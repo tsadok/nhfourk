@@ -3578,7 +3578,8 @@ pay_for_damage(const char *dmgstr, boolean cant_mollify)
            critter out of the way. */
         if (MON_AT(level, x, y)) {
             You_hear(msgc_monneutral, "an angry voice:");
-            verbalize(msgc_monneutral, "Out of my way, scum!");
+            if (canhear())
+                verbalize(msgc_monneutral, "Out of my way, scum!");
         }
         mnearto(shkp, x, y, TRUE);
     }

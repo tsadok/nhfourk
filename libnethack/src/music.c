@@ -431,6 +431,7 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
         }       /* else FALLTHRU */
     case LEATHER_DRUM: /* Awaken monsters */
         pline(msgc_actionok, "You beat a deafening row!");
+        incr_itimeout(&HDeaf, rn1(20,30));
         awaken_monsters(u.ulevel * 40);
         break;
     default:

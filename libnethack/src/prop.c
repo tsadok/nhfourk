@@ -542,6 +542,8 @@ enlightenment(int final)
             you_are(&menu, "confused");
         if (Blinded)
             you_are(&menu, "blinded");
+        if (Deaf)
+            you_are(&menu, "deaf");
         if (Sick) {
             if (u.usick_type & SICK_VOMITABLE)
                 you_are(&menu, "sick from food poisoning");

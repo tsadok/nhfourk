@@ -241,8 +241,10 @@ dosit(const struct nh_cmd_arg *arg)
                 int cnt = rn2_on_rng(10, rng_throne_result);
                 struct monst *mtmp;
                 vanishnum = 7;
-                
-                pline(msgc_npcvoice, "A voice echoes:");
+
+                /* Magical voice not affected by deafness */
+                pline(msgc_npcvoice, "A voice echoes%s:",
+                      (canhear() ? "" : " in your mind"));
                 verbalize(msgc_levelwarning,
                           "Thy audience hath been summoned, %s!",
                           u.ufemale ? "Dame" : "Sire");
@@ -255,14 +257,18 @@ dosit(const struct nh_cmd_arg *arg)
                 break;
             }
             case 8:
-                pline(msgc_npcvoice, "A voice echoes:");
+                /* Magical voice not affected by deafness */
+                pline(msgc_npcvoice, "A voice echoes%s:",
+                      (canhear() ? "" : " in your mind"));
                 verbalize(msgc_intrgain, "By thy Imperious order, %s...",
                           u.ufemale ? "Dame" : "Sire");
                 do_genocide(5); /* REALLY|ONTHRONE, see do_genocide() */
                 break;
             case 9:
                 vanishnum = 10;
-                pline(msgc_npcvoice, "A voice echoes:");
+                /* Magical voice not affected by deafness */
+                pline(msgc_npcvoice, "A voice echoes%s:",
+                      (canhear() ? "" : " in your mind"));
                 verbalize(Luck > 0 ? msgc_statusbad : msgc_itemloss,
                           "A curse upon thee for sitting upon this most holy "
                           "throne!");
@@ -275,6 +281,8 @@ dosit(const struct nh_cmd_arg *arg)
                 if (Luck < 0 || (HSee_invisible & INTRINSIC)) {
                     if (level->flags.nommap) {
                         vanishnum = 10;
+                        /* This, likewise, goes directly into your mind, even if
+                           your ears can't hear. */
                         pline(msgc_statusbad,
                               "A terrible drone fills your head!");
                         make_confused(HConfusion + rnd(30), FALSE);

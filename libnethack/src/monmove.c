@@ -19,7 +19,8 @@ boolean
 mb_trapped(struct monst *mtmp)
 {
     if (cansee(mtmp->mx, mtmp->my))
-        pline(msgc_levelsound, "KABOOM!!  You see a door explode.");
+        pline(msgc_levelsound, "%sYou see a door explode.",
+              (canhear() ? "KABOOM!!  " : ""));
     else
         You_hear(msgc_levelsound, "a distant explosion.");
     wake_nearto(mtmp->mx, mtmp->my, 7 * 7);
@@ -1211,7 +1212,8 @@ postmov:
                     } else {
                         if (canseeit)
                             pline(msgc_monneutral,
-                                  "You see a door crash open.");
+                                  "You see a door %s open.",
+                                  (canhear() ? "crash" : "suddenly"));
                         else
                             You_hear(msgc_levelsound, "a door crash open.");
                         if (here->doormask & D_LOCKED && !rn2(2))

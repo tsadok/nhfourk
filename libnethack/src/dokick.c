@@ -1073,8 +1073,12 @@ dokick(const struct nh_cmd_arg *arg)
                 if (canhear())
                     pline(msgc_failrandom,
                           "Klunk!  The pipes vibrate noisily.");
+                else if (!Blind)
+                    pline(msgc_failrandom, "The pipes vibrate visibly.");
                 else
-                    pline(msgc_failrandom, "Klunk!");
+                    pline(msgc_failrandom,
+                          "Your %s throbs unpleasantly for a moment.",
+                          body_part(FOOT));
                 exercise(A_DEX, TRUE);
                 return 1;
             } else if (!(maploc->looted & S_LPUDDING) && pudding_available) {

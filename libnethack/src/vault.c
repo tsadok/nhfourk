@@ -358,7 +358,13 @@ invault(void)
         }
         verbalize(msgc_npcvoice, "I don't know you.");
         umoney = money_cnt(invent);
-        if (!umoney && !hidden_gold())
+        if (Deaf)
+            if (!Blind)
+                pline(msgc_hint, "%s gestures emphatically.",
+                      Monnam(guard));
+            else
+                pline(msgc_hint, "You feel exposed.");
+        else if (!umoney && !hidden_gold())
             verbalize(msgc_hint, "Please follow me.");
         else {
             if (!umoney)
@@ -533,15 +539,24 @@ gd_move(struct monst *grd)
         return -1;      /* teleported guard - treat as monster */
     if (egrd->fcend == 1) {
         if (u_in_vault && (u_carry_gold || um_dist(grd->mx, grd->my, 1))) {
-            if (egrd->warncnt == 3)
-                verbalize(msgc_hint, "I repeat, %sfollow me!",
-                          u_carry_gold ? (!umoney ?
-                                          "drop that hidden money and " :
-                                          "drop that money and ") : "");
+            if (egrd->warncnt == 3) {
+                if (Deaf) {
+                    if (Blind)
+                        pline(msgc_hint, "You feel very exposed.");
+                    else
+                        pline(msgc_hint, "%s gestures very emphatically.",
+                              Monnam(grd));
+                } else
+                    verbalize(msgc_hint, "I repeat, %sfollow me!",
+                              u_carry_gold ? (!umoney ?
+                                              "drop that hidden money and " :
+                                              "drop that money and ") : "");
+            }
             if (egrd->warncnt == 7) {
                 m = grd->mx;
                 n = grd->my;
-                verbalize(msgc_npcanger, "You've been warned, knave!");
+                if (canhear())
+                    verbalize(msgc_npcanger, "You've been warned, knave!");
                 mnexto(grd);
                 level->locations[m][n].typ = egrd->fakecorr[0].ftyp;
                 newsym(m, n);
@@ -572,7 +587,8 @@ gd_move(struct monst *grd)
                           "You are confronted by an angry guard.");
                 return -1;
             } else {
-                verbalize(msgc_npcvoice, "Well, begone.");
+                if (canhear())
+                    verbalize(msgc_npcvoice, "Well, begone.");
                 wallify_vault(grd);
                 egrd->gddone = 1;
                 goto cleanup;
@@ -601,10 +617,14 @@ gd_move(struct monst *grd)
             }
             if (egrd->warncnt < 6) {
                 egrd->warncnt = 6;
-                verbalize(msgc_hint, "Drop all your gold, scoundrel!");
+                if (canhear())
+                    verbalize(msgc_hint, "Drop all your gold, scoundrel!");
+                else if (!Blind)
+                    pline(msgc_hint, "%s gestures at you.", Monnam(grd));
                 return 0;
             } else {
-                verbalize(msgc_npcanger, "So be it, rogue!");
+                if (canhear())
+                    verbalize(msgc_npcanger, "So be it, rogue!");
                 msethostility(grd, TRUE, FALSE);
                 return -1;
             }
@@ -634,7 +654,8 @@ gd_move(struct monst *grd)
         } else {
             /* just for insurance... */
             if (MON_AT(level, m, n) && m != grd->mx && n != grd->my) {
-                verbalize(msgc_monneutral, "Out of my way, scum!");
+                if (canhear())
+                    verbalize(msgc_monneutral, "Out of my way, scum!");
                 rloc(m_at(level, m, n), FALSE, level);
             }
             remove_monster(level, grd->mx, grd->my);
@@ -664,7 +685,7 @@ gd_move(struct monst *grd)
         }
     }
     if (um_dist(grd->mx, grd->my, 1) || egrd->gddone) {
-        if (!egrd->gddone && !rn2(10))
+        if (!egrd->gddone && !rn2(10) && canhear())
             verbalize(msgc_npcvoice, "Move along!");
         restfakecorr(grd);
         return 0;       /* didn't move */

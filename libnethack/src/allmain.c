@@ -1425,6 +1425,8 @@ cancel_mimicking(const char* msg)
 boolean
 canhear(void)
 {
+    if (Deaf)
+        return FALSE;
     return !u_helpless(hm_unconscious);
 }
 

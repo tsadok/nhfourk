@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The player character can now be temporarily deafened (e.g., by
+   beating a deafening row).  While deaf, your character does not
+   hear sounds.
+
  * Sacks have been added to the list of objects that may show up
    in the first few levels of the dungeon (above and beyond their
    ordinary generation probability as a random object), similar to

@@ -1066,7 +1066,8 @@ doorlock(struct obj * otmp, int x, int y)
                 else {
                     if (cansee(x, y))
                         pline(msgc_substitute,
-                              "KABOOM!!  You see a door explode.");
+                              "%sYou see a door explode.",
+                              (canhear() ? "KABOOM!!  " : ""));
                     else
                         You_hear(msgc_levelsound, "a distant explosion.");
                 }

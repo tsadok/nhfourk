@@ -1648,7 +1648,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             
         } else {
             if (Role_if(PM_HEALER)) {
-                if (!(moves % 5))
+                if (canhear() && !(moves % 5))
                     verbalize(msgc_hint,
                               "Doc, I can't help you unless you cooperate.");
                 dmg = 0;
@@ -1666,7 +1666,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                    a much higher one */
                 if (Blind)
                     You_hear(msgc_levelwarning, "laughter.");
-                else
+                else if (canhear())
                     pline_implied(combat_msgc(mtmp, &youmonst, cr_hit),
                                   "%s chuckles.", Monnam(mtmp));
             }

@@ -927,6 +927,11 @@ dotalk(const struct nh_cmd_arg *arg)
         pline(msgc_cancelled, "Your speech is unintelligible underwater.");
         return 0;
     }
+    if (Deaf) {
+	pline(msgc_cancelled,
+              "How can you hold a conversation when you cannot hear?");
+	return 0;
+    }
 
     if (!Blind && (otmp = shop_object(u.ux, u.uy)) != NULL) {
         /* standing on something in a shop and chatting causes the shopkeeper

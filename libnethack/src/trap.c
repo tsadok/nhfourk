@@ -2897,8 +2897,10 @@ domagictrap(void)
                 pline(msgc_statusheal, "Your vision quickly clears.");
         } else if (!Blind) {
             pline(msgc_levelwarning, "You see a flash of light!");
-        } else
+        } else if (!Deaf) {
             You_hear(msgc_levelwarning, "a deafening roar!");
+            incr_itimeout(&HDeaf, rn1(20,30));
+        }
         /* Use the "create monster used by monster" RNG for the species; the
            other option is the "random monster generation on this level" RNG,
            but I don't like that one as much; it's rather about what we want to

@@ -1956,14 +1956,14 @@ do_genocide(int how)
             }
 
             if (!(ptr->geno & G_GENO)) {
-                if (canhear()) {
+                if (canhear())
                     /* fixme: unconditional "caverns" will be silly in some
                        circumstances */
                     pline(msgc_npcvoice,
                           "A thunderous voice booms through the caverns:");
-                    verbalize(msgc_hint, "No, %s!  That will not be done.",
-                              mortal_or_creature(youmonst.data, TRUE));
-                }
+                /* This part you can hear in your mind even if deaf: */
+                verbalize(msgc_hint, "No, %s!  That will not be done.",
+                          mortal_or_creature(youmonst.data, TRUE));
                 continue;
             }
             if (is_human(ptr))

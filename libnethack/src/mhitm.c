@@ -867,7 +867,8 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
                 pline(msgc_petfatal, brief_feeling, "queasy");
             return MM_AGR_DIED;
         }
-        verbalize(combat_msgc(magr, mdef, cr_hit), "Burrrrp!");
+        if (canhear())
+            verbalize(combat_msgc(magr, mdef, cr_hit), "Burrrrp!");
         tmp = mdef->mhp;
         /* Use up amulet of life saving */
         if ((obj = mlifesaver(mdef)))

@@ -821,7 +821,11 @@ resurrect(void)
     if (mtmp) {
         mtmp->msleeping = 0;
         msethostility(mtmp, TRUE, TRUE);
-        pline(msgc_npcvoice, "A voice booms out...");
+        if (canhear())
+            pline(msgc_npcvoice, "A voice booms out...");
+        /* In vanilla, you only get this if you can hear; but the Wizard of
+           Yendor is a sufficiently powerful entity, it seems to me he ought to
+           have a way to speak directly into your mind -- NAE */
         verbalize(msgc_npcanger,
                   "So thou thought thou couldst %s me, fool.", verb);
     }
@@ -919,6 +923,8 @@ static const char *const random_malediction[] = {
 void
 cuss(struct monst *mtmp)
 {
+    if (Deaf)
+        return;
     if (mtmp->iswiz) {
         if (!rn2(5))    /* typical bad guy action */
             pline(msgc_npcvoice, "%s laughs fiendishly.", Monnam(mtmp));
