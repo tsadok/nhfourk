@@ -61,6 +61,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Polymorphed spellbooks may turn blank or be too faint to read.
+   (This is a 3.6 bugfix, but one that I held off on doing until now
+   because it has significant balance implications, and I was waiting
+   until I was ready to rebalance spellbook availability.)
+
  * The bones option, instead of being boolean (on or off), now has
    three possible values:  disabled, which causes bones not to be
    loaded at all; normal, which is the default setting and allows

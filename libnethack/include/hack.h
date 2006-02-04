@@ -55,6 +55,10 @@
 # define SELL_DELIBERATE        (1)
 # define SELL_DONTSELL          (2)
 
+/* spellbook re-use control; used when reading and when polymorphing */
+#define MAX_SPELL_STUDY 3 /* Cf the SPBOOK_CLASS case in doname_base where
+                             it decides whether to say a book was faint. */
+
 /* This is the way the game ends.  If these are rearranged or new entries are
    added, the arrays in end.c will need to be changed. */
 # define DIED            0

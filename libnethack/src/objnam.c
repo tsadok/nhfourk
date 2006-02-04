@@ -885,7 +885,7 @@ doname_base(const struct obj *obj, boolean with_price)
             goto charges;
         break;
     case SPBOOK_CLASS:
-        if (dump && (obj->spestudied > 3)) /* MAX_SPELL_STUDY */
+        if (dump && (obj->spestudied > MAX_SPELL_STUDY))
             prefix = msgcat(prefix, "[faint] ");
         break;
     case WAND_CLASS:

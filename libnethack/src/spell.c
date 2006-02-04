@@ -10,8 +10,6 @@
 #define SPELLMENU_VIEW (-1)
 
 #define KEEN 20000
-#define MAX_SPELL_STUDY 3 /* Cf the SPBOOK_CLASS case in doname_base where
-                             it decides whether to say a book was faint. */
 #define incrnknow(spell)        spl_book[spell].sp_know = KEEN
 
 #define spellev(spell)          spl_book[spell].sp_lev
@@ -383,17 +381,15 @@ learn(void)
     int i;
     short booktype;
     boolean costly = TRUE;
-    boolean already_known = FALSE;
-    int first_unknown = MAXSPELL;
-    int known_spells = 0;
     const char *splname;
+    struct obj *book = u.utracked[tos_book];
 
     /* JDS: lenses give 50% faster reading; 33% smaller read time */
     if (u.uoccupation_progress[tos_book] &&
         ublindf && ublindf->otyp == LENSES && rn2(2))
         u.uoccupation_progress[tos_book]++;
     if (Confusion) {    /* became confused while learning */
-        confused_book(u.utracked[tos_book]);
+        confused_book(book);
         u.utracked[tos_book] = 0;       /* no longer studying */
         helpless(-u.uoccupation_progress[tos_book], hr_busy,
                  "absorbed in a spellbook",
@@ -402,9 +398,9 @@ learn(void)
         return 0;
     }
 
-    booktype = u.utracked[tos_book]->otyp;
+    booktype = book->otyp;
     if (booktype == SPE_BOOK_OF_THE_DEAD) {
-        deadbook(u.utracked[tos_book], FALSE);
+        deadbook(book, FALSE);
         u.utracked[tos_book] = 0;
         u.uoccupation_progress[tos_book] = 0;
         return 0;
@@ -415,7 +411,7 @@ learn(void)
        helplessness. (3.4.3 applies negative spellbook effects but lets you
        memorize the spell anyway; this makes no sense. It destroys the spellbook
        on the "contact poison" result, which makes even less sense.) */
-    if (u.utracked[tos_book]->cursed) {
+    if (book->cursed) {
         pline(msgc_substitute, "This book isn't making sense any more.");
         helpless(rn1(5,5), hr_busy,
                  "making sense of a spellbook",
@@ -434,59 +430,69 @@ learn(void)
     splname = msgprintf(objects[booktype].oc_name_known ?
                         "\"%s\"" : "the \"%s\" spell",
                         OBJ_NAME(objects[booktype]));
-    for (i = 0; i < MAXSPELL; i++) {
-        if (spellid(i) == booktype) {
-            already_known = TRUE;
-            if (u.utracked[tos_book]->spestudied > MAX_SPELL_STUDY) {
-                pline(msgc_failcurse,
-                      "This spellbook is too faint to be read any more.");
-                u.utracked[tos_book]->otyp = booktype = SPE_BLANK_PAPER;
-            } else if (spellknow(i) <= 1000) {
-                pline(msgc_actionok, "Your knowledge of %s is keener.",
+
+    for (i = 0; i < MAXSPELL; i++)
+        if (spellid(i) == booktype || spellid(i) == NO_SPELL) break;
+
+    if (i == MAXSPELL) {
+        panic("Too many spells memorized!");
+    } else if (spellid(i) == booktype) {
+        /* normal book can be read and re-read a total of 4 times */
+        if (book->spestudied > MAX_SPELL_STUDY) {
+            pline(msgc_failcurse,
+                  "This spellbook is too faint to be read any more.");
+            book->otyp = booktype = SPE_BLANK_PAPER;
+        } else if (spellknow(i) <= 1000) {
+            pline(msgc_actionok, "Your knowledge of %s is keener.", splname);
+            incrnknow(i);
+            book->spestudied++;
+            if (ACURR(A_WIS) < 12)
+                exercise(A_WIS,TRUE);       /* extra study */
+        } else { /* 1000 < spellknow(i) <= MAX_SPELL_STUDY */
+            pline(msgc_hint, "You know %s quite well already.", splname);
+            if (yn("Do you want to read the book anyway?") == 'y') {
+                pline(msgc_actionok, "You refresh your knowledge of %s.",
                       splname);
                 incrnknow(i);
-                u.utracked[tos_book]->spestudied++;
-                if (ACURR(A_WIS) < 12)
-                    exercise(A_WIS, TRUE); /* extra study */
-            } else {    /* 1000 < spellknow(i) <= MAX_SPELL_STUDY */
-                pline(msgc_hint, "You know %s quite well already.", splname);
-                if (yn("Do you want to read the book anyway?") == 'y') {
-                    pline(msgc_actionok, "You refresh your knowledge of %s.",
-                          splname);
-                    incrnknow(i);
-                    u.utracked[tos_book]->spestudied++;
-                } else
-                    costly = FALSE;
-            }
-            /* make book become known even when spell is already known, in case
-               amnesia made you forget the book */
-            makeknown((int)booktype);
-            break;
-        } else if (spellid(i) == NO_SPELL &&
-                   (i < first_unknown ||
-                    i == spellno_from_let(objects[booktype].oc_defletter)))
-            first_unknown = i;
-        else
-            known_spells++;
-    }
-
-    if (first_unknown == MAXSPELL && !already_known)
-        panic("Too many spells memorized!");
-
-    if (!already_known) {
-        spl_book[first_unknown].sp_id = booktype;
-        spl_book[first_unknown].sp_lev = objects[booktype].oc_level;
-        incrnknow(first_unknown);
-        u.utracked[tos_book]->spestudied++;
-        pline(msgc_actionok, known_spells > 0 ?
-              "You add %s to your repertoire." : "You learn %s.", splname);
-        if (Role_if(PM_WIZARD) && objects[booktype].oc_level >= 3)
-            adjalign(1);
+                book->spestudied++;
+            } else
+                costly = FALSE;
+        }
+        /* If we had amnesia in our variant, we'd make the book become known
+           even when spell is already known, in case amnesia made the player
+           forget the book. */
+        /* makeknown((int)booktype); */
+    } else { /* (spellid(i) == NO_SPELL) */
+        /* for a normal book, spestudied will be zero, but for
+           a polymorphed one, spestudied will be non-zero and
+           one less reading is available than when re-learning */
+        if (book->spestudied >= MAX_SPELL_STUDY) {
+            /* pre-used due to being the product of polymorph */
+            pline(msgc_failcurse,
+                  "This spellbook is too faint to read even once.");
+            book->otyp = booktype = SPE_BLANK_PAPER;
+        } else {
+            spl_book[i].sp_id = booktype;
+            spl_book[i].sp_lev = objects[booktype].oc_level;
+            incrnknow(i);
+            book->spestudied++;
+            pline(msgc_actionok,
+                  (i > 0 ? "You add %s to your repertoire." : "You learn %s."),
+                  splname);
+        }
         makeknown((int)booktype);
     }
 
+    if (book->cursed) {	/* maybe a demon cursed it while you were reading */
+        if (cursed_book(book)) {
+            u.utracked[tos_book] = 0;
+            useup(book);
+            return 0;
+        }
+    }
+
     if (costly)
-        check_unpaid(u.utracked[tos_book]);
+        check_unpaid(book);
     u.utracked[tos_book] = 0;
     return 0;
 }
