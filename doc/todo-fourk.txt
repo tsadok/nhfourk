@@ -268,9 +268,6 @@ Outstanding Bug Reports:
 ▒▒▒
 ▒▒▒ * The M3_CLIMBER flag should change the message when you go up ladders or stairs.
 ▒▒▒
-▒▒▒ * Look at commit 94ea00a1a3, from 3.6, and implement temple sounds.
-▒▒▒   Don't forget to set lev->heardsound[levsound_temple]
-▒▒▒
 ▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
 ▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
 ▒▒▒   doing so at the behest of the Norn still makes flavor sense).

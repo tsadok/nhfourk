@@ -3,9 +3,11 @@
 /*      Copyright (c) 1989 Janet Walz, Mike Threepoint */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include <strings.h>
 #include "hack.h"
 #include "edog.h"
 #include "eshk.h"
+#include "epri.h"
 
 static int domonnoise(struct monst *);
 static const char * librarian_chat(struct monst *libr);
@@ -323,6 +325,52 @@ dosounds(void)
             You_hear(msgc_levelsound, shop_msg[rn2(2) + hallu], name);
         }
         return;
+    }
+    if ((sroom = search_special(level, TEMPLE)) && !rn2(200) &&
+        !(Is_astralevel(&u.uz) || Is_sanctum(&u.uz))) {
+        for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
+            if (DEADMONSTER(mtmp)) continue;
+            if (mtmp->ispriest && inhistemple(mtmp) &&
+                /* priest must be active */
+                mtmp->mcanmove && !mtmp->msleeping &&
+                /* hero must be outside this temple */
+                temple_occupied(u.urooms) != EPRI(mtmp)->shroom)
+                break;
+        }
+        if (mtmp) { /* Generic temple messages; no attempt to match topic or
+                       tone to the pantheon involved, let alone to the specific
+                       deity.  These are assumed to be coming from the attending
+                       priest; asterisk means that the priest must be capable of
+                       speech; pound sign (octathorpe,&c--don't go there) means
+                       that the priest and the altar must not be directly
+                       visible (we don't care if telepathy or extended detection
+                       reveals that the priest is not currently standing on the
+                       altar; he's mobile). */
+            static const char * const temple_msg[] = {
+                "*someone praising %s.",
+                "*someone beseeching %s.",
+                "#an animal carcass being offered in sacrifice.",
+                "*a strident plea for donations.",
+            };
+            const char *msg;
+            int idx, trycount = 0,
+                ax = EPRI(mtmp)->shrpos.x, ay = EPRI(mtmp)->shrpos.y;
+            boolean speechless = (mtmp->data->msound <= MS_ANIMAL),
+                in_sight = canseemon(mtmp) || cansee(ax, ay);
+
+            do { idx = rn2(SIZE(temple_msg) - 1 + hallu);
+                 msg = temple_msg[idx];
+                 if (speechless && !strchr(msg, '*')) continue;
+                 if (in_sight   && !strchr(msg, '#')) continue;
+                 break; /* msg is acceptable */
+            } while (++trycount < 50);
+            ++msg;  /* skip control flag */
+            if (strchr(msg, '%'))
+                msg = msgprintf(msg, halu_gname(EPRI(mtmp)->shralign));
+            if (sounds) level->heardsound[levsound_temple] = TRUE;
+            You_hear(msgc_levelsound, msg);
+            return;
+        }
     }
     if (search_special(level, DELPHI) && !rn2(400)) {
         /* make sure the Oracle is still here */
