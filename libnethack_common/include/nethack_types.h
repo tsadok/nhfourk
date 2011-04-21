@@ -200,6 +200,17 @@
 
 # define SERVERCANCEL_CHAR '\x1c'
 
+/* K-Mod level styles (idea taken from sporkhack, but certainly not the code!)
+   These are all room-and-corridor level styles, but with different types of
+   arrangements in terms of how the rooms are laid out and interconnected. */
+enum levstyle {
+    LEVSTYLE_STANDARD = 0,
+    LEVSTYLE_RING,
+    LEVSTYLE_HUB,
+    /* more to come */
+    LEVSTYLE_TYPES /* total number of different styles */
+};
+
 enum nh_direction {
     DIR_SERVERCANCEL = -2,
     DIR_NONE = -1,

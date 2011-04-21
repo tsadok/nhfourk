@@ -1479,9 +1479,9 @@ create_corridor(struct level *lev, corridor *c, int *smeq)
     coord org, dest;
 
     if (c->src.room == -1) {
-        sort_rooms(lev);
+        sort_rooms(lev, LEVSTYLE_STANDARD);
         fix_stair_rooms(lev);
-        makecorridors(lev, smeq);
+        makecorridors(lev, smeq, LEVSTYLE_STANDARD);
         return;
     }
 

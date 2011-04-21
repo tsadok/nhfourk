@@ -25,7 +25,11 @@ static boolean place_niche(struct level *lev, struct mkroom *, int *, int *,
 static void makeniche(struct level *lev, int);
 static void make_niches(struct level *lev);
 
-static int do_comp(const void *, const void *);
+/* K-Mod, I've implemented a couple of different sorting functions for use with
+   different level styles. */
+/* static int do_comp(const void *, const void *); */
+static int lx_comp(const void *, const void *);
+static int angle_comp(const void *, const void *);
 
 static void dosdoor(struct level *lev, xchar, xchar, struct mkroom *, int);
 static void join(struct level *lev, int a, int b, boolean, int *);
@@ -47,9 +51,9 @@ static boolean made_branch;     /* used only during level creation */
 #define mrng()  rng_for_level(&lev->z)
 
 /* Args must be (const void *) so that qsort will always be happy. */
-
+/* K-Mod, this use to be called "do_comp" */
 static int
-do_comp(const void *vx, const void *vy)
+lx_comp(const void *vx, const void *vy)
 {
     const struct mkroom *x, *y;
 
@@ -66,11 +70,88 @@ do_comp(const void *vx, const void *vy)
     return x->ly - y->ly;
 }
 
+static int
+angle_comp(const void *vx, const void *vy)
+{
+    const struct mkroom *a, *b;
+    int ax, ay, bx, by; /* x and y, relative the the map centre (COLNO/2, ROWNO/2) */
+    /* double ra, rb, ta, tb; // radius and angle */
+    int aquad, bquad; /* circle quadrants */
+
+    a = (const struct mkroom *)vx;
+    b = (const struct mkroom *)vy;
+
+    ax = (a->lx + a->hx - COLNO)/2;
+    bx = (b->lx + b->hx - COLNO)/2;
+    ay = (a->ly + a->hy - ROWNO)/2;
+    by = (b->ly + b->hy - ROWNO)/2;
+
+    /* normalize */
+    ay*=COLNO;
+    ay/=ROWNO;
+    by*=COLNO;
+    by/=ROWNO;
+
+
+    /* I've decided (for various reasons) that it would be good
+       to swap the x and y for sorting purposes. *//*
+    ax^=ay;
+    ay^=ax;
+    ax^=ay;
+
+    bx^=by;
+    by^=bx;
+    bx^=by;
+    // While we're at it, we might as well flip the x axis.  This way, the angle
+    // we will be comparing is measured clockwise from the top of the screen.
+    ax*=-1;
+    bx*=-1;*/
+
+    // ar = sqrt(ax*ax + ay*ay);
+    // at = atan2(ay, ax);
+    // ...
+    // But rather than use those expensive functions, we can compare quadrants and the tangent directly.
+
+    /* First, the quadrant check. */
+    aquad = (ax >= 0)? ((ay >= 0) ? 0 : 3) :((ay >= 0)? 1 : 2);
+    bquad = (bx >= 0)? ((by >= 0) ? 0 : 3) :((by >= 0)? 1 : 2);
+
+    if (aquad != bquad) {
+        return (aquad < bquad) ? -1 : 1;
+    } else {
+        /* same quadrant. Compare tan value. ay/ax vs by/bx */
+        if (ax == 0)
+            return (bx == 0) ? 0 : -1;
+        if (bx == 0)
+            return 1;
+        /* I've slapped an arbitrary factor of 20 on it just to reduce rounding errors */
+        if ((20*ay) / ax == (20*by) / bx)
+            return 0;
+        else
+            return ((20*ay) / ax < (20*by) / bx) ? -1 : 1;
+    }
+}
+
 static void
 finddpos(struct level *lev, coord * cc, xchar xl, xchar yl, xchar xh, xchar yh)
 {
     xchar x, y;
 
+    /* K-Mod: I'm going to make this a bit more random. */
+    xchar rx = rn2(xh-xl+1);
+    xchar ry = rn2(yh-yl+1);
+
+    for (x = 0; x <= xh-xl; x++) {
+        for (y = 0; y <= yh-yl; y++) {
+            if (okdoor(lev, xl+(x+rx)%(xh-xl+1) , yl+(y+ry)%(yh-yl+1))) {
+                cc->x = xl+(x+rx)%(xh-xl+1);
+                cc->y = yl+(y+ry)%(yh-yl+1);
+                return; /* "goto" can get stuffed */
+            }
+        }
+    }
+
+    /* Original code:
     x = (xl == xh) ? xl : (xl + mrn2(xh - xl + 1));
     y = (yl == yh) ? yl : (yl + mrn2(yh - yl + 1));
     if (okdoor(lev, x, y))
@@ -80,6 +161,7 @@ finddpos(struct level *lev, coord * cc, xchar xl, xchar yl, xchar xh, xchar yh)
         for (y = yl; y <= yh; y++)
             if (okdoor(lev, x, y))
                 goto gotit;
+        */
 
     for (x = xl; x <= xh; x++)
         for (y = yl; y <= yh; y++)
@@ -96,9 +178,22 @@ gotit:
 }
 
 void
-sort_rooms(struct level *lev)
+sort_rooms(struct level *lev, enum levstyle style)
 {
-    qsort(lev->rooms, lev->nroom, sizeof (struct mkroom), do_comp);
+    int (*comp_func)(const void *, const void *);
+
+    switch (style) {
+    default: /* standard */
+        comp_func = lx_comp;
+        break;
+    case LEVSTYLE_RING:
+        comp_func = angle_comp;
+        break;
+    case LEVSTYLE_HUB:
+        /* no sorting required */
+        return;
+    }
+    qsort(lev->rooms, lev->nroom, sizeof (struct mkroom), comp_func);
 }
 
 static void
@@ -505,6 +600,44 @@ join(struct level *lev, int a, int b, boolean nxcor, int *smeq)
     }
     xx = cc.x;
     yy = cc.y;
+
+    /*
+     * K-Mod
+     * when rooms were put next to each other, I was using this. but now this isn't required.
+     */
+/*
+	if (0 && (levl[xx][yy].roomno == SHARED || levl[tt.x][tt.y].roomno==SHARED))
+	{
+		// This could be done using lx, hx etc. but that might fail for irregular rooms.
+		boolean in_c = FALSE, in_t = FALSE;
+		char *r_list = in_rooms(xx, yy, 0);
+
+		while (*r_list)
+		{
+			if (&rooms[*r_list-ROOMOFFSET] == croom)
+				in_c = TRUE;
+			if (&rooms[*r_list-ROOMOFFSET] == troom)
+				in_t = TRUE;
+		}
+		if (in_c && in_t)
+		{
+			// the rooms are connected
+			if (okdoor(xx,yy) || !nxcor)
+			{
+				dodoor(xx,yy,croom);
+				add_door(xx, yy, troom); // dodoor only adds the door to one of the rooms.
+				if(smeq[a] < smeq[b])
+					smeq[b] = smeq[a];
+				else
+					smeq[a] = smeq[b];
+				// join complete
+				return;
+			}
+		}
+	}
+*/
+
+
     tx = tt.x - dx;
     ty = tt.y - dy;
     if (nxcor && lev->locations[xx + dx][yy + dy].typ)
@@ -532,11 +665,16 @@ join(struct level *lev, int a, int b, boolean nxcor, int *smeq)
 }
 
 void
-makecorridors(struct level *lev, int *smeq)
+makecorridors(struct level *lev, int *smeq, enum levstyle style)
 {
     int a, b, i;
     boolean any = TRUE;
 
+    /* K-Mod: the implementation of 'styles' in sporkhack is completely broken
+       but I liked the idea, so I've been working to try to fix the system. */
+
+    switch (style) {
+    default: /* standard style (using unmodified code) */
     for (a = 0; a < lev->nroom - 1; a++) {
         join(lev, a, a + 1, FALSE, smeq);
         if (!mrn2(50))
@@ -561,6 +699,27 @@ makecorridors(struct level *lev, int *smeq)
                 b += 2;
             join(lev, a, b, TRUE, smeq);
         }
+    break;
+    case LEVSTYLE_RING:
+        /* rooms should be ordered by their angle to the center */
+        if (lev->nroom > 1) {
+            for (a = 0; a < lev->nroom; a++) {
+                b = (a + 1) % lev->nroom;
+                join(lev, a, b, FALSE, smeq);
+            }
+        }
+        break;
+
+    case LEVSTYLE_HUB:
+        /* central room should have been already chosen and put first in the list */
+        if (lev->nroom > 1) {
+            for (a = 1; a < lev->nroom; a++) {
+                join(lev, a, 0, FALSE, smeq);
+            }
+        }
+        break;
+        /* More styles to come */
+    }
 }
 
 void
@@ -796,9 +955,14 @@ makelevel(struct level *lev)
     struct monst *tmonst;       /* always put a web with a spider */
     branch *branchp;
     int room_threshold;
+    enum levstyle style = (!Is_rogue_level(&lev->z) &&
+                           !Is_special(&lev->z) && !mrn2(8)) ? /* K-Mod */
+        mrn2(LEVSTYLE_TYPES) : LEVSTYLE_STANDARD;
 
     int smeq[MAXNROFROOMS + 1];
 
+    if (wizard) pline(msgc_debug, "Level style %d", style);
+    
     if (wiz1_level.dlevel == 0)
         init_dungeons();
 
@@ -842,9 +1006,30 @@ makelevel(struct level *lev)
     if (Is_rogue_level(&lev->z)) {
         makeroguerooms(lev, smeq);
         makerogueghost(lev);
-    } else
+    } else {
+        if (style == LEVSTYLE_HUB) {
+            /* create the central room.  For historical reasons, create_room()
+	       takes its (x,y) coords in units of 1/5 of the map. */
+#define mrn1(x,y)         (mrn2(x)+(y))
+            if (!create_room(lev, 3, mrn1(3,1), mrn1(5, 9), mrn1(4, 5),
+                             3 /* xmiddle */, -1, OROOM, -1, smeq,
+                             (depth(&lev->z) > 2)))
+                style = LEVSTYLE_STANDARD; /* failed */
+            else {
+                if (!mrn2(10)) {
+                    struct mkroom* croom = &lev->rooms[lev->nroom-1];
+                    int x = croom->lx + (croom->hx - croom->lx)/2 - 2 + mrn2(5);
+                    int y = croom->ly + (croom->hy - croom->ly)/2 - 1 + mrn2(3);
+                    struct obj* otmp =
+                        mksobj_at(STATUE, lev, x, y, TRUE, FALSE, mrng());
+                    if (otmp)
+                        otmp->corpsenm = PM_WIZARD_OF_YENDOR;
+                }
+            }
+        }
         makerooms(lev, smeq); /* Some rooms may get shaped. */
-    sort_rooms(lev);
+    }
+    sort_rooms(lev, style);
     /* after sorting the rooms, fix up the shaped rooms
        so that somexy can work with them */
     for (i = 0; i < lev->nroom; i++) {
@@ -897,7 +1082,7 @@ makelevel(struct level *lev)
                                            allow a random special room */
     if (Is_rogue_level(&lev->z))
         goto skip0;
-    makecorridors(lev, smeq);
+    makecorridors(lev, smeq, style);
     make_niches(lev);
 
     /* make a secret treasure vault, not connected to the rest */

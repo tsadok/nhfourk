@@ -993,12 +993,12 @@ extern void mkaiscav(struct level *lev);
 /* ### mklev.c ### */
 
 extern struct level *alloc_level(d_level * levnum);
-extern void sort_rooms(struct level *lev);
+extern void sort_rooms(struct level *lev, enum levstyle style);
 extern void add_room(struct level *lev, int, int, int, int, boolean, schar,
                      boolean, boolean);
 extern void add_subroom(struct level *lev, struct mkroom *, int, int, int, int,
                         boolean, schar, boolean);
-extern void makecorridors(struct level *lev, int *smeq);
+extern void makecorridors(struct level *lev, int *smeq, enum levstyle style);
 extern void add_door(struct level *lev, int, int, struct mkroom *);
 extern struct level *mklev(d_level * levnum);
 extern void topologize(struct level *lev, struct mkroom *croom);

@@ -61,6 +61,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Cherry-picked two alternative room-and-corridor level topologies
+   ("styles") from K-Mod.  These are only used for non-special levels.
+   Seven-eighths of the time, the traditional style of corridor
+   arrangement is used; one-eighth of the time, a style is randomly
+   chosen from among three available topologies:  the traditional
+   standard topology, a ring topology, or a hub-and-spoke topology.
+   So in effect, room-and-corridor filler levels will have the ring
+   topology 1/24th of the time and the hub-and-spoke topology another
+   1/24th of the time; so a typical game will average somewhere around
+   one of each of these, and the rest traditional.
+
  * The statues at Medusa's Island (except for Perseus) now have the
    usual chance to contain spellbooks, like any other random statue.
 
