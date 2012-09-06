@@ -1026,7 +1026,7 @@ makelevel(struct level *lev)
                         otmp->corpsenm = PM_WIZARD_OF_YENDOR;
                 }
             }
-        }
+        } /* Continue to make the rest of the rooms... */
         makerooms(lev, smeq); /* Some rooms may get shaped. */
     }
     sort_rooms(lev, style);
@@ -1180,6 +1180,29 @@ skip0:
             if (tmonst && !mrn2(ldiff || 1) && !resists_sleep(tmonst))
                 tmonst->msleeping = 1;
         }
+
+        /* K-Mod. put an additional monster in the hub room. */
+        if (style == LEVSTYLE_HUB && croom == lev->rooms) {
+            /* I'd like to make this an especially strong monster,
+               so lets pick the strongest from a few random monsters. */
+            const struct permonst *best_mon=0, *temp_mon;
+            int i;
+            for (i = 0; i < 5; i++) {
+                temp_mon = rndmonst(&lev->z, mrng());
+                if (!best_mon || temp_mon->mlevel > best_mon->mlevel)
+                    best_mon = temp_mon;
+            }
+            x = somex(croom, mrng()); y = somey(croom, mrng());
+            if (best_mon)
+                tmonst = makemon(best_mon, lev, x, y, NO_MM_FLAGS);
+            else
+                tmonst = makemon((struct permonst *) 0, lev, x,y,NO_MM_FLAGS);
+
+            if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
+                !occupied(lev, x, y))
+                (void) maketrap(lev, x, y, WEB, mrng());
+        }
+
         /* put traps and mimics inside */
         x = 8 - (level_difficulty(&lev->z) / 6);
         if (x <= 1)
@@ -1274,7 +1297,8 @@ skip0:
         }
 
     skip_nonrogue:
-        if (!mrn2(3)) {
+        /* always create loot for the hub-room of hub-and-spoke topology */
+        if ((!mrn2(3)) || ((style == LEVSTYLE_HUB) && (croom == lev->rooms))) {
             int tries = 20;
             y = somey(croom, mrng());
             x = somex(croom, mrng());
