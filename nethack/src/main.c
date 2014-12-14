@@ -63,20 +63,19 @@ static struct nh_menuitem mainmenu_items_noclient[] = {
     {EXITGAME, MI_NORMAL, "quit", 'q', 'x'}
 };
 
-const char *nhlogo_small[11] = {        /* created using pbmtoascii */
-    "                                                       oo               _d#,   ",
-    "MMM,   MM            oo    MM     MM                   MM             ,HMMP'   ",
-    "MMMM   MM            MM    MM     MM                   MM           ,HMMMM     ",
-    "MMMM|  MM    ,oo,   oMMoo  MM     MM   ,ooo      ,ooo  MM   oo,   .dMM*MMM     ",
-    "MM`MH  MM   dMMMMb  #MM##  MM     MM  |MMMMM,   dMM#M| MM  dMP   ,MMH' MMM     ",
-    "MM TM, MM  |MM' 9Mb  MM    MM#####MM  `'  `Mb  |MH' `' MM dMP  ,HMM?   ]MM##HMH",
-    "MM `Mb MM  MMboodMM  MM    MM\"\"\"\"\"MM    ,ooMM  MM'     MMMMP  ?MMMH##MMMMMH*\"'\"",
-    "MM  HM.MM  MMH#####  MM    MM     MM  .HMH#MM  MM      MMMMb  *###\"\"\"\"\"9MM|    ",
-    "MM  |MMMM  9Mb       MM    MM     MM  HM' .MM  9M?     MM 9Mb          |MM|    ",
-    "MM   MMMM  `MMbood|  MMoo  MM     MM  HMbdMMM  `MMb_d| MM `MMb          MMb    ",
-    "MM   `MMM   `9MMMP'  `MMM  MM     MM  `*MM'MM   `9MMM' MM  `MMb         ?MH    ",
+const char *nhlogo_small[9] = {        /* created by hand */
+    "|  |          |  |        |  ",
+    "|\\ |  __  _|_ |__|  _   _ | /",
+    "| \\| / _>  |  |  | / | /  |< ",
+    "|  | \\__/  \\_ |  | \\_| \\_ | \\",
+    "       ___                   ",
+    "      |               |      ",
+    "      |__  _          | /    ",
+    "      |   / \\ | | |/~ |<     ",
+    "      |   \\_/ \\_| |   | \\    ",
 };
 
+/*
 const char *nhlogo_large[14] = {
     "                                                                     ooo                   .##.    ",
     "####     ##b                      ###     ###                        MMM                 dMMMM'    ",
@@ -93,6 +92,7 @@ const char *nhlogo_large[14] = {
     "MMM   `MMMMM   9MMMMMMMH  `MMMM|  MMM     MMM  `9MMMMPMMM   \"MMM#MM  MMM  9MMb,           #MMM     ",
     "###    ?####   `\"#####'    ?###|  ###     ###    `##' ###    \"####?  ###  `###b            *#*     ",
 };
+*/
 
 
 static char **
@@ -247,13 +247,13 @@ mainmenu(void)
     load_keymap(); /* netgame() assumes the keymap isn't loaded */
 
     while (n >= 0) {
-        if (COLS >= 100) {
-            nhlogo = nhlogo_large;
-            logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
-        } else {
+//        if (COLS >= 100) {
+//            nhlogo = nhlogo_large;
+//            logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
+//        } else {
             nhlogo = nhlogo_small;
             logoheight = sizeof (nhlogo_small) / sizeof (nhlogo_small[0]);
-        }
+//        }
         wclear(basewin);
         wattron(basewin, A_BOLD | COLOR_PAIR(4));
         for (i = 0; i < logoheight; i++) {

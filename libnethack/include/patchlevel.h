@@ -10,10 +10,10 @@
 #define EDITLEVEL 0
 
 #define COPYRIGHT_BANNER_A \
-"NetHack 4, Copyright (C) 2009-2015; based on NetHack, Copyright (C) 1985-2006"
+"NetHack Fourk, Copyright 2015; based on NetHack, Copyright 1985-2003"
 
 #define COPYRIGHT_BANNER_B \
-"  NetHack 4 by Alex Smith, Daniel Thaler and many other contributors."
+"  NetHack Fourk is based on NetHack 4 by Alex Smith and many others."
 
 #define COPYRIGHT_BANNER_C \
 "  NetHack by Stichting Mathematisch Centrum and M. Stephenson. See " \

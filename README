@@ -2,25 +2,95 @@ About this document:
 Last modified by Alex Smith, 2015-02-11
 
 Copyright (C) 2013 Alex Smith.
+Copyright (C) 2014 Nathan Eady.
 
-This README file is licensed under the NetHack General Public License.  See
-libnethack/dat/license for details.
+This README file is licensed under the NetHack General Public License.
+See libnethack/dat/license for details.
 
+Overview
+========
+
+NetHack Fourk (NHF) is based on NetHack 4 (NH4), with additional
+changes.  In order to understand the purpose of NetHack Fourk, you
+must first understand about NetHack 4.
 
 NetHack 4
 =========
 
-NetHack 4 is a version of the computer game NetHack, that aims to bring a
-better-quality codebase and a less hostile interface to NetHack's highly rated
-"roguelike" gameplay.  Unlike many NetHack variants, it is intentionally
-conservative in making gameplay changes; in particular, it aims to avoid the
-common problem whereby development is driven via fixing perceived balance
-issues with the game (often losing the ability to improvise solutions to
-complex problems in the process), or via focusing too much on the difference
-between wins and losses (meaning that players are forced into taking the best
-choice, rather than the choice they enjoy most or a choice they want to try).
+NetHack 4 is a version of the computer game NetHack, that aims to
+bring a better-quality codebase and a less hostile interface to
+NetHack's highly rated "roguelike" gameplay.  Unlike many NetHack
+variants, it is intentionally conservative in making gameplay changes;
+in particular, it aims to avoid the common problem whereby development
+is driven via fixing perceived balance issues with the game (often
+losing the ability to improvise solutions to complex problems in the
+process), or via focusing too much on the difference between wins and
+losses (meaning that players are forced into taking the best choice,
+rather than the choice they enjoy most or a choice they want to try).
 See the file `doc/philosophy.txt` for more information on NetHack 4's
 philosophy.
+
+NetHack Fourk
+=============
+
+NetHack Fourk exists to test out changes that are believed to be
+needed in principle (typically, for balance reasons) but might or
+might not prove to be appropriate in practice, in some cases because
+we are unsure whether they are the correct solution to a problem or
+because we are unsure how much of the proposed solution is actually
+required, or in other cases because we are unsure whether the change
+might introduce even larger balance issues than the problem it intends
+to solve ("the cure is worse than the disease").  As such, NetHack
+Fourk will be far more conservative about gameplay changes than the
+truly experimental variants, but less strict than NetHack4.
+Development will closely track NetHack 4 as an upstream source.
+
+The following principles are put forward:
+
+ * When possible, uncontroversial improvements should be committed
+   upstream to NetHack 4 first and then be merged down to NetHack
+   Fourk.  Priority should be given to bug fixes and to popular
+   enhancements that have been field tested elsewhere (especially
+   on very active public servers).
+   
+ * Changes from the stable branch of NetHack 4 (at the time of this
+   writing, called nicehack) may be merged at any time, unless we are
+   in a freeze to prepare for release.  Such freezes should be short
+   in duration.
+   
+ * Changes from other NetHack 4 branches should only be merged at
+   certain points in the development cycle.  If there is more than
+   one developer working on NetHack Fourk, these changes should be
+   discussed prior to merging, because planning may be required.
+   However, in general, NetHack Fourk aims to be somewhat more
+   experimental than mainstream NetHack 4, so it will often be
+   appropriate to merge pending changes from other branches.
+   
+ * At appropriate points in the development cycle, popular changes
+   from other NetHack variants may also be merged.  Priority should be
+   given to popular changes from conservative variants, or ones that
+   are popular enough to have made it into multiple variants already,
+   or ones that are well understood because they have seen extensive
+   play testing already, or that only impact players who choose to use
+   them (e.g., new roles).
+   
+ * Original changes should only be implemented when necessary to
+   address serious shortcomingsor or major balance issues or to
+   improve the monster AI.  Some exceptions may be made for changes
+   that only impact players who choose to use them, e.g., for new
+   playable races and roles.  These should always be implemented
+   in a feature branch first and tested at least a little before
+   merging into the master branch.
+   
+ * Improving the monster AI, if it genuinely makes monsters smarter or
+   introduces greater variety of monster behavior, may be done even if
+   it disrupts game balance; subsequently, if play testing reveals a
+   significant imbalance, steps may be taken to compensate, e.g., by
+   giving the player better ways to deal with monsters that have
+   become more dangerous.
+
+History
+=======
 
 NetHack 4 was originally produced by merging two forks, Alex Smith's AceHack,
 and Daniel Thaler's NitroHack.  Since then it has incorporated changes from
@@ -37,9 +107,10 @@ style, but doing so would be close to an impossible project.  Our continuous
 changes of NetHack from the inside will eventually accomplish a similar goal,
 but in a more realistic manner.
 
-This README file describes NetHack 4.3, which focuses mostly on improvements
-to the game's internals, rather than gameplay changes.  We are planning to
-make more substantial gameplay changes in 4.4.
+This README file describes NetHack 4.3, which focuses mostly on
+improvements to the game's internals, rather than gameplay changes.
+The NetHack 4 developers are planning to make more substantial
+gameplay changes in 4.4.
 
 
 Frequently Asked Questions
@@ -51,15 +122,24 @@ See the file at `doc/faq.txt`.
 Contact
 =======
 
-Bugs in NetHack 4 can be reported at http://trac.nethack4.org, our bug
-tracker.  The homepage for NetHack 4 itself is http://nethack4.org, and
-contains many other resources about the game and its community.
+Bugs in NetHack Fourk that can also be reproduced in NetHack 4 should
+ideally be reported upstream at http://trac.nethack4.org, our bug
+tracker.  The homepage for NetHack 4 itself is http://nethack4.org,
+and contains many other resources about the game and its community.
+
+At the time of this writing, NetHack Fourk does not have its own bug
+tracker or website, but bug reports or other correspondance specific
+to NetHack Fourk may be reported to Jonadab either on the Freenode IRC
+network or by email (at columbus.rr.com).
 
 You can discuss NetHack 4 on IRC.  irc:irc.freenode.net/nethack4 is the
 specific channel for NetHack 4, and typically discusses development.  For
 gameplay advice, the best place is the general NetHack discussion channel at
-irc:irc.freenode.net/nethack (which also covers NetHack 3 and Slash'EM).  If
-you're more old-fashioned, you can use Usenet instead; the appropriate
+irc:irc.freenode.net/nethack (which also covers NetHack 3 and Slash'EM).  
+A channel specifically for NetHack Fourk will be created if it turns
+out to be needed.
+
+If you're more old-fashioned, you can use Usenet instead; the appropriate
 newsgroup is rec.games.roguelike.nethack (although they would appreciate it if
 you put `[NetHack 4]` in the subject line to make it clear that you aren't
 talking about NetHack 3).
@@ -263,6 +343,10 @@ listed below.
   * Building the game from source is much easier than it was in NetHack
     3.4.3.  See the build instructions below.
 
+For a list of changes in NetHack Fourk compared to the NetHack 4, see
+`doc/changelog-fourk.txt`.  (If greater detail is wanted, you can also
+look at the git log.)  Additionally, changelog.txt, listing the
+changes in NetHack 4 as compared to 3.x, is still available.
 
 Build Instructions
 ==================

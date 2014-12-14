@@ -1,7 +1,7 @@
 # Last modified by Alex Smith, 2015-03-10
 # Copyright (c) Alex Smith, 2013.
 # NetHack may be freely redistributed.  See license for details.
-# NetHack 4: aimake configuration.
+# NetHack Fourk: aimake configuration.
 
 # There's a maximum combined length on the executable info structure.
 # So this is written concisely, so as to be able to fit everything in.
@@ -15,10 +15,10 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
 
 {
     options => {
-        packagename      => 'nethack4',
-        packagename_text => 'NetHack 4',
-        packageversion   => '4.3.beta2',
-        companyname      => 'NetHack 4 DevTeam',
+        packagename => 'nhfourk',
+        packagename_text => 'NetHack Fourk',
+        packageversion => '4.3.beta2',
+        companyname => 'NetHack Fourk DevTeam',
 
         AM_CPPFLAGS => '-DNETCLIENT -D_REENTRANT',
         CFLAGS      => '-Wall -Wextra -fdiagnostics-show-option -O2 -g',
@@ -53,10 +53,10 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         },
         jansson => {
             description => "Use the provided rather than system libjansson",
-            long_description => "NetHack 4 can build either using a copy of ".
+            long_description => "NetHack Fourk can build either using a copy of ".
                                 "libjansson that already exists on your ".
                                 "system, or a copy that ships with the ".
-                                "NetHack 4 source. Set this to false if you ".
+                                "NetHack Fourk source. Set this to false if you ".
                                 "already have libjansson development headers ".
                                 "installed, or true otherwise.",
             object => qr=^path:libjansson/=,
@@ -79,7 +79,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             # it, and we can choose not to build the documentation.
             description => "Tileset compiler",
             long_description => "Installs a command-line tool for changing ".
-                                "the tilesets that ship with NetHack 4 (both ".
+                                "the tilesets that ship with NetHack Fourk (both ".
                                 "graphical tiles, and sets of character/color ".
                                 "pairs used for rendering in a terminal).",
             object => qr=^bpath:doc/tilecompile.pod$=,
@@ -433,7 +433,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             command => ["intcmd:writefile",
 "optstring:This_directory_stores_dumplogs_produced_during_server_play.",
 "optstring:When_you_play_locally,_dumplogs_are_saved_in_the_same_place_as_your",
-"optstring:save_files_(e.g._~/.config/NetHack4/dumps_on_Linux).",
+"optstring:save_files_(e.g._~/.config/NHFourk/dumps_on_Linux).",
                         "optpath::bpath:readme-dumps"],
             output => "bpath:readme-dumps",
         },
@@ -441,27 +441,27 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             command => ["intcmd:writefile",
 "optstring:This_directory_stores_data_shared_between_all_users.",
 "optstring:When_you_play_locally,_your_save_files_are_stored_in_your_home",
-"optstring:directory_(e.g._~/.config/NetHack4/saves_on_Linux).",
+"optstring:directory_(e.g._~/.config/NHFourk/saves_on_Linux).",
                         "optpath::bpath:readme-saves"],
             output => "bpath:readme-saves",
         },
 
-        # We need a symlink from "nethack4-sdl" to "nethack4". Thus we
-        # add a second symlink from "nethack4" to "main" so that if
+        # We need a symlink from "nhfourk-sdl" to "nhfourk". Thus we
+        # add a second symlink from "nhfourk" to "main" so that if
         # symlinks are implemented by copying, nothing breaks.
 
         _sdl_link_preparation => {
             object => "bpath:nethack/src/main.c/main$exeext",
             command => ["intcmd:symlink", "optpath::",
-                        "optpath:-o:bpath:nethack/src/main.c/nethack4$exeext",
+                        "optpath:-o:bpath:nethack/src/main.c/nhfourk$exeext",
                         "bpath:tilesets/dat/fonts/font14.png"],
             output_from_optpath => '-o',
             verb => 'symlinked',
         },
         _sdl_link => {
-            object => "bpath:nethack/src/main.c/nethack4$exeext",
+            object => "bpath:nethack/src/main.c/nhfourk$exeext",
             command => ["intcmd:symlink", "optpath::",
-                        "optpath:-o:bpath:nethack/src/main.c/nethack4-sdl$exeext",
+                        "optpath:-o:bpath:nethack/src/main.c/nhfourk-sdl$exeext",
                         "bpath:tilesets/dat/fonts/font14.png"],
             output_from_optpath => '-o',
             verb => 'symlinked',
@@ -469,9 +469,9 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
 
         _man_sdl_symlink => {
             command => ["intcmd:symlink",
-                        "optpath:-o:bpath:doc/nethack4-sdl.6",
-                        "optpath::bpath:doc/nethack4.6",
-                        "bpath:doc/nethack4.6",
+                        "optpath:-o:bpath:doc/nhfourk-sdl.6",
+                        "optpath::bpath:doc/nhfourk.6",
+                        "bpath:doc/nhfourk.6",
                         "bpath:tilesets/dat/fonts/font14.png"],
             output_from_optpath => '-o',
             verb => 'symlinked',
@@ -516,23 +516,23 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             object => "bpath:nethack/src/main.c/main$exeext",
             install_dir => "gamesbindir",
             install_elevation => "games",
-            install_name => "nethack4$exeext",
+            install_name => "nhfourk$exeext",
             exeparams => {
                 icon => qr/^path:dist\/common\/icon.*\.png$/,
                 copyright => $copyright,
-                name => "NetHack 4 (console)",
+                name => "NetHack Fourk (console)",
                 description => "Dungeon exploration game (text interface)",
                 terminal => 1,
             },
         },
         _install_sdl => {
-            object => "bpath:nethack/src/main.c/nethack4-sdl$exeext",
+            object => "bpath:nethack/src/main.c/nhfourk-sdl$exeext",
             install_dir => "gamesbindir",
             install_elevation => "games",
             exeparams => {
                 icon => qr/^path:dist\/common\/icon.*\.png$/,
                 copyright => $copyright,
-                name => "NetHack 4 (GUI)",
+                name => "NetHack Fourk (GUI)",
                 description => "Dungeon exploration game (graphical interface)",
                 terminal => 0,
             },
@@ -543,7 +543,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             install_dir => "gamesbindir",
             exeparams => {
                 copyright => $tilecompile_copyright,
-                name => "NetHack 4 Tile Compiler",
+                name => "NetHack Fourk Tile Compiler",
                 terminal => 1,
                 interactive => 0,
             },
@@ -588,12 +588,12 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         _install_server => {
             object => "bpath:nethack_server/src/srvmain.c/srvmain$exeext",
             install_dir => "gamesbindir",
-            install_name => "nethack4-server$exeext",
+            install_name => "nhfourk-server$exeext",
             install_permission => "games",
             exeparams => {
                 copyright => $copyright,
-                name => "NetHack 4 Server",
-                description => "NetHack 4 server daemon",
+                name => "NetHack Fourk Server",
+                description => "NetHack Fourk server daemon",
                 interactive => 0,
             },
             install_feature => "server",
@@ -634,11 +634,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         install_manuals => undef, # these are feature-gated at install time
 
         _install_manpage => {
-            object => qr=^bpath:doc/nethack4\.6.*=,
+            object => qr=^bpath:doc/nhfourk\.6.*=,
             install_dir => "mandir",
         },
         _install_sdl_manpage => {
-            object => qr=^bpath:doc/nethack4-sdl\.6.*=,
+            object => qr=^bpath:doc/nhfourk-sdl\.6.*=,
             install_dir => "mandir",
             install_feature => "gui",
         },
@@ -699,13 +699,13 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         _install_server_config => {
             object => "sys:ensure_exists",
             install_dir => "configdir",
-            install_name => "nethack4.conf",
+            install_name => "nhfourk.conf",
             install_feature => "server",
         },
         _install_server_logfile => {
             object => "sys:ensure_exists",
             install_dir => "logdir",
-            install_name => "nethack4.log",
+            install_name => "nhfourk.log",
             install_permission => "games",
             install_feature => "server",
         },

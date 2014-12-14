@@ -1,20 +1,21 @@
-Source: nethack4
+Source: nhfourk
 Section: games
 Priority: optional
-Maintainer: Alex Smith <ais523@nethack4.org>
+Maintainer: Jonadab the Unsightly One
 Build-Depends: debhelper (>= 9.0.0), libz-dev, libjansson-dev, bison, flex, libsdl2-dev, libpng-dev, perl (>= 5.8.1)
 Standards-Version: 3.9.5
-Homepage: http://nethack4.org
-Vcs-Git: http://nethack4.org/media/nethack4.git -b master
+Homepage: http://mistersanity.blogspot.com
+Vcs-Git: git://gitorious.org/nethackfourk/jonadab.git
 
-Package: nethack4
+Package: nhfourk
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: modernized version of the classic roguelike
- NetHack 4 is a modernized version of the classic game NetHack. It adds a
- completely new user interface, numerous bugfixes, and much more. It also tries
- to avoid killing the player with the interface - its authors feel that player
- deaths should be the result of their actions, not their typos.
+ NetHack Fourk is a modernized version of the classic game NetHack,
+ based on the NetHack4 codebase, which, compared to 3.4.3, adds a
+ completely new user interface, numerous bugfixes, and much more.
+ On top of that, NetHack Fourk makes various balance adjustments
+ and attempts to relieve tedium.
  .
  NetHack itself is perhaps the best-known "roguelike" game: a screen-oriented
  dungeon crawler in which levels are randomly generated, giving a different

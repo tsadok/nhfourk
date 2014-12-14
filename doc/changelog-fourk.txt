@@ -1,0 +1,24 @@
+About this document:
+Last modified by Jonadab the Unsightly One, 2014-12-13
+
+Copyright (C) 2014 Nathan Eady.
+
+This document is licensed under the NetHack General Public License.  See
+libnethack/dat/license for details.
+
+
+NetHack Fourk Changelog
+=======================
+
+This document describes the changes that have been made in NetHack
+Fourk specifically, which are different from the upstream NetHack 4
+codebase.  For changes made in NetHack 4, see instead changelog.txt
+
+These changes are in chronological order, most recent at top.
+
+ * Updated branding, docs, build rules, and such to refer to nhfourk
+   (for filenames) and NetHack Fourk (for human-readable names) where
+   appropriate.  References to NetHack 4 and nethack4 have also been
+   retained in many places, since that is the upstream codebase on
+   which NetHack Fourk is based.
+
