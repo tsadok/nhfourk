@@ -1780,7 +1780,7 @@ corpse_chance(struct monst *mon,
     /* NetHack Fourk balance adjustment: any given type of monster
        becomes unlikely to leave further corpses when lots of that
        type of monster have been killed already. */
-    if (log(1 + mvitals[mon->mtmp].died) > rn2(5))
+    if (log(1 + mvitals[mon->mnum].died) > rn2(5))
         return FALSE;
 
     if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
