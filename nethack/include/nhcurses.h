@@ -407,7 +407,7 @@ extern char cmdline_name[];
 extern nh_bool random_player;
 extern struct gamewin *firstgw, *lastgw;
 extern struct nh_cmd_desc *keymap[KEY_MAX + 1];
-extern const char *nhlogo_small[11], *nhlogo_large[14];
+extern const char *nhlogo_small[9]/*, *nhlogo_large[14]*/;
 extern char *override_hackdir, *override_userdir;
 extern int repeats_remaining;
 extern char *tiletable;

@@ -1772,13 +1772,22 @@ corpse_chance(struct monst *mon,
     if (LEVEL_SPECIFIC_NOCORPSE(mdat))
         return FALSE;
 
-    if (bigmonst(mdat) || mdat == &mons[PM_LIZARD]
-        || is_golem(mdat)
+    if (is_golem(mdat)
         || is_mplayer(mdat)
         || is_rider(mdat))
         return TRUE;
-    return (boolean) (!rn2((int) (2 + ((int)(mdat->geno & G_FREQ) < 2) +
-                                  verysmall(mdat))));
+
+    /* NetHack Fourk balance adjustment: any given type of monster
+       becomes unlikely to leave further corpses when lots of that
+       type of monster have been killed already. */
+    if (log(1 + mvitals[mon->mtmp].died) > rn2(5))
+        return FALSE;
+
+    if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
+        return TRUE;
+    return (boolean) (!rn2((int)
+                           (2 + ((int)(mdat->geno & G_FREQ) < 2) +
+                            verysmall(mdat))));
 }
 
 /* drop (perhaps) a cadaver and remove monster */

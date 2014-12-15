@@ -16,9 +16,19 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
+ * Any given type of monster becomes less likely to drop corpses as
+   you kill more and more of them.  Somewhere around 150 kills, you
+   altogether stop getting corpses for that kind of monster.  This
+   is expected to be most noticeable with puddings but may also be
+   relevant for extinctionists and throne farmers.  I'd have made
+   it top out at a thousand or so kills, but the kill count only 
+   goes up to 255, probably so it can fit in a single byte.  In any
+   case, this is unlikely to be noticed in normal play except with
+   large creatures such as dragons, which are no longer guaranteed
+   to drop corpses every single time.
+
  * Updated branding, docs, build rules, and such to refer to nhfourk
    (for filenames) and NetHack Fourk (for human-readable names) where
    appropriate.  References to NetHack 4 and nethack4 have also been
    retained in many places, since that is the upstream codebase on
    which NetHack Fourk is based.
-
