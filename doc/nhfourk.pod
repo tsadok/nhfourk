@@ -6,7 +6,7 @@ NetHack can be freely redistributed.  See license for details.
 
 =for aimake manualsection 6
 
-=for aimake manualname nethack4
+=for aimake manualname nhfourk
 
 =head1 NAME
 
