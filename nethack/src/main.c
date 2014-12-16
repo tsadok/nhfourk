@@ -63,36 +63,38 @@ static struct nh_menuitem mainmenu_items_noclient[] = {
     {EXITGAME, MI_NORMAL, "quit", 'q', 'x'}
 };
 
-const char *nhlogo_small[9] = {        /* created by hand */
+const char *nhlogo_small[11] = {        /* created by hand */
+    "                             ",
+    "                             ",
     "|  |          |  |        |  ",
     "|\\ |  __  _|_ |__|  _   _ | /",
     "| \\| / _>  |  |  | / | /  |< ",
     "|  | \\__/  \\_ |  | \\_| \\_ | \\",
-    "       ___                   ",
-    "      |               |      ",
-    "      |__  _          | /    ",
-    "      |   / \\ | | |/~ |<     ",
-    "      |   \\_/ \\_| |   | \\    ",
+    "      ___                    ",
+    "     |               |       ",
+    "     |__  _          | /     ",
+    "     |   / \\ | | |/~ |<      ",
+    "     |   \\_/ \\_| |   | \\     ",
 };
 
-/*
+
 const char *nhlogo_large[14] = {
-    "                                                                     ooo                   .##.    ",
-    "####     ##b                      ###     ###                        MMM                 dMMMM'    ",
-    "MMMMb    MMM              MMM     MMM     MMM                        MMM              .dHMMMM'     ",
-    "MMMMM.   MMM              MMM     MMM     MMM                        MMM             oHMMMMMT      ",
-    "MMMMM|   MMM     ooo,    oMMMoo,  MMM     MMM    ,oooo        oooo,  MMM   ooo,    .dMMH*MMM|      ",
-    "MMM\"MH|  MMM   JMMMMMM.  MMMMMM|  MMM     MMM   dMMMMMM_    _MMMMMM  MMM  JMM|    JMMMH  MMM|      ",
-    "MMM 9M|  MMM  |MMM\"\"MMH   MMM     MMMoooooMMM  |MP\"\"\"TMM   |MMP' \"9  MMM |MMT   oHMMP\"   9MMbooo##b",
-    "MMM |MM  MMM  dMM'  |MMM  MMM     MMMMMMMMMMM         MMH  MMH'      MMMdMM\"  .dMMMR:_,ooHMMMMMMM##",
-    "MMM `MM| MMM  MMM###HMMM  MMM     MMM\"\"\"\"\"MMM    .o###MMM  MM|       MMMMMT  ,dMMMMMMMMMMMMMH*'\"\"  ",
-    "MMM  HML MMM  MMM#######  MMM     MMM     MMM   ,MMM##MMM  MM|       MMMMMb  `*###*\"\"\"'  9MMM      ",
-    "MMM  |MMMMMM  HMM.        MMM     MMM     MMM  ,MM*'  MMM  MMH       MMM|HMM.            |MMM|     ",
-    "MMM   |MMMMM  |MMH    ?b  MMM     MMM     MMM  |MM\\ ,dMMM  TMMb,  d  MMM |MMH            `MMM|     ",
-    "MMM   `MMMMM   9MMMMMMMH  `MMMM|  MMM     MMM  `9MMMMPMMM   \"MMM#MM  MMM  9MMb,           #MMM     ",
-    "###    ?####   `\"#####'    ?###|  ###     ###    `##' ###    \"####?  ###  `###b            *#*     ",
+    "                             ",
+    "                             ",
+    "|  |          |  |        |  ",
+    "|\\ |  __  _|_ |__|  _   _ | /",
+    "| \\| / _>  |  |  | / | /  |< ",
+    "|  | \\__/  \\_ |  | \\_| \\_ | \\",
+    "      ___                    ",
+    "     |               |       ",
+    "     |__  _          | /     ",
+    "     |   / \\ | | |/~ |<      ",
+    "     |   \\_/ \\_| |   | \\     ",
+    "                             ",
+    "                             ",
+    "     A Fork of NetHack 4     ",
 };
-*/
+
 
 
 static char **
@@ -247,13 +249,13 @@ mainmenu(void)
     load_keymap(); /* netgame() assumes the keymap isn't loaded */
 
     while (n >= 0) {
-//        if (COLS >= 100) {
-//            nhlogo = nhlogo_large;
-//            logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
-//        } else {
+        if (LINES >= 30) {
+            nhlogo = nhlogo_large;
+            logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
+        } else {
             nhlogo = nhlogo_small;
             logoheight = sizeof (nhlogo_small) / sizeof (nhlogo_small[0]);
-//        }
+        }
         wclear(basewin);
         wattron(basewin, A_BOLD | COLOR_PAIR(4));
         for (i = 0; i < logoheight; i++) {

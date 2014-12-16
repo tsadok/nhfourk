@@ -631,13 +631,13 @@ netgame_mainmenu(struct server_info *server)
     }
 
     while (1) {
-//        if (COLS >= 100) {
-//            nhlogo = nhlogo_large;
-//            logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
-//        } else {
+        if (LINES >= 30) {
+            nhlogo = nhlogo_large;
+            logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
+        } else {
             nhlogo = nhlogo_small;
             logoheight = sizeof (nhlogo_small) / sizeof (nhlogo_small[0]);
-//        }
+        }
         wclear(basewin);
         wattron(basewin, A_BOLD | COLOR_PAIR(4));
         for (i = 0; i < logoheight; i++) {
