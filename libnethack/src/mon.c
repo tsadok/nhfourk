@@ -2051,22 +2051,31 @@ xkilled(struct monst *mtmp, int dest)
     if ((dest & 2) || LEVEL_SPECIFIC_NOCORPSE(mdat))
         goto cleanup;
 
-    /* might be here after swallowed */
-    if (((x != u.ux) || (y != u.uy)) && !rn2(6) &&
-        !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
-        int typ;
+    /* NetHack Fourk balance adjustment: any given type of monster becomes
+     * unlikely to leave further death drops when lots of that type of monster
+     * have been killed already.  Removing the rn2(6) check means the first few
+     * monsters you kill of any given type are significantly more likely to drop
+     * something than before.  This is intended.  As you kill more of that kind
+     * of monster, the probabilities quickly drop off.  */
+    if (log(1 + mvitals[mtmp->mnum].died) <= rn2(5)) {
+        /* might be here after swallowed */
+        if (((x != u.ux) || (y != u.uy)) && /* !rn2(6) && */
+            !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
+            int typ;
 
-        otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
-                        ? rng_death_drop_s : rng_death_drop_l);
-        /* Don't create large objects from small monsters */
-        typ = otmp->otyp;
-        if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&
-            typ != LEASH && typ != FIGURINE &&
-            (otmp->owt > 3 || objects[typ].oc_big || /* oc_bimanual/oc_bulky */
-             is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
-            delobj(otmp);
-        } else
-            redisp = TRUE;
+            otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE,
+                            ((mdat->msize < MZ_HUMAN)
+                             ? rng_death_drop_s : rng_death_drop_l));
+            /* Don't create large objects from small monsters */
+            typ = otmp->otyp;
+            if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&
+                typ != LEASH && typ != FIGURINE &&
+                (otmp->owt > 3 || objects[typ].oc_big || /* oc_bimanual/oc_bulky */
+                 is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
+                delobj(otmp);
+            } else
+                redisp = TRUE;
+        }
     }
     /* Whether or not it always makes a corpse is, in theory, different from
        whether or not the corpse is "special"; if we want both, we have to

@@ -16,16 +16,25 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
- * Any given type of monster becomes less likely to drop corpses as
-   you kill more and more of them.  Somewhere around 150 kills, you
-   altogether stop getting corpses for that kind of monster.  This
-   is expected to be most noticeable with puddings but may also be
-   relevant for extinctionists and throne farmers.  I'd have made
-   it top out at a thousand or so kills, but the kill count only 
-   goes up to 255, probably so it can fit in a single byte.  In any
-   case, this is unlikely to be noticed in normal play except with
-   large creatures such as dragons, which are no longer guaranteed
-   to drop corpses every single time.
+ * Any given type of monster becomes less likely to drop corpses and
+   death drops as you kill more and more of them.  Somewhere around
+   150 kills, you altogether stop getting corpses for that kind of
+   monster.  This is expected to be most noticeable with puddings but
+   may also be relevant for extinctionists and throne farmers.  I'd
+   have made it top out at a thousand or so kills, but the kill count
+   only goes up to 255, probably so it can fit in a single byte.  In
+   any case, this is unlikely to be noticed in normal play except with
+   large creatures such as dragons, which are no longer guaranteed to
+   drop corpses every single time.
+
+ * To compensate for the reduced death drops as you kill many monsters
+   of the same kind (which happens in normal play for some monsters,
+   particularly common ones generated in groups), the base death drop
+   probability has been adjusted upward.  Thus, the first few monsters
+   you kill of any given type are now more likely to leave death drops
+   than before.  This needs play testing for balance, but the
+   intention is that the overall number of death drops in a typical
+   normal (non-farming) game should be about the same.
 
  * Updated branding, docs, build rules, and such to refer to nhfourk
    (for filenames) and NetHack Fourk (for human-readable names) where
