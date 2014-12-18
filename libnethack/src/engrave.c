@@ -499,6 +499,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     const char *helpless_endmsg;/* Temporary for helpless end message */
     struct engr *oep = engr_at(level, u.ux, u.uy);
     struct obj *otmp;
+    int cramps = 0;             /* How much your hand is cramping up from writing */
 
     /* The current engraving */
     const char *writer;
@@ -1058,12 +1059,28 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     for (sp = ebuf_copy; *sp; sp++) {
         if (isspace(*sp))
             continue;
-        if (((type == DUST || type == ENGR_BLOOD) && !rn2(25)) ||
+        /* NetHack Fourk balance adjustment:  writing Elbereth a whole lot of
+         * times makes it harder to continue writing anything successfully.  */
+        if (!rn2((((type == DUST || type == ENGR_BLOOD)) ? 150
+                  : (type == ENGRAVE) ? 350 : 1500)
+                 * u.ulevel / (1 + u.uconduct[conduct_elbereth])) ||
             (Blind && !rn2(11)) || (Confusion && !rn2(7)) ||
-            (Stunned && !rn2(4)) || (Hallucination && !rn2(2)))
+            (Stunned && !rn2(4)) || (Hallucination && !rn2(2))) {
             *sp = ' ' + rnd(96 - 2);    /* ASCII '!' thru '~' (excludes ' ' and 
                                            DEL) */
+            cramps++;
+        }
     }
+    if (cramps > 6)
+        pline("Your entire %s is cramping up.  You simply cannot write any more right now.", body_part(ARM));
+    else if (cramps > 4)
+        pline("Your %s is cramping up very severely.", body_part(HAND));
+    else if (cramps > 2)
+        pline("Your %s is really cramping up.", body_part(HAND));
+    else if (cramps > 1)
+        pline("Your %s is cramping up.", body_part(HAND));
+    else if (cramps > 0)
+        pline("Your writing %s is beginning to cramp.", body_part(HAND));
 
     /* Previous engraving is overwritten */
     if (eow) {
