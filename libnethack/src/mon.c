@@ -2145,7 +2145,10 @@ cleanup:
         adjalign(-5);
 
     /* malign was already adjusted for u.ualign.type and randomization */
-    adjalign(mtmp->malign);
+    /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
+     *    monster killing.  That completely defeats the purpose of even
+     *    bothering to keep track of player alignment record.  So no. */
+    /* adjalign(mtmp->malign); */
 }
 
 /* changes the monster into a stone monster of the same type */

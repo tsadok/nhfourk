@@ -19,6 +19,13 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
+ * Alignment record points are no longer granted for killing most
+   kinds of monsters.
+
+ * Gaining alignment record points through sacrifice is now somewhat
+   more difficult (especially for non-chaotics); although certain
+   kinds of special-cased corpses are still particularly effective.
+
  * Alignment record now starts at 10 for lawfuls, 15 for neutrals,
    20 for chaotics.  (These numbers may get adjusted later, not sure;
    as it stands, it means chaotics don't have to improve their record
