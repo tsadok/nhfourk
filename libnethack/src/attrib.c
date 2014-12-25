@@ -702,7 +702,9 @@ newhp(void)
 
         /* Initialize alignment stuff */
         u.ualign.type = aligns[u.initalign].value;
-        u.ualign.record = urole.initrecord;
+        /* NetHack Fourk balance adjustment:  lawful characters start with a lower alignment record, chaotics higher */
+        u.ualign.record = urole.initrecord + ((u.ualign.type == A_CHAOTIC) ? 10
+                                              : ((u.ualign.type == A_NEUTRAL) ? 5 : 0));
 
         return hp;
     } else {
