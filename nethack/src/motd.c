@@ -6,12 +6,9 @@
 #include "netconnect.h"
 #include "nhcurses.h"
 
-/* This mostly just resolves to the same IP as nethack4.org. However, a
-   subdomain is used so that it can be overridden in the hosts file (e.g. for
-   local testing of the MotD system, or so that nethack4.org server play
-   doesn't advertise itself). */
-#define MOTD_SERVER "motd.nethack4.org"
-#define MOTD_PORT   53401
+/* Currently Nethack Fourk does not have a public server, so no motd server either. */
+/* #define MOTD_SERVER "motd.nethack4.org" */
+/* #define MOTD_PORT   53401 */
 
 int
 network_motd(void)
@@ -22,6 +19,9 @@ network_motd(void)
 
     if (settings.show_motd == MOTD_TRUE) {
 
+#ifndef MOTD_SERVER
+        strcpy(motdmsg, "There is no Message of the Day server available.");
+#else
         fd = connect_server(MOTD_SERVER, MOTD_PORT, FALSE,
                             errmsg, sizeof errmsg);
         if (fd == -1)
@@ -57,6 +57,7 @@ network_motd(void)
         }
 
         close(fd);
+#endif
     } else if (settings.show_motd == MOTD_FALSE) {
         return 1;
     } else {

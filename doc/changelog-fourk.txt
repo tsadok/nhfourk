@@ -19,6 +19,9 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
+ * Disabled the "network MOTD" feature, since it requires a public
+   server, which Fourk currently does not have.
+
  * Alignment record points are no longer granted for killing most
    kinds of monsters.
 
