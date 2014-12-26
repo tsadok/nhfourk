@@ -61,7 +61,7 @@ get_gamedir(enum game_dirs dirtype, wchar_t *buf)
     }
 
     if (!override_userdir)
-        snwprintf(nhPath, MAX_PATH, L"%s\\NetHack4", appPath);
+        snwprintf(nhPath, MAX_PATH, L"%s\\NetHackFourk", appPath);
     _wmkdir(nhPath);
 
     snwprintf(buf, BUFSZ, L"%s%s", nhPath, subdir);
@@ -110,7 +110,7 @@ get_gamedirA(enum game_dirs dirtype, char *buf)
     }
 
     if (!override_userdir)
-        snprintf(nhPath, MAX_PATH, "%s\\NetHack4", appPath);
+        snprintf(nhPath, MAX_PATH, "%s\\NetHackFourk", appPath);
     mkdir(nhPath);
 
     snprintf(buf, BUFSZ, "%s%s", nhPath, subdir);
@@ -153,12 +153,12 @@ get_gamedir(enum game_dirs dirtype, char *buf)
         /* look in regular location */
         envval = getenv("XDG_CONFIG_HOME");
         if (envval)
-            snprintf(buf, BUFSZ, "%s/NetHack4/%s", envval, subdir);
+            snprintf(buf, BUFSZ, "%s/NetHackFourk/%s", envval, subdir);
         else {
             envval = getenv("HOME");
             if (!envval)        /* HOME not set? just give up... */
                 return FALSE;
-            snprintf(buf, BUFSZ, "%s/.config/NetHack4/%s", envval, subdir);
+            snprintf(buf, BUFSZ, "%s/.config/NetHackFourk/%s", envval, subdir);
         }
     }
 
@@ -258,7 +258,7 @@ game_ended(int status, fnchar *filename, nh_bool net)
         curses_raw_print("Error: Could not find the save file.");
         return;
     case ERR_BAD_FILE:
-        curses_raw_print("Error: This does not look like a NetHack 4 save "
+        curses_raw_print("Error: This does not look like a NetHack Fourk save "
                          "file.");
         return;
     case ERR_IN_PROGRESS:

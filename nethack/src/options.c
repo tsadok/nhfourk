@@ -1274,11 +1274,11 @@ get_config_name(fnchar * buf, nh_bool ui)
 #endif
 
     fnncat(buf, ui_flags.connection_only ? usernamew :
-                ui ? FN("curses.conf") :
-                FN("NetHack4.conf"),
+                ui ? FN("NHFUI.conf") :
+                FN("NHFourk.conf"),
            BUFSZ - fnlen(buf) - 1);
     if (ui_flags.connection_only)
-        fnncat(buf, ui ? FN(".curses.rc") : FN(".NetHack4.rc"),
+        fnncat(buf, ui ? FN(".NHFUI.rc") : FN(".NHFourk.rc"),
                BUFSZ - fnlen(buf) - 1);
 
     return 1;

@@ -276,7 +276,7 @@ methods:
 
   * Use the `--interface sdl` command line option when starting NetHack 4; or
   * Use an executable whose name ends `-sdl` (the build system will create an
-    executable or symlink `nethack4-sdl` for this purpose if building in tiles
+    executable or symlink `nhfourk-sdl` for this purpose if building in tiles
     mode).
 
 The `sdl` interface is a "fake terminal" port that simulates a terminal
@@ -464,8 +464,8 @@ score penalty as dying?), but the option's there.
 Where are the save files / recordings / dump files?
 ---------------------------------------------------
 
-On Linux and UNIX, by default, `~/.config/NetHack4/save`,
-`~/.config/NetHack4/log`, `~/.config/NetHack4/dumps` respectively.  (If
+On Linux and UNIX, by default, `~/.config/NHFourk/save`,
+`~/.config/NHFourk/log`, `~/.config/NHFourk/dumps` respectively.  (If
 misconfigured, it's possible that the game will put dump files in your home
 directory.)  The dump files record details of games that have ended, whether
 in victory or defeat.
@@ -475,9 +475,9 @@ whatever directory `CSIDL_APPDATA` refers to.  This is normally something like
 `C:\Users\username\AppData\Roaming`, although it depends on how Windows is
 configured.
 
-There's often a `save` folder in the NetHack 4 install directory (depending on
-how it was installed), but this is used for save information common to all
-users: bones files, xlogfiles, that sort of thing.
+There's often a `save` folder in the install directory (depending on
+how the game was installed), but this is used for save information
+common to all users: bones files, xlogfiles, that sort of thing.
 
 
 How do I eat an item from the ground?

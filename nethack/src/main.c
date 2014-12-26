@@ -16,7 +16,7 @@
 # include <unistd.h>
 #endif
 
-#define DEFAULT_NETHACKDIR "/usr/share/NetHack4/"
+#define DEFAULT_NETHACKDIR "/usr/share/NetHackFourk/"
 
 static void process_args(int, char **);
 void append_slash(char *name);
@@ -68,7 +68,7 @@ const char *nhlogo_small[11] = {        /* created by hand */
     "                             ",
     "|  |          |  |        |  ",
     "|\\ |  __  _|_ |__|  _   _ | /",
-    "| \\| / _>  |  |  | / | /  |< ",
+    "| \\| / _)  |  |  | / | /  |< ",
     "|  | \\__/  \\_ |  | \\_| \\_ | \\",
     "      ___                    ",
     "     |               |       ",
@@ -83,7 +83,7 @@ const char *nhlogo_large[14] = {
     "                             ",
     "|  |          |  |        |  ",
     "|\\ |  __  _|_ |__|  _   _ | /",
-    "| \\| / _>  |  |  | / | /  |< ",
+    "| \\| / _)  |  |  | / | /  |< ",
     "|  | \\__/  \\_ |  | \\_| \\_ | \\",
     "      ___                    ",
     "     |               |       ",
@@ -416,7 +416,7 @@ process_args(int argc, char *argv[])
         switch (argv[0][1]) {
         case '-':
             if (!strcmp(argv[0], "--help")) {
-                puts("Usage: nethack4 [--interface PLUGIN] [OPTIONS]");
+                puts("Usage: nhfourk [--interface PLUGIN] [OPTIONS]");
                 puts("");
                 puts("-k          connection-only mode");
                 puts("-D          start games in wizard mode");
@@ -433,7 +433,7 @@ process_args(int argc, char *argv[])
                 puts("on your system; examples may include 'tty' and 'sdl'.");
                 exit(0);
             } else if (!strcmp(argv[0], "--version")) {
-                printf("NetHack 4 version %d.%d.%d\n",
+                printf("NetHack Fourk version %d.%d.%d\n",
                        VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
                 exit(0);
             }
