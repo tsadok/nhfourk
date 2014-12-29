@@ -19,6 +19,13 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
+ * The formula for the player's odds of hitting monsters has been
+   adjusted significantly.  Luck and experience level are now only
+   added in on a logarithmic scale (together), meaning that always
+   hitting everything no matter what is (hopefully) no longer a
+   foregone conclusion in the late game.  It is to be expected that
+   further tweaks to this formula will be required.
+
  * Disabled the "network MOTD" feature, since it requires a public
    server, which Fourk currently does not have.
 

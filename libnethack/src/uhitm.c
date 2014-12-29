@@ -218,11 +218,25 @@ find_roll_to_hit(struct monst *mtmp)
 {
     schar tmp;
     int tmp2;
+    int luckpluslevel;
 
-    tmp =
-        1 + Luck + abon() + find_mac(mtmp) + u.uhitinc +
-        maybe_polyd(youmonst.data->mlevel, u.ulevel);
-
+    /* NetHack Fourk Balance Change:  the 3.4.3 to-hit formula is deeply broken.
+     * We have not entirely fixed it yet, but we are working on the issue.
+     * Changes so far: 
+     *  1. Luck and your experience level, rather than being added directly into
+     *     tmp in their entirety, are now added in on a logarithmic scale
+     *     together, limiting how much impact they can have.  It makes sense
+     *     intuitively that these things would have some impact, but the formula
+     *     in 3.4.3 was disruptively overpowered.  A late game character can
+     *     easily have 20 luck and 30 XL, and a +50 to-hit bonus is just way too
+     *     powerful.
+     * It is anticipated that further tweaks will be required here.
+     */
+    luckpluslevel = Luck + maybe_polyd(youmonst.data->mlevel, u.ulevel);
+    tmp = 1 + abon() + find_mac(mtmp) + u.uhitinc
+            + ((luckpluslevel >= 1) ? log(luckpluslevel)
+                                    : (-1 * log(1 - luckpluslevel)));
+ 
     check_caitiff(mtmp);
 
 /* attacking peaceful creatures is bad for the samurai's giri */
