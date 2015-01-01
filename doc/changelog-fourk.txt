@@ -26,6 +26,14 @@ These changes are in chronological order, most recent at top.
    foregone conclusion in the late game.  It is to be expected that
    further tweaks to this formula will be required.
 
+ * Unicorn horns are now a technically finite resource (unless you can
+   cast cancellation).  What happens is, applying a non-cursed unicorn
+   horn when you have a problem it can fix has a 33% chance of
+   reducing its enchantment by one point, unless it is already at or
+   below -3, in which case it is simply destroyed without providing
+   any benefit.  Cursed unicorn horns and the "Nothing happens" case
+   are unchanged.
+
  * Disabled the "network MOTD" feature, since it requires a public
    server, which Fourk currently does not have.
 

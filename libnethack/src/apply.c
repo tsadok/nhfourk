@@ -1626,6 +1626,7 @@ use_unicorn_horn(struct obj *obj)
         pline("Nothing happens.");
         return;
     } else if (trouble_count > 1) {     /* shuffle */
+        
         int i, j, k;
 
         for (i = trouble_count - 1; i > 0; i--)
@@ -1634,6 +1635,21 @@ use_unicorn_horn(struct obj *obj)
                 trouble_list[j] = trouble_list[i];
                 trouble_list[i] = k;
             }
+    }
+
+    /* NetHack Fourk balance change: unicorn horns are now technically
+     * a finite resource (unless you can cast cancellation): */
+    if (obj) {
+        if ((obj->spe > -3) && !rn2(3)) {
+            obj->spe--;
+            if (!Blind)
+                pline("The %s emits a dim glow for a moment, then fades.", xname(obj));
+        } else if (obj->spe <= -3) {
+            pline("The %s vibrates for a moment, then shatters.", xname(obj));
+            if (obj == uwep) uwepgone();
+            useup(obj);
+            return;
+        }
     }
 
     /* 
