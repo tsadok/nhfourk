@@ -137,7 +137,7 @@ attack_checks(struct monst *mtmp,
             seemimic(mtmp);
             return ac_continue;
         }
-        if (!(Blind ? Blind_telepat : Unblind_telepat)) {
+        if (!((Blind ? Blind_telepat : Unblind_telepat) || Detect_monsters)) {
             struct obj *obj;
 
             if (Blind || (is_pool(level, mtmp->mx, mtmp->my) && !Underwater))
