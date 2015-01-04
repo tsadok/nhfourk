@@ -547,9 +547,9 @@ digactualhole(int x, int y, struct monst *madeby, int ttyp)
     if (!ttmp)
         return;
     newobjs = level->objects[x][y];
-    ttmp->tseen = (madeby_u || cansee(x, y));
     ttmp->madeby_u = madeby_u;
-    newsym(ttmp->tx, ttmp->ty);
+    if (cansee(x,y)) seetrap(ttmp);
+    else if (madeby_u) feeltrap(ttmp);
 
     if (ttyp == PIT) {
         /* Assume that long worms can't dig pits. */
