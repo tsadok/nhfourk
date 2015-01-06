@@ -771,6 +771,9 @@ rehumanize(int how, const char *killer)
     polyman("You return to %s form!", urace.adj);
 
     if (u.uhp < 1)
+        /* can only happen if some bit of code reduces u.uhp
+         * instead of u.mh while poly'd */
+        pline("Your old form was not healthy enough to survive.");
         done(DIED,
              killer_msg(DIED, msgcat_many("reverting to unhealthy ", urace.adj,
                                           " form", NULL)));
