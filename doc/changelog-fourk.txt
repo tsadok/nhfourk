@@ -26,6 +26,12 @@ These changes are in chronological order, most recent at top.
    foregone conclusion in the late game.  It is to be expected that
    further tweaks to this formula will be required.
 
+ * Changed the colors of two monsters (xorns to red, acid blobs to
+   yellow, matching yellow dragons).  This is a pre-emptive measure
+   to reduce color conflicts later, when certain monster classes
+   eventually get combined.  Might as well let users go ahead and
+   get used to the new colors for these monsters now.
+
  * Unicorn horns are now a technically finite resource (unless you can
    cast cancellation).  What happens is, applying a non-cursed unicorn
    horn when you have a problem it can fix has a 33% chance of

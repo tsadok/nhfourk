@@ -143,7 +143,7 @@ const struct permonst mons[] = {
         MR_SLEEP | MR_POISON | MR_ACID | MR_STONE, MR_STONE,
         M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
         M1_MINDLESS | M1_ACID,
-        M2_WANDER | M2_NEUTER, 0, CLR_GREEN),
+        M2_WANDER | M2_NEUTER, 0, CLR_YELLOW),
     MON("quivering blob", S_BLOB,
         LVL(5, 1, 8, 0, 0), (G_GENO | 2),
         A(ATTK(AT_TUCH, AD_PHYS, 1, 8),
@@ -2072,7 +2072,7 @@ const struct permonst mons[] = {
         SIZ(1200, 700, 0, MS_ROAR, MZ_MEDIUM),
         MR_FIRE | MR_COLD | MR_STONE, MR_STONE,
         M1_BREATHLESS | M1_WALLWALK | M1_THICK_HIDE | M1_METALLIVORE,
-        M2_HOSTILE | M2_STRONG, 0, CLR_BROWN),
+        M2_HOSTILE | M2_STRONG, 0, CLR_RED),
 /*
  * Apelike beasts
  */
