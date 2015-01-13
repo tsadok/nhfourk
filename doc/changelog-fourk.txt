@@ -19,12 +19,15 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
- * The formula for the player's odds of hitting monsters has been
-   adjusted significantly.  Luck and experience level are now only
-   added in on a logarithmic scale (together), meaning that always
-   hitting everything no matter what is (hopefully) no longer a
-   foregone conclusion in the late game.  It is to be expected that
-   further tweaks to this formula will be required.
+ * Differentiated nymphs.  Wood nymphs are the lowest-level and
+   slightly easier to deal with than before (notably, they are now
+   slightly slower than the player); water nymphs are a little
+   tougher, and mountain nymphs are now the highest-level and most
+   difficult nymphs.  They do NOT grow up into each other.  However,
+   water nymphs (barring fountain schenanighans, which are always a
+   player's fault) and especially mountain nymphs should now start
+   showing up a little later in the game than before; wood nymphs
+   should start showing up around the same time as before.
 
  * Changed the colors of two monsters (xorns to red, acid blobs to
    yellow, matching yellow dragons).  This is a pre-emptive measure
@@ -39,6 +42,13 @@ These changes are in chronological order, most recent at top.
    below -3, in which case it is simply destroyed without providing
    any benefit.  Cursed unicorn horns and the "Nothing happens" case
    are unchanged.
+
+ * The formula for the player's odds of hitting monsters has been
+   adjusted significantly.  Luck and experience level are now only
+   added in on a logarithmic scale (together), meaning that always
+   hitting everything no matter what is (hopefully) no longer a
+   foregone conclusion in the late game.  It is to be expected that
+   further tweaks to this formula will be required.
 
  * Disabled the "network MOTD" feature, since it requires a public
    server, which Fourk currently does not have.
