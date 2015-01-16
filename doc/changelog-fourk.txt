@@ -1,17 +1,19 @@
 About this document:
-Last modified by Jonadab the Unsightly One, 2014-12-17
-
-Written 2014 by Nathan Eady.
+Written 2014-2015 by Nathan Eady.
 
 This document (i.e., this specific file, changelog-fourk.txt) is in
-the public domain.
+the public domain.  The author has specifically released it to the
+public, choosing to waive any exclusivity rights that he might
+otherwise have under copyright law, reserving none of them.  You
+may read, modify, distribute, or otherwise use this document in
+any manner that you deem appropriate.
 
-At your option, you may choose instead to treat it as being under the
-NetHack General Public License.  In that case, see further details
-about that license in libnethack/dat/license.
+At your option, you may choose instead to treat this document as being
+under the NetHack General Public License.  In that case, see further
+details about that license in libnethack/dat/license.
 
-NetHack Fourk Changelog Overview
-================================
+NetHack Fourk Changelog Overview:
+=================================
 
 This document describes the changes that have been made in NetHack
 Fourk specifically, which are different from the upstream NetHack 4
@@ -47,8 +49,11 @@ categories:
    largely cosmetic changes were necessary to accommodate this.
 
 
-Chronological Changelog (recent at top):
-========================================
+Chronological Changelog (most recent at top):
+=============================================
+
+ * Made rock piercers brown, lurkers above red.  Eventually
+   these will all be in mlet t (S_TRAPPER).
 
  * Marked umber hulks as HI_ULINE (i.e., underlined).  This
    is a pre-emptive measure, done for the same reason that xorns

@@ -727,7 +727,7 @@ const struct permonst mons[] = {
         SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0,
         M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
         M1_NOTAKE,
-        M2_HOSTILE, 0, CLR_GRAY),
+        M2_HOSTILE, 0, CLR_BROWN),
     MON("iron piercer", S_PIERCER,
         LVL(5, 1, 0, 0, 0), (G_GENO | 2),
         A(ATTK(AT_BITE, AD_PHYS, 3, 6),
@@ -887,7 +887,7 @@ const struct permonst mons[] = {
         SIZ(800, 350, 0, MS_SILENT, MZ_HUGE), 0, 0,
         M1_HIDE | M1_FLY | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
         M1_CARNIVORE,
-        M2_HOSTILE | M2_STALK | M2_STRONG, 0, CLR_GRAY),
+        M2_HOSTILE | M2_STALK | M2_STRONG, 0, CLR_RED),
     MON("trapper", S_TRAPPER,
         LVL(12, 3, 3, 0, 0), (G_GENO | 2),
         A(ATTK(AT_ENGL, AD_DGST, 1, 10),
