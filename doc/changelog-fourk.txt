@@ -10,14 +10,53 @@ At your option, you may choose instead to treat it as being under the
 NetHack General Public License.  In that case, see further details
 about that license in libnethack/dat/license.
 
-NetHack Fourk Changelog
-=======================
+NetHack Fourk Changelog Overview
+================================
 
 This document describes the changes that have been made in NetHack
 Fourk specifically, which are different from the upstream NetHack 4
 codebase.  For changes made in NetHack 4, see instead changelog.txt
 
-These changes are in chronological order, most recent at top.
+Thematically, the major changes fall into the following overall
+categories:
+
+ * Balance adjustments.  Various formulae have been revised, to
+   improve the overall balance and difficulty curve of the game.
+   Things like death-drop probability, engraving success rate,
+   alignment record, etc. have had the shape of their curve adjusted,
+   i.e., they way their probability changes as the game progresses
+   from early to middle to late has been changed.  Additionally, some
+   game features have been buffed (e.g., bow and arrow damage) or
+   nerfed (e.g., unicorn horns) so that they fit better into the
+   overall scheme of the game's balance.
+   
+ * Monster/class reorganization.  Some classes with very few
+   monsters have been combined and thus freed up, so that in
+   a subsequent version some heavily overloaded monster classes can be
+   split, without running out of letters.  I tried to be conservative
+   about this (MUCH more conservative than e.g. b_jonas wants to be),
+   and for now I tried to avoid having any monster look exactly the
+   same as another monster used to look, when it can be avoided.
+   
+ * Monster differentiation.  Some monsters that were for practical
+   purposes identical in their gameplay significance have been
+   tweaked slightly so that they are no longer exactly the same.
+   I tried to preserve or slightly enhance flavor when doing this.
+
+ * Branding.  This is NetHack Fourk, not NetHack 4.  Some
+   largely cosmetic changes were necessary to accommodate this.
+
+
+Chronological Changelog (recent at top):
+========================================
+
+ * Marked umber hulks as HI_ULINE (i.e., underlined).  This
+   is a pre-emptive measure, done for the same reason that xorns
+   are now red:  eventually both of these large, distinctive,
+   deep-rock-dwelling creatures are going to be in the same
+   monster class together, probably mlet X (S_XORN), and I don't
+   want either of them looking exactly the same as the other
+   one used to look, if it can be avoided.
 
  * Moved leprechauns into the S_IMP (lowercase i) mlet class.
    For detailed justification, see the changelog entry (834cebee),

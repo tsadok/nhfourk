@@ -1984,7 +1984,8 @@ const struct permonst mons[] = {
           ATTK(AT_BITE, AD_PHYS, 2, 5), ATTK(AT_GAZE, AD_CONF, 0, 0),
           NO_ATTK, NO_ATTK),
         SIZ(1200, 500, 0, MS_SILENT, MZ_LARGE), 0, 0,
-        M1_TUNNEL | M1_CARNIVORE, M2_STRONG, M3_INFRAVISIBLE, CLR_BROWN),
+        M1_TUNNEL | M1_CARNIVORE, M2_STRONG, M3_INFRAVISIBLE,
+        CLR_BROWN | HI_ULINE),
 /*
  * Vampires
  */
