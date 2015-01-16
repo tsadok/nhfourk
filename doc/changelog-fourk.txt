@@ -19,6 +19,18 @@ codebase.  For changes made in NetHack 4, see instead changelog.txt
 
 These changes are in chronological order, most recent at top.
 
+ * Moved leprechauns into the S_IMP (lowercase i) mlet class.
+   For detailed justification, see the changelog entry (834cebee),
+   but in brief, they are mischevious but usually not outright
+   dangerous spirit/faerie beings appearing with a physical body,
+   playing pranks, meddling, occasionally making people's fortunes,
+   and there is folklore associated with capturing them, all of
+   which is also true of imps and tengu.  Additionally, they are
+   diminutive in stature like imps and quasits.  This reduces the
+   number of in-use map characters by one, which is a Good Thing.
+   To distinguish, leprechauns are bright green and homonculi are
+   now gray (previously, both were green).
+
  * Differentiated nymphs.  Wood nymphs are the lowest-level and
    slightly easier to deal with than before (notably, they are now
    slightly slower than the player); water nymphs are a little
