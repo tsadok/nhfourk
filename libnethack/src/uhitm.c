@@ -358,7 +358,7 @@ attack(struct monst * mtmp, schar dx, schar dy, enum u_interaction_mode uim)
     u_wipe_engr(3);
 
     /* Is the "it died" check actually correct? */
-    if (mdat->mlet == S_LEPRECHAUN &&
+    if (mtmp->data == &mons[PM_LEPRECHAUN] &&
         !mtmp->mfrozen && !mtmp->msleeping && !mtmp->mconf &&
         mtmp->mcansee && !rn2(7) && (m_move(mtmp, 0) == 2 || /* it died */
                                      mtmp->mx != u.ux + dx ||

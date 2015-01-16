@@ -150,7 +150,7 @@ disturb(struct monst *mtmp)
     if (couldsee(mtmp->mx, mtmp->my) && distu(mtmp->mx, mtmp->my) <= 100 &&
         (!Stealth || (mtmp->data == &mons[PM_ETTIN] && rn2(10))) &&
         (!(mtmp->data->mlet == S_NYMPH || mtmp->data == &mons[PM_JABBERWOCK]
-           || mtmp->data->mlet == S_LEPRECHAUN) || !rn2(50)) &&
+           || mtmp->data == &mons[PM_LEPRECHAUN]) || !rn2(50)) &&
         (Aggravate_monster ||
          (mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN)
          || (!rn2(7) && mtmp->m_ap_type != M_AP_FURNITURE &&
@@ -481,7 +481,7 @@ toofar:
 
     /* Now the actual movement phase */
 
-    if (mdat->mlet == S_LEPRECHAUN) {
+    if (mtmp->data == &mons[PM_LEPRECHAUN]) {
         ygold = findgold(invent);
         lepgold = findgold(mtmp->minvent);
     }
@@ -495,7 +495,7 @@ toofar:
 
     if (!nearby || mtmp->mflee || scared || mtmp->mconf || mtmp->mstun ||
         (mtmp->minvis && !rn2(3)) ||
-        (mdat->mlet == S_LEPRECHAUN && !ygold &&
+        (mtmp->data == &mons[PM_LEPRECHAUN] && !ygold &&
          (lepgold || rn2(2))) || (is_wanderer(mdat) && !rn2(4)) ||
         (Conflict && !mtmp->iswiz) || (!mtmp->mcansee && !rn2(4)) ||
         mtmp->mpeaceful) {

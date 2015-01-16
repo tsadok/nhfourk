@@ -505,7 +505,7 @@ const struct permonst mons[] = {
         SIZ(60, 100, 0, MS_SILENT, MZ_TINY),
         MR_SLEEP | MR_POISON, MR_SLEEP | MR_POISON,
         M1_FLY | M1_POIS, M2_STALK, M3_INFRAVISIBLE | M3_INFRAVISION,
-        CLR_GREEN),
+        CLR_GRAY),
     MON("imp", S_IMP,
         LVL(3, 12, 2, 20, -7), (G_GENO | 1),
         A(ATTK(AT_CLAW, AD_PHYS, 1, 4),
@@ -527,6 +527,13 @@ const struct permonst mons[] = {
           ATTK(AT_BITE, AD_PHYS, 1, 4), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), MR_POISON, MR_POISON,
         M1_REGEN, M2_STALK, M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BLUE),
+    MON("leprechaun", S_IMP,
+        LVL(5, 15, 8, 20, 0), (G_GENO | 4),
+        A(ATTK(AT_CLAW, AD_SGLD, 1, 2),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(60, 30, 0, MS_LAUGH, MZ_TINY), 0, 0,
+        M1_HUMANOID | M1_TPORT, M2_HOSTILE | M2_GREEDY, M3_INFRAVISIBLE,
+        CLR_BRIGHT_GREEN),
     MON("tengu", S_IMP,
         LVL(6, 13, 5, 30, 7), (G_GENO | 3),
         A(ATTK(AT_BITE, AD_PHYS, 1, 7),
@@ -596,15 +603,8 @@ const struct permonst mons[] = {
         M1_HUMANOID | M1_POIS | M1_OMNIVORE, M2_HOSTILE | M2_MAGIC,
         M3_INFRAVISIBLE | M3_INFRAVISION, HI_ZAP),
 /*
- * leprechauns
+ * leprechauns have been moved to S_IMP
  */
-    MON("leprechaun", S_LEPRECHAUN,
-        LVL(5, 15, 8, 20, 0), (G_GENO | 4),
-        A(ATTK(AT_CLAW, AD_SGLD, 1, 2),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(60, 30, 0, MS_LAUGH, MZ_TINY), 0, 0,
-        M1_HUMANOID | M1_TPORT, M2_HOSTILE | M2_GREEDY, M3_INFRAVISIBLE,
-        CLR_GREEN),
 /*
  * mimics
  */

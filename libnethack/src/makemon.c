@@ -695,11 +695,10 @@ m_initinv(struct monst *mtmp, enum rng rng)
             mpickobj(mtmp, otmp);
         }
         break;
-    case S_LEPRECHAUN:
-    {
-        /* leave the dice() roll on rng_main, because it factors in the
-           level_difficulty */
-        mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
+    case S_IMP:
+        if (mtmp->data == &mons[PM_LEPRECHAUN])
+            mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
+        /* Nothing special for the other i for now. */
         break;
     }
     case S_DEMON:
@@ -1092,8 +1091,9 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         if (is_pool(lev, x, y))
             mtmp->mundetected = TRUE;
         break;
-    case S_LEPRECHAUN:
-        mtmp->msleeping = 1;
+    case S_IMP:
+        if (mndx == PM_LEPRECHAUN)
+            mtmp->msleeping = 1;
         break;
     case S_JABBERWOCK:
     case S_NYMPH:
