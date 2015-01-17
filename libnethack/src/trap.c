@@ -635,7 +635,7 @@ dotrap(struct trap *trap, unsigned trflags)
     boolean already_seen = trap->tseen;
     boolean webmsgok = (!(trflags & NOWEBMSG));
     boolean forcebungle = (trflags & FORCEBUNGLE);
-
+    int steed_article = ARTICLE_THE;
     action_interrupted();
 
     /* KMH -- You can't escape the Sokoban level traps */
@@ -669,8 +669,13 @@ dotrap(struct trap *trap, unsigned trflags)
         }
     }
 
-    if (u.usteed)
+    if (u.usteed) {
         u.usteed->mtrapseen |= (1 << (ttype - 1));
+        /* suppress article in various steed messages when using its
+           name (which won't occur when hallucinating) */
+        if (u.usteed->mnamelth && !Hallucination)
+            steed_article = ARTICLE_NONE;
+    }
 
     switch (ttype) {
     case ARROW_TRAP:
@@ -906,17 +911,13 @@ dotrap(struct trap *trap, unsigned trflags)
                 if ((trflags & RECURSIVETRAP) != 0)
                     verbbuf = msgprintf(
                         "and %s fall",
-                        x_monnam(u.usteed,
-                                 u.usteed->mnamelth ? ARTICLE_NONE :
-                                 ARTICLE_THE, NULL, SUPPRESS_SADDLE,
-                                 FALSE));
+                        x_monnam(u.usteed, steed_article,
+                                 NULL, SUPPRESS_SADDLE, FALSE));
                 else
                     verbbuf = msgcat(
                         "lead ",
-                        x_monnam(u.usteed,
-                                 u.usteed->mnamelth ? ARTICLE_NONE :
-                                 ARTICLE_THE, "poor", SUPPRESS_SADDLE,
-                                 FALSE));
+                        x_monnam(u.usteed, steed_article, "poor",
+                                 SUPPRESS_SADDLE, FALSE));
             } else
                 verbbuf = "fall";
             pline("You %s into %s pit!", verbbuf, a_your[trap->madeby_u]);
@@ -936,7 +937,7 @@ dotrap(struct trap *trap, unsigned trflags)
                       msgupcasefirst(
                           x_monnam(
                               u.usteed,
-                              u.usteed->mnamelth ? ARTICLE_NONE : ARTICLE_THE,
+                              steed_article,
                               "poor", SUPPRESS_SADDLE, FALSE)), predicament);
             } else
                 pline("You land %s!", predicament);
@@ -1018,9 +1019,7 @@ dotrap(struct trap *trap, unsigned trflags)
             if (u.usteed)
                 verbbuf = msgcat(
                     "lead ",
-                    x_monnam(u.usteed,
-                             u.usteed->
-                             mnamelth ? ARTICLE_NONE : ARTICLE_THE, "poor",
+                    x_monnam(u.usteed, steed_article, "poor",
                              SUPPRESS_SADDLE, FALSE));
             else
                 verbbuf = Levitation ? (const char *)"float" :
@@ -1116,9 +1115,7 @@ dotrap(struct trap *trap, unsigned trflags)
             if (u.usteed)
                 verbbuf = msgcat(
                     "lead ",
-                    x_monnam(u.usteed,
-                             u.usteed->
-                             mnamelth ? ARTICLE_NONE : ARTICLE_THE, NULL,
+                    x_monnam(u.usteed, steed_article, NULL,
                              SUPPRESS_SADDLE, FALSE));
             else
                 verbbuf =
@@ -1292,8 +1289,7 @@ steedintrap(struct trap *trap, struct obj *otmp)
                     dismount_steed(DISMOUNT_POLY);
                 } else {
                     pline("You have to adjust yourself in the saddle on %s.",
-                          x_monnam(mtmp,
-                                   mtmp->mnamelth ? ARTICLE_NONE : ARTICLE_A,
+                          x_monnam(mtmp, ARTICLE_A,
                                    NULL, SUPPRESS_SADDLE, FALSE));
                 }
 
