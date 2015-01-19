@@ -873,6 +873,8 @@ burn_object(void *arg, long timeout)
                     switch (obj->where) {
                     case OBJ_INVENT:
                     case OBJ_MINVENT:
+                        if (uwep && (obj == uwep))
+                            uwepgone(); /* prevent save desync */
                         pline("%s %s %s consumed!", whose, xname(obj),
                               many ? "are" : "is");
                         obj->known = 1;

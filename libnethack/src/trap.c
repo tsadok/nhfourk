@@ -36,6 +36,7 @@ static const char *const A_gush_of_water_hits = "A gush of water hits";
 static const char *const blindgas[6] =
     { "humid", "odorless", "pungent", "chilling", "acrid", "biting" };
 
+#define WAX_EROSION_AMOUNT 50
 
 /* called when you're hit by fire (dofiretrap,buzz,zapyourself,explode) */
 /* returns TRUE if hit on torso */
@@ -134,6 +135,13 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
     case ERODE_BURN:
         vulnerable = is_flammable(otmp) || Is_candle(otmp);
         check_grease = FALSE;
+        if (Is_candle(otmp)) {
+            /* Recalculate the current erosion level
+               based on remaining fuel (otmp->age): */
+            int eroded = ((WAX_EROSION_AMOUNT * MAX_ERODE + 1)
+                          - otmp->age) / WAX_EROSION_AMOUNT;
+            otmp->oeroded = (eroded >= 0) ? eroded : 0;
+        }
         break;
     case ERODE_RUST:
         vulnerable = is_rustprone(otmp);
@@ -207,11 +215,20 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
             costly_damage_obj(otmp);
 
         if (Is_candle(otmp) && (type == ERODE_BURN)) {
-            /* I thought about using up some of the candle's remaining wax here,
-             * but I did not implement that, mostly out of laziness.  We can at
-             * least easily set it burning, however, if it isn't already: */
-            if (!otmp->lamplit)
-                begin_burn(otmp, FALSE);
+            if (!otmp->lamplit) {
+                int fuelleft = otmp->age;
+                fuelleft -= WAX_EROSION_AMOUNT;
+                otmp->age = (fuelleft > 1) ? fuelleft : 1;
+                begin_burn(otmp, FALSE);    
+            } /* else {
+                 I thought about using up some of the candle's remaining wax
+                 in this already-lit case as well, but that would require
+                 messing with an existing timer.  Out of laziness, I haven't
+                 implemented that part yet.  Ergo, correct strategy when fire
+                 damage is destroying your candles is to leave them lit until
+                 the source of damage can be neutralized, _then_ snuff them.
+                 This is counterintuitive.  Bad programmer, no cookie :-(
+            } */
         }
 
         update_inventory();
