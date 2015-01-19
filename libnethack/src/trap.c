@@ -132,7 +132,7 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
 
     switch (type) {
     case ERODE_BURN:
-        vulnerable = is_flammable(otmp);
+        vulnerable = is_flammable(otmp) || Is_candle(otmp);
         check_grease = FALSE;
         break;
     case ERODE_RUST:
@@ -205,6 +205,15 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
 
         if (otmp->unpaid)
             costly_damage_obj(otmp);
+
+        if (Is_candle(otmp) && (type == ERODE_BURN)) {
+            /* I thought about using up some of the candle's remaining wax here,
+             * but I did not implement that, mostly out of laziness.  We can at
+             * least easily set it burning, however, if it isn't already: */
+            if (!otmp->lamplit)
+                begin_burn(otmp, FALSE);
+        }
+
         update_inventory();
         return TRUE;
     } else {
