@@ -855,6 +855,7 @@ eat_tin_one_turn(void)
     int r;
     const char *what;
     int which;
+    int foodwarn;
 
     /* The !u.utracked[tos_tin] case can't happen in the current codebase
        (there's no need for special handling to identify which object is being
@@ -928,7 +929,22 @@ eat_tin_one_turn(void)
         if (which == 0)
             what = makeplural(what);
         pline("It smells like %s%s.", (which == 2) ? "the " : "", what);
-        if (yn("Eat it?") == 'n') {
+        
+        /* food detection warning */
+        foodwarn = u.uedibility ? edibility_prompts(u.utracked[tos_tin]) : 0;
+        if (foodwarn) {
+            pline("Your %s stops tingling and your "
+                  "sense of smell returns to normal.", body_part(NOSE));
+            u.uedibility = 0;
+        }
+        if (foodwarn == 1) { /* Player chose not to eat it. */
+            costly_tin(NULL);
+            if (flags.verbose)
+                pline("You discard the open tin.");
+            goto use_me;
+        } else if (foodwarn == 2) { /* Player chose to go ahead and eat it. */
+            /* Fall through to the code below. */
+        } else if (yn("Eat it?") == 'n') {
             if (!Hallucination)
                 u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
             if (flags.verbose)
