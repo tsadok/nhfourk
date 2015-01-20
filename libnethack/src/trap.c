@@ -231,6 +231,7 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
                  damage is destroying your candles is to leave them lit until
                  the source of damage can be neutralized, _then_ snuff them.
                  This is counterintuitive.  Bad programmer, no cookie :-(
+                 See also the similar case in set_candles_afire() in zap.c
             } */
         }
 
