@@ -834,6 +834,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 destroy_item(POTION_CLASS, AD_FIRE);
             if ((int)mtmp->m_lev > rn2(25))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if ((int)mtmp->m_lev > rn2(20))
+                set_candles_afire();
             burn_away_slime();
         } else
             dmg = 0;
@@ -1894,6 +1896,8 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
                 destroy_item(POTION_CLASS, AD_FIRE);
             if ((int)mtmp->m_lev > rn2(25))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if ((int)mtmp->m_lev > rn2(20))
+                set_candles_afire();
             if (dmg)
                 mdamageu(mtmp, dmg);
         }

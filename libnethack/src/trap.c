@@ -36,8 +36,6 @@ static const char *const A_gush_of_water_hits = "A gush of water hits";
 static const char *const blindgas[6] =
     { "humid", "odorless", "pungent", "chilling", "acrid", "biting" };
 
-#define WAX_EROSION_AMOUNT 50
-
 /* called when you're hit by fire (dofiretrap,buzz,zapyourself,explode) */
 /* returns TRUE if hit on torso */
 boolean
@@ -104,8 +102,14 @@ burnarmor(struct monst *victim)
 #undef burn_dmg
 }
 
-/*
- * Generic erode-item function.  Returns TRUE if any change in state occurred,
+int
+candle_erosion_level(int fuelremaining)
+{
+    return ((WAX_EROSION_AMOUNT * MAX_ERODE + 1)
+            - fuelremaining) / WAX_EROSION_AMOUNT;
+}
+
+/* Generic erode-item function.  Returns TRUE if any change in state occurred,
  * or if grease protected item.
  * "check_grease", if FALSE, means that grease is not checked for.
  * "print", if set, means to print a message even if no change occurs.
@@ -138,8 +142,7 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
         if (Is_candle(otmp)) {
             /* Recalculate the current erosion level
                based on remaining fuel (otmp->age): */
-            int eroded = ((WAX_EROSION_AMOUNT * MAX_ERODE + 1)
-                          - otmp->age) / WAX_EROSION_AMOUNT;
+            int eroded = candle_erosion_level(otmp->age);
             otmp->oeroded = (eroded >= 0) ? eroded : 0;
         }
         break;
@@ -2585,6 +2588,7 @@ dofiretrap(struct obj *box)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
+        set_candles_afire();
     }
     if (!box && burn_floor_paper(level, u.ux, u.uy, see_it, TRUE) && !see_it)
         pline("You smell paper burning.");
@@ -4175,6 +4179,7 @@ burn_stuff:
     destroy_item(SCROLL_CLASS, AD_FIRE);
     destroy_item(SPBOOK_CLASS, AD_FIRE);
     destroy_item(POTION_CLASS, AD_FIRE);
+    set_candles_afire();
     return FALSE;
 }
 

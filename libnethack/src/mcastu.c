@@ -528,6 +528,7 @@ cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
+        set_candles_afire();
         burn_floor_paper(level, u.ux, u.uy, TRUE, FALSE);
         break;
     case CLC_LIGHTNING:
