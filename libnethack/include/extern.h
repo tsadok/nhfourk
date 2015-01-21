@@ -1417,6 +1417,7 @@ extern void ghod_hitsu(struct monst *);
 extern void angry_priest(void);
 extern void clearpriests(void);
 extern void restpriest(struct monst *, boolean);
+extern boolean inhistemple(struct monst *);
 
 /* ### prop.c ### */
 

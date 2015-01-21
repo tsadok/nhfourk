@@ -4,6 +4,8 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "eshk.h"
+#include "epri.h"
 
 static boolean tele_jump_ok(int, int, int, int);
 static boolean teleok(int, int, boolean, boolean wizard_tele);
@@ -868,7 +870,16 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
                      !within_bounded_area(
                          x, y, level->dndest.nlx, level->dndest.nly,
                          level->dndest.nhx, level->dndest.nhy)));
-    } else {
+    } else { /* [try to] prevent a shopkeeper or temple priest from being
+                sent out of his room (caller might resort to goodpos() if
+                we report failure here, so this isn't full prevention) */
+        if (mtmp->isshk && inhishop(mtmp)) {
+            if (level->locations[x][y].roomno != ESHK(mtmp)->shoproom)
+                return FALSE;
+        } else if (mtmp->ispriest && inhistemple(mtmp)) {
+            if (level->locations[x][y].roomno != EPRI(mtmp)->shroom)
+                return FALSE;
+        }
         /* current location is <xx,yy> */
         if (!tele_jump_ok(xx, yy, x, y))
             return FALSE;
