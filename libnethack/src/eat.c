@@ -38,6 +38,16 @@ static void lesshungry(int, struct obj *);
 /* monster types that cause hero to be turned into stone if eaten */
 #define flesh_petrifies(pm) (touch_petrifies(pm) || (pm) == &mons[PM_MEDUSA])
 
+/* Rider corpses are treated as non-rotting so that attempting to eat one
+   will be sure to reach the stage of eating where that meal is fatal */
+#define nonrotting_corpse(mnum) ((mnum) == PM_LIZARD || \
+                                 (mnum) == PM_LICHEN || \
+                                 is_rider(&mons[mnum]))
+
+/* non-rotting non-corpses; unlike lizard corpses, these items will behave
+   as if rotten if they are cursed (fortune cookies handled elsewhere) */
+#define nonrotting_food(otyp) ((otyp) == LEMBAS_WAFER || (otyp) == CRAM_RATION)
+
 static const char comestibles[] = { ALLOW_NONE, NONE_ON_COMMA, FOOD_CLASS, 0 };
 
 static const char allobj[] = {
@@ -906,9 +916,7 @@ eat_tin_one_turn(void)
         r = u.utracked[tos_tin]->cursed ? ROTTEN_TIN : /* cursed => rotten */
             (u.utracked[tos_tin]->spe == -1) ? HOMEMADE_TIN :  /* player-made */
             rn2(TTSZ - 1);      /* else take your pick */
-        if (r == ROTTEN_TIN &&
-            (u.utracked[tos_tin]->corpsenm == PM_LIZARD ||
-             u.utracked[tos_tin]->corpsenm == PM_LICHEN))
+        if (r == ROTTEN_TIN && nonrotting_corpse(u.utracked[tos_tin]->corpsenm))
             r = HOMEMADE_TIN;   /* lizards don't rot */
         else if (u.utracked[tos_tin]->spe == -1 &&
                  !u.utracked[tos_tin]->blessed && !rn2(7))
@@ -1144,7 +1152,7 @@ eatcorpse(void)
     if (!vegetarian(&mons[mnum]))
         break_conduct(conduct_vegetarian);
 
-    if (mnum != PM_LIZARD && mnum != PM_LICHEN) {
+    if (!nonrotting_corpse(mnum)) {
         long age = peek_at_iced_corpse_age(otmp);
 
         rotted = (moves - age) / (10L + rn2(20));
@@ -1205,8 +1213,7 @@ eatcorpse(void)
         losehp(rnd(8), killer_msg(DIED, "a cadaver"));
     }
 
-    if (!tp && mnum != PM_LIZARD && mnum != PM_LICHEN &&
-        (otmp->orotten || !rn2(7))) {
+    if (!tp && !nonrotting_corpse(mnum) && (otmp->orotten || !rn2(7))) {
         touchfood();
         if (rottenfood(otmp)) {
             if (!u.utracked[tos_food])
@@ -1980,9 +1987,10 @@ doeat(const struct nh_cmd_arg *arg)
             }
 
             if (otmp->otyp != FORTUNE_COOKIE &&
-                (otmp->cursed ||
-                 (((moves - otmp->age) > (otmp->blessed ? 50 : 30)) &&
-                  (otmp->orotten || !rn2(7))))) {
+                (otmp->cursed || (!nonrotting_food(otmp->otyp) &&
+                                  (((moves - otmp->age) >
+                                    (otmp->blessed ? 50 : 30)) &&
+                                   (otmp->orotten || !rn2(7)))))) {
                 if (rottenfood(otmp))
                     dont_start = TRUE;
                 touchfood();
