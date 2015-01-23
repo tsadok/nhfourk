@@ -52,6 +52,9 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Arrows (against small monsters) and darts have been
+   slightly buffed: one additional point of base damage.
+
  * Made rock piercers brown, lurkers above red.  Eventually
    these will all be in mlet t (S_TRAPPER).
 
