@@ -52,8 +52,17 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+
  * Arrows (against small monsters) and darts have been
    slightly buffed: one additional point of base damage.
+
+ * Cherry-picked two trap-related changes from the Gehennom Fun Patch.
+   Falling rock traps are no longer generated on levels 1-3 in the
+   main dungeon, and when a monster is changed by a polymorph trap,
+   there is now a chance for the trap to be used up.  The probability
+   of this drops off deeper into the dungeon.  To be able to use the
+   same polymorph trap on pets indefinitely with no chance of it being
+   used up, you must find one at dungeon level 35 or deeper.
 
  * Made rock piercers brown, lurkers above red.  Eventually
    these will all be in mlet t (S_TRAPPER).

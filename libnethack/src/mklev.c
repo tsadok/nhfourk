@@ -1203,6 +1203,12 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
                 if (lvl < 2)
                     kind = NO_TRAP;
                 break;
+            case ROCKTRAP:
+                /* NetHack Fourk balance change: no instapetkill rock traps on
+                 * the first three levels of the main dungeon. */
+                if ((lvl < 4) && (lev->z.dnum == medusa_level.dnum))
+                    kind = NO_TRAP;
+                break;
             case LEVEL_TELEP:
                 if (lvl < 5 || lev->flags.noteleport)
                     kind = NO_TRAP;

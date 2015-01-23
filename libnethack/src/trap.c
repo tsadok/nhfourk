@@ -2263,8 +2263,19 @@ mintrap(struct monst *mtmp)
             if (resists_magm(mtmp)) {
                 shieldeff(mtmp->mx, mtmp->my);
             } else if (!resist(mtmp, WAND_CLASS, 0, NOTELL)) {
+                /* NetHack Fourk balance change,
+                 * cherry-picked from the Gehennom Fun Patch:
+                 * The trap can become used up, but the probability
+                 * of this drops as you descend into the dungeon. */
+                int trapdepth = depth(&u.uz);
                 newcham(mtmp, NULL, FALSE, FALSE);
-                if (in_sight)
+                if (In_endgame(&u.uz)) /* Does this case even matter? */
+                    trapdepth = 55;
+                if (rnd(rnd(35)) >= trapdepth) {
+                    deltrap(lev, trap);
+                    /* Should we pline a message here? */
+                    newsym(u.ux, u.uy);
+                } else if (in_sight)
                     seetrap(trap);
             }
             break;
