@@ -1676,6 +1676,7 @@ extern void exercise_steed(void);
 extern void kick_steed(void);
 extern void dismount_steed(int);
 extern void place_monster(struct monst *mon, int x, int y);
+extern boolean stucksteed(boolean);
 
 /* ### symclass.c ### */
 

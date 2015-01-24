@@ -12,6 +12,7 @@ static const char steeds[] = {
 
 static boolean mount_steed(struct monst *, boolean);
 static boolean landing_spot(coord *, int, int);
+static void maybewakesteed(struct monst *);
 
 
 /* caller has decided that hero can't reach something while mounted */
@@ -132,6 +133,9 @@ use_saddle(struct obj *otmp, const struct nh_cmd_arg *arg)
         chance += 10;
     if (otmp->cursed)
         chance -= 50;
+
+    /* steed becomes alert if possible */
+    maybewakesteed(mtmp);
 
     /* Make the attempt */
     if (rn2(100) < chance) {
@@ -321,6 +325,7 @@ mount_steed(struct monst * mtmp,        /* The animal */
     }
 
     /* Success */
+    maybewakesteed(mtmp);
     if (!force) {
         if (Levitation && !is_floater(ptr) && !is_flyer(ptr))
             /* Must have Lev_at_will at this point */
@@ -612,6 +617,49 @@ dismount_steed(int reason)
     return;
 }
 
+/* when attempting to saddle or mount a sleeping steed, try to
+ * wake it up (for the saddling case, it won't be u.usteed yet) */
+void
+maybewakesteed(struct monst *steed)
+{
+    int frozen = (int) steed->mfrozen;
+    boolean wasimmobile = steed->msleeping || !steed->mcanmove;
+
+    steed->msleeping = 0;
+    if (frozen) {
+        frozen = (frozen + 1) / 2;              /* half */
+        /* might break out of timed sleep or paralysis */
+        if (!rn2(frozen)) {
+            steed->mfrozen = 0;
+            steed->mcanmove = 1;
+        } else {
+            /* didn't awake, but remaining duration is halved */
+            steed->mfrozen = frozen;
+        }
+    }
+    if (wasimmobile && !steed->msleeping && steed->mcanmove)
+        pline("%s wakes up.", Monnam(steed));
+    /* regardless of waking, terminate any meal in progress */
+    steed->meating = 0;
+}
+
+/* decide whether hero's steed is able to move;
+ * doesn't check for holding traps--those affect the hero directly */
+boolean
+stucksteed (boolean checkfeeding)
+{
+    struct monst *steed = u.usteed;
+    if (steed) {
+        if (steed->msleeping || !u.usteed->mcanmove) {
+            pline("%s won't move!", msgupcasefirst(y_monnam(steed)));
+            return TRUE;
+        } else if (checkfeeding && steed->meating) {
+            pline("%s is still eating.", msgupcasefirst(y_monnam(u.usteed)));
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 void
 place_monster(struct monst *mon, int x, int y)
