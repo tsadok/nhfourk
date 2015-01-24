@@ -344,6 +344,7 @@ polymon(int mntmp, boolean noisy)
     boolean sticky = sticks(youmonst.data) && u.ustuck &&
         !Engulfed, was_blind = ! !Blind, dochange = FALSE;
     boolean could_pass_walls = Passes_walls;
+    const char *kbuf;
     int mlvl;
 
     if (mvitals[mntmp].mvflags & G_GENOD) {     /* allow G_EXTINCT */
@@ -355,6 +356,12 @@ polymon(int mntmp, boolean noisy)
 
     if (noisy)
         break_conduct(conduct_polyself);     /* KMH, conduct */
+
+    /* exercise used to be at the very end, but only Wis was affected
+     * there since the polymorph was always in effect by then, and
+     * exercising other attributes has no effect when polyselfed. */
+    exercise(A_CON, FALSE);
+    exercise(A_WIS, TRUE);
 
     if (!Upolyd) {
         /* Human to monster; save human stats */
@@ -581,10 +588,19 @@ polymon(int mntmp, boolean noisy)
     }
     turnstate.vision_full_recalc = TRUE;
     see_monsters(FALSE);
-    exercise(A_CON, FALSE);
-    exercise(A_WIS, TRUE);
     if (noisy)
         encumber_msg();
+    
+    /* this final selftouch might trigger a recursize call to polymon()
+     * [stone golem wielding cockatrice corpse and hit by stone-to-flesh,
+     * becomes flesh golem above, now gets turned back into stone golem] */
+    if (Upolyd) {
+        kbuf = msgprintf("polymorphing into %s while wielding",
+                         an(mons[u.umonnum].mname));
+    } else {
+        kbuf = msgprintf("returning to %s form while wielding", urace.adj);
+    }
+    if (!uarmg) selftouch("No longer petrify-resistant, you", kbuf);
     return 1;
 }
 
