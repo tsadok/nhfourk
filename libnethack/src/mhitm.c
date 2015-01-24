@@ -1097,7 +1097,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
             if (otmp->owornmask) {
                 mdef->misc_worn_check &= ~otmp->owornmask;
                 if (otmp->owornmask & W_MASK(os_wep))
-                    setmnotwielded(mdef, otmp);
+                    mwepgone(mdef);
                 otmp->owornmask = 0L;
                 update_mon_intrinsics(mdef, otmp, FALSE, FALSE);
             }
