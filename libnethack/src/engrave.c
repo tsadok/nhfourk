@@ -1358,7 +1358,7 @@ static const char *const epitaphs[] = {
     "Look out below!",
     "Please don't dig me up. I'm perfectly happy down here. -- Resident",
     "Postman, please note forwarding address: Gehennom, Asmodeus's Fortress, "
-        "fifth lemure on the left",
+        "fifth manes on the left",
     "Mary had a little lamb/Its fleece was white as snow/When Mary was in "
         "trouble/The lamb was first to go",
     "Be careful, or this could happen to you!",
