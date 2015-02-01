@@ -55,13 +55,12 @@ const char def_monsyms[MAXMCLASSES] = {
     DEF_WORM,
     DEF_XAN,
     DEF_LIGHT,
-    DEF_ZRUTY,
     DEF_ANGEL,
     DEF_BAT,
     DEF_CENTAUR,
     DEF_DRAGON,
-    DEF_ELEMENTAL,/* 30 */
-    DEF_FUNGUS,
+    DEF_ELEMENTAL,
+    DEF_FUNGUS,/* 30 */
     DEF_GNOME,
     DEF_GIANT,
     '\0',
@@ -70,8 +69,8 @@ const char def_monsyms[MAXMCLASSES] = {
     DEF_LICH,
     DEF_MUMMY,
     DEF_NAGA,
-    DEF_OGRE,/* 40 */
-    DEF_PUDDING,
+    DEF_OGRE,
+    DEF_PUDDING,/* 40 */
     DEF_QUANTMECH,
     DEF_RUSTMONST,
     DEF_SNAKE,
@@ -80,15 +79,15 @@ const char def_monsyms[MAXMCLASSES] = {
     DEF_VAMPIRE,
     DEF_WRAITH,
     DEF_XORN,
-    DEF_YETI,/* 50 */
-    DEF_ZOMBIE,
+    DEF_YETI,
+    DEF_ZOMBIE,/* 50 */
     DEF_HUMAN,
     DEF_GOLEM,
     DEF_DEMON,
     DEF_EEL,
     DEF_LIZARD,
     DEF_WORM_TAIL,
-    DEF_MIMIC_DEF,/* 59 */
+    DEF_MIMIC_DEF,/* 58 */
 };
 
 

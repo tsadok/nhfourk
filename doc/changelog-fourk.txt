@@ -32,13 +32,17 @@ categories:
    nerfed (e.g., unicorn horns) so that they fit better into the
    overall scheme of the game's balance.
    
- * Monster/class reorganization.  Some classes with very few
-   monsters have been combined and thus freed up, so that in
-   a subsequent version some heavily overloaded monster classes can be
-   split, without running out of letters.  I tried to be conservative
-   about this (MUCH more conservative than e.g. b_jonas wants to be),
-   and for now I tried to avoid having any monster look exactly the
-   same as another monster used to look, when it can be avoided.
+ * Monster/class reorganization.  Some classes with very few monsters
+   have been combined and thus freed up, so that in a subsequent
+   version some heavily overloaded monster classes can be split,
+   without running out of letters.  I tried to be conservative about
+   this (MUCH more conservative than e.g. b_jonas wants to be), and
+   for now I tried to avoid having any monster look exactly the same
+   as another monster used to look, when it can be avoided.  In
+   conjunction with this reorganization, a couple of very boring
+   monsters that nobody will miss (because they never had any
+   distinctive characteristics or strategic significance) have been
+   removed from the game.
    
  * Monster differentiation.  Some monsters that were for practical
    purposes identical in their gameplay significance have been

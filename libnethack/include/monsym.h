@@ -35,43 +35,42 @@
 # define S_WORM         22
 # define S_XAN          23
 # define S_LIGHT        24
-# define S_ZRUTY        25
-# define S_ANGEL        26
-# define S_BAT          27
-# define S_CENTAUR      28
-# define S_DRAGON       29
-# define S_ELEMENTAL    30
-# define S_FUNGUS       31
-# define S_GNOME        32
-# define S_GIANT        33
+# define S_ANGEL        25
+# define S_BAT          26
+# define S_CENTAUR      27
+# define S_DRAGON       28
+# define S_ELEMENTAL    29
+# define S_FUNGUS       30
+# define S_GNOME        31
+# define S_GIANT        32
 
-# define S_JABBERWOCK   35
-# define S_KOP          36
-# define S_LICH         37
-# define S_MUMMY        38
-# define S_NAGA         39
-# define S_OGRE         40
-# define S_PUDDING      41
-# define S_QUANTMECH    42
-# define S_RUSTMONST    43
-# define S_SNAKE        44
-# define S_TROLL        45
-# define S_UMBER        46
-# define S_VAMPIRE      47
-# define S_WRAITH       48
-# define S_XORN         49
-# define S_YETI         50
-# define S_ZOMBIE       51
-# define S_HUMAN        52
-# define S_GOLEM        53
-# define S_DEMON        54
-# define S_EEL          55
-# define S_LIZARD       56
+# define S_JABBERWOCK   34
+# define S_KOP          35
+# define S_LICH         36
+# define S_MUMMY        37
+# define S_NAGA         38
+# define S_OGRE         39
+# define S_PUDDING      40
+# define S_QUANTMECH    41
+# define S_RUSTMONST    42
+# define S_SNAKE        43
+# define S_TROLL        44
+# define S_UMBER        45
+# define S_VAMPIRE      46
+# define S_WRAITH       47
+# define S_XORN         48
+# define S_YETI         49
+# define S_ZOMBIE       50
+# define S_HUMAN        51
+# define S_GOLEM        52
+# define S_DEMON        53
+# define S_EEL          54
+# define S_LIZARD       55
 
-# define S_WORM_TAIL    57
-# define S_MIMIC_DEF    58
+# define S_WORM_TAIL    56
+# define S_MIMIC_DEF    57
 
-# define MAXMCLASSES 59 /* number of monster classes */
+# define MAXMCLASSES 58 /* number of monster classes */
 
 /*
  * Default characters for monsters.  These correspond to the monster classes
@@ -101,7 +100,6 @@
 # define DEF_WORM       'w'
 # define DEF_XAN        'x'
 # define DEF_LIGHT      'y'
-# define DEF_ZRUTY      'z'
 # define DEF_ANGEL      'A'
 # define DEF_BAT        'B'
 # define DEF_CENTAUR    'C'
