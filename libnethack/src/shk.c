@@ -58,6 +58,7 @@ static void add_to_billobjs(struct obj *);
 static void bill_box_content(struct obj *, boolean, boolean, struct monst *);
 static boolean rob_shop(struct monst *);
 static struct obj *find_oid_lev(struct level *lev, unsigned id);
+static const char *cad(void);
 
 /*
     invariants: obj->unpaid iff onbill(obj) [unless bp->useup]
@@ -567,7 +568,7 @@ u_entered_shop(char *enterstring)
 int
 inhishop(struct monst *keeper)
 {
-    return(index(in_rooms(keeper->mx, keeper->my, SHOPBASE),
+    return(index(in_rooms(level, keeper->mx, keeper->my, SHOPBASE),
                  ESHK(keeper)->shoproom) &&
            on_level(&(ESHK(keeper)->shoplevel), &u.uz));
 }
@@ -589,7 +590,8 @@ pick_pick_from_container(struct obj *obj)
             /* if you bring a sack of N picks into a shop to sell,
                don't repeat this N times when they're taken out */
             if (moves != pickmovetime)
-                verbalize("You sneaky cad!  Get out of here with that pick!");
+                verbalize("You sneaky %s!  Get out of here with that pick!",
+                          cad());
             pickmovetime = moves;
         }
     }
@@ -3500,8 +3502,8 @@ pay_for_damage(const char *dmgstr, boolean cant_mollify)
 
     if (Invis)
         pline("Your invisibility does not fool %s!", shkname(shkp));
-    snprintf(qbuf, SIZE(qbuf), "\"Cad!  You did %ld %s worth of damage!\"  Pay? ",
-            cost_of_damage, currency(cost_of_damage));
+    snprintf(qbuf, SIZE(qbuf), "\"%s!  You did %ld %s worth of damage!\"  Pay? ",
+             msgupcasefirst(cad()), cost_of_damage, currency(cost_of_damage));
     if (yn(qbuf) != 'n') {
         cost_of_damage = check_credit(cost_of_damage, shkp);
         money2mon(shkp, cost_of_damage);
@@ -3808,8 +3810,10 @@ check_unpaid_usage(struct obj *otmp, boolean altusage)
 
     arg1 = arg2 = "";
     if (otmp->oclass == SPBOOK_CLASS) {
+        char buf[100];
+        snprintf(buf, SIZE(buf), "This is no free library, %s!  ", cad());
         fmt = "%sYou owe%s %ld %s.";
-        arg1 = rn2(2) ? "This is no free library, cad!  " : "";
+        arg1 = rn2(2) ? buf : "";
         arg2 = ESHK(shkp)->debit > 0L ? " an additional" : "";
     } else if (otmp->otyp == POT_OIL) {
         fmt = "%s%sThat will cost you %ld %s (Yendorian Fuel Tax).";
@@ -3975,6 +3979,18 @@ mon_owns(const struct obj *obj)
     if (obj->where == OBJ_MINVENT)
         return s_suffix(mon_nam(obj->ocarry));
     return NULL;
+}
+
+static const char *
+cad(void)
+{
+    switch (is_demon(youmonst.data) ? 3 : poly_gender()) {
+    case 0:  return "cad";     break;
+    case 1:  return "minx";    break;
+    case 2:  return "beast";   break;
+    case 3:  return "fiend";   break;
+    default: return "wastrel"; break; /* unknown gender */
+    }
 }
 
 void
