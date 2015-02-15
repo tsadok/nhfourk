@@ -565,14 +565,6 @@ u_entered_shop(char *enterstring)
     return;
 }
 
-int
-inhishop(struct monst *keeper)
-{
-    return(index(in_rooms(level, keeper->mx, keeper->my, SHOPBASE),
-                 ESHK(keeper)->shoproom) &&
-           on_level(&(ESHK(keeper)->shoplevel), &u.uz));
-}
-
 #define muteshk(shkp)   ((shkp)->msleeping || !(shkp)->mcanmove || \
                          (shkp)->data->msound <= MS_ANIMAL)
 
@@ -585,14 +577,12 @@ pick_pick_from_container(struct obj *obj)
     if (*u.ushops) {
         shkp = shop_keeper(level, *u.ushops);
         if (shkp && inhishop(shkp) && !muteshk(shkp)) {
-            /* NOTE: This static declaration is probably bad and likely should be moved to program_state or someplace. */
-            static NEARDATA long pickmovetime = 0L;
             /* if you bring a sack of N picks into a shop to sell,
                don't repeat this N times when they're taken out */
-            if (moves != pickmovetime)
+            if (moves != program_state.pickmovetime)
                 verbalize("You sneaky %s!  Get out of here with that pick!",
                           cad());
-            pickmovetime = moves;
+            program_state.pickmovetime = moves;
         }
     }
 }
