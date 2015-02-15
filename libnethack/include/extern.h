@@ -1551,6 +1551,7 @@ extern char inside_shop(struct level *lev, xchar x, xchar y);
 extern void u_left_shop(char *, boolean);
 extern void remote_burglary(xchar, xchar);
 extern void u_entered_shop(char *);
+extern void pick_pick_from_container(struct obj *);
 extern boolean same_price(struct obj *, struct obj *);
 extern void shopper_financial_report(void);
 extern int inhishop(struct monst *);

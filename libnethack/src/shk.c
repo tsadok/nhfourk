@@ -564,6 +564,37 @@ u_entered_shop(char *enterstring)
     return;
 }
 
+int
+inhishop(struct monst *keeper)
+{
+    return(index(in_rooms(keeper->mx, keeper->my, SHOPBASE),
+                 ESHK(keeper)->shoproom) &&
+           on_level(&(ESHK(keeper)->shoplevel), &u.uz));
+}
+
+#define muteshk(shkp)   ((shkp)->msleeping || !(shkp)->mcanmove || \
+                         (shkp)->data->msound <= MS_ANIMAL)
+
+void
+pick_pick_from_container(struct obj *obj)
+{
+    struct monst *shkp;
+
+    if (obj->unpaid || !is_pick(obj)) return;
+    if (*u.ushops) {
+        shkp = shop_keeper(level, *u.ushops);
+        if (shkp && inhishop(shkp) && !muteshk(shkp)) {
+            /* NOTE: This static declaration is probably bad and likely should be moved to program_state or someplace. */
+            static NEARDATA long pickmovetime = 0L;
+            /* if you bring a sack of N picks into a shop to sell,
+               don't repeat this N times when they're taken out */
+            if (moves != pickmovetime)
+                verbalize("You sneaky cad!  Get out of here with that pick!");
+            pickmovetime = moves;
+        }
+    }
+}
+
 /*
    Decide whether two unpaid items are mergable; caller is responsible for
    making sure they're unpaid and the same type of object; we check the price
@@ -2143,7 +2174,7 @@ addtobill(struct obj *obj, boolean ininv, boolean dummy, boolean silent)
         return;
 
     if (ESHK(shkp)->billct == BILLSZ) {
-        pline("You got that for free!");
+        if (!silent) pline("You got that for free!");
         return;
     }
 
@@ -2520,7 +2551,7 @@ sellobj(struct obj *obj, xchar x, xchar y)
     eshkp = ESHK(shkp);
 
     if (ANGRY(shkp)) {  /* they become shop-objects, no pay */
-        pline("Thank you, scum!");
+        verbalize("Thank you, scum!");
         subfrombill(obj, shkp);
         return;
     }

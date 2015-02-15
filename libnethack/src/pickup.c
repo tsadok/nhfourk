@@ -1729,9 +1729,7 @@ out_container(struct obj *obj)
         obj->oy = current_container->oy;
         addtobill(obj, FALSE, FALSE, FALSE);
     }
-    if (is_pick(obj) && !obj->unpaid && *u.ushops &&
-        shop_keeper(level, *u.ushops))
-        verbalize("You sneaky cad! Get out of here with that pick!");
+    if (is_pick(obj)) pick_pick_from_container(obj); /* shop feedback */
 
     otmp = addinv(obj);
     loadlev = near_capacity();
