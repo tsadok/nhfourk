@@ -2665,6 +2665,9 @@ newcham(struct monst *mtmp, const struct permonst *mdat,
     const char *oldname = NULL; /* initialize because gcc can't figure out that
                                    this is unused if !msg */
 
+    /* Riders are immune to polymorph and green slime: */
+    if (is_rider(mtmp->data)) return 0;
+
     if (msg) {
         /* like Monnam() but never mention saddle */
         oldname = x_monnam(mtmp, ARTICLE_THE, NULL, SUPPRESS_SADDLE, FALSE);
