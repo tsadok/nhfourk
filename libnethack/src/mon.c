@@ -1780,7 +1780,7 @@ corpse_chance(struct monst *mon,
     /* NetHack Fourk balance adjustment: any given type of monster
        becomes unlikely to leave further corpses when lots of that
        type of monster have been killed already. */
-    if (log(1 + mvitals[mon->mnum].died) > rn2(5))
+    if (log(1 + mvitals[monsndx(mon->data)].died) > rn2(5))
         return FALSE;
 
     if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
@@ -2057,7 +2057,7 @@ xkilled(struct monst *mtmp, int dest)
      * monsters you kill of any given type are significantly more likely to drop
      * something than before.  This is intended.  As you kill more of that kind
      * of monster, the probabilities quickly drop off.  */
-    if (log(1 + mvitals[mtmp->mnum].died) <= rn2(5)) {
+    if (log(1 + mvitals[monsndx(mtmp->data)].died) <= rn2(5)) {
         /* might be here after swallowed */
         if (((x != u.ux) || (y != u.uy)) && /* !rn2(6) && */
             !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
