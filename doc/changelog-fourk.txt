@@ -56,6 +56,14 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The Wizard of Yendor now has an attack that can change
+   your alignment (law/neu/cha), but this effect is blocked
+   if you are pious.  The main upshot of this is that early
+   (pre-quest) alignment conversion no longer makes the
+   game unwinnable, although it is still a significant
+   inconvenience, since you will need to fight the Wizard
+   before doing the quest, which is not the usual strategy.
+
  * The shopkeeper names list for general stores has been
    expanded, since that is the most common type of shop.
    Also, some tool shop owners have been re-inserted into

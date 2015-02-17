@@ -52,7 +52,7 @@ static const char *const godvoices[] = {
     "booms",
 };
 
-#define PIOUS 20
+#define PIOUS 20 /* also defined in mcastu.c, make sure they match */
 #define DEVOUT 14
 #define FERVENT 9
 #define STRIDENT 4

@@ -7,6 +7,8 @@
 
 extern const int monstr[];
 
+#define PIOUS 20 /* should match the #define in pray.c */
+
 /* monster mage spells */
 #define MGC_PSI_BOLT    0
 #define MGC_CURE_SELF   1
@@ -20,6 +22,7 @@ extern const int monstr[];
 #define MGC_SUMMON_MONS 9
 #define MGC_CLONE_WIZ   10
 #define MGC_DEATH_TOUCH 11
+#define MGC_RND_ALIGN   12
 
 /* monster cleric spells */
 #define CLC_OPEN_WOUNDS 0
@@ -88,6 +91,7 @@ choose_magic_spell(int spellval)
     case 20:
         return MGC_DEATH_TOUCH;
     case 19:
+        return rn2(5) ? MGC_CLONE_WIZ : MGC_RND_ALIGN;
     case 18:
         return MGC_CLONE_WIZ;
     case 17:
@@ -364,6 +368,24 @@ cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
         }
         dmg = 0;
         break;
+    case MGC_RND_ALIGN:
+        if (mtmp->iswiz) {
+            if (u.ualign.record >= PIOUS)
+                verbalize("Bah! Pious are thou? What shall it avail thee?");
+            else {
+                schar olda = u.ualign.type; /* prior alignment */
+                schar aln1 = A_LAWFUL;
+                schar aln2 = A_CHAOTIC;
+                if (u.ualign.type == A_LAWFUL)  aln1 = A_NEUTRAL;
+                if (u.ualign.type == A_CHAOTIC) aln2 = A_NEUTRAL;
+                /* This magic is stronger than any helm: */
+                u.ualign.type = u.ualignbase[A_CURRENT] =
+                    (rn2(2) ? aln1 : aln2);
+                pline("Suddenly, you don't feel so %s.", align_str(olda));
+                /* if (!rn2(3)) angrygods(olda); */
+                /* TODO: figure out the scoping so we can call that function. */
+            }
+        }
     case MGC_CLONE_WIZ:
         if (mtmp->iswiz && flags.no_of_wizards == 1) {
             pline("Double Trouble...");
@@ -756,7 +778,7 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
            or would cause problems if they were */
         if (magr_peaceful &&
             (spellnum == MGC_AGGRAVATION || spellnum == MGC_SUMMON_MONS ||
-             spellnum == MGC_CLONE_WIZ))
+             spellnum == MGC_CLONE_WIZ || spellnum == MGC_RND_ALIGN))
             return TRUE;
         /* haste self when already fast */
         if (m_has_property(magr, FAST, ANY_PROPERTY, TRUE) &&
@@ -785,6 +807,9 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
         if (!believed_loe &&
             (spellnum == MGC_SUMMON_MONS ||
              (!magr->iswiz && spellnum == MGC_CLONE_WIZ)))
+            return TRUE;
+        /* only the Wizard of Yendor can cast certain spells */
+        if ((spellnum == MGC_RND_ALIGN) && !mtmp->iswiz)
             return TRUE;
         if ((!magr->iswiz || flags.no_of_wizards > 1)
             && spellnum == MGC_CLONE_WIZ)
