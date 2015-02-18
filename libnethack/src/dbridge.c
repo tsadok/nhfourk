@@ -92,7 +92,7 @@ is_moat(struct level * lev, int x, int y)
  * We want to know whether a wall (or a door) is the portcullis (passageway)
  * of an eventual drawbridge.
  *
- * Return value:  the direction of the drawbridge.
+ * Return value:  the direction of the drawbridge (or -1 for none).
  */
 
 int
