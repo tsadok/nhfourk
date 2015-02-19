@@ -209,7 +209,7 @@ extern boolean is_pool(struct level *lev, int x, int y);
 extern boolean is_lava(struct level *lev, int x, int y);
 extern boolean is_ice(struct level *lev, int x, int y);
 extern boolean is_moat(struct level *lev, int x, int y);
-extern int is_drawbridge_wall(int, int);
+extern int drawbridge_wall_direction(int, int);
 extern boolean is_db_wall(int, int);
 extern boolean find_drawbridge(int *, int *);
 extern boolean create_drawbridge(struct level *lev, int x, int y, int dir,

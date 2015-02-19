@@ -1731,7 +1731,7 @@ dfeature_at(int x, int y)
             break;      /* "closed door" */
         }
         /* override door description for open drawbridge */
-        if (is_drawbridge_wall(x, y) >= 0)
+        if (drawbridge_wall_direction(x, y) >= 0)
             dfeature = "open drawbridge portcullis", cmap = -1;
     } else if (IS_FOUNTAIN(ltyp))
         cmap = S_fountain;      /* "fountain" */

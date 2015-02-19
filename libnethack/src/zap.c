@@ -2382,7 +2382,7 @@ zap_updown(struct obj *obj, schar dz)
     case SPE_WIZARD_LOCK:
         /* down at open bridge or up or down at open portcullis */
         if ((level->locations[x][y].typ == DRAWBRIDGE_DOWN) ? (dz > 0)
-            : ((is_drawbridge_wall(x, y) >= 0) && !is_db_wall(x, y)) &&
+            : ((drawbridge_wall_direction(x, y) >= 0) && !is_db_wall(x, y)) &&
             find_drawbridge(&xx, &yy)) {
             if (!striking)
                 close_drawbridge(xx, yy);

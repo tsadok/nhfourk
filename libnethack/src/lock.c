@@ -450,7 +450,7 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
             return 1;
         }
         if (!IS_DOOR(door->typ)) {
-            if (is_drawbridge_wall(cc.x, cc.y) >= 0)
+            if (drawbridge_wall_direction(cc.x, cc.y) >= 0)
                 pline("You %s no lock on the drawbridge.",
                       Blind ? "feel" : "see");
             else

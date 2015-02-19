@@ -629,7 +629,7 @@ use_defensive(struct monst *mtmp, struct musable *m)
                 makeknown(WAN_DIGGING);
             if (IS_FURNITURE(level->locations[mtmp->mx][mtmp->my].typ) ||
                 IS_DRAWBRIDGE(level->locations[mtmp->mx][mtmp->my].typ) ||
-                (is_drawbridge_wall(mtmp->mx, mtmp->my) >= 0) ||
+                (drawbridge_wall_direction(mtmp->mx, mtmp->my) >= 0) ||
                 (level->sstairs.sx == mtmp->mx &&
                  level->sstairs.sy == mtmp->my)) {
                 pline("The digging ray is ineffective.");

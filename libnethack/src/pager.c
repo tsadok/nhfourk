@@ -153,7 +153,7 @@ describe_bg(int x, int y, int bg, char *buf)
         break;
 
     case S_ndoor:
-        if (is_drawbridge_wall(x, y) >= 0)
+        if (drawbridge_wall_direction(x, y) >= 0)
             strcpy(buf, "open drawbridge portcullis");
         else if ((level->locations[x][y].doormask & ~D_TRAPPED) == D_BROKEN)
             strcpy(buf, "broken door");

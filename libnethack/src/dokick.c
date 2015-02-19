@@ -1081,7 +1081,7 @@ dokick(const struct nh_cmd_arg *arg)
             exercise(A_STR, FALSE);
             if (Blind)
                 feel_location(x, y);    /* we know we hit it */
-            if (is_drawbridge_wall(x, y) >= 0) {
+            if (drawbridge_wall_direction(x, y) >= 0) {
                 pline("The drawbridge is unaffected.");
                 /* update maploc to refer to the drawbridge */
                 find_drawbridge(&x, &y);
