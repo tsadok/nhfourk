@@ -141,6 +141,12 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
             break;      /* No bonus */
         }
     }
+    /* crossbows are slow to load and probably shouldn't allow multiple
+       shots at all, but that would result in players never using them;
+       instead, we require high strength to load and shoot quickly */
+    if (multishot > 1 && (int)ACURRSTR < (Race_if(PM_GNOME) ? 16 : 18) &&
+        ammo_and_launcher(obj, uwep) && weapon_type(uwep) == P_CROSSBOW)
+        multishot = rnd(multishot);
 
     if ((long)multishot > obj->quan)
         multishot = (int)obj->quan;
@@ -845,6 +851,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
 {
     struct monst *mon;
     int range, urange;
+    boolean crossbowing;
     boolean impaired = (Confusion || Stunned || Blind || Hallucination ||
                         Fumbling);
 
@@ -926,10 +933,13 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
     } else {
         boolean obj_destroyed;
 
-        urange = (int)(ACURRSTR) / 2;
-        /* balls are easy to throw or at least roll */
-        /* also, this insures the maximum range of a ball is greater than 1, so 
-           the effects from throwing attached balls are actually possible */
+        /* crossbow range is independent of strength */
+        crossbowing = (ammo_and_launcher(obj, uwep) &&
+                       weapon_type(uwep) == P_CROSSBOW);
+        urange = (crossbowing ? 18 : ((int)(ACURRSTR) / 2));
+        /* balls are easy to throw or at least roll; also, this insures the
+         * maximum range of a ball is greater than 1, so the effects from
+         * throwing attached balls are actually possible */
         if (obj->otyp == HEAVY_IRON_BALL)
             range = urange - (int)(obj->owt / 100);
         else
@@ -944,9 +954,12 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             range = 1;
 
         if (is_ammo(obj)) {
-            if (ammo_and_launcher(obj, uwep))
-                range++;
-            else if (obj->oclass != GEM_CLASS)
+            if (ammo_and_launcher(obj, uwep)) {
+                if (crossbowing)
+                    range = BOLT_LIM;
+                else
+                    range++;
+            } else if (obj->oclass != GEM_CLASS)
                 range /= 2;
         }
 
