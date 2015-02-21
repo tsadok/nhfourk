@@ -427,8 +427,7 @@ landing_spot(coord * spot,      /* landing position (we fill it in) */
                 if (!isok(x, y) || (x == u.ux && y == u.uy))
                     continue;
 
-                if (ACCESSIBLE(level->locations[x][y].typ) &&
-                    !MON_AT(level, x, y) && !closed_door(level, x, y)) {
+                if (accessible(x,y) && !MON_AT(level, x, y)) {
                     distance = distu(x, y);
                     if (min_distance < 0 || distance < min_distance ||
                         (distance == min_distance && rn2(2))) {

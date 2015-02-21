@@ -1189,8 +1189,17 @@ closed_door(struct level * lev, int x, int y)
 boolean
 accessible(int x, int y)
 {
-    return (boolean) (ACCESSIBLE(level->locations[x][y].typ) &&
-                      !closed_door(level, x, y));
+    int levtyp = level->locations[x][y].typ;
+    if (levtyp == DRAWBRIDGE_UP) {
+        /* use underlying terrain in front of closed drawbridge */
+        switch (level->locations[x][y].drawbridgemask & DB_UNDER) {
+        case DB_MOAT:  levtyp = MOAT; break;
+        case DB_LAVA:  levtyp = LAVAPOOL; break;
+        case DB_ICE:   levtyp = ICE; break;
+        case DB_FLOOR: levtyp = ROOM; break;
+        }
+    }
+    return (boolean) (ACCESSIBLE(levtyp) && !closed_door(level, x, y));
 }
 
 
@@ -1305,8 +1314,8 @@ set_apparxy(struct monst *mtmp)
     } while (!isok(mx, my)
              || (mx == mtmp->mx && my == mtmp->my)
              || ((mx != u.ux || my != u.uy) && !passes_walls(mtmp->data) &&
-                 (!ACCESSIBLE(level->locations[mx][my].typ) ||
-                  (closed_door(level, mx, my) && !can_ooze(mtmp))))
+                 !(accessible(mx,my) ||
+                   (closed_door(level, mx, my) && can_ooze(mtmp))))
              || !couldsee(mx, my));
 
     mtmp->mux = mx;

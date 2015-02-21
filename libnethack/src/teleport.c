@@ -71,15 +71,19 @@ goodpos(struct level *lev, int x, int y, struct monst *mtmp, unsigned gpflags)
         }
         if (passes_walls(mdat) && may_passwall(lev, x, y))
             return TRUE;
+        if (amorphous(mdat) && closed_door(lev, x, y))
+            return TRUE;
     }
-    if (!ACCESSIBLE(lev->locations[x][y].typ)) {
+    if (!accessible(x,y)) {
         if (!(is_pool(lev, x, y) && ignorewater))
             return FALSE;
     }
 
+/*  If I understand correctly, this may now be redundant, I think, maybe:
     if (!(gpflags & MM_IGNOREDOORS) && closed_door(lev, x, y) &&
         (!mdat || !amorphous(mdat)))
         return FALSE;
+*/
     if (!(gpflags & MM_IGNOREDOORS) && sobj_at(BOULDER, lev, x, y) &&
         (!mdat || !throws_rocks(mdat)))
         return FALSE;
