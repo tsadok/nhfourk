@@ -72,8 +72,7 @@ pick_move:
     for (i = 0; i < cnt; i++) {
         nx = poss[i].x;
         ny = poss[i].y;
-        if (level->locations[nx][ny].typ == ROOM ||
-            (mtmp->ispriest && level->locations[nx][ny].typ == ALTAR) ||
+        if (IS_ROOM(level->locations[nx][ny].typ) ||
             (mtmp->isshk && (!in_his_shop || ESHK(mtmp)->following))) {
             if (avoid && (info[i] & NOTONL))
                 continue;
