@@ -1326,12 +1326,15 @@ blow_up_landmine(struct trap *trap)
     wake_nearto(trap->tx, trap->ty, 400);
     if (IS_DOOR(level->locations[trap->tx][trap->ty].typ))
         level->locations[trap->tx][trap->ty].doormask = D_BROKEN;
-    if (!IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)) {
+    if (IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)
+        || Is_waterlevel(&u.uz) || Is_airlevel(&u.uz)) {
+        /* No pits on the Planes of Air or Water; and if it's a
+         * bridge, destroy_drawbridge (called below) does enough. */
+        deltrap(level, trap);
+    } else {
         trap->ttyp = PIT;       /* explosion creates a pit */
         trap->madeby_u = FALSE; /* resulting pit isn't yours */
-        seetrap(trap);  /* and it isn't concealed */
-    } else {
-        deltrap(level, trap);
+        seetrap(trap);          /* and it isn't concealed */
     }
     if (find_drawbridge(&x, &y)) {
         destroy_drawbridge(x, y);
