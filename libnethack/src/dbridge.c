@@ -102,6 +102,10 @@ drawbridge_wall_direction(int x, int y)
 {
     struct rm *loc;
 
+    if (!isok(x,y)) {
+        impossible("drawbridge_wall_direction(%d,%d) not ok.", x, y);
+        return -1;
+    }
     loc = &level->locations[x][y];
     if (loc->typ != DOOR && loc->typ != DBWALL)
         return -1;
@@ -133,6 +137,10 @@ drawbridge_wall_direction(int x, int y)
 boolean
 is_db_wall(int x, int y)
 {
+    if (!isok(x,y)) {
+        impossible("is_db_wall(%d,%d) not ok.", x, y);
+        return FALSE; /* arbitrary choice */
+    }
     return (boolean) (level->locations[x][y].typ == DBWALL);
 }
 
