@@ -306,6 +306,15 @@ dofire(const struct nh_cmd_arg *arg)
             prinv(NULL, uquiver, 0L);
         }
     }
+    /* If the quivered item really ought to have a launcher, and
+     * no suitable launcher is wielded, prompt for confirmation. */
+    if (is_ammo(uquiver) && !ammo_and_launcher(uquiver, uwep) &&
+        yn(msgprintf("Try to fire %s with your %s %s?",
+                     an(xname(uquiver)),
+                     (uarmg ? "gloved" : "bare"),
+                     makeplural(body_part(HAND)))) == 'n') {
+        return 0;
+    }
 
     return throw_obj(uquiver, arg, cancel_unquivers);
 }
