@@ -9,9 +9,13 @@
 
 /* random engravings */
 static const char *const random_mesg[] = {
-    "Elbereth",
+    "Elbereth", "ElberethElbereth", "ElberethElberethElbereth",
+    "ElberetnElherethLlberethElbcrethElbere?hElbercthFlbereth",
     /* trap engravings */
     "Vlad was here", "ad aerarium",
+    /* other NetHack-specific references */
+    "I never hit with a wielded weapon, but I changed form six times.",
+    "Always name your kitten after a famous wizard.",
     /* take-offs and other famous engravings */
     "Owlbreath", "Galadriel",
     "Kilroy was here",
@@ -19,6 +23,7 @@ static const char *const random_mesg[] = {
     "You won't get it up the steps",    /* Adventure */
     "Lasciate ogni speranza o voi ch'entrate.", /* Inferno */
     "Well Come",        /* Prisoner */
+    "We juggle priceless eggs in variable gravity.", /* Gateway */
     "We apologize for the inconvenience.",      /* So Long... */
     "See you next Wednesday",   /* Thriller */
     "notary sojak",     /* Smokey Stover */
@@ -28,6 +33,10 @@ static const char *const random_mesg[] = {
     "Two thumbs up!",   /* Siskel & Ebert */
     "Hello, World!",    /* The First C Program */
     "As if!",   /* Clueless */
+    "Klaatu barada nikto!", /* The Day the Earth Stood Still */
+    "When the goat turns red strikes true.", /* Order of the Stick */
+    "It is a far, far better thing I do than I have ever done.", /* A Tale of Two Cities */
+    "In the dungeon, all adventurers are equal; but some are more equal than others.", /* Animal Farm (sort of) */
 };
 
 const char *
