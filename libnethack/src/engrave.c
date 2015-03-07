@@ -1347,7 +1347,9 @@ void
 make_grave(struct level *lev, int x, int y, const char *str)
 {
     /* Can we put a grave here? */
-    if ((lev->locations[x][y].typ != ROOM && lev->locations[x][y].typ != GRAVE)
+    if ((lev->locations[x][y].typ != ROOM &&
+         lev->locations[x][y].typ != GRAVE &&
+         lev->locations[x][y].typ != CORR)
         || t_at(lev, x, y))
         return;
 
