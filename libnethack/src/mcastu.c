@@ -809,7 +809,7 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
              (!magr->iswiz && spellnum == MGC_CLONE_WIZ)))
             return TRUE;
         /* only the Wizard of Yendor can cast certain spells */
-        if ((spellnum == MGC_RND_ALIGN) && !mtmp->iswiz)
+        if ((spellnum == MGC_RND_ALIGN) && !magr->iswiz)
             return TRUE;
         if ((!magr->iswiz || flags.no_of_wizards > 1)
             && spellnum == MGC_CLONE_WIZ)

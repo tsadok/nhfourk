@@ -811,7 +811,7 @@ mineralize(struct level *lev)
 {
     s_level *sp;
     struct obj *otmp;
-    int goldprob, gemprob, x, y, cnt;
+    int goldprob, gemprob, rockprob, x, y, cnt;
 
 
     /* Place kelp, except on the plane of water */
@@ -834,7 +834,8 @@ mineralize(struct level *lev)
 
     /* basic level-related probabilities */
     goldprob = 20 + depth(&lev->z) / 3;
-    gemprob = goldprob / 4;
+    gemprob  = goldprob / 4;
+    rockprob = 50 - 2 * depth(&lev->z);
 
     /* mines have ***MORE*** goodies - otherwise why mine? */
     if (In_mines(&lev->z)) {
@@ -883,7 +884,7 @@ mineralize(struct level *lev)
                          cnt > 0; cnt--)
                         if ((otmp = mkobj(lev, GEM_CLASS, FALSE, mrng()))) {
                             if (otmp->otyp == ROCK) {
-                                dealloc_obj(otmp);      /* discard it */
+                                dealloc_obj(otmp);  /* no rocks on gem piles */
                             } else {
                                 otmp->ox = x, otmp->oy = y;
                                 if (!mrn2(3))
@@ -892,6 +893,13 @@ mineralize(struct level *lev)
                                     place_object(otmp, lev, x, y);
                             }
                         }
+                } else if (rn2(1000) < rockprob) {
+                    otmp = mksobj(lev, ROCK, TRUE, FALSE);
+                    otmp->ox = x; otmp->oy = y;
+                    if (rn2(3))
+                        add_to_buried(otmp);
+                    else
+                        place_object(otmp, lev, x, y);
                 }
             }
 }

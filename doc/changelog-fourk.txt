@@ -29,8 +29,8 @@ categories:
    i.e., they way their probability changes as the game progresses
    from early to middle to late has been changed.  Additionally, some
    game features have been buffed (e.g., bow and arrow damage) or
-   nerfed (e.g., unicorn horns) so that they fit better into the
-   overall scheme of the game's balance.
+   gently nerfed (e.g., unicorn horns) so that they fit better into
+   the overall scheme of the game's balance.
    
  * Monster/class reorganization.  Some classes with very few monsters
    have been combined and thus freed up, so that in a subsequent
@@ -42,7 +42,9 @@ categories:
    conjunction with this reorganization, a couple of very boring
    monsters that nobody will miss (because they never had any
    distinctive characteristics or strategic significance) have been
-   removed from the game.
+   removed from the game.  Honestly, the only way you'll even figure
+   out which ones is by process of elimination, or reading the source
+   or the changelogs.  They were that insignificant.
    
  * Monster differentiation.  Some monsters that were for practical
    purposes identical in their gameplay significance have been
@@ -56,24 +58,28 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
- * The Wizard of Yendor now has an attack that can change
-   your alignment (law/neu/cha), but this effect is blocked
-   if you are pious.  The main upshot of this is that early
-   (pre-quest) alignment conversion no longer makes the
-   game unwinnable, although it is still a significant
-   inconvenience, since you will need to fight the Wizard
-   before doing the quest, which is not the usual strategy.
+ * The supply of rocks has been increased, because slings are bad
+   enough, compared to other launchers, without having to constantly
+   worry about running out of rocks (which aren't even supposed to
+   be the primary ammo; they're what you use when you're trying to
+   conserve or have run out of flint and glass).
 
- * The shopkeeper names list for general stores has been
-   expanded, since that is the most common type of shop.
-   Also, some tool shop owners have been re-inserted into
-   the list that were in (at least some ports of) 3.4.3
-   but had been removed at some point due to the #ifdef
-   purge and/or platforms being dropped.  (This re-insert
-   was not comprehensive.)
+ * The Wizard of Yendor now has an attack that can change your
+   alignment (law/neu/cha), but this effect is blocked if you are
+   pious.  The main upshot of this is that early (pre-quest) alignment
+   conversion no longer makes the game unwinnable, although it is
+   still a significant inconvenience, since you will need to fight the
+   Wizard before doing the quest, which is not the usual strategy.
 
- * Arrows (against small monsters) and darts have been
-   slightly buffed: one additional point of base damage.
+ * The shopkeeper names list for general stores has been expanded,
+   since that is the most common type of shop.  Also, some tool shop
+   owners have been re-inserted into the list that were in (at least
+   some ports of) 3.4.3 but had been removed at some point due to the
+   #ifdef purge and/or platforms being dropped.  (This re-insert was
+   not comprehensive.)
+
+ * Arrows (against small monsters) and darts have been slightly
+   buffed: one additional point of base damage.
 
  * Cherry-picked two trap-related changes from the Gehennom Fun Patch.
    Falling rock traps are no longer generated on levels 1-3 in the
