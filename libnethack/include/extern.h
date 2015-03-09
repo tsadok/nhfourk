@@ -1902,6 +1902,7 @@ extern int chwepon(struct obj *, int);
 extern int welded(struct obj *);
 extern void weldmsg(struct obj *);
 extern void setmnotwielded(struct monst *, struct obj *);
+extern boolean mwelded(const struct monst *, struct obj *);
 extern void unwield_weapons_silently(void);
 extern void unwield_silently(struct obj *obj);
 
