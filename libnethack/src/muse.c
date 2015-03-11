@@ -1821,7 +1821,21 @@ use_misc(struct monst *mtmp, struct musable *m)
                 /* obj->bknown = 1; *//* welded() takes care of this */
                 where_to = 0;
             }
-            if (!where_to) {
+            if ((obj->otyp == LEASH) && (obj->leashmon != 0)) {
+                struct monst *pet = find_mid(level, obj->leashmon, FM_FMON);
+                pline("%s becomes entangled in %s leash.", The_whip,
+                      (pet ? mhis(pet) : "your"));
+                yelp(pet);
+                obj_extract_self(otmp);
+                setmnotwielded(mtmp, otmp);
+                MON_NOWEP(mtmp);
+                otmp->owornmask = 0L;
+                pline("%s tugs away from %s.", The_whip,
+                      (vismon ? mon_nam(mtmp) : "something"));
+                otmp = hold_another_object(otmp, "%s untangles and falls away.",
+                                           doname(otmp), "You now have ");
+                return 1;
+            } else if (!where_to) {
                 pline("The whip slips free.");  /* not `The_whip' */
                 return 1;
             } else if (where_to == 3 && hates_silver(mtmp->data) &&
