@@ -293,12 +293,19 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         {
             struct monst *mtmp;
             struct obj *otmp, *statue;
+            const struct permonst *mptr;
+            int trycount = 50;
 
-            /* use the provided RNG for species but nothing else */
-            statue = mkcorpstat(STATUE, NULL, &mons[rndmonnum(&lev->z, rng)],
-                                lev, x, y, FALSE, rng_main);
-            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO,
-                           NO_MM_FLAGS);
+            do {    /* Avoid ultimately hostile co-aligned unicorn. */
+                    /* Use the provided RNG once only for species. */
+                mptr = &mons[rndmonnum(&lev->z,
+                                       ((trycount == 50) ? rng : rng_main))];
+            } while (--trycount > 0 && is_unicorn(mptr) &&
+                     sgn(u.ualign.type) == sgn(mptr->maligntyp));
+
+            statue = mkcorpstat(STATUE, NULL, mptr, lev, x, y, FALSE, rng_main);
+            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO, MM_NOCOUNTBIRTH);
+
             if (!mtmp)
                 break;  /* should never happen */
             while (mtmp->minvent) {
