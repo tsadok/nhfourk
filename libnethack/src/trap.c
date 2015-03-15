@@ -528,6 +528,15 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
     else
         mon->mundetected = FALSE;
 
+    mon->msleeping = 0; /* trap releases an awake monster */
+    if (cause == ANIMATE_NORMAL || cause == ANIMATE_SHATTER) {
+        /* trap always releases hostile monster */
+        mon->mtame = 0;     /* (might be petrified pet tossed onto trap) */
+        mon->mpeaceful = 0;
+        set_malign(mon);
+    }
+
+
     const char *comes_to_life =
         nonliving(mon->data) ? "moves" : "comes to life";
 
