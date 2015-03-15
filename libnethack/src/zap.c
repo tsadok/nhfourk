@@ -3914,7 +3914,7 @@ struct destroy_message destroy_messages[num_destroy_msgs] = {
 };
 
 void
-set_candles_afire()
+set_candles_afire(void)
 { /* modeled after destroy_item */
     struct obj *obj, *obj2;
     int eroded;
