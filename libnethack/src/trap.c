@@ -3271,18 +3271,26 @@ try_disarm(struct trap *ttmp, boolean force_failure, schar dx, schar dy)
                         killed(mtmp);
                 } else if (ttype == WEB) {
                     if (!webmaker(youmonst.data)) {
-                        struct trap *ttmp2 =
-                            maketrap(level, u.ux, u.uy, WEB, rng_main);
+                        if (!On_stairs(u.ux, u.uy)) {
+                            struct trap *ttmp2 =
+                                maketrap(level, u.ux, u.uy, WEB, rng_main);
 
-                        if (ttmp2) {
-                            pline("The webbing sticks to you. You're caught "
-                                  "too!");
-                            dotrap(ttmp2, NOWEBMSG);
-                            if (u.usteed && u.utrap) {
-                                /* you, not steed, are trapped */
-                                dismount_steed(DISMOUNT_FELL);
+                            if (ttmp2) {
+                                pline("The webbing sticks to you. "
+                                      "You're caught too!");
+                                dotrap(ttmp2, NOWEBMSG);
+                                if (u.usteed && u.utrap) {
+                                    /* you, not steed, are trapped */
+                                    dismount_steed(DISMOUNT_FELL);
+                                }
                             }
-                        }
+                        } /* Else, don't make a web on the stairs; besides being
+                           * inconsistent with other traps (which cannot occur
+                           * on furniture, including stairs) and a glyph
+                           * conflict (which confuses travel), putting web on
+                           * stairs causes additional strange bugs, such as
+                           * inconsistency as to whether you are stuck depending
+                           * on which direction you're moving.  Ticket #477.  */
                     } else
                         pline("%s remains entangled.", Monnam(mtmp));
                 }
