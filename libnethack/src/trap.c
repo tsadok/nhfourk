@@ -3271,7 +3271,8 @@ try_disarm(struct trap *ttmp, boolean force_failure, schar dx, schar dy)
                         killed(mtmp);
                 } else if (ttype == WEB) {
                     if (!webmaker(youmonst.data)) {
-                        if (!On_stairs(u.ux, u.uy)) {
+                        if (!On_stairs(u.ux, u.uy) &&
+                            !t_at(level, u.ux, u.uy)) {
                             struct trap *ttmp2 =
                                 maketrap(level, u.ux, u.uy, WEB, rng_main);
 
@@ -3284,7 +3285,10 @@ try_disarm(struct trap *ttmp, boolean force_failure, schar dx, schar dy)
                                     dismount_steed(DISMOUNT_FELL);
                                 }
                             }
-                        } /* Else, don't make a web on the stairs; besides being
+                        } /* Else, don't make a web on an existing trap (because
+                           * we can only have one trap at a time per tile, the
+                           * way the data structure currently is set up), and
+                           * don't make web on the stairs; besides being
                            * inconsistent with other traps (which cannot occur
                            * on furniture, including stairs) and a glyph
                            * conflict (which confuses travel), putting web on
