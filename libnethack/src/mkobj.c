@@ -267,6 +267,7 @@ rndmonnum(const d_level *dlev, enum rng rng)
 {
     const struct permonst *ptr;
     int i;
+    unsigned short excludeflags;
 
     /* Plan A: get a level-appropriate common monster */
     ptr = rndmonst(dlev, rng);
@@ -274,11 +275,11 @@ rndmonnum(const d_level *dlev, enum rng rng)
         return monsndx(ptr);
 
     /* Plan B: get any common monster */
+    excludeflags = G_UNIQ | G_NOGEN | (Inhell ? G_NOHELL : G_HELL);
     do {
         i = LOW_PM + rn2_on_rng(SPECIAL_PM - LOW_PM, rng);
         ptr = &mons[i];
-    } while ((ptr->geno & G_NOGEN) ||
-             (!In_hell(dlev) && (ptr->geno & G_HELL)));
+    } while ((ptr->geno & excludeflags) != 0);
 
     return i;
 }

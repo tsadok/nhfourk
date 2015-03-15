@@ -300,7 +300,7 @@ const struct permonst mons[] = {
         M3_INFRAVISIBLE, CLR_ORANGE | HI_ULINE),
 #ifdef CHARON
     MON("Cerberus", S_DOG,
-        LVL(12, 10, 2, 20, -7), (G_HELL | G_UNIQ | 1),
+        LVL(12, 10, 2, 20, -7), (G_NOGEN | G_HELL | G_UNIQ | 1),
         A(ATTK(AT_BITE, AD_PHYS, 3, 6), ATTK(AT_BITE, AD_PHYS, 3, 6),
           ATTK(AT_BITE, AD_PHYS, 3, 6), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(1000, 350, 0, MS_BARK, MZ_LARGE), MR_FIRE, MR_FIRE,
