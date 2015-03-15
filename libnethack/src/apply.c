@@ -3098,6 +3098,13 @@ doapply(const struct nh_cmd_arg *arg)
             otmp->blessed = obj->blessed;
             otmp->cursed = obj->cursed;
             otmp->owt = weight(otmp);
+            /* using a shop's horn of plenty entails a usage fee and also
+               confers ownership of the created item to the shopkeeper */
+            if (carried(obj) ? obj->unpaid :
+                (costly_spot(u.ux, u.uy) && !obj->no_charge))
+                addtobill(obj, FALSE, FALSE, FALSE);
+            /* if it ended up on bill, we don't want "(unpaid, N zorkids)"
+               being included in its formatted name during next message */
             hold_another_object(
                 otmp, Engulfed ? "Oops!  %s out of your reach!"
                 : (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) ||
