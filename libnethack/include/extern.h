@@ -1105,6 +1105,7 @@ extern void mnexto(struct monst *);
 extern boolean mnearto(struct monst *, xchar, xchar, boolean);
 extern void poisontell(int);
 extern void poisoned(const char *, int, const char *, int);
+extern void deadly_poison(const char *, int, const char *, boolean);
 extern void m_respond(struct monst *);
 extern void setmangry(struct monst *);
 extern void msethostility(struct monst *, boolean, boolean);

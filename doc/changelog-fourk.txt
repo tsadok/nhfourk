@@ -58,6 +58,15 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Insteadeath by poison when you could have survived the damage
+   will now only drain a level rather than killing you outright,
+   if you are at least XL3.  Furthermore, starting characters have
+   a 500-turn grace period to reach XL3 to protect against this.
+   (You can still die by falling onto poisoned spikes or being hit by
+   a poisoned weapon or whatever, if you do not have enough current HP
+   to survive the damage that it does, or if you are running around
+   at XL1 or XL2 past turn 500.)
+
  * The supply of rocks has been increased, because slings are bad
    enough, compared to other launchers, without having to constantly
    worry about running out of rocks (which aren't even supposed to

@@ -2293,9 +2293,10 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     }
 
     i = rn2_on_rng(fatal, rng);
+
     if (i == 0 && typ != A_CHA) {
-        pline("The poison was deadly...");
-        done(POISONING, killer);
+        deadly_poison("The poison was deadly...", POISONING,
+                      killer, !strcmp(string, "blast"));
     } else if (i <= 5) {
         /* Check that a stat change was made */
         if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3, 3), 1))
@@ -2313,6 +2314,47 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     }
     encumber_msg();
 }
+
+void deadly_poison (const char *message,    int how,
+                    const char *killer,     boolean showshield)
+{
+    /* Traditionally, this was always an instadeath; but it was one of the most
+     * random and frequently unavoidable instadeaths in the game, and the player
+     * community almost universally perceived this as unfair and unbalanced.
+     *
+     * My new plan is to make it drain a level if you are XL3 or higher,
+     * otherwise spare you if the turncount is very low, otherwise kill you.
+     * Thus, by gaining a couple of experience levels pretty early, the player
+     * can obtain a bit of insurance against the instadeath effect of poison,
+     * but such poison is still harmful and best avoided whenever possible.
+     *
+     * Note that the caller is responsible for any percentage chances, since
+     * they are different in various cases.
+     *
+     * At the time of this writing, deadly_poison() is only being used as a
+     * helper function for poisoned(), though it is designed to be usable
+     * independently of that in principle.
+     */
+
+    if (Poison_resistance) {
+        if (showshield)
+            shieldeff(u.ux,u.uy);
+        pline("The poison doesn't seem to affect you.");
+        return;
+    } else if (u.ulevel > 2) {
+        losexp(killer, TRUE); /* Drain resistance doesn't save you here:
+                               * it's not a draining attack, and poison
+                               * resistance already had a chance above. */
+    } else if (moves <= 500) {
+        /* TODO: think up better flavor for this case. */
+        pline("You feel drained for a moment, but the feeling passes.");
+    } else {
+        /* Traditional instadeath: */
+        pline(message);
+        done(how, killer);
+    }
+}
+
 
 /* monster responds to player action; not the same as a passive attack */
 /* assumes reason for response has been tested, and response _must_ be made */
