@@ -2260,6 +2260,7 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
 {
     int i, plural;
     boolean thrown_weapon = (fatal < 0);
+    enum rng rng;
 
     if (thrown_weapon)
         fatal = -fatal;
@@ -2272,15 +2273,7 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
               plural ? "were" : "was");
     }
 
-    if (Poison_resistance) {
-        if (!strcmp(string, "blast"))
-            shieldeff(u.ux, u.uy);
-        pline("The poison doesn't seem to affect you.");
-        return;
-    }
-
     fatal += 20 * thrown_weapon;
-    enum rng rng;
     switch (fatal) {
     case  8: rng = rng_deadlypoison_8;  break;
     case 10: rng = rng_deadlypoison_10; break;
