@@ -1454,12 +1454,24 @@ passivemm(struct monst *magr, struct monst *mdef, boolean mhit, int mdead)
         return mdead | mhit;
 
     /* These affect the enemy only if defender is still alive */
-    if (rn2(3))
+    if (mddat == &mons[PM_FLOATING_EYE]) {
+        if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
+                    (perceives(madat) || !mdef->minvis)) {
+            tmp = rn2(magr->mhpmax * 2 / 3);
+            if (canseemon(magr) && ((magr->mhp > tmp) || flags.verbose))
+                pline("%s seems %s.", Monnam(magr),
+                      (Hallucination ? "sober" : "remorseful"));
+            goto assess_dmg;
+        } else {
+            return mdead | mhit;
+        }
+    } else if (rn2(3))
         switch (mddat->mattk[i].adtyp) {
-        case AD_PLYS:  /* Floating eye */
+        case AD_PLYS:  /* Floating eye used to use this code path */
             if (tmp > 127)
                 tmp = 127;
             if (mddat == &mons[PM_FLOATING_EYE]) {
+                impossible("Floating eye using old codepath."); /*
                 if (!rn2(4))
                     tmp = 127;
                 if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
@@ -1475,7 +1487,7 @@ passivemm(struct monst *magr, struct monst *mdef, boolean mhit, int mdead)
                     magr->mcanmove = 0;
                     magr->mfrozen = tmp;
                     return mdead | mhit;
-                }
+                } */
             } else {    /* gelatinous cube */
                 if (canseemon(magr))
                     pline("%s is frozen by %s.", Monnam(magr), mon_nam(mdef));
