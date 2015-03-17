@@ -58,6 +58,14 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The ever controversial Acehack/NetHack4 floating eye behavior
+   (wherein you can't melee them at all) has been replaced with a new
+   behavior that will probably be equally controversial but hopefully
+   more interesting:  whatever hp damage you do to the floating eye
+   you also sustain yourself, amplified proprortionally to your own
+   experience level.  The exact formula may may to be tweaked, pending
+   play testing.
+
  * Insteadeath by poison when you could have survived the damage
    will now only drain a level rather than killing you outright,
    if you are at least XL3.  Furthermore, starting characters have

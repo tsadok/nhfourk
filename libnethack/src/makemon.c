@@ -700,7 +700,6 @@ m_initinv(struct monst *mtmp, enum rng rng)
             mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
         /* Nothing special for the other i for now. */
         break;
-    }
     case S_DEMON:
         /* moved here from m_initweap() because these don't have AT_WEAP so
            m_initweap() is not called for them */

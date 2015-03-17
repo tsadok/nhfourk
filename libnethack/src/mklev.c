@@ -894,7 +894,7 @@ mineralize(struct level *lev)
                             }
                         }
                 } else if (rn2(1000) < rockprob) {
-                    otmp = mksobj(lev, ROCK, TRUE, FALSE);
+                    otmp = mksobj(lev, ROCK, TRUE, FALSE, mrng());
                     otmp->ox = x; otmp->oy = y;
                     if (rn2(3))
                         add_to_buried(otmp);

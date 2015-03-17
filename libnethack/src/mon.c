@@ -1979,7 +1979,7 @@ xkilled(struct monst *mtmp, int dest)
     struct trap *t;
     boolean redisp = FALSE;
     boolean wasinside = Engulfed && (u.ustuck == mtmp);
-
+    enum rng death_drop_rng;
 
     /* KMH, conduct */
     break_conduct(conduct_killer);

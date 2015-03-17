@@ -307,7 +307,6 @@ enum attack_check_status
 attack(struct monst * mtmp, schar dx, schar dy, enum u_interaction_mode uim)
 {
     schar tmp;
-    const struct permonst *mdat = mtmp->data;
     enum attack_check_status ret;
 
     /* Checks that prevent attacking altogether: do this to avoid a
@@ -382,20 +381,7 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
 {
     boolean malive = TRUE;
 
-    /* AceHack patch: trying to hit a floating eye screws up if it can see, you 
-       can see it, and you don't have free action; this is considerably less
-       evil to the player than the vanilla alternative. */
-    if (mon->data == &mons[PM_FLOATING_EYE] && canseemon(mon) && !Free_action &&
-        !Reflecting && mon->mcansee) {
-        *mhit = 0;
-        pline("%s glares at you.", Monnam(mon));
-        /* can't keep this short enough to be a oneliner, it seems; so no need
-           to try to keep this and the previous message below 80 between them.
-           (On 80x24, this also causes a suitably scary --More-- after the
-           first message.) */
-        pline("You manage to look away just in time; "
-              "but that disturbs your aim, and you miss.");
-    } else if (!*mhit) {
+    if (!*mhit) {
         missum(mon, uattk);
     } else {
         int oldhp = mon->mhp;
@@ -445,6 +431,18 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
             }
             if (mon->wormno && *mhit)
                 cutworm(mon, x, y, uwep);
+        }
+        if (malive && (mon->data == &mons[PM_FLOATING_EYE]) &&
+            canseemon(mon) && !Reflecting && mon->mcansee) {
+            int difference = oldhp - mon->mhp;
+            if (difference > 0) {
+                pline("As you meet %s deep, meaningful gaze, you feel "
+                      "its suffering as though it were your own.", mhis(mon));
+                exercise(A_WIS, FALSE);
+                exercise(A_INT, FALSE);
+                losehp((difference * u.ulevel * 4 / 3),
+                       killer_msg(DIED, "vicarious suffering"));
+            }
         }
     }
     return malive;
