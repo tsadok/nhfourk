@@ -44,6 +44,10 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The differences between the different versions of Minetown have
+   been enhanced.  Previously, several of them felt almost the same
+   as one another.  Hopefully that is not the case now.
+
  * Barring bones, the only variant of Minetown that might not have a
    general store now is College Town, which has a guaranteed book
    shop, so you can at least easily price check scrolls (and books).

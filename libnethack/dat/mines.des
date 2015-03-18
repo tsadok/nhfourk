@@ -55,10 +55,9 @@ ROOM: "ordinary" , lit, (3,3), (center,center), (31,15)
 NAME: "town"
 FOUNTAIN: (13, 7)
 FOUNTAIN: (20, 7)
+OBJECT: '*', "touchstone", random, cursed, 0
 
 # The Town Watch
-MONSTER: '@', "watchman", random, peaceful
-MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watch captain", random, peaceful
@@ -67,7 +66,6 @@ SUBROOM: "shop" , lit, (2,2), (3,4), "town"
 DOOR: false, closed, south, random
 
 SUBROOM: "tool shop", lit, (2,9), (3,4), "town"
-CHANCE: 90
 DOOR: false, closed, north, random
 
 SUBROOM: "ordinary", unlit, (6,2), (3,4), "town"
@@ -77,7 +75,7 @@ SUBROOM: "ordinary", lit, (6,9), (3,4), "town"
 DOOR: false, closed, north, random
 
 SUBROOM: "food shop", lit, (10,2), (2,3), "town"
-CHANCE: 90
+CHANCE: 50
 DOOR: false, closed, south, random
 
 SUBROOM: "candle shop", lit, (22,2), (3,3), "town"
@@ -85,7 +83,7 @@ DOOR: false, closed, south, random
 
 SUBROOM: "ordinary", unlit, (10,10), (2,3), "town"
 DOOR: false, locked, east, random
-MONSTER: 'G', "gnome", random
+MONSTER: 'h', "dwarf lord", random
 
 SUBROOM: "ordinary", lit, (19,2),  (2,3), "town"
 DOOR: false, locked, west, random
@@ -94,15 +92,14 @@ MONSTER: 'G', "gnome", random
 SUBROOM: "temple", lit, (15,9), (4,4), "town"
 DOOR: false, closed, north, random
 ALTAR:(02,02),align[0],shrine
-MONSTER: 'G', "gnomish wizard", random
-MONSTER: 'G', "gnomish wizard", random
+MONSTER: 'h', "dwarf", random
 
 SUBROOM: "ordinary", lit, (22,10), (2,3), "town"
 DOOR: false, locked, west, random
 
 SUBROOM: "ordinary", lit, (26,2), (3,3), "town"
 DOOR: false, closed, south, random
-MONSTER: 'G', "gnome lord", random
+MONSTER: 'h', "dwarf", random
 
 SUBROOM: "ordinary", unlit, (25,10), (4,3), "town"
 DOOR: false, closed, north, random
@@ -113,10 +110,10 @@ STAIR: random, up
 ROOM: "ordinary" , random, random, random, random
 STAIR: random, down
 TRAP: random, random
-MONSTER: 'G', "gnome", random
-MONSTER: 'G', "gnome", random
+MONSTER: 'h', "dwarf", random
 
 ROOM: "ordinary" , random, random, random, random
+OBJECT: '(', "oil lamp", random
 MONSTER: 'h', "dwarf", random
 
 ROOM: "ordinary" , random, random, random, random
@@ -234,6 +231,11 @@ MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watch captain", random, peaceful
+MONSTER: 'a', "soldier ant", random
+MONSTER: 'a', random, random
+MONSTER: 'a', random, random
+MONSTER: 'G', "gnome lord", random, hostile
+OBJECT: '%', "slime mold", random
 
 SUBROOM:"ordinary",random,(2,2),(2,2),"town"
 DOOR: false,closed,south,random
@@ -244,7 +246,6 @@ DOOR: false,closed,south,random
 
 SUBROOM:"ordinary",random,(2,10),(2,3),"town"
 DOOR: false, locked, north, random
-MONSTER: 'G',random,random
 
 SUBROOM:"ordinary",random,(5,9),(2,2),"town"
 DOOR: false,closed,north,random
@@ -263,7 +264,6 @@ DOOR:false,closed,west,random
 
 SUBROOM:"ordinary",random,(14,8),(2,2),"town"
 DOOR:false,locked,north,random
-MONSTER: 'G',random,random
 
 SUBROOM:"ordinary",random,(14,11),(2,2),"town"
 DOOR:false,closed,south,random
@@ -274,10 +274,9 @@ DOOR:false,closed,north,random
 
 SUBROOM:"ordinary",random,(21,11),(2,2),"town"
 DOOR:false,locked,east,random
-MONSTER:'G',random,random
 
 SUBROOM:"food shop",lit,(26,8),(3,2),"town"
-CHANCE:90
+CHANCE:50
 DOOR:false,closed,west,random
 
 SUBROOM:"ordinary",random,(16,2),(2,2),"town"
@@ -287,7 +286,7 @@ SUBROOM:"ordinary",random,(19,2),(2,2),"town"
 DOOR:false,closed,north,random
 
 SUBROOM:"wand shop",lit,(19,5),(3,2),"town"
-CHANCE:30
+CHANCE:80
 DOOR:false,closed,west,random
 
 SUBROOM: "candle shop",lit,(25,2),(3,3),"town"
@@ -304,6 +303,7 @@ MONSTER: 'G', "gnome", random
 
 ROOM: "ordinary" , random, random, random, random
 MONSTER: 'h', "dwarf", random
+OBJECT: '%', "slime mold", random
 
 ROOM: "ordinary" , random, random, random, random
 TRAP: random, random
@@ -372,7 +372,7 @@ DOOR:false,locked,north,random
 MONSTER:'G',random,random
 
 SUBROOM:"shop",lit,(23,10),(3,3),"town"
-CHANCE:90
+CHANCE:80
 DOOR:false,closed,north,random
 
 ROOM: "ordinary" , random, random, random, random
@@ -785,7 +785,8 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 # Random traps
-TRAP[75%]:"polymorph",random
+TRAP[50%]:"polymorph",random
+TRAP[50%]:"polymorph",random
 TRAP:random,random
 TRAP:random,random
 TRAP:random,random
