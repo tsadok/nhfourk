@@ -266,6 +266,27 @@ change_luck(schar n)
         u.uluck = LUCKMAX;
 }
 
+/* Called when an action is performed that would be bad luck in Sokoban: */
+void
+sokoban_guilt(void)
+{
+    if (!In_sokoban(&u.uz)) return; /* Penalty only applies in Sokoban. */
+    if (u.moreluck > 0)     return; /* Non-cursed luckstone protects you. */
+    if (Luck <= -3)         return; /* That's bad enough already. */
+    /* TODO: no penalty if the level's puzzle is solved already. */
+
+    if (Hallucination) {
+        pline("Avalanche!");
+        mksobj_at(BOULDER, level, u.ux, u.uy, TRUE, FALSE, rng_main);
+        losehp(rnd(12), "crushed by a hallucinatory boulder");
+        /* No luck penalty in this case. */
+        return;
+    } else if (flags.verbose)
+        pline("You feel like a cheater.");
+
+    change_luck(-1);
+}
+
 int
 stone_luck(boolean parameter)
 {

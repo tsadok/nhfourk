@@ -1150,8 +1150,7 @@ seffects(struct obj *sobj, boolean *known)
             pline("The %s rumbles %s you!", ceiling(u.ux, u.uy),
                   sobj->blessed ? "around" : "above");
             *known = TRUE;
-            if (In_sokoban(&u.uz))
-                change_luck(-1);        /* Sokoban guilt */
+            sokoban_guilt();
 
             /* Loop through the surrounding squares */
             if (!sobj->cursed)

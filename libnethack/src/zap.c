@@ -1202,8 +1202,8 @@ poly_obj(struct obj *obj, int id)
         return obj;
     }
 
-    if (obj->otyp == BOULDER && In_sokoban(&u.uz))
-        change_luck(-1);        /* Sokoban guilt */
+    if (obj->otyp == BOULDER)
+        sokoban_guilt();
     if (id == STRANGE_OBJECT) { /* preserve symbol */
         int try_limit = 3;
 
@@ -3853,9 +3853,8 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
 void
 fracture_rock(struct obj *obj)
 {
-    /* A little Sokoban guilt... */
-    if (obj->otyp == BOULDER && In_sokoban(&u.uz) && !flags.mon_moving)
-        change_luck(-1);
+    if (obj->otyp == BOULDER && !flags.mon_moving)
+        sokoban_guilt();
 
     obj->otyp = ROCK;
     obj->quan = (long)rn1(60, 7);

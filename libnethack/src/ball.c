@@ -706,8 +706,7 @@ drop_ball(xchar x, xchar y, schar dx, schar dy)
         newsym(u.ux0, u.uy0);   /* clean up old position */
         if (u.ux0 != u.ux || u.uy0 != u.uy) {
             spoteffects(TRUE);
-            if (In_sokoban(&u.uz))
-                change_luck(-1);        /* Sokoban guilt */
+            sokoban_guilt();
         }
     }
 }

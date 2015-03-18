@@ -44,6 +44,16 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The luck penalty in Sokoban can now be avoided by carrying a
+   non-cursed luckstone or by hallucinating.  Also, the Sokoban luck
+   penalty will never take your luck below -3.
+
+ * The Statue of Perseus is now guaranteed to contain the shield of
+   reflection and the sack (and the scimitar, just because).  This is
+   mainly intended as a sop for players who insist on skipping
+   Sokoban.  At least you don't have to do the Castle with no
+   reflection and no container.
+
  * The differences between the different versions of Minetown have
    been enhanced.  Previously, several of them felt almost the same
    as one another.  Hopefully that is not the case now.

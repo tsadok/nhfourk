@@ -1435,9 +1435,7 @@ jump_to_coords(coord *cc)
         range = temp;
     walk_path(&uc, cc, hurtle_step, &range);
 
-    /* A little Sokoban guilt... */
-    if (In_sokoban(&u.uz))
-        change_luck(-1);
+    sokoban_guilt();
 
     teleds(cc->x, cc->y, TRUE);
     helpless(1, hr_moving, "jumping around", NULL);

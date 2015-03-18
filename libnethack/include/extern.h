@@ -136,6 +136,7 @@ extern long arti_cost(const struct obj *);
 
 extern boolean adjattrib(int, int, int);
 extern void change_luck(schar);
+extern void sokoban_guilt(void);
 extern int stone_luck(boolean);
 extern void set_moreluck(void);
 extern void gainstr(struct obj *, int);
