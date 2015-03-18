@@ -44,6 +44,14 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Barring bones, the only variant of Minetown that might not have a
+   general store now is College Town, which has a guaranteed book
+   shop, so you can at least easily price check scrolls (and books).
+
+ * The Mimic of the Mines level has been made more interesting,
+   bringing it somewhat closer to the other Mine's End levels in terms
+   of both difficulty and loot.
+
  * Certain normally rare items are supplied in small numbers early in
    the game as floor items.  Specifically, filler levels at depth 2-6
    in the main dungeon each have an 80% chance to get one of these
