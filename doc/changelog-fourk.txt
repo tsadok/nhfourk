@@ -44,6 +44,18 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Certain normally rare items are supplied in small numbers early in
+   the game as floor items.  Specifically, filler levels at depth 2-6
+   in the main dungeon each have an 80% chance to get one of these
+   items, which is most often a scroll of scare monster but can also
+   be wolfsbane, eucalytus, or a wand of enlightenment.
+
+ * Pulled in about fifty fixes for various vanilla bugs from an
+   upstream "4.3 maintenance" branch.  The upstream master hasn't
+   merged these changes yet for reasons involving release timing,
+   but Fourk is at a different place in its dev cycle that makes
+   them appropriate now.
+
  * The ever controversial Acehack/NetHack4 floating eye behavior
    (wherein you can't melee them at all) has been replaced with a new
    behavior that will probably be equally controversial but hopefully
@@ -54,12 +66,6 @@ Chronological Changelog (most recent at top):
    from the formula for player-vs-monster, not because I think it
    should be, but because rebalancing player hitpoints vs monster
    hitpoints is a larger change that I didn't want to rush into yet.
-
- * Pulled in about fifty fixes for various vanilla bugs from an
-   upstream "4.3 maintenance" branch.  The upstream master hasn't
-   merged these changes yet for reasons involving release timing,
-   but Fourk is at a different place in its dev cycle that makes
-   them appropriate now.
 
  * Insteadeath by poison when you could have survived the damage
    will now only drain a level rather than killing you outright,

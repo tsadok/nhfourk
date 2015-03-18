@@ -799,6 +799,25 @@ skip0:
             }
         }
     }
+    /* Supply small numbers of certain normally rare items early: */
+    if ((lev->z.dlevel > 1) && (lev->z.dlevel < 7) && (mrn2(5))) {
+        croom = &lev->rooms[mrn2(lev->nroom - 1)];
+        y = somey(croom, mrng());
+        x = somex(croom, mrng());
+        switch (mrn2(6)) {
+        case 1:
+            mksobj_at(WAN_ENLIGHTENMENT, lev, x, y, TRUE, FALSE, mrng());
+            break;
+        case 2:
+            mksobj_at(EUCALYPTUS_LEAF, lev, x, y, TRUE, FALSE, mrng());
+            break;
+        case 3:
+            mksobj_at(SPRIG_OF_WOLFSBANE, lev, x, y, TRUE, FALSE, mrng());
+            break;
+        default:
+            mksobj_at(SCR_SCARE_MONSTER, lev, x, y, TRUE, FALSE, mrng());
+        }
+    }
 }
 
 /*
