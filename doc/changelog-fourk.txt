@@ -83,11 +83,12 @@ Chronological Changelog (most recent at top):
    behavior that will probably be equally controversial but hopefully
    more interesting:  whatever hp damage you do to the floating eye
    you also sustain yourself, amplified proprortionally to your own
-   experience level.  The exact formula may may to be tweaked, pending
-   play testing.  The formula for monster-vs-monster is different
-   from the formula for player-vs-monster, not because I think it
-   should be, but because rebalancing player hitpoints vs monster
-   hitpoints is a larger change that I didn't want to rush into yet.
+   experience level.  The exact formula may need to be tweaked,
+   pending play testing.  The formula for monster-vs-monster is
+   different from the formula for player-vs-monster, not because I
+   think it should be, but because rebalancing player hitpoints vs
+   monster hitpoints is a larger change that I didn't want to rush
+   into yet.
 
  * Insteadeath by poison when you could have survived the damage
    will now only drain a level rather than killing you outright,
