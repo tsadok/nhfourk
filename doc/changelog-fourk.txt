@@ -26,30 +26,19 @@ categories:
    improve the overall balance and difficulty curve of the game.
    Things like death-drop probability, engraving success rate,
    alignment record, etc. have had the shape of their curve adjusted,
-   i.e., they way their probability changes as the game progresses
-   from early to middle to late has been changed.  Additionally, some
-   game features have been buffed (e.g., bow and arrow damage) or
-   gently nerfed (e.g., unicorn horns) so that they fit better into
-   the overall scheme of the game's balance.
+   and some game features have been buffed or gently nerfed so that
+   they fit better into the overall scheme of the game's balance.
    
  * Monster/class reorganization.  Some classes with very few monsters
    have been combined and thus freed up, so that in a subsequent
    version some heavily overloaded monster classes can be split,
    without running out of letters.  I tried to be conservative about
-   this (MUCH more conservative than e.g. b_jonas wants to be), and
-   for now I tried to avoid having any monster look exactly the same
-   as another monster used to look, when it can be avoided.  In
-   conjunction with this reorganization, a couple of very boring
-   monsters that nobody will miss (because they never had any
-   distinctive characteristics or strategic significance) have been
-   removed from the game.  Honestly, the only way you'll even figure
-   out which ones is by process of elimination, or reading the source
-   or the changelogs.  They were that insignificant.
+   this, and for now I tried to avoid having any monster look exactly
+   the same as another monster used to look, when it can be avoided.
    
  * Monster differentiation.  Some monsters that were for practical
    purposes identical in their gameplay significance have been
    tweaked slightly so that they are no longer exactly the same.
-   I tried to preserve or slightly enhance flavor when doing this.
 
 
 Chronological Changelog (most recent at top):
