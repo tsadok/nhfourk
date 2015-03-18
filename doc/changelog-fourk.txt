@@ -66,6 +66,12 @@ Chronological Changelog (most recent at top):
    should be, but because rebalancing player hitpoints vs monster
    hitpoints is a larger change that I didn't want to rush into yet.
 
+ * Pulled in about fifty fixes for various vanilla bugs from an
+   upstream "4.3 maintenance" branch.  The upstream master hasn't
+   merged these changes yet for reasons involving release timing,
+   but Fourk is at a different place in its dev cycle that makes
+   them appropriate now.
+
  * Insteadeath by poison when you could have survived the damage
    will now only drain a level rather than killing you outright,
    if you are at least XL3.  Furthermore, starting characters have
