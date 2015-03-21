@@ -65,6 +65,8 @@ struct artifact {
 # define CREATE_PORTAL  (LAST_PROP+7)
 # define ENLIGHTENING   (LAST_PROP+8)
 # define CREATE_AMMO    (LAST_PROP+9)
+# define UNCURSE_INVK   (LAST_PROP+10)
+
 
 #endif /* ARTIFACT_H */
 

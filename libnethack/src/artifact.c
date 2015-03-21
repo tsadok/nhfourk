@@ -1309,10 +1309,16 @@ arti_invoke(struct obj *obj)
                     goto nothing_special;
                 break;
             }
+        case UNCURSE_INVK:{
+            if (Role_if(PM_BARBARIAN))
+                do_uncurse_effect(TRUE, FALSE);
+            else
+                do_uncurse_effect(FALSE, TRUE);
+            update_inventory();
+        }
         case UNTRAP:{
                 if (!untrap(&(struct nh_cmd_arg){.argtype = 0}, TRUE)) {
-                    obj->age = 0;       /* don't charge for changing their mind 
-                                         */
+                    obj->age = 0;   /* don't charge for changing their mind */
                     return 0;
                 }
                 break;

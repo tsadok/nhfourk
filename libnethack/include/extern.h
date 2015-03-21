@@ -1460,6 +1460,7 @@ extern int doread(const struct nh_cmd_arg *);
 extern boolean is_chargeable(struct obj *);
 extern void recharge(struct obj *, int);
 extern void forget_objects(int);
+extern void do_uncurse_effect(boolean, boolean);
 extern int seffects(struct obj *scroll, boolean * known);
 extern void litroom(boolean, struct obj *);
 extern void do_level_genocide(void);

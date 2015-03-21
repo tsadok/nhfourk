@@ -589,6 +589,56 @@ maybe_tame(struct monst *mtmp, struct obj *sobj)
     }
 }
 
+void
+do_uncurse_effect(boolean blessedeffect, boolean confusable)
+{
+    struct obj *obj;
+
+    for (obj = invent; obj; obj = obj->nobj) {
+        long wornmask;
+
+        /* gold isn't subject to cursing and blessing */
+        if (obj->oclass == COIN_CLASS)
+            continue;
+
+        wornmask = obj->owornmask & W_MASKABLE;
+        if (wornmask && !blessedeffect) {
+            /* handle a couple of special cases; we don't allow
+               auxiliary weapon slots to be used to artificially
+               increase number of worn items */
+            if (obj == uswapwep) {
+                if (!u.twoweap)
+                    wornmask = 0L;
+            } else if (obj == uquiver) {
+                if (obj->oclass == WEAPON_CLASS) {
+                    /* mergeable weapon test covers ammo, missiles, 
+                       spears, daggers & knives */
+                    if (!objects[obj->otyp].oc_merge)
+                        wornmask = 0L;
+                } else if (obj->oclass == GEM_CLASS) {
+                    /* possibly ought to check whether alternate
+                       weapon is a sling... */
+                    if (!uslinging())
+                        wornmask = 0L;
+                } else {
+                    /* weptools don't merge and aren't reasonable
+                       quivered weapons */
+                    wornmask = 0L;
+                }
+            }
+        }
+
+        if (blessedeffect || wornmask || obj->otyp == LOADSTONE ||
+            (obj->otyp == LEASH && obj->leashmon)) {
+            if (confusable && Confusion)
+                blessorcurse(obj, 2, rng_main);
+            else
+                uncurse(obj);
+        }
+    }
+    update_inventory();
+}
+
 int
 seffects(struct obj *sobj, boolean *known)
 {
@@ -846,8 +896,6 @@ seffects(struct obj *sobj, boolean *known)
     case SCR_REMOVE_CURSE:
     case SPE_REMOVE_CURSE:
         {
-            struct obj *obj;
-
             if (confused)
                 if (Hallucination)
                     pline("You feel the power of the Force against you!");
@@ -861,51 +909,12 @@ seffects(struct obj *sobj, boolean *known)
             if (sobj->cursed) {
                 pline("The scroll disintegrates.");
             } else {
-                for (obj = invent; obj; obj = obj->nobj) {
-                    long wornmask;
-
-                    /* gold isn't subject to cursing and blessing */
-                    if (obj->oclass == COIN_CLASS)
-                        continue;
-
-                    wornmask = obj->owornmask & W_MASKABLE;
-                    if (wornmask && !sobj->blessed) {
-                        /* handle a couple of special cases; we don't allow
-                           auxiliary weapon slots to be used to artificially
-                           increase number of worn items */
-                        if (obj == uswapwep) {
-                            if (!u.twoweap)
-                                wornmask = 0L;
-                        } else if (obj == uquiver) {
-                            if (obj->oclass == WEAPON_CLASS) {
-                                /* mergeable weapon test covers ammo, missiles, 
-                                   spears, daggers & knives */
-                                if (!objects[obj->otyp].oc_merge)
-                                    wornmask = 0L;
-                            } else if (obj->oclass == GEM_CLASS) {
-                                /* possibly ought to check whether alternate
-                                   weapon is a sling... */
-                                if (!uslinging())
-                                    wornmask = 0L;
-                            } else {
-                                /* weptools don't merge and aren't reasonable
-                                   quivered weapons */
-                                wornmask = 0L;
-                            }
-                        }
-                    }
-                    if (sobj->blessed || wornmask || obj->otyp == LOADSTONE ||
-                        (obj->otyp == LEASH && obj->leashmon)) {
-                        if (confused)
-                            blessorcurse(obj, 2, rng_main);
-                        else
-                            uncurse(obj);
-                    }
-                }
+                do_uncurse_effect(sobj->blessed, TRUE);
             }
-            if (Punished && !confused)
+            if (Punished && !confused) {
                 unpunish();
-            update_inventory();
+                update_inventory();
+            }
             break;
         }
     case SCR_CREATE_MONSTER:
