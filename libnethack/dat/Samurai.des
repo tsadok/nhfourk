@@ -55,6 +55,32 @@ DOOR:closed,(50,06)
 MONSTER:'@',"Lord Sato",(20,04)
 # The treasure of Lord Sato
 OBJECT:'(',"chest",(20,04)
+# Other goodies
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT:')',"ya",(33,04),uncursed,2
+OBJECT[75%]:')',"ya",(33,04),uncursed,2
+OBJECT[75%]:')',"ya",(33,04),uncursed,2
+OBJECT[75%]:')',"ya",(33,04),uncursed,2
+OBJECT[75%]:')',"ya",(33,04),uncursed,2
+OBJECT[50%]:')',"ya",(33,04),uncursed,2
+OBJECT[50%]:')',"ya",(33,04),uncursed,2
+OBJECT[50%]:')',"ya",(33,04),uncursed,2
+OBJECT[50%]:')',"ya",(33,04),uncursed,2
+OBJECT[25%]:')',"ya",(33,04),uncursed,2
+OBJECT[25%]:')',"ya",(33,04),uncursed,2
+OBJECT[25%]:')',"ya",(33,04),uncursed,2
+OBJECT[25%]:')',"ya",(33,04),uncursed,2
+OBJECT:')',"long sword",(33,04),uncursed,2
 # roshi guards for the audience chamber
 MONSTER:'@',"roshi",(18,04)
 MONSTER:'@',"roshi",(18,05)
@@ -171,7 +197,19 @@ OBJECT:'[',random,(41,06)
 OBJECT:'[',random,(42,06)
 OBJECT:'[',random,(43,06)
 #
-OBJECT:')',random,(27,13)
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT:')',"ya",(27,13),uncursed,2
+OBJECT[75%]:')',"ya",(27,13),uncursed,2
+OBJECT[75%]:')',"ya",(27,13),uncursed,2
+OBJECT[75%]:')',"ya",(27,13),uncursed,2
+OBJECT[75%]:')',"ya",(27,13),uncursed,2
+OBJECT[75%]:')',"ya",(27,13),uncursed,2
 OBJECT:')',random,(28,13)
 OBJECT:')',random,(29,13)
 OBJECT:')',random,(30,13)
@@ -183,7 +221,7 @@ OBJECT:')',random,(30,14)
 OBJECT:'(',random,(37,13)
 OBJECT:'(',random,(38,13)
 OBJECT:'(',random,(39,13)
-OBJECT:'(',random,(40,13)
+OBJECT:'(',"saddle",(40,13)
 OBJECT:'(',random,(37,14)
 OBJECT:'(',random,(38,14)
 OBJECT:'(',random,(39,14)
@@ -292,6 +330,19 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT:')',"ya",random
+OBJECT[50%]:')',"ya",random
+OBJECT[50%]:')',"ya",random
+OBJECT[50%]:')',"ya",random
+OBJECT[50%]:')',"ya",random
+OBJECT[50%]:')',"ya",random
 #
 TRAP:"board",(22,09)
 TRAP:"board",(24,10)
