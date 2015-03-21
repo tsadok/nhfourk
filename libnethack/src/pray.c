@@ -6,6 +6,7 @@
 #include "hack.h"
 #include "epri.h"
 #include "hungerstatus.h"
+#include "alignrec.h"
 
 static struct obj *worst_cursed_item(void);
 static enum pray_trouble in_trouble(void);
@@ -51,11 +52,6 @@ static const char *const godvoices[] = {
     "rings out",
     "booms",
 };
-
-#define PIOUS 20 /* also defined in mcastu.c, make sure they match */
-#define DEVOUT 14
-#define FERVENT 9
-#define STRIDENT 4
 
 /* We could force rehumanize of polyselfed people, but we can't tell
    unintentional shape changes from the other kind. Oh well.

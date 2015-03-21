@@ -4,10 +4,9 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "alignrec.h"
 
 extern const int monstr[];
-
-#define PIOUS 20 /* should match the #define in pray.c */
 
 /* monster mage spells */
 #define MGC_PSI_BOLT    0
