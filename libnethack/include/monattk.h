@@ -78,6 +78,12 @@
 # define AD_SLIM 40     /* turns you into green slime */
 # define AD_ENCH 41     /* remove enchantment (disenchanter) */
 # define AD_CORR 42     /* corrode armor (black pudding) */
+# define AD_OTHER 43    /* Numbers starting here can be used for non-damage
+                         * constants stored in a damage type field, such as the
+                         * field in the artilist that governs what an artifact
+                         * grants when equipped, which in vanilla can only be a
+                         * damage type -- resistance is granted -- but in Fourk
+                         * can now also be an extrinsic.  See artifact.h */
 
 # define AD_CLRC 240    /* random clerical spell */
 # define AD_SPEL 241    /* random magic spell */

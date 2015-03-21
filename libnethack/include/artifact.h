@@ -67,6 +67,8 @@ struct artifact {
 # define CREATE_AMMO    (LAST_PROP+9)
 # define UNCURSE_INVK   (LAST_PROP+10)
 
+/* extrinsic properties supplied when equipped */
+# define ART_EXTR_SPEED (AD_OTHER + 0) /* Tsurugi of Muramasa */
 
 #endif /* ARTIFACT_H */
 
