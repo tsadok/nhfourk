@@ -531,7 +531,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         pline ("You can't write on the %s while embedded therein.",
                surface(u.ux, u.uy));
         return 0;
-    } else if (!accessible(u.ux, u.uy)) {
+    } else if (!accessible(level, u.ux, u.uy)) {
         /* stone, tree, wall, secret corridor, pool, lava, bars */
         pline("You can't write here.");
         return 0;

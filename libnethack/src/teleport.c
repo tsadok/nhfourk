@@ -74,7 +74,7 @@ goodpos(struct level *lev, int x, int y, struct monst *mtmp, unsigned gpflags)
         if (amorphous(mdat) && closed_door(lev, x, y))
             return TRUE;
     }
-    if (!accessible(x,y)) {
+    if (!accessible(lev, x, y)) {
         if (!(is_pool(lev, x, y) && ignorewater))
             return FALSE;
     }

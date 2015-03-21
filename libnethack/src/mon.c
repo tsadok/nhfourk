@@ -1790,7 +1790,8 @@ mondied(struct monst *mdef)
         return; /* lifesaved */
 
     if (corpse_chance(mdef, NULL, FALSE) &&
-        (accessible(mdef->mx, mdef->my) || is_pool(level, mdef->mx, mdef->my)))
+        (accessible(level, mdef->mx, mdef->my) ||
+         is_pool(level, mdef->mx, mdef->my)))
         make_corpse(mdef);
 }
 
@@ -2064,7 +2065,7 @@ xkilled(struct monst *mtmp, int dest)
     if (corpse_chance(mtmp, NULL, FALSE))
         make_corpse(mtmp);
 
-    if (!accessible(x, y) && !is_pool(level, x, y)) {
+    if (!accessible(level, x, y) && !is_pool(level, x, y)) {
         /* might be mimic in wall or corpse in lava */
         redisp = TRUE;
         if (wasinside)

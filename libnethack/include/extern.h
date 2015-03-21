@@ -1171,7 +1171,7 @@ extern boolean monster_would_take_item(struct monst *, struct obj *);
 extern int dochug(struct monst *);
 extern int m_move(struct monst *, int);
 extern boolean closed_door(struct level *lev, int x, int y);
-extern boolean accessible(int, int);
+extern boolean accessible(struct level *, int, int);
 extern void set_apparxy(struct monst *);
 extern boolean can_ooze(struct monst *);
 
