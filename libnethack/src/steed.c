@@ -307,7 +307,8 @@ mount_steed(struct monst * mtmp,        /* The animal */
     }
     if (!force &&
         (Confusion || Fumbling || Glib || Wounded_legs || otmp->cursed ||
-         (u.ulevel + mtmp->mtame < rnd(MAXULEV / 2 + 5)))) {
+         ((u.ulevel + mtmp->mtame < rnd(MAXULEV / 2 + 5)) &&
+          (!Role_if(PM_KNIGHT))))) {
         if (Levitation) {
             pline("%s slips away from you.", Monnam(mtmp));
             return FALSE;
