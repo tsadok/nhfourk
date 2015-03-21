@@ -71,7 +71,8 @@ const struct Role roles[] = {
      PM_PELIAS, PM_CHIEFTAIN, PM_THOTH_AMON,
      PM_OGRE, PM_TROLL, S_OGRE, S_TROLL,
      ART_HEART_OF_AHRIMAN,
-     MH_HUMAN | MH_ORC | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
+     MH_HUMAN | MH_DWARF | MH_ORC | ROLE_MALE | ROLE_FEMALE
+              | ROLE_LAWFUL | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {16, 7, 7, 15, 16, 6},
      {30, 6, 7, 20, 30, 7},
@@ -194,8 +195,8 @@ const struct Role roles[] = {
      PM_ARCH_PRIEST, PM_ACOLYTE, PM_NALZOK,
      PM_HUMAN_ZOMBIE, PM_WRAITH, S_ZOMBIE, S_WRAITH,
      ART_MITRE_OF_HOLINESS,
-     MH_HUMAN | MH_ELF | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL | ROLE_NEUTRAL |
-     ROLE_CHAOTIC,
+     MH_HUMAN | MH_ELF | MH_DWARF | ROLE_MALE | ROLE_FEMALE
+              | ROLE_LAWFUL | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {7, 7, 10, 7, 7, 7},
      {15, 10, 30, 15, 20, 10},
@@ -221,7 +222,7 @@ const struct Role roles[] = {
      PM_MASTER_OF_THIEVES, PM_THUG, PM_MASTER_ASSASSIN,
      PM_LEPRECHAUN, PM_GUARDIAN_NAGA, S_NYMPH, S_NAGA,
      ART_MASTER_KEY_OF_THIEVERY,
-     MH_HUMAN | MH_ORC | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC,
+     MH_HUMAN | MH_ORC | MH_ELF | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {7, 7, 7, 10, 7, 6},
      {20, 10, 10, 30, 20, 10},
@@ -294,7 +295,7 @@ const struct Role roles[] = {
      PM_TWOFLOWER, PM_GUIDE, PM_MASTER_OF_THIEVES,
      PM_GIANT_SPIDER, PM_FOREST_CENTAUR, S_SPIDER, S_CENTAUR,
      ART_YENDORIAN_EXPRESS_CARD,
-     MH_HUMAN | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
+     MH_HUMAN | MH_GNOME | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
      {7, 10, 6, 7, 7, 10},
      {15, 10, 10, 15, 30, 20},
@@ -318,7 +319,7 @@ const struct Role roles[] = {
      PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
      PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
      ART_ORB_OF_FATE,
-     MH_HUMAN | MH_DWARF | ROLE_FEMALE | ROLE_LAWFUL | ROLE_NEUTRAL,
+     MH_HUMAN | ROLE_FEMALE | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
      {10, 7, 7, 7, 10, 7},
      {30, 6, 7, 20, 30, 7},
