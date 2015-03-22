@@ -57,28 +57,7 @@ MONSTER:'@',"Lord Sato",(20,04)
 OBJECT:'(',"chest",(20,04)
 # Other goodies
 OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT:')',"ya",(33,04),uncursed,2
-OBJECT[75%]:')',"ya",(33,04),uncursed,2
-OBJECT[75%]:')',"ya",(33,04),uncursed,2
-OBJECT[75%]:')',"ya",(33,04),uncursed,2
-OBJECT[75%]:')',"ya",(33,04),uncursed,2
 OBJECT[50%]:')',"ya",(33,04),uncursed,2
-OBJECT[50%]:')',"ya",(33,04),uncursed,2
-OBJECT[50%]:')',"ya",(33,04),uncursed,2
-OBJECT[50%]:')',"ya",(33,04),uncursed,2
-OBJECT[25%]:')',"ya",(33,04),uncursed,2
-OBJECT[25%]:')',"ya",(33,04),uncursed,2
-OBJECT[25%]:')',"ya",(33,04),uncursed,2
 OBJECT[25%]:')',"ya",(33,04),uncursed,2
 OBJECT:')',"long sword",(33,04),uncursed,2
 # roshi guards for the audience chamber
@@ -198,18 +177,7 @@ OBJECT:'[',random,(42,06)
 OBJECT:'[',random,(43,06)
 #
 OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT:')',"ya",(27,13),uncursed,2
-OBJECT[75%]:')',"ya",(27,13),uncursed,2
-OBJECT[75%]:')',"ya",(27,13),uncursed,2
-OBJECT[75%]:')',"ya",(27,13),uncursed,2
-OBJECT[75%]:')',"ya",(27,13),uncursed,2
-OBJECT[75%]:')',"ya",(27,13),uncursed,2
+OBJECT[50%]:')',"ya",(27,13),uncursed,2
 OBJECT:')',random,(28,13)
 OBJECT:')',random,(29,13)
 OBJECT:')',random,(30,13)
@@ -330,17 +298,6 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT:')',"ya",random
-OBJECT[50%]:')',"ya",random
-OBJECT[50%]:')',"ya",random
-OBJECT[50%]:')',"ya",random
 OBJECT[50%]:')',"ya",random
 OBJECT[50%]:')',"ya",random
 #
