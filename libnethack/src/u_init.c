@@ -50,6 +50,7 @@ static const struct trobj Archeologist[] = {
     {TINNING_KIT, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {TOUCHSTONE, 0, GEM_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
+    {TIN_OPENER, 0, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
 };
 
@@ -74,6 +75,7 @@ static const struct trobj Cave_man[] = {
 };
 
 static const struct trobj Healer[] = {
+#define H_LEAF  9
     {SCALPEL, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {LEATHER_GLOVES, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
     {STETHOSCOPE, 0, TOOL_CLASS, 1, 0},
@@ -84,6 +86,7 @@ static const struct trobj Healer[] = {
     {SPE_HEALING, 0, SPBOOK_CLASS, 1, 1},
     {SPE_EXTRA_HEALING, 0, SPBOOK_CLASS, 1, 1},
     {SPE_STONE_TO_FLESH, 0, SPBOOK_CLASS, 1, 1},
+    {EUCALYPTUS_LEAF, 0, FOOD_CLASS, 6, 1},
     {APPLE, 0, FOOD_CLASS, 5, 0},
     {0, 0, 0, 0, 0}
 };
@@ -132,7 +135,7 @@ static const struct trobj Ranger[] = {
 #define RAN_TWO_ARROWS  2
 #define RAN_ZERO_ARROWS 3
     {DAGGER, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
-    {BOW, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
+    {BOW, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     {ARROW, 2, WEAPON_CLASS, 50, UNDEF_BLESS},
     {ARROW, 0, WEAPON_CLASS, 30, UNDEF_BLESS},
     {CLOAK_OF_DISPLACEMENT, 2, ARMOR_CLASS, 1, UNDEF_BLESS},
@@ -148,14 +151,15 @@ static const struct trobj Rogue[] = {
     {POT_SICKNESS, 0, POTION_CLASS, 1, 0},
     {LOCK_PICK, 9, TOOL_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
+    {BLINDFOLD, 0, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
 };
 
 static const struct trobj Samurai[] = {
 #define S_ARROWS        3
     {KATANA, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
-    {SHORT_SWORD, 0, WEAPON_CLASS, 1, UNDEF_BLESS},     /* wakizashi */
-    {YUMI, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
+    {SHORT_SWORD, 2, WEAPON_CLASS, 1, UNDEF_BLESS},     /* wakizashi */
+    {YUMI, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
     {YA, 0, WEAPON_CLASS, 25, UNDEF_BLESS},     /* variable quan */
     {SPLINT_MAIL, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
@@ -174,16 +178,17 @@ static const struct trobj Tourist[] = {
 };
 
 static const struct trobj Valkyrie[] = {
-    {LONG_SWORD, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
+#define V_SPELL 3
+    {SPEAR, 3, WEAPON_CLASS, 1, UNDEF_BLESS},
     {DAGGER, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 3, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {SPE_FORCE_BOLT, 0, SPBOOK_CLASS, 1, 1},
     {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
+    {OIL_LAMP, 1, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
 };
 
 static const struct trobj Wizard[] = {
-#define W_MULTSTART     2
-#define W_MULTEND       6
     {QUARTERSTAFF, 1, WEAPON_CLASS, 1, 1},
     {CLOAK_OF_MAGIC_RESISTANCE, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {UNDEF_TYP, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
@@ -191,7 +196,9 @@ static const struct trobj Wizard[] = {
     {UNDEF_TYP, UNDEF_SPE, POTION_CLASS, 3, UNDEF_BLESS},
     {UNDEF_TYP, UNDEF_SPE, SCROLL_CLASS, 3, UNDEF_BLESS},
     {SPE_FORCE_BOLT, 0, SPBOOK_CLASS, 1, 1},
+    {SPE_MAGIC_MISSILE, 0, SPBOOK_CLASS, 1, 1},
     {UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS},
+    {MAGIC_MARKER, UNDEF_SPE, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
 };
 
@@ -201,6 +208,27 @@ static const struct trobj Wizard[] = {
 
 static const struct trobj Tinopener[] = {
     {TIN_OPENER, 0, TOOL_CLASS, 1, 0},
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj GnomeStuff[] = {
+    {AKLYS, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
+    /*  {CROSSBOW_BOLT, 2, WEAPON_CLASS, 12, UNDEF_BLESS}, */
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj Boomer[] = {
+    {BOOMERANG, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj Shuri[] = {
+    {SHURIKEN, 0, WEAPON_CLASS, 12, UNDEF_BLESS},
+    {0, 0, 0, 0, 0}
+};
+
+static struct trobj PBook[] = {
+    {SPE_LIGHT, 0, SPBOOK_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
