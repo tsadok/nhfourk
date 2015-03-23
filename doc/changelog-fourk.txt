@@ -44,6 +44,11 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The Oracle can now sell you enlightenment, in addition to the
+   other services.
+
+ * Monkeys are better at stealing things and getting away.
+
  * Additional rocks are sometimes generated on the floor of rooms.
    This is mainly a balance change, to prevent sling users from
    trivially running out of ammo -- sling has to have _some_ kind
