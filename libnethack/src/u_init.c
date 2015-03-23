@@ -767,10 +767,6 @@ u_init_inv_skills(void)
         break;
     case PM_WIZARD:
         role_ini_inv(Wizard, nclist);
-        if (!rolern2(5))
-            role_ini_inv(Magicmarker, nclist);
-        if (!rolern2(5))
-            role_ini_inv(Blindfold, nclist);
         skill_init(Skill_W);
         break;
 
