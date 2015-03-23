@@ -654,7 +654,7 @@ u_init_inv_skills(void)
         break;
     case PM_CAVEMAN:
         trobj_list = copy_trobj_list(Cave_man);
-        trobj_list[C_AMMO].trquan = 10 + rolern2(11);
+        trobj_list[C_AMMO].trquan = 20 + rolern2(11);
         role_ini_inv(trobj_list, nclist);
         skill_init(Skill_C);
         break;
