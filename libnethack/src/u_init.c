@@ -757,9 +757,10 @@ u_init_inv_skills(void)
         skill_init(Skill_T);
         break;
     case PM_VALKYRIE:
-        role_ini_inv(Valkyrie, nclist);
-        if (!rolern2(6))
-            role_ini_inv(Lamp, nclist);
+        trobj_list = copy_trobj_list(Valkyrie);
+        if (!rolern2(3))
+            trobj_list[V_SPELL].trotyp = SPE_MAGIC_MISSILE;
+        role_ini_inv(trobj_list, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
