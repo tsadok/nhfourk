@@ -161,6 +161,7 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
     case 0:    /* just check for worn speed boots */
         break;
     case -1:
+        mon->mnitro = 0;
         if (mon->permspeed == MFAST)
             mon->permspeed = 0;
         else
@@ -168,10 +169,12 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
         break;
     case -2:
         mon->permspeed = MSLOW;
+        mon->mnitro = 0;
         give_msg = FALSE;       /* (not currently used) */
         break;
     case -3:   /* petrification */
         /* take away intrinsic speed but don't reduce normal speed */
+        mon->mnitro = 0;
         if (mon->permspeed == MFAST)
             mon->permspeed = 0;
         petrify = TRUE;

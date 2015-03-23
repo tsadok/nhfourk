@@ -262,7 +262,9 @@ mstatusline(struct monst *mtmp)
         info = msgcat(info, ", scared");
     if (mtmp->mtrapped)
         info = msgcat(info, ", trapped");
-    if (mtmp->mspeed)
+    if (mtmp->mnitro)
+        info = msgcat(info, ", frantic");
+    else if (mtmp->mspeed)
         info = msgcat(info,
                       mtmp->mspeed == MFAST ? ", fast" :
                       mtmp->mspeed == MSLOW ? ", slow" : ", ???? speed");

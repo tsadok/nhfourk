@@ -2142,7 +2142,7 @@ restore_mon(struct memfile *mf)
     mon->mtrapped = (mflags >> 8) & 1;
     mon->mleashed = (mflags >> 7) & 1;
     mon->msuspicious = (mflags >> 6) & 1;
-    /* 1 free bit */
+    mon->mnitro = (mflags >> 5) & 1;
     mon->isshk = (mflags >> 4) & 1;
     mon->isminion = (mflags >> 3) & 1;
     mon->isgd = (mflags >> 2) & 1;
@@ -2264,7 +2264,7 @@ save_mon(struct memfile *mf, const struct monst *mon)
         (mon->mstun << 11) | (mon->mconf << 10) | (mon->mpeaceful << 9) |
         (mon->mtrapped << 8) | (mon->mleashed << 7) |
         (mon->msuspicious << 6) |
-        /* 1 free bit */
+        (mon->mnitro << 5) |
         (mon->isshk << 4) |
         (mon->isminion << 3) | (mon->isgd << 2) |
         (mon->ispriest << 1) | (mon->iswiz << 0); /* savemap: ignore */

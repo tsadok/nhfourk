@@ -527,6 +527,11 @@ mcalcmove(struct monst *mon)
     else if (mon->mspeed == MFAST)
         mmove = (4 * mmove + 2) / 3;
 
+    if (mon->mnitro) {
+        mmove += (mon->mspeed == MSLOW) ? 12 : 24; /* Too much? */
+        mon->mnitro = 0;
+    }
+
     if (mon == u.usteed) {
         /* This used to have a flags.mv check, but that has been conclusively
            been shown to be a) abusable, and b) really confusing in practice.

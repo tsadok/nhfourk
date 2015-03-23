@@ -238,7 +238,7 @@ gotobj:
             if (monkey_business) {
                 /* animals usually don't have enough patience to take off items 
                    which require extra time */
-                if (armordelay >= 1 && rn2(10))
+                if (armordelay >= 1 && rn2(4))
                     goto cant_take;
                 remove_worn_item(otmp, TRUE);
                 break;
@@ -302,6 +302,9 @@ gotobj:
     could_petrify = (otmp->otyp == CORPSE &&
                      touch_petrifies(&mons[otmp->corpsenm]));
     mpickobj(mtmp, otmp);       /* may free otmp */
+    if (monkey_business) {
+        mtmp->mnitro = 1; /* single burst of extra movement to get away */
+    }
     if (could_petrify && !(mtmp->misc_worn_check & W_MASK(os_armg))) {
         minstapetrify(mtmp, TRUE);
         return -1;
