@@ -643,13 +643,11 @@ u_init_inv_skills(void)
         break;
     case PM_BARBARIAN:
         trobj_list = copy_trobj_list(Barbarian);
-        if (!rolern2(100)) {
+        if (rolern2(4)) {
             trobj_list[B_MAJOR].trotyp = BATTLE_AXE;
             trobj_list[B_MINOR].trotyp = SHORT_SWORD;
         }
         role_ini_inv(trobj_list, nclist);
-        if (!rolern2(6))
-            role_ini_inv(Lamp, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_B);
