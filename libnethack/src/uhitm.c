@@ -5,6 +5,7 @@
 
 #include "hack.h"
 #include "eshk.h"
+#include "alignrec.h"
 
 static boolean known_hitum(struct monst *, int *, const struct attack *, schar,
                            schar);
@@ -946,7 +947,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         tmp += dice(2, (obj == uwep) ? 10 : 2); /* [was in dmgval()] */
         pline("You joust %s%s", mon_nam(mon),
               canseemon(mon) ? exclam(tmp) : ".");
-        if (jousting < 0) {
+        if ((jousting < 0) &&
+            !(Role_if(PM_KNIGHT) && u.ualign.record >= DEVOUT)) {
             pline("Your %s shatters on impact!", xname(obj));
             /* (must be either primary or secondary weapon to get here) */
             u.twoweap = FALSE;  /* untwoweapon() is too verbose here */
