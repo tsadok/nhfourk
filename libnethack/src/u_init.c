@@ -743,17 +743,17 @@ u_init_inv_skills(void)
         break;
     case PM_TOURIST:
         trobj_list = copy_trobj_list(Tourist);
-        trobj_list[T_DARTS].trquan = 21 + rolern2(20);
+        trobj_list[T_DARTS].trquan = 35 + rolern2(20);
         u.umoney0 = 1 + rolern2(1000);
         role_ini_inv(trobj_list, nclist);
-        if (!rolern2(25))
+        if (!rolern2(4))
             role_ini_inv(Tinopener, nclist);
-        else if (!rolern2(25))
+        else if (!rolern2(3))
             role_ini_inv(Leash, nclist);
-        else if (!rolern2(25))
+        else if (!rolern2(2))
             role_ini_inv(Towel, nclist);
-        else if (!rolern2(25))
-            role_ini_inv(Magicmarker, nclist);
+        else
+            role_ini_inv(Lamp, nclist);
         skill_init(Skill_T);
         break;
     case PM_VALKYRIE:
