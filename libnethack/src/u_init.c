@@ -723,11 +723,9 @@ u_init_inv_skills(void)
         break;
     case PM_ROGUE:
         trobj_list = copy_trobj_list(Rogue);
-        trobj_list[R_DAGGERS].trquan = 6 + rolern2(10);
+        trobj_list[R_DAGGERS].trquan = 8 + rolern2(8);
         u.umoney0 = 0;
         role_ini_inv(trobj_list, nclist);
-        if (!rolern2(5))
-            role_ini_inv(Blindfold, nclist);
         knows_object(SACK);
         skill_init(Skill_R);
         break;
