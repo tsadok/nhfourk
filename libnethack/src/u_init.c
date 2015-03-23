@@ -790,7 +790,7 @@ u_init_inv_skills(void)
            Non-warriors get an instrument.  We use a kludge to get only
            non-magic instruments. */
         static const int trotyp[] = {
-            WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP, BELL, BUGLE, LEATHER_DRUM
+            WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP, LEATHER_DRUM
         };
         if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
             trobj_list = copy_trobj_list(Instrument);
@@ -824,6 +824,7 @@ u_init_inv_skills(void)
         break;
 
     case PM_GNOME:
+        ini_inv(GnomeStuff, nclist, rng_main);
         break;
 
     case PM_ORC:
@@ -1006,6 +1007,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                    || (otyp == SCR_ENCHANT_WEAPON && Role_if(PM_MONK))
                    /* wizard patch -- they already have one */
                    || (otyp == SPE_FORCE_BOLT && Role_if(PM_WIZARD))
+                   || (otyp == SPE_MAGIC_MISSILE && Role_if(PM_WIZARD))
                    /* powerful spells are either useless to low level players
                       or unbalancing; also spells in restricted skill
                       categories */
