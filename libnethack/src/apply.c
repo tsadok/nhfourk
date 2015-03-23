@@ -2998,6 +2998,8 @@ doapply(const struct nh_cmd_arg *arg)
                           hcolor("brown"));
                     obj->bknown = 1;
                 }
+                if (obj->quan > 1L)
+                    obj = splitobj(obj, 1L);
                 unbless(obj);
             }
         } else {
