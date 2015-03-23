@@ -700,10 +700,13 @@ u_init_inv_skills(void)
         break;
     case PM_PRIEST:
         role_ini_inv(Priest, nclist);
-        if (!rolern2(10))
+        if (!rolern2(5))
             role_ini_inv(Magicmarker, nclist);
-        else if (!rolern2(10))
-            role_ini_inv(Lamp, nclist);
+        else {
+            if (!rolern2(2)) 
+                PBook[0].trotyp = SPE_PROTECTION;
+            role_ini_inv(PBook, nclist);
+        }
         knows_object(POT_WATER);
         skill_init(Skill_P);
         /* KMH, conduct -- Some may claim that this isn't agnostic, since they
