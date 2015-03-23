@@ -660,9 +660,9 @@ u_init_inv_skills(void)
         break;
     case PM_HEALER:
         u.umoney0 = 1001 + rolern2(1000);
-        role_ini_inv(Healer, nclist);
-        if (!rolern2(25))
-            role_ini_inv(Lamp, nclist);
+        trobj_list = copy_trobj_list(Healer);
+        trobj_list[H_LEAF].trquan = 6 + rolern2(6);
+        role_ini_inv(trobj_list, nclist);
         knows_object(POT_FULL_HEALING);
         skill_init(Skill_H);
         break;
