@@ -752,6 +752,12 @@ skip0:
             x = somex(croom, mrng());
             mkcorpstat(STATUE, NULL, NULL, lev, x, y, TRUE, mrng());
         }
+        /* and some rocks */
+        if (!mrn2(7)) {
+            y = somey(croom, mrng());
+            x = somex(croom, mrng());
+            mksobj_at(ROCK, lev, x, y, TRUE, FALSE, mrng());
+        }
         /* put box/chest inside; 40% chance for at least 1 box, regardless of
            number of rooms; about 5 - 7.5% for 2 boxes, least likely when few
            rooms; chance for 3 or more is neglible. */

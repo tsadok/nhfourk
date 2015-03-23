@@ -44,11 +44,50 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Additional rocks are sometimes generated on the floor of rooms.
+   This is mainly a balance change, to prevent sling users from
+   trivially running out of ammo -- sling has to have _some_ kind
+   of advantage, as it's worse than other ranged weapons in most
+   ways.  However, it also makes flavor sense, IMO, to have a lot
+   of rocks laying around.
+
+ * Wands of wishing are no longer rechargeable.
+
+ * Role rebalance, round one.
+   + Starting inventory has been adjusted for some roles: a bit more
+     ammo or an additional spell book; low-percentage-chance items are
+     either guranteed or removed, or you get a consolation prize if
+     you don't get them; healers get eucalyptus; some roles get small
+     enchantment adjustments on starting equipment.
+   + Several role/race and role/alignment combinations are permitted
+     that previously were not, and in one case vice versa.
+   + The Barbarian role has had its melee skill options and quest
+     artifact buffed.  (The Heart can now be invoked for a
+     remove-curse effect; Barbarians get the blessed remove curse
+     effect; other roles get the uncursed effect.)
+   + Valkyries, Knights, and Samurai have had their melee prowess
+     reduced a bit (so that their melee options are worse than
+     Barbarians) but are compensated in other ways.
+     - Valkyries now start with a +3 spear and an attack spell and can
+       find a spellbook of cone of cold on quest home.  Their casting
+       abilities still need to be balanced so they can use attack
+       spells without becomming general-purpose casters.  I may need
+       to give them starting skill in attack, we'll see.
+     - Knights can now get expert in crossbow, can find spare lances
+       and a spare saddle on quest home, will not fall off and die
+       when mounting their pony on turn 1, and will not break their
+       lance while jousting if at least devoutly aligned.  Figuring
+       out how to get to devout as early as possible under the Fourk
+       alignment record formula is left as an exercise.
+     - Samurai are guaranteed a longsword and some replacement ya and
+       a saddle on the quest, and the Tsurugi now provides extrinsic
+       speed when wielded.
+
  * Pulled in about fifty fixes for various vanilla bugs from an
-   upstream "4.3 maintenance" branch.  The upstream master hasn't
-   merged these changes yet for reasons involving release timing,
-   but Fourk is at a different place in its dev cycle that makes
-   them appropriate now.
+   upstream "4.3 maintenance" branch.  The upstream master branch
+   hasn't merged these changes yet for reasons involving release
+   timing, but Fourk is at a different place in its dev cycle that
+   makes them appropriate now.
 
  * The luck penalty in Sokoban can now be avoided by carrying a
    non-cursed luckstone or by hallucinating.  Also, the Sokoban luck
@@ -78,17 +117,17 @@ Chronological Changelog (most recent at top):
    items, which is most often a scroll of scare monster but can also
    be wolfsbane, eucalytus, or a wand of enlightenment.
 
- * The ever controversial Acehack/NetHack4 floating eye behavior
-   (wherein you can't melee them at all) has been replaced with a new
-   behavior that will probably be equally controversial but hopefully
-   more interesting:  whatever hp damage you do to the floating eye
-   you also sustain yourself, amplified proprortionally to your own
-   experience level.  The exact formula may need to be tweaked,
-   pending play testing.  The formula for monster-vs-monster is
-   different from the formula for player-vs-monster, not because I
-   think it should be, but because rebalancing player hitpoints vs
-   monster hitpoints is a larger change that I didn't want to rush
-   into yet.
+ * The ever controversial and rather boring Acehack/NetHack4 floating
+   eye behavior (wherein you can't melee them at all) has been
+   replaced with a new behavior that will probably be equally
+   controversial but hopefully more interesting:  whatever hp damage
+   you do to the floating eye you also sustain yourself, amplified
+   proprortionally to your own experience level.  The exact formula
+   may need to be tweaked, pending play testing.  The formula for
+   monster-vs-monster is different from the formula for
+   player-vs-monster, not because I think it should be, but because
+   rebalancing player hitpoints vs monster hitpoints is a larger
+   change that I didn't want to rush into yet.
 
  * Insteadeath by poison when you could have survived the damage
    will now only drain a level rather than killing you outright,
@@ -99,11 +138,11 @@ Chronological Changelog (most recent at top):
    to survive the damage that it does, or if you are running around
    at XL1 or XL2 past turn 500.)
 
- * The supply of rocks has been increased, because slings are bad
-   enough, compared to other launchers, without having to constantly
-   worry about running out of rocks (which aren't even supposed to
-   be the primary ammo; they're what you use when you're trying to
-   conserve or have run out of flint and glass).
+ * The supply of rocks (embedded within the rock) has been increased,
+   because slings are bad enough, compared to other launchers, without
+   having to constantly worry about running out of rocks (which aren't
+   even supposed to be the primary ammo; they're what you use when
+   you're trying to conserve or have run out of flint and glass).
 
  * The Wizard of Yendor now has an attack that can change your
    alignment (law/neu/cha), but this effect is blocked if you are
