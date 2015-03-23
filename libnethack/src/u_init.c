@@ -691,8 +691,10 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         if (!rolern2(5))
             role_ini_inv(Magicmarker, nclist);
-        else if (!rolern2(10))
+        else {
             role_ini_inv(Lamp, nclist);
+            role_ini_inv(Shuri, nclist);
+        }
         knows_class(ARMOR_CLASS);
         skill_init(Skill_Mon);
         break;
