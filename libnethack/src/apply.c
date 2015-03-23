@@ -93,15 +93,21 @@ use_camera(struct obj *obj, const struct nh_cmd_arg *arg)
 static int
 use_towel(struct obj *obj)
 {
+    long old;
+
     if (!freehand()) {
         pline("You have no free %s!", body_part(HAND));
         return 0;
     } else if (obj->owornmask & W_WORN) {
         pline("You cannot use it while you're wearing it!");
         return 0;
+    } else if (obj->greased) {
+        old = Glib;
+        Glib += rn1(10, 3);
+        pline("Your %s %s!", makeplural(body_part(HAND)),
+              (old ? "are filthier than ever" : "get slimy"));
+        return 1;
     } else if (obj->cursed) {
-        long old;
-
         switch (rn2(3)) {
         case 2:
             old = Glib;
