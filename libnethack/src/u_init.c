@@ -731,10 +731,12 @@ u_init_inv_skills(void)
         break;
     case PM_SAMURAI:
         trobj_list = copy_trobj_list(Samurai);
-        trobj_list[S_ARROWS].trquan = 26 + rolern2(20);
+        trobj_list[S_ARROWS].trquan = 36 + rolern2(16);
         role_ini_inv(trobj_list, nclist);
-        if (!rolern2(5))
+        if (!rolern2(2))
             role_ini_inv(Blindfold, nclist);
+        else
+            role_ini_inv(Shuri, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_S);
