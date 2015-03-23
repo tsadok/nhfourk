@@ -1209,6 +1209,9 @@ light_cocktail(struct obj *obj)
         return 0;
     }
 
+    if (obj->quan > 1L)
+        obj = splitobj(obj, 1L);
+
     pline("You light %s potion.%s", shk_your(obj),
           Blind ? "" : "  It gives off a dim light.");
     if (obj->unpaid && costly_spot(u.ux, u.uy)) {
