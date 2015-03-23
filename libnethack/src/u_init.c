@@ -633,12 +633,10 @@ u_init_inv_skills(void)
     switch (Role_switch) {
     case PM_ARCHEOLOGIST:
         role_ini_inv(Archeologist, nclist);
-        if (!rolern2(10))
-            role_ini_inv(Tinopener, nclist);
-        else if (!rolern2(4))
+        if (!rolern2(2))
             role_ini_inv(Lamp, nclist);
-        else if (!rolern2(10))
-            role_ini_inv(Magicmarker, nclist);
+        else
+            role_ini_inv(Boomer, nclist);
         knows_object(SACK);
         knows_object(TOUCHSTONE);
         skill_init(Skill_A);
