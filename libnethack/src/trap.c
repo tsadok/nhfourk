@@ -744,7 +744,8 @@ dotrap(struct trap *trap, unsigned trflags)
         trap->once = 1;
         feeltrap(trap);
         pline("An arrow shoots out at you!");
-        otmp = mksobj(level, ARROW, TRUE, FALSE, rng_main);
+        otmp = mksobj(level, ((Inhell && !rn2(3)) ? SILVER_ARROW : ARROW),
+                      TRUE, FALSE, rng_main);
         otmp->quan = 1L;
         otmp->owt = weight(otmp);
         otmp->opoisoned = 0;
@@ -1838,7 +1839,8 @@ mintrap(struct monst *mtmp)
                 break;
             }
             trap->once = 1;
-            otmp = mksobj(lev, ARROW, TRUE, FALSE, rng_main);
+            otmp = mksobj(lev, ((Inhell && !rn2(3)) ? SILVER_ARROW : ARROW),
+                          TRUE, FALSE, rng_main);
             otmp->quan = 1L;
             otmp->owt = weight(otmp);
             otmp->opoisoned = 0;
@@ -3259,7 +3261,9 @@ untrap_prob(struct trap *ttmp)
 void
 cnv_trap_obj(struct level *lev, int otyp, int cnt, struct trap *ttmp)
 {
-    struct obj *otmp = mksobj(lev, otyp, TRUE, FALSE, rng_main);
+    struct obj *otmp;
+    otmp = mksobj(lev, superioritem((struct monst *) 0, otyp),
+                  TRUE, FALSE, rng_main);
 
     otmp->quan = cnt;
     otmp->owt = weight(otmp);

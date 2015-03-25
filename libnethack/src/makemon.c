@@ -159,6 +159,58 @@ m_initthrow(struct monst *mtmp, int otyp, int oquan, enum rng rng)
     mpickobj(mtmp, otmp);
 }
 
+static int
+rodneyitem(enum rng rng)
+{
+    switch(rn2_on_rng(30, rng)) {
+    case 1:
+        return MAGIC_MARKER;
+    case 2:
+        return WAN_DEATH;
+    case 3:
+        return WAN_TELEPORTATION;
+    case 4:
+        return ATHAME;
+    case 5:
+        return TALLOW_CANDLE;
+    case 6:
+    case 7:
+        return WAX_CANDLE;
+    case 8:
+        return LUMP_OF_ROYAL_JELLY;
+    case 9:
+        return T_SHIRT;
+    case 10:
+        return RIN_LEVITATION;
+    case 11:
+        return SCR_CHARGING;
+    case 12:
+        return RIN_CONFLICT;
+    case 13:
+        return RIN_POLYMORPH;
+    case 14:
+        return RIN_FREE_ACTION;
+    case 15:
+        return RIN_POLYMORPH_CONTROL;
+    case 16:
+        return BAG_OF_HOLDING;
+    case 17:
+        return OILSKIN_SACK;
+    case 18:
+        return ROBE;
+    case 19:
+        return SPE_MAGIC_MISSILE;
+    case 20:
+        return SPE_FINGER_OF_DEATH;
+    case 21:
+        return SPE_JUMPING;
+    case 22:
+        return SPE_EXTRA_HEALING;
+    default:
+        return FAKE_AMULET_OF_YENDOR;
+    }
+}
+
 static void
 m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
 {
@@ -177,6 +229,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
  *      centaurs get some sort of bow & arrows or bolts
  *      soldiers get all sorts of things.
  *      kops get clubs & cream pies.
+ *      the Wizard of Yendor gets various stuff
  */
     switch (ptr->mlet) {
     case S_GIANT:
@@ -184,7 +237,11 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             mongets(mtmp, (mm != PM_ETTIN) ? BOULDER : CLUB, rng);
         break;
     case S_HUMAN:
-        if (is_mercenary(ptr)) {
+        if (mtmp->iswiz) {
+            mongets(mtmp, rodneyitem(rng), rng);
+            if (!rn2_on_rng(3, rng))
+                mongets(mtmp, rodneyitem(rng), rng);
+        } else if (is_mercenary(ptr)) {
             int w1 = 0, w2 = 0;
 
             switch (mm) {
@@ -1590,6 +1647,96 @@ grow_up(struct monst *mtmp,   /* `mtmp' might "grow up" into a bigger version */
 }
 
 
+/* Gehennom Fun Patch:  In Gehennom, certain objects may get upgraded. */
+int
+superioritem(struct monst *mon, int original)
+{
+    int superioritem = original;
+    int nosilver = (mon && hates_silver(mon->data)) ? 1 : 0;
+    if (!Inhell)
+        return original;
+    /* Note: I'm sure some of these probabilities will need tweaked. */
+    switch (original) {
+    /* I haven't implemented steel sabers in NetHack Fourk. */
+    // case STEEL_SABER:
+    //    return nosilver ? original : SILVER_SABER;
+    //    /* In practice, I don't think anything that fears silver ever gets
+    //     * a saber in the first place, so this one always upgrades.  That's
+    //     * intended.  Steel sabers only exist to make the silver version
+    //     * harder to find outside Gehennom. */
+    case ARROW:
+        return (nosilver || rn2_on_rng(4, rng_superior_item))
+            ? original : SILVER_ARROW;
+    /* I haven't implemented silver darts in NetHack Fourk. */
+    // case DART:
+    //     return (nosilver || rn2_on_rng(4, rng_superior_item))
+    //         ? original : SILVER_DART;
+    case SPEAR:
+        return (nosilver || rn2_on_rng(4, rng_superior_item))
+            ? original : SILVER_SPEAR;
+    case DAGGER:
+        return (nosilver || rn2_on_rng(6, rng_superior_item))
+            ? original : SILVER_DAGGER;
+    case LONG_SWORD:
+        return rn2_on_rng(4, rng_superior_item) ? original : KATANA;
+    case ORCISH_HELM:
+    case DWARVISH_IRON_HELM:
+    case DENTED_POT:
+    case HELMET:
+        switch (rn2_on_rng(8, rng_superior_item)) {
+        case 1:
+            superioritem = DUNCE_CAP;
+            break;
+        case 2:
+            superioritem = HELM_OF_OPPOSITE_ALIGNMENT;
+            break;
+        case 3:
+            superioritem = HELM_OF_TELEPATHY;
+            break;
+        case 4:
+            superioritem = CORNUTHAUM;
+            break;
+        case 5:
+            superioritem = ELVEN_LEATHER_HELM;
+            break;
+        case 6:
+            superioritem = HELM_OF_BRILLIANCE;
+            break;
+        default:
+            return original;
+        }
+        return rn2_on_rng(25, rng_superior_item)
+            ? original : superioritem;
+    case PLATE_MAIL:
+    case SPLINT_MAIL:
+    case BANDED_MAIL:
+    case CHAIN_MAIL:
+    case SCALE_MAIL:
+    case RING_MAIL:
+        switch (rn2_on_rng(8, rng_superior_item)) {
+        case 1:
+            superioritem = T_SHIRT;
+            break;
+        case 2:
+            superioritem = BLACK_DRAGON_SCALE_MAIL;
+            break;
+        case 3:
+            superioritem = SILVER_DRAGON_SCALE_MAIL;
+            break;
+        case 4:
+            superioritem = GRAY_DRAGON_SCALE_MAIL;
+            break;
+        default:
+            superioritem = T_SHIRT;
+        }
+        return rn2_on_rng(25, rng_superior_item)
+            ? original : superioritem;
+    default:
+        return original;
+    }
+}
+
+
 int
 mongets(struct monst *mtmp, int otyp, enum rng rng)
 {
@@ -1598,9 +1745,16 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
 
     if (!otyp)
         return 0;
-    otmp = mksobj(mtmp->dlevel, otyp, TRUE, FALSE, rng);
+
+    otmp = mksobj(mtmp->dlevel, superioritem(mtmp, otyp), TRUE, FALSE, rng);
 
     if (otmp) {
+        if (Inhell) { /* GFP: monster items in Gehennom tend to be better */
+            if ((otmp->oclass == WEAPON_CLASS) || 
+                (otmp->oclass == ARMOR_CLASS)) {
+                otmp->spe += rn2_on_rng(3, rng);
+            }
+        }
         if (mtmp->data->mlet == S_DEMON) {
             /* demons never get blessed objects */
             if (otmp->blessed)
@@ -1628,11 +1782,12 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
         }
 
         /* leaders don't tolerate inferior quality battle gear */
+        /* Gehennom Fun Patch:  this is especially so in Gehennom. */
         if (is_prince(mtmp->data)) {
             if (otmp->oclass == WEAPON_CLASS && otmp->spe < 1)
-                otmp->spe = 1;
+                otmp->spe = Inhell ? (1 + rn2_on_rng(3, rng)) : 1;
             else if (otmp->oclass == ARMOR_CLASS && otmp->spe < 0)
-                otmp->spe = 0;
+                otmp->spe = Inhell ? rn2_on_rng(3, rng) : 0;
         }
 
         spe = otmp->spe;

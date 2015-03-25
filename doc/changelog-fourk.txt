@@ -45,6 +45,13 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The Wizard of Yendor gets more starting inventory now.  Some
+   of it might actually be useful at that stage of the game.
+
+ * Cherry-picked the "monsters get better equipment in Gehennom"
+   feature from the Gehennom Fun Patch.  Also, arrow traps in
+   Gehennom may yield silver arrows.
+
  * Now that Sokoban is somewhat easier for the haters to bypass or
    deal with in some other way without properly solving it, we're
    free to add a few new Sokoban levels:

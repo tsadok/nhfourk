@@ -133,6 +133,7 @@ enum rng {
     rng_rndcurse,        /* rndcurse(): Magicbane absorption, count, saddle */
     rng_levport_results, /* distance to get level-teleported */
     rng_trapdoor_result, /* distance to get trapdoored */
+    rng_superior_item,   /* upgrade some items in Gehennom */
     first_level_rng
 };
 

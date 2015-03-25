@@ -846,6 +846,7 @@ extern void bagotricks(struct obj *);
 extern boolean propagate(int, boolean, boolean);
 extern struct monst *restore_mon(struct memfile *mf);
 extern void save_mon(struct memfile *mf, const struct monst *mon);
+extern int superioritem(struct monst *, int);
 
 /* ### mcastu.c ### */
 
