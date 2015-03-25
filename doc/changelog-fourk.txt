@@ -36,16 +36,37 @@ categories:
    this, and for now I tried to avoid having any monster look exactly
    the same as another monster used to look, when it can be avoided.
    
- * Monster differentiation.  Some monsters that were for practical
-   purposes identical in their gameplay significance have been
-   tweaked slightly so that they are no longer exactly the same.
+ * Differentiation (aka improved variety).  Some monsters, items, or
+   special levels that were practically identical have been tweaked
+   slightly so that they are no longer quite so closely the same.
+   Some special levels may get new versions, as well.
 
 
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Now that Sokoban is somewhat easier for the haters to bypass or
+   deal with in some other way without properly solving it, we're
+   free to add a few new Sokoban levels:
+   + Add four new versions of Soko-1: "Boomerang Boulders", "Through
+     the Cracks", "Easy Peasey", and "First Things First".  The two
+     existing vanilla versions are retained also, for a total of six.
+   + Add three new versions of Soko-2, for a total of four.
+     The added versions are "Fly on the Wall", "Boulder Halls
+     of Zim", and "Two-Phase".  One of the existing vanilla
+     versions is also retained.  The infamous "Sokoban 2 B"
+     (steelypips) aka "soko2a" (nethackwiki) is excluded.
+   + Add two new versions of Soko-3, for a total of four.
+     The new ones are "Bring 'em on Down" and "Slot Machine".
+   + Add one new version of Soko-4, "'Ring 'em Around", with
+     the prize being a ring of polymorph control.
+   I have some reservations about a couple of these, but it's hard
+   for me to be objective about them, since I created them.  I've
+   included them for now, pending user feedback.
+
  * The Oracle can now sell you enlightenment, in addition to the
-   other services.
+   other services.  Also, the prices are calculated differently,
+   in a way that should make them lower in the early game.
 
  * Monkeys are better at stealing things and getting away.
 
