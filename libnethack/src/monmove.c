@@ -13,7 +13,7 @@ static int disturb(struct monst *);
 static void distfleeck(struct monst *, int *, int *, int *);
 static int m_arrival(struct monst *);
 static void watch_on_duty(struct monst *);
-
+static void release_hero(struct monst *);
 
 /* TRUE : mtmp died */
 boolean
@@ -161,6 +161,20 @@ disturb(struct monst *mtmp)
     return 0;
 }
 
+/* ungrab/expel held/swallowed hero */
+void
+release_hero(struct monst *mon)
+{
+    if (mon == u.ustuck) {
+        if (Engulfed)
+            expels(mon, mon->data, TRUE);
+        else if (!sticks(youmonst.data)) {
+            unstuck(mon); /* Let go. */
+            pline("You get released!");
+        }
+    }
+}
+
 /* monster begins fleeing for the specified time, 0 means untimed flee
  * if first, only adds fleetime if monster isn't already fleeing
  * if fleemsg, prints a message about new flight, otherwise, caller should */
@@ -170,14 +184,7 @@ monflee(struct monst *mtmp, int fleetime, boolean first, boolean fleemsg)
     if (DEADMONSTER(mtmp))
         return;
 
-    if (u.ustuck == mtmp) {
-        if (Engulfed)
-            expels(mtmp, mtmp->data, TRUE);
-        else if (!sticks(youmonst.data)) {
-            unstuck(mtmp);      /* monster lets go when fleeing */
-            pline("You get released!");
-        }
-    }
+    if (mtmp == u.ustuck) release_hero(mtmp); /* expel/unstick */
 
     if (!first || !mtmp->mflee) {
         /* don't lose untimed scare */
@@ -324,6 +331,12 @@ dochug(struct monst *mtmp)
     /* fleeing monsters might regain courage */
     if (mtmp->mflee && !mtmp->mfleetim && mtmp->mhp == mtmp->mhpmax && !rn2(25))
         mtmp->mflee = 0;
+
+    /* cease conflict-induced swallow/grab if conflict has ended */
+    if (mtmp == u.ustuck && mtmp->mpeaceful && !mtmp->mconf && !Conflict) {
+        release_hero(mtmp);
+        return 0;   /* uses up monster's turn */
+    }
 
     strategy(mtmp, FALSE); /* calls set_apparxy */
     /* Must be done after you move and before the monster does.  The

@@ -604,6 +604,10 @@ delobj(struct obj *obj)
            exploding chests, and golem creation, and ... */
         return;
     }
+
+    if (uwep && (obj == uwep)) uwepgone(); /* Pre-emptively unwield _before_ deleting; this should fix C343-295.    */
+    setnotworn(obj);                       /* And just in case there are similar bugs lurking, do this too.  -- NAE */
+
     update_map = (obj->where == OBJ_FLOOR);
     obj_extract_self(obj);
     if (!OBJ_AT_LEV(obj->olev, obj->ox, obj->oy) &&

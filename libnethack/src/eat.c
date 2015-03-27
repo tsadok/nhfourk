@@ -35,6 +35,9 @@ static void lesshungry(int, struct obj *);
 /* also used to see if you're allowed to eat cats and dogs */
 #define CANNIBAL_ALLOWED() (Role_if (PM_CAVEMAN) || Race_if(PM_ORC))
 
+/* monster types that cause hero to be turned into stone if eaten */
+#define flesh_petrifies(pm) (touch_petrifies(pm) || (pm) == &mons[PM_MEDUSA])
+
 static const char comestibles[] = { ALLOW_NONE, NONE_ON_COMMA, FOOD_CLASS, 0 };
 
 static const char allobj[] = {
@@ -365,7 +368,7 @@ cprefx(int pm)
     maybe_cannibal(pm, TRUE);
     /* Note: can't use touched_monster here, Medusa acts differently on touching
        and eating */
-    if (touch_petrifies(&mons[pm]) || pm == PM_MEDUSA) {
+    if (flesh_petrifies(&mons[pm])) {
         if (!Stone_resistance && !(poly_when_stoned(youmonst.data) &&
                                    polymon(PM_STONE_GOLEM, TRUE))) {
             pline("You turn to stone.");
@@ -855,6 +858,7 @@ eat_tin_one_turn(void)
     int r;
     const char *what;
     int which;
+    int foodwarn;
 
     /* The !u.utracked[tos_tin] case can't happen in the current codebase
        (there's no need for special handling to identify which object is being
@@ -928,7 +932,22 @@ eat_tin_one_turn(void)
         if (which == 0)
             what = makeplural(what);
         pline("It smells like %s%s.", (which == 2) ? "the " : "", what);
-        if (yn("Eat it?") == 'n') {
+        
+        /* food detection warning */
+        foodwarn = u.uedibility ? edibility_prompts(u.utracked[tos_tin]) : 0;
+        if (foodwarn) {
+            pline("Your %s stops tingling and your "
+                  "sense of smell returns to normal.", body_part(NOSE));
+            u.uedibility = 0;
+        }
+        if (foodwarn == 1) { /* Player chose not to eat it. */
+            costly_tin(NULL);
+            if (flags.verbose)
+                pline("You discard the open tin.");
+            goto use_me;
+        } else if (foodwarn == 2) { /* Player chose to go ahead and eat it. */
+            /* Fall through to the code below. */
+        } else if (yn("Eat it?") == 'n') {
             if (!Hallucination)
                 u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
             if (flags.verbose)
@@ -1116,7 +1135,7 @@ eatcorpse(void)
     long rotted = 0L;
     boolean uniq = ! !(mons[mnum].geno & G_UNIQ);
     int retcode = 0;
-    boolean stoneable = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
+    boolean stoneable = (flesh_petrifies(&mons[mnum]) && !Stone_resistance &&
                          !poly_when_stoned(youmonst.data));
 
     /* KMH, conduct */
@@ -1616,7 +1635,7 @@ edibility_prompts(struct obj *otmp)
     if (cadaver || (otmp->otyp == EGG && u.uedibility) ||
         (otmp->otyp == TIN && u.uedibility)) {
         /* These checks must match those in eatcorpse() */
-        stoneorslime = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
+        stoneorslime = (flesh_petrifies(&mons[mnum]) && !Stone_resistance &&
                         !poly_when_stoned(youmonst.data));
 
         if (mnum == PM_GREEN_SLIME)

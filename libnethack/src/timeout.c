@@ -576,6 +576,11 @@ slip_or_trip(void)
         } else {
             pline("You trip over %s.", what);
         }
+        if (!uarmf && (otmp->otyp == CORPSE) &&
+            touch_petrifies(&mons[otmp->corpsenm]) && !Stone_resistance)
+            instapetrify(killer_msg(STONING,
+                                    msgprintf("tripping over %s corpse",
+                                              an(mons[otmp->corpsenm].mname))));
     } else if (rn2(3) && is_ice(level, u.ux, u.uy)) {
         pline("%s %s%s on the ice.",
               u.usteed ?
@@ -873,6 +878,8 @@ burn_object(void *arg, long timeout)
                     switch (obj->where) {
                     case OBJ_INVENT:
                     case OBJ_MINVENT:
+                        if (uwep && (obj == uwep))
+                            uwepgone(); /* prevent save desync */
                         pline("%s %s %s consumed!", whose, xname(obj),
                               many ? "are" : "is");
                         obj->known = 1;

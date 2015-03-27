@@ -697,6 +697,9 @@ static boolean
 toss_up(struct obj *obj, boolean hitsroof)
 {
     const char *almost;
+    const char *vhelmp;
+    boolean petrifier = ((obj->otyp == EGG || obj->otyp == CORPSE) &&
+                         touch_petrifies(&mons[obj->corpsenm]));
 
     /* note: obj->quan == 1 */
 
@@ -719,7 +722,7 @@ toss_up(struct obj *obj, boolean hitsroof)
     if (obj->oclass == POTION_CLASS) {
         potionhit(&youmonst, obj, TRUE);
     } else if (breaktest(obj)) {
-        int otyp = obj->otyp, ocorpsenm = obj->corpsenm;
+        int otyp = obj->otyp;
         int blindinc;
 
         /* need to check for blindness result prior to destroying obj */
@@ -732,8 +735,23 @@ toss_up(struct obj *obj, boolean hitsroof)
         obj = NULL;     /* it's now gone */
         switch (otyp) {
         case EGG:
-            if (!uarmh && touched_monster(ocorpsenm))
-                goto petrify;
+            if (petrifier && !Stone_resistance &&
+                !(poly_when_stoned(youmonst.data) &&
+                  polymon(PM_STONE_GOLEM, FALSE))) {
+                if (uarmh
+                    && ((vhelmp = OBJ_DESCR(objects[uarmh->otyp]))
+                        != NULL)
+                    && !strcmp(vhelmp, "visored helmet")) {
+                    pline("You've got it all over your visor!");
+                    break;
+                } else {
+                    /* egg ends up "all over your face" */
+                    pline("You've got it all over your %s!", body_part(FACE));
+                    if (uarmh)
+                        pline("Your %s fails to protect you.", xname(uarmh));
+                    goto petrify;
+                }
+            }
         case CREAM_PIE:
         case BLINDING_VENOM:
             pline("You've got it all over your %s!", body_part(FACE));

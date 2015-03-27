@@ -458,6 +458,8 @@ new_angle(struct rm *loc, unsigned char *sv, int row, int col)
  *     + Right before something is printed. [pline()]
  *     + Right before we do a vision based operation. [do_clear_area()]
  *     + Screen redraw, so we can renew all positions in sight. [doredraw()]
+ *     + When toggling temporary blindness, in case additional events
+ *       impacted by vision occur during the same move [make_blinded()]
  *
  * Control flag = 1.  An adjacent vision recalculation.  The hero has moved
  * one square.  Knowing this, it might be possible to optimize the vision

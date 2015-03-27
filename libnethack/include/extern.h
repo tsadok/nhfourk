@@ -1417,6 +1417,7 @@ extern void ghod_hitsu(struct monst *);
 extern void angry_priest(void);
 extern void clearpriests(void);
 extern void restpriest(struct monst *, boolean);
+extern boolean inhistemple(struct monst *);
 
 /* ### prop.c ### */
 
@@ -1758,6 +1759,7 @@ extern void restore_track(struct memfile *mf);
 /* ### trap.c ### */
 
 extern boolean burnarmor(struct monst *);
+extern int candle_erosion_level(int);
 extern boolean erode_obj(struct obj *, const char *, enum erode_type, boolean,
                          boolean);
 extern boolean grease_protect(struct obj *, const char *, struct monst *);
@@ -1767,6 +1769,7 @@ extern struct monst *animate_statue(struct obj *, xchar, xchar, int, int *);
 extern struct monst *activate_statue_trap(struct trap *, xchar, xchar, boolean);
 extern void dotrap(struct trap *, unsigned);
 extern void seetrap(struct trap *);
+extern void feeltrap(struct trap *);
 extern int mintrap(struct monst *);
 extern void instapetrify(const char *);
 extern void minstapetrify(struct monst *, boolean);
@@ -2023,6 +2026,7 @@ extern int zap_over_floor(xchar, xchar, int, boolean *);
 extern void fracture_rock(struct obj *);
 extern boolean break_statue(struct obj *);
 extern void destroy_item(int, int);
+extern void set_candles_afire(void);
 extern int destroy_mitem(struct monst *, int, int);
 extern int resist(struct monst *, char, int, int);
 extern void makewish(void);
