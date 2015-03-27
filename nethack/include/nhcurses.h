@@ -239,6 +239,7 @@ enum nh_palette {
     PALETTE_EQUILUM,   /*  Equiluminous, from paxed's wintermcolors.php */
     PALETTE_DKPASTELS, /*  Dark Pastels, from Konsole via paxed */
     PALETTE_REDMOND,   /*  Windows console default colors */
+    PALETTE_VGA,       /*  kerio says these are the VGA color values */
 };
 
 enum nh_animation {
