@@ -369,6 +369,7 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
+OBJECT:'?',"wishing",random
 # The resident nasty
 MONSTER:'&',"Orcus",(33,15)
 # And its preferred companions
