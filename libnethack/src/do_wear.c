@@ -1810,7 +1810,7 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
         }
         if (otmp == uskin()) {
             if (noisy)
-                pline("The %s is merged with your skin!",
+                pline("The %s merged with your skin!",
                       otmp->otyp >= GRAY_DRAGON_SCALES ?
                       "dragon scales are" : "dragon scale mail is");
         }
