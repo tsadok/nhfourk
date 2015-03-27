@@ -2530,6 +2530,12 @@ typfnd:
                         || typ == ROCK || is_missile(otmp))) ||
          cnt <= rn2_on_rng(6, rng_wish_quantity)))
         otmp->quan = (long)cnt;
+    if ((typ == SCR_WISHING) && !wizard) {
+        /* If I got the thing right in objects.c, this won't happen. */
+        impossible("Ixnay on the wishing for more wishes.");
+        otmp->quan = 1L;
+        change_luck(-1);
+    }
 
     if (spesgn == 0)
         spe = otmp->spe;

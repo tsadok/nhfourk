@@ -1298,6 +1298,18 @@ seffects(struct obj *sobj, boolean *known)
                              8 + 4 * bcsign(sobj));
             break;
         }
+    case SCR_WISHING:
+        *known = TRUE;
+        if (Luck + rn2(5) < 0) {
+            pline("Unfortunately, nothing happens.");
+            break;
+        } else if (sobj->cursed) {
+            pline("You finish reading the %s, but nothing happens.",
+                  (Hallucination ? "horse" : "scroll"));
+            break;
+        }
+        makewish();
+        break;
     default:
         impossible("What weird effect is this? (%u)", sobj->otyp);
     }

@@ -4,7 +4,7 @@
 ! file is based.
 ! NetHack may be freely redistributed.  See license for details.
 !
-! The tiles in this file are required by NetHack 4, but not Slash'EM
+! The tiles in this file are required by NetHack Fourk, but not Slash'EM
 ! nor NetHack 3.4.3.  This file additionally contains some overrides
 ! for tiles that shipped with Slash'EM (for instance, room tiles have
 ! changed to accommodate darkroom tiles).  This file contains only
@@ -355,4 +355,23 @@ $ = (71, 108, 108)
   MMFMMFFFFFFFFFFM
   MFMFMMFMMMFFFFMM
   MMMMFMMMFMMMMMMM
+}
+# tile 1008 (RATSANOPU)
+{
+  MMMMMMMMMMMMMMMM
+  MMMMMMMMMMMMMMMM
+  MMMMPOOOOOPKAMMM
+  MMMDOOOOOOKDJMMM
+  MMMMPOOOOOPJAAMM
+  MMMMMAAAAAAPAMMM
+  MMMMMLLLLLLPAMMM
+  MMMMMNJNJAOMAMMM
+  MMMMMLLLLLLPAMMM
+  MMMMMLLJLJLPAMMM
+  MMMMPOOOOOPKAMMM
+  MMMDOOOOOOKDJMMM
+  MMMMPOOOOOPJAAMM
+  MMMMMAAAAAAAAMMM
+  MMMMMMMMMMMMMMMM
+  MMMMMMMMMMMMMMMM
 }

@@ -1,0 +1,52 @@
+! Last modified by Jonadab the Unsightly One, 2015-Mar-26
+!
+! Copyright (C) Andrew Rios, 2014
+!
+! This work is licenced under the Creative Commons Attribution-Share
+! Alike 3.0 Unported License. To view a copy of this licence, visit
+! http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to
+! Creative Commons, 171 Second Street, Suite 300, San Francisco,
+! California 94105, USA.
+!
+! This file contains supplementary tiles from DawnLike for any
+! new monsters/objects/etc. added in NetHack Fourk.  In most cases
+! they are directly derived from (maybe even identical to) existing
+! DawnLike tiles.
+!
+A = (71, 108, 108)
+B = (20, 12, 28)
+C = (69, 36, 52)
+D = (52, 101, 36)
+E = (48, 52, 109)
+F = (77, 73, 77)
+G = (134, 77, 48)
+H = (109, 170, 44)
+I = (117, 113, 97)
+J = (211, 69, 73)
+K = (211, 125, 44)
+L = (89, 125, 207)
+M = (134, 150, 162)
+N = (109, 195, 203)
+O = (219, 215, 93)
+P = (211, 170, 154)
+Q = (223, 239, 215)
+
+# tile 496 (RATSANOPU)
+{
+  AAAABBBBBBBBAAAA
+  AABBMBIOMMOMBAAA
+  AAABIBFKIIKIBAAA
+  AAABBBBBBBBBAAAA
+  AAABFKIIKFBAAAAA
+  AAABIBGMBMBAAAAA
+  AAABIOMMOMBAAAAA
+  AAABIBMGBMBAAAAA
+  AAABIOMMOMBAAAAA
+  AAABIBGMBMBAAAAA
+  AAABIOMMOMBAAAAA
+  AAABBBBBBBBBAAAA
+  AAABMBIOMMOMBAAA
+  AABBIBFKIIKIBAAA
+  AAAABBBBBBBBAAAA
+  AAAAAAAAAAAAAAAA
+}

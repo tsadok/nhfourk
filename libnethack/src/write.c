@@ -52,6 +52,9 @@ cost(struct obj *otmp)
     case SCR_GENOCIDE:
         return 30;
 /*      break; */
+    case SCR_WISHING:
+        /* Yeah, sure, wish for a marker, write a scroll of wishing, recharge... */
+        return 999;
     case SCR_BLANK_PAPER:
     default:
         impossible("You can't write such a weird scroll!");
