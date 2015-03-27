@@ -678,11 +678,7 @@ dodown(enum u_interaction_mode uim)
     boolean ladder_down = (u.ux == level->dnladder.sx &&
                            u.uy == level->dnladder.sy);
 
-    if (u.usteed && !u.usteed->mcanmove) {
-        pline("%s won't move!", Monnam(u.usteed));
-        return 0;
-    } else if (u.usteed && u.usteed->meating) {
-        pline("%s is still eating.", Monnam(u.usteed));
+    if (stucksteed(TRUE)) {
         return 0;
     } else if (Levitation) {
         unsigned controlled_lev = u_have_property(
@@ -805,8 +801,7 @@ doup(enum u_interaction_mode uim)
         pline("You can't go up here.");
         return 0;
     }
-    if (u.usteed && !u.usteed->mcanmove) {
-        pline("%s won't move!", Monnam(u.usteed));
+    if (stucksteed(TRUE)) {
         return 0;
     } else if (u.usteed && u.usteed->meating) {
         pline("%s is still eating.", Monnam(u.usteed));
@@ -1546,15 +1541,43 @@ void
 revive_mon(void *arg, long timeout)
 {
     struct obj *body = (struct obj *)arg;
-
+    struct monst *mtmp;
+    xchar x, y;
     (void) timeout;
 
-    /* if we succeed, the corpse is gone, otherwise, rot it away */
+    /* corpse will revive somewhere else if there is a monster in the way;
+       displacers get a chance to try to bump the obstacle out of their way */
+    if (((mons[body->corpsenm].mflags3 & M3_DISPLACES) != 0)
+        && body->where == OBJ_FLOOR && get_obj_location(body, &x, &y, 0)
+        && ((mtmp = m_at(level, x, y)) != 0)) {
+        boolean notice_it = canseemon(mtmp);    /* before rloc() */
+        char *monname = Monnam(mtmp);           /* ditto */
+        if (rloc(mtmp, TRUE)) {
+            if (notice_it && !canseemon(mtmp))
+                pline("%s vanishes.", monname);
+            else if (!notice_it && canseemon(mtmp))
+                pline("%s appears.", Monnam(mtmp)); /* not pre-rloc monname */
+            else if (notice_it && dist2(mtmp->mx, mtmp->my, x, y) > 2)
+                pline("%s teleports.", monname); /* saw it and still see it */
+        }
+    }
+
+
+    /* If we succeed, the corpse is gone; otherwise it either rots away
+     * or in very special cases gets tried again a short while later: */
     if (!revive_corpse(body)) {
-        if (is_rider(&mons[body->corpsenm]))
-            pline("You feel less hassled.");
-        start_timer(body->olev, 250L - (moves - body->age), TIMER_OBJECT,
-                    ROT_CORPSE, arg);
+        if (is_rider(&mons[body->corpsenm]) && rn2(99)) {
+            /* Rider corpse, we'll try again later... */
+            long when;
+            for (when = 3L; when < 67L; when++)
+                if (!rn2(3)) break;
+            start_timer(body->olev, when, TIMER_OBJECT, REVIVE_MON, arg);
+        } else { /* Rot this corpse away. */
+            if (is_rider(&mons[body->corpsenm]))
+                pline("You feel less hassled.");
+            start_timer(body->olev, 250L - (moves - body->age), TIMER_OBJECT,
+                        ROT_CORPSE, arg);
+        }
     }
 }
 

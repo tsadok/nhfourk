@@ -1614,9 +1614,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     }
 
     /* Not attacking a monster, for whatever reason; we try to move. */
-    if (u.usteed && !u.usteed->mcanmove &&
-        (turnstate.move.dx || turnstate.move.dy)) {
-        pline("%s won't move!", msgupcasefirst(y_monnam(u.usteed)));
+    if ((turnstate.move.dx || turnstate.move.dy) && stucksteed(FALSE)) {
         action_completed();
         return 1;
     } else if (!youmonst.data->mmove) {
@@ -2079,6 +2077,25 @@ stillinwater:
         struct trap *trap = t_at(level, u.ux, u.uy);
         boolean pit;
 
+        /* If levitation is due to time out at the end of this turn, allowing
+           it to do so at this exact moment could give the perception that the
+           trap is triggering twice, so adjust the timeout to prevent that: */
+        if (trap && (HLevitation & TIMEOUT) == 1L) {
+            if (rn2(2)) {       /* defer timeout */
+                HLevitation += 1L;
+            } else {            /* timeout early */
+                if (float_down(I_SPECIAL|TIMEOUT)) {
+                    /* levitation has ended; we've already triggered
+                       any trap and [usually] performed autopickup */
+                    trap = 0;
+                    pick = FALSE;
+                }
+            }
+        }
+        /*
+         * If not a pit, pickup before triggering trap.
+         * If pit, trigger trap before pickup.
+         */
         pit = (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT));
         if (trap && pit)
             dotrap(trap, 0);    /* fall into pit */

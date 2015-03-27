@@ -323,12 +323,19 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         {
             struct monst *mtmp;
             struct obj *otmp, *statue;
+            const struct permonst *mptr;
+            int trycount = 50;
 
-            /* use the provided RNG for species but nothing else */
-            statue = mkcorpstat(STATUE, NULL, &mons[rndmonnum(&lev->z, rng)],
-                                lev, x, y, FALSE, rng_main);
-            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO,
-                           NO_MM_FLAGS);
+            do {    /* Avoid ultimately hostile co-aligned unicorn. */
+                    /* Use the provided RNG once only for species. */
+                mptr = &mons[rndmonnum(&lev->z,
+                                       ((trycount == 50) ? rng : rng_main))];
+            } while (--trycount > 0 && is_unicorn(mptr) &&
+                     sgn(u.ualign.type) == sgn(mptr->maligntyp));
+
+            statue = mkcorpstat(STATUE, NULL, mptr, lev, x, y, FALSE, rng_main);
+            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO, MM_NOCOUNTBIRTH);
+
             if (!mtmp)
                 break;  /* should never happen */
             while (mtmp->minvent) {
@@ -567,6 +574,15 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
         seemimic(mon);
     else
         mon->mundetected = FALSE;
+
+    mon->msleeping = 0; /* trap releases an awake monster */
+    if (cause == ANIMATE_NORMAL || cause == ANIMATE_SHATTER) {
+        /* trap always releases hostile monster */
+        mon->mtame = 0;     /* (might be petrified pet tossed onto trap) */
+        mon->mpeaceful = 0;
+        set_malign(mon);
+    }
+
 
     const char *comes_to_life =
         nonliving(mon->data) ? "moves" : "comes to life";
@@ -1362,12 +1378,15 @@ blow_up_landmine(struct trap *trap)
     wake_nearto(trap->tx, trap->ty, 400);
     if (IS_DOOR(level->locations[trap->tx][trap->ty].typ))
         level->locations[trap->tx][trap->ty].doormask = D_BROKEN;
-    if (!IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)) {
+    if (IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)
+        || Is_waterlevel(&u.uz) || Is_airlevel(&u.uz)) {
+        /* No pits on the Planes of Air or Water; and if it's a
+         * bridge, destroy_drawbridge (called below) does enough. */
+        deltrap(level, trap);
+    } else {
         trap->ttyp = PIT;       /* explosion creates a pit */
         trap->madeby_u = FALSE; /* resulting pit isn't yours */
-        seetrap(trap);  /* and it isn't concealed */
-    } else {
-        deltrap(level, trap);
+        seetrap(trap);          /* and it isn't concealed */
     }
     if (find_drawbridge(&x, &y)) {
         destroy_drawbridge(x, y);
@@ -2329,7 +2348,8 @@ selftouch(const char *arg, const char *deathtype)
         instapetrify(killer_msg(STONING,
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uwep->corpsenm].mname))));
-        if (!Stone_resistance)
+        /* life-saved; unwield the corpse if we can't handle it */
+        if (!Stone_resistance && !uarmg)
             uwepgone();
     }
     /* Or your secondary weapon, if wielded */
@@ -2339,7 +2359,8 @@ selftouch(const char *arg, const char *deathtype)
         instapetrify(killer_msg(STONING,
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uswapwep->corpsenm].mname))));
-        if (!Stone_resistance)
+        /* life-saved; unwield the corpse */
+        if (!Stone_resistance && !uarmg)
             uswapwepgone();
     }
 }
@@ -2350,12 +2371,16 @@ mselftouch(struct monst *mon, const char *arg, boolean byplayer)
     struct obj *mwep = MON_WEP(mon);
 
     if (mwep && mwep->otyp == CORPSE &&
+        !resists_ston(mon) &&
         touch_petrifies(&mons[mwep->corpsenm])) {
         if (cansee(mon->mx, mon->my)) {
             pline("%s%s touches the %s corpse.", arg ? arg : "",
                   arg ? mon_nam(mon) : Monnam(mon), mons[mwep->corpsenm].mname);
         }
         minstapetrify(mon, byplayer);
+        /* if life-saved, might not be able to continue wielding */
+        if (mon->mhp > 0 && !which_armor(mon, os_armg) && !resists_ston(mon))
+            mwepgone(mon);
     }
 }
 
@@ -3258,7 +3283,13 @@ move_into_trap(struct trap *ttmp)
         check_leash(u.ux0, u.uy0);
         if (Punished)
             move_bc(0, bc, bx, by, cx, cy);
-        spoteffects(FALSE);     /* dotrap() */
+        /* Marking the trap unseen forces dotrap() to treat it like a new
+           discovery and prevents pickup() -> look_here() -> check_here()
+           from giving a redudant "There is a <trap> here" message when
+           there are objects covering this trap: */
+        ttmp->tseen = 0;    /* hack for check_here() */
+        /* trigger the trap: */
+        spoteffects(TRUE);  /* pickup() + dotrap() */
         exercise(A_WIS, FALSE);
     }
 }

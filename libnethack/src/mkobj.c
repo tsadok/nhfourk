@@ -325,6 +325,8 @@ splitobj(struct obj *obj, long num)
         obj_split_timers(obj, otmp);
     if (obj_sheds_light(obj))
         obj_split_light_source(obj, otmp);
+    if (carried(otmp))
+        assigninvlet(otmp);
     return otmp;
 }
 

@@ -1214,8 +1214,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hurtarmor(&youmonst, ERODE_ROT);
         break;
     case AD_HEAL:
-        /* a cancelled nurse is just an ordinary monster */
-        if (mtmp->mcan) {
+        /* a cancelled nurse is just an ordinary monster,
+         * and nurses don't heal those that cause petrification */
+        if (mtmp->mcan || (Upolyd && touch_petrifies(youmonst.data))) {
             hitmsg(mtmp, mattk);
             break;
         }

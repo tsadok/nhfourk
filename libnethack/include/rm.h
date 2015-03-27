@@ -89,7 +89,7 @@
 # define IS_DOOR(typ)       ((typ) == DOOR)
 # define IS_TREE(typ)       ((typ) == TREE || \
                             (level->flags.arboreal && (typ) == STONE))
-# define ACCESSIBLE(typ)    ((typ) >= DOOR)     /* good position */
+# define ACCESSIBLE(typ)    ((typ) >= DOOR)     /* accessible() is preferred */
 # define IS_ROOM(typ)       ((typ) >= ROOM)     /* ROOM, STAIRS, furniture.. */
 # define ZAP_POS(typ)       ((typ) >= POOL)
 # define SPACE_POS(typ)     ((typ) > DOOR)

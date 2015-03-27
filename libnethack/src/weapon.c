@@ -496,8 +496,8 @@ select_rwep(const struct monst *mtmp)
             }
             if (!tmpprop)
                 tmpprop = propellor;
-            if ((otmp = MON_WEP(mtmp)) && otmp->cursed && otmp != propellor &&
-                mtmp->weapon_check == NO_WEAPON_WANTED)
+            if ((otmp = MON_WEP(mtmp)) && mwelded(mtmp, otmp) &&
+                otmp != propellor && mtmp->weapon_check == NO_WEAPON_WANTED)
                 propellor = 0;
         }
         /* propellor = obj, propellor to use propellor = &zeroobj, doesn't need 
@@ -509,7 +509,7 @@ select_rwep(const struct monst *mtmp)
             if (rwep[i] != LOADSTONE) {
                 /* Don't throw a cursed weapon-in-hand or an artifact */
                 if ((otmp = oselect(mtmp, rwep[i])) && !otmp->oartifact &&
-                    (!otmp->cursed || otmp != MON_WEP(mtmp)))
+                    !(otmp == MON_WEP(mtmp) && mwelded(mtmp, otmp)))
                     return otmp;
             } else
                 for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj) {
@@ -660,7 +660,7 @@ possibly_unwield(struct monst *mon, boolean polyspot)
        Possible problem: big monster with big cursed weapon gets polymorphed
        into little monster.  But it's not quite clear how to handle this
        anyway.... */
-    if (!(mw_tmp->cursed && mon->weapon_check == NO_WEAPON_WANTED))
+    if (!(mwelded(mon, mw_tmp) && mon->weapon_check == NO_WEAPON_WANTED))
         mon->weapon_check = NEED_WEAPON;
     return;
 }
@@ -722,7 +722,7 @@ mon_wield_item(struct monst *mon)
         /* Actually, this isn't necessary--as soon as the monster wields the
            weapon, the weapon welds itself, so the monster can know it's cursed 
            and needn't even bother trying. Still.... */
-        if (mw_tmp && mw_tmp->cursed && mw_tmp->otyp != CORPSE) {
+        if (mw_tmp && mwelded(mon, mw_tmp)) {
             if (mon_visible(mon)) {
                 const char *welded_buf;
                 const char *mon_hand = mbodypart(mon, HAND);
@@ -754,7 +754,7 @@ mon_wield_item(struct monst *mon)
         if (mon_visible(mon)) {
             pline("%s wields %s%s", Monnam(mon), singular(obj, doname),
                   mon->mtame ? "." : "!");
-            if (obj->cursed && obj->otyp != CORPSE) {
+            if (mwelded(mon, obj)) {
                 pline("%s %s to %s %s!", Tobjnam(obj, "weld"),
                       is_plural(obj) ? "themselves" : "itself",
                       s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
@@ -772,6 +772,19 @@ mon_wield_item(struct monst *mon)
     }
     mon->weapon_check = NEED_WEAPON;
     return 0;
+}
+
+/* force monster to stop wielding current weapon, if any */
+void
+mwepgone(struct monst *mon)
+{
+    struct obj *mwep = MON_WEP(mon);
+
+    if (mwep) {
+        setmnotwielded(mon, mwep);
+        MON_NOWEP(mon);
+        mon->weapon_check = NEED_WEAPON;
+    }
 }
 
 /* attack bonus for strength & dexterity */

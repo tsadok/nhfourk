@@ -344,8 +344,12 @@ addinv(struct obj *obj)
 
     obj_was_thrown = obj->was_thrown;
 
-    obj->no_charge = 0; /* not meaningful for invent */
-    obj->was_thrown = 0;
+    /* normally addtobill() clears no_charge when items in a shop are
+       picked up, but won't do so if the shop has become untended */
+    obj->no_charge = 0;  /* should not be set in player inventory */
+    if (Has_contents(obj))
+        picked_container(obj); /* clear no_charge for contents, recursively */
+    obj->was_thrown = 0; /* not meaningful in player inventory */
 
     examine_object(obj);
 
@@ -760,6 +764,15 @@ compactify(const char *buf_orig)
                 ilet = buf[i1];
                 continue;
             }
+        } else if (ilet == NOINVSYM) {
+            /* compact three or more consecutive '#'
+               characters into "#-#" */
+            if (i2 >= 2 && buf[i2 - 2] == NOINVSYM &&
+                buf[i2 - 1] == NOINVSYM)
+                buf[i2 - 1] = '-';
+            else if (i2 >= 3 && buf[i2 - 3] == NOINVSYM &&
+                     buf[i2 - 2] == '-' && buf[i2 - 1] == NOINVSYM)
+                --i2;
         }
         ilet2 = ilet1;
         ilet1 = ilet;
@@ -1735,7 +1748,7 @@ dfeature_at(int x, int y)
             break;      /* "closed door" */
         }
         /* override door description for open drawbridge */
-        if (is_drawbridge_wall(x, y) >= 0)
+        if (drawbridge_wall_direction(x, y) >= 0)
             dfeature = "open drawbridge portcullis", cmap = -1;
     } else if (IS_FOUNTAIN(ltyp))
         cmap = S_fountain;      /* "fountain" */

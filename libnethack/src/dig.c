@@ -520,7 +520,8 @@ digactualhole(int x, int y, struct monst *madeby, int ttyp)
     } else if (IS_SINK(loc->typ)) {
         breaksink(x, y);
         return;
-    } else if (loc->typ == DRAWBRIDGE_DOWN || (is_drawbridge_wall(x, y) >= 0)) {
+    } else if (loc->typ == DRAWBRIDGE_DOWN
+               || (drawbridge_wall_direction(x, y) >= 0)) {
         int bx = x, by = y;
 
         /* if under the portcullis, the bridge is adjacent */
@@ -690,7 +691,7 @@ dighole(boolean pit_only)
         wake_nearby(FALSE);  /* splashing */
 
     } else if (loc->typ == DRAWBRIDGE_DOWN ||
-               (is_drawbridge_wall(u.ux, u.uy) >= 0)) {
+               (drawbridge_wall_direction(u.ux, u.uy) >= 0)) {
         /* drawbridge_down is the platform crossing the moat when the bridge is
            extended; drawbridge_wall is the open "doorway" or closed "door"
            where the portcullis/mechanism is located */
