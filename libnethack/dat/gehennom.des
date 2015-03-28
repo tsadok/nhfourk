@@ -218,8 +218,8 @@ MONSTER:'m',"giant mimic",place[3],m_feature "fountain"
 # The demon of the swamp
 MONSTER:'&',"Juiblex",(25,08)
 # And a couple demons
-MONSTER:'i',"manes",(43,08)
-MONSTER:'i',"manes",(44,08)
+MONSTER:'W',"manes",(43,08)
+MONSTER:'W',"manes",(44,08)
 MONSTER:'i',"imp",(45,08)
 # Some liquids and gems
 OBJECT:'*',random,(43,06)

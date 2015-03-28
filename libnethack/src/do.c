@@ -1558,7 +1558,7 @@ revive_mon(void *arg, long timeout)
         && body->where == OBJ_FLOOR && get_obj_location(body, &x, &y, 0)
         && ((mtmp = m_at(level, x, y)) != 0)) {
         boolean notice_it = canseemon(mtmp);    /* before rloc() */
-        char *monname = Monnam(mtmp);           /* ditto */
+        const char *monname = Monnam(mtmp);           /* ditto */
         if (rloc(mtmp, TRUE)) {
             if (notice_it && !canseemon(mtmp))
                 pline("%s vanishes.", monname);
