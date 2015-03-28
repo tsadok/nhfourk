@@ -306,6 +306,24 @@ arti_reflects(struct obj * obj)
     return FALSE;
 }
 
+/* decide whether this obj is effective when attacking against shades;
+   does not consider the bonus for blessed objects versus undead */
+boolean
+shade_glare(struct obj *obj)
+{
+    const struct artifact *arti;
+
+    /* any silver object is effective */
+    if (objects[obj->otyp].oc_material == SILVER) return TRUE;
+    /* non-silver artifacts with bonus against undead also are effective */
+    arti = get_artifact(obj);
+    if (arti && (arti->spfx & SPFX_DFLAG2) && arti->mtype == M2_UNDEAD)
+        return TRUE;
+    /* [if there was anything with special bonus against noncorporeals,
+       it should be effective too] */
+    /* otherwise, harmless to shades */
+    return FALSE;
+}
 
 boolean
 restrict_name(struct obj * otmp, const char *name)

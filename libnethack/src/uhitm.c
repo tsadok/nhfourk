@@ -535,7 +535,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                    /* or throw a missile without the proper bow... */
                    (is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
                 /* then do only 1-2 points of damage */
-                if (mdat == &mons[PM_SHADE] && obj->otyp != SILVER_ARROW)
+                if (mdat == &mons[PM_SHADE] && !shade_glare(obj))
                     tmp = 0;
                 else
                     tmp = rnd(2);
