@@ -45,6 +45,10 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Manes are now in the W mlet, with wraiths and ghosts and other
+   spirits of the dead.  This fits their flavour much better than
+   their previous mlet assignment and also reduces color conflicts.
+
  * Rings that are dropped down a sink end up buried in the ground
    under the sink.  They can be reclaimed by destroying the sink,
    drying up the resulting fountain, and digging up the rings,

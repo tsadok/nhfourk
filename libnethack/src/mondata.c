@@ -235,7 +235,8 @@ hates_silver(const struct permonst * ptr)
     return ((boolean)
             (is_were(ptr) || ptr->mlet == S_VAMPIRE || is_demon(ptr) ||
              ptr == &mons[PM_SHADE] || (ptr->mlet == S_IMP &&
-                                        ptr != &mons[PM_TENGU])));
+                                        ptr != &mons[PM_TENGU] &&
+                                        ptr != &mons[PM_LEPRECHAUN])));
 }
 
 /* true iff the type of monster pass through iron bars */

@@ -490,13 +490,6 @@ const struct permonst mons[] = {
 /*
  * imps & other minor demons/devils
  */
-    MON("manes", S_IMP,
-        LVL(1, 3, 7, 0, -7), (G_GENO | G_LGROUP | G_NOCORPSE | 1),
-        A(ATTK(AT_CLAW, AD_PHYS, 1, 3), ATTK(AT_CLAW, AD_PHYS, 1, 3),
-          ATTK(AT_BITE, AD_PHYS, 1, 4), NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(100, 100, 0, MS_SILENT, MZ_SMALL), MR_SLEEP | MR_POISON, 0,
-        M1_POIS, M2_HOSTILE | M2_STALK, M3_INFRAVISIBLE | M3_INFRAVISION,
-        CLR_RED),
     MON("homunculus", S_IMP,
         LVL(2, 12, 6, 10, -7), (G_GENO | 2),
         A(ATTK(AT_BITE, AD_SLEE, 1, 3),
@@ -2000,6 +1993,13 @@ const struct permonst mons[] = {
 /*
  * Wraiths
  */
+    MON("manes", S_WRAITH,
+        LVL(1, 3, 7, 0, -7), (G_GENO | G_LGROUP | G_NOCORPSE | 1),
+        A(ATTK(AT_CLAW, AD_PHYS, 1, 3), ATTK(AT_CLAW, AD_PHYS, 1, 3),
+          ATTK(AT_BITE, AD_PHYS, 1, 4), NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(100, 100, 0, MS_SILENT, MZ_SMALL), MR_SLEEP | MR_POISON, 0,
+        M1_POIS, M2_HOSTILE | M2_STALK, M3_INFRAVISIBLE | M3_INFRAVISION,
+        CLR_RED),
     MON("barrow wight", S_WRAITH,
         LVL(3, 12, 5, 5, -3), (G_GENO | G_NOCORPSE | 1),
         A(ATTK(AT_WEAP, AD_DRLI, 0, 0), ATTK(AT_MAGC, AD_SPEL, 0, 0),
