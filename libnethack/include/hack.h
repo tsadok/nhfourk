@@ -258,6 +258,9 @@ struct distmap_state {
 # define NOSE             17
 # define STOMACH          18
 # define HIDE             19
+# define LIMBS            20
+# define SKIN             21
+# define BODY             22
 
 /* Flags to control menus */
 # define MENU_PARTIAL     2

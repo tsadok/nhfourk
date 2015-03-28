@@ -1731,7 +1731,8 @@ corpse_chance(struct monst *mon,
 
     if (mdat == &mons[PM_VLAD_THE_IMPALER] || mdat->mlet == S_LICH) {
         if (cansee(mon->mx, mon->my) && !was_swallowed)
-            pline("%s body crumbles into dust.", s_suffix(Monnam(mon)));
+            pline("%s %s crumbles into dust.", s_suffix(Monnam(mon)),
+                  mbodypart(mon, BODY));
         return FALSE;
     }
 

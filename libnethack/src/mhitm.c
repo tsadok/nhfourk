@@ -1233,8 +1233,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         break;
     case AD_FAMN:
         if (vis)
-            pline("%s reaches out, and %s body shrivels.",
-                  Monnam(magr), s_suffix(mon_nam(mdef)));
+            pline("%s reaches out, and %s %s shrivels.",
+                  Monnam(magr), s_suffix(mon_nam(mdef)),
+                  mbodypart(mdef, BODY));
         if (mdef->mtame && !mdef->isminion)
             EDOG(mdef)->hungrytime -= rn1(120, 120);
         else {
