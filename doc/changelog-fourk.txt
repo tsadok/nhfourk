@@ -45,6 +45,13 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The backstab bonus now scales with your skill in whatever weapon
+   you are using.  Currently, the bonus potentially goes as high as 28
+   per hit if you are expert but falls off significantly at lower
+   skill levels.  This change probably gives rogues a very powerful
+   mid-game, without making them overpowered in the late game; but
+   it will need play testing for balance.
+
  * Added single-use wish sources at the top of Vlad's tower
    and in Orcus Town.
 

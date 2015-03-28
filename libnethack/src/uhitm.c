@@ -586,7 +586,9 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     ;   /* no special bonuses */
                 } else if (mon->mflee && Role_if(PM_ROGUE) && !Upolyd) {
                     pline("You strike %s from behind!", mon_nam(mon));
-                    tmp += rnd(u.ulevel);
+                    tmp += rnd(3);
+                    if ((wtype = uwep_skill_type()) != P_NONE)
+                        tmp += rnd(1 + (3 * P_SKILL(wtype) * P_SKILL(wtype) / 2));
                     hittxt = TRUE;
                 } else if (dieroll == 2 && obj == uwep &&
                            obj->oclass == WEAPON_CLASS &&
