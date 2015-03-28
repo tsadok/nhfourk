@@ -400,8 +400,15 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
         obj->in_use = FALSE;
         /* the caller has checked this is safe */
         dropx(obj);
-    } else
-        useup(obj);
+    } else {
+        /* Rather than destroy the ring, we bury it in the ground under the
+         * sink.  In order to get it back, the player must destroy the sink. */
+        obj->in_use = FALSE;
+        freeinv(obj);
+        obj->ox = u.ux;
+        obj->oy = u.uy;
+        add_to_buried(obj);
+    }
 }
 
 

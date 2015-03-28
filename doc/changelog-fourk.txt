@@ -45,6 +45,11 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Rings that are dropped down a sink end up buried in the ground
+   under the sink.  They can be reclaimed by destroying the sink,
+   drying up the resulting fountain, and digging up the rings,
+   which will now be identified.
+
  * The backstab bonus now scales with your skill in whatever weapon
    you are using.  Currently, the bonus potentially goes as high as 28
    per hit if you are expert but falls off significantly at lower
