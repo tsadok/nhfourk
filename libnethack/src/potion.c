@@ -996,7 +996,7 @@ potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 
             if (has_head(mon->data))
                 buf = msgprintf("%s %s", s_suffix(mnam),
-                                (notonhead ? "body" : "head"));
+                                (notonhead ? mbodypart(mon, BODY) : "head"));
             else
                 buf = mnam;
 

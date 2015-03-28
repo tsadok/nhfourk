@@ -414,7 +414,7 @@ cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
             shieldeff(u.ux, u.uy);
             pline("A field of force surrounds you!");
         } else if (!destroy_arm(some_armor(&youmonst))) {
-            pline("Your skin itches.");
+            pline("Your %s itches.", body_part(SKIN));
         }
         dmg = 0;
         break;
@@ -683,13 +683,13 @@ cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
             dmg = (dmg + 1) / 2;
         }
         if (dmg <= 5)
-            pline("Your skin itches badly for a moment.");
+            pline("Your %s itches badly for a moment.", body_part(SKIN));
         else if (dmg <= 10)
-            pline("Wounds appear on your body!");
+            pline("Wounds appear on your %s!", body_part(BODY));
         else if (dmg <= 20)
-            pline("Severe wounds appear on your body!");
+            pline("Severe wounds appear on your %s!", body_part(BODY));
         else
-            pline("Your body is covered with painful wounds!");
+            pline("Your %s is covered with painful wounds!", body_part(BODY));
         break;
     default:
         impossible("mcastu: invalid clerical spell (%d)", spellnum);
