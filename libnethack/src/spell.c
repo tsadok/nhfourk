@@ -717,7 +717,7 @@ cast_protection(void)
         if (!u.usptime)
             u.usptime = u.uspmtime;
     } else {
-        pline("Your skin feels warm for a moment.");
+        pline("Your %s feels warm for a moment.", body_part(SKIN));
     }
 }
 

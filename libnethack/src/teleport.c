@@ -629,8 +629,9 @@ level_tele_impl(boolean wizard_tele)
                 goto random_levtport;
             if (ynq("Go to Nowhere.  Are you sure?") != 'y')
                 return;
-            pline("You %s in agony as your body begins to warp...",
-                  is_silent(youmonst.data) ? "writhe" : "scream");
+            pline("You %s in agony as your %s begins to warp...",
+                  (is_silent(youmonst.data) ? "writhe" : "scream"),
+                  body_part(BODY));
             win_pause_output(P_MESSAGE);
             pline("You cease to exist.");
             if (invent)
@@ -638,7 +639,7 @@ level_tele_impl(boolean wizard_tele)
                       surface(u.ux, u.uy));
             done(DIED, "committed suicide");
             pline("An energized cloud of dust begins to coalesce.");
-            pline("Your body rematerializes%s.",
+            pline("Your %s rematerializes%s.", body_part(BODY),
                   invent ? ", and you gather up all your possessions" : "");
             return;
         }

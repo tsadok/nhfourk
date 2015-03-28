@@ -1148,7 +1148,8 @@ dotrap(struct trap *trap, unsigned trflags)
             newsym(u.ux, u.uy); /* update position */
             pline("You are caught in a magical explosion!");
             losehp(rnd(10), killer_msg(DIED, "a magical explosion"));
-            pline("Your body absorbs some of the magical energy!");
+            pline("Your %s absorbs some of the magical energy!",
+                  body_part(BODY));
             u.uen = (u.uenmax += 2);
         } else
             domagictrap();
@@ -2394,8 +2395,8 @@ float_up(void)
             turnstate.vision_full_recalc = TRUE;     /* vision limits change */
             fill_pit(level, u.ux, u.uy);
         } else if (u.utraptype == TT_INFLOOR) {
-            pline("Your body pulls upward, but your %s are still stuck.",
-                  makeplural(body_part(LEG)));
+            pline("Your %s pulls upward, but your %s are still stuck.",
+                  body_part(BODY), makeplural(body_part(LEG)));
         } else {
             pline("You float up, only your %s is still stuck.", body_part(LEG));
         }
