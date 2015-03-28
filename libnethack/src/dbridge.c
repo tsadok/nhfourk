@@ -677,6 +677,8 @@ close_drawbridge(int x, int y)
         pline("You see a drawbridge %s up!",
               (((u.ux == x || u.uy == y) && !Underwater) ||
                distu(x2, y2) < distu(x, y)) ? "coming" : "going");
+    else if (canhear())
+        pline("You hear chains rattling and gears turning.");
     loc1->typ = DRAWBRIDGE_UP;
     loc2 = &level->locations[x2][y2];
     loc2->typ = DBWALL;
@@ -732,6 +734,8 @@ open_drawbridge(int x, int y)
     if (cansee(x, y) || cansee(x2, y2))
         pline("You see a drawbridge %s down!",
               (distu(x2, y2) < distu(x, y)) ? "going" : "coming");
+    else if (canhear())
+        pline("You hear chains rattling and gears turning.");
     loc1->typ = DRAWBRIDGE_DOWN;
     loc2 = &level->locations[x2][y2];
     loc2->typ = DOOR;
@@ -764,7 +768,8 @@ destroy_drawbridge(int x, int y)
 {
     struct rm *loc1, *loc2;
     struct trap *t;
-    int x2, y2;
+    struct obj *chain;
+    int x2, y2, i;
     boolean e_inview;
     struct entity *etmp1 = &(occupants[0]), *etmp2 = &(occupants[1]);
 
@@ -816,6 +821,17 @@ destroy_drawbridge(int x, int y)
         deltrap(level, t);
     del_engr_at(level, x, y);
     del_engr_at(level, x2, y2);
+    for (i = rn2(6); i > 0; --i) {  /* scatter some debris */
+        /* doesn't matter if we happen to pick <x,y2> or <x2,y>;
+           since drawbridges are never placed diagonally, those
+           pairings will always match one of <x,y> or <x2,y2> */
+        chain = mksobj_at(IRON_CHAIN, level,
+                          rn2(2) ? x : x2, rn2(2) ? y : y2,
+                          TRUE, FALSE, rng_main);
+        /* a force of 5 here would yield a radius of 2 for
+           iron chain; anything less produces a radius of 1 */
+        (void) scatter(chain->ox, chain->oy, 1, MAY_HIT, chain);
+    }
     newsym(x, y);
     newsym(x2, y2);
     if (!does_block(level, x2, y2))
