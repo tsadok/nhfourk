@@ -1785,14 +1785,14 @@ corpse_chance(struct monst *mon,
     /* NetHack Fourk balance adjustment: any given type of monster
        becomes unlikely to leave further corpses when lots of that
        type of monster have been killed already. */
-    if (log(1 + mvitals[monsndx(mon->data)].died) > rn2(5))
+    if (log(1 + mvitals[monsndx(mon->data)].died)
+        > rn2_on_rng(5, rng_death_drop_c))
         return FALSE;
 
     if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
         return TRUE;
-    return (boolean) (!rn2((int)
-                           (2 + ((int)(mdat->geno & G_FREQ) < 2) +
-                            verysmall(mdat))));
+    return (boolean) (!rn2((int) (2 + ((int)(mdat->geno & G_FREQ) < 2)
+                                    + verysmall(mdat))));
 }
 
 /* drop (perhaps) a cadaver and remove monster */
@@ -2062,15 +2062,17 @@ xkilled(struct monst *mtmp, int dest)
      * monsters you kill of any given type are significantly more likely to drop
      * something than before.  This is intended.  As you kill more of that kind
      * of monster, the probabilities quickly drop off.  */
-    if (log(1 + mvitals[monsndx(mtmp->data)].died) <= rn2(5)) {
+    death_drop_rng = (mdat->msize < MZ_HUMAN) ? rng_death_drop_s
+                                              : rng_death_drop_l;
+
+    if (log(1 + mvitals[monsndx(mtmp->data)].died)
+        <= rn2_on_rng(5, death_drop_rng)) {
         /* might be here after swallowed */
         if (((x != u.ux) || (y != u.uy)) && /* !rn2(6) && */
             !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
             int typ;
 
-            otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE,
-                            ((mdat->msize < MZ_HUMAN)
-                             ? rng_death_drop_s : rng_death_drop_l));
+            otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, death_drop_rng);
             /* Don't create large objects from small monsters */
             typ = otmp->otyp;
             if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&

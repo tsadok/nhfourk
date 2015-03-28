@@ -753,6 +753,8 @@ m_initinv(struct monst *mtmp, enum rng rng)
         }
         break;
     case S_IMP:
+        /* leave the dice() roll on rng_main, because it factors in the
+           level_difficulty */
         if (mtmp->data == &mons[PM_LEPRECHAUN])
             mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
         /* Nothing special for the other i for now. */

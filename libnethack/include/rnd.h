@@ -102,6 +102,7 @@ enum rng {
     rng_wish_10,         /* 10% wish source, e.g. fountain on dlvl 10 */
     rng_wish_5,          /*  5% wish source, e.g. cursed magic lamp */
     rng_smoky_potion,    /* smoky potion effects */
+    rng_death_drop_c,    /* corpse drop probability - likely won't sync */
     rng_death_drop_s,    /* death drop RNG (small monsters) */
     rng_death_drop_l,    /* death drop RNG (large monsters) */
     rng_poly_obj,        /* object creatd by polymorph */
