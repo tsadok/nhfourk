@@ -45,6 +45,9 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Quasits have been buffed slightly, because they're boring, but
+   I don't want to just remove them if they can be made interesting.
+
  * Manes are now in the W mlet, with wraiths and ghosts and other
    spirits of the dead.  This fits their flavour much better than
    their previous mlet assignment and also reduces color conflicts.
