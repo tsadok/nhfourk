@@ -979,9 +979,13 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         mon->mhp = mon->mhpmax;
     if (mon->mhp < 1)
         destroyed = TRUE;
-    if (mon->mtame && (!mon->mflee || mon->mfleetim) && tmp > 0) {
-        abuse_dog(mon);
-        monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
+    if (mon->mtame && tmp > 0) {
+        /* do this even if the pet is being killed (affects revival) */
+        abuse_dog(mon);     /* reduces tameness */
+        /* flee if still alive and still tame; if already suffering from
+           untimed fleeing, no effect, otherwise increases timed fleeing */
+        if (mon->mtame && !destroyed)
+            monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
     }
     if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING])
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
