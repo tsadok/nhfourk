@@ -167,7 +167,7 @@ disturb(struct monst *mtmp)
 void
 monflee(struct monst *mtmp, int fleetime, boolean first, boolean fleemsg)
 {
-    if (DEADMONSTER(mtmp))
+    if (DEADMONSTER(mtmp)) /* shouldn't happen; but does; fixes C343-299 */
         return;
 
     if (u.ustuck == mtmp) {
