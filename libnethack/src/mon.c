@@ -2054,7 +2054,7 @@ xkilled(struct monst *mtmp, int dest)
         typ = otmp->otyp;
         if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&
             typ != LEASH && typ != FIGURINE &&
-            (otmp->owt > 3 || objects[typ].oc_big || /* oc_bimanual/oc_bulky */
+            (otmp->owt > 30 || objects[typ].oc_big || /* oc_bimanual/oc_bulky */
              is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
             delobj(otmp);
         } else
