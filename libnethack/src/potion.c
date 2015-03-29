@@ -430,6 +430,7 @@ peffects(struct obj *otmp)
             pline("Ulch!  This makes you feel mediocre!");
             break;
         } else {
+            /* unlike unicorn horn, overrides Fixed_abil */
             pline("Wow!  This makes you feel %s!",
                   (otmp->blessed) ? (unfixable_trouble_count(FALSE) ? "better" :
                                      "great")

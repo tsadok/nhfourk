@@ -521,6 +521,9 @@ thrwmq(struct monst *mtmp, int xdef, int ydef)
     if (is_pole(otmp)) {
         int dam, hitv;
 
+        if (otmp != MON_WEP(mtmp))
+            return;  /* polearm must be wielded */
+
         /* TODO: LOE function between two arbitrary points. */
         if (dist2(mtmp->mx, mtmp->my, xdef, ydef) > POLE_LIM ||
             (xdef == u.ux && ydef == u.uy && !couldsee(mtmp->mx, mtmp->my)))
