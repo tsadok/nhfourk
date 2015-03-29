@@ -418,8 +418,10 @@ struct obj *
 select_rwep(const struct monst *mtmp)
 {
     struct obj *otmp;
+    boolean mweponly;
     int i;
 
+    struct obj *mwep = MON_WEP(mtmp);
     struct obj *tmpprop = &zeroobj;
 
     char mlet = mtmp->data->mlet;
@@ -431,12 +433,24 @@ select_rwep(const struct monst *mtmp)
     if (throws_rocks(mtmp->data))       /* ...boulders for giants */
         Oselect(BOULDER);
 
-    /* Select polearms first; they do more damage and aren't expendable */
+    /* Select polearms first; they do more damage and aren't expendable.
+       But don't pick one if monster's weapon is welded, because then
+       we'd never have a chance to throw non-wielding missiles. */
     /* The limit of 13 here is based on the monster polearm range limit
        (defined as 5 in mthrowu.c).  5 corresponds to a distance of 2 in one
        direction and 1 in another; one space beyond that would be 3 in one
        direction and 2 in another; 3^2+2^2=13. */
     {
+        /* NO_WEAPON_WANTED means we already tried to wield and failed */
+        mweponly = (mwep && (mwep->owornmask & W_MASK(os_wep)) && mwep->cursed
+                    /* could use will_weld, but it's a #define in wield.c */
+                    && ((mwep->oclass == WEAPON_CLASS && !is_ammo(mwep)) ||
+                        is_weptool(mwep) || mwep->otyp == HEAVY_IRON_BALL ||
+                        /* mwep->otyp == IRON_CHAIN || */
+                        mwep->otyp == TIN_OPENER) &&
+                    /* in simple terms, the weapon is welded, and... */
+                    mtmp->weapon_check == NO_WEAPON_WANTED);
+
         for (i = 0; i < SIZE(pwep); i++) {
             /* Only strong monsters can wield big (esp. long) weapons. Big
                weapon is basically the same as bimanual. All monsters can wield 
@@ -446,7 +460,8 @@ select_rwep(const struct monst *mtmp)
                  || !objects[pwep[i]].oc_bimanual) &&
                 (objects[pwep[i]].oc_material != SILVER ||
                  !hates_silver(mtmp->data))) {
-                if ((otmp = oselect(mtmp, pwep[i])) != 0) {
+                if (((otmp = oselect(mtmp, pwep[i])) != 0) &&
+                    (otmp == mwep || !mweponly)) {
                     propellor = otmp;   /* force the monster to wield it */
                     return otmp;
                 }
