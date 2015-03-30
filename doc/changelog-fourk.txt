@@ -45,6 +45,9 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Players who wish to use spears should be able to find more
+   of them now, introduced via the monster inventory mechanism.
+
  * Quasits have been buffed slightly, because they're boring, but
    I don't want to just remove them if they can be made interesting.
 

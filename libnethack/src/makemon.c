@@ -388,6 +388,11 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 mongets(mtmp, DWARVISH_IRON_HELM, rng);
                 if (!rn2_on_rng(3, rng))
                     mongets(mtmp, DWARVISH_MITHRIL_COAT, rng);
+            } else if (!rn2_on_rng(5, rng)) {
+                mongets(mtmp, DWARVISH_SPEAR, rng);
+                mongets(mtmp, DWARVISH_ROUNDSHIELD, rng);
+                mongets(mtmp, DWARVISH_IRON_HELM, rng);
+                
             } else {
                 mongets(mtmp, !rn2_on_rng(3, rng) ? PICK_AXE : DAGGER, rng);
             }
@@ -408,6 +413,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
         case PM_MORDOR_ORC:
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, SCIMITAR, rng);
+            else if (!rn2_on_rng(3, rng))
+                mongets(mtmp, ORCISH_SPEAR, rng);
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, ORCISH_SHIELD, rng);
             if (!rn2_on_rng(3, rng))
@@ -420,6 +427,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 mongets(mtmp, ORCISH_CLOAK, rng);
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, ORCISH_SHORT_SWORD, rng);
+            else if (!rn2_on_rng(3, rng))
+                mongets(mtmp, ORCISH_SPEAR, rng);
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, IRON_SHOES, rng);
             if (!rn2_on_rng(3, rng)) {
@@ -1756,6 +1765,11 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
                 (otmp->oclass == ARMOR_CLASS)) {
                 otmp->spe += rn2_on_rng(3, rng);
             }
+        }
+        if (otmp->otyp == SPEAR || otmp->otyp == DWARVISH_SPEAR ||
+            otmp->otyp == ELVEN_SPEAR || otmp->otyp == ORCISH_SPEAR ||
+            otmp->otyp == JAVELIN) {
+            otmp->quan = rne_on_rng(2, rng);
         }
         if (mtmp->data->mlet == S_DEMON) {
             /* demons never get blessed objects */
