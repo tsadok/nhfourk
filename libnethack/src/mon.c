@@ -1726,7 +1726,8 @@ corpse_chance(struct monst *mon,
 
     if (mdat == &mons[PM_VLAD_THE_IMPALER] || mdat->mlet == S_LICH) {
         if (cansee(mon->mx, mon->my) && !was_swallowed)
-            pline("%s body crumbles into dust.", s_suffix(Monnam(mon)));
+            pline("%s %s crumbles into dust.", s_suffix(Monnam(mon)),
+                  mbodypart(mon, BODY));
         return FALSE;
     }
 
@@ -1790,7 +1791,8 @@ mondied(struct monst *mdef)
         return; /* lifesaved */
 
     if (corpse_chance(mdef, NULL, FALSE) &&
-        (accessible(mdef->mx, mdef->my) || is_pool(level, mdef->mx, mdef->my)))
+        (accessible(level, mdef->mx, mdef->my) ||
+         is_pool(level, mdef->mx, mdef->my)))
         make_corpse(mdef);
 }
 
@@ -2046,15 +2048,20 @@ xkilled(struct monst *mtmp, int dest)
         !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
         int typ;
 
-        otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
+        otmp = mkobj(level, RANDOM_CLASS, TRUE, mdat->msize < MZ_HUMAN
                         ? rng_death_drop_s : rng_death_drop_l);
         /* Don't create large objects from small monsters */
         typ = otmp->otyp;
-        if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&
-            typ != LEASH && typ != FIGURINE &&
-            (otmp->owt > 3 || objects[typ].oc_big || /* oc_bimanual/oc_bulky */
+        if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
+            /* oc_big is also oc_bimanual and oc_bulky */
+            (otmp->owt > 30 || objects[typ].oc_big ||
              is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
             delobj(otmp);
+        } else if (!flooreffects(otmp, x, y,
+                                 (dest & 1) ? "fall" : "")) {
+            place_object(otmp, level, x, y);
+            stackobj(otmp);
+            redisp = TRUE;
         } else
             redisp = TRUE;
     }
@@ -2064,7 +2071,7 @@ xkilled(struct monst *mtmp, int dest)
     if (corpse_chance(mtmp, NULL, FALSE))
         make_corpse(mtmp);
 
-    if (!accessible(x, y) && !is_pool(level, x, y)) {
+    if (!accessible(level, x, y) && !is_pool(level, x, y)) {
         /* might be mimic in wall or corpse in lava */
         redisp = TRUE;
         if (wasinside)
@@ -2540,7 +2547,7 @@ restore_cham(struct monst *mon)
 static boolean
 restrap(struct monst *mtmp)
 {
-    if (mtmp->cham || mtmp->mcan || mtmp->m_ap_type ||
+    if (mtmp->mcan || mtmp->m_ap_type ||
         cansee(mtmp->mx, mtmp->my) || rn2(3) || (mtmp == u.ustuck) ||
         (sensemon(mtmp) && distu(mtmp->mx, mtmp->my) <= 2))
         return FALSE;
@@ -2665,6 +2672,9 @@ newcham(struct monst *mtmp, const struct permonst *mdat,
     const char *oldname = NULL; /* initialize because gcc can't figure out that
                                    this is unused if !msg */
 
+    /* Riders are immune to polymorph and green slime: */
+    if (is_rider(mtmp->data)) return 0;
+
     if (msg) {
         /* like Monnam() but never mention saddle */
         oldname = x_monnam(mtmp, ARTICLE_THE, NULL, SUPPRESS_SADDLE, FALSE);
@@ -2721,6 +2731,8 @@ newcham(struct monst *mtmp, const struct permonst *mdat,
         wormgone(mtmp);
         place_monster(mtmp, mtmp->mx, mtmp->my);
     }
+    if (mtmp->m_ap_type && mdat->mlet != S_MIMIC)
+        seemimic(mtmp);     /* revert to normal monster */
 
     hpn = mtmp->mhp;
     hpd = (mtmp->m_lev < 50) ? ((int)mtmp->m_lev) * 8 : mdat->mlevel;

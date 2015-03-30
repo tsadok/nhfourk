@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-03-30 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -654,7 +654,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     int armpro, num, tmp = dice((int)mattk->damn, (int)mattk->damd);
     boolean cancelled;
 
-    if (touch_petrifies(pd) && !resists_ston(magr)) {
+    if ((touch_petrifies(pd)
+         || (mattk->adtyp == AD_DGST && pd == &mons[PM_MEDUSA]))
+        && !resists_ston(magr)) {
         long protector = attk_protection((int)mattk->aatyp);
         long wornitems = magr->misc_worn_check;
 
@@ -1097,7 +1099,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
             if (otmp->owornmask) {
                 mdef->misc_worn_check &= ~otmp->owornmask;
                 if (otmp->owornmask & W_MASK(os_wep))
-                    setmnotwielded(mdef, otmp);
+                    mwepgone(mdef);
                 otmp->owornmask = 0L;
                 update_mon_intrinsics(mdef, otmp, FALSE, FALSE);
             }
@@ -1196,6 +1198,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         case 17:
             if (!resist(mdef, 0, 0, 0)) {
                 monkilled(mdef, "", AD_DETH);
+                if (mdef->mhp <= 0)             /* did it lifesave? */
+                    return MM_DEF_DIED;
+
                 tmp = 0;
                 break;
             }   /* else FALLTHRU */
@@ -1231,8 +1236,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         break;
     case AD_FAMN:
         if (vis)
-            pline("%s reaches out, and %s body shrivels.",
-                  Monnam(magr), s_suffix(mon_nam(mdef)));
+            pline("%s reaches out, and %s %s shrivels.",
+                  Monnam(magr), s_suffix(mon_nam(mdef)),
+                  mbodypart(mdef, BODY));
         if (mdef->mtame && !mdef->isminion)
             EDOG(mdef)->hungrytime -= rn1(120, 120);
         else {
@@ -1374,9 +1380,10 @@ mswingsm(struct monst *magr, struct monst *mdef, struct obj *otemp)
     if (!flags.verbose || Blind || !mon_visible(magr))
         return;
 
-    pline("%s %s %s %s at %s.", Monnam(magr),
+    pline("%s %s %s%s %s at %s.", Monnam(magr),
           (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-          mhis(magr), singular(otemp, xname), mon_nam(mdef));
+          ((otemp->quan > 1L) ? "one of " : ""),
+          mhis(magr), xname(otemp), mon_nam(mdef));
 }
 
 /*

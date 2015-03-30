@@ -629,7 +629,7 @@ use_defensive(struct monst *mtmp, struct musable *m)
                 makeknown(WAN_DIGGING);
             if (IS_FURNITURE(level->locations[mtmp->mx][mtmp->my].typ) ||
                 IS_DRAWBRIDGE(level->locations[mtmp->mx][mtmp->my].typ) ||
-                (is_drawbridge_wall(mtmp->mx, mtmp->my) >= 0) ||
+                (drawbridge_wall_direction(mtmp->mx, mtmp->my) >= 0) ||
                 (level->sstairs.sx == mtmp->mx &&
                  level->sstairs.sy == mtmp->my)) {
                 pline("The digging ray is ineffective.");
@@ -1727,7 +1727,8 @@ use_misc(struct monst *mtmp, struct musable *m)
         mon_set_minvis(mtmp);
         if (vismon && mtmp->minvis) {   /* was seen, now invisible */
             if (See_invisible)
-                pline("%s body takes on a %s transparency.", s_suffix(nambuf),
+                pline("%s %s takes on a %s transparency.", s_suffix(nambuf),
+                      mbodypart(mtmp, BODY),
                       Hallucination ? "normal" : "strange");
             else if (tp_sensemon(mtmp))
                 pline("%s disappears, but you can still %s.", nambuf,
@@ -1821,7 +1822,21 @@ use_misc(struct monst *mtmp, struct musable *m)
                 /* obj->bknown = 1; *//* welded() takes care of this */
                 where_to = 0;
             }
-            if (!where_to) {
+            if ((obj->otyp == LEASH) && (obj->leashmon != 0)) {
+                struct monst *pet = find_mid(level, obj->leashmon, FM_FMON);
+                pline("%s becomes entangled in %s leash.", The_whip,
+                      (pet ? mhis(pet) : "your"));
+                yelp(pet);
+                obj_extract_self(otmp);
+                setmnotwielded(mtmp, otmp);
+                MON_NOWEP(mtmp);
+                otmp->owornmask = 0L;
+                pline("%s tugs away from %s.", The_whip,
+                      (vismon ? mon_nam(mtmp) : "something"));
+                otmp = hold_another_object(otmp, "%s untangles and falls away.",
+                                           doname(otmp), "You now have ");
+                return 1;
+            } else if (!where_to) {
                 pline("The whip slips free.");  /* not `The_whip' */
                 return 1;
             } else if (where_to == 3 && hates_silver(mtmp->data) &&

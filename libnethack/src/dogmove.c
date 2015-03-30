@@ -744,11 +744,13 @@ dog_move(struct monst *mtmp, int after)
 
         }
     }
+    /* This is now handled by dochug():
     if (!Conflict && !mtmp->mconf && mtmp == u.ustuck &&
         !sticks(youmonst.data)) {
-        unstuck(mtmp);  /* swallowed case handled above */
+        unstuck(mtmp);  // swallowed case handled above
         pline("You get released!");
     }
+    */
 
 /*
  * We haven't moved yet, so search for monsters to attack from a

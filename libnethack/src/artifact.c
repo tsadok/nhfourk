@@ -306,6 +306,24 @@ arti_reflects(struct obj * obj)
     return FALSE;
 }
 
+/* decide whether this obj is effective when attacking against shades;
+   does not consider the bonus for blessed objects versus undead */
+boolean
+shade_glare(struct obj *obj)
+{
+    const struct artifact *arti;
+
+    /* any silver object is effective */
+    if (objects[obj->otyp].oc_material == SILVER) return TRUE;
+    /* non-silver artifacts with bonus against undead also are effective */
+    arti = get_artifact(obj);
+    if (arti && (arti->spfx & SPFX_DFLAG2) && arti->mtype == M2_UNDEAD)
+        return TRUE;
+    /* [if there was anything with special bonus against noncorporeals,
+       it should be effective too] */
+    /* otherwise, harmless to shades */
+    return FALSE;
+}
 
 boolean
 restrict_name(struct obj * otmp, const char *name)
@@ -902,7 +920,7 @@ magicbane_hit(struct monst *magr,   /* attacker */
     if (youattack || youdefend || vis) {
         hittee = msgupcasefirst(hittee);
         if (resisted) {
-            pline("%s %s!", hittee, vtense(hittee, "resist"));
+            pline("%s resist%s!", hittee, youdefend ? "" : "s");
             shieldeff(m_mx(mdef), m_my(mdef));
         }
         if (flags.verbose) {
@@ -916,8 +934,8 @@ magicbane_hit(struct monst *magr,   /* attacker */
                 buf = "confused";
 
             if (buf)
-                pline("%s %s %s%c", hittee, vtense(hittee, "are"), buf,
-                      (do_stun && do_confuse) ? '!' : '.');
+                pline("%s %s %s%c", hittee, youdefend ? "are" : "is",
+                      buf, (do_stun && do_confuse) ? '!' : '.');
         }
     }
 
@@ -1465,10 +1483,10 @@ arti_invoke(struct obj *obj)
                 goto nothing_special;
             newsym(u.ux, u.uy);
             if (on)
-                pline("Your body takes on a %s transparency...",
+                pline("Your %s takes on a %s transparency...", body_part(BODY),
                       Hallucination ? "normal" : "strange");
             else
-                pline("Your body seems to unfade...");
+                pline("Your %s seems to unfade...", body_part(BODY));
             break;
         }
     }

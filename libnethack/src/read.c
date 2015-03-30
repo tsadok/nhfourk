@@ -608,8 +608,10 @@ seffects(struct obj *sobj, boolean *known)
             otmp = some_armor(&youmonst);
             if (!otmp) {
                 strange_feeling(sobj,
-                                !Blind ? "Your skin glows then fades." :
-                                "Your skin feels warm for a moment.");
+                                !Blind ? msgprintf("Your %s glows then fades.",
+                                                   body_part(SKIN)) :
+                                msgprintf("Your %s feels warm for a moment.",
+                                          body_part(SKIN)));
                 exercise(A_CON, !sobj->cursed);
                 exercise(A_STR, !sobj->cursed);
                 return 1;
@@ -741,7 +743,8 @@ seffects(struct obj *sobj, boolean *known)
             }
             if (!sobj->cursed || !otmp || !otmp->cursed) {
                 if (!destroy_arm(otmp)) {
-                    strange_feeling(sobj, "Your skin itches.");
+                    strange_feeling(sobj, msgprintf("Your %s itches.",
+                                                    body_part(SKIN)));
                     exercise(A_STR, FALSE);
                     exercise(A_CON, FALSE);
                     return 1;

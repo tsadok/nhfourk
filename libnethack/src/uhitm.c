@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-03-30 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -137,7 +137,7 @@ attack_checks(struct monst *mtmp,
             seemimic(mtmp);
             return ac_continue;
         }
-        if (!(Blind ? Blind_telepat : Unblind_telepat)) {
+        if (!((Blind ? Blind_telepat : Unblind_telepat) || Detect_monsters)) {
             struct obj *obj;
 
             if (Blind || (is_pool(level, mtmp->mx, mtmp->my) && !Underwater))
@@ -535,7 +535,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                    /* or throw a missile without the proper bow... */
                    (is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
                 /* then do only 1-2 points of damage */
-                if (mdat == &mons[PM_SHADE] && obj->otyp != SILVER_ARROW)
+                if (mdat == &mons[PM_SHADE] && !shade_glare(obj))
                     tmp = 0;
                 else
                     tmp = rnd(2);
@@ -979,9 +979,13 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         mon->mhp = mon->mhpmax;
     if (mon->mhp < 1)
         destroyed = TRUE;
-    if (mon->mtame && (!mon->mflee || mon->mfleetim) && tmp > 0) {
-        abuse_dog(mon);
-        monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
+    if (mon->mtame && tmp > 0) {
+        /* do this even if the pet is being killed (affects revival) */
+        abuse_dog(mon);     /* reduces tameness */
+        /* flee if still alive and still tame; if already suffering from
+           untimed fleeing, no effect, otherwise increases timed fleeing */
+        if (mon->mtame && !destroyed)
+            monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
     }
     if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING])
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
@@ -1309,6 +1313,16 @@ damageum(struct monst *mdef, const struct attack *mattk)
                     tmp = 0;
                 } else
                     tmp = rnd(4);       /* bless damage */
+            }
+            /* add ring(s) of increase damage */
+            if (u.udaminc > 0) {
+                /* applies even if damage was 0 */
+                tmp += u.udaminc;
+            } else if (tmp > 0) {
+                /* ring(s) might be negative; avoid converting
+                   0 to non-0 or positive to non-positive */
+                tmp += u.udaminc;
+                if (tmp < 1) tmp = 1;
             }
         }
         break;
@@ -1737,6 +1751,7 @@ gulpum(struct monst *mdef, const struct attack *mattk)
     int tmp;
     int dam = dice((int)mattk->damn, (int)mattk->damd);
     struct obj *otmp;
+    boolean fatal_gulp;
 
     /* Not totally the same as for real monsters.  Specifically, these don't
        take multiple moves.  (It's just too hard, for too little result, to
@@ -1752,8 +1767,13 @@ gulpum(struct monst *mdef, const struct attack *mattk)
         for (otmp = mdef->minvent; otmp; otmp = otmp->nobj)
             snuff_lit(otmp);
 
-        /* KMH, conduct */
-        if (mattk->adtyp == AD_DGST) {
+        fatal_gulp = (touch_petrifies(mdef->data) && !Stone_resistance) ||
+            (mattk->adtyp == AD_DGST &&
+             (is_rider(mdef->data) ||
+              ((mdef->data == &mons[PM_MEDUSA]) && !Stone_resistance)));
+
+        if ((mattk->adtyp == AD_DGST && !Slow_digestion) || fatal_gulp) {
+            /* KMH, conduct */
             break_conduct(conduct_food);
             if (!vegan(mdef->data))
                 break_conduct(conduct_vegan);
@@ -1761,7 +1781,12 @@ gulpum(struct monst *mdef, const struct attack *mattk)
                 break_conduct(conduct_vegetarian);
         }
 
-        if (!touch_petrifies(mdef->data) || Stone_resistance) {
+        if (fatal_gulp && !is_rider(mdef->data)) {  /* petrification */
+            const char *mname = mdef->data->mname;
+            if (!type_is_pname(mdef->data)) mname = an(mname);
+            pline("You bite into %s.", mon_nam(mdef));
+            instapetrify(killer_msg(STONING, msgprintf("swallowing %s whole", mname)));
+        } else {
             start_engulf(mdef);
             switch (mattk->adtyp) {
             case AD_DGST:
@@ -1893,10 +1918,6 @@ gulpum(struct monst *mdef, const struct attack *mattk)
                 pline("Obviously, you didn't like %s taste.",
                       s_suffix(mon_nam(mdef)));
             }
-        } else {
-            pline("You bite into %s.", mon_nam(mdef));
-            instapetrify(killer_msg(STONING,
-                msgprintf("swallowing %s whole", an(mdef->data->mname))));
         }
     }
     return 0;
@@ -2069,7 +2090,13 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
                youmonst.data->mlet==S_ORC || youmonst.data->mlet==S_GNOME ))
                goto use_weapon; */
             sum[i] = castum(mon, mattk);
-            continue;
+            /* allow enemy passives here, these spells are mostly flavoured as
+               melee attacks anyway (to do this properly, we'd need to get
+               castum to return a value that indicated whether a touch attack
+               was used); note that we can't disallow them via "continue"
+               because then, killing the monster will kill it twice and throw
+               off dead monster accounting */
+            break;
 
         case AT_NONE:
         case AT_BOOM:
@@ -2126,7 +2153,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
     else
         tmp = 0;
 
-/* These affect you even if they just died */
+    /* These affect you even if they just died */
 
     switch (ptr->mattk[i].adtyp) {
 
@@ -2232,7 +2259,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
         break;
     }
 
-/* These only affect you if they still live */
+    /* These only affect you if they still live */
 
     if (malive && !mon->mcan && rn2(3)) {
 

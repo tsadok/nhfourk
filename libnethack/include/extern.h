@@ -113,6 +113,7 @@ extern int nartifact_exist(void);
 extern boolean spec_ability(struct obj *, unsigned long);
 extern boolean confers_luck(struct obj *);
 extern boolean arti_reflects(struct obj *);
+extern boolean shade_glare(struct obj *);
 extern boolean restrict_name(struct obj *, const char *);
 extern boolean defends(int, struct obj *);
 extern boolean protects(int, struct obj *);
@@ -209,7 +210,7 @@ extern boolean is_pool(struct level *lev, int x, int y);
 extern boolean is_lava(struct level *lev, int x, int y);
 extern boolean is_ice(struct level *lev, int x, int y);
 extern boolean is_moat(struct level *lev, int x, int y);
-extern int is_drawbridge_wall(int, int);
+extern int drawbridge_wall_direction(int, int);
 extern boolean is_db_wall(int, int);
 extern boolean find_drawbridge(int *, int *);
 extern boolean create_drawbridge(struct level *lev, int x, int y, int dir,
@@ -1171,7 +1172,7 @@ extern boolean monster_would_take_item(struct monst *, struct obj *);
 extern int dochug(struct monst *);
 extern int m_move(struct monst *, int);
 extern boolean closed_door(struct level *lev, int x, int y);
-extern boolean accessible(int, int);
+extern boolean accessible(struct level *, int, int);
 extern void set_apparxy(struct monst *);
 extern boolean can_ooze(struct monst *);
 
@@ -1417,6 +1418,7 @@ extern void ghod_hitsu(struct monst *);
 extern void angry_priest(void);
 extern void clearpriests(void);
 extern void restpriest(struct monst *, boolean);
+extern boolean inhistemple(struct monst *);
 
 /* ### prop.c ### */
 
@@ -1551,6 +1553,7 @@ extern char inside_shop(struct level *lev, xchar x, xchar y);
 extern void u_left_shop(char *, boolean);
 extern void remote_burglary(xchar, xchar);
 extern void u_entered_shop(char *);
+extern void pick_pick_from_container(struct obj *);
 extern boolean same_price(struct obj *, struct obj *);
 extern void shopper_financial_report(void);
 extern int inhishop(struct monst *);
@@ -1676,6 +1679,7 @@ extern void exercise_steed(void);
 extern void kick_steed(void);
 extern void dismount_steed(int);
 extern void place_monster(struct monst *mon, int x, int y);
+extern boolean stucksteed(boolean);
 
 /* ### symclass.c ### */
 
@@ -1758,6 +1762,7 @@ extern void restore_track(struct memfile *mf);
 /* ### trap.c ### */
 
 extern boolean burnarmor(struct monst *);
+extern int candle_erosion_level(int);
 extern boolean erode_obj(struct obj *, const char *, enum erode_type, boolean,
                          boolean);
 extern boolean grease_protect(struct obj *, const char *, struct monst *);
@@ -1767,6 +1772,7 @@ extern struct monst *animate_statue(struct obj *, xchar, xchar, int, int *);
 extern struct monst *activate_statue_trap(struct trap *, xchar, xchar, boolean);
 extern void dotrap(struct trap *, unsigned);
 extern void seetrap(struct trap *);
+extern void feeltrap(struct trap *);
 extern int mintrap(struct monst *);
 extern void instapetrify(const char *);
 extern void minstapetrify(struct monst *, boolean);
@@ -1853,6 +1859,7 @@ extern int dmgval(struct obj *, struct monst *);
 extern struct obj *select_rwep(const struct monst *);
 extern struct obj *select_hwep(const struct monst *);
 extern void possibly_unwield(struct monst *, boolean);
+extern void mwepgone(struct monst *);
 extern int mon_wield_item(struct monst *);
 extern int abon(void);
 extern int dbon(void);
@@ -1902,6 +1909,7 @@ extern int chwepon(struct obj *, int);
 extern int welded(struct obj *);
 extern void weldmsg(struct obj *);
 extern void setmnotwielded(struct monst *, struct obj *);
+extern boolean mwelded(const struct monst *, struct obj *);
 extern void unwield_weapons_silently(void);
 extern void unwield_silently(struct obj *obj);
 
@@ -2023,6 +2031,7 @@ extern int zap_over_floor(xchar, xchar, int, boolean *);
 extern void fracture_rock(struct obj *);
 extern boolean break_statue(struct obj *);
 extern void destroy_item(int, int);
+extern void set_candles_afire(void);
 extern int destroy_mitem(struct monst *, int, int);
 extern int resist(struct monst *, char, int, int);
 extern void makewish(void);
