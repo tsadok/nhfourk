@@ -221,7 +221,13 @@ make_blinded(long xtime, boolean talk)
     set_itimeout(&Blinded, xtime);
 
     if (u_could_see ^ can_see_now) {    /* one or the other but not both */
-        turnstate.vision_full_recalc = TRUE; /* blindness just got toggled */
+        turnstate.vision_full_recalc = TRUE;
+        /* This vision recalculation used to be deferred until moveloop(), but
+         * that made it possible for vision irregularities to occur (cited case
+         * was force bolt hitting adjacent potion of blindness and then a secret
+         * door; hero was blinded by vapors but then got the message "a door
+         * appears in the wall", C343-99) */
+        vision_recalc(0);
         if (Blind_telepat || Infravision)
             see_monsters(FALSE);
     }
@@ -424,6 +430,7 @@ peffects(struct obj *otmp)
             pline("Ulch!  This makes you feel mediocre!");
             break;
         } else {
+            /* unlike unicorn horn, overrides Fixed_abil */
             pline("Wow!  This makes you feel %s!",
                   (otmp->blessed) ? (unfixable_trouble_count(FALSE) ? "better" :
                                      "great")
@@ -996,7 +1003,7 @@ potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
 
             if (has_head(mon->data))
                 buf = msgprintf("%s %s", s_suffix(mnam),
-                                (notonhead ? "body" : "head"));
+                                (notonhead ? mbodypart(mon, BODY) : "head"));
             else
                 buf = mnam;
 

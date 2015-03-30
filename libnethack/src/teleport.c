@@ -4,6 +4,8 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "eshk.h"
+#include "epri.h"
 
 static boolean tele_jump_ok(int, int, int, int);
 static boolean teleok(int, int, boolean, boolean wizard_tele);
@@ -71,15 +73,19 @@ goodpos(struct level *lev, int x, int y, struct monst *mtmp, unsigned gpflags)
         }
         if (passes_walls(mdat) && may_passwall(lev, x, y))
             return TRUE;
+        if (amorphous(mdat) && closed_door(lev, x, y))
+            return TRUE;
     }
-    if (!ACCESSIBLE(lev->locations[x][y].typ)) {
+    if (!accessible(lev, x, y)) {
         if (!(is_pool(lev, x, y) && ignorewater))
             return FALSE;
     }
 
+/*  If I understand correctly, this may now be redundant, I think, maybe:
     if (!(gpflags & MM_IGNOREDOORS) && closed_door(lev, x, y) &&
         (!mdat || !amorphous(mdat)))
         return FALSE;
+*/
     if (!(gpflags & MM_IGNOREDOORS) && sobj_at(BOULDER, lev, x, y) &&
         (!mdat || !throws_rocks(mdat)))
         return FALSE;
@@ -623,8 +629,9 @@ level_tele_impl(boolean wizard_tele)
                 goto random_levtport;
             if (ynq("Go to Nowhere.  Are you sure?") != 'y')
                 return;
-            pline("You %s in agony as your body begins to warp...",
-                  is_silent(youmonst.data) ? "writhe" : "scream");
+            pline("You %s in agony as your %s begins to warp...",
+                  (is_silent(youmonst.data) ? "writhe" : "scream"),
+                  body_part(BODY));
             win_pause_output(P_MESSAGE);
             pline("You cease to exist.");
             if (invent)
@@ -632,7 +639,7 @@ level_tele_impl(boolean wizard_tele)
                       surface(u.ux, u.uy));
             done(DIED, "committed suicide");
             pline("An energized cloud of dust begins to coalesce.");
-            pline("Your body rematerializes%s.",
+            pline("Your %s rematerializes%s.", body_part(BODY),
                   invent ? ", and you gather up all your possessions" : "");
             return;
         }
@@ -868,7 +875,16 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
                      !within_bounded_area(
                          x, y, level->dndest.nlx, level->dndest.nly,
                          level->dndest.nhx, level->dndest.nhy)));
-    } else {
+    } else { /* [try to] prevent a shopkeeper or temple priest from being
+                sent out of his room (caller might resort to goodpos() if
+                we report failure here, so this isn't full prevention) */
+        if (mtmp->isshk && inhishop(mtmp)) {
+            if (level->locations[x][y].roomno != ESHK(mtmp)->shoproom)
+                return FALSE;
+        } else if (mtmp->ispriest && inhistemple(mtmp)) {
+            if (level->locations[x][y].roomno != EPRI(mtmp)->shroom)
+                return FALSE;
+        }
         /* current location is <xx,yy> */
         if (!tele_jump_ok(xx, yy, x, y))
             return FALSE;
@@ -1203,12 +1219,23 @@ random_teleport_level(void)
        explicitly handle quest here too, to fix the problem of monsters
        sometimes level teleporting out of it into main dungeon. Also prevent
        monsters reaching the Sanctum prior to invocation. */
-    min_depth = In_quest(&u.uz) ? dungeons[u.uz.dnum].depth_start : 1;
-    max_depth =
-        dunlevs_in_dungeon(&u.uz) + (dungeons[u.uz.dnum].depth_start - 1);
-    /* can't reach the Sanctum if the invocation hasn't been performed */
-    if (Inhell && !u.uevent.invoked)
-        max_depth -= 1;
+    if (In_quest(&u.uz)) {
+        int bottom = dunlevs_in_dungeon(&u.uz),
+            qlocate_depth = qlocate_level.dlevel;
+        /* if hero hasn't reached the middle locate level yet,
+           no one can randomly teleport past it */
+        if (dunlev_reached(&u.uz) < qlocate_depth)
+            bottom = qlocate_depth;
+        min_depth = dungeons[u.uz.dnum].depth_start;
+        max_depth = bottom + (dungeons[u.uz.dnum].depth_start - 1);
+    } else {
+        min_depth = 1;
+        max_depth = dunlevs_in_dungeon(&u.uz) +
+            (dungeons[u.uz.dnum].depth_start - 1);
+        /* can't reach the Sanctum if the invocation hasn't been performed */
+        if (Inhell && !u.uevent.invoked)
+            max_depth -= 1;
+    }
 
     /* Get a random value relative to the current dungeon */
     /* Range is 1 to current+3, current not counting */

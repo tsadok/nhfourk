@@ -1215,6 +1215,9 @@ light_cocktail(struct obj *obj)
         return 0;
     }
 
+    if (obj->quan > 1L)
+        obj = splitobj(obj, 1L);
+
     pline("You light %s potion.%s", shk_your(obj),
           Blind ? "" : "  It gives off a dim light.");
     if (obj->unpaid && costly_spot(u.ux, u.uy)) {
@@ -1611,10 +1614,17 @@ use_unicorn_horn(struct obj *obj)
 
     /* collect attribute troubles */
     for (idx = 0; idx < A_MAX; idx++) {
+        if (ABASE(idx) >= AMAX(idx)) continue;
         val_limit = AMAX(idx);
         /* don't recover strength lost from hunger */
         if (idx == A_STR && u.uhs >= WEAK)
             val_limit--;
+        if (Fixed_abil) {
+            /* potion/spell of restore ability override sustain ability
+               intrinsic but unicorn horn usage doesn't */
+            unfixable_trbl += val_limit - ABASE(idx);
+            continue;
+        }
         /* don't recover more than 3 points worth of any attribute */
         if (val_limit > ABASE(idx) + 3)
             val_limit = ABASE(idx) + 3;
@@ -2103,6 +2113,10 @@ use_trap(struct obj *otmp, const struct nh_cmd_arg *arg)
              IS_ROCK(level->locations[u.ux][u.uy].typ) ||
              closed_door(level, u.ux, u.uy) || t_at(level, u.ux, u.uy))
         what = "here";
+    else if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz))
+        what = (level->locations[u.ux][u.uy].typ == AIR) ? "in midair" :
+            (level->locations[u.ux][u.uy].typ == CLOUD) ? "in a cloud" :
+            "in this place";         /* Air/Water Plane catch-all */
     if (what) {
         pline("You can't set a trap %s!", what);
         u.utracked[tos_trap] = 0;
@@ -2192,9 +2206,8 @@ set_trap(void)
     ttyp = (otmp->otyp == LAND_MINE) ? LANDMINE : BEAR_TRAP;
     ttmp = maketrap(level, u.ux, u.uy, ttyp, rng_main);
     if (ttmp) {
-        ttmp->tseen = 1;
         ttmp->madeby_u = 1;
-        newsym(u.ux, u.uy);     /* if our hero happens to be invisible */
+        feeltrap(ttmp);
         if (*in_rooms(level, u.ux, u.uy, SHOPBASE)) {
             add_damage(u.ux, u.uy, 0L); /* schedule removal */
         }
@@ -2389,7 +2402,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
 
             pline("You wrap your bullwhip around %s %s.",
                   s_suffix(mon_nam(mtmp)), onambuf);
-            if (gotit && otmp->cursed) {
+            if (gotit && mwelded(mtmp, otmp)) {
                 pline("%s welded to %s %s%c",
                       (otmp->quan == 1L) ? "It is" : "They are", mhis(mtmp),
                       mon_hand, !otmp->bknown ? '!' : '.');
@@ -3004,6 +3017,8 @@ doapply(const struct nh_cmd_arg *arg)
                           hcolor("brown"));
                     obj->bknown = 1;
                 }
+                if (obj->quan > 1L)
+                    obj = splitobj(obj, 1L);
                 unbless(obj);
             }
         } else {
@@ -3104,6 +3119,13 @@ doapply(const struct nh_cmd_arg *arg)
             otmp->blessed = obj->blessed;
             otmp->cursed = obj->cursed;
             otmp->owt = weight(otmp);
+            /* using a shop's horn of plenty entails a usage fee and also
+               confers ownership of the created item to the shopkeeper */
+            if (carried(obj) ? obj->unpaid :
+                (costly_spot(u.ux, u.uy) && !obj->no_charge))
+                addtobill(obj, FALSE, FALSE, FALSE);
+            /* if it ended up on bill, we don't want "(unpaid, N zorkids)"
+               being included in its formatted name during next message */
             hold_another_object(
                 otmp, Engulfed ? "Oops!  %s out of your reach!"
                 : (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) ||

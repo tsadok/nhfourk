@@ -95,9 +95,10 @@ mswings(struct monst *mtmp, struct obj *otemp)
 {
     if (!flags.verbose || Blind || !mon_visible(mtmp))
         return;
-    pline("%s %s %s %s.", Monnam(mtmp),
+    pline("%s %s %s%s %s.", Monnam(mtmp),
           (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-          mhis(mtmp), singular(otemp, xname));
+          ((otemp->quan > 1L) ? "one of " : ""),
+          mhis(mtmp), xname(otemp));
 }
 
 /* return how a poison attack was delivered */
@@ -834,6 +835,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 destroy_item(POTION_CLASS, AD_FIRE);
             if ((int)mtmp->m_lev > rn2(25))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if ((int)mtmp->m_lev > rn2(20))
+                set_candles_afire();
             burn_away_slime();
         } else
             dmg = 0;
@@ -1211,8 +1214,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hurtarmor(&youmonst, ERODE_ROT);
         break;
     case AD_HEAL:
-        /* a cancelled nurse is just an ordinary monster */
-        if (mtmp->mcan) {
+        /* a cancelled nurse is just an ordinary monster,
+         * and nurses don't heal those that cause petrification */
+        if (mtmp->mcan || (Upolyd && touch_petrifies(youmonst.data))) {
             hitmsg(mtmp, mattk);
             break;
         }
@@ -1369,7 +1373,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         diseasemu(mdat);        /* plus the normal damage */
         break;
     case AD_FAMN:
-        pline("%s reaches out, and your body shrivels.", Monnam(mtmp));
+        pline("%s reaches out, and your %s shrivels.", Monnam(mtmp),
+              body_part(BODY));
         exercise(A_CON, FALSE);
         if (u.uhs != FAINTED)
             morehungry(rn1(40, 40));
@@ -1894,6 +1899,8 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
                 destroy_item(POTION_CLASS, AD_FIRE);
             if ((int)mtmp->m_lev > rn2(25))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if ((int)mtmp->m_lev > rn2(20))
+                set_candles_afire();
             if (dmg)
                 mdamageu(mtmp, dmg);
         }

@@ -115,41 +115,74 @@ choke_dialogue(void)
     exercise(A_STR, FALSE);
 }
 
-static const char *const slime_texts[] = {
-    "You are turning a little %s.",     /* 5 */
-    "Your limbs are getting oozy.",     /* 4 */
-    "Your skin begins to peel away.",   /* 3 */
-    "You are turning into %s.", /* 2 */
-    "You have become %s."       /* 1 */
-};
+static boolean
+is_green(struct monst *mon)
+{
+    if (mon->data == &mons[PM_GREMLIN] || mon->data == &mons[PM_LEPRECHAUN] ||
+        /* Are wood nymphs green?  Sylphs are, but they might be different? */
+        mon->data == &mons[PM_BABY_GREEN_DRAGON] ||
+        mon->data == &mons[PM_GREEN_DRAGON] ||
+        /* Are NetHack's lichens green?  Some real lichens are, some not.
+         * What about guardian nagas and their hatchlings?  Their default
+         * representation is green, but that's also true of hobbits, among
+         * other things... */
+        mon->data == &mons[PM_GARTER_SNAKE] || /* usually green and black */
+        mon->data == &mons[PM_GREEN_MOLD] ||
+        /* Green elves are not green; etymology is they live in forests. */
+        mon->data == &mons[PM_GECKO] || mon->data == &mons[PM_IGUANA] ||
+        /* Lizards come in a variety of colors.  What about crocodiles?
+         * I grew up thinking crocodiles and aligators are green, but
+         * Google Images seems to suggest they're more often gray/brown. */
+        /* The ones below this comment are currently not relevant, since
+         * you can't be slimed while polymorphed into them. */
+        mon->data == &mons[PM_MEDUSA] || mon->data == &mons[PM_JUIBLEX] ||
+        mon->data == &mons[PM_NEFERET_THE_GREEN] ||
+        mon->data == &mons[PM_GREEN_SLIME]) {
+        return TRUE;
+    }
+    return FALSE;
+}
 
 static void
 slime_dialogue(void)
 {
     long i = (Slimed & TIMEOUT) / 2L;
 
-    if (((Slimed & TIMEOUT) % 2L) && i >= 0L && i < SIZE(slime_texts)) {
-        const char *str = slime_texts[SIZE(slime_texts) - i - 1L];
-
-        if (strchr(str, '%')) {
-            if (i == 4L) {      /* "you are turning green" */
-                if (!Blind)     /* [what if you're already green?] */
-                    pline(str, hcolor("green"));
-            } else {
-                if (Hallucination) {
-                    int idx = rndmonidx();
-
-                    pline(str, monnam_is_pname(idx)
-                          ? monnam_for_index(idx)
-                          : (idx < SPECIAL_PM && (mons[idx].geno & G_UNIQ))
-                          ? the(monnam_for_index(idx))
-                          : an(monnam_for_index(idx)));
-                } else {
-                    pline(str, "a green slime");
-                }
+    if (((Slimed & TIMEOUT) % 2L) && i >= 0L && i < 5) {
+        int idx = rndmonidx();
+        const char *turninto = Hallucination ? (monnam_is_pname(idx)
+                                                ? monnam_for_index(idx)
+                                                : (idx < SPECIAL_PM &&
+                                                   (mons[idx].geno & G_UNIQ))
+                                                ? the(monnam_for_index(idx))
+                                                : an(monnam_for_index(idx)))
+                                             : "a green slime";
+        switch (5 - i - 1L) {
+        case 0:
+            if (!Blind) {
+                if (is_green(&youmonst))
+                    pline("You are turning a more vivid shade of %s.",
+                          hcolor("green"));
+                else 
+                    pline("You are turning a little %s.",
+                          /* TODO: handle the case wherein
+                           *       you are already green. */
+                          hcolor("green"));
             }
-        } else
-            pline("%s", str);
+            break;
+        case 1:
+            pline("Your %s are getting oozy.", body_part(LIMBS));
+            break;
+        case 2:
+            pline("Your %s begins to peel away", body_part(BODY));
+            break;
+        case 3:
+            pline("You are turning into %s.", turninto);
+            break;
+        case 4:
+            pline("You have become %s.", turninto);
+            break;
+        }
     }
     if (i == 3L) {      /* limbs becoming oozy */
         HFast = 0L;     /* lose intrinsic speed */
@@ -576,6 +609,11 @@ slip_or_trip(void)
         } else {
             pline("You trip over %s.", what);
         }
+        if (!uarmf && (otmp->otyp == CORPSE) &&
+            touch_petrifies(&mons[otmp->corpsenm]) && !Stone_resistance)
+            instapetrify(killer_msg(STONING,
+                                    msgprintf("tripping over %s corpse",
+                                              an(mons[otmp->corpsenm].mname))));
     } else if (rn2(3) && is_ice(level, u.ux, u.uy)) {
         pline("%s %s%s on the ice.",
               u.usteed ?
@@ -873,6 +911,8 @@ burn_object(void *arg, long timeout)
                     switch (obj->where) {
                     case OBJ_INVENT:
                     case OBJ_MINVENT:
+                        if (uwep && (obj == uwep))
+                            uwepgone(); /* prevent save desync */
                         pline("%s %s %s consumed!", whose, xname(obj),
                               many ? "are" : "is");
                         obj->known = 1;

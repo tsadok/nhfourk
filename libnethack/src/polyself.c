@@ -204,7 +204,8 @@ newman(void)
              urace.individual.f) ? urace.individual.f :
             (urace.individual.m) ? urace.individual.m : urace.noun);
     if (Slimed) {
-        pline("Your body transforms, but there is still slime on you.");
+        pline("Your %s transforms, but there is still slime on you.",
+              body_part(BODY));
         Slimed = 10L;
     }
     see_monsters(FALSE);
@@ -344,6 +345,7 @@ polymon(int mntmp, boolean noisy)
     boolean sticky = sticks(youmonst.data) && u.ustuck &&
         !Engulfed, was_blind = ! !Blind, dochange = FALSE;
     boolean could_pass_walls = Passes_walls;
+    const char *kbuf;
     int mlvl;
 
     if (mvitals[mntmp].mvflags & G_GENOD) {     /* allow G_EXTINCT */
@@ -355,6 +357,12 @@ polymon(int mntmp, boolean noisy)
 
     if (noisy)
         break_conduct(conduct_polyself);     /* KMH, conduct */
+
+    /* exercise used to be at the very end, but only Wis was affected
+     * there since the polymorph was always in effect by then, and
+     * exercising other attributes has no effect when polyselfed. */
+    exercise(A_CON, FALSE);
+    exercise(A_WIS, TRUE);
 
     if (!Upolyd) {
         /* Human to monster; save human stats */
@@ -581,10 +589,19 @@ polymon(int mntmp, boolean noisy)
     }
     turnstate.vision_full_recalc = TRUE;
     see_monsters(FALSE);
-    exercise(A_CON, FALSE);
-    exercise(A_WIS, TRUE);
     if (noisy)
         encumber_msg();
+    
+    /* this final selftouch might trigger a recursize call to polymon()
+     * [stone golem wielding cockatrice corpse and hit by stone-to-flesh,
+     * becomes flesh golem above, now gets turned back into stone golem] */
+    if (Upolyd) {
+        kbuf = msgprintf("polymorphing into %s while wielding",
+                         an(mons[u.umonnum].mname));
+    } else {
+        kbuf = msgprintf("returning to %s form while wielding", urace.adj);
+    }
+    if (!uarmg) selftouch("No longer petrify-resistant, you", kbuf);
     return 1;
 }
 
@@ -741,11 +758,13 @@ drop_weapon(int alone, boolean noisy)
                       u.twoweap ? "s" : "");
             otmp2 = u.twoweap ? uswapwep : 0;
             uwepgone();
-            if (!wep->cursed || wep->otyp != LOADSTONE)
+            if ((!wep->cursed || wep->otyp != LOADSTONE) &&
+                (wep->otyp != LEASH || wep->leashmon == 0))
                 dropx(otmp);
             if (otmp2 != 0) {
                 uswapwepgone();
-                if (!otmp2->cursed || otmp2->otyp != LOADSTONE)
+                if ((!otmp2->cursed || otmp2->otyp != LOADSTONE) &&
+                    (otmp2->otyp != LEASH || otmp2->leashmon == 0))
                     dropx(otmp2);
             }
             untwoweapon();
@@ -771,6 +790,9 @@ rehumanize(int how, const char *killer)
     polyman("You return to %s form!", urace.adj);
 
     if (u.uhp < 1)
+        /* can only happen if some bit of code reduces u.uhp
+         * instead of u.mh while poly'd */
+        pline("Your old form was not healthy enough to survive.");
         done(DIED,
              killer_msg(DIED, msgcat_many("reverting to unhealthy ", urace.adj,
                                           " form", NULL)));
@@ -967,10 +989,9 @@ dospinweb(void)
     }
     ttmp = maketrap(level, u.ux, u.uy, WEB, rng_main);
     if (ttmp) {
-        ttmp->tseen = 1;
         ttmp->madeby_u = 1;
+        feeltrap(ttmp);
     }
-    newsym(u.ux, u.uy);
     return 1;
 }
 
@@ -1191,50 +1212,68 @@ mbodypart(struct monst *mon, int part)
         *const humanoid_parts[] = { "arm", "eye", "face", "finger",
         "fingertip", "foot", "hand", "handed", "head", "leg",
         "light headed", "neck", "spine", "toe", "hair",
-        "blood", "lung", "nose", "stomach", "hide"
+        "blood", "lung", "nose", "stomach", "hide",
+        "limbs", "skin", "body"
     }, *const jelly_parts[] = { "pseudopod", "dark spot", "front",
         "pseudopod extension", "pseudopod extremity",
         "pseudopod root", "grasp", "grasped", "cerebral area",
         "lower pseudopod", "viscous", "middle", "surface",
         "pseudopod extremity", "ripples", "juices",
-        "surface", "sensor", "stomach", "surface"
+        "surface", "sensor", "stomach", "surface",
+        "pseudopods", "surface", "body"
     }, *const animal_parts[] =
         { "forelimb", "eye", "face", "foreclaw", "claw tip",
         "rear claw", "foreclaw", "clawed", "head", "rear limb",
         "light headed", "neck", "spine", "rear claw tip",
-        "fur", "blood", "lung", "nose", "stomach", "hide"
+        "fur", "blood", "lung", "nose", "stomach", "hide",
+        "limbs", "hide", "body"
     }, *const bird_parts[] = { "wing", "eye", "face", "wing", "wing tip",
         "foot", "wing", "winged", "head", "leg",
         "light headed", "neck", "spine", "toe",
-        "feathers", "blood", "lung", "bill", "stomach", "plumage"
+        "feathers", "blood", "lung", "bill", "stomach", "plumage",
+        "limbs", "skin", "body"
     }, *const horse_parts[] =
         { "foreleg", "eye", "face", "forehoof", "hoof tip",
         "rear hoof", "forehoof", "hooved", "head", "rear leg",
         "light headed", "neck", "backbone", "rear hoof tip",
-        "mane", "blood", "lung", "nose", "stomach", "hide"
+        "mane", "blood", "lung", "nose", "stomach", "hide",
+        "limbs", "skin", "body"
     }, *const sphere_parts[] = { "appendage", "optic nerve", "body", "tentacle",
         "tentacle tip", "lower appendage", "tentacle", "tentacled",
         "body", "lower tentacle", "rotational", "equator", "body",
         "lower tentacle tip", "cilia", "life force", "retina",
-        "olfactory nerve", "interior", "cornea"
+        "olfactory nerve", "interior", "cornea", "tentacles", "sclera", "body"
     }, *const fungus_parts[] = { "mycelium", "visual area", "front", "hypha",
         "hypha", "root", "strand", "stranded", "cap area",
         "rhizome", "sporulated", "stalk", "root", "rhizome tip",
-        "spores", "juices", "gill", "gill", "interior", "zest"
+        "spores", "juices", "gill", "gill", "interior", "zest",
+        "hyphae", "zest", "mycelium"
     }, *const vortex_parts[] = { "region", "eye", "front", "minor current",
         "minor current", "lower current", "swirl", "swirled",
         "central core", "lower current", "addled", "center",
         "currents", "edge", "currents", "life force",
-        "center", "leading edge", "interior", "wisps"
+        "center", "leading edge", "interior", "wisps",
+        "wisps", "outer vortex", "vortex"
     }, *const snake_parts[] = { "vestigial limb", "eye", "face", "large scale",
         "large scale tip", "rear region", "scale gap", "scale gapped",
         "head", "rear region", "light headed", "neck", "length",
         "rear scale", "scales", "blood", "lung", "forked tongue", "stomach",
-        "scales"
+        "scales", "scales", "skin", "body"
+    }, *const worm_parts[] = { "anterior segment", "light sensitive cell", "clitellum",
+        "setae", "setae", "posterior segment", "segment", "segmented",
+        "anterior segment", "posterior", "over stretched", "clitellum", "length",
+        "posterior setae", "setae", "blood", "skin", "prostomium", "stomach",
+        "segments", "skin", "body"
     }, *const fish_parts[] = { "fin", "eye", "premaxillary", "pelvic axillary",
         "pelvic fin", "anal fin", "pectoral fin", "finned", "head", "peduncle",
         "played out", "gills", "dorsal fin", "caudal fin",
-        "scales", "blood", "gill", "nostril", "stomach", "scales"
+        "scales", "blood", "gill", "nostril", "stomach", "scales",
+        "fins", "skin", "body"
+    }, *const ghost_parts[] = { "arm", "eye", "face", "ghostly finger",
+        "ghostly fingertip", "foot", "ghostly hand", "handed", "head",
+        "leg", "light headed", "neck", "back", "toe", "aura", "spirit",
+        "interior", "nose", "interior", "aura", "ghostly limbs", "aura",
+        "manifestation"
     };
     /* claw attacks are overloaded in mons[]; most humanoids with such attacks
        should still reference hands rather than claws */
@@ -1264,15 +1303,20 @@ mbodypart(struct monst *mon, int part)
         if (part == HIDE)
             return "hide";
     }
-    if (mptr == &mons[PM_JELLYFISH] &&
-        (part == ARM || part == FINGER || part == HAND || part == FOOT ||
-         part == TOE))
-        return "tentacle";
+    if (mptr == &mons[PM_JELLYFISH] || mptr == &mons[PM_KRAKEN]) {
+        if ((part == ARM || part == FINGER || part == HAND ||
+             part == FOOT || part == TOE))
+            return "tentacle";
+        if (part == LIMBS)
+            return "tentacles";
+    }
     if (mptr == &mons[PM_FLOATING_EYE] && part == EYE)
         return "cornea";
+    if (mptr->mlet == S_WRAITH)
+        return ghost_parts[part];
     if (humanoid(mptr) &&
         (part == ARM || part == FINGER || part == FINGERTIP || part == HAND ||
-         part == HANDED))
+         part == HANDED || part == LIMBS))
         return humanoid_parts[part];
     if (mptr == &mons[PM_RAVEN])
         return bird_parts[part];
@@ -1285,14 +1329,21 @@ mbodypart(struct monst *mon, int part)
         else if (part == ARM || part == FINGER || part == FINGERTIP ||
                  part == HAND)
             return "ray";
-        else if (part == HIDE)
+        else if (part == LIMBS) /* lights can't be slimed... */
+            return "rays";      /* but let's future-proof it anyway. */
+        else if ((part == HIDE) || (part == SKIN))
             return "glow";
         else
             return "beam";
     }
+    if (mptr == &mons[PM_STALKER] && part == HEAD)
+        return "head";
     if (mptr->mlet == S_EEL && mptr != &mons[PM_JELLYFISH])
         return fish_parts[part];
-    if (slithy(mptr) || (mptr->mlet == S_DRAGON && (part == HAIR || part == HIDE)))
+    if (mptr->mlet == S_WORM)
+        return worm_parts[part];
+    if (slithy(mptr) || (mptr->mlet == S_DRAGON &&
+                         (part == HAIR || part == HIDE || part == SKIN)))
         return snake_parts[part];
     if (mptr->mlet == S_EYE)
         return sphere_parts[part];

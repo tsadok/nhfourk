@@ -35,6 +35,19 @@ static void lesshungry(int, struct obj *);
 /* also used to see if you're allowed to eat cats and dogs */
 #define CANNIBAL_ALLOWED() (Role_if (PM_CAVEMAN) || Race_if(PM_ORC))
 
+/* monster types that cause hero to be turned into stone if eaten */
+#define flesh_petrifies(pm) (touch_petrifies(pm) || (pm) == &mons[PM_MEDUSA])
+
+/* Rider corpses are treated as non-rotting so that attempting to eat one
+   will be sure to reach the stage of eating where that meal is fatal */
+#define nonrotting_corpse(mnum) ((mnum) == PM_LIZARD || \
+                                 (mnum) == PM_LICHEN || \
+                                 is_rider(&mons[mnum]))
+
+/* non-rotting non-corpses; unlike lizard corpses, these items will behave
+   as if rotten if they are cursed (fortune cookies handled elsewhere) */
+#define nonrotting_food(otyp) ((otyp) == LEMBAS_WAFER || (otyp) == CRAM_RATION)
+
 static const char comestibles[] = { ALLOW_NONE, NONE_ON_COMMA, FOOD_CLASS, 0 };
 
 static const char allobj[] = {
@@ -365,7 +378,7 @@ cprefx(int pm)
     maybe_cannibal(pm, TRUE);
     /* Note: can't use touched_monster here, Medusa acts differently on touching
        and eating */
-    if (touch_petrifies(&mons[pm]) || pm == PM_MEDUSA) {
+    if (flesh_petrifies(&mons[pm])) {
         if (!Stone_resistance && !(poly_when_stoned(youmonst.data) &&
                                    polymon(PM_STONE_GOLEM, TRUE))) {
             pline("You turn to stone.");
@@ -402,7 +415,8 @@ cprefx(int pm)
             done(DIED, msgcat("unwisely ate the body of ", mons[pm].mname));
             /* It so happens that since we know these monsters cannot appear in
                tins, u.utracked[tos_food] will always be what we want, which is
-               not generally true. */
+               not generally true.  Likewise, the word "body" is hardcoded,
+               but that's ok because these monsters have a physical body. */
             if (revive_corpse(u.utracked[tos_food]))
                 u.utracked[tos_food] = NULL;
             return;
@@ -855,6 +869,7 @@ eat_tin_one_turn(void)
     int r;
     const char *what;
     int which;
+    int foodwarn;
 
     /* The !u.utracked[tos_tin] case can't happen in the current codebase
        (there's no need for special handling to identify which object is being
@@ -902,9 +917,7 @@ eat_tin_one_turn(void)
         r = u.utracked[tos_tin]->cursed ? ROTTEN_TIN : /* cursed => rotten */
             (u.utracked[tos_tin]->spe == -1) ? HOMEMADE_TIN :  /* player-made */
             rn2(TTSZ - 1);      /* else take your pick */
-        if (r == ROTTEN_TIN &&
-            (u.utracked[tos_tin]->corpsenm == PM_LIZARD ||
-             u.utracked[tos_tin]->corpsenm == PM_LICHEN))
+        if (r == ROTTEN_TIN && nonrotting_corpse(u.utracked[tos_tin]->corpsenm))
             r = HOMEMADE_TIN;   /* lizards don't rot */
         else if (u.utracked[tos_tin]->spe == -1 &&
                  !u.utracked[tos_tin]->blessed && !rn2(7))
@@ -928,7 +941,22 @@ eat_tin_one_turn(void)
         if (which == 0)
             what = makeplural(what);
         pline("It smells like %s%s.", (which == 2) ? "the " : "", what);
-        if (yn("Eat it?") == 'n') {
+        
+        /* food detection warning */
+        foodwarn = u.uedibility ? edibility_prompts(u.utracked[tos_tin]) : 0;
+        if (foodwarn) {
+            pline("Your %s stops tingling and your "
+                  "sense of smell returns to normal.", body_part(NOSE));
+            u.uedibility = 0;
+        }
+        if (foodwarn == 1) { /* Player chose not to eat it. */
+            costly_tin(NULL);
+            if (flags.verbose)
+                pline("You discard the open tin.");
+            goto use_me;
+        } else if (foodwarn == 2) { /* Player chose to go ahead and eat it. */
+            /* Fall through to the code below. */
+        } else if (yn("Eat it?") == 'n') {
             if (!Hallucination)
                 u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
             if (flags.verbose)
@@ -1116,7 +1144,7 @@ eatcorpse(void)
     long rotted = 0L;
     boolean uniq = ! !(mons[mnum].geno & G_UNIQ);
     int retcode = 0;
-    boolean stoneable = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
+    boolean stoneable = (flesh_petrifies(&mons[mnum]) && !Stone_resistance &&
                          !poly_when_stoned(youmonst.data));
 
     /* KMH, conduct */
@@ -1125,7 +1153,7 @@ eatcorpse(void)
     if (!vegetarian(&mons[mnum]))
         break_conduct(conduct_vegetarian);
 
-    if (mnum != PM_LIZARD && mnum != PM_LICHEN) {
+    if (!nonrotting_corpse(mnum)) {
         long age = peek_at_iced_corpse_age(otmp);
 
         rotted = (moves - age) / (10L + rn2(20));
@@ -1186,8 +1214,7 @@ eatcorpse(void)
         losehp(rnd(8), killer_msg(DIED, "a cadaver"));
     }
 
-    if (!tp && mnum != PM_LIZARD && mnum != PM_LICHEN &&
-        (otmp->orotten || !rn2(7))) {
+    if (!tp && !nonrotting_corpse(mnum) && (otmp->orotten || !rn2(7))) {
         touchfood();
         if (rottenfood(otmp)) {
             if (!u.utracked[tos_food])
@@ -1315,8 +1342,8 @@ fprefx(struct obj *otmp)
 static void
 accessory_has_effect(struct obj *otmp)
 {
-    pline("Magic spreads through your body as you digest the %s.",
-          otmp->oclass == RING_CLASS ? "ring" : "amulet");
+    pline("Magic spreads through your %s as you digest the %s.",
+          body_part(BODY), otmp->oclass == RING_CLASS ? "ring" : "amulet");
 }
 
 static void
@@ -1362,7 +1389,8 @@ eataccessory(struct obj *otmp)
                 if (!oldprop && !worn_extrinsic(INVIS) &&
                     !worn_blocked(INVIS) && !See_invisible && !Blind) {
                     newsym(u.ux, u.uy);
-                    pline("Your body takes on a %s transparency...",
+                    pline("Your %s takes on a %s transparency...",
+                          body_part(BODY),
                           Hallucination ? "normal" : "strange");
                     makeknown(typ);
                 }
@@ -1616,7 +1644,7 @@ edibility_prompts(struct obj *otmp)
     if (cadaver || (otmp->otyp == EGG && u.uedibility) ||
         (otmp->otyp == TIN && u.uedibility)) {
         /* These checks must match those in eatcorpse() */
-        stoneorslime = (touch_petrifies(&mons[mnum]) && !Stone_resistance &&
+        stoneorslime = (flesh_petrifies(&mons[mnum]) && !Stone_resistance &&
                         !poly_when_stoned(youmonst.data));
 
         if (mnum == PM_GREEN_SLIME)
@@ -1789,7 +1817,9 @@ doeat(const struct nh_cmd_arg *arg)
        ridiculous amounts of coding to deal with partly eaten plate mails,
        players who polymorph back to human in the middle of their metallic
        meal, etc.... */
-    if (!is_edible(otmp, TRUE)) {
+    if (otmp->oartifact && !touch_artifact(otmp, &youmonst)) {
+        return 1;
+    } else if (!is_edible(otmp, TRUE)) {
         pline("You cannot eat that!");
         return 0;
     } else if ((otmp->owornmask & (W_ARMOR | W_MASK(os_tool) |
@@ -1961,9 +1991,10 @@ doeat(const struct nh_cmd_arg *arg)
             }
 
             if (otmp->otyp != FORTUNE_COOKIE &&
-                (otmp->cursed ||
-                 (((moves - otmp->age) > (otmp->blessed ? 50 : 30)) &&
-                  (otmp->orotten || !rn2(7))))) {
+                (otmp->cursed || (!nonrotting_food(otmp->otyp) &&
+                                  (((moves - otmp->age) >
+                                    (otmp->blessed ? 50 : 30)) &&
+                                   (otmp->orotten || !rn2(7)))))) {
                 if (rottenfood(otmp))
                     dont_start = TRUE;
                 touchfood();

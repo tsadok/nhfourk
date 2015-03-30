@@ -267,6 +267,7 @@ rndmonnum(const d_level *dlev, enum rng rng)
 {
     const struct permonst *ptr;
     int i;
+    unsigned short excludeflags;
 
     /* Plan A: get a level-appropriate common monster */
     ptr = rndmonst(dlev, rng);
@@ -274,11 +275,11 @@ rndmonnum(const d_level *dlev, enum rng rng)
         return monsndx(ptr);
 
     /* Plan B: get any common monster */
+    excludeflags = G_UNIQ | G_NOGEN | (Inhell ? G_NOHELL : G_HELL);
     do {
         i = LOW_PM + rn2_on_rng(SPECIAL_PM - LOW_PM, rng);
         ptr = &mons[i];
-    } while ((ptr->geno & G_NOGEN) ||
-             (!In_hell(dlev) && (ptr->geno & G_HELL)));
+    } while ((ptr->geno & excludeflags) != 0);
 
     return i;
 }
@@ -324,6 +325,8 @@ splitobj(struct obj *obj, long num)
         obj_split_timers(obj, otmp);
     if (obj_sheds_light(obj))
         obj_split_light_source(obj, otmp);
+    if (carried(otmp))
+        assigninvlet(otmp);
     return otmp;
 }
 
@@ -1197,6 +1200,9 @@ is_flammable(const struct obj * otmp)
     int otyp = otmp->otyp;
     int omat = objects[otyp].oc_material;
 
+    /* Candles can be burned, but it makes no sense for them to be fireproofed. */
+    if (Is_candle(otmp))
+        return FALSE;
     if (objects[otyp].oc_oprop == FIRE_RES || otyp == WAN_FIRE)
         return FALSE;
 

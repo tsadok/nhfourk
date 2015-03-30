@@ -292,7 +292,20 @@ fix_worst_trouble(int trouble)
         u.uhp = u.uhpmax;
         break;
     case ptr_collapsing:
+        /* override Fixed_abil; uncurse that if feasible */
+        pline("You feel %sstronger.",
+                 (AMAX(A_STR) - ABASE(A_STR) > 6) ? "much " : "");
         ABASE(A_STR) = AMAX(A_STR);
+        if (Fixed_abil) {
+            if ((otmp = stuck_ring(uleft, RIN_SUSTAIN_ABILITY)) != 0) {
+                if (otmp == uleft)
+                    what = leftglow;
+            } else if ((otmp = stuck_ring(uright, RIN_SUSTAIN_ABILITY)) != 0) {
+                if (otmp == uright)
+                    what = rightglow;
+            }
+            if (otmp) goto decurse;
+        }
         break;
     case ptr_stuck:
         pline("Your surroundings change.");
@@ -366,6 +379,7 @@ fix_worst_trouble(int trouble)
         update_inventory();
         break;
     case ptr_poisoned:
+        /* override Fixed_abil; ignore items which confer that */
         if (Hallucination)
             pline("There's a tiger in your tank.");
         else
@@ -1544,7 +1558,11 @@ dosacrifice(const struct nh_cmd_arg *arg)
                         exercise(A_WIS, TRUE);
                         /* make sure we can use this weapon */
                         unrestrict_weapon_skill(weapon_type(otmp));
-                        discover_artifact(otmp->oartifact);
+                        if (!Hallucination && !Blind) {
+                            otmp->dknown = 1;
+                            makeknown(otmp->otyp);
+                            discover_artifact(otmp->oartifact);
+                        }
                         return 1;
                     }
                 } else {

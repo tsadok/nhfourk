@@ -813,10 +813,11 @@ paygd(void)
         pline("%s remits your gold to the vault.", Monnam(grd));
         gx = level->rooms[EGD(grd)->vroom].lx + rn2(2);
         gy = level->rooms[EGD(grd)->vroom].ly + rn2(2);
-        make_grave(level, gx, gy,
-                   msgprintf(
-                       "To Croesus: here's the gold recovered from %s the %s.",
-                       u.uplname, mons[u.umonster].mname));
+        if (level->locations[gx][gy].typ != CORR)
+            make_grave(level, gx, gy,
+                       msgprintf(
+                           "To Croesus: here's the gold recovered from %s the %s.",
+                           u.uplname, mons[u.umonster].mname));
     }
     
     for (coins = invent; coins; coins = nextcoins) {

@@ -271,7 +271,7 @@ dmgval(struct obj *otmp, struct monst *mon)
     if (objects[otyp].oc_material <= LEATHER && thick_skinned(ptr))
         /* thick skinned/scaled creatures don't feel it */
         tmp = 0;
-    if (ptr == &mons[PM_SHADE] && objects[otyp].oc_material != SILVER)
+    if (ptr == &mons[PM_SHADE] && !shade_glare(otmp))
         tmp = 0;
 
     /* "very heavy iron ball"; weight increase is in increments of 160 */
@@ -418,8 +418,10 @@ struct obj *
 select_rwep(const struct monst *mtmp)
 {
     struct obj *otmp;
+    boolean mweponly;
     int i;
 
+    struct obj *mwep = MON_WEP(mtmp);
     struct obj *tmpprop = &zeroobj;
 
     char mlet = mtmp->data->mlet;
@@ -431,12 +433,24 @@ select_rwep(const struct monst *mtmp)
     if (throws_rocks(mtmp->data))       /* ...boulders for giants */
         Oselect(BOULDER);
 
-    /* Select polearms first; they do more damage and aren't expendable */
+    /* Select polearms first; they do more damage and aren't expendable.
+       But don't pick one if monster's weapon is welded, because then
+       we'd never have a chance to throw non-wielding missiles. */
     /* The limit of 13 here is based on the monster polearm range limit
        (defined as 5 in mthrowu.c).  5 corresponds to a distance of 2 in one
        direction and 1 in another; one space beyond that would be 3 in one
        direction and 2 in another; 3^2+2^2=13. */
     {
+        /* NO_WEAPON_WANTED means we already tried to wield and failed */
+        mweponly = (mwep && (mwep->owornmask & W_MASK(os_wep)) && mwep->cursed
+                    /* could use will_weld, but it's a #define in wield.c */
+                    && ((mwep->oclass == WEAPON_CLASS && !is_ammo(mwep)) ||
+                        is_weptool(mwep) || mwep->otyp == HEAVY_IRON_BALL ||
+                        /* mwep->otyp == IRON_CHAIN || */
+                        mwep->otyp == TIN_OPENER) &&
+                    /* in simple terms, the weapon is welded, and... */
+                    mtmp->weapon_check == NO_WEAPON_WANTED);
+
         for (i = 0; i < SIZE(pwep); i++) {
             /* Only strong monsters can wield big (esp. long) weapons. Big
                weapon is basically the same as bimanual. All monsters can wield 
@@ -446,7 +460,8 @@ select_rwep(const struct monst *mtmp)
                  || !objects[pwep[i]].oc_bimanual) &&
                 (objects[pwep[i]].oc_material != SILVER ||
                  !hates_silver(mtmp->data))) {
-                if ((otmp = oselect(mtmp, pwep[i])) != 0) {
+                if (((otmp = oselect(mtmp, pwep[i])) != 0) &&
+                    (otmp == mwep || !mweponly)) {
                     propellor = otmp;   /* force the monster to wield it */
                     return otmp;
                 }
@@ -496,8 +511,8 @@ select_rwep(const struct monst *mtmp)
             }
             if (!tmpprop)
                 tmpprop = propellor;
-            if ((otmp = MON_WEP(mtmp)) && otmp->cursed && otmp != propellor &&
-                mtmp->weapon_check == NO_WEAPON_WANTED)
+            if ((otmp = MON_WEP(mtmp)) && mwelded(mtmp, otmp) &&
+                otmp != propellor && mtmp->weapon_check == NO_WEAPON_WANTED)
                 propellor = 0;
         }
         /* propellor = obj, propellor to use propellor = &zeroobj, doesn't need 
@@ -509,7 +524,7 @@ select_rwep(const struct monst *mtmp)
             if (rwep[i] != LOADSTONE) {
                 /* Don't throw a cursed weapon-in-hand or an artifact */
                 if ((otmp = oselect(mtmp, rwep[i])) && !otmp->oartifact &&
-                    (!otmp->cursed || otmp != MON_WEP(mtmp)))
+                    !(otmp == MON_WEP(mtmp) && mwelded(mtmp, otmp)))
                     return otmp;
             } else
                 for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj) {
@@ -660,7 +675,7 @@ possibly_unwield(struct monst *mon, boolean polyspot)
        Possible problem: big monster with big cursed weapon gets polymorphed
        into little monster.  But it's not quite clear how to handle this
        anyway.... */
-    if (!(mw_tmp->cursed && mon->weapon_check == NO_WEAPON_WANTED))
+    if (!(mwelded(mon, mw_tmp) && mon->weapon_check == NO_WEAPON_WANTED))
         mon->weapon_check = NEED_WEAPON;
     return;
 }
@@ -722,7 +737,7 @@ mon_wield_item(struct monst *mon)
         /* Actually, this isn't necessary--as soon as the monster wields the
            weapon, the weapon welds itself, so the monster can know it's cursed 
            and needn't even bother trying. Still.... */
-        if (mw_tmp && mw_tmp->cursed && mw_tmp->otyp != CORPSE) {
+        if (mw_tmp && mwelded(mon, mw_tmp)) {
             if (mon_visible(mon)) {
                 const char *welded_buf;
                 const char *mon_hand = mbodypart(mon, HAND);
@@ -754,7 +769,7 @@ mon_wield_item(struct monst *mon)
         if (mon_visible(mon)) {
             pline("%s wields %s%s", Monnam(mon), singular(obj, doname),
                   mon->mtame ? "." : "!");
-            if (obj->cursed && obj->otyp != CORPSE) {
+            if (mwelded(mon, obj)) {
                 pline("%s %s to %s %s!", Tobjnam(obj, "weld"),
                       is_plural(obj) ? "themselves" : "itself",
                       s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
@@ -772,6 +787,19 @@ mon_wield_item(struct monst *mon)
     }
     mon->weapon_check = NEED_WEAPON;
     return 0;
+}
+
+/* force monster to stop wielding current weapon, if any */
+void
+mwepgone(struct monst *mon)
+{
+    struct obj *mwep = MON_WEP(mon);
+
+    if (mwep) {
+        setmnotwielded(mon, mwep);
+        MON_NOWEP(mon);
+        mon->weapon_check = NEED_WEAPON;
+    }
 }
 
 /* attack bonus for strength & dexterity */

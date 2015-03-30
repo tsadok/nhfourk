@@ -1990,6 +1990,7 @@ zapyourself(struct obj *obj, boolean ordinary)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
+        set_candles_afire();
         break;
 
     case WAN_COLD:
@@ -2377,11 +2378,12 @@ zap_updown(struct obj *obj, schar dz)
     case WAN_STRIKING:
     case SPE_FORCE_BOLT:
         striking = TRUE;
-     /*FALLTHRU*/ case WAN_LOCKING:
+     /*FALLTHRU*/
+    case WAN_LOCKING:
     case SPE_WIZARD_LOCK:
         /* down at open bridge or up or down at open portcullis */
         if ((level->locations[x][y].typ == DRAWBRIDGE_DOWN) ? (dz > 0)
-            : (is_drawbridge_wall(x, y) && !is_db_wall(x, y)) &&
+            : ((drawbridge_wall_direction(x, y) >= 0) && !is_db_wall(x, y)) &&
             find_drawbridge(&xx, &yy)) {
             if (!striking)
                 close_drawbridge(xx, yy);
@@ -3154,6 +3156,8 @@ zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy)
                 destroy_item(SCROLL_CLASS, AD_FIRE);
             if (!rn2(5))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if (!rn2(4))
+                set_candles_afire();
         }
         break;
     case ZT_COLD:
@@ -3911,6 +3915,38 @@ struct destroy_message destroy_messages[num_destroy_msgs] = {
 };
 
 void
+set_candles_afire(void)
+{ /* modeled after destroy_item */
+    struct obj *obj, *obj2;
+    int eroded;
+    for (obj = invent; obj; obj = obj2) {
+        obj2 = obj->nobj;
+        if (!Is_candle(obj)) continue;
+        if (obj->oartifact) /* There are currently no artifact candles, but. */
+            continue;
+        if (obj->in_use && obj->quan == 1)
+            continue;   /* not available */
+        eroded = candle_erosion_level(obj->age);
+        obj->oeroded = (eroded >= 0) ? eroded : 0;
+        if (!obj->lamplit) {
+            int fuelleft = obj->age;
+            fuelleft -= WAX_EROSION_AMOUNT;
+            obj->age = (fuelleft > 1) ? fuelleft : 1;
+            begin_burn(obj, FALSE);
+        } /* else {
+             I thought about using up some of the candle's remaining wax
+             in this already-lit case as well, but that would require
+             messing with an existing timer.  Out of laziness, I haven't
+             implemented that part yet.  Ergo, correct strategy when fire
+             damage is destroying your candles is to leave them lit until
+             the source of damage can be neutralized, _then_ snuff them.
+             This is counterintuitive.  Bad programmer, no cookie :-(
+             See also the similar case in erode_obj in zap.c
+        } */
+    }
+}
+
+void
 destroy_item(int osym, int dmgtyp)
 {
     struct obj *obj, *obj2;
@@ -4058,6 +4094,7 @@ destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 
     if (mtmp == &youmonst) {    /* this simplifies artifact_hit() */
         destroy_item(osym, dmgtyp);
+        if (dmgtyp == AD_FIRE) set_candles_afire();
         return 0;       /* arbitrary; value doesn't matter to artifact_hit() */
     }
 

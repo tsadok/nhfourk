@@ -141,6 +141,12 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
             break;      /* No bonus */
         }
     }
+    /* crossbows are slow to load and probably shouldn't allow multiple
+       shots at all, but that would result in players never using them;
+       instead, we require high strength to load and shoot quickly */
+    if (multishot > 1 && (int)ACURRSTR < (Race_if(PM_GNOME) ? 16 : 18) &&
+        ammo_and_launcher(obj, uwep) && weapon_type(uwep) == P_CROSSBOW)
+        multishot = rnd(multishot);
 
     if ((long)multishot > obj->quan)
         multishot = (int)obj->quan;
@@ -305,6 +311,15 @@ dofire(const struct nh_cmd_arg *arg)
             pline("You fill your quiver:");
             prinv(NULL, uquiver, 0L);
         }
+    }
+    /* If the quivered item really ought to have a launcher, and
+     * no suitable launcher is wielded, prompt for confirmation. */
+    if (is_ammo(uquiver) && !ammo_and_launcher(uquiver, uwep) &&
+        yn(msgprintf("Try to fire %s with your %s %s?",
+                     an(xname(uquiver)),
+                     (uarmg ? "gloved" : "bare"),
+                     makeplural(body_part(HAND)))) == 'n') {
+        return 0;
     }
 
     return throw_obj(uquiver, arg, cancel_unquivers);
@@ -697,6 +712,9 @@ static boolean
 toss_up(struct obj *obj, boolean hitsroof)
 {
     const char *almost;
+    const char *vhelmp;
+    boolean petrifier = ((obj->otyp == EGG || obj->otyp == CORPSE) &&
+                         touch_petrifies(&mons[obj->corpsenm]));
 
     /* note: obj->quan == 1 */
 
@@ -719,7 +737,7 @@ toss_up(struct obj *obj, boolean hitsroof)
     if (obj->oclass == POTION_CLASS) {
         potionhit(&youmonst, obj, TRUE);
     } else if (breaktest(obj)) {
-        int otyp = obj->otyp, ocorpsenm = obj->corpsenm;
+        int otyp = obj->otyp;
         int blindinc;
 
         /* need to check for blindness result prior to destroying obj */
@@ -732,8 +750,23 @@ toss_up(struct obj *obj, boolean hitsroof)
         obj = NULL;     /* it's now gone */
         switch (otyp) {
         case EGG:
-            if (!uarmh && touched_monster(ocorpsenm))
-                goto petrify;
+            if (petrifier && !Stone_resistance &&
+                !(poly_when_stoned(youmonst.data) &&
+                  polymon(PM_STONE_GOLEM, FALSE))) {
+                if (uarmh
+                    && ((vhelmp = OBJ_DESCR(objects[uarmh->otyp]))
+                        != NULL)
+                    && !strcmp(vhelmp, "visored helmet")) {
+                    pline("You've got it all over your visor!");
+                    break;
+                } else {
+                    /* egg ends up "all over your face" */
+                    pline("You've got it all over your %s!", body_part(FACE));
+                    if (uarmh)
+                        pline("Your %s fails to protect you.", xname(uarmh));
+                    goto petrify;
+                }
+            }
         case CREAM_PIE:
         case BLINDING_VENOM:
             pline("You've got it all over your %s!", body_part(FACE));
@@ -845,6 +878,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
 {
     struct monst *mon;
     int range, urange;
+    boolean crossbowing;
     boolean impaired = (Confusion || Stunned || Blind || Hallucination ||
                         Fumbling);
 
@@ -926,10 +960,13 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
     } else {
         boolean obj_destroyed;
 
-        urange = (int)(ACURRSTR) / 2;
-        /* balls are easy to throw or at least roll */
-        /* also, this insures the maximum range of a ball is greater than 1, so 
-           the effects from throwing attached balls are actually possible */
+        /* crossbow range is independent of strength */
+        crossbowing = (ammo_and_launcher(obj, uwep) &&
+                       weapon_type(uwep) == P_CROSSBOW);
+        urange = (crossbowing ? 18 : ((int)(ACURRSTR) / 2));
+        /* balls are easy to throw or at least roll; also, this insures the
+         * maximum range of a ball is greater than 1, so the effects from
+         * throwing attached balls are actually possible */
         if (obj->otyp == HEAVY_IRON_BALL)
             range = urange - (int)(obj->owt / 100);
         else
@@ -944,9 +981,12 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             range = 1;
 
         if (is_ammo(obj)) {
-            if (ammo_and_launcher(obj, uwep))
-                range++;
-            else if (obj->oclass != GEM_CLASS)
+            if (ammo_and_launcher(obj, uwep)) {
+                if (crossbowing)
+                    range = BOLT_LIM;
+                else
+                    range++;
+            } else if (obj->oclass != GEM_CLASS)
                 range /= 2;
         }
 

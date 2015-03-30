@@ -72,8 +72,7 @@ pick_move:
     for (i = 0; i < cnt; i++) {
         nx = poss[i].x;
         ny = poss[i].y;
-        if (level->locations[nx][ny].typ == ROOM ||
-            (mtmp->ispriest && level->locations[nx][ny].typ == ALTAR) ||
+        if (IS_ROOM(level->locations[nx][ny].typ) ||
             (mtmp->isshk && (!in_his_shop || ESHK(mtmp)->following))) {
             if (avoid && (info[i] & NOTONL))
                 continue;
@@ -128,6 +127,16 @@ histemple_at(struct monst *priest, xchar x, xchar y)
     return ((boolean)
             ((CONST_EPRI(priest)->shroom == *in_rooms(level, x, y, TEMPLE)) &&
              on_level(&(CONST_EPRI(priest)->shrlevel), &u.uz)));
+}
+
+boolean
+inhistemple(struct monst *priest) {
+    /* make sure we have a priest */
+    if (!priest || !priest->ispriest) return FALSE;
+    /* priest must be on right level and in right room */
+    if (!histemple_at(priest, priest->mx, priest->my)) return FALSE;
+    /* temple room must still contain properly aligned altar */
+    return has_shrine(priest);
 }
 
 /*

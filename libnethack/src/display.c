@@ -544,9 +544,12 @@ display_warning(struct monst *mon)
 void
 feel_location(xchar x, xchar y)
 {
-    struct rm *loc = &(level->locations[x][y]);
+    struct rm *loc;
     struct obj *boulder;
     struct monst *mon;
+
+    if (!isok(x, y)) return; /* Do not attempt to feel off edge of map. */
+    loc = &(level->locations[x][y]);
 
     /* If the hero's memory of an invisible monster is accurate, we want to
        keep him from detecting the same monster over and over again on each
