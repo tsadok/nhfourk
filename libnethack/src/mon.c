@@ -2048,15 +2048,20 @@ xkilled(struct monst *mtmp, int dest)
         !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
         int typ;
 
-        otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
+        otmp = mkobj(level, RANDOM_CLASS, TRUE, mdat->msize < MZ_HUMAN
                         ? rng_death_drop_s : rng_death_drop_l);
         /* Don't create large objects from small monsters */
         typ = otmp->otyp;
-        if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&
-            typ != LEASH && typ != FIGURINE &&
-            (otmp->owt > 30 || objects[typ].oc_big || /* oc_bimanual/oc_bulky */
+        if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
+            /* oc_big is also oc_bimanual and oc_bulky */
+            (otmp->owt > 30 || objects[typ].oc_big ||
              is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
             delobj(otmp);
+        } else if (!flooreffects(otmp, x, y,
+                                 (dest & 1) ? "fall" : "")) {
+            place_object(otmp, level, x, y);
+            stackobj(otmp);
+            redisp = TRUE;
         } else
             redisp = TRUE;
     }
