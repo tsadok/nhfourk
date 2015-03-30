@@ -1290,6 +1290,8 @@ eatcorpse(void)
     } else if ((mnum == PM_COCKATRICE || mnum == PM_CHICKATRICE) &&
                (Stone_resistance || Hallucination)) {
         pline(msgc_playerimmune, "This tastes just like chicken!");
+    } else if (mnum == PM_FLOATING_EYE && u.umonnum == PM_RAVEN) {
+        pline(msgc_actionok, "You peck the eyeball with delight!");
     } else {
         pline(msgc_actionok, "%s%s %s!",
               !uniq ? "This " : !type_is_pname(&mons[mnum]) ? "The " : "",
