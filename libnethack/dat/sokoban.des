@@ -225,73 +225,8 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-# "Through the Cracks"
-MAZE:"soko4-4",' '
-FLAGS:noteleport,hardfloor
-GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
-MAP
- ----                 
- |..------------------
- |.................|.|
- |........-........|.|
---.---..---.--.....|.|
-|..--..---..--.-----.|
-|....................|
--------------------..|
-                  ----
-ENDMAP
-BRANCH:(17,04,17,04),levregion()
-STAIR:(20,02),up
-REGION:(00,00,21,08),lit,"ordinary"
-NON_DIGGABLE:(00,00,21,08)
-NON_PASSWALL:(00,00,21,08)
-
-# Boulders
-OBJECT:'`',"boulder",(02,05)
-OBJECT:'`',"boulder",(04,03)
-OBJECT:'`',"boulder",(05,02)
-#
-OBJECT:'`',"boulder",(09,02)
-OBJECT:'`',"boulder",(08,03)
-OBJECT:'`',"boulder",(06,05)
-#
-OBJECT:'`',"boulder",(11,05)
-OBJECT:'`',"boulder",(13,03)
-OBJECT:'`',"boulder",(14,02)
-#
-OBJECT:'`',"boulder",(14,05)
-OBJECT:'`',"boulder",(15,04)
-OBJECT:'`',"boulder",(16,03)
-OBJECT:'`',"boulder",(17,02)
-
-# Traps
-TRAP:"pit",(14,06)
-TRAP:"pit",(15,06)
-TRAP:"pit",(16,06)
-TRAP:"pit",(17,06)
-TRAP:"pit",(18,06)
-TRAP:"pit",(19,06)
-TRAP:"pit",(20,06)
-TRAP:"pit",(20,05)
-TRAP:"pit",(20,04)
-TRAP:"pit",(20,03)
-
-# A little help
-OBJECT:'?',"earth",(19,07)
-OBJECT:'?',"earth",(20,07)
-
-# Random objects
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
-
-
 # "Easy Peasey"
-MAZE:"soko4-5",' '
+MAZE:"soko4-4",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
@@ -357,7 +292,7 @@ OBJECT:'/',random,random
 
 
 # "First Things First"
-MAZE:"soko4-6",' '
+MAZE:"soko4-5",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
@@ -419,6 +354,72 @@ OBJECT:'%',random,random
 OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
+
+
+## # This one's too hard for Soko1, I'm commenting it out for now.
+## # "Through the Cracks"
+## MAZE:"soko4-6",' '
+## FLAGS:noteleport,hardfloor
+## GEOMETRY:center,center
+## #12345678901234567890123456789012345678901234567890
+## MAP
+##  ----                 
+##  |..------------------
+##  |.................|.|
+##  |........-........|.|
+## --.---..---.--.....|.|
+## |..--..---..--.-----.|
+## |....................|
+## -------------------..|
+##                   ----
+## ENDMAP
+## BRANCH:(17,04,17,04),levregion()
+## STAIR:(20,02),up
+## REGION:(00,00,21,08),lit,"ordinary"
+## NON_DIGGABLE:(00,00,21,08)
+## NON_PASSWALL:(00,00,21,08)
+## 
+## # Boulders
+## OBJECT:'`',"boulder",(02,05)
+## OBJECT:'`',"boulder",(04,03)
+## OBJECT:'`',"boulder",(05,02)
+## #
+## OBJECT:'`',"boulder",(09,02)
+## OBJECT:'`',"boulder",(08,03)
+## OBJECT:'`',"boulder",(06,05)
+## #
+## OBJECT:'`',"boulder",(11,05)
+## OBJECT:'`',"boulder",(13,03)
+## OBJECT:'`',"boulder",(14,02)
+## #
+## OBJECT:'`',"boulder",(14,05)
+## OBJECT:'`',"boulder",(15,04)
+## OBJECT:'`',"boulder",(16,03)
+## OBJECT:'`',"boulder",(17,02)
+## 
+## # Traps
+## TRAP:"pit",(14,06)
+## TRAP:"pit",(15,06)
+## TRAP:"pit",(16,06)
+## TRAP:"pit",(17,06)
+## TRAP:"pit",(18,06)
+## TRAP:"pit",(19,06)
+## TRAP:"pit",(20,06)
+## TRAP:"pit",(20,05)
+## TRAP:"pit",(20,04)
+## TRAP:"pit",(20,03)
+## 
+## # A little help
+## OBJECT:'?',"earth",(19,07)
+## OBJECT:'?',"earth",(20,07)
+## 
+## # Random objects
+## OBJECT:'%',random,random
+## OBJECT:'%',random,random
+## OBJECT:'%',random,random
+## OBJECT:'%',random,random
+## OBJECT:'=',random,random
+## OBJECT:'/',random,random
 
 
 
@@ -1372,3 +1373,321 @@ DOOR:closed,(18,09)
 REGION:(13,10,19,14),lit,"zoo",filled,true
 OBJECT:'=',"polymorph control",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
+
+
+# "Open at the Top"
+MAZE:"soko1-4",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+ ------------------    ----
+ |................------..|
+ |........................|
+ |--.------------.-------.|
+ |.....|.....|....|     |.|
+ |.....|..........|     |.|
+ |............-----     |.|
+ |.....|......|         |.|
+ |.....--.....|         |.|
+ -----.--------   ------|.|
+  |.........|   --|.....|.|
+  |.........|   |.+.....|.|
+  |-.----...|   |-|.....|.|
+  |........--   |.+.....+.|
+  |.>......|    |-|.....|--
+  |.....----    |.+.....|  
+  -------       --|.....|  
+                  -------  
+ENDMAP
+RANDOM_PLACES:(17,11),(17,13),(17,15)
+STAIR:(04,14),down
+REGION:(00,00,26,17),lit,"ordinary"
+NON_DIGGABLE:(00,00,26,17)
+NON_PASSWALL:(00,00,26,17)
+
+# Boulders
+OBJECT:'`',"boulder",(05,13)
+OBJECT:'`',"boulder",(08,14)
+OBJECT:'`',"boulder",(09,13)
+#OBJECT:'`',"boulder",(10,14)
+#
+OBJECT:'`',"boulder",(04,11)
+OBJECT:'`',"boulder",(05,11)
+OBJECT:'`',"boulder",(07,10)
+OBJECT:'`',"boulder",(08,11)
+OBJECT:'`',"boulder",(10,11)
+#
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(13,07)
+OBJECT:'`',"boulder",(12,07)
+OBJECT:'`',"boulder",(11,05)
+OBJECT:'`',"boulder",(10,07)
+OBJECT:'`',"boulder",(09,07)
+OBJECT:'`',"boulder",(08,05)
+#
+OBJECT:'`',"boulder",(06,08)
+OBJECT:'`',"boulder",(06,06)
+OBJECT:'`',"boulder",(06,05)
+OBJECT:'`',"boulder",(03,06)
+OBJECT:'`',"boulder",(04,04)
+
+# Traps
+TRAP:"hole",(18,02)
+TRAP:"hole",(19,02)
+TRAP:"hole",(20,02)
+TRAP:"hole",(21,02)
+TRAP:"hole",(22,02)
+TRAP:"hole",(23,02)
+TRAP:"hole",(24,02)
+TRAP:"hole",(25,03)
+TRAP:"hole",(25,04)
+TRAP:"hole",(25,05)
+TRAP:"hole",(25,06)
+TRAP:"hole",(25,07)
+TRAP:"hole",(25,08)
+TRAP:"hole",(25,09)
+TRAP:"hole",(25,10)
+TRAP:"hole",(25,11)
+TRAP:"hole",(25,12)
+
+MONSTER:'m',"giant mimic", (10,14), m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# Rewards
+DOOR:locked,(24,13)
+DOOR:closed,(18,11)
+DOOR:closed,(18,13)
+DOOR:closed,(18,15)
+REGION:(19,12,23,18),lit,"zoo",filled,true
+OBJECT:'(',"bag of holding",place[0]
+ENGRAVING:place[0],burn,"Elbereth"
+
+
+# "Collecting Marbles"
+MAZE:"soko1-5",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+   ------------------------
+   |......................|
+   |..-------------------.|
+ ----.--   ----         |.|
+ |.....-----..|         |.|
+ |............|         |.|
+ --.......|...|         |.|
+  --......|...|         |.|
+   |.----.--.-|   ------|.|
+  --...--.....| --|.....|.|
+  |...........| |.+.....|.|
+  |...---.--.-| |-|.....|.|
+  |...|.......| |.+.....+.|
+ --.---.......| |-|.....|--
+ |............| |.+.....|  
+ |.>..|.......| --|.....|  
+ --------------   -------  
+ENDMAP
+RANDOM_PLACES:(17,10),(17,12),(17,14)
+STAIR:(03,15),down
+REGION:(00,00,26,16),lit,"ordinary"
+NON_DIGGABLE:(00,00,26,16)
+NON_PASSWALL:(00,00,26,16)
+
+# Boulders
+OBJECT:'`',"boulder",(03,14)
+#
+OBJECT:'`',"boulder",(06,14)
+OBJECT:'`',"boulder",(08,14)
+OBJECT:'`',"boulder",(10,14)
+OBJECT:'`',"boulder",(12,14)
+OBJECT:'`',"boulder",(12,13)
+OBJECT:'`',"boulder",(09,13)
+OBJECT:'`',"boulder",(08,12)
+OBJECT:'`',"boulder",(11,12)
+#
+OBJECT:'`',"boulder",(03,11)
+OBJECT:'`',"boulder",(05,11)
+OBJECT:'`',"boulder",(05,09)
+OBJECT:'`',"boulder",(04,08)
+#
+OBJECT:'`',"boulder",(11,09)
+#
+OBJECT:'`',"boulder",(03,04)
+OBJECT:'`',"boulder",(04,06)
+OBJECT:'`',"boulder",(08,07)
+OBJECT:'`',"boulder",(08,05)
+#
+OBJECT:'`',"boulder",(11,05)
+OBJECT:'`',"boulder",(12,05)
+OBJECT:'`',"boulder",(12,06)
+
+# Traps
+TRAP:"hole",(06,01)
+TRAP:"hole",(07,01)
+TRAP:"hole",(08,01)
+TRAP:"hole",(09,01)
+TRAP:"hole",(10,01)
+TRAP:"hole",(11,01)
+TRAP:"hole",(12,01)
+TRAP:"hole",(13,01)
+TRAP:"hole",(14,01)
+TRAP:"hole",(15,01)
+TRAP:"hole",(16,01)
+TRAP:"hole",(17,01)
+TRAP:"hole",(18,01)
+TRAP:"hole",(19,01)
+TRAP:"hole",(20,01)
+TRAP:"hole",(21,01)
+TRAP:"hole",(22,01)
+TRAP:"hole",(23,01)
+
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# Rewards
+DOOR:locked,(24,12)
+DOOR:closed,(18,10)
+DOOR:closed,(18,12)
+DOOR:closed,(18,14)
+REGION:(19,09,23,15),lit,"zoo",filled,true
+OBJECT:'"',"amulet of reflection",place[0]
+ENGRAVING:place[0],burn,"Elbereth"
+
+
+
+
+# "Jumpin' All Around"
+MAZE:"soko1-6",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+----                  -----------
+|..------------------ |.........|
+|...................| |.........|
+--.-------------+---| |..--.--.--
+ |.|        |.......| |.--.....| 
+ |.| ------ |.......| |........| 
+ |.| |....| |.......| |........| 
+ |.| |....| |.......| |........| 
+ |.| |....| |.......| |.------.| 
+ |.| |....| --+-+-+-- |........| 
+ |.| |....|  |.|.|.|  |...-+-..| 
+ |.| |....----------  |...|.|..| 
+ |.| |........|  ---- |...---..| 
+ |.| |.....--.|---..| |........| 
+--.---.-----........---.------.--
+|.............|.................|
+|....---......|---------------..|
+------ --------              ----
+ENDMAP
+RANDOM_PLACES:(14,10),(16,10),(18,10)
+STAIR:(03,16),down
+REGION:(00,00,32,17),lit,"ordinary"
+NON_DIGGABLE:(00,00,32,17)
+NON_PASSWALL:(00,00,32,17)
+
+# Boulders
+OBJECT:'`',"boulder",(05,15)
+OBJECT:'`',"boulder",(06,14)
+OBJECT:'`',"boulder",(07,13)
+OBJECT:'`',"boulder",(08,12)
+OBJECT:'`',"boulder",(07,11)
+OBJECT:'`',"boulder",(06,10)
+#
+OBJECT:'`',"boulder",(06,07)
+OBJECT:'`',"boulder",(07,08)
+OBJECT:'`',"boulder",(08,09)
+OBJECT:'`',"boulder",(09,10)
+#
+OBJECT:'`',"boulder",(19,15)
+OBJECT:'`',"boulder",(13,13)
+#
+OBJECT:'`',"boulder",(16,15)
+OBJECT:'`',"boulder",(18,14)
+#
+OBJECT:'`',"boulder",(23,13)
+OBJECT:'`',"boulder",(23,11)
+OBJECT:'`',"boulder",(23,09)
+#
+OBJECT:'`',"boulder",(30,11)
+OBJECT:'`',"boulder",(30,09)
+#
+OBJECT:'`',"boulder",(24,05)
+OBJECT:'`',"boulder",(25,07)
+OBJECT:'`',"boulder",(28,07)
+OBJECT:'`',"boulder",(27,06)
+OBJECT:'`',"boulder",(29,05)
+#
+OBJECT:'`',"boulder",(24,02)
+OBJECT:'`',"boulder",(27,02)
+OBJECT:'`',"boulder",(29,02)
+
+# Traps
+TRAP:"hole",(12,02)
+TRAP:"hole",(11,02)
+TRAP:"hole",(10,02)
+TRAP:"hole",(09,02)
+TRAP:"hole",(08,02)
+TRAP:"hole",(07,02)
+TRAP:"hole",(06,02)
+TRAP:"hole",(05,02)
+TRAP:"hole",(04,02)
+TRAP:"hole",(03,02)
+TRAP:"hole",(02,03)
+TRAP:"hole",(02,04)
+TRAP:"hole",(02,05)
+TRAP:"hole",(02,06)
+TRAP:"hole",(02,07)
+TRAP:"hole",(02,08)
+TRAP:"hole",(02,09)
+TRAP:"hole",(02,10)
+TRAP:"hole",(02,11)
+TRAP:"hole",(02,12)
+TRAP:"hole",(02,13)
+TRAP:"hole",(02,14)
+TRAP:"hole",(20,15)
+TRAP:"hole",(21,15)
+TRAP:"hole",(22,15)
+TRAP:"hole",(23,14)
+
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# Rewards
+DOOR:locked,(16,03)
+DOOR:closed,(14,09)
+DOOR:closed,(16,09)
+DOOR:closed,(18,09)
+DOOR:locked,(27,10)
+REGION:(13,04,19,08),lit,"zoo",filled,true
+OBJECT:'=',"teleport control",place[0]
+ENGRAVING:place[0],burn,"Elbereth"
+
+
