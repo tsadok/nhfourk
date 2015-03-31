@@ -1360,18 +1360,25 @@ thitmonst(struct monst *mon, struct obj *obj)
             if (objects[otyp].oc_skill < P_NONE &&
                 objects[otyp].oc_skill > -P_BOOMERANG &&
                 !objects[otyp].oc_magic) {
-                /* we were breaking 2/3 of everything unconditionally. we still 
-                   don't want anything to survive unconditionally, but we need
-                   ammo to stay around longer on average. */
-                int broken, chance;
-
-                chance = 3 + greatest_erosion(obj) - obj->spe;
-                if (chance > 1)
-                    broken = rn2(chance);
-                else
-                    broken = !rn2(4);
-                if (obj->blessed && !rnl(4))
-                    broken = 0;
+                /* The previous version of this logic made sure early-game
+                 * characters couldn't use their ranged weapons much or they'd
+                 * all break.  That isn't what we want.  So instead, we use a
+                 * combination of skill and max skill to determine the base
+                 * chance of breakage, then use item enchantment for the
+                 * item's saving throw as it were. */
+                int broken;
+                if (P_RESTRICTED(weapon_type(obj)) ? rn2(2) :
+                    !rn2(P_SKILL(weapon_type(obj)) *
+                         P_MAX_SKILL(weapon_type(obj)) * 2)) {
+                    /* Object will break unless its enchantment saves it. */
+                    broken = (obj->spe > 0) ? !rn2(1 + obj->spe) : 1;
+                } else {
+                    /* Object survives unless negative enchantment dooms it. */
+                    broken = (obj->spe < 0) ? rn2(1 - obj->spe) : 0;
+                }
+                /* Cursed objects have an additional chance to break. */
+                if (obj->cursed && !broken && rnl(10) > 5)
+                    broken = 1;
 
                 if (broken) {
                     if (*u.ushops)
