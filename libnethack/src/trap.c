@@ -3524,7 +3524,7 @@ disarm_shooting_trap(struct trap *ttmp, int otyp, schar dx, schar dy)
     if (fails < 2)
         return fails;
     pline("You disarm %s trap.", the_your[ttmp->madeby_u]);
-    cnv_trap_obj(level, otyp, 50 - rnl(50), ttmp);
+    cnv_trap_obj(level, otyp, 60 - rnl(50), ttmp);
     level->locations[u.ux + dx][u.uy + dy].mem_trap = NO_TRAP;
     newsym(u.ux + dx, u.uy + dy);
     return 1;
@@ -3715,6 +3715,8 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
                 return disarm_shooting_trap(ttmp, DART, dx, dy);
             case ARROW_TRAP:
                 return disarm_shooting_trap(ttmp, ARROW, dx, dy);
+            case ROCKTRAP:
+                return disarm_shooting_trap(ttmp, ROCK, dx, dy);
             case PIT:
             case SPIKED_PIT:
                 if (!dx && !dy) {
