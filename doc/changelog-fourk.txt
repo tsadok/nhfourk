@@ -45,10 +45,13 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
- * The chance for thrown projectiles to break now depends
-   primarily on your skill.  Enchanted objects get an extra
-   chance to survive (and negatively enchanted ones get an
-   extra chance to break).
+ * Added a digit to the version number, so I can do more than one
+   release based on a given version of upstream, without getting my
+   version numbers horribly out of sync.
+
+ * The chance for thrown projectiles to break now depends primarily on
+   your skill.  Enchanted objects get an extra chance to survive (and
+   negatively enchanted ones get an extra chance to break).
 
  * You can now #untrap falling rock traps, obtaining rocks.
    Also, disarming a projectile trap (rocks, arrows, or darts)

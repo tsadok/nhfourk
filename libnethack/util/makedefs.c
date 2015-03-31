@@ -345,7 +345,7 @@ make_version(void)
 static char *
 version_string(char *outbuf)
 {
-    sprintf(outbuf, "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
+    sprintf(outbuf, "4.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
     return outbuf;
 }
 
