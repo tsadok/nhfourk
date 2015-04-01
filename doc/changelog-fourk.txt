@@ -45,6 +45,15 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Cavemen have had their race and alignment options adjusted.
+
+ * The Caveman quest artifact is now Big Stick, an artifact club.
+   Big Stick good.  Hit things with it.  Bam.  Bam bam.  If I did
+   the coding correctly, it grants stealth when carried and magic
+   resistance when wielded.  The bonus is +5 to-hit, +1d12 damage.
+
+ * Mastodons have been replaced with mammoths.
+
  * Bugfix: the monstr value for floating eyes was being calculated
    incorrectly, due to the way they are implemented.  This was
    causing them to generate too often too early.
