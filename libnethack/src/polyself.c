@@ -1295,7 +1295,7 @@ mbodypart(struct monst *mon, int part)
             mptr != &mons[PM_INCUBUS] && mptr != &mons[PM_SUCCUBUS])
             return part == HAND ? "claw" : "clawed";
     }
-    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MASTODON]) && part == NOSE)
+    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MAMMOTH]) && part == NOSE)
         return "trunk";
     if (mptr == &mons[PM_SHARK]) {
         /* sharks don't have scales */

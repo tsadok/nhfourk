@@ -774,7 +774,7 @@ const struct permonst mons[] = {
         SIZ(3800, 800, 0, MS_SILENT, MZ_LARGE), 0, 0,
         M1_ANIMAL | M1_THICK_HIDE | M1_NOHANDS | M1_HERBIVORE,
         M2_HOSTILE | M2_STRONG, M3_INFRAVISIBLE, CLR_WHITE | HI_ULINE),
-    MON("mastodon", S_QUADRUPED,
+    MON("mammoth", S_QUADRUPED,
         LVL(20, 12, 5, 0, 0), (G_GENO | 1),
         A(ATTK(AT_BUTT, AD_PHYS, 4, 8), ATTK(AT_BUTT, AD_PHYS, 4, 8),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
