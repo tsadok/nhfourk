@@ -389,7 +389,7 @@ init_curses_ui(const char *dataprefix)
     /* set up the default system locale by reading the environment variables */
     setlocale(LC_ALL, "");
 
-    uncursed_set_title("NetHack 4");
+    uncursed_set_title("NetHack Fourk");
 
     if (!initscr()) {
         fprintf(stderr, "Could not initialise the UI.\n");
