@@ -83,6 +83,7 @@ OBJECT:'!',random,random
 OBJECT:'!',random,random
 OBJECT:'?',random,random
 OBJECT:'?',random,random
+OBJECT:'?',"wishing",random
 OBJECT:'+',random,random
 OBJECT:'+',random,random
 OBJECT:'+',random,random

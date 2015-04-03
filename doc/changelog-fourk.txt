@@ -80,7 +80,7 @@ Chronological Changelog (most recent at top):
    it will need play testing for balance.
 
  * Added single-use wish sources at the top of Vlad's tower
-   and in Orcus Town.
+   and in Orcus Town.  (Update: and one in the Wizard's Tower.)
 
  * The Wizard of Yendor gets more starting inventory now.  Some
    of it might actually be useful at that stage of the game.
