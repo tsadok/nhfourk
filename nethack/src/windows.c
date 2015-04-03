@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-18 */
+/* Last modified by Alex Smith, 2015-04-01 */
 /* Copyright (c) Daniel Thaler, 2011.                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -8,6 +8,11 @@
 #include <locale.h>
 #include <time.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <ctype.h>
+#ifndef WIN32
+# include <dirent.h>
+#endif
 
 WINDOW *basewin, *mapwin, *msgwin, *statuswin, *sidebar, *extrawin, *loadwin;
 struct gamewin *firstgw, *lastgw;
@@ -40,7 +45,9 @@ struct nh_window_procs curses_windowprocs = {
 
 /*----------------------------------------------------------------------------*/
 
-static char *tileprefix;
+static char *tileprefix = NULL;
+
+static void setup_tiles(void);
 
 void
 set_font_file(const char *fontfilename)
@@ -129,16 +136,29 @@ seek_tile_file(FILE *in) {
     return filelen;
 }
 
-/* This function parses the given tile file to determine its dimensions,
-   image/cchar nature, and to record the tile table in it. If the tile file is
-   image-based, it also sends it to libuncursed to start rendering the
-   images. */
+/* This function parses the given tile file. If "store_tilename_in" is NULL,
+   then loads the tileset into the appropriate global variables (dimensions,
+   image/cchar, tile table), and if the tile file is image-based, also sends it
+   to libuncursed to start rendering the images. Otherwise, the tileset metadata
+   is converted into a string and returned; the global variables remain
+   untouched. */
 void
-set_tile_file(const char *tilefilename)
+load_tile_file(const char *tilebase, char *store_tilename_in)
 {
-    char namebuf1[strlen(tileprefix) + strlen(tilefilename) + 1];
+    if (!store_tilename_in) {
+        free(tiletable);
+        tiletable = NULL;
+        tiletable_len = 0;
+    } else
+        *store_tilename_in = '\0';
+
+    if (!tileprefix)
+        return;        /* UI not initialized yet */
+
+    char namebuf1[strlen(tileprefix) + strlen(tilebase) + sizeof ".nh4ct"];
     strcpy(namebuf1, tileprefix);
-    strcat(namebuf1, tilefilename);
+    strcat(namebuf1, tilebase);
+    strcat(namebuf1, ".nh4ct");
 
     char user_tilespath[
 #ifdef AIMAKE_BUILDOS_MSWin32
@@ -153,13 +173,10 @@ set_tile_file(const char *tilefilename)
     if (!ui_flags.connection_only)
         get_gamedirA(TILESET_DIR, user_tilespath);
 
-    char namebuf2[strlen(user_tilespath) + strlen(tilefilename) + 1];
+    char namebuf2[strlen(user_tilespath) + strlen(tilebase) + sizeof ".nh4ct"];
     strcpy(namebuf2, user_tilespath);
-    strcat(namebuf2, tilefilename);
-
-    free(tiletable);
-    tiletable = NULL;
-    tiletable_len = 0;
+    strcat(namebuf2, tilebase);
+    strcat(namebuf2, ".nh4ct");
 
     /* On Windows, fopen has somehow been redefined to take a wchar_t * here.
        Make sure we call the function, not the macro. We look in two places: the
@@ -184,11 +201,16 @@ set_tile_file(const char *tilefilename)
         curses_raw_print(strerror(e));
         return;
     }
-    tiletable_len = seek_tile_file(in) - 84;
-    if (tiletable_len == -84)
+
+    int ttlen = seek_tile_file(in) - 84;
+    if (ttlen == -84)
         return; /* error message has already been printed */
 
-    fseek(in, 80, SEEK_CUR); /* skip the name */
+    if (store_tilename_in) {
+        if (fread(store_tilename_in, 1, 80, in) != 80)
+            curses_impossible("File length is longer than the file");
+    } else
+        fseek(in, 80, SEEK_CUR); /* skip the name */
 
     /* Unlike PNG, tile tables are little-endian. */
     int w = getc(in);
@@ -196,23 +218,153 @@ set_tile_file(const char *tilefilename)
     int h = getc(in);
     h += getc(in) << 8;
 
+    if (store_tilename_in) {
+        store_tilename_in[80] = '\0';
+
+        char *p = store_tilename_in;
+        int remlen = QBUFSZ;
+        while (*p) {
+            p++;
+            remlen--;
+        }
+
+        if (w || h)
+            snprintf(p, remlen - 1, " (graphical, %d x %d)", w, h);
+        else
+            snprintf(p, remlen - 1, " (text-based)");
+
+        return;
+    }
+
     if (w == 0 || h == 0) {
-        set_tiles_tile_file(NULL, 0, 0);
+        if (ui_flags.initialized)
+            set_tiles_tile_file(NULL, 0, 0);
         tiletable_is_cchar = 1;
     } else {
-        set_tiles_tile_file(whichnamebuf, h, w);
+        if (ui_flags.initialized)
+            set_tiles_tile_file(whichnamebuf, h, w);
         tiletable_is_cchar = 0;
     }
 
     /* Load up the entire table. */
-    tiletable = malloc(tiletable_len);
-    if (fread(tiletable, 1, tiletable_len, in) < tiletable_len) {
+    tiletable = malloc(ttlen);
+    if (fread(tiletable, 1, ttlen, in) < ttlen) {
         curses_raw_print("Warning: tileset shrunk while in use.\n");
         free(tiletable);
         tiletable = NULL;
         tiletable_len = 0;
         return;
     }
+    tiletable_len = ttlen;
+}
+
+static int
+compare_tileset_descriptions(const void *d1, const void *d2)
+{
+    const struct tileset_description *td1 = d1;
+    const struct tileset_description *td2 = d2;
+
+    return strcmp(td1->basename, td2->basename);
+}
+
+struct tileset_description *
+get_tileset_descriptions(int *count)
+{
+    char user_tilespath[
+#ifdef AIMAKE_BUILDOS_MSWin32
+        MAX_PATH
+#else
+        BUFSZ
+#endif
+        ];
+
+    *user_tilespath = '\0';
+
+    if (!ui_flags.connection_only)
+        get_gamedirA(TILESET_DIR, user_tilespath);
+
+    *count = 0;
+    struct tileset_description *rv = malloc(1);
+
+    int dirnum;
+    for (dirnum = 0; dirnum < 2; dirnum++) {
+        char *dir;
+        if (dirnum == 0)
+            dir = user_tilespath;
+        else
+            dir = tileprefix;
+
+#ifdef WIN32
+        HANDLE dirp;
+        WIN32_FIND_DATAA dp;
+
+        char pattern[strlen(dir) + sizeof "*.nh4ct"];
+        strcpy(pattern, dir);
+        strcat(pattern, "*.nh4ct");
+        dirp = FindFirstFileA(pattern, &dp);
+
+        while (dirp != INVALID_HANDLE_VALUE)
+        {
+            char d_name[strlen(dp.cFileName) + 1];
+            strcpy(d_name, dp.cFileName);
+            char *ep;
+            for (ep = d_name; *ep; ep++)
+                *ep = tolower(*ep);       /* Windows is case-insensitive */
+#else
+        DIR *dirp = opendir(dir);
+        struct dirent *dp;
+        while ((dp = readdir(dirp)))
+        {
+            char d_name[strlen(dp->d_name) + 1];
+            strcpy(d_name, dp->d_name);
+            char *ep;
+#endif
+
+            ep = strstr(d_name, ".nh4ct");
+            if (!ep || ep[6] != '\0')
+                continue;
+
+            *ep = '\0';
+            rv = realloc(rv, (1 + *count) * sizeof *rv);
+
+            strncpy(rv[*count].basename, d_name, sizeof rv->basename);
+            rv[*count].basename[sizeof rv->basename - 1] = '\0';
+            load_tile_file(rv[*count].basename, rv[*count].desc);
+            ++*count;
+
+#ifdef WIN32
+            if (!FindNextFileA(dirp, &dp))
+                break;
+        }
+
+        if (dirp != INVALID_HANDLE_VALUE)
+            FindClose(dirp);
+#else
+        }
+        closedir(dirp);
+#endif
+    }
+
+    /* Sort the tiles by basename. If we find duplicates, we eliminate them. */
+    qsort(rv, *count, sizeof *rv, compare_tileset_descriptions);
+    struct tileset_description *tdp1 = rv, *tdp2 = rv;
+    /* tdp1 points to the position of a tile in the old array; tdp2 points to
+       the position it should be placed in in the new array. */
+    while (tdp2 - rv < *count - 1) {
+        if (strcmp(tdp1[0].basename, tdp1[1].basename) == 0) {
+            tdp1++;
+            --*count;
+        } else {
+            if (tdp1 != tdp2)
+                memcpy(tdp2, tdp1, sizeof *rv);
+            tdp1++;
+            tdp2++;
+        }
+    }
+    if (tdp2 - rv < *count) /* i.e. *count, but this is clearer */
+        memcpy(tdp2, tdp1, sizeof *rv);
+
+    return rv;
 }
 
 /* A delayed-action curs_set; we don't show the cursor until just before we
@@ -248,6 +400,7 @@ init_curses_ui(const char *dataprefix)
 
     tileprefix = strdup(dataprefix);
     set_font_file("font14.png");
+    setup_tiles();
 
     setup_palette();
 
@@ -327,7 +480,7 @@ unicode_border(enum framechars which)
 static void
 set_frame_cchar(cchar_t *cchar, enum framechars which, nh_bool mainframe)
 {
-    if (settings.graphics == ASCII_GRAPHICS) {
+    if (ui_flags.asciiborders) {
         wchar_t w[2] = {ascii_borders[which], 0};
         setcchar(cchar, w, (attr_t)0, mainframe ? MAINFRAME_PAIR : FRAME_PAIR,
                  NULL);
@@ -777,39 +930,34 @@ setup_palette(void)
     }
 }
 
-
-static nh_bool
+static void
 setup_tiles(void)
 {
-    switch (settings.graphics) {
-    case TILESET_DAWNLIKE_16:
-        set_tile_file("dawnlike-16.nh4ct");
-        return TRUE;
-    case TILESET_DAWNLIKE_32:
-        set_tile_file("dawnlike-32.nh4ct");
-        return TRUE;
-    case TILESET_RLTILES_32:
-        set_tile_file("rltiles-32.nh4ct");
-        return TRUE;
-    case TILESET_SLASHEM_16:
-        set_tile_file("slashem-16.nh4ct");
-        return TRUE;
-    case TILESET_SLASHEM_32:
-        set_tile_file("slashem-32.nh4ct");
-        return TRUE;
-    case TILESET_SLASHEM_3D:
-        set_tile_file("slashem-3d.nh4ct");
-        return TRUE;
-    case ASCII_GRAPHICS:
-        set_tile_file("textascii.nh4ct");
-        return FALSE;
-    case UNICODE_GRAPHICS:
-        set_tile_file("textunicode.nh4ct");
-        return FALSE;
-    default:
-        /* unreachable */
-        return FALSE;
+    load_tile_file(settings.tileset, NULL);
+    ui_flags.asciiborders = FALSE;
+
+    if (!tiletable || !tiletable_is_cchar)
+        return;
+
+    int i = 0;
+    for (i = 0; i < tiletable_len; i += 16) {
+        /* The format of a tile table entry is 32 bits of tile number, 64 bits
+           of substitutions, 11 bits of formatting, and 21 for the character.
+           However, due to endianness considerations, we need to reverse the
+           first 4, middle 8, and last 4 bits.
+
+           We want to check that the character is always in the 32-126 range. */
+        unsigned long unichar = 0;
+        unichar |= (unsigned long)(tiletable[i + 12]) << 0;
+        unichar |= (unsigned long)(tiletable[i + 13]) << 8;
+        unichar |= (unsigned long)(tiletable[i + 14] & 0x1F) << 16;
+
+        if (unichar < (unsigned long)L' ' || unichar > (unsigned long)L'~')
+            if (unichar != 0xd800UL && unichar != 0)
+                return;
     }
+
+    ui_flags.asciiborders = TRUE;
 }
 
 static void
@@ -875,9 +1023,10 @@ create_or_resize_game_windows(void (*wrapper)(WINDOW **, int, int, int, int))
     } else
         sidebar = NULL;
 
+    setup_tiles();
     draw_frame();
 
-    if (setup_tiles())
+    if (tiletable && !tiletable_is_cchar)
         wset_tiles_region(mapwin, ui_flags.mapheight,
                           ui_flags.mapwidth - 2 * ui_flags.map_padding, 0, 0,
                           ROWNO, COLNO, 0, 0);
@@ -1048,8 +1197,10 @@ rebuild_ui(void)
         draw_sidebar();
 
         redraw_game_windows();
-    } else if (basewin) {
-        wnoutrefresh(basewin);
+    } else if (settings.tileset) {
+        setup_tiles();                 /* for ASCII vs. Unicode border */
+        if (basewin && ui_flags.initialized)
+            wnoutrefresh(basewin);
     }
 }
 
