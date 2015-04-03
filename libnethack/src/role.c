@@ -91,9 +91,9 @@ const struct Role roles[] = {
                                 {"Rover", 0},
                                 {"Pioneer", 0}},
      "Anu", "_Ishtar", "Anshar",        /* Babylonian */
-     "Cav", "the Caves of the Ancestors", "the Dragon's Lair",
+     "Cav", "Home Cave", "the Dragon's Lair",
      PM_CAVEMAN, PM_CAVEWOMAN, PM_LITTLE_DOG,
-     PM_SHAMAN_KARNOV, PM_NEANDERTHAL, PM_CHROMATIC_DRAGON,
+     PM_SHAMAN_KARNOV, PM_NEANDERTHAL, PM_GREAT_FIERCE_BEAST,
      PM_BUGBEAR, PM_HILL_GIANT, S_HUMANOID, S_GIANT,
      ART_BIG_STICK,
      MH_HUMAN | MH_ORC | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC | ROLE_NEUTRAL,

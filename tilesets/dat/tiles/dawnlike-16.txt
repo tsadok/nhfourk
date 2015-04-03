@@ -13916,7 +13916,7 @@ Q = (223, 239, 215)
   AAANNQNFNQQNFEEA
   AAAANENEEEEEEAAA
 }
-# tile 731 (Chromatic Dragon)
+# tile 731 (Great Fierce Beast)
 {
   GAAAAAAACBBBAAAA
   AAGAACCCCCFFBAAA

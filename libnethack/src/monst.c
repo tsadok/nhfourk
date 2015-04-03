@@ -3180,7 +3180,7 @@ const struct permonst mons[] = {
         M3_WANTSARTI | M3_WAITFORU | M3_INFRAVISIBLE, HI_QUEST),
     /* Multi-headed, possessing the breath attacks of all the other dragons
        (selected at random when attacking). */
-    MON("Chromatic Dragon", S_DRAGON,
+    MON("Great Fierce Beast", S_DRAGON,
         LVL(16, 12, 0, 30, -14), (G_NOGEN | G_UNIQ),
         A(ATTK(AT_BREA, AD_RBRE, 6, 8), ATTK(AT_MAGC, AD_SPEL, 0, 0),
           ATTK(AT_CLAW, AD_SAMU, 2, 8), ATTK(AT_BITE, AD_PHYS, 4, 8),
