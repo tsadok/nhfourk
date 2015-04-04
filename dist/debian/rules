@@ -3,7 +3,7 @@
 %:
 	env DH_VERBOSE=1 dh $@
 
-DESTDIR=debian/nethack4
+DESTDIR=debian/nhfourk
 PREFIX=/usr
 
 override_dh_auto_configure:
