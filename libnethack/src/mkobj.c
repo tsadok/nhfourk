@@ -711,13 +711,15 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                or the level creation RNG; in both cases we want the charges on
                the wand of wishing to be determined on the same RNG, rather than
                using a separate RNG for wand of wishing charges */
-            if (otmp->otyp == WAN_WISHING)
+            if (otmp->otyp == WAN_WISHING) {
                 otmp->spe = 1 + rn2_on_rng(3, rng);
-            else
+                otmp->recharged = rne_on_rng(3, rng_main);
+            } else {
                 otmp->spe = rn2_on_rng(5, rng) +
                     ((objects[otmp->otyp].oc_dir == NODIR) ? 11 : 4);
+                otmp->recharged = 0;        /* used to control recharging */
+            }
             blessorcurse(otmp, 17, rng);
-            otmp->recharged = 0;        /* used to control recharging */
             break;
         case RING_CLASS:
             if (objects[otmp->otyp].oc_charged) {

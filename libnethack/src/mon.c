@@ -2160,9 +2160,12 @@ cleanup:
 
     /* malign was already adjusted for u.ualign.type and randomization */
     /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
-     *    monster killing.  That completely defeats the purpose of even
-     *    bothering to keep track of player alignment record.  So no. */
-    /* adjalign(mtmp->malign); */
+       monster killing.  That completely defeats the purpose of even bothering
+       to keep track of player alignment record.  So no.  However, we do still
+       want a penalty for killing monsters that generated peaceful.  I'm not
+       absolutely sure the following condition is correct, but we'll test it: */
+    if (mtmp->malign < 0)
+        adjalign(mtmp->malign);
 }
 
 /* changes the monster into a stone monster of the same type */
