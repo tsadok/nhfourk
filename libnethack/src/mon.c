@@ -1786,8 +1786,8 @@ corpse_chance(struct monst *mon,
     /* NetHack Fourk balance adjustment: any given type of monster
        becomes unlikely to leave further corpses when lots of that
        type of monster have been killed already. */
-    if (log(1 + mvitals[monsndx(mon->data)].died)
-        > rn2_on_rng(5, rng_death_drop_c))
+    if (ilog2(mvitals[monsndx(mon->data)].died)
+        > rn2_on_rng(8000, rng_death_drop_c))
         return FALSE;
 
     if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
@@ -2066,8 +2066,8 @@ xkilled(struct monst *mtmp, int dest)
     death_drop_rng = (mdat->msize < MZ_HUMAN) ? rng_death_drop_s
                                               : rng_death_drop_l;
 
-    if (log(1 + mvitals[monsndx(mtmp->data)].died)
-        <= rn2_on_rng(5, death_drop_rng)) {
+    if (ilog2(mvitals[monsndx(mtmp->data)].died)
+        <= rn2_on_rng(6500, death_drop_rng)) {
         /* might be here after swallowed */
         if (((x != u.ux) || (y != u.uy)) && /* !rn2(6) && */
             !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {

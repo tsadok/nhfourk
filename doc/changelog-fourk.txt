@@ -341,15 +341,16 @@ Chronological Changelog (most recent at top):
    normal (non-farming) game should be about the same.
 
  * Any given type of monster becomes less likely to drop corpses and
-   death drops as you kill more and more of them.  Somewhere around
-   150 kills, you altogether stop getting corpses for that kind of
-   monster.  This is expected to be most noticeable with puddings but
-   may also be relevant for extinctionists and throne farmers.  I'd
-   have made it top out at a thousand or so kills, but the kill count
-   only goes up to 255, probably so it can fit in a single byte.  In
-   any case, this is unlikely to be noticed in normal play except with
-   large creatures such as dragons, which are no longer guaranteed to
-   drop corpses every single time.
+   death drops as you kill more and more of them.  Somewhere around 80
+   kills you stop getting death drops from that type of monster, and
+   somewhere around 225 kills, you stop getting corpses for that kind
+   of monster.  This is expected to be most noticeable with puddings
+   but may also be relevant for extinctionists and throne farmers.
+   I'd have made it top out at a thousand or so kills, but the kill
+   count only goes up to 255, probably so it can fit in a single byte.
+   In any case, this is unlikely to be noticed in normal play except
+   with large creatures such as dragons, which are no longer
+   guaranteed to drop corpses every single time.
 
  * Updated branding, docs, build rules, and such to refer to nhfourk
    (for filenames) and NetHack Fourk (for human-readable names) where
