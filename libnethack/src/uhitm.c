@@ -352,8 +352,8 @@ find_roll_to_hit(struct monst *mtmp)
    It is therefore wrong to add hitval to tmp; we must add it only for the
    specific attack (in hmonas()). */
     if (!Upolyd) {
-        tmp += hitval(uwep, mtmp);
-        tmp += weapon_hit_bonus(uwep); /* picks up bare-handed bonus */
+        tmp += 2 * hitval(uwep, mtmp);
+        tmp += 3 * weapon_hit_bonus(uwep); /* picks up bare-handed bonus */
     }
     return tmp;
 }
