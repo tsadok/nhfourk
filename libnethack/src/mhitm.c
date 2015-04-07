@@ -1461,7 +1461,7 @@ passivemm(struct monst *magr, struct monst *mdef, boolean mhit, int mdead)
     if (mddat == &mons[PM_FLOATING_EYE]) {
         if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
                     (perceives(madat) || !mdef->minvis)) {
-            tmp = rn2(magr->mhpmax * 2 / 3);
+            tmp = rn2(magr->mhpmax / 2);
             if (canseemon(magr) && ((magr->mhp > tmp) || flags.verbose))
                 pline("%s seems %s.", Monnam(magr),
                       (Hallucination ? "sober" : "remorseful"));
