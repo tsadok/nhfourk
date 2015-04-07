@@ -54,6 +54,9 @@ Chronological Changelog (most recent at top):
 
  * Mastodons have been replaced with mammoths.
 
+ * The effect of weapon skill on chance to hit has been magnified,
+   and being restricted is now worse than being unskilled.
+
  * Bugfix: the monstr value for floating eyes was being calculated
    incorrectly, due to the way they are implemented.  This was
    causing them to generate too often too early.
