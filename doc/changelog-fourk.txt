@@ -45,6 +45,10 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Bugfix: the monstr value for floating eyes was being calculated
+   incorrectly, due to the way they are implemented.  This was
+   causing them to generate too often too early.
+
  * Added a digit to the version number, so I can do more than one
    release based on a given version of upstream, without getting my
    version numbers horribly out of sync.

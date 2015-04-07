@@ -436,13 +436,16 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
         if (malive && (mon->data == &mons[PM_FLOATING_EYE]) &&
             canseemon(mon) && !Reflecting && mon->mcansee) {
             int difference = oldhp - mon->mhp;
+            int suffering;
             if (difference > 0) {
                 pline("As you meet %s deep, meaningful gaze, you feel "
                       "its suffering as though it were your own.", mhis(mon));
                 exercise(A_WIS, FALSE);
                 exercise(A_INT, FALSE);
-                losehp((difference * u.ulevel * 4 / 3),
-                       killer_msg(DIED, "vicarious suffering"));
+                suffering = difference * u.ulevel;
+                if (suffering > (u.uhpmax - 1) / 2)
+                    suffering = (u.uhpmax - 1) / 2;
+                losehp(suffering, killer_msg(DIED, "vicarious suffering"));
             }
         }
     }

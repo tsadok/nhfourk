@@ -2265,7 +2265,10 @@ mayberem(struct obj *obj, const char *str)
     remove_worn_item(obj, TRUE);
 }
 
-
+/* Return value matters when called at the bottom of hitmu, as it may be
+   returned to hitmu's caller.  (All other cases are in void context.)
+   According to the comment at the top of hitmu, 2 means mtmp dies;
+   3 means it lives but teleports away; otherwise, return 1.  */
 static int
 passiveum(const struct permonst *olduasmon, struct monst *mtmp,
           const struct attack *mattk)
@@ -2351,34 +2354,54 @@ passiveum(const struct permonst *olduasmon, struct monst *mtmp,
                 goto assess_dmg;
             }
             break;
-        case AD_PLYS:  /* Floating eye */
-            if (tmp > 127)
-                tmp = 127;
-            if (u.umonnum == PM_FLOATING_EYE) {
-                if (!rn2(4))
-                    tmp = 127;
-                if (mtmp->mcansee && haseyes(mtmp->data) && rn2(3) &&
-                    (perceives(mtmp->data) || !Invis)) {
-                    if (Blind)
+        case AD_FLPN:  /* Floating eye */
+            if (mtmp->mcansee && haseyes(mtmp->data) &&
+                (perceives(mtmp->data) || !Invis)) {
+                if (rn2(3)) {
+                    if (Blind) {
                         pline("As a blind %s, you cannot defend yourself.",
                               youmonst.data->mname);
-                    else {
+                        tmp = 0;
+                        break;
+                    } else {
+                        int suffering = rn2(mtmp->mhpmax / 2);
                         if (mon_reflects
                             (mtmp, "Your gaze is reflected by %s %s."))
                             return 1;
-                        pline("%s is frozen by your gaze!", Monnam(mtmp));
-                        mtmp->mcanmove = 0;
-                        mtmp->mfrozen = tmp;
-                        return 3;
+                        tmp = suffering;
+                        if (tmp >= mtmp->mhp)
+                            pline("You gaze deeply into %s %s, and %s is "
+                                  "completely overcome by remorse.",
+                                  s_suffix(mon_nam(mtmp)),
+                                  makeplural(mbodypart(mtmp, EYE)),
+                                  mon_nam(mtmp));
+                        else
+                            pline("You gaze deeply into %s %s and sense that "
+                                  "%s feels your suffering.",
+                                  s_suffix(mon_nam(mtmp)),
+                                  makeplural(mbodypart(mtmp, EYE)),
+                                  mon_nam(mtmp));
+                        break;
                     }
+                } else {
+                    pline("You find that %s does not meet your gaze.",
+                          mon_nam(mtmp));
+                    tmp = 0;
+                    break;
                 }
-            } else {    /* gelatinous cube */
-                pline("%s is frozen by you.", Monnam(mtmp));
-                mtmp->mcanmove = 0;
-                mtmp->mfrozen = tmp;
-                return 3;
+            } else {
+                    pline("You find that %s cannot meet your gaze.",
+                          mon_nam(mtmp));
+                    tmp = 0;
+                    break;
             }
-            return 1;
+        case AD_PLYS:  /* Gelatinous cube */
+            if (tmp > 127)
+                tmp = 127;
+            pline("%s is frozen by you.", Monnam(mtmp));
+            mtmp->mcanmove = 0;
+            mtmp->mfrozen = tmp;
+            return 3;
         case AD_COLD:  /* Brown mold or blue jelly */
             if (resists_cold(mtmp)) {
                 shieldeff(mtmp->mx, mtmp->my);

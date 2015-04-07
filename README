@@ -199,7 +199,7 @@ For a full list of changes in NetHack 4 compared to the NetHack 3 series, see
 `doc/changelog.txt`.  Some of the most interesting or noticeable of these
 changes are listed below.
 
-  * Numerous bugfixes.  Over 150 of the numbered bugs in NetHack 3.4.3 have
+  * Numerous bugfixes.  Over 200 of the numbered bugs in NetHack 3.4.3 have
     been fixed *intentionally*; many more have been fixed as a side effect of
     the improvements to NetHack's internals included in NetHack 4, and many
     bugs have been fixed in NetHack 4 that aren't included in the NetHack
