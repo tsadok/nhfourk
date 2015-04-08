@@ -1783,11 +1783,18 @@ corpse_chance(struct monst *mon,
         || is_rider(mdat))
         return TRUE;
 
+    /* Certain monsters reliably drop corpses for the first hundred kills. */
+    if ((mdat == &mons[PM_LIZARD] || mdat == &mons[PM_ACID_BLOB] ||
+         mdat->mlet == S_FUNGUS || mdat->mlet == S_PUDDING ||
+         mdat->mlet == S_TROLL) &&
+        mvitals[monsndx(mon->data)].died < 100)
+        return TRUE;
+
     /* NetHack Fourk balance adjustment: any given type of monster
        becomes unlikely to leave further corpses when lots of that
        type of monster have been killed already. */
-    if (log(1 + mvitals[monsndx(mon->data)].died)
-        > rn2_on_rng(5, rng_death_drop_c))
+    if (ilog2(mvitals[monsndx(mon->data)].died)
+        > rn2_on_rng(8000, rng_death_drop_c))
         return FALSE;
 
     if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
@@ -2066,24 +2073,29 @@ xkilled(struct monst *mtmp, int dest)
     death_drop_rng = (mdat->msize < MZ_HUMAN) ? rng_death_drop_s
                                               : rng_death_drop_l;
 
-    if (log(1 + mvitals[monsndx(mtmp->data)].died)
-        <= rn2_on_rng(5, death_drop_rng)) {
+    if (ilog2(mvitals[monsndx(mtmp->data)].died)
+        <= rn2_on_rng(6500, death_drop_rng)) {
         /* might be here after swallowed */
         if (((x != u.ux) || (y != u.uy)) && /* !rn2(6) && */
             !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
             int typ;
 
-            otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, death_drop_rng);
+        otmp = mkobj(level, RANDOM_CLASS, TRUE, death_drop_rng);
             /* Don't create large objects from small monsters */
             typ = otmp->otyp;
-            if (mdat->msize < MZ_HUMAN && typ != FOOD_RATION &&
-                typ != LEASH && typ != FIGURINE &&
+            if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
                 (otmp->owt > 30 ||
-                 objects[typ].oc_big || /* oc_bimanual/oc_bulky */
-                 is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
+                 /* oc_big is also oc_bimanual and oc_bulky */
+                 (otmp->owt > 30 || objects[typ].oc_big ||
+                  is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR))) {
                 delobj(otmp);
-            } else
+            } else if (!flooreffects(otmp, x, y,
+                                     (dest & 1) ? "fall" : "")) {
+                place_object(otmp, level, x, y);
+                stackobj(otmp);
                 redisp = TRUE;
+            } else
+                redisp = TRUE;       
         }
     }
     /* Whether or not it always makes a corpse is, in theory, different from
@@ -2155,9 +2167,12 @@ cleanup:
 
     /* malign was already adjusted for u.ualign.type and randomization */
     /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
-     *    monster killing.  That completely defeats the purpose of even
-     *    bothering to keep track of player alignment record.  So no. */
-    /* adjalign(mtmp->malign); */
+       monster killing.  That completely defeats the purpose of even bothering
+       to keep track of player alignment record.  So no.  However, we do still
+       want a penalty for killing monsters that generated peaceful.  I'm not
+       absolutely sure the following condition is correct, but we'll test it: */
+    if (mtmp->malign < 0)
+        adjalign(mtmp->malign);
 }
 
 /* changes the monster into a stone monster of the same type */

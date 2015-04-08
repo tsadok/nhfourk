@@ -618,9 +618,9 @@ netgame_mainmenu(struct server_info *server)
         {DISCONNECT, MI_NORMAL, "disconnect", 'q', 'x', 0}
     };
 
-    snprintf(verstr, ARRAY_SIZE(verstr), "Client version: %d.%d.%d", VERSION_MAJOR, VERSION_MINOR,
+    snprintf(verstr, ARRAY_SIZE(verstr), "Client version: 4.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR,
             PATCHLEVEL);
-    snprintf(server_verstr, ARRAY_SIZE(server_verstr), "Server version: %d.%d.%d", nhnet_server_ver.major,
+    snprintf(server_verstr, ARRAY_SIZE(server_verstr), "Server version: 4.%d.%d.%d", nhnet_server_ver.major,
             nhnet_server_ver.minor, nhnet_server_ver.patchlevel);
 
     /* In connection-only mode, we can't read the config file until we're

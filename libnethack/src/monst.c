@@ -322,7 +322,8 @@ const struct permonst mons[] = {
         M2_HOSTILE | M2_NEUTER, 0, CLR_GRAY),
     MON("floating eye", S_EYE,
         LVL(2, 1, 9, 10, 0), (G_GENO | 5),
-        A(NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        A(ATTK(AT_NONE, AD_FLPN, 0, 70),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(10, 10, 0, MS_SILENT, MZ_SMALL), 0, 0,
         M1_FLY | M1_AMPHIBIOUS | M1_NOLIMBS | M1_NOHEAD | M1_NOTAKE,
         M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE, CLR_BLUE),
@@ -773,7 +774,7 @@ const struct permonst mons[] = {
         SIZ(3800, 800, 0, MS_SILENT, MZ_LARGE), 0, 0,
         M1_ANIMAL | M1_THICK_HIDE | M1_NOHANDS | M1_HERBIVORE,
         M2_HOSTILE | M2_STRONG, M3_INFRAVISIBLE, CLR_WHITE | HI_ULINE),
-    MON("mastodon", S_QUADRUPED,
+    MON("mammoth", S_QUADRUPED,
         LVL(20, 12, 5, 0, 0), (G_GENO | 1),
         A(ATTK(AT_BUTT, AD_PHYS, 4, 8), ATTK(AT_BUTT, AD_PHYS, 4, 8),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
@@ -3179,7 +3180,7 @@ const struct permonst mons[] = {
         M3_WANTSARTI | M3_WAITFORU | M3_INFRAVISIBLE, HI_QUEST),
     /* Multi-headed, possessing the breath attacks of all the other dragons
        (selected at random when attacking). */
-    MON("Chromatic Dragon", S_DRAGON,
+    MON("Great Fierce Beast", S_DRAGON,
         LVL(16, 12, 0, 30, -14), (G_NOGEN | G_UNIQ),
         A(ATTK(AT_BREA, AD_RBRE, 6, 8), ATTK(AT_MAGC, AD_SPEL, 0, 0),
           ATTK(AT_CLAW, AD_SAMU, 2, 8), ATTK(AT_BITE, AD_PHYS, 4, 8),

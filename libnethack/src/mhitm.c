@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-03-30 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1198,6 +1198,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         case 17:
             if (!resist(mdef, 0, 0, 0)) {
                 monkilled(mdef, "", AD_DETH);
+                if (mdef->mhp <= 0)             /* did it lifesave? */
+                    return MM_DEF_DIED;
+
                 tmp = 0;
                 break;
             }   /* else FALLTHRU */
@@ -1458,7 +1461,7 @@ passivemm(struct monst *magr, struct monst *mdef, boolean mhit, int mdead)
     if (mddat == &mons[PM_FLOATING_EYE]) {
         if (magr->mcansee && haseyes(madat) && mdef->mcansee &&
                     (perceives(madat) || !mdef->minvis)) {
-            tmp = rn2(magr->mhpmax * 2 / 3);
+            tmp = rn2(magr->mhpmax / 2);
             if (canseemon(magr) && ((magr->mhp > tmp) || flags.verbose))
                 pline("%s seems %s.", Monnam(magr),
                       (Hallucination ? "sober" : "remorseful"));

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-03-30 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -235,8 +235,75 @@ find_roll_to_hit(struct monst *mtmp)
      */
     luckpluslevel = Luck + maybe_polyd(youmonst.data->mlevel, u.ulevel);
     tmp = 1 + abon() + find_mac(mtmp) + u.uhitinc
-            + ((luckpluslevel >= 1) ? log(luckpluslevel)
-                                    : (-1 * log(1 - luckpluslevel)));
+            + (((luckpluslevel >= 1) ? ilog2(luckpluslevel)
+                                     : (-1 * ilog2(1 - luckpluslevel))) / 512);
+    /*
+      Analysis:  1 + (-5 to +26) + (+10 to -10, minus armor) + +0 + ((0-5556)/512)
+           (Then below we can adjust by numbers like 2 or 4 for things like
+            encumbrance or the monster having status effects.)
+           (Then the various weapon and skill to-hit boni are added.)
+           If the result is greater than d20, you hit.
+
+      abon() is normally the strength bonus plus the dex bonus
+            strength bonus ranges from -2 (str < 6) to +3
+            dex bonus ranges from -3 (dex < 6) to (dex - 14) at the high end.
+            So an abon of -5 is horrible, 26 is crazy awesome.
+         However, if you are polyselfed, abon() is calculated by adj_lev()
+
+      find_mac(mtmp) starts from mtmp->data->ac()
+                ac is the third field in LVL() right after move speed
+                Examples:
+                   10  dwarves, kobolds, orcs, gnomes, most @
+                    9  floating eye, bugbear, wood nymph, grid bug, most F
+                    8  blobs, cubes, jellies, chickatrice, leprechaun, newt
+                    7  most canines, most felines, mimics, rothe, some r
+                    6  cockatrice, pyrolisk, kitten, homunculus, water n,
+                    5  dog, dingo, housecat, mind flayer, tengu, shamans
+                    4  large dog, wolves, large cat, leocrotta, warhorse
+                    3  ants, spiders, t, Q, iron golem
+                    2  gremlin, mountain nymph, unicorns, v, baby D,
+                       E, U, shark, hell hound
+                    0  mmf, p, y, mumak, Aleax, giants, lich, Nazgul, nurse,
+                         shopkeeper, foocubi, barbed &, vrock, quest leaders
+                   -1  killer bee, Dragons, bone &, nalfeshnee
+                   -2  winged g, J, X, hezrou, balrog
+                   -3  Titan, Vlad, pit fiend, electric eel
+                   -4  queen bee, gargoyle, xan, Angel, master L, Olog-hai,
+                       water &, ice &
+                   -5  ghost, horned &, Yeenoghu, Baalzebub, Riders
+                   -6  Archon, arch-lich, marilith, Orcus
+                   -7  Asmodeus
+                   -8  Rodney, Demogorgon
+                  -10  disenchanter, Master Kaen
+            then subtracts the ARM_BONUS() for each worn item.
+          Pets get an additional tweak of -20 when at less than 1/3 HP.
+              
+      u.uhitinc is the ring of increase accuracy bonus, typically +0
+
+      luckpluslevel is what it says on the tin.
+            luck ranges from -13 to +13 but in the early game is generally near 0.
+                 luck below about -3 represents significant misbehavior
+            level, in natural form, ranges from 1 to 30.
+          Thus ilog2() will be called on values ranging from 1 to 43 (positive)
+          Or else ilog2() will be called on a value from 1 to 13, result negated.
+
+      For reference:
+       ilog2(   1) =    0  	ilog2(   2) = 1024  	ilog2(   3) = 1623
+       ilog2(   4) = 2048  	ilog2(   5) = 2377  	ilog2(   6) = 2647
+       ilog2(   7) = 2874  	ilog2(   8) = 3072  	ilog2(   9) = 3246
+       ilog2(  10) = 3401  	ilog2(  11) = 3542  	ilog2(  12) = 3671
+       ilog2(  13) = 3789  	ilog2(  14) = 3898  	ilog2(  15) = 4000
+       ilog2(  16) = 4096  	ilog2(  17) = 4185  	ilog2(  18) = 4270
+       ilog2(  19) = 4349  	ilog2(  20) = 4425  	ilog2(  21) = 4497
+       ilog2(  22) = 4566  	ilog2(  23) = 4632  	ilog2(  24) = 4695
+       ilog2(  25) = 4755  	ilog2(  26) = 4813  	ilog2(  27) = 4869
+       ilog2(  28) = 4922  	ilog2(  29) = 4974  	ilog2(  30) = 5024
+       ilog2(  31) = 5073  	ilog2(  32) = 5120  	ilog2(  33) = 5165
+       ilog2(  34) = 5209  	ilog2(  35) = 5252  	ilog2(  36) = 5294
+       ilog2(  37) = 5334  	ilog2(  38) = 5373  	ilog2(  39) = 5412
+       ilog2(  40) = 5449  	ilog2(  41) = 5486  	ilog2(  42) = 5521
+       ilog2(  43) = 5556
+     */
  
     check_caitiff(mtmp);
 
@@ -285,8 +352,8 @@ find_roll_to_hit(struct monst *mtmp)
    It is therefore wrong to add hitval to tmp; we must add it only for the
    specific attack (in hmonas()). */
     if (!Upolyd) {
-        tmp += hitval(uwep, mtmp);
-        tmp += weapon_hit_bonus(uwep); /* picks up bare-handed bonus */
+        tmp += 2 * hitval(uwep, mtmp);
+        tmp += 3 * weapon_hit_bonus(uwep); /* picks up bare-handed bonus */
     }
     return tmp;
 }
@@ -436,13 +503,16 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
         if (malive && (mon->data == &mons[PM_FLOATING_EYE]) &&
             canseemon(mon) && !Reflecting && mon->mcansee) {
             int difference = oldhp - mon->mhp;
+            int suffering;
             if (difference > 0) {
                 pline("As you meet %s deep, meaningful gaze, you feel "
                       "its suffering as though it were your own.", mhis(mon));
                 exercise(A_WIS, FALSE);
                 exercise(A_INT, FALSE);
-                losehp((difference * u.ulevel * 4 / 3),
-                       killer_msg(DIED, "vicarious suffering"));
+                suffering = difference * u.ulevel;
+                if (suffering > (u.uhpmax - 1) / 2)
+                    suffering = (u.uhpmax - 1) / 2;
+                losehp(suffering, killer_msg(DIED, "vicarious suffering"));
             }
         }
     }
@@ -2106,7 +2176,13 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
                youmonst.data->mlet==S_ORC || youmonst.data->mlet==S_GNOME ))
                goto use_weapon; */
             sum[i] = castum(mon, mattk);
-            continue;
+            /* allow enemy passives here, these spells are mostly flavoured as
+               melee attacks anyway (to do this properly, we'd need to get
+               castum to return a value that indicated whether a touch attack
+               was used); note that we can't disallow them via "continue"
+               because then, killing the monster will kill it twice and throw
+               off dead monster accounting */
+            break;
 
         case AT_NONE:
         case AT_BOOM:
@@ -2163,7 +2239,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
     else
         tmp = 0;
 
-/* These affect you even if they just died */
+    /* These affect you even if they just died */
 
     switch (ptr->mattk[i].adtyp) {
 
@@ -2269,7 +2345,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
         break;
     }
 
-/* These only affect you if they still live */
+    /* These only affect you if they still live */
 
     if (malive && !mon->mcan && rn2(3)) {
 

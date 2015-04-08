@@ -789,14 +789,14 @@ rehumanize(int how, const char *killer)
         del_light_source(level, LS_MONSTER, &youmonst);
     polyman("You return to %s form!", urace.adj);
 
-    if (u.uhp < 1)
+    if (u.uhp < 1) {
         /* can only happen if some bit of code reduces u.uhp
          * instead of u.mh while poly'd */
         pline("Your old form was not healthy enough to survive.");
         done(DIED,
              killer_msg(DIED, msgcat_many("reverting to unhealthy ", urace.adj,
                                           " form", NULL)));
-
+    }
     action_interrupted();
 
     turnstate.vision_full_recalc = TRUE;
@@ -1295,7 +1295,7 @@ mbodypart(struct monst *mon, int part)
             mptr != &mons[PM_INCUBUS] && mptr != &mons[PM_SUCCUBUS])
             return part == HAND ? "claw" : "clawed";
     }
-    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MASTODON]) && part == NOSE)
+    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MAMMOTH]) && part == NOSE)
         return "trunk";
     if (mptr == &mons[PM_SHARK]) {
         /* sharks don't have scales */
@@ -1356,6 +1356,32 @@ mbodypart(struct monst *mon, int part)
         return vortex_parts[part];
     if (mptr->mlet == S_FUNGUS)
         return fungus_parts[part];
+    /* Golems have substance in the right places to form
+     * the body parts that are defined by shape -- hands,
+     * legs, face, and so on; but they have no organs.
+     * Flesh golems are the exception, of course. */
+    if (mptr->mlet == S_GOLEM && !(mptr == &mons[PM_FLESH_GOLEM]) &&
+        (part == HAIR || part == SPINE || part == BLOOD ||
+         part == LUNG || part == STOMACH || part == EYE ||
+         part == HIDE || part == SKIN)) {
+        if (mptr == &mons[PM_STRAW_GOLEM] ||
+            mptr == &mons[PM_PAPER_GOLEM] ||
+            mptr == &mons[PM_WOOD_GOLEM] ||
+            mptr == &mons[PM_ROPE_GOLEM])
+            return "fiber";
+        else if (mptr == &mons[PM_GOLD_GOLEM] ||
+                 mptr == &mons[PM_IRON_GOLEM])
+            return "metal";
+        else if (mptr == &mons[PM_LEATHER_GOLEM])
+            return "leather";
+        else if (mptr == &mons[PM_CLAY_GOLEM] ||
+                 mptr == &mons[PM_STONE_GOLEM])
+            return "sediment";
+        else if (mptr == &mons[PM_GLASS_GOLEM])
+            return "glass";
+        else
+            return "substance";
+    }
     if (humanoid(mptr))
         return humanoid_parts[part];
     return animal_parts[part];

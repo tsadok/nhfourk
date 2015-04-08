@@ -70,11 +70,15 @@ network_motd(void)
            Note that nothing is sent (other than the fact that the connection
            exists); the nethack4 binary just creates the connection, then reads
            from it. */
+#ifdef MOTD_SERVER
         strcpy(motdmsg, "The Message of the Day system connects to the "
                "Internet to receive gameplay tips and announcements (such "
                "as tournament information or release announcements). Do you "
                "want to turn it on? (You can change this later with the "
                "\x0enetwork_motd\x0f option.)");
+#else
+        return 1;
+#endif
     }
 
     /* SI/SO in the output indicate bold text. This isn't implemented yet.  Also

@@ -345,7 +345,7 @@ make_version(void)
 static char *
 version_string(char *outbuf)
 {
-    sprintf(outbuf, "%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
+    sprintf(outbuf, "4.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
     return outbuf;
 }
 
@@ -819,6 +819,8 @@ mstrength(const struct permonst *ptr)
         if ((tmp2 == AD_DRLI) || (tmp2 == AD_STON) || (tmp2 == AD_DRST)
             || (tmp2 == AD_DRDX) || (tmp2 == AD_DRCO) || (tmp2 == AD_WERE))
             n += 2;
+        else if (tmp2 == AD_FLPN)
+            n += 1; /* NH Fourk floating eyes */
         else if (strcmp(ptr->mname, "grid bug"))
             n += (tmp2 != AD_PHYS);
         n += ((int)(ptr->mattk[i].damd * ptr->mattk[i].damn) > 23);

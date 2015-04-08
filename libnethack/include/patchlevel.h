@@ -29,8 +29,8 @@
  * with all four numbers specified as two hexadecimal digits.
  * Keep this consistent with nethack.h.
  */
-#define VERSION_COMPATIBILITY 0x04030000L       /* 4.3.0-0 */
-
+#define VERSION_COMPATIBILITY 0x03000200L       /* [4.]3.0.2-0 */
+/* (Yes, we are a fork of NetHack 4.  The 4. is implicit.) */
 
 /*patchlevel.h*/
 

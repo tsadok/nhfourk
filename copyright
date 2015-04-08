@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Last-Modified: Last modified by Alex Smith, 2015-03-21
+Last-Modified: Last modified by Alex Smith, 2015-04-01
 Comment:
  .
  This file is Copyright (C) Alex Smith 2013-2015, except as explained below
@@ -158,12 +158,6 @@ Files: libnethack/include/extern.h
 License: NGPL
 Copyright: Copyright (c) Steve Creps, 1988
 
-Files: libnethack/include/hacklib.h
-License: NGPL
-Copyright:
- Copyright (c) Alex Smith, 2013
- Copyright (c) Steve Creps, 1988
-
 Files: libnethack/include/magic.h
 License: NGPL
 Copyright: Copyright (c) Daniel Thaler, 2011
@@ -279,12 +273,6 @@ Copyright: Copyright 1988, 1989 by Ken Arromdee
 Files: libnethack/src/fountain.c
 License: NGPL
 Copyright: Copyright Scott R. Turner, srt@ucla, 10/27/86
-
-Files: libnethack/src/hacklib.c
-License: NGPL
-Copyright:
- Copyright (c) Robert Patrick Rankin, 1991
- Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985
 
 Files: libnethack/src/history.c
 License: NGPL
@@ -447,7 +435,7 @@ Files: libuncursed/*
 License: NGPL or GPL-2+
 Copyright: Copyright (c) 2013-2014 Alex Smith
 
-Files: libnethack_common/nethack*.h
+Files: libnethack_common/include/nethack*.h
 License: NGPL
 Copyright:
  These files have no explicit copyright notice.  However, the originals come
@@ -468,6 +456,18 @@ Copyright:
 Files: libnethack_common/src/xmalloc.c
 License: NGPL
 Copyright: Copyright (c) Daniel Thaler, 2011
+
+Files: libnethack_common/src/hacklib.c
+License: NGPL
+Copyright:
+ Copyright (c) Robert Patrick Rankin, 1991
+ Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985
+
+Files: libnethack_common/include/hacklib.h
+License: NGPL
+Copyright:
+ Copyright (c) Alex Smith, 2013
+ Copyright (c) Steve Creps, 1988
 
 Files: libnethack_common/include/xmalloc.h
 License: NGPL
@@ -794,6 +794,10 @@ Files: doc/changelog.txt doc/faq.txt doc/mainloop.txt doc/philosophy.txt doc/sav
 License: NGPL
 Copyright: Copyright (c) 2013-2015 Alex Smith
 
+Files: doc/changelog-fourk.xt
+License: public-domain
+Copyright: Not Applicable / Waived by Author
+
 Files: doc/nethack4.pod doc/tilecompile.pod
 License: NGPL
 Copyright: Copyright (c) 2014-2015 Alex Smith
@@ -851,7 +855,7 @@ Files: prebuilt/README.prebuilt
 License: public-domain
  (The license on the file is not specified explicitly.)
 Copyright: This file is only one short sentence.  It was written by
- Alex Smith, who does not which to enforce copyright on it.  (It's
+ Alex Smith, who does not wish to enforce copyright on it.  (It's
  also entirely unused during the build, and exists only to explain the
  purpose of the directory in which it resides.)
 
@@ -865,7 +869,7 @@ Copyright: Copyright (c) Alex Smith, 2013
 
 Files: aimake
 License: GPL-3+
-Copyright: Copyright (C) 2013 Alex Smith
+Copyright: Copyright (C) 2013, 2014, 2015 Alex Smith
 Comment: aimake is only used as the build system and none of it is compiled
  into the resulting executables. As such, there is no license clash between
  it and the files it's compiling, just as there is no problem using a GPL'd

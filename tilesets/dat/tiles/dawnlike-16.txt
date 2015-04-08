@@ -1,4 +1,4 @@
-! Last modified by Alex Smith, 2014-10-20
+! Last modified by Alex Smith, 2015-04-02
 !
 ! Copyright (C) Andrew Rios, 2014
 !
@@ -13517,7 +13517,7 @@ Q = (223, 239, 215)
   AIFBAFIFBAAFIFAA
   AFBAABIBAAABFBAA
 }
-# tile 710 (mastodon)
+# tile 710 (mammoth)
 {
   AAAAAAAAAAAAAAAA
   ABBBBBBABBBBABAA
@@ -13916,7 +13916,7 @@ Q = (223, 239, 215)
   AAANNQNFNQQNFEEA
   AAAANENEEEEEEAAA
 }
-# tile 731 (Chromatic Dragon)
+# tile 731 (Great Fierce Beast)
 {
   GAAAAAAACBBBAAAA
   AAGAACCCCCFFBAAA
@@ -17127,7 +17127,7 @@ Q = (223, 239, 215)
   AAAAAAFBBBFAAAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 900 (figurine)
+# tile 900 (figurine; sub figurine *)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAAAAAAAAAA

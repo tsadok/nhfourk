@@ -73,7 +73,7 @@ const char *nhlogo_small[11] = {        /* created by hand */
     "      ___                    ",
     "     |               |       ",
     "     |__  _          | /     ",
-    "     |   / \\ | | |/~ |<      ",
+    "     |   / \\ | | |/` |<      ",
     "     |   \\_/ \\_| |   | \\     ",
 };
 
@@ -88,7 +88,7 @@ const char *nhlogo_large[14] = {
     "      ___                    ",
     "     |               |       ",
     "     |__  _          | /     ",
-    "     |   / \\ | | |/~ |<      ",
+    "     |   / \\ | | |/` |<      ",
     "     |   \\_/ \\_| |   | \\     ",
     "                             ",
     "                             ",
@@ -236,7 +236,7 @@ mainmenu(void)
     char verstr[32];
     nh_bool first = TRUE;
 
-    snprintf(verstr, ARRAY_SIZE(verstr), "Version %d.%d.%d", VERSION_MAJOR, VERSION_MINOR,
+    snprintf(verstr, ARRAY_SIZE(verstr), "Version 4.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR,
             PATCHLEVEL);
 
 #if defined(NETCLIENT)

@@ -2175,7 +2175,7 @@ mintrap(struct monst *mtmp)
             case PM_IRON_GOLEM:
             case PM_BALROG:
             case PM_KRAKEN:
-            case PM_MASTODON:
+            case PM_MAMMOTH:
                 tear_web = TRUE;
                 break;
             }
