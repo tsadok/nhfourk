@@ -609,8 +609,11 @@ delobj(struct obj *obj)
         return;
     }
 
-    if (uwep && (obj == uwep)) uwepgone(); /* Pre-emptively unwield _before_ deleting; this should fix C343-295.    */
-    setnotworn(obj);                       /* And just in case there are similar bugs lurking, do this too.  -- NAE */
+    if (obj->where == OBJ_INVENT && obj->owornmask & W_MASK(os_wep)) {
+        impossible("Deleting wielded object.");
+        uwepgone();  /* Pre-emptively unwield before deleting; fix C343-295. */
+    }
+    setnotworn(obj); /* Just in case there are other, similar bugs lurking. */
 
     update_map = (obj->where == OBJ_FLOOR);
     obj_extract_self(obj);
