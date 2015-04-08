@@ -579,10 +579,10 @@ pick_pick_from_container(struct obj *obj)
         if (shkp && inhishop(shkp) && !muteshk(shkp)) {
             /* if you bring a sack of N picks into a shop to sell,
                don't repeat this N times when they're taken out */
-            if (moves != program_state.pickmovetime)
+            if (moves != u.pickmovetime)
                 verbalize("You sneaky %s!  Get out of here with that pick!",
                           cad());
-            program_state.pickmovetime = moves;
+            u.pickmovetime = moves;
         }
     }
 }
