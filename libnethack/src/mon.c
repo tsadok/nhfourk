@@ -1783,6 +1783,13 @@ corpse_chance(struct monst *mon,
         || is_rider(mdat))
         return TRUE;
 
+    /* Certain monsters reliably drop corpses for the first hundred kills. */
+    if ((mdat == &mons[PM_LIZARD] || mdat == &mons[ACID_BLOB] ||
+         mdat->mlet == S_FUNGUS || mdat->mlet == S_PUDDING ||
+         mdat->mlet == S_TROLL) &&
+        mvitals[monsndx(mon->data)].died < 100)
+        return TRUE;
+
     /* NetHack Fourk balance adjustment: any given type of monster
        becomes unlikely to leave further corpses when lots of that
        type of monster have been killed already. */

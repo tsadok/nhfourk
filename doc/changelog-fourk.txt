@@ -45,6 +45,11 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Lizards (specifically), acid blobs, F, P, and T are guaranteed to
+   drop corpses for the first hundred kills per monster type.  This is
+   mostly significant because it guarantees stoning remedies.  
+   The F and P are thrown in just for flavor, T so they can revive.
+
  * The effect of weapon skill on chance to hit has been magnified,
    and being restricted is now worse than being unskilled.
 

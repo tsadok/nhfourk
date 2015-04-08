@@ -245,7 +245,7 @@ find_roll_to_hit(struct monst *mtmp)
            If the result is greater than d20, you hit.
 
       abon() is normally the strength bonus plus the dex bonus
-            strength bonus ranges from -2 (str < 6) to +3 (18/**)
+            strength bonus ranges from -2 (str < 6) to +3
             dex bonus ranges from -3 (dex < 6) to (dex - 14) at the high end.
             So an abon of -5 is horrible, 26 is crazy awesome.
          However, if you are polyselfed, abon() is calculated by adj_lev()
