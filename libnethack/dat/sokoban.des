@@ -356,72 +356,6 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-## # This one's too hard for Soko1, I'm commenting it out for now.
-## # "Through the Cracks"
-## MAZE:"soko4-6",' '
-## FLAGS:noteleport,hardfloor
-## GEOMETRY:center,center
-## #12345678901234567890123456789012345678901234567890
-## MAP
-##  ----                 
-##  |..------------------
-##  |.................|.|
-##  |........-........|.|
-## --.---..---.--.....|.|
-## |..--..---..--.-----.|
-## |....................|
-## -------------------..|
-##                   ----
-## ENDMAP
-## BRANCH:(17,04,17,04),levregion()
-## STAIR:(20,02),up
-## REGION:(00,00,21,08),lit,"ordinary"
-## NON_DIGGABLE:(00,00,21,08)
-## NON_PASSWALL:(00,00,21,08)
-## 
-## # Boulders
-## OBJECT:'`',"boulder",(02,05)
-## OBJECT:'`',"boulder",(04,03)
-## OBJECT:'`',"boulder",(05,02)
-## #
-## OBJECT:'`',"boulder",(09,02)
-## OBJECT:'`',"boulder",(08,03)
-## OBJECT:'`',"boulder",(06,05)
-## #
-## OBJECT:'`',"boulder",(11,05)
-## OBJECT:'`',"boulder",(13,03)
-## OBJECT:'`',"boulder",(14,02)
-## #
-## OBJECT:'`',"boulder",(14,05)
-## OBJECT:'`',"boulder",(15,04)
-## OBJECT:'`',"boulder",(16,03)
-## OBJECT:'`',"boulder",(17,02)
-## 
-## # Traps
-## TRAP:"pit",(14,06)
-## TRAP:"pit",(15,06)
-## TRAP:"pit",(16,06)
-## TRAP:"pit",(17,06)
-## TRAP:"pit",(18,06)
-## TRAP:"pit",(19,06)
-## TRAP:"pit",(20,06)
-## TRAP:"pit",(20,05)
-## TRAP:"pit",(20,04)
-## TRAP:"pit",(20,03)
-## 
-## # A little help
-## OBJECT:'?',"earth",(19,07)
-## OBJECT:'?',"earth",(20,07)
-## 
-## # Random objects
-## OBJECT:'%',random,random
-## OBJECT:'%',random,random
-## OBJECT:'%',random,random
-## OBJECT:'%',random,random
-## OBJECT:'=',random,random
-## OBJECT:'/',random,random
-
-
 
 ### Second level ###
 MAZE:"soko3-1",' '
@@ -498,75 +432,6 @@ OBJECT:'%',random,random
 OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
-
-
-# The infamous "soko2a" (nethackwiki) / "Sokoban 2 B" (steelypips):
-## MAZE:"soko3-2",' '
-## FLAGS:noteleport
-## GEOMETRY:center,center
-## #12345678901234567890123456789012345678901234567890
-## MAP
-##  ----          -----------
-## -|..|-------   |.........|
-## |..........|   |.........|
-## |..-----.-.|   |.........|
-## |..|...|...|   |.........|
-## |.........-|   |.........|
-## |.......|..|   |.........|
-## |.----..--.|   |.........|
-## |........|.--  |.........|
-## |.---.-.....------------+|
-## |...|...-................|
-## |.........----------------
-## ----|..|..|               
-##     -------               
-## ENDMAP
-## STAIR:(03,01),down
-## STAIR:(20,04),up
-## DOOR:locked,(24,09)
-## REGION:(00,00,25,13),lit,"ordinary"
-## NON_DIGGABLE:(00,00,25,13)
-## NON_PASSWALL:(00,00,25,13)
-## 
-## # Boulders
-## OBJECT:'`',"boulder",(02,03)
-## OBJECT:'`',"boulder",(08,03)
-## OBJECT:'`',"boulder",(09,04)
-## OBJECT:'`',"boulder",(02,05)
-## OBJECT:'`',"boulder",(04,05)
-## OBJECT:'`',"boulder",(09,05)
-## OBJECT:'`',"boulder",(02,06)
-## OBJECT:'`',"boulder",(05,06)
-## OBJECT:'`',"boulder",(06,07)
-## OBJECT:'`',"boulder",(03,08)
-## OBJECT:'`',"boulder",(07,08)
-## OBJECT:'`',"boulder",(05,09)
-## OBJECT:'`',"boulder",(10,09)
-## OBJECT:'`',"boulder",(07,10)
-## OBJECT:'`',"boulder",(10,10)
-## OBJECT:'`',"boulder",(03,11)
-## 
-## # Traps
-## TRAP:"hole",(12,10)
-## TRAP:"hole",(13,10)
-## TRAP:"hole",(14,10)
-## TRAP:"hole",(15,10)
-## TRAP:"hole",(16,10)
-## TRAP:"hole",(17,10)
-## TRAP:"hole",(18,10)
-## TRAP:"hole",(19,10)
-## TRAP:"hole",(20,10)
-## TRAP:"hole",(21,10)
-## TRAP:"hole",(22,10)
-## TRAP:"hole",(23,10)
-## 
-## # Random objects
-## OBJECT:'%',random,random
-## OBJECT:'%',random,random
-## OBJECT:'%',random,random
-## OBJECT:'%',random,random
-## OBJECT:'=',random,random
-## OBJECT:'/',random,random
 
 
 # "Fly on the Wall"
@@ -1079,6 +944,139 @@ OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
 
+
+# "Through the Cracks"
+MAZE:"soko2-5",' '
+FLAGS:noteleport,hardfloor
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+ ----                 
+ |..------------------
+ |.................|.|
+ |........-........|.|
+--.---..---.--.....|.|
+|..--..---..--.-----.|
+|....................|
+-------------------..|
+                  ----
+ENDMAP
+BRANCH:(17,04,17,04),levregion()
+STAIR:(20,02),up
+REGION:(00,00,21,08),lit,"ordinary"
+NON_DIGGABLE:(00,00,21,08)
+NON_PASSWALL:(00,00,21,08)
+
+# Boulders
+OBJECT:'`',"boulder",(02,05)
+OBJECT:'`',"boulder",(04,03)
+OBJECT:'`',"boulder",(05,02)
+#
+OBJECT:'`',"boulder",(09,02)
+OBJECT:'`',"boulder",(08,03)
+OBJECT:'`',"boulder",(06,05)
+#
+OBJECT:'`',"boulder",(11,05)
+OBJECT:'`',"boulder",(13,03)
+OBJECT:'`',"boulder",(14,02)
+#
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(15,04)
+OBJECT:'`',"boulder",(16,03)
+OBJECT:'`',"boulder",(17,02)
+
+# Traps
+TRAP:"pit",(14,06)
+TRAP:"pit",(15,06)
+TRAP:"pit",(16,06)
+TRAP:"pit",(17,06)
+TRAP:"pit",(18,06)
+TRAP:"pit",(19,06)
+TRAP:"pit",(20,06)
+TRAP:"pit",(20,05)
+TRAP:"pit",(20,04)
+TRAP:"pit",(20,03)
+
+# A little help
+OBJECT:'?',"earth",(19,07)
+OBJECT:'?',"earth",(20,07)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+# The infamous "soko2a" (nethackwiki) / "Sokoban 2 B" (steelypips):
+MAZE:"soko2-6",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+ ----          -----------
+-|..|-------   |.........|
+|..........|   |.........|
+|..-----.-.|   |.........|
+|..|...|...|   |.........|
+|.........-|   |.........|
+|.......|..|   |.........|
+|.----..--.|   |.........|
+|........|.--  |.........|
+|.---.-.....------------+|
+|...|...-................|
+|.........----------------
+----|..|..|               
+    -------               
+ENDMAP
+STAIR:(03,01),down
+STAIR:(20,04),up
+DOOR:locked,(24,09)
+REGION:(00,00,25,13),lit,"ordinary"
+NON_DIGGABLE:(00,00,25,13)
+NON_PASSWALL:(00,00,25,13)
+
+# Boulders
+OBJECT:'`',"boulder",(02,03)
+OBJECT:'`',"boulder",(08,03)
+OBJECT:'`',"boulder",(09,04)
+OBJECT:'`',"boulder",(02,05)
+OBJECT:'`',"boulder",(04,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(02,06)
+OBJECT:'`',"boulder",(05,06)
+OBJECT:'`',"boulder",(06,07)
+OBJECT:'`',"boulder",(03,08)
+OBJECT:'`',"boulder",(07,08)
+OBJECT:'`',"boulder",(05,09)
+OBJECT:'`',"boulder",(10,09)
+OBJECT:'`',"boulder",(07,10)
+OBJECT:'`',"boulder",(10,10)
+OBJECT:'`',"boulder",(03,11)
+
+# Traps
+TRAP:"hole",(12,10)
+TRAP:"hole",(13,10)
+TRAP:"hole",(14,10)
+TRAP:"hole",(15,10)
+TRAP:"hole",(16,10)
+TRAP:"hole",(17,10)
+TRAP:"hole",(18,10)
+TRAP:"hole",(19,10)
+TRAP:"hole",(20,10)
+TRAP:"hole",(21,10)
+TRAP:"hole",(22,10)
+TRAP:"hole",(23,10)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
 
 
 
