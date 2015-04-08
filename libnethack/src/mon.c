@@ -1784,7 +1784,7 @@ corpse_chance(struct monst *mon,
         return TRUE;
 
     /* Certain monsters reliably drop corpses for the first hundred kills. */
-    if ((mdat == &mons[PM_LIZARD] || mdat == &mons[ACID_BLOB] ||
+    if ((mdat == &mons[PM_LIZARD] || mdat == &mons[PM_ACID_BLOB] ||
          mdat->mlet == S_FUNGUS || mdat->mlet == S_PUDDING ||
          mdat->mlet == S_TROLL) &&
         mvitals[monsndx(mon->data)].died < 100)
