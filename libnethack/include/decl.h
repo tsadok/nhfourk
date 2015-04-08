@@ -420,7 +420,6 @@ extern struct sinfo {
     long end_of_gamestate_location;          /* bytes from start of file */
     boolean input_was_just_replayed;
     boolean ok_to_diff;
-    long pickmovetime;
 } program_state;
 
 #define panic(...) panic_core(__FILE__, __LINE__, __VA_ARGS__)
