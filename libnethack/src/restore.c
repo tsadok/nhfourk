@@ -700,6 +700,7 @@ restore_you(struct memfile *mf, struct you *y)
     }
 
     y->lastinvnr = mread32(mf);
+    y->pickmovetime = mread64(mf);
 }
 
 static void
