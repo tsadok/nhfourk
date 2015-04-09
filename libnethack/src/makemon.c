@@ -1770,6 +1770,7 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
             otmp->otyp == ELVEN_SPEAR || otmp->otyp == ORCISH_SPEAR ||
             otmp->otyp == JAVELIN) {
             otmp->quan = rne_on_rng(2, rng);
+            otmp->owt = weight(otmp);
         }
         if (mtmp->data->mlet == S_DEMON) {
             /* demons never get blessed objects */
