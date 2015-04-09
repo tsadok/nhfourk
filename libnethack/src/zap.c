@@ -1508,6 +1508,8 @@ hito_stone_to_flesh(struct obj *obj)
             refresh_y = ooy;
             mon = makemon(&mons[obj->corpsenm], level, oox, ooy, NO_MM_FLAGS);
             if (mon) {
+                if (obj->where == OBJ_INVENT && obj->owornmask & W_MASK(os_wep))
+                    uwepgone();
                 delobj(obj);
                 if (cansee(mon->mx, mon->my))
                     pline("The figurine animates!");
@@ -4285,12 +4287,12 @@ retry:
         if (!otmp)
             return;     /* for safety; should never happen */
     } else if (otmp == &nothing) {
-        historic_event(FALSE, "refused a wish.");
+        historic_event(FALSE, TRUE, "refused a wish.");
         /* explicitly wished for "nothing", presumeably attempting to retain
            wishless conduct */
         return;
     } else
-        historic_event(FALSE, "wished for \"%s\".", origbuf);
+        historic_event(FALSE, TRUE, "wished for \"%s\".", origbuf);
 
     /* KMH, conduct */
     break_conduct(conduct_wish);
