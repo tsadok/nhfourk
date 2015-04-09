@@ -297,11 +297,12 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
             int trycount = 50;
 
             do {    /* Avoid ultimately hostile co-aligned unicorn. */
+                    /* Also avoid cross-aligned ones, because the
+                       trap could end up in a bones file. */
                     /* Use the provided RNG once only for species. */
                 mptr = &mons[rndmonnum(&lev->z,
                                        ((trycount == 50) ? rng : rng_main))];
-            } while (--trycount > 0 && is_unicorn(mptr) &&
-                     sgn(u.ualign.type) == sgn(mptr->maligntyp));
+            } while (--trycount > 0 && is_unicorn(mptr));
 
             statue = mkcorpstat(STATUE, NULL, mptr, lev, x, y, FALSE, rng_main);
             mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO, MM_NOCOUNTBIRTH);
@@ -538,9 +539,7 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
     mon->msleeping = 0; /* trap releases an awake monster */
     if (cause == ANIMATE_NORMAL || cause == ANIMATE_SHATTER) {
         /* trap always releases hostile monster */
-        mon->mtame = 0;     /* (might be petrified pet tossed onto trap) */
-        mon->mpeaceful = 0;
-        set_malign(mon);
+        msethostility(mtmp, TRUE, TRUE);
     }
 
 
