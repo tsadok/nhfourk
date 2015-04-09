@@ -517,13 +517,13 @@ FLAGS:noteleport
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
-   ---------    -----------
+                -----------
+   ---------    |.........|
   --.......|    |.........|
   |........--   |.........|
   ---..---..|   |.........|
     |..| |..|   |.........|
  ----.----..|   |.........|
- |.......|..|   |.........|
  |.......|..|   |.........|
  |..........|   |.........|
  |..........-------------+|
@@ -540,16 +540,16 @@ NON_DIGGABLE:(00,00,26,13)
 NON_PASSWALL:(00,00,26,13)
 
 # Boulders
-OBJECT:'`',"boulder",(05,02)
-OBJECT:'`',"boulder",(07,02)
-OBJECT:'`',"boulder",(09,02)
+OBJECT:'`',"boulder",(05,03)
+OBJECT:'`',"boulder",(07,03)
+OBJECT:'`',"boulder",(09,03)
 #
-OBJECT:'`',"boulder",(03,06)
-OBJECT:'`',"boulder",(05,06)
-OBJECT:'`',"boulder",(07,06)
+OBJECT:'`',"boulder",(03,07)
+OBJECT:'`',"boulder",(05,07)
+OBJECT:'`',"boulder",(07,07)
 #
 OBJECT:'`',"boulder",(03,09)
-OBJECT:'`',"boulder",(05,08)
+OBJECT:'`',"boulder",(05,09)
 OBJECT:'`',"boulder",(05,11)
 OBJECT:'`',"boulder",(07,09)
 
@@ -588,70 +588,69 @@ FLAGS:noteleport
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
-  ---------------------    
-  |.............|.....-----
-  |....---......|.........|
-  -----|.|......|.........|
- ----..|.|-.---.----.----.|
- |.....|.|....-..| |......|
- |..|..|.|.......---......|
- --.|....|.....-..........|
-  |.|....|.---...---.------
-  |.|-----............|    
-  |..............------     
-  |..-------------         
-  ----                     
+----------                
+|........|                
+|........|------------    
+|........|.....|.....-----
+|........|.....|.........|
+|........|.....|.........|
+|------+--.---.----.----.|
+|.....|.|....-..| |......|
+|..|..|.|.......---......|
+--.|....|.....-..........|
+ |.|....|.---...---.------
+ |.------............|    
+ |..............------    
+ |..-------------         
+ ----                     
 ENDMAP
-STAIR:(05,02),down
-STAIR:(08,03),up
-REGION:(00,00,26,12),lit,"ordinary"
-NON_DIGGABLE:(00,00,26,12)
-NON_PASSWALL:(00,00,26,12)
+STAIR:(12,03),down
+STAIR:(04,03),up
+DOOR:locked,(07,06)
+REGION:(00,00,25,14),lit,"ordinary"
+NON_DIGGABLE:(00,00,25,14)
+NON_PASSWALL:(00,00,25,14)
 
 # Boulders
-OBJECT:'`',"boulder",(04,01)
+OBJECT:'`',"boulder",(10,05)
+OBJECT:'`',"boulder",(11,04)
+OBJECT:'`',"boulder",(12,05)
+OBJECT:'`',"boulder",(13,04)
+OBJECT:'`',"boulder",(14,05)
 #
-OBJECT:'`',"boulder",(06,06)
-OBJECT:'`',"boulder",(07,07)
+OBJECT:'`',"boulder",(14,08)
+OBJECT:'`',"boulder",(10,09)
+OBJECT:'`',"boulder",(10,11)
 #
-OBJECT:'`',"boulder",(11,09)
-OBJECT:'`',"boulder",(11,07)
-OBJECT:'`',"boulder",(15,06)
+OBJECT:'`',"boulder",(19,09)
+OBJECT:'`',"boulder",(22,07)
 #
-OBJECT:'`',"boulder",(10,02)
-OBJECT:'`',"boulder",(11,03)
-OBJECT:'`',"boulder",(12,02)
-OBJECT:'`',"boulder",(13,03)
-OBJECT:'`',"boulder",(14,02)
-OBJECT:'`',"boulder",(15,03)
+OBJECT:'`',"boulder",(17,05)
+OBJECT:'`',"boulder",(18,04)
+OBJECT:'`',"boulder",(20,04)
+OBJECT:'`',"boulder",(20,05)
+OBJECT:'`',"boulder",(23,05)
 #
-OBJECT:'`',"boulder",(18,03)
-OBJECT:'`',"boulder",(19,02)
-OBJECT:'`',"boulder",(21,02)
-OBJECT:'`',"boulder",(21,03)
-OBJECT:'`',"boulder",(24,03)
-#
-OBJECT:'`',"boulder",(22,05)
-OBJECT:'`',"boulder",(24,07)
+OBJECT:'`',"boulder",(06,09)
 
 # Traps
-TRAP:"hole",(09,10)
-TRAP:"hole",(08,10)
-TRAP:"hole",(07,10)
-TRAP:"hole",(06,10)
-TRAP:"hole",(05,10)
-TRAP:"hole",(04,10)
-TRAP:"hole",(03,09)
-TRAP:"hole",(03,08)
+TRAP:"hole",(08,12)
+TRAP:"hole",(07,12)
+TRAP:"hole",(06,12)
+TRAP:"hole",(05,12)
+TRAP:"hole",(04,12)
+#
+TRAP:"hole",(02,11)
+TRAP:"hole",(02,10)
+TRAP:"hole",(02,09)
+TRAP:"hole",(02,08)
+#
 TRAP:"hole",(03,07)
-TRAP:"hole",(03,06)
-TRAP:"hole",(04,05)
-TRAP:"hole",(05,05)
-TRAP:"hole",(06,07)
-TRAP:"hole",(08,07)
-TRAP:"hole",(08,06)
-TRAP:"hole",(08,05)
-TRAP:"hole",(08,04)
+TRAP:"hole",(04,07)
+#
+TRAP:"hole",(07,09)
+TRAP:"hole",(07,08)
+TRAP:"hole",(07,07)
 
 # Random objects
 OBJECT:'%',random,random
@@ -660,6 +659,7 @@ OBJECT:'%',random,random
 OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
+MONSTER:'m',random,(04,09),m_object "boulder"
 
 
 
@@ -951,8 +951,13 @@ FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
- ----                 
- |..------------------
+ ---------------------
+--....||...........+.|
+|.....||...........|.|
+|.....||...........|.|
+|....--|...........|.|
+---.-- |...........|.|
+ |..---------------|.|
  |.................|.|
  |........-........|.|
 --.---..---.--.....|.|
@@ -961,45 +966,52 @@ MAP
 -------------------..|
                   ----
 ENDMAP
-BRANCH:(17,04,17,04),levregion()
-STAIR:(20,02),up
-REGION:(00,00,21,08),lit,"ordinary"
-NON_DIGGABLE:(00,00,21,08)
-NON_PASSWALL:(00,00,21,08)
+STAIR:(17,09),down
+STAIR:(10,03),up
+REGION:(00,00,21,13),lit,"ordinary"
+NON_DIGGABLE:(00,00,21,13)
+NON_PASSWALL:(00,00,21,13)
 
 # Boulders
-OBJECT:'`',"boulder",(02,05)
-OBJECT:'`',"boulder",(04,03)
-OBJECT:'`',"boulder",(05,02)
+OBJECT:'`',"boulder",(14,10)
+OBJECT:'`',"boulder",(15,09)
+OBJECT:'`',"boulder",(16,08)
+OBJECT:'`',"boulder",(17,07)
 #
-OBJECT:'`',"boulder",(09,02)
-OBJECT:'`',"boulder",(08,03)
-OBJECT:'`',"boulder",(06,05)
+OBJECT:'`',"boulder",(11,10)
+OBJECT:'`',"boulder",(13,08)
+OBJECT:'`',"boulder",(14,07)
 #
-OBJECT:'`',"boulder",(11,05)
-OBJECT:'`',"boulder",(13,03)
-OBJECT:'`',"boulder",(14,02)
+OBJECT:'`',"boulder",(06,10)
+OBJECT:'`',"boulder",(08,08)
+OBJECT:'`',"boulder",(09,07)
 #
-OBJECT:'`',"boulder",(14,05)
-OBJECT:'`',"boulder",(15,04)
-OBJECT:'`',"boulder",(16,03)
-OBJECT:'`',"boulder",(17,02)
+OBJECT:'`',"boulder",(02,10)
+OBJECT:'`',"boulder",(04,08)
+OBJECT:'`',"boulder",(05,07)
+#
+OBJECT:'`',"boulder",(03,05)
+OBJECT:'`',"boulder",(02,04)
+OBJECT:'`',"boulder",(02,03)
+OBJECT:'`',"boulder",(03,02)
+OBJECT:'`',"boulder",(04,02)
 
 # Traps
-TRAP:"pit",(14,06)
-TRAP:"pit",(15,06)
-TRAP:"pit",(16,06)
-TRAP:"pit",(17,06)
-TRAP:"pit",(18,06)
-TRAP:"pit",(19,06)
+TRAP:"pit",(14,11)
+TRAP:"pit",(15,11)
+TRAP:"pit",(16,11)
+TRAP:"pit",(17,11)
+TRAP:"pit",(18,11)
+TRAP:"pit",(19,11)
+TRAP:"pit",(20,10)
+TRAP:"pit",(20,09)
+TRAP:"pit",(20,08)
+TRAP:"pit",(20,07)
 TRAP:"pit",(20,06)
 TRAP:"pit",(20,05)
 TRAP:"pit",(20,04)
 TRAP:"pit",(20,03)
-
-# A little help
-OBJECT:'?',"earth",(19,07)
-OBJECT:'?',"earth",(20,07)
+TRAP:"pit",(20,02)
 
 # Random objects
 OBJECT:'%',random,random
@@ -1590,11 +1602,11 @@ MAP
  |.| |....|  |.|.|.|  |...-+-..| 
  |.| |....----------  |...|.|..| 
  |.| |........|  ---- |...---..| 
- |.| |.....--.|---..| |........| 
+ |.| |.....--.----..| |........| 
 --.---.-----........---.------.--
 |.............|.................|
-|....---......|---------------..|
------- --------              ----
+|....---......|..-------------..|
+------ -----------           ----
 ENDMAP
 RANDOM_PLACES:(14,10),(16,10),(18,10)
 STAIR:(03,16),down
