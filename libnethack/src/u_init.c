@@ -179,12 +179,11 @@ static const struct trobj Tourist[] = {
 
 static const struct trobj Valkyrie[] = {
 #define V_SPEAR 0
-#define V_SPELL 4
     {SPEAR, 3, WEAPON_CLASS, 1, UNDEF_BLESS},
     {WAR_HAMMER, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
     {DAGGER, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 3, ARMOR_CLASS, 1, UNDEF_BLESS},
-    {SPE_FORCE_BOLT, 0, SPBOOK_CLASS, 1, 1},
+    {STUDDED_LEATHER_ARMOR, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
     {OIL_LAMP, 1, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
@@ -761,8 +760,10 @@ u_init_inv_skills(void)
     case PM_VALKYRIE:
         trobj_list = copy_trobj_list(Valkyrie);
         if (!rolern2(3)) {
-            trobj_list[V_SPELL].trotyp = SPE_MAGIC_MISSILE;
             trobj_list[V_SPEAR].trotyp = SILVER_SPEAR;
+        } else {
+            trobj_list[V_SPEAR].trquan =
+                rne_on_rng(3, rng_charstats_role);
         }
         role_ini_inv(trobj_list, nclist);
         knows_class(WEAPON_CLASS);

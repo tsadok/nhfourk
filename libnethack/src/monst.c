@@ -3018,7 +3018,7 @@ const struct permonst mons[] = {
         A(ATTK(AT_WEAP, AD_PHYS, 1, 8), ATTK(AT_WEAP, AD_PHYS, 1, 8),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(WT_HUMAN, 400, 0, MS_HUMANOID, MZ_HUMAN), MR_COLD, 0,
-        M1_HUMANOID | M1_OMNIVORE,
+        M1_HUMANOID | M1_OMNIVORE | M1_FLY,
         M2_NOPOLY | M2_HUMAN | M2_STRONG | M2_FEMALE | M2_COLLECT,
         M3_INFRAVISIBLE,
         HI_DOMESTIC3),
