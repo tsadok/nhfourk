@@ -2222,6 +2222,10 @@ restore_mon(struct memfile *mf)
     if (mon->mnamelth)
         mread(mf, NAME_MUTABLE(mon), mon->mnamelth);
 
+#ifdef LIVELOG_BONES_KILLER
+    mon->former_player = mread16(mf);
+#endif
+
     switch (mon->mxtyp) {
     case MX_EPRI:
         EPRI(mon)->shralign = mread8(mf);
@@ -2453,6 +2457,12 @@ save_mon(struct memfile *mf, const struct monst *mon)
 
     if (mon->mnamelth)
         mwrite(mf, NAME(mon), mon->mnamelth);
+
+#ifdef LIVELOG_BONES_KILLER
+    /* It would be possible to optimize this to one byte, theoretically
+       (but the logic in bones.c and livelog.c would be more complicated.) */
+    mwrite16(mf, mon->former_player);
+#endif
 
     switch (mon->mxtyp) {
     case MX_EPRI:
