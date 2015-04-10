@@ -278,7 +278,10 @@ sokoban_guilt(void)
     if (Hallucination) {
         pline("Avalanche!");
         mksobj_at(BOULDER, level, u.ux, u.uy, TRUE, FALSE, rng_main);
-        losehp(rnd(12), "crushed by a hallucinatory boulder");
+        if (uarmh && is_metallic(uarmh)) {
+            losehp(rnd(4), "crushed by a hallucinatory boulder, despite wearing a hard helmet.");
+        } else
+            losehp(rnd(12), "crushed by a hallucinatory boulder");
         /* No luck penalty in this case. */
         return;
     } else if (flags.verbose)
