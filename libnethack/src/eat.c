@@ -942,9 +942,10 @@ eat_tin_one_turn(void)
             what = makeplural(what);
         pline("It smells like %s%s.", (which == 2) ? "the " : "", what);
         
-        /* food detection warning */
-        foodwarn = u.uedibility ? edibility_prompts(u.utracked[tos_tin]) : 0;
-        if (foodwarn) {
+        /* Note that edibility_prompts requires u.uedibility to warn about tin
+         * contents, so it will return 0 if you don't have that property. */
+        foodwarn = edibility_prompts(u.utracked[tos_tin]);
+        if (foodwarn && u.uedibility) {
             pline("Your %s stops tingling and your "
                   "sense of smell returns to normal.", body_part(NOSE));
             u.uedibility = 0;
