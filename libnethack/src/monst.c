@@ -1467,14 +1467,6 @@ const struct permonst mons[] = {
  * giant Humanoids
  */
     MON("giant", S_GIANT,
-        LVL(6, 6, 0, 0, 2), (G_GENO | G_NOGEN | 1),
-        A(ATTK(AT_WEAP, AD_PHYS, 2, 10),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(2250, 750, 0, MS_BOAST, MZ_HUGE), 0, 0,
-        M1_HUMANOID | M1_CARNIVORE,
-        M2_GIANT | M2_STRONG | M2_ROCKTHROW | M2_NASTY | M2_COLLECT | M2_JEWELS,
-        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_RED),
-    MON("stone giant", S_GIANT,
         LVL(6, 6, 0, 0, 2), (G_GENO | G_SGROUP | 1),
         A(ATTK(AT_WEAP, AD_PHYS, 2, 10),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),

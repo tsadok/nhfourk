@@ -45,6 +45,12 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * The "stone giant" has been renamed to just "giant", meaning
+   its corpse can now be used for things like giant mummies,
+   eliminating the need for the otherwise-unused generic "giant"
+   monster.  This reduces the number of monsters in monst.c by
+   one, with probably no gameplay effect at all.
+
  * Cavemen have had their race and alignment options adjusted.
 
  * The Caveman quest artifact is now Big Stick, an artifact club.
