@@ -579,7 +579,7 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
     mon->msleeping = 0; /* trap releases an awake monster */
     if (cause == ANIMATE_NORMAL || cause == ANIMATE_SHATTER) {
         /* trap always releases hostile monster */
-        msethostility(mtmp, TRUE, TRUE);
+        msethostility(mon, TRUE, TRUE);
     }
 
 
