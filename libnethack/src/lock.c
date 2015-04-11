@@ -22,7 +22,7 @@ uwep_can_force(void)
         (uwep->oclass != WEAPON_CLASS && !is_weptool(uwep) &&
          uwep->oclass != ROCK_CLASS) ||
         (objects[uwep->otyp].oc_skill < P_DAGGER) ||
-        (objects[uwep->otyp].oc_skill > P_LANCE) || uwep->otyp == FLAIL ||
+        (objects[uwep->otyp].oc_skill >= P_BOW) || uwep->otyp == FLAIL ||
         uwep->otyp == AKLYS || uwep->otyp == RUBBER_HOSE) {
         pline("You can't force anything without a %sweapon.",
               (uwep) ? "proper " : "");

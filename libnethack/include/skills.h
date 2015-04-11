@@ -43,7 +43,7 @@
 # define P_SPEAR             18
 # define P_JAVELIN           19
 # define P_TRIDENT           20
-# define P_LANCE             21
+# define P_LANCE             21 /* Currently unused, can be renamed later */
 # define P_BOW               22
 # define P_SLING             23
 # define P_CROSSBOW          24
