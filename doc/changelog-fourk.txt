@@ -49,6 +49,9 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Hezrou now have a passive attack that gives off a foul stench
+   (implemented as stinking cloud).
+
  * "melon" is now the default name for custom fruit.
 
  * The number of different kinds of polearms has been reduced.

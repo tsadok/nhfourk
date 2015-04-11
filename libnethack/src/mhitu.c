@@ -2445,6 +2445,14 @@ passiveum(const struct permonst *olduasmon, struct monst *mtmp,
             }
             pline("%s is jolted with your electricity!", Monnam(mtmp));
             break;
+        case AD_SCLD:
+            pline("Your %s oozes a foul stench.  The cloud engulfs %s.",
+                  body_part(SKIN), Monnam(mtmp));
+            create_gas_cloud(level, mtmp->mx, mtmp->my,
+                             youmonst.data->mattk[i].damn,
+                             youmonst.data->mattk[i].damd);
+            tmp = 0;
+            break;
         default:
             tmp = 0;
             break;

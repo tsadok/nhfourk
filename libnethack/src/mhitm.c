@@ -846,6 +846,20 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         /* only rings damage resistant players in destroy_item */
         tmp += destroy_mitem(mdef, RING_CLASS, AD_ELEC);
         break;
+    case AD_SCLD:
+        if (cancelled) {
+            tmp = 0;
+            break;
+        } else {
+            if (vis)
+                pline("%s is engulfed in a foul-smelling cloud.",
+                      Monnam(mdef));
+            else
+                pline("You smell %s.", Hallucination ? "breakfast" :
+                      "rotten eggs");
+            create_gas_cloud(level, mdef->mx, mdef->my,
+                             mattk->damn, mattk->damd);
+        }
     case AD_ACID:
         if (magr->mcan) {
             tmp = 0;

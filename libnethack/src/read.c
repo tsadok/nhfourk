@@ -1294,7 +1294,8 @@ seffects(struct obj *sobj, boolean *known)
                 return 0;
             }
             if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32) {
-                pline("You smell rotten eggs.");
+                pline("You smell %s.", Hallucination ? "breakfast" :
+                      "rotten eggs");
                 return 0;
             }
             create_gas_cloud(level, cc.x, cc.y, 3 + bcsign(sobj),

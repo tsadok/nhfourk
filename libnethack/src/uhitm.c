@@ -2427,6 +2427,13 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
             pline("You are jolted with electricity!");
             mdamageu(mon, tmp);
             break;
+        case AD_SCLD:
+            pline("%s %s oozes a foul stench.",
+                  s_suffix(Monnam(mon)), mbodypart(mon, SKIN));
+            create_gas_cloud(level, u.ux, u.uy,
+                             (int)ptr->mattk[i].damn,
+                             (int)ptr->mattk[i].damd);
+            break;
         default:
             break;
         }
