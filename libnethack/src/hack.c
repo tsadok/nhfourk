@@ -2314,6 +2314,10 @@ check_special_room(boolean newlev)
         switch (rt) {
         case ZOO:
             pline("Welcome to David's treasure zoo!");
+            if (In_sokoban(&u.uz) &&
+                !historysearch("entered the Sokoban zoo.", TRUE)) {
+                historic_event(FALSE, TRUE, "entered the Sokoban zoo.");
+            }
             break;
         case SWAMP:
             pline("It %s rather %s down here.", Blind ? "feels" : "looks",
