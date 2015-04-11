@@ -254,6 +254,7 @@ enum player_conduct {
     conduct_puddingsplit,                /* split a pudding */
     conduct_lostalign,                   /* lost alignment record points */
     conduct_unused1,                     /* unused, might not be 0 in -beta1 */
+    conduct_sokoban_guilt,               /* did guilt-inducing things */
     num_conducts,
 };
 

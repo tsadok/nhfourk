@@ -884,7 +884,7 @@ unspoilered_intrinsics(void)
 void
 show_conduct(int final)
 {
-    int ngenocided;
+    int ngenocided, guilt, sokodone;
     struct nh_menulist menu;
     const char *buf;
 
@@ -978,6 +978,23 @@ show_conduct(int final)
                         u.uconduct_time[conduct_polyself]);
         you_have_X(&menu, buf);
     }
+
+    guilt = u.uconduct[conduct_sokoban_guilt];
+    sokodone = historysearch("entered the Sokoban zoo.", TRUE);
+    if (sokodone) {
+        if (guilt)
+            enl_msg(&menu, You_, "have cheated", "cheated",
+                    msgprintf(" %d time%s but completed Sokoban on turn %d",
+                              guilt, ((guilt > 1) ? "s" : ""), sokodone));
+        else
+            enl_msg(&menu, You_, "have completed", "completed",
+                    msgprintf(" Sokoban on turn %d, according to the rules",
+                              sokodone));
+    } else if (guilt) {
+        enl_msg(&menu, You_, "have cheated", "cheated",
+                msgprintf(" in Sokoban %d time%s, without finishing",
+                          guilt, (guilt > 1) ? "s" : ""));
+    } /* No message if you neither cheated nor completed. */
 
     if (!u.uconduct[conduct_wish])
         you_have_X(&menu, "used no wishes");

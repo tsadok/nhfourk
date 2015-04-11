@@ -270,23 +270,27 @@ change_luck(schar n)
 void
 sokoban_guilt(void)
 {
-    if (!In_sokoban(&u.uz)) return; /* Penalty only applies in Sokoban. */
+    if (!In_sokoban(&u.uz)) return; /* Guilt only applies in Sokoban. */
+    if (historysearch("entered the Sokoban zoo.", TRUE))
+        return; /* Once you've solved the puzzle, guilt no longer applies. */
+
+    break_conduct(conduct_sokoban_guilt); /* Keep track even if no penalty. */
+
     if (u.moreluck > 0)     return; /* Non-cursed luckstone protects you. */
     if (Luck <= -3)         return; /* That's bad enough already. */
-    /* TODO: no penalty if the level's puzzle is solved already. */
 
     if (Hallucination) {
         pline("Avalanche!");
         mksobj_at(BOULDER, level, u.ux, u.uy, TRUE, FALSE, rng_main);
         if (uarmh && is_metallic(uarmh)) {
             losehp(rnd(4), "crushed by a hallucinatory boulder, despite wearing a hard helmet.");
-        } else
+        } else {
             losehp(rnd(12), "crushed by a hallucinatory boulder");
-        /* No luck penalty in this case. */
+        }
+        /* No luck penalty if you get the hallucinatory boulder. */
         return;
-    } else if (flags.verbose)
-        pline("You feel like a cheater.");
-
+    }
+    pline("You feel like a cheater.");
     change_luck(-1);
 }
 

@@ -151,5 +151,20 @@ hist_lev_name(const d_level * l, boolean in_or_on)
     return hlnbuf;
 }
 
+/* Find the first matching event in your game history, if any.
+   Returns a turn count if one is found, zero otherwise. */
+unsigned int
+historysearch(const char *substring, boolean hiddenok)
+{
+    int i;
+    for (i = 0; i < histcount; i++) {
+        if (hiddenok || !histevents[i].hidden) {
+            if (!strcmp(histevents[i].what, substring))
+                return histevents[i].when;
+        }
+    }
+    return 0;
+}
+
 /* history.c */
 
