@@ -706,7 +706,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     silverobj = TRUE;
                 }
                 if (u.usteed && !thrown && tmp > 0 &&
-                    weapon_type(obj) == P_LANCE && mon != u.ustuck) {
+                    obj->otyp == LANCE && mon != u.ustuck) {
                     jousting = joust(mon, obj);
                     /* exercise skill even for minimal damage hits */
                     if (jousting)

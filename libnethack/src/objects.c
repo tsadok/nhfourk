@@ -187,13 +187,12 @@ const struct objclass const_objects[] = {
     /* +5d2 +d8 from level drain */
 
 /* polearms */
-/* spear-type */
     WEAPON("partisan", "vulgar polearm",
            0, 0, 1, 15, 80, 10, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
     WEAPON("glaive", "single-edged polearm",
            0, 0, 1, 15, 75, 6, 6, 10, 0, S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("lance", NULL,
-           1, 0, 0, 8, 180, 10, 6, 8, 0, P, P_LANCE, IRON, HI_METAL),
+           1, 0, 0, 8, 180, 10, 6, 8, 0, P, P_POLEARMS, IRON, HI_METAL),
     WEAPON("halberd", "angled poleaxe",
            0, 0, 1, 15, 150, 10, 10, 6, 0, P | S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("dwarvish mattock", "broad pick",
