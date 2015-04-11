@@ -137,9 +137,7 @@ const struct objclass const_objects[] = {
     WEAPON("scalpel", NULL,
            1, 1, 0, 0, 5, 6, 3, 3, 2, S, P_KNIFE, METAL, HI_METAL),
     WEAPON("knife", NULL,
-           1, 1, 0, 20, 5, 4, 3, 2, 0, P | S, P_KNIFE, IRON, HI_METAL),
-    WEAPON("stiletto", NULL,
-           1, 1, 0, 5, 5, 4, 3, 2, 0, P | S, P_KNIFE, IRON, HI_METAL),
+           1, 1, 0, 25, 5, 4, 3, 2, 0, P | S, P_KNIFE, IRON, HI_METAL),
     WEAPON("worm tooth", NULL,
            1, 0, 0, 0, 20, 2, 2, 2, 0, 0, P_KNIFE, 0, CLR_WHITE),
     WEAPON("crysknife", NULL,
@@ -191,46 +189,17 @@ const struct objclass const_objects[] = {
 /* polearms */
 /* spear-type */
     WEAPON("partisan", "vulgar polearm",
-           0, 0, 1, 5, 80, 10, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
-    /* +1 large */
-    WEAPON("ranseur", "hilted polearm",
-           0, 0, 1, 5, 50, 6, 4, 4, 0, P, P_POLEARMS, IRON, HI_METAL),
-    /* +d4 both */
-    WEAPON("spetum", "forked polearm",
-           0, 0, 1, 5, 50, 5, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
-    /* +1 small, +d6 large */
+           0, 0, 1, 15, 80, 10, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
     WEAPON("glaive", "single-edged polearm",
-           0, 0, 1, 8, 75, 6, 6, 10, 0, S, P_POLEARMS, IRON, HI_METAL),
+           0, 0, 1, 15, 75, 6, 6, 10, 0, S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("lance", NULL,
-           1, 0, 0, 4, 180, 10, 6, 8, 0, P, P_LANCE, IRON, HI_METAL),
-/* axe-type */
+           1, 0, 0, 8, 180, 10, 6, 8, 0, P, P_LANCE, IRON, HI_METAL),
     WEAPON("halberd", "angled poleaxe",
-           0, 0, 1, 8, 150, 10, 10, 6, 0, P | S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d6 large */
-    WEAPON("bardiche", "long poleaxe",
-           0, 0, 1, 4, 120, 7, 4, 4, 0, S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small, +2d4 large */
-    WEAPON("voulge", "pole cleaver",
-           0, 0, 1, 4, 125, 5, 4, 4, 0, S, P_POLEARMS, IRON, HI_METAL),
-    /* +d4 both */
+           0, 0, 1, 15, 150, 10, 10, 6, 0, P | S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("dwarvish mattock", "broad pick",
            0, 0, 1, 13, 120, 50, 12, 8, -1, B, P_PICK_AXE, IRON, HI_METAL),
-
-/* curved/hooked */
-    WEAPON("fauchard", "pole sickle",
-           0, 0, 1, 6, 60, 5, 6, 8, 0, P | S, P_POLEARMS, IRON, HI_METAL),
-    WEAPON("guisarme", "pruning hook",
-           0, 0, 1, 6, 80, 5, 4, 8, 0, S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small */
-    WEAPON("bill-guisarme", "hooked polearm",
-           0, 0, 1, 4, 120, 7, 4, 10, 0, P | S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small */
-/* other */
     WEAPON("lucern hammer", "pronged polearm",
-           0, 0, 1, 5, 150, 7, 4, 6, 0, B | P, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small */
-    WEAPON("bec de corbin", "beaked polearm",
-           0, 0, 1, 4, 100, 8, 8, 6, 0, B | P, P_POLEARMS, IRON, HI_METAL),
+           0, 0, 1, 15, 130, 7, 4, 6, 0, B | P, P_POLEARMS, IRON, HI_METAL),
 
 /* bludgeons */
     WEAPON("mace", NULL,
@@ -698,13 +667,12 @@ const struct objclass const_objects[] = {
     FOOD("kelp frond", 0, 1, 1, 0, VEGGY, 30, CLR_GREEN),
     FOOD("eucalyptus leaf", 3, 1, 1, 0, VEGGY, 30, CLR_GREEN),
     FOOD("apple", 15, 1, 2, 0, VEGGY, 50, CLR_RED),
-    FOOD("orange", 10, 1, 2, 0, VEGGY, 80, CLR_ORANGE),
-    FOOD("pear", 10, 1, 2, 0, VEGGY, 50, CLR_BRIGHT_GREEN),
-    FOOD("melon", 10, 1, 5, 0, VEGGY, 100, CLR_BRIGHT_GREEN),
-    FOOD("banana", 10, 1, 2, 0, VEGGY, 80, CLR_YELLOW),
+    FOOD("orange", 14, 1, 2, 0, VEGGY, 80, CLR_ORANGE),
+    FOOD("pear", 12, 1, 2, 0, VEGGY, 50, CLR_BRIGHT_GREEN),
+    FOOD("banana", 12, 1, 2, 0, VEGGY, 80, CLR_YELLOW),
     FOOD("carrot", 15, 1, 2, 0, VEGGY, 50, CLR_ORANGE),
-    FOOD("sprig of wolfsbane", 7, 1, 1, 0, VEGGY, 40, CLR_GREEN),
-    FOOD("clove of garlic", 7, 1, 1, 0, VEGGY, 40, CLR_WHITE),
+    FOOD("sprig of wolfsbane", 8, 1, 1, 0, VEGGY, 40, CLR_GREEN),
+    FOOD("clove of garlic", 8, 1, 1, 0, VEGGY, 40, CLR_WHITE),
     FOOD("slime mold", 75, 1, 5, 0, VEGGY, 250, HI_ORGANIC),
 
 /* people food */

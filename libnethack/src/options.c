@@ -365,7 +365,7 @@ new_opt_struct(void)
     nhlib_find_option(options, "horsename")->s.maxlen = PL_PSIZ;
 
     struct nh_option_desc *fruit = nhlib_find_option(options, "fruit");
-    const char *def_fruit = "slime mold";
+    const char *def_fruit = "melon";
     fruit->s.maxlen = PL_FSIZ;
     fruit->value.s = malloc(strlen(def_fruit)+1);
     strcpy(fruit->value.s, def_fruit);

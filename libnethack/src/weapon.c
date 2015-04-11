@@ -205,19 +205,15 @@ dmgval(struct obj *otmp, struct monst *mon)
             break;
 
         case FLAIL:
-        case RANSEUR:
-        case VOULGE:
             tmp += rnd(4);
             break;
 
         case ACID_VENOM:
         case HALBERD:
-        case SPETUM:
             tmp += rnd(6);
             break;
 
         case BATTLE_AXE:
-        case BARDICHE:
         case TRIDENT:
             tmp += dice(2, 4);
             break;
@@ -237,22 +233,16 @@ dmgval(struct obj *otmp, struct monst *mon)
         case MACE:
         case WAR_HAMMER:
         case FLAIL:
-        case SPETUM:
         case TRIDENT:
             tmp++;
             break;
 
         case BATTLE_AXE:
-        case BARDICHE:
-        case BILL_GUISARME:
-        case GUISARME:
         case LUCERN_HAMMER:
         case MORNING_STAR:
-        case RANSEUR:
         case BROADSWORD:
         case ELVEN_BROADSWORD:
         case RUNESWORD:
-        case VOULGE:
             tmp += rnd(4);
             break;
 
@@ -352,8 +342,7 @@ static const int rwep[] =
 };
 
 static const int pwep[] =
-    { HALBERD, BARDICHE, SPETUM, BILL_GUISARME, VOULGE, RANSEUR, GUISARME,
-    GLAIVE, LUCERN_HAMMER, BEC_DE_CORBIN, FAUCHARD, PARTISAN, LANCE
+    { HALBERD, GLAIVE, LUCERN_HAMMER, PARTISAN, LANCE
 };
 
 boolean

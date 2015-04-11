@@ -250,7 +250,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             case PM_SOLDIER:
                 if (!rn2_on_rng(3, rng)) {
                     w1 = PARTISAN +
-                        rn2_on_rng(BEC_DE_CORBIN - PARTISAN + 1, rng);
+                        rn2_on_rng(LUCERN_HAMMER - PARTISAN + 1, rng);
                     w2 = rn2_on_rng(2, rng) ? DAGGER : KNIFE;
                 } else
                     w1 = rn2_on_rng(2, rng) ? SPEAR : SHORT_SWORD;
@@ -453,18 +453,15 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
         break;
     case S_TROLL:
         if (!rn2_on_rng(2, rng))
-            switch (rn2_on_rng(4, rng)) {
+            switch (rn2_on_rng(3, rng)) {
             case 0:
-                mongets(mtmp, RANSEUR, rng);
+                mongets(mtmp, LUCERN_HAMMER, rng);
                 break;
             case 1:
                 mongets(mtmp, PARTISAN, rng);
                 break;
             case 2:
                 mongets(mtmp, GLAIVE, rng);
-                break;
-            case 3:
-                mongets(mtmp, SPETUM, rng);
                 break;
             }
         break;
@@ -499,7 +496,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
     case S_LIZARD:
         if (mm == PM_SALAMANDER)
             mongets(mtmp, (rn2_on_rng(7, rng) ? SPEAR :
-                           rn2_on_rng(3, rng) ? TRIDENT : STILETTO), rng);
+                           rn2_on_rng(3, rng) ? TRIDENT : KNIFE), rng);
         break;
     case S_DEMON:
         switch (mm) {

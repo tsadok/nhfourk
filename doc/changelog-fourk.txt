@@ -41,9 +41,18 @@ categories:
    slightly so that they are no longer quite so closely the same.
    Some special levels may get new versions, as well.
 
+ * Consolidation.  Some meaningless things that didn't really add to
+   the game have been removed or combined with others.  Monsters,
+   objects, skills, etc.
+
 
 Chronological Changelog (most recent at top):
 =============================================
+
+ * "melon" is now the default name for custom fruit.
+
+ * The number of different kinds of polearms has been reduced.
+   Also, stiletto is no longer a distinct object from knife.
 
  * The "stone giant" has been renamed to just "giant", meaning
    its corpse can now be used for things like giant mummies,

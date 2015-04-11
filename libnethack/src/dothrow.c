@@ -1702,7 +1702,6 @@ breaktest(struct obj *obj)
     case EXPENSIVE_CAMERA:
     case EGG:
     case CREAM_PIE:
-    case MELON:
         return 1;
     default:
         return 0;
@@ -1733,7 +1732,6 @@ breakmsg(struct obj *obj, boolean in_view)
                   to_pieces);
         break;
     case EGG:
-    case MELON:
         pline("Splat!");
         break;
     case CREAM_PIE:

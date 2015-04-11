@@ -160,10 +160,6 @@ banded mail
 	extremely good protection against attack, almost as good as plate mail and
 	equivalent to splint mail, although it cannot block special attacks of
 	monsters. Its metallic construction interferes with spellcasting.
-bardiche
-	It is very powerful, doing slightly more damage against smaller enemies than a
-	long sword, but with a huge bonus against larger enemies, against which it is
-	as powerful as a two-handed sword, and more powerful than any other weapon.
 battle-axe
 	It is slightly less effective than a two-handed sword (around twice as
 	powerful as a short sword), and has a bonus against large creatures (although
@@ -176,9 +172,6 @@ beartrap
 	A hinged iron device with a powerful spring and sharp teeth. Although it is
 	currently disarmed, if set correctly it will trap monsters that step on it,
 	holding them in place for a while.
-bec de corbin
-	It is about as effective as a short sword, except that its bonus is against
-	smaller rather than larger enemies, much the same as a battle-axe.
 bell
 	A small brass device with a clapper, that makes a ringing noise when
 	shaken. It alerts nearby monsters to your location, meaning that it can be
@@ -190,10 +183,6 @@ bell of opening
 	additional holy energy, although it can only be used a very few times before
 	it needs to be magically recharged. Its sound is also one of the keys to
 	unlocking a special vibrating magical door.
-bill-guisarme
-	It is more powerful than a typical short sword, and around as powerful as a
-	broadsword against smaller enemies, but not as powerful as a long sword. It
-	has a small bonus against larger enemies.
 black dragon scale mail
 	A hugely protective suit of armour made magically from the scales of a dead
 	black dragon; armour made from dragons protects better than any other. It also
@@ -718,9 +707,6 @@ faded pall
 	A cloth cloak, designed to be worn above body armour, with its former colour
 	faded so much, perhaps from sunlight, that it's impossible to tell what it
 	was.
-fauchard
-	It is just as powerful as a typical short sword or spear, with a similar bonus
-	against larger enemies.
 fedora
 	A stylish cloth hat, which may look fancy but which is useless at protecting
 	the head from anything unless magically enchanted.
@@ -862,9 +848,6 @@ green gem
 	identification or abilities as a jeweller are needed to determine how valuable
 	apparent gemstones are, or even whether they are real or fake; and proof of a
 	stone's value is needed to be able to sell it at a shop.
-guisarme
-	It is as effective as a short sword or spear against larger enemies, but even
-	more effective against smaller enemies than it is against larger ones.
 halberd
 	It does a huge amount of damage, slightly more than a long sword or even
 	katana, and is slightly better against larger enemies.
@@ -1142,8 +1125,7 @@ long wand
 	They give only minimal protection for the feet.
 lucern hammer
 	It is about as effective as a short sword, except that its bonus is against
-	smaller rather than larger enemies, much the same as a battle-axe, and it has
-	a slightly larger bonus than a battle-axe or bec de corbin.
+	smaller rather than larger enemies, much the same as a battle-axe.
 luckstone
 	This stone is enchanted to provide luck to its wearer, making several random
 	events give slightly better results on average. In addition, it prevents
@@ -1204,10 +1186,6 @@ meat stick
 meatball
 	A tiny ball of meat, delicious as a treat for people or for dogs, but with
 	only minimal nutritional content.
-melon
-	A large and substantial green fruit with a high water content. It is more
-	filling than most other fruit, twice as much as an apple and slightly more so
-	than an orange; and is enjoyed by both people and herbivorous animals.
 milky potion
 	A glass vial that seems to contain a milky white liquid.
 mirror
@@ -1554,10 +1532,6 @@ ragged spellbook
 	A book, looking rather the worse for wear, as if it has been used as a
 	doorstop. Reading it is dangerous, but a sufficiently skilled reader can learn
 	a spell from it.
-ranseur
-	It is noticeably more powerful than a typical short sword (doing slightly more
-	damage against larger enemies, against which it is just as powerful as against
-	smaller enemies).
 red dragon scale mail
 	A hugely protective suit of armour made magically from the scales of a dead
 	red dragon; armour made from dragons protects better than any other. It also
@@ -2146,9 +2120,6 @@ spellbook of wizard lock
 	This matter spell ensures that a chest, large box or doorway in a chosen
 	direction is closed and locked; it will repair or create a door and/or a lock,
 	if necessary, to achieve this.
-spetum
-	It is about as powerful as a typical long sword, with a similar bonus against
-	larger enemies.
 spherical amulet
 	A pendulum-like iron sphere, connected to a chain so that it can be worn
 	around a person's neck.
@@ -2195,12 +2166,6 @@ stethoscope
 	without taking more time than the other action would take by itself), and can
 	be used to gain an idea of the health of a monster, or to try to ascertain
 	whether or not terrain is not what it seems.
-stiletto
-	A small but sharp knife made of iron, advertised as being useful for
-	self-defence but not particularly useful in combat, although it can be used as
-	a melee weapon or thrown by hand. It is not very effective at damaging
-	monsters, but is slightly less bad against small enemies than against large
-	ones.
 stout spear
 	A moderately long, and unusually wide, pointed piece of iron, which can be
 	thrown by hand or used as a melee weapon.
@@ -2354,10 +2319,6 @@ violet spellbook
 	learn a spell from it.
 visored helmet
 	An iron helmet with an imposing visor.
-voulge
-	It is noticeably more powerful than a typical short sword (doing slightly more
-	damage against larger enemies, against which it is just as powerful as against
-	smaller enemies).
 vulgar polearm
 	A simple but very long iron spear, requiring two hands to hold. Its length
 	prevents it doing more than minimal damage against adjacent enemies, but it
