@@ -114,9 +114,9 @@ read_config(const char *confname)
     char *data, *line, *newline;
 
     const char *configdir = aimake_get_option("configdir");
-    char default_filename[strlen(configdir) + strlen("/nethack4.conf") + 1];
+    char default_filename[strlen(configdir) + strlen("/nhfourk.conf") + 1];
     strcpy(default_filename, configdir);
-    strcat(default_filename, "/nethack4.conf");
+    strcat(default_filename, "/nhfourk.conf");
 
     if (!filename)
         filename = default_filename;
@@ -189,11 +189,11 @@ setup_defaults(void)
 {
     if (!settings.logfile)
         settings.logfile =
-            construct_server_filename("logdir", "/nethack4.log");
+            construct_server_filename("logdir", "/nhfourk.log");
 
     if (!settings.pidfile)
         settings.pidfile =
-            construct_server_filename("lockdir", "/nethack4.pid");
+            construct_server_filename("lockdir", "/nhfourk.pid");
 
     if (!settings.workdir)
         settings.workdir =
