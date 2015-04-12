@@ -1071,7 +1071,9 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             cramps++;
         }
     }
-    if (cramps > 6)
+    if ((Blind || Confusion || Hallucination || Stunned) && (cramps > 0))
+        pline("You have difficulty writing in your present condition.");
+    else if (cramps > 6)
         pline("Your entire %s is cramping up.  You simply cannot write any more right now.", body_part(ARM));
     else if (cramps > 4)
         pline("Your %s is cramping up very severely.", body_part(HAND));
