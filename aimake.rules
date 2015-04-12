@@ -654,7 +654,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             install_feature => "playfield_utils",
         },
         _install_docs => {
-            object => qr=path:doc/(?:changelog|faq|philosophy)\.txt=,
+            object => qr=path:doc/(?:changelog|changelog-fourk|faq|philosophy)\.txt=,
             install_dir => "docdir",
         },
         _install_copyright => {
