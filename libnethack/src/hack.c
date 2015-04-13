@@ -1177,8 +1177,6 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
             return dodown(uim);
     }
 
-    u_wipe_engr(rnd(5));
-
     /* Don't allow running, travel or autoexplore when stunned or confused. */
     if (Stunned || Confusion) {
         const char *stop_which = NULL;

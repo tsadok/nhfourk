@@ -45,6 +45,13 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * Engraving Elbereth no longer exercises wisdom.
+
+ * Engravings are no longer degraded by walking, and the probability
+   that random actions or inactions (including resting, searching)
+   will erode an engraving is greatly reduced.  However, engraving
+   additional text degrades what is already there.
+
  * Lizards (specifically), acid blobs, F, P, and T are guaranteed to
    drop corpses for the first hundred kills per monster type.  This is
    mostly significant because it guarantees stoning remedies.  
