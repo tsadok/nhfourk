@@ -68,23 +68,27 @@ static const struct {
     'F', "|-"}, {
     'G', "C("}, {
     'H', "|-"}, {
-    'I', "|"}, {
+    'I', "|T_"}, {
     'K', "|<"}, {
     'L', "|_"}, {
-    'M', "|"}, {
+    'M', "|NV"}, {
     'N', "|\\"}, {
-    'O', "C("}, {
+    'O', "C()"}, {
     'P', "F"}, {
-    'Q', "C("}, {
+    'Q', "OC("}, {
     'R', "PF"}, {
+    'S', "5"}, {
     'T', "|"}, {
     'U', "J"}, {
     'V', "/\\"}, {
-    'W', "V/\\"}, {
+    'W', "^V/\\"}, {
+    'X', "/\\"}, {
     'Z', "/"}, {
+    'a', "c"}, {
     'b', "|"}, {
     'd', "c|"}, {
     'e', "c"}, {
+    'f', "t"}, {
     'g', "c"}, {
     'h', "n"}, {
     'j', "i"}, {
@@ -94,10 +98,12 @@ static const struct {
     'n', "r"}, {
     'o', "c"}, {
     'q', "c"}, {
+    't', "-"}, {
     'w', "v"}, {
     'y', "v"}, {
     ':', "."}, {
     ';', ","}, {
+    ',', ","}, {
     '0', "C("}, {
     '1', "|"}, {
     '6', "o"}, {
@@ -399,9 +405,6 @@ make_engr_at(struct level *lev, int x, int y, const char *s, long e_time,
     ep->engr_txt[engr_len] = '\0';
     while (ep->engr_txt[0] == ' ')
         ep->engr_txt++;
-    /* engraving Elbereth shows wisdom */
-    if (!in_mklev && !strcmp(s, "Elbereth"))
-        exercise(A_WIS, TRUE);
     ep->engr_time = e_time;
     /* the caller shouldn't be asking for a random engrave type except during
        polymorph; if they do anyway, using the poly_engrave RNG isn't the end of
@@ -1051,9 +1054,11 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     if (len != 1 || (!strchr(ebuf, 'x') && !strchr(ebuf, 'X')))
         break_conduct(conduct_illiterate);
 
-    /* Mix up engraving if surface or state of mind is unsound. Note: this
-       won't add or remove any spaces. */
+    /* Degrade any existing text: */
+    u_wipe_engr(rnd(3));
 
+    /* Mix up the new text we are engraving if surface or state of mind is
+       unsound. Note: this won't add or remove any spaces. */
     char ebuf_copy[strlen(ebuf) + 1];
     strcpy(ebuf_copy, ebuf);
     for (sp = ebuf_copy; *sp; sp++) {
