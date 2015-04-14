@@ -7,7 +7,7 @@
 #include "epri.h"
 #include "emin.h"
 #include "edog.h"
-
+#include "alignrec.h"
 
 /*VARARGS1*/
 /* Note that these declarations rely on knowledge of the internals
@@ -353,13 +353,13 @@ ustatusline(void)
     }
 
     pline("Status of %s (%s%s):  Level %d  HP %d(%d)  Def %d%s.", u.uplname,
-          (u.ualign.record >= 20) ? "piously " :
-          (u.ualign.record > 13) ? "devoutly " :
-          (u.ualign.record > 8) ? "fervently " :
-          (u.ualign.record > 3) ? "stridently " :
-          (u.ualign.record == 3) ? "" :
-          (u.ualign.record >= 1) ? "haltingly " :
-          (u.ualign.record == 0) ? "nominally " : "insufficiently ",
+          (u.ualign.record >= PIOUS) ? "piously " :
+          (u.ualign.record >= DEVOUT) ? "devoutly " :
+          (u.ualign.record >= FERVENT) ? "fervently " :
+          (u.ualign.record >= STRIDENT) ? "stridently " :
+          (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE) ? "" :
+          (u.ualign.record >= HALTINGLY) ? "haltingly " :
+          (u.ualign.record >= NOMINALLY) ? "nominally " : "insufficiently ",
           align_str(u.ualign.type), Upolyd ? mons[u.umonnum].mlevel : u.ulevel,
           Upolyd ? u.mh : u.uhp, Upolyd ? u.mhmax : u.uhpmax,
           10 - get_player_ac(), info);
