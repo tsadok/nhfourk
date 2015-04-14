@@ -1651,7 +1651,7 @@ use_unicorn_horn(struct obj *obj)
     /* NetHack Fourk balance change: unicorn horns are now technically
      * a finite resource (unless you can cast cancellation): */
     if (obj) {
-        if ((obj->spe > -3) && !rn2(3)) {
+        if ((obj->spe > -5) && !rn2(3)) {
             obj->spe--;
             if (!Blind)
                 pline("The %s emits a dim glow for a moment, then fades.", xname(obj));
