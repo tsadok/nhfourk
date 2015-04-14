@@ -178,12 +178,13 @@ static const struct trobj Tourist[] = {
 };
 
 static const struct trobj Valkyrie[] = {
-#define V_SPEAR 0
-    {SPEAR, 3, WEAPON_CLASS, 1, UNDEF_BLESS},
-    {WAR_HAMMER, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
+#define V_SPEAR  0
+#define V_SHIELD 2
+#define V_ARMOR  3
+    {SPEAR, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     {DAGGER, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 3, ARMOR_CLASS, 1, UNDEF_BLESS},
-    {STUDDED_LEATHER_ARMOR, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
     {OIL_LAMP, 1, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
@@ -225,6 +226,11 @@ static const struct trobj Boomer[] = {
 
 static const struct trobj Shuri[] = {
     {SHURIKEN, 0, WEAPON_CLASS, 12, UNDEF_BLESS},
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj Coldwand[] = {
+    {WAN_COLD, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -751,18 +757,42 @@ u_init_inv_skills(void)
         skill_init(Skill_T);
         break;
     case PM_VALKYRIE:
+    {
+        boolean docold = FALSE;
         trobj_list = copy_trobj_list(Valkyrie);
-        if (!rolern2(3)) {
+        switch (rolern2(6)) {
+        case 1:
+            trobj_list[V_SPEAR].trspe  = 3;
+            trobj_list[V_SHIELD].trspe = 2;
+            break;
+        case 2:
+            trobj_list[V_SPEAR].trotyp = WAR_HAMMER;
+            trobj_list[V_ARMOR].trotyp = SPEED_BOOTS;
+            break;
+        case 3:
+        case 4:
+            trobj_list[V_SPEAR].trspe  = 1;
+            trobj_list[V_ARMOR].trotyp = STUDDED_LEATHER_ARMOR;
+            trobj_list[V_ARMOR].trspe  = 1;
+            break;
+        case 5:
             trobj_list[V_SPEAR].trotyp = SILVER_SPEAR;
-        } else {
+            docold = TRUE;
+            break;
+        default:
             trobj_list[V_SPEAR].trquan =
-                rne_on_rng(3, rng_charstats_role);
+                2 + rne_on_rng(3, rng_charstats_role);
+            docold = TRUE;
+            break;
         }
         role_ini_inv(trobj_list, nclist);
+        if (docold)
+            role_ini_inv(Coldwand, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
         break;
+    }        
     case PM_WIZARD:
         role_ini_inv(Wizard, nclist);
         skill_init(Skill_W);
