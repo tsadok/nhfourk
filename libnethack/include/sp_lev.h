@@ -45,6 +45,7 @@ typedef struct {
     char fg, bg;
     boolean smoothed, joined;
     xchar lit, walled;
+    boolean icedpools;      /* for ice locations: ICED_POOL vs ICED_MOAT */
 } lev_init;
 
 typedef struct {
