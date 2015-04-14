@@ -2082,11 +2082,11 @@ xkilled(struct monst *mtmp, int dest)
     if (ilog2(mvitals[monsndx(mtmp->data)].died)
         <= rn2_on_rng(6500, death_drop_rng)) {
         /* might be here after swallowed */
-        if (((x != u.ux) || (y != u.uy)) && /* !rn2(6) && */
+        if (((x != u.ux) || (y != u.uy)) && !rn2(3) &&
             !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
             int typ;
 
-        otmp = mkobj(level, RANDOM_CLASS, TRUE, death_drop_rng);
+            otmp = mkobj(level, RANDOM_CLASS, TRUE, death_drop_rng);
             /* Don't create large objects from small monsters */
             typ = otmp->otyp;
             if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
