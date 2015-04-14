@@ -7,6 +7,7 @@
 
 #include "hack.h"
 #include "mfndpos.h"
+#include "alignrec.h"
 
 /* This file is responsible for determining whether the character has intrinsics
    and extrinsics, because it was previously done with a bunch of macros, which
@@ -454,23 +455,23 @@ enlightenment(int final)
     }
 
     /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
-    if (u.ualign.record >= 20)
+    if (u.ualign.record >= PIOUS)
         you_are(&menu, "piously aligned");
-    else if (u.ualign.record > 13)
+    else if (u.ualign.record >= DEVOUT)
         you_are(&menu, "devoutly aligned");
-    else if (u.ualign.record > 8)
+    else if (u.ualign.record >= FERVENT)
         you_are(&menu, "fervently aligned");
-    else if (u.ualign.record > 3)
+    else if (u.ualign.record >= STRIDENT)
         you_are(&menu, "stridently aligned");
-    else if (u.ualign.record == 3)
+    else if (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE)
         you_are(&menu, "aligned");
-    else if (u.ualign.record > 0)
+    else if (u.ualign.record >= HALTINGLY)
         you_are(&menu, "haltingly aligned");
-    else if (u.ualign.record == 0)
+    else if (u.ualign.record >= NOMINALLY)
         you_are(&menu, "nominally aligned");
-    else if (u.ualign.record >= -3)
+    else if (u.ualign.record >= STRAYED)
         you_have(&menu, "strayed");
-    else if (u.ualign.record >= -8)
+    else if (u.ualign.record >= SINNED)
         you_have(&menu, "sinned");
     else
         you_have(&menu, "transgressed");

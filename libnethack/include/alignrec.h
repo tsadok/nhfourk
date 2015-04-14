@@ -10,5 +10,12 @@
 #define DEVOUT 14
 #define FERVENT 9
 #define STRIDENT 4
+#define ALIGNED_WITHOUT_ADJECTIVE 3
+#define HALTINGLY 1
+#define NOMINALLY 0
+#define STRAYED -3
+#define SINNED -8
+/* anything worse than sinned is transgressed */
+#define SEARED_CONSCIENCE -20
 
 #endif /* ALIGNREC_H */
