@@ -45,6 +45,9 @@ categories:
 Chronological Changelog (most recent at top):
 =============================================
 
+ * When you lose alignment points, bringing your alignment below 0,
+   you now get warning messages about it.
+
  * Engraving Elbereth no longer exercises wisdom.
 
  * Engravings are no longer degraded by walking, and the probability

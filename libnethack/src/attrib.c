@@ -7,6 +7,7 @@
 
 #include "hack.h"
 #include "hungerstatus.h"
+#include "alignrec.h"
 
 /* #define DEBUG *//* uncomment for debugging info */
 
@@ -877,6 +878,13 @@ adjalign(int n)
                 break_conduct(conduct_lostalign);
             }
             u.ualign.record = newalign;
+            if (u.ualign.record < SEARED_CONSCIENCE) {
+                /* No warning -- your conscience no longer works. */
+            } else if (u.ualign.record < SINNED) {
+                pline("Your transgressions are more than you can bear to think about.");
+            } else if (u.ualign.record < STRAYED) {
+                pline("You worry that your sins will catch up with you.");
+            }
         }
     } else if (newalign > u.ualign.record) {
         u.ualign.record = newalign;
