@@ -51,7 +51,7 @@ Chronological Changelog (most recent at top):
 =============================================
 
 
-Changes in 4.3.0.1:
+Changes in 4.3.0.2:
 -------------------
 
  * Hezrou now have a passive attack that gives off a foul stench
@@ -76,6 +76,11 @@ Changes in 4.3.0.1:
    resistance when wielded.  The bonus is +5 to-hit, +1d12 damage.
 
  * Mastodons have been replaced with mammoths.
+
+
+Changes in 4.3.0.1:
+-------------------
+
 
  * When you lose alignment points, bringing your alignment below 0,
    you now get warning messages about it.
