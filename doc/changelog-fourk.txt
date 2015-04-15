@@ -48,6 +48,11 @@ categories:
 
 Chronological Changelog (most recent at top):
 =============================================
+=============================================
+
+
+Changes in 4.3.0.1:
+-------------------
 
  * Hezrou now have a passive attack that gives off a foul stench
    (implemented as stinking cloud).
