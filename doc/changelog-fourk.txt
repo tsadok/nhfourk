@@ -44,6 +44,11 @@ categories:
 
 Chronological Changelog (most recent at top):
 =============================================
+=============================================
+
+
+Changes in 4.3.0.1:
+-------------------
 
  * When you lose alignment points, bringing your alignment below 0,
    you now get warning messages about it.
