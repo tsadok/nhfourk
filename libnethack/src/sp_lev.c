@@ -2610,7 +2610,7 @@ load_maze(struct level *lev, dlb * fd)
                 y--;
         }
 
-        walkfrom(lev, x, y);
+        walkfrom(lev, x, y, x_maze_max, y_maze_max);
     }
     wallification(lev, 0, 0, COLNO - 1, ROWNO - 1);
 
