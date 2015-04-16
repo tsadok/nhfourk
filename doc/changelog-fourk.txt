@@ -54,6 +54,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Mazes in Gehennom can now have wall and/or corridor widths
+   other than 1 tile.  Occasionally, they can have "walls" that
+   are not made of wall or rock.
+
  * Hezrou now have a passive attack that gives off a foul stench
    (implemented as stinking cloud).
 
