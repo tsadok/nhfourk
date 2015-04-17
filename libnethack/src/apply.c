@@ -1648,32 +1648,17 @@ use_unicorn_horn(struct obj *obj)
             }
     }
 
-    /* NetHack Fourk balance change: unicorn horns are now technically
-     * a finite resource (unless you can cast cancellation): */
-    if (obj) {
-        if ((obj->spe > -5) && !rn2(3)) {
-            obj->spe--;
-            if (!Blind)
-                pline("The %s emits a dim glow for a moment, then fades.", xname(obj));
-        } else if (obj->spe <= -3) {
-            pline("The %s vibrates for a moment, then shatters.", xname(obj));
-            if (obj == uwep) uwepgone();
-            useup(obj);
-            return;
-        }
-    }
-
     /* 
      *              Chances for number of troubles to be fixed
-     *               0      1      2      3      4      5      6      7
-     *   blessed:  22.7%  22.7%  19.5%  15.4%  10.7%   5.7%   2.6%   0.8%
-     *  uncursed:  35.4%  35.4%  22.9%   6.3%    0      0      0      0
+     *               0      1      2      3      4      5     6     7     8
+     *   blessed:    0    22.7%  22.7%  19.5%  15.4%  10.7%  5.7%  2.6%  0.8%
+     *  uncursed:  35.4%  35.4%  22.9%   6.3%    0      0     0     0     0
      *
      * We don't use a separate RNG for blessed unihorns; unlike cursed unihorns
      * (which might be used once or twice per game by accident), blessed
      * unihorns are normally used frequently all through the game.
      */
-    val_limit = rn2(dice(2, (obj && obj->blessed) ? 4 : 2));
+    val_limit = (obj->blessed ? 1 : 0) + rn2(dice(2, (obj && obj->blessed) ? 4 : 2));
     if (val_limit > trouble_count)
         val_limit = trouble_count;
 
@@ -1714,6 +1699,29 @@ use_unicorn_horn(struct obj *obj)
                 panic("use_unicorn_horn: bad trouble? (%d)", idx);
             break;
         }
+    }
+    /* NetHack Fourk balance change: unicorn horns for restoring lost attributes
+       are now technically a finite resource (unless you can cast cancellation).
+       The status-ailment fixing, however, is free again now. */
+    if (obj && did_attr) {
+        if (obj->spe > -5) {
+            obj->spe--;
+            if (!Blind)
+                pline("The %s emits a dim glow for a moment, then fades.", xname(obj));
+        } else if (obj->spe <= -3) {
+            pline("The %s vibrates for a moment, then shatters.", xname(obj));
+            if (obj == uwep) uwepgone();
+            useup(obj);
+            return;
+        }
+    } else if (obj && did_prop && obj->blessed &&
+               !rn2((P_SKILL(P_UNICORN_HORN) >= P_EXPERT)  ? 50 :
+                    (P_SKILL(P_UNICORN_HORN) >= P_SKILLED) ? 30 :
+                    (P_SKILL(P_UNICORN_HORN) >= P_BASIC)   ? 20 : 10)) {
+        pline("%s %s %s.", Shk_Your(obj), aobjnam(obj, "glow"),
+              hcolor("brown"));
+        obj->bknown = 1;
+        unbless(obj);
     }
 
     if (did_attr)

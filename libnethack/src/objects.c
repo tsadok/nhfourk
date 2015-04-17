@@ -654,7 +654,7 @@ const struct objclass const_objects[] = {
             0, 0, 0, 5, 30, 50, 2, 6, WHACK, P_FLAIL, IRON, HI_METAL),
 /* 3.4.1: unicorn horn left classified as "magic" */
     WEPTOOL("unicorn horn", NULL,
-            1, 1, 1, 0, 20, 100, 12, 12, PIERCE, P_UNICORN_HORN, BONE,
+            1, 1, 1, 0,  8, 100, 12, 12, PIERCE, P_UNICORN_HORN, BONE,
             CLR_WHITE),
 
 /* two special unique artifact "tools" */
