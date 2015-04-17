@@ -1505,7 +1505,9 @@ canwearobj(struct obj *otmp, long *mask,
         if (uwep && bimanual(uwep) && known_welded(spoil)) {
             if (noisy)
                 pline("You cannot do that while your hands "
-                      "are welded to your %s.",
+                      "%s your %s.",
+                      (objects[uwep->otyp].oc_material == WOOD) ?
+                      "are ingrown with" : "are welded to",
                       is_sword(uwep) ? "sword" : c_slotnames[os_wep]);
             return FALSE;
         }

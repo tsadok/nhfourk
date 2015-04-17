@@ -249,9 +249,11 @@ ready_weapon(struct obj *wep)
                 tmp = thestr;
             else
                 tmp = "";
-            pline("%s%s %s to your %s!", tmp,
-                  aobjnam(wep, "weld"),
+            pline("%s%s %s %sto your %s!", tmp,
+                  aobjnam(wep, (objects[wep->otyp].oc_material == WOOD) ?
+                          "grow" : "weld"),
                   (wep->quan == 1L) ? "itself" : "themselves", /* a3 */
+                  (objects[wep->otyp].oc_material == WOOD) ? "right in" : "",
                   bimanual(wep) ? (const char *)makeplural(body_part(HAND))
                   : body_part(HAND));
             wep->bknown = TRUE;
@@ -641,7 +643,9 @@ welded(struct obj *obj)
 void
 weldmsg(struct obj *obj)
 {
-    pline("Your %s %s welded to your %s!", xname(obj), otense(obj, "are"),
+    pline("Your %s %s %s your %s!", xname(obj), otense(obj, "are"),
+          (objects[obj->otyp].oc_material == WOOD) ?
+          "grown right into" : "welded to",
           bimanual(obj) ? (const char *)makeplural(body_part(HAND))
           : body_part(HAND));
 }

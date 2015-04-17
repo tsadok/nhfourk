@@ -2417,9 +2417,11 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
             pline("You wrap your bullwhip around %s %s.",
                   s_suffix(mon_nam(mtmp)), onambuf);
             if (gotit && mwelded(mtmp, otmp)) {
-                pline("%s welded to %s %s%c",
-                      (otmp->quan == 1L) ? "It is" : "They are", mhis(mtmp),
-                      mon_hand, !otmp->bknown ? '!' : '.');
+                pline("%s %s %s %s%c",
+                      (otmp->quan == 1L) ? "It is" : "They are", 
+                      (objects[otmp->otyp].oc_material == WOOD) ?
+                      "grown right into" : "welded to",
+                      mhis(mtmp), mon_hand, !otmp->bknown ? '!' : '.');
                 otmp->bknown = 1;
                 gotit = FALSE;  /* can't pull it free */
             }

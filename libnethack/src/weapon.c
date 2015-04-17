@@ -770,8 +770,12 @@ mon_wield_item(struct monst *mon)
             pline("%s wields %s%s", Monnam(mon), singular(obj, doname),
                   mon->mtame ? "." : "!");
             if (mwelded(mon, obj)) {
-                pline("%s %s to %s %s!", Tobjnam(obj, "weld"),
+                pline("%s %s %sto %s %s!",
+                      Tobjnam(obj, (objects[obj->otyp].oc_material == WOOD) ?
+                              "grow" : "weld"),
                       is_plural(obj) ? "themselves" : "itself",
+                      (objects[obj->otyp].oc_material == WOOD) ?
+                                                           "right in" : "",
                       s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
                 obj->bknown = 1;
             }
