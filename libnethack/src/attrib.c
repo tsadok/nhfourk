@@ -871,6 +871,11 @@ adjalign(int n)
 {
     int cnt; /* for loop initial declarations are only allowed in C99 mode */
     int newalign = u.ualign.record + n;
+    int minalign = 0 - ALIGNLIM - 20;
+    if (newalign > ALIGNLIM)
+        newalign = ALIGNLIM;
+    if (newalign < minalign)
+        newalign = minalign;
 
     if (n < 0) {
         if (newalign < u.ualign.record) {
@@ -884,12 +889,27 @@ adjalign(int n)
                 pline("Your transgressions are more than you can bear to think about.");
             } else if (u.ualign.record < STRAYED) {
                 pline("You worry that your sins will catch up with you.");
+            } else if (u.ualign.record < HALTINGLY) {
+                pline("Your conscience bothers you, but you dismiss it.");
+            } else if (u.ualign.record < FERVENT) {
+                pline("Your conscience bothers you.");
+            } else if (u.ualign.record < PIOUS) {
+                pline("You hesitate for a moment, bothered by your conscience.");
             }
         }
     } else if (newalign > u.ualign.record) {
         u.ualign.record = newalign;
-        if (u.ualign.record > ALIGNLIM)
-            u.ualign.record = ALIGNLIM;
+        if (u.uconduct[conduct_lostalign]) {
+            if (u.ualign.record < SINNED) {
+                /* No message -- let 'em sweat a bit. */
+            } else if (u.ualign.record < NOMINALLY) {
+                pline("Your conscience bothers you just a little less.");
+            } else if (u.ualign.record < PIOUS) {
+                pline("Your conscience bothers you a little less.");
+            } else if (u.ualign.record == PIOUS) {
+                pline("Your conscience is assuaged.");
+            }
+        }
     }
 }
 
