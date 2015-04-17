@@ -85,9 +85,8 @@ Changes in 4.3.0.2:
 Changes in 4.3.0.1:
 -------------------
 
-
- * When you lose alignment points, bringing your alignment below 0,
-   you now get warning messages about it.
+ * When you lose alignment points, you now get warning messages
+   about it.  You also get messages when you regain alignment.
 
  * Engraving Elbereth no longer exercises wisdom.
 
