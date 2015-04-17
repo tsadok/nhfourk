@@ -1820,9 +1820,11 @@ use_misc(struct monst *mtmp, struct musable *m)
             }
             pline("%s wraps around %s you're wielding!", The_whip, the_weapon);
             if (welded(obj)) {
-                pline("%s welded to your %s%c",
-                      !is_plural(obj) ? "It is" : "They are", hand,
-                      !obj->bknown ? '!' : '.');
+                pline("%s %s your %s%c",
+                      !is_plural(obj) ? "It is" : "They are",
+                      (objects[obj->otyp].oc_material == WOOD) ?
+                      "grown right into" : "welded to",
+                      hand, !obj->bknown ? '!' : '.');
                 /* obj->bknown = 1; *//* welded() takes care of this */
                 where_to = 0;
             }
