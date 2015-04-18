@@ -737,9 +737,11 @@ drop_weapon(int alone, boolean noisy)
            can wield weapons */
         if (!alone || cantwield(youmonst.data)) {
             struct obj *wep = uwep;
-            candropwep =  !wep->cursed || wep->otyp != LOADSTONE;/* canletgo(uwep, ""); */
-            candropswapwep = (!otmp2->cursed || otmp2->otyp != LOADSTONE);
-                              /* u.twoweap ? canletgo(uswapwep, "") : FALSE; */
+            candropwep =  canletgo(wep, "");
+            candropswapwep = u.twoweap ? canletgo(uswapwep, "") : TRUE;
+            /* If you're not wielding two weapons, candropswapweap
+               is set to TRUE so you get the "drop" wording, since
+               you are dropping your only wielded item if candropwep */
 
             if (alone && noisy) {
                 what = (candropwep && candropswapwep) ? "drop" : "release";
