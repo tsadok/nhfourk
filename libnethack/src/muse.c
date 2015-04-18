@@ -1831,8 +1831,8 @@ use_misc(struct monst *mtmp, struct musable *m)
                 pline("%s becomes entangled in %s leash.", The_whip,
                       (pet ? mhis(pet) : "your"));
                 yelp(pet);
-                obj_extract_self(otmp);
                 setmnotwielded(mtmp, otmp);
+                obj_extract_self(otmp);
                 MON_NOWEP(mtmp);
                 otmp->owornmask = 0L;
                 pline("%s tugs away from %s.", The_whip,
