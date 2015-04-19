@@ -989,7 +989,7 @@ extern void remove_rooms(struct level *lev, int lx, int ly, int hx, int hy);
 /* ### mkmaze.c ### */
 
 extern void wallification(struct level *lev, int x1, int y1, int x2, int y2);
-extern void walkfrom(struct level *lev, int, int);
+extern void walkfrom(struct level *lev, int, int, int, int);
 extern void makemaz(struct level *lev, const char *);
 extern void mazexy(struct level *lev, coord * cc);
 extern void bound_digging(struct level *lev);
