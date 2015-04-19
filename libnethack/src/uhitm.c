@@ -1727,6 +1727,9 @@ damageum(struct monst *mdef, const struct attack *mattk)
             mdef->mconf = 1;
         }
         break;
+    case AD_PITS:
+        do_pit_attack(level, mdef, &youmonst);
+        break;
     default:
         tmp = 0;
         break;

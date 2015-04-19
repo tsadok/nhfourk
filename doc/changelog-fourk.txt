@@ -85,6 +85,9 @@ Changes in 4.3.0.2:
 Changes in 4.3.0.1:
 -------------------
 
+ * Some monsters have been given more interesting attacks.  Notably,
+   pit fiends now have an attack that creates pits.
+
  * Fixing status ailments with a unicorn horn is now mostly free; the
    only penalty is that a blessed horn can become uncursed.  Blessed
    horns are now guaranteed to fix at least one trouble (assuming you

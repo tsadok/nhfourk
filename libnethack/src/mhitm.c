@@ -1284,6 +1284,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         /* there's no msomearmor() function, so just do damage */
         /* if (cancelled) break; */
         break;
+    case AD_PITS:
+        do_pit_attack(level, mdef, magr);
+        break;
     default:
         tmp = 0;
         break;

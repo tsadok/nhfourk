@@ -299,42 +299,10 @@ do_earthquake(int force)
                     /* We have to check whether monsters or player falls in a
                        chasm... */
 
-                    if (mtmp) {
-                        if (!is_flyer(mtmp->data) && !is_clinger(mtmp->data)) {
-                            mtmp->mtrapped = 1;
-                            if (cansee(x, y))
-                                pline("%s falls into a chasm!", Monnam(mtmp));
-                            else if (humanoid(mtmp->data))
-                                You_hear("a scream!");
-                            mselftouch(mtmp, "Falling, ", TRUE);
-                            if (mtmp->mhp > 0)
-                                if ((mtmp->mhp -= rnd(6)) <= 0) {
-                                    if (!cansee(x, y))
-                                        pline("It is destroyed!");
-                                    else {
-                                        pline("You destroy %s!",
-                                              mtmp->mtame ?
-                                              x_monnam(mtmp, ARTICLE_THE,
-                                                       "poor", mtmp->mnamelth ?
-                                                       SUPPRESS_SADDLE : 0,
-                                                       FALSE) : mon_nam(mtmp));
-                                    }
-                                    xkilled(mtmp, 0);
-                                }
-                        }
+                    if (mtmp && !(mtmp == &youmonst)) {
+                        pit_under_monster(mtmp, PIT, TRUE);
                     } else if (!u.utrap && x == u.ux && y == u.uy) {
-                        if (Levitation || Flying || is_clinger(youmonst.data)) {
-                            pline("A chasm opens up under you!");
-                            pline("You don't fall in!");
-                        } else {
-                            pline("You fall into a chasm!");
-                            u.utrap = rn1(6, 2);
-                            u.utraptype = TT_PIT;
-                            turnstate.vision_full_recalc = TRUE;
-                            losehp(rnd(6), "fell into a chasm");
-                            selftouch("Falling, you",
-                                      "falling into a chasm while wielding");
-                        }
+                        pit_under_player(PIT);
                     } else
                         newsym(x, y);
                     break;
