@@ -260,6 +260,9 @@ extern void bury_objs(struct level *, int, int);
 extern void unearth_objs(struct level *lev, int x, int y);
 extern void rot_organic(void *, long);
 extern void rot_corpse(void *, long);
+extern void pit_under_player(int);
+extern void pit_under_monster(struct monst *, int, boolean);
+extern void do_pit_attack(struct level *, struct monst *, struct monst *);
 
 /* ### display.c ### */
 

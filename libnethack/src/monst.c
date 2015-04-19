@@ -2640,7 +2640,9 @@ const struct permonst mons[] = {
     MON("pit fiend", S_DEMON,
         LVL(13, 6, -3, 65, -13), (G_HELL | G_NOCORPSE | 2),
         A(ATTK(AT_WEAP, AD_PHYS, 4, 2), ATTK(AT_WEAP, AD_PHYS, 4, 2),
-          ATTK(AT_HUGS, AD_PHYS, 2, 4), NO_ATTK, NO_ATTK, NO_ATTK),
+          /* I'd like to make the AD_PITS attack AT_GAZE, but that
+             would take more doing.  For now... */
+          ATTK(AT_CLAW, AD_PITS, 2, 4), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(WT_HUMAN, 400, 0, MS_GROWL, MZ_LARGE),
         MR_FIRE | MR_POISON, 0,
         M1_SEE_INVIS | M1_POIS,
