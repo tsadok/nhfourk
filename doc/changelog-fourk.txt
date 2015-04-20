@@ -54,6 +54,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Piranha generate in larger groups and have more attacks.
+
  * Mazes in Gehennom can now have wall and/or corridor widths
    other than 1 tile.  Occasionally, they can have "walls" that
    are not made of wall or rock.
