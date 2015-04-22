@@ -1047,7 +1047,7 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
                  /* in Sokoban, don't accept a giant on first try;
                     after that, boulder carriers are fair game */
                  ((tryct == 1 && throws_rocks(ptr) && In_sokoban(&u.uz)) ||
-                  !goodpos(level, x, y, &fakemon, gpflags)));
+                  !goodpos(lev, x, y, &fakemon, gpflags)));
         mndx = monsndx(ptr);
     }
 
