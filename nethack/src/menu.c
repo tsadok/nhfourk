@@ -783,7 +783,7 @@ draw_objlist(WINDOW * win, struct nh_objlist *objlist, int *selected, int how)
             txtattr |= COLOR_PAIR(2);
             break;
         case B_BLESSED:
-            txtattr |= COLOR_PAIR(7);
+            txtattr |= COLOR_PAIR(3);
             break;
         default:
             break;
