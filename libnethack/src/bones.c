@@ -214,11 +214,6 @@ can_make_bones(d_level *lev)
         return FALSE;
     /* don't let multiple restarts generate multiple copies of objects in bones 
        files */
-    if (discover)
-        return FALSE;
-    /* don't drop multiple bones files from the same dungeon */
-    if (*flags.setseed)
-        return FALSE;
     return TRUE;
 }
 
