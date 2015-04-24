@@ -552,8 +552,12 @@ touch_artifact(struct obj *obj, const struct monst *mon)
 
     /* can pick it up unless you're totally non-synch'd with the artifact */
     if (badclass && badalign && self_willed) {
-        if (yours)
-            pline("%s your grasp!", Tobjnam(obj, "evade"));
+        if (yours) {
+            if (obj->where != OBJ_INVENT)
+                pline("%s your grasp!", Tobjnam(obj, "evade"));
+            else
+                pline("%s beyond your control!", Tobjnam(obj, "are"));
+        }
         return 0;
     }
 
@@ -1205,7 +1209,7 @@ doinvoke(const struct nh_cmd_arg *arg)
     if (!obj)
         return 0;
 
-    if (obj->oartifact && !touch_artifact(obj, &youmonst))
+    if (!retouch_object(&obj, FALSE))
         return 1;
 
     const struct artifact *oart = get_artifact(obj);
@@ -1524,6 +1528,54 @@ arti_cost(const struct obj *otmp)
         return artilist[(int)otmp->oartifact].cost;
     else
         return 100L * (long)objects[otmp->otyp].oc_cost;
+}
+
+/* called when hero is wielding/applying/invoking a carried item, or
+   after undergoing a transformation (alignment change, lycanthropy)
+   which might affect item access */
+int
+retouch_object(struct obj **objp, boolean loseit)
+/* The object might be destroyed or unintentionally dropped. */
+/* loseit is whether to drop it if hero can longer touch it. */
+{
+    struct obj *obj = *objp;
+    
+    if (touch_artifact(obj, &youmonst)) {
+        /* nothing to do if hero can successfully handle this object */
+        if (!(objects[obj->otyp].oc_material == SILVER &&
+              (u.ulycn >= LOW_PM || hates_silver(youmonst.data))))
+            return 1;
+        /* we didn't get "<obj> evades your grasp" message; give alt message */
+        pline("You can't handle %s anymore!", the(xname(obj)));
+    }
+    
+    /* removing a worn item might result in loss of levitation,
+       dropping the hero onto a polymorph trap or into water or
+       lava and potentially dropping or destroying the item */
+    if (obj->owornmask) {
+        struct obj *otmp;
+        
+        remove_worn_item(obj, FALSE);
+        for (otmp = invent; otmp; otmp = otmp->nobj)
+            if (otmp == obj) break;
+        if (!otmp) *objp = obj = 0;
+    }
+    
+    /* if we still have it and caller wants us to drop it, do so now */
+    if (loseit && obj) {
+        if (Levitation) {
+            freeinv(obj);
+            hitfloor(obj);
+        } else {
+            /* dropx gives a message iff item lands on an altar */
+            if (!IS_ALTAR(level->locations[u.ux][u.uy].typ))
+                pline("%s to the %s.",
+                      Tobjnam(obj, "drop"), surface(u.ux, u.uy));
+            dropx(obj);
+        }
+        *objp = obj = 0;        /* no longer in inventory */
+    }
+    return 0;
 }
 
 /*artifact.c*/

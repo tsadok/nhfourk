@@ -162,6 +162,8 @@ canwieldobj(struct obj *wep, boolean noisy, boolean spoil, boolean cblock)
             }
         }
         return 0;
+    } else if (!retouch_object(&wep, FALSE)) {
+        return 0;
     }
     /* If we can't ready something, we can't wield it either, unless it's our
        currently wielded weapon. */
