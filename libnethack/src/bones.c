@@ -24,6 +24,12 @@ make_bones_id(char *buf, d_level * dlev)
     else
         sprintf(buf + 2, ".%d", dlev->dlevel);
 
+    sprintf(buf + 4, ".%s%x",
+            flags.debug ? "W" : flags.explore ? "X" :
+            *flags.setseed ? "S" :
+            (flags.polyinit_mnum != -1) ? "P" : "N",
+            (unsigned int) (u.ubirthday % 16));
+
     return buf;
 }
 
@@ -226,7 +232,7 @@ savebones(struct obj *corpse, boolean take_items)
     struct monst *mtmp;
     const struct permonst *mptr;
     struct fruit *f;
-    char c, bonesid[10];
+    char c, bonesid[13];
     struct memfile mf;
     struct obj *statue = 0;
     uchar cnamelth = 0, snamelth = 0;
@@ -396,7 +402,7 @@ int
 getbones(d_level *levnum)
 {
     int ok;
-    char c, bonesid[10], oldbonesid[10];
+    char c, bonesid[13], oldbonesid[13];
     struct memfile mf;
     boolean from_file = FALSE;
     char *bonesfn = NULL;
