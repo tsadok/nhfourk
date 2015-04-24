@@ -6,6 +6,7 @@
 # These are the bigroom levels:
 #
 
+# Big Room: Just What it Says on the Tin
 MAZE:"bigrm-1",' '
 GEOMETRY:center,center
 MAP
@@ -88,8 +89,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-#	Here, just play with the lighting...
 
+# Dark Checkers
 MAZE:"bigrm-2",' '
 GEOMETRY:center,center
 MAP
@@ -180,8 +181,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-#	Now, let's get fancy...
 
+# Let's Get Fancy
 MAZE:"bigrm-3",' '
 GEOMETRY:center,center
 MAP
@@ -263,6 +264,9 @@ MONSTER:random,random,(37,16)
 MONSTER:random,random,(49,16)
 MONSTER:random,random,(61,16)
 MONSTER:random,random,(73,16)
+
+
+# Pinched Big Room
 MAZE:"bigrm-4",' '
 GEOMETRY:center,center
 MAP
@@ -350,8 +354,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-#	Try an oval room...
 
+# Oval Big Room
 MAZE:"bigrm-5",' '
 GEOMETRY:center,center
 MAP
@@ -434,3 +438,92 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
+
+
+# Peanut Island, by Khor
+MAZE:"bigrm-6",' '
+GEOMETRY:center,center
+###########1#########2#########3#########4#########5#########6#########7#####
+#0123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+0}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+1}}}}}}}}}||}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+2}}}}}}}}----}}}}}}}}}}}}......}}}}}}}}}}}}}}}}}}......}}}}}}}}}}}}..}}}}}}}}
+3}}}}}}--....--}}}}}}}}..........}}}}}}}}}}}}}}..........}}}}}}}}}....}}}}}}}
+4}}}}}|........|}}}}}}..............}}}}}}}}..............}}}}}}}}....}}}}}}}
+5}}}}}|........|}}}}}......................................}}}}}}}}}..}}}}}}}
+6}}}}|..........|}}}}......................................}}}}}}}}}}}}}}}}}}
+7}}}}|.....|....|}}}........................................}}}}}}}}}}}}}}}}}
+8}}}}|------....|}}}........................................}}}}}}}}}}}}}}}}}
+9}}}}|..........|}}}........................................}}}}}}}}}}}}}}}}}
+0}}}}|.--------.|}}}........................................}}}}}}}}}}}}}.}}}
+1}}}}|....--................................................}}}}}}}}}}}}}..}}
+2}}}}|..........|}}}........................................}}}}}}}}}}}}}}}}}
+3}}}}|....------|}}}}......................................}}}}}}}}}}}}}}}}}}
+4}}}}|....|.....|}}}}......................................}}}}}}}}}}}}}}}}}}
+5}}}}|..........|}}}}}..............}}}}}}}}..............}}}}}..}}}}}}}}}}}}
+6}}}}|....--....|}}}}}}..........}}}}}}}}}}}}}}..........}}}}}}....}}}}}}}}}}
+7}}}}|..........|}}}}}}}}......}}}}}}}}}}}}}}}}}}......}}}}}}}}}......}}}}}}}
+8}}}}}----------}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}...}}}}}}}}
+9}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+ENDMAP
+# Dungeon Description
+REGION:(01,01,73,16),lit,"ordinary"
+# Stairs
+STAIR:(19,02,58,07), (19,10,20,12), up
+STAIR:(19,02,58,07), (19,10,20,12), down
+# Non diggable walls
+NON_DIGGABLE:(00,00,75,19)
+# Objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Random traps
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+# Random monsters.
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
