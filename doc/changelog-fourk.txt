@@ -87,6 +87,10 @@ Changes in 4.3.0.2:
 Changes in 4.3.0.1:
 -------------------
 
+ * Shamelessly copied the multiple-bones-pools implementation from
+   NAO, then enhanced it to keep separate pools for each game mode
+   (normal, explore, wizmode, setseed, polyinit).
+
  * Some monsters have been given more interesting attacks.  Notably,
    pit fiends now have an attack that creates pits.
 
