@@ -79,6 +79,9 @@ Changes in 4.3.0.2:
    in ice.  (Fiery monsters, such as fire elementals, are not
    immobilized but sustain damage.)
 
+ * Lizards (everything that formerly looked like a colon, :) are
+   now represented by a lowercase l, which stands for lizard.
+
  * Piercers are now in mlet t, things that pretend to be part of
    the ceiling/wall/floor until you wander into them, then attack.
 

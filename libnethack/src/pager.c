@@ -31,12 +31,11 @@ const char *const monexplain[MAXMCLASSES] = {
     "ant or other insect", "blob", "cockatrice",
     "dog or other canine", "eye or sphere", "feline",
     "gremlin", "humanoid", "impish spirit",
-    "jelly", "kobold",
-    "mimic", "nymph", "orc",
-    "piercer", "quadruped", "rodent",
-    "arachnid or centipede", "trapper or lurker above", "unicorn or horse",
-    "vortex", "worm", "xan or other fantastic insect",
-    "light",
+    "jelly", "kobold", "lizard, reptile, or amphibian",
+    "mimic", "nymph", "orc", "quadruped", "rodent",
+    "arachnid or centipede", "trapper, piercer, or lurker above",
+    "unicorn or horse", "vortex", "worm",
+    "xan or other fantastic insect", "light",
 
     "angelic being", "bat or bird", "centaur",
     "dragon", "elemental", "fungus or mold",
@@ -48,7 +47,7 @@ const char *const monexplain[MAXMCLASSES] = {
     "vampire", "wraith or ghost", "xorn",
     "apelike creature", "zombie",
 
-    "human or elf", "golem", "major demon", "sea monster", "lizard",
+    "human or elf", "golem", "major demon", "sea monster",
     "long worm tail", "mimic"
 };
 
