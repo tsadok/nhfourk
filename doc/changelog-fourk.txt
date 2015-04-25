@@ -79,6 +79,9 @@ Changes in 4.3.0.2:
    in ice.  (Fiery monsters, such as fire elementals, are not
    immobilized but sustain damage.)
 
+ * Piercers are now in mlet t, things that pretend to be part of
+   the ceiling/wall/floor until you wander into them, then attack.
+
  * Piranha generate in larger groups and have more attacks.
 
  * Mazes in Gehennom can now have wall and/or corridor widths

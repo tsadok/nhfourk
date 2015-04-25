@@ -712,31 +712,9 @@ const struct permonst mons[] = {
         M2_ORC | M2_STRONG | M2_GREEDY | M2_JEWELS | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION, HI_LORD),
 /*
- * piercers
+ * p, formerly piercers, now available
  */
-    MON("rock piercer", S_PIERCER,
-        LVL(3, 1, 3, 0, 0), (G_GENO | 4),
-        A(ATTK(AT_BITE, AD_PHYS, 2, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0, MRACE_NONE,
-        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS |
-        M1_CARNIVORE | M1_NOTAKE, M2_HOSTILE, 0, CLR_BROWN),
-    MON("iron piercer", S_PIERCER,
-        LVL(5, 1, 0, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_BITE, AD_PHYS, 3, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), 0, 0,
-        MRACE_NONE, M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES |
-        M1_NOLIMBS | M1_CARNIVORE | M1_NOTAKE,
-        M2_HOSTILE, 0, CLR_CYAN),
-    MON("glass piercer", S_PIERCER,
-        LVL(7, 1, 0, 0, 0), (G_GENO | 1),
-        A(ATTK(AT_BITE, AD_PHYS, 4, 6), NO_ATTK, NO_ATTK,
-          NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), MR_ACID, 0,
-        MRACE_NONE, M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES |
-        M1_NOLIMBS | M1_CARNIVORE | M1_NOTAKE,
-        M2_HOSTILE, 0, CLR_WHITE),
+
 /*
  * quadrupeds
  */
@@ -874,6 +852,30 @@ const struct permonst mons[] = {
 /*
  * trappers, lurkers, &c
  */
+    MON("rock piercer", S_TRAPPER,
+        LVL(3, 1, 3, 0, 0), (G_GENO | 4),
+        A(ATTK(AT_BITE, AD_PHYS, 2, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0,
+        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
+        M1_NOTAKE,
+        M2_HOSTILE, 0, CLR_BROWN),
+    MON("iron piercer", S_TRAPPER,
+        LVL(5, 1, 0, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_BITE, AD_PHYS, 3, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), 0, 0,
+        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
+        M1_NOTAKE,
+        M2_HOSTILE, 0, CLR_CYAN),
+    MON("glass piercer", S_TRAPPER,
+        LVL(7, 1, 0, 0, 0), (G_GENO | 1),
+        A(ATTK(AT_BITE, AD_PHYS, 4, 6), NO_ATTK, NO_ATTK,
+          NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), MR_ACID, 0,
+        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
+        M1_NOTAKE,
+        M2_HOSTILE, 0, CLR_WHITE),
     MON("lurker above", S_TRAPPER,
         LVL(10, 3, 3, 0, 0), (G_GENO | 2),
         A(ATTK(AT_ENGL, AD_DGST, 1, 8),
