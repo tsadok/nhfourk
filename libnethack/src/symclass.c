@@ -32,7 +32,7 @@ const char def_oc_syms[MAXOCLASSES] = {
 const char def_monsyms[MAXMCLASSES] = {
     '\0',       /* holder */
     DEF_ANT,
-    DEF_BLOB,
+    DEF_BLOB, /* currently unused */
     DEF_COCKATRICE,
     DEF_DOG,
     DEF_EYE,

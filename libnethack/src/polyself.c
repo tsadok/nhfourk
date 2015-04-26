@@ -1367,7 +1367,7 @@ mbodypart(struct monst *mon, int part)
         return snake_parts[part];
     if (mptr->mlet == S_EYE)
         return sphere_parts[part];
-    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING || mptr->mlet == S_BLOB
+    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING
         || mptr == &mons[PM_JELLYFISH])
         return jelly_parts[part];
     if (mptr->mlet == S_VORTEX ||

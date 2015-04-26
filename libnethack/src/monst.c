@@ -133,35 +133,9 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_ANIMAL | M1_FLY | M1_NOHANDS | M1_OVIPAROUS | M1_POIS,
         M2_HOSTILE | M2_FEMALE | M2_PRINCE, 0, HI_LORD),
 /*
- * blobs
+ * b is available (blobs are moved to j)
  */
-    MON("acid blob", S_BLOB,
-        LVL(1, 3, 8, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_NONE, AD_ACID, 1, 8),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(30, 10, 0, MS_SILENT, MZ_TINY),
-        MR_SLEEP | MR_POISON | MR_ACID | MR_STONE, MR_STONE, MRACE_NONE,
-        M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
-        M1_MINDLESS | M1_ACID,
-        M2_WANDER | M2_NEUTER, 0, CLR_YELLOW),
-    MON("quivering blob", S_BLOB,
-        LVL(5, 1, 8, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_TUCH, AD_PHYS, 1, 8),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(200, 100, 0, MS_SILENT, MZ_SMALL),
-        MR_SLEEP | MR_POISON, MR_POISON,
-        MRACE_NONE, M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS,
-        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_WHITE),
-    MON("gelatinous cube", S_BLOB,
-        LVL(6, 6, 8, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_TUCH, AD_PLYS, 2, 4), ATTK(AT_NONE, AD_PLYS, 1, 4),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(600, 150, 0, MS_SILENT, MZ_LARGE),
-        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP | MR_POISON | MR_ACID | MR_STONE,
-        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP, MRACE_NONE,
-        M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS | M1_OMNIVORE |
-        M1_ACID,
-        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_CYAN),
+
 /*
  * cockatrice
  */
@@ -530,8 +504,35 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_TPORT | M1_TPORT_CNTRL, M2_STALK,
         M3_INFRAVISIBLE | M3_INFRAVISION, CLR_CYAN),
 /*
- * jellies
+ * jellies and blobs
  */
+    MON("acid blob", S_JELLY,
+        LVL(1, 3, 8, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_NONE, AD_ACID, 1, 8),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(30, 10, 0, MS_SILENT, MZ_TINY),
+        MR_SLEEP | MR_POISON | MR_ACID | MR_STONE, MR_STONE, MRACE_NONE,
+        M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
+        M1_MINDLESS | M1_ACID,
+        M2_WANDER | M2_NEUTER, 0, CLR_YELLOW),
+    MON("quivering blob", S_JELLY,
+        LVL(5, 1, 8, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_TUCH, AD_PHYS, 1, 8),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(200, 100, 0, MS_SILENT, MZ_SMALL),
+        MR_SLEEP | MR_POISON, MR_POISON, MRACE_NONE,
+        M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS,
+        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_WHITE),
+    MON("gelatinous cube", S_JELLY,
+        LVL(6, 6, 8, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_TUCH, AD_PLYS, 2, 4), ATTK(AT_NONE, AD_PLYS, 1, 4),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(600, 150, 0, MS_SILENT, MZ_LARGE),
+        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP | MR_POISON | MR_ACID | MR_STONE,
+        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP, MRACE_NONE,
+        M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS | M1_OMNIVORE |
+        M1_ACID,
+        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_CYAN),
     MON("blue jelly", S_JELLY,
         LVL(4, 0, 8, 10, 0), (G_GENO | 2),
         A(ATTK(AT_NONE, AD_COLD, 0, 6),

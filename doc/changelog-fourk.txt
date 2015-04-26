@@ -54,6 +54,15 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Gelatinous cubes, acid blobs, and quivering blobs now appear
+   as lowercase j, along with jellies.
+
+ * Lizards (everything that formerly looked like a colon, :) are
+   now represented by a lowercase l, which stands for lizard.
+
+ * Piercers are now in mlet t, things that pretend to be part of
+   the ceiling/wall/floor until you wander into them, then attack.
+
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
    the character's overall maximum where it was in vanilla):
@@ -78,12 +87,6 @@ Changes in 4.3.0.2:
  * Ice devils now have an attack that immobilizes the target
    in ice.  (Fiery monsters, such as fire elementals, are not
    immobilized but sustain damage.)
-
- * Lizards (everything that formerly looked like a colon, :) are
-   now represented by a lowercase l, which stands for lizard.
-
- * Piercers are now in mlet t, things that pretend to be part of
-   the ceiling/wall/floor until you wander into them, then attack.
 
  * Piranha generate in larger groups and have more attacks.
 

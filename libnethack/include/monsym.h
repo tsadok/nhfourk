@@ -12,7 +12,7 @@
  * NULL character.
  */
 # define S_ANT          1
-# define S_BLOB         2
+# define S_BLOB         2 /* Currently unused */
 # define S_COCKATRICE   3
 # define S_DOG          4
 # define S_EYE          5
@@ -26,7 +26,7 @@
 # define S_MIMIC        13
 # define S_NYMPH        14
 # define S_ORC          15
-# define S_PIERCER      16
+# define S_PIERCER      16 /* Currently unused */
 # define S_QUADRUPED    17
 # define S_RODENT       18
 # define S_SPIDER       19
@@ -77,7 +77,7 @@
  * above.
  */
 # define DEF_ANT        'a'
-# define DEF_BLOB       'b'
+# define DEF_BLOB       'b' /* Currently unused */
 # define DEF_COCKATRICE 'c'
 # define DEF_DOG        'd'
 # define DEF_EYE        'e'
@@ -91,7 +91,7 @@
 # define DEF_MIMIC      'm'
 # define DEF_NYMPH      'n'
 # define DEF_ORC        'o'
-# define DEF_PIERCER    'p'
+# define DEF_PIERCER    'p' /* Currently unused */
 # define DEF_QUADRUPED  'q'
 # define DEF_RODENT     'r'
 # define DEF_SPIDER     's'

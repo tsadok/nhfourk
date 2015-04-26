@@ -28,11 +28,11 @@ static int do_look(boolean, const struct nh_cmd_arg *);
  */
 const char *const monexplain[MAXMCLASSES] = {
     0,
-    "ant or other insect", "blob", "cockatrice",
+    "ant or other insect", "[unused]", "cockatrice",
     "dog or other canine", "eye or sphere", "feline",
     "gremlin", "humanoid", "impish spirit",
-    "jelly", "kobold", "lizard, reptile, or amphibian",
-    "mimic", "nymph", "orc", "quadruped", "rodent",
+    "jelly or blob", "kobold", "lizard, reptile, or amphibian",
+    "mimic", "nymph", "orc", "[unused]", "quadruped", "rodent",
     "arachnid or centipede", "trapper, piercer, or lurker above",
     "unicorn or horse", "vortex", "worm",
     "xan or other fantastic insect", "light",
