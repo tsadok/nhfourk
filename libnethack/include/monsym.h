@@ -56,7 +56,7 @@
 # define S_RUSTMONST    43
 # define S_SNAKE        44
 # define S_TROLL        45
-# define S_UMBER        46
+# define S_UMBER        46 /* currently unused */
 # define S_VAMPIRE      47
 # define S_WRAITH       48
 # define S_XORN         49

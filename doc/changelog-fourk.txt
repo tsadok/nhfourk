@@ -54,6 +54,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Large deep-rock dwellers (X) now include xorns, umber hulks,
+   ettins, and deep ettins.
+
  * Gelatinous cubes, acid blobs, and quivering blobs now appear
    as lowercase j, along with jellies.
 

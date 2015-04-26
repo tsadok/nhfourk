@@ -43,8 +43,9 @@ const char *const monexplain[MAXMCLASSES] = {
     "jabberwock", "Keystone Kop", "lich",
     "mummy", "naga", "ogre",
     "pudding or ooze", "quantum mechanic", "rust monster or disenchanter",
-    "snake", "troll", "umber hulk",
-    "vampire", "wraith or ghost", "xorn",
+    "snake", "troll", "[unused]",
+    "vampire", "wraith or ghost",
+    "xorn, umber hulk, or other large deep-rock dweller",
     "apelike creature", "zombie",
 
     "human or elf", "golem", "major demon", "sea monster",

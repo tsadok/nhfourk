@@ -1588,14 +1588,6 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_HUMANOID | M1_CARNIVORE,
         M2_GIANT | M2_STRONG | M2_ROCKTHROW | M2_NASTY | M2_COLLECT | M2_JEWELS,
         M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BLUE),
-    MON("ettin", S_GIANT,
-        LVL(10, 12, 3, 0, 0), (G_GENO | 1),
-        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_WEAP, AD_PHYS, 3, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(1700, 500, 0, MS_GRUNT, MZ_HUGE), 0, 0,
-        MRACE_NONE, M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE,
-        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_COLLECT,
-        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BRIGHT_BLUE),
     MON("titan", S_GIANT,
         LVL(16, 18, -3, 70, 9), (1),
         A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_MAGC, AD_SPEL, 0, 0),
@@ -2032,16 +2024,9 @@ const struct permonst mons[] = {
         M2_STRONG | M2_STALK | M2_HOSTILE | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION, HI_LORD),
 /*
- * Umber hulk
+ * Unused (formerly umber hulk)
  */
-    MON("umber hulk", S_UMBER,
-        LVL(9, 6, 2, 25, 0), (G_GENO | 2),
-        A(ATTK(AT_CLAW, AD_PHYS, 3, 4), ATTK(AT_CLAW, AD_PHYS, 3, 4),
-          ATTK(AT_BITE, AD_PHYS, 2, 5), ATTK(AT_GAZE, AD_CONF, 0, 0),
-          NO_ATTK, NO_ATTK),
-        SIZ(1200, 500, 0, MS_SILENT, MZ_LARGE), 0, 0,
-        MRACE_NONE, M1_TUNNEL | M1_CARNIVORE, M2_STRONG, M3_INFRAVISIBLE,
-        CLR_BROWN | HI_ULINE),
+
 /*
  * Vampires
  */
@@ -2127,7 +2112,7 @@ const struct permonst mons[] = {
         M2_NOPOLY | M2_UNDEAD | M2_WANDER | M2_STALK | M2_HOSTILE | M2_NASTY,
         M3_INFRAVISION, CLR_BRIGHT_BLUE),
 /*
- * Xorn
+ * Large Deep-Rock Dwellers
  */
     MON("xorn", S_XORN,
         LVL(8, 9, -2, 20, 0), (G_GENO | 1),
@@ -2138,6 +2123,30 @@ const struct permonst mons[] = {
         MR_FIRE | MR_COLD | MR_STONE, MR_STONE, MRACE_NONE,
         M1_BREATHLESS | M1_WALLWALK | M1_THICK_HIDE | M1_METALLIVORE,
         M2_HOSTILE | M2_STRONG, 0, CLR_RED),
+    MON("umber hulk", S_XORN,
+        LVL(9, 6, 2, 25, 0), (G_GENO | 2),
+        A(ATTK(AT_CLAW, AD_PHYS, 3, 4), ATTK(AT_CLAW, AD_PHYS, 3, 4),
+          ATTK(AT_BITE, AD_PHYS, 2, 5), ATTK(AT_GAZE, AD_CONF, 0, 0),
+          NO_ATTK, NO_ATTK),
+        SIZ(1200, 500, 0, MS_SILENT, MZ_LARGE), 0, 0, MRACE_NONE,
+        M1_TUNNEL | M1_CARNIVORE, M2_STRONG, M3_INFRAVISIBLE,
+        CLR_BROWN | HI_ULINE),
+    MON("ettin", S_XORN,
+        LVL(10, 12, 3, 0, 0), (G_GENO | 1),
+        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_WEAP, AD_PHYS, 3, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(1700, 500, 0, MS_GRUNT, MZ_HUGE), 0, 0, MRACE_NONE,
+        M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE,
+        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_COLLECT,
+        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BRIGHT_BLUE),
+    MON("deep ettin", S_XORN,
+        LVL(16, 12, -6, 50, 0), (G_GENO | G_SGROUP | 1),
+        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_WEAP, AD_PHYS, 3, 6),
+          ATTK(AT_MAGC, AD_SPEL, 0, 0), NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(1700, 500, 0, MS_GRUNT, MZ_HUGE), 0, 0, MRACE_FAIRY,
+        M1_TUNNEL | M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE,
+        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_COLLECT,
+        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_MAGENTA),
 /*
  * Apelike beasts
  */
