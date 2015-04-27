@@ -36,6 +36,14 @@ mb_trapped(struct monst *mtmp)
     return FALSE;
 }
 
+void
+mon_yells(struct monst *mon, enum msg_channel shout_msgc, const char *shout) {
+    if (canspotmon(mon))
+	pline(msgc_npcvoice, "%s yells:", Amonnam(mon));
+    else
+	You_hear(msgc_npcvoice, "someone yell:");
+    verbalize(shout_msgc, shout);
+}
 
 /* Called every turn by the Watch to see if they notice any misbehaviour.
    Currently this only handles occupations. (There are other behaviours

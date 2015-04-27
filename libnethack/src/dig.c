@@ -1174,7 +1174,8 @@ watch_warn(struct monst *mtmp, xchar x, xchar y, boolean zap)
 
             if (zap || mtmp->msuspicious) {
 
-                verbalize(msgc_npcanger, "Halt, vandal!  You're under arrest!");
+                mon_yells(mtmp, msgc_npcanger,
+                          "Halt, vandal!  You're under arrest!");
                 angry_guards(!canhear());
 
             } else {
@@ -1193,11 +1194,8 @@ watch_warn(struct monst *mtmp, xchar x, xchar y, boolean zap)
                 else
                     str = "architecture"; /* should be unreachable */
 
-                pline(msgc_npcvoice,
-                      "%s sees what you're doing, and yells at you.",
-                      Amonnam(mtmp));
-                verbalize(msgc_npcvoice, "Hey, stop messing with that %s!",
-                          str);
+                mon_yells(mtmp, msgc_levelwarning,
+                          msgprintf("Hey, stop messing with that %s!", str));
             }
             action_interrupted();
         }

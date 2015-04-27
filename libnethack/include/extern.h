@@ -1213,6 +1213,7 @@ extern void mon_regen(struct monst *, boolean);
 extern int dochugw(struct monst *);
 extern boolean onscary(int, int, struct monst *);
 extern void monflee(struct monst *, int, boolean, boolean);
+extern void mon_yells(struct monst *, enum msg_channel, const char *);
 extern boolean monster_would_take_item(struct monst *, struct obj *);
 extern int dochug(struct monst *);
 extern int m_move(struct monst *, int);

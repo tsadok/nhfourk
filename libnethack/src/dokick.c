@@ -1227,11 +1227,7 @@ dokick(const struct nh_cmd_arg *arg)
                 if ((mtmp->data == &mons[PM_WATCHMAN] ||
                      mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
                     couldsee(mtmp->mx, mtmp->my) && mtmp->mpeaceful) {
-                    if (canspotmon(mtmp))
-                        pline(msgc_npcvoice, "%s yells:", Amonnam(mtmp));
-                    else
-                        You_hear(msgc_npcvoice, "someone yell:");
-                    verbalize(msgc_npcanger,
+                    mon_yells(mtmp, msgc_npcanger,
                               "Halt, thief!  You're under arrest!");
                     angry_guards(FALSE);
                     break;
@@ -1254,11 +1250,11 @@ dokick(const struct nh_cmd_arg *arg)
                     else
                         You_hear(msgc_npcvoice, "someone yell:");
                     if (level->locations[x][y].looted & D_WARNED) {
-                        verbalize(msgc_npcanger,
+                        mon_yells(mtmp, msgc_npcanger,
                                   "Halt, vandal!  You're under arrest!");
                         angry_guards(FALSE);
                     } else {
-                        verbalize(msgc_levelwarning,
+                        mon_yells(mtmp, msgc_levelwarning,
                                   "Hey, stop damaging that door!");
                         level->locations[x][y].looted |= D_WARNED;
                     }
