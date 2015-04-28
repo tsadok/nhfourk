@@ -134,7 +134,7 @@ struct monst {
     unsigned mstun:1;   /* stunned (off balance) */
     unsigned mconf:1;   /* confused */
     unsigned mpeaceful:1;       /* does not attack unprovoked */
-    unsigned mtrapped:1;        /* trapped in a pit, web or bear trap */
+    unsigned mtrapped:1;        /* trapped in a pit, web, bear trap, etc. */
 
     unsigned mleashed:1;        /* monster is on a leash */
     unsigned msuspicious:1;     /* monster is suspicious of the player */

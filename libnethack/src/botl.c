@@ -30,6 +30,7 @@ static const char *const trap_stat[] = {
     "Web",
     "Lava",
     "Infloor",
+    "IceB",
 };
 
 

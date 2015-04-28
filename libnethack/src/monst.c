@@ -2606,7 +2606,7 @@ const struct permonst mons[] = {
         M3_INFRAVISIBLE | M3_INFRAVISION, CLR_GRAY | HI_ULINE),
     MON("ice devil", S_DEMON,
         LVL(11, 6, -4, 55, -12), (G_HELL | G_NOCORPSE | 2),
-        A(ATTK(AT_CLAW, AD_PHYS, 1, 4), ATTK(AT_CLAW, AD_PHYS, 1, 4),
+        A(ATTK(AT_CLAW, AD_PHYS, 1, 4), ATTK(AT_CLAW, AD_ICEB, 1, 4),
           ATTK(AT_BITE, AD_PHYS, 2, 4), ATTK(AT_STNG, AD_COLD, 3, 4),
           NO_ATTK, NO_ATTK),
         SIZ(WT_HUMAN, 400, 0, MS_SILENT, MZ_LARGE),

@@ -555,10 +555,12 @@ polymon(int mntmp, boolean noisy)
          (is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy))) ||
         (Underwater && !Swimming))
         spoteffects(TRUE);
-    if (Passes_walls && u.utrap && u.utraptype == TT_INFLOOR) {
+    if (Passes_walls && u.utrap && (u.utraptype == TT_INFLOOR ||
+                                    u.utraptype == TT_ICEBLOCK)) {
         u.utrap = 0;
         if (noisy)
-            pline("The rock seems to no longer trap you.");
+            pline("The %s seems to no longer trap you.",
+                  u.utraptype == TT_ICEBLOCK ? "ice" : "rock");
     } else if (likes_lava(youmonst.data) && u.utrap && u.utraptype == TT_LAVA) {
         u.utrap = 0;
         if (noisy)

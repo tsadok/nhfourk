@@ -130,6 +130,7 @@ static const struct {
       { "Held", CLR_RED, -1 },
       { "Pit", CLR_RED, -1 },
       { "Bear", CLR_RED, -1 },
+      { "IceB", CLR_RED, -1 },
       { "Web", CLR_RED, -1 },
       { "Infloor", CLR_RED, -1 },
       { "Lava", CLR_BRIGHT_MAGENTA, CLR_BRIGHT_MAGENTA },

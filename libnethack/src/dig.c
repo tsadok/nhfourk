@@ -511,6 +511,8 @@ digactualhole(int x, int y, struct monst *madeby, int ttyp)
     if (u.utrap && u.utraptype == TT_INFLOOR)
         u.utrap = 0;
 
+    remove_iceblock(u.ux, u.uy, "collapses in a pile of melting chunks.");
+
     /* these furniture checks were in dighole(), but wand breaking bypasses
        that routine and calls us directly */
     if (IS_FOUNTAIN(loc->typ)) {
