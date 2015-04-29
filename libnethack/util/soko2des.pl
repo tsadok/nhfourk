@@ -10,13 +10,14 @@ my $outfile = "s2dout.des";
 open IN,  "<", $infile  or die "Cannot read input ($infile): $!\n";
 open OUT, ">", $outfile or die "Cannot write output ($outfile): $!\n";
 
-my (@pos, @stair, @door, @boulder, @pit, @scroll, @mimic);
+my (@pos, @stair, @door, @boulder, @pit, @scroll, @mimic, %count);
 my ($x, $y, $maxx, $maxy) = (0, 0, 0, 0);
 
 for my $line (<IN>) {
   chomp $line;
   $x = 0;
   for my $chr (split //, $line) {
+    $count{$chr}++;
     if ($chr eq '0') {
       push @boulder, [$x, $y];
       $chr = '.';
@@ -124,3 +125,11 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 ];
+
+
+print "
+Character Counts:
+=================
+" . (join "\n", map {
+  sprintf " %4d  '$_'", $count{$_}
+} sort { $count{$b} <=> $count{$a} } keys %count) . "\n\n";
