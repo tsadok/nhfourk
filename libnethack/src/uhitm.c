@@ -214,6 +214,10 @@ check_caitiff(struct monst *mtmp)
     }
 }
 
+/* This function is named a bit strangely, but the actual deal is, if the value
+   it returns is greater than the d20 roll, you hit.  So higher values here make
+   it easier to hit, and lower values make it harder.  19 or higher means you
+   always hit, and 0 or lower means you always miss. */
 schar
 find_roll_to_hit(struct monst *mtmp)
 {
@@ -238,7 +242,7 @@ find_roll_to_hit(struct monst *mtmp)
             + (((luckpluslevel >= 1) ? ilog2(luckpluslevel)
                                      : (-1 * ilog2(1 - luckpluslevel))) / 512);
     /*
-      Analysis:  1 + (-5 to +26) + (+10 to -10, minus armor) + +0 + ((0-5556)/512)
+      Analysis:  1 + (-5 to +12) + (+10 to -10, minus armor) + +0 + ((0-5556)/512)
            (Then below we can adjust by numbers like 2 or 4 for things like
             encumbrance or the monster having status effects.)
            (Then the various weapon and skill to-hit boni are added.)
@@ -247,7 +251,7 @@ find_roll_to_hit(struct monst *mtmp)
       abon() is normally the strength bonus plus the dex bonus
             strength bonus ranges from -2 (str < 6) to +3
             dex bonus ranges from -3 (dex < 6) to (dex - 14) at the high end.
-            So an abon of -5 is horrible, 26 is crazy awesome.
+            So an abon of -5 is horrible; +12 is pretty good.
          However, if you are polyselfed, abon() is calculated by adj_lev()
 
       find_mac(mtmp) starts from mtmp->data->ac()
@@ -352,8 +356,8 @@ find_roll_to_hit(struct monst *mtmp)
    It is therefore wrong to add hitval to tmp; we must add it only for the
    specific attack (in hmonas()). */
     if (!Upolyd) {
-        tmp += 2 * hitval(uwep, mtmp);
-        tmp += 3 * weapon_hit_bonus(uwep); /* picks up bare-handed bonus */
+        tmp += hitval(uwep, mtmp);
+        tmp += 2 * weapon_hit_bonus(uwep); /* picks up bare-handed bonus */
     }
     return tmp;
 }

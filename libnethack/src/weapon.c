@@ -1309,6 +1309,7 @@ weapon_hit_bonus(struct obj *weapon)
             impossible(bad_skill, P_SKILL(type));       /* fall through */
         case P_ISRESTRICTED:
             bonus = -6;
+            break;
         case P_UNSKILLED:
             bonus = -4;
             break;
@@ -1321,6 +1322,21 @@ weapon_hit_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 5;
             break;
+        }
+        switch (P_MAX_SKILL(type)) {
+            /* Note fall-through at every step, e.g. 2+2+2 = 6 for P_EXPERT. */
+        default:
+        case P_EXPERT:
+            bonus += 2;
+        case P_SKILLED:
+            bonus += 2;
+        case P_BASIC:
+            bonus += 2;
+        /* case P_NONE: the compiler won't allow this because after
+                        preprocessing it becomes a duplicate case value */
+        case P_ISRESTRICTED:
+        case P_UNSKILLED:
+            ;
         }
     } else if (type == P_TWO_WEAPON_COMBAT) {
         skill = P_SKILL(P_TWO_WEAPON_COMBAT);
