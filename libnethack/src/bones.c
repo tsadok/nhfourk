@@ -24,6 +24,12 @@ make_bones_id(char *buf, d_level * dlev)
     else
         sprintf(buf + 2, ".%d", dlev->dlevel);
 
+    sprintf(buf + 4, ".%s%x",
+            flags.debug ? "W" : flags.explore ? "X" :
+            *flags.setseed ? "S" :
+            (flags.polyinit_mnum != -1) ? "P" : "N",
+            (unsigned int) (u.ubirthday % 16));
+
     return buf;
 }
 
@@ -208,11 +214,6 @@ can_make_bones(d_level *lev)
         return FALSE;
     /* don't let multiple restarts generate multiple copies of objects in bones 
        files */
-    if (discover)
-        return FALSE;
-    /* don't drop multiple bones files from the same dungeon */
-    if (*flags.setseed)
-        return FALSE;
     return TRUE;
 }
 
@@ -226,7 +227,7 @@ savebones(struct obj *corpse, boolean take_items)
     struct monst *mtmp;
     const struct permonst *mptr;
     struct fruit *f;
-    char c, bonesid[10];
+    char c, bonesid[13];
     struct memfile mf;
     struct obj *statue = 0;
     uchar cnamelth = 0, snamelth = 0;
@@ -329,6 +330,13 @@ make_bones:
         mtmp->mhp = mtmp->mhpmax = u.uhpmax;
         mtmp->female = u.ufemale;
         mtmp->msleeping = 1;
+#ifdef LIVELOG_BONES_KILLER
+        mtmp->former_player = 1 + /* Guarantee former_player > 0 */
+            (2 * u.initgend    /*   2 * (0-2) = 0-4 */) +
+            (8   * u.initalign /*   8 * (0-3) = 0-24 */) +
+            (32  * u.initrace  /*  32 * (0-4) = 0-128, but leave room */) +
+            (256 * u.initrole);
+#endif
     }
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         resetobjs(mtmp->minvent, FALSE);
@@ -396,7 +404,7 @@ int
 getbones(d_level *levnum)
 {
     int ok;
-    char c, bonesid[10], oldbonesid[10];
+    char c, bonesid[13], oldbonesid[13];
     struct memfile mf;
     boolean from_file = FALSE;
     char *bonesfn = NULL;

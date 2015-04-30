@@ -260,6 +260,9 @@ extern void bury_objs(struct level *, int, int);
 extern void unearth_objs(struct level *lev, int x, int y);
 extern void rot_organic(void *, long);
 extern void rot_corpse(void *, long);
+extern void pit_under_player(int);
+extern void pit_under_monster(struct monst *, int, boolean);
+extern void do_pit_attack(struct level *, struct monst *, struct monst *);
 
 /* ### display.c ### */
 
@@ -661,12 +664,13 @@ extern int dofight(const struct nh_cmd_arg *);
 /* ### history.c ### */
 
 extern int dohistory(const struct nh_cmd_arg *);
-extern void historic_event(boolean hidden, const char *fmt, ...)
-    PRINTFLIKE(2,3);
+extern void historic_event(boolean hidden, boolean dolivelog, const char *fmt, ...)
+    PRINTFLIKE(3,4);
 extern void save_history(struct memfile *mf);
 extern void restore_history(struct memfile *mf);
 extern void free_history(void);
 extern const char *hist_lev_name(const d_level * l, boolean in_or_on);
+extern unsigned int historysearch(const char *substring, boolean hiddenok);
 
 /* ### invent.c ### */
 
@@ -985,7 +989,7 @@ extern void remove_rooms(struct level *lev, int lx, int ly, int hx, int hy);
 /* ### mkmaze.c ### */
 
 extern void wallification(struct level *lev, int x1, int y1, int x2, int y2);
-extern void walkfrom(struct level *lev, int, int);
+extern void walkfrom(struct level *lev, int, int, int, int);
 extern void makemaz(struct level *lev, const char *);
 extern void mazexy(struct level *lev, coord * cc);
 extern void bound_digging(struct level *lev);
@@ -1858,6 +1862,7 @@ extern void do_clear_area(int, int, int, void (*)(int, int, void *), void *);
 /* ### weapon.c ### */
 
 extern boolean can_advance(int, boolean);
+extern const char *weapon_descr(struct obj *);
 extern int hitval(struct obj *, struct monst *);
 extern int dmgval(struct obj *, struct monst *);
 extern struct obj *select_rwep(const struct monst *);
@@ -2039,6 +2044,10 @@ extern void set_candles_afire(void);
 extern int destroy_mitem(struct monst *, int, int);
 extern int resist(struct monst *, char, int, int);
 extern void makewish(void);
+
+/* ### livelog.c ### */
+extern void livelog_write_event(const char *);
+extern void livelog_unique_monster(const struct monst *);
 
 #endif /* EXTERN_H */
 

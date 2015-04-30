@@ -16,6 +16,7 @@ static schar fillholetyp(int, int);
 static void dig_up_grave(void);
 static boolean dighole(boolean);
 static struct obj *bury_an_obj(struct obj *);
+static void no_pit_message(struct monst *, struct monst *);
 
 /* Indices returned by dig_typ() */
 #define DIGTYP_UNDIGGABLE 0
@@ -1475,6 +1476,210 @@ rot_corpse(void *arg, long timeout)
         newsym(x, y);
     else if (in_invent)
         update_inventory();
+}
+
+/* Called when a new pit is created under the player. */
+void
+pit_under_player(int typ)
+{
+    if (Levitation || Flying || is_clinger(youmonst.data)) {
+        pline("A chasm opens up under you!");
+        pline("You don't fall in!");
+    } else {
+        pline("You fall into a chasm!");
+        if (typ == HOLE) {
+            fall_through(TRUE);
+        } else {
+            u.utrap = rn1(6, 2);
+            u.utraptype = TT_PIT;
+            turnstate.vision_full_recalc = TRUE;
+            losehp(rnd(6), "fell into a chasm");
+            selftouch("Falling, you",
+                      "falling into a chasm while wielding");
+        }
+    }
+}
+
+/* Called when a new pit is created under a monster. */
+void
+pit_under_monster(struct monst *mtmp, int typ, boolean blameplayer)
+{
+    if (mtmp == &youmonst) {
+        pit_under_player(typ);
+        return;
+    }
+    if (!is_flyer(mtmp->data) && !is_clinger(mtmp->data)) {
+        mtmp->mtrapped = 1;
+        if (cansee(mtmp->mx, mtmp->my))
+            pline("%s falls into a chasm!", Monnam(mtmp));
+        else if (humanoid(mtmp->data))
+            You_hear("a scream!");
+
+        if (typ == HOLE)
+            mlevel_tele_trap(mtmp, t_at(level, mtmp->mx, mtmp->my),
+                             FALSE, cansee(mtmp->mx, mtmp->my));
+        else {
+            mselftouch(mtmp, "Falling, ", TRUE);
+            if (mtmp->mhp > 0)
+                if ((mtmp->mhp -= rnd(6)) <= 0) {
+                    if (!cansee(mtmp->mx, mtmp->my))
+                        pline("It is destroyed!");
+                    else if (!blameplayer)
+                        pline("%s is destroyed", Monnam(mtmp));
+                    else {
+                        pline("You destroy %s!",
+                              mtmp->mtame ?
+                              x_monnam(mtmp, ARTICLE_THE,
+                                       "poor", mtmp->mnamelth ?
+                                       SUPPRESS_SADDLE : 0,
+                                       FALSE) : mon_nam(mtmp));
+                    }
+                    if (blameplayer)
+                        xkilled(mtmp, 0);
+                }
+        }
+    }
+}
+
+void
+no_pit_message(struct monst *magr, struct monst *mdef)
+{
+    if (magr == &youmonst)
+        pline("The %s near %s is inhospitable, the epitome of hardness.",
+              surface(m_mx(mdef), m_my(mdef)),
+              mon_nam(mdef));
+    else
+        pline("%s %s %s.", Monnam(magr),
+              (m_cansee(magr, m_mx(mdef), m_my(mdef)) ?
+               "looks piteously at" :
+               mindless(magr->data) ? "capitulates to" :
+               "thinks piteously about"),
+              (mdef == &youmonst) ? "you" : mon_nam(mdef));
+}
+
+/* I'm designing this function so that it can be called more or less identically
+   for the mhitu, mhitm, and uhitm cases.  The defender's tile always gets a pit
+   unless it's an immune tile (certain terrains, dungeon features, and trap
+   types are immune, and undiggable floor of course).  The attacker's tile never
+   gets a pit unless it is also the defender's tile (which however may be
+   possible in the case of an engulfed player pit fiend).  Other tiles in the
+   vicinity may get pits or not. */
+void
+do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
+{
+    struct monst *mtmp; /* monster at target location */
+    struct obj   *otmp; /* object, likewise */
+    struct trap  *chasm, *oldtrap; /* chasm is a new one, oldtrap extant */
+    int x, y, i, tries, newtyp;
+    int pcount = rne(2);
+    boolean growlarger = FALSE;
+
+    if (!can_dig_down(lev)) {
+        no_pit_message(magr, mdef);
+        return;
+    }
+    
+    for (i = 0; i < pcount; i++) {
+        tries = 0;
+        if (i==0) {
+            x = m_mx(mdef);
+            y = m_my(mdef);
+        } else {
+            do {
+                x = m_mx(mdef) + (rn2(2) ? -1 : 1) * (rne(2)-1);
+                y = m_my(mdef) + (rn2(2) ? -1 : 1) * (rne(2)-1);
+            } while ((!isok(x, y) ||
+                      ((x == m_mx(magr)) && (y == m_my(magr))) ||
+                      ((x == m_mx(mdef)) && (y == m_my(mdef))) ||
+                      !((lev->locations[x][y].typ == ROOM)  ||
+                        (lev->locations[x][y].typ == DOOR)  ||
+                        (lev->locations[x][y].typ == GRAVE) ||
+                        (lev->locations[x][y].typ == CORR)  ||
+                        (lev->locations[x][y].typ == SCORR) ||
+                        (lev->locations[x][y].typ == ICE))) && 
+                     (tries++ < 25));
+        }
+        if (tries >= 25) {
+            no_pit_message(magr, mdef);
+            return;
+        } else if (isok(x, y)) {
+            oldtrap = t_at(lev, x, y);
+            if (oldtrap && ((oldtrap->ttyp == PIT) ||
+                            (oldtrap->ttyp == SPIKED_PIT))) {
+                growlarger = TRUE;
+                newtyp     = HOLE;
+            } else {
+                switch (rn2(6)) {
+                case 1:
+                case 2:
+                    newtyp = SPIKED_PIT;
+                case 3:
+                    newtyp = HOLE;
+                default:
+                    newtyp = PIT;
+                }
+            }
+            /* Some types of traps should not be converted to pits. */
+            if (oldtrap &&
+                ((oldtrap->ttyp == MAGIC_PORTAL) ||
+                 (oldtrap->ttyp == VIBRATING_SQUARE))) {
+                no_pit_message(magr, mdef);
+                return;
+            } else if (oldtrap && (newtyp != HOLE) &&
+                       ((oldtrap->ttyp == PIT) ||
+                        (oldtrap->ttyp == SPIKED_PIT) ||
+                        (oldtrap->ttyp == HOLE))) {
+                mtmp = m_at(lev, x, y);
+                if (cansee(x, y))
+                    pline("The chasm%s seems to grow larger.",
+                          ((x == u.ux) && (y == u.uy)) ? " below you" :
+                          mtmp ? msgprintf(" below %s", mon_nam(mtmp)) : "");
+            } else {
+                mtmp = m_at(lev, x, y);
+                if (mtmp)
+                    mtmp->msleeping = 0;
+                /* When a drum of earthquake wakes monsters, it also unhides
+                   mimics and other hiders.  I prefer not to do that here
+                   but need to test whether not doing so causes problems. */
+                if (oldtrap && (oldtrap->ttyp == BEAR_TRAP)) {
+                    if (mtmp)
+                        mtmp->mtrapped = 0;
+                    cnv_trap_obj(lev, BEARTRAP, 1, oldtrap);
+                }
+                chasm = maketrap(lev, x, y, newtyp, rng_main);
+                if (chasm && cansee(x, y))
+                    chasm->tseen = 1;
+                otmp = sobj_at(BOULDER, lev, x, y);
+                if (otmp) {
+                    if (cansee(x, y))
+                        pline("KADOOM! The boulder falls into a chasm%s!",
+                              ((x == u.ux) &&
+                               (y == u.uy)) ? " below you" : "");
+                    if (mtmp)
+                        mtmp->mtrapped = 0;
+                    obj_extract_self(otmp);
+                    flooreffects(otmp, x, y, "");
+                }
+                /* If the new pit /hasn't/ just been filled by a boulder,
+                   someone might fall into it. */
+                chasm = t_at(lev, x, y);
+                if (chasm) {
+                    if (magr == &youmonst) {
+                        chasm->madeby_u = 1;
+                    }
+                    if (mtmp && !(mtmp == &youmonst)) {
+                        pit_under_monster(mtmp, newtyp, (magr == &youmonst));
+                    } else if (!u.utrap && x == u.ux && y == u.uy) {
+                        pit_under_player(newtyp);
+                    } else if (cansee(x,y))
+                        pline("A chasm %s in the %s.",
+                              (growlarger ? "widens" : "opens"),
+                              surface(x, y));
+                    newsym(x, y);
+                }
+            }
+        }
+    }
 }
 
 /*dig.c*/

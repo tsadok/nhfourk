@@ -947,7 +947,7 @@ you_moved(void)
             invault();
             if (Uhave_amulet)
                 amulet();
-            if (!rn2(40 + (int)(ACURR(A_DEX) * 3)))
+            if (!rn2(500 + (int)(ACURR(A_DEX) * 50)))
                 u_wipe_engr(rnd(3));
             if (u.uevent.udemigod && !u.uinvulnerable) {
                 if (u.udg_cnt)
@@ -1459,7 +1459,7 @@ newgame(microseconds birthday)
     /* Stop autoexplore revisiting the entrance stairs (or position). */
     level->locations[u.ux][u.uy].mem_stepped = 1;
 
-    historic_event(FALSE,
+    historic_event(FALSE, FALSE,
                    "entered the Dungeons of Doom to retrieve the Amulet of "
                    "Yendor!");
 

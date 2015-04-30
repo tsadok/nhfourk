@@ -41,7 +41,7 @@ dohistory(const struct nh_cmd_arg *arg)
 
 
 void
-historic_event(boolean hidden, const char *fmt, ...)
+historic_event(boolean hidden, boolean dolivelog, const char *fmt, ...)
 {
     const char *hbuf;
     va_list vargs;
@@ -49,6 +49,10 @@ historic_event(boolean hidden, const char *fmt, ...)
     va_start(vargs, fmt);
     hbuf = msgvprintf(fmt, vargs, TRUE);
     va_end(vargs);
+
+    if (dolivelog) {
+        livelog_write_event(msgprintf("historic_event=%s", hbuf));
+    }
 
     histevents =
         realloc(histevents, (histcount + 1) * sizeof (struct histevent));
@@ -145,6 +149,21 @@ hist_lev_name(const d_level * l, boolean in_or_on)
         hlnbuf += 3;
 
     return hlnbuf;
+}
+
+/* Find the first matching event in your game history, if any.
+   Returns a turn count if one is found, zero otherwise. */
+unsigned int
+historysearch(const char *substring, boolean hiddenok)
+{
+    int i;
+    for (i = 0; i < histcount; i++) {
+        if (hiddenok || !histevents[i].hidden) {
+            if (!strcmp(histevents[i].what, substring))
+                return histevents[i].when;
+        }
+    }
+    return 0;
 }
 
 /* history.c */

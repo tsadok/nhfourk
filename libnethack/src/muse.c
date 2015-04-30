@@ -1733,6 +1733,10 @@ use_misc(struct monst *mtmp, struct musable *m)
             else if (tp_sensemon(mtmp))
                 pline("%s disappears, but you can still %s.", nambuf,
                       Hallucination ? "see its aura" : "sense its thoughts");
+            else if (canspotmon(mtmp)) /* e.g. the orc/Sting case */
+                pline("%s %s %s.", s_suffix(nambuf), mbodypart(mtmp, BODY),
+                      Hallucination ? "is totally psychedelic" :
+                      "seems to lose its definition");
             else
                 pline("Suddenly you cannot see %s.", nambuf);
             if (oseen)
@@ -1816,9 +1820,11 @@ use_misc(struct monst *mtmp, struct musable *m)
             }
             pline("%s wraps around %s you're wielding!", The_whip, the_weapon);
             if (welded(obj)) {
-                pline("%s welded to your %s%c",
-                      !is_plural(obj) ? "It is" : "They are", hand,
-                      !obj->bknown ? '!' : '.');
+                pline("%s %s your %s%c",
+                      !is_plural(obj) ? "It is" : "They are",
+                      (objects[obj->otyp].oc_material == WOOD) ?
+                      "grown right into" : "welded to",
+                      hand, !obj->bknown ? '!' : '.');
                 /* obj->bknown = 1; *//* welded() takes care of this */
                 where_to = 0;
             }
@@ -1827,8 +1833,8 @@ use_misc(struct monst *mtmp, struct musable *m)
                 pline("%s becomes entangled in %s leash.", The_whip,
                       (pet ? mhis(pet) : "your"));
                 yelp(pet);
-                obj_extract_self(otmp);
                 setmnotwielded(mtmp, otmp);
+                obj_extract_self(otmp);
                 MON_NOWEP(mtmp);
                 otmp->owornmask = 0L;
                 pline("%s tugs away from %s.", The_whip,

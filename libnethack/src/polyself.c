@@ -745,6 +745,8 @@ drop_weapon(int alone, boolean noisy)
 {
     struct obj *otmp;
     struct obj *otmp2;
+    const char *what, *which, *whichtoo;
+    boolean candropwep, candropswapwep;
 
     if ((otmp = uwep) != 0) {
         /* !alone check below is currently superfluous but in the future it
@@ -752,19 +754,34 @@ drop_weapon(int alone, boolean noisy)
            can wield weapons */
         if (!alone || cantwield(youmonst.data)) {
             struct obj *wep = uwep;
+            candropwep =  canletgo(wep, "");
+            candropswapwep = u.twoweap ? canletgo(uswapwep, "") : TRUE;
+            /* If you're not wielding two weapons, candropswapweap
+               is set to TRUE so you get the "drop" wording, since
+               you are dropping your only wielded item if candropwep */
 
-            if (alone && noisy)
-                pline("You find you must drop your weapon%s!",
-                      u.twoweap ? "s" : "");
+            if (alone && noisy) {
+                what = (candropwep && candropswapwep) ? "drop" : "release";
+                which = is_sword(uwep) ? "sword" : weapon_descr(uwep);
+                if (u.twoweap) {
+                    whichtoo = is_sword(uswapwep) ? "sword" :
+                        weapon_descr(uswapwep);
+                    if (strcmp(which, whichtoo))
+                        which = "weapon";
+                }
+                if (uwep->quan != 1L || u.twoweap)
+                    which = makeplural(which);
+                
+                pline("You find you must %s %s %s!", what,
+                      the_your[!!strncmp(which, "corpse", 6)], which);
+            }
             otmp2 = u.twoweap ? uswapwep : 0;
             uwepgone();
-            if ((!wep->cursed || wep->otyp != LOADSTONE) &&
-                (wep->otyp != LEASH || wep->leashmon == 0))
+            if (candropwep)
                 dropx(otmp);
             if (otmp2 != 0) {
                 uswapwepgone();
-                if ((!otmp2->cursed || otmp2->otyp != LOADSTONE) &&
-                    (otmp2->otyp != LEASH || otmp2->leashmon == 0))
+                if (candropswapwep)
                     dropx(otmp2);
             }
             untwoweapon();

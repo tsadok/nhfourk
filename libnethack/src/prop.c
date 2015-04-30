@@ -7,6 +7,7 @@
 
 #include "hack.h"
 #include "mfndpos.h"
+#include "alignrec.h"
 
 /* This file is responsible for determining whether the character has intrinsics
    and extrinsics, because it was previously done with a bunch of macros, which
@@ -454,23 +455,23 @@ enlightenment(int final)
     }
 
     /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
-    if (u.ualign.record >= 20)
+    if (u.ualign.record >= PIOUS)
         you_are(&menu, "piously aligned");
-    else if (u.ualign.record > 13)
+    else if (u.ualign.record >= DEVOUT)
         you_are(&menu, "devoutly aligned");
-    else if (u.ualign.record > 8)
+    else if (u.ualign.record >= FERVENT)
         you_are(&menu, "fervently aligned");
-    else if (u.ualign.record > 3)
+    else if (u.ualign.record >= STRIDENT)
         you_are(&menu, "stridently aligned");
-    else if (u.ualign.record == 3)
+    else if (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE)
         you_are(&menu, "aligned");
-    else if (u.ualign.record > 0)
+    else if (u.ualign.record >= HALTINGLY)
         you_are(&menu, "haltingly aligned");
-    else if (u.ualign.record == 0)
+    else if (u.ualign.record >= NOMINALLY)
         you_are(&menu, "nominally aligned");
-    else if (u.ualign.record >= -3)
+    else if (u.ualign.record >= STRAYED)
         you_have(&menu, "strayed");
-    else if (u.ualign.record >= -8)
+    else if (u.ualign.record >= SINNED)
         you_have(&menu, "sinned");
     else
         you_have(&menu, "transgressed");
@@ -884,7 +885,7 @@ unspoilered_intrinsics(void)
 void
 show_conduct(int final)
 {
-    int ngenocided;
+    int ngenocided, guilt, sokodone;
     struct nh_menulist menu;
     const char *buf;
 
@@ -978,6 +979,23 @@ show_conduct(int final)
                         u.uconduct_time[conduct_polyself]);
         you_have_X(&menu, buf);
     }
+
+    guilt = u.uconduct[conduct_sokoban_guilt];
+    sokodone = historysearch("entered the Sokoban zoo.", TRUE);
+    if (sokodone) {
+        if (guilt)
+            enl_msg(&menu, You_, "have cheated", "cheated",
+                    msgprintf(" %d time%s but completed Sokoban on turn %d",
+                              guilt, ((guilt > 1) ? "s" : ""), sokodone));
+        else
+            enl_msg(&menu, You_, "have completed", "completed",
+                    msgprintf(" Sokoban on turn %d, according to the rules",
+                              sokodone));
+    } else if (guilt) {
+        enl_msg(&menu, You_, "have cheated", "cheated",
+                msgprintf(" in Sokoban %d time%s, without finishing",
+                          guilt, (guilt > 1) ? "s" : ""));
+    } /* No message if you neither cheated nor completed. */
 
     if (!u.uconduct[conduct_wish])
         you_have_X(&menu, "used no wishes");

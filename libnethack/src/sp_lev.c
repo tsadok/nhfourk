@@ -2236,6 +2236,9 @@ load_maze(struct level *lev, dlb * fd)
                         lev->locations[x][y].horizontal = 1;
                     else if (lev->locations[x][y].typ == LAVAPOOL)
                         lev->locations[x][y].lit = 1;
+                    else if (lev->locations[x][y].typ == ICE)
+                        lev->locations[x][y].icedpool =
+                            init_lev.icedpools ? ICED_POOL : ICED_MOAT;
                     else if (lev->locations[x][y].typ == CROSSWALL)
                         has_bounds = TRUE;
                     Map[x][y] = 1;
@@ -2607,7 +2610,7 @@ load_maze(struct level *lev, dlb * fd)
                 y--;
         }
 
-        walkfrom(lev, x, y);
+        walkfrom(lev, x, y, x_maze_max, y_maze_max);
     }
     wallification(lev, 0, 0, COLNO - 1, ROWNO - 1);
 

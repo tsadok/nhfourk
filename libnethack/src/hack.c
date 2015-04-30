@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-04-05 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1177,8 +1177,6 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
             return dodown(uim);
     }
 
-    u_wipe_engr(rnd(5));
-
     /* Don't allow running, travel or autoexplore when stunned or confused. */
     if (Stunned || Confusion) {
         const char *stop_which = NULL;
@@ -1508,7 +1506,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 pline("You stop.  %s is in the way!",
                       msgupcasefirst(y_monnam(mtmp)));
                 action_completed();
-                return 0;
+                return 1;
             } else if ((mtmp->mfrozen || (!mtmp->mcanmove)
                         || (mtmp->data->mmove == 0)) && rn2(6)) {
                 pline("%s doesn't seem to move!", Monnam(mtmp));
@@ -2314,6 +2312,10 @@ check_special_room(boolean newlev)
         switch (rt) {
         case ZOO:
             pline("Welcome to David's treasure zoo!");
+            if (In_sokoban(&u.uz) &&
+                !historysearch("entered the Sokoban zoo.", TRUE)) {
+                historic_event(FALSE, TRUE, "entered the Sokoban zoo.");
+            }
             break;
         case SWAMP:
             pline("It %s rather %s down here.", Blind ? "feels" : "looks",

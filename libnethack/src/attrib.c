@@ -7,6 +7,7 @@
 
 #include "hack.h"
 #include "hungerstatus.h"
+#include "alignrec.h"
 
 /* #define DEBUG *//* uncomment for debugging info */
 
@@ -270,20 +271,27 @@ change_luck(schar n)
 void
 sokoban_guilt(void)
 {
-    if (!In_sokoban(&u.uz)) return; /* Penalty only applies in Sokoban. */
+    if (!In_sokoban(&u.uz)) return; /* Guilt only applies in Sokoban. */
+    if (historysearch("entered the Sokoban zoo.", TRUE))
+        return; /* Once you've solved the puzzle, guilt no longer applies. */
+
+    break_conduct(conduct_sokoban_guilt); /* Keep track even if no penalty. */
+
     if (u.moreluck > 0)     return; /* Non-cursed luckstone protects you. */
     if (Luck <= -3)         return; /* That's bad enough already. */
-    /* TODO: no penalty if the level's puzzle is solved already. */
 
     if (Hallucination) {
         pline("Avalanche!");
         mksobj_at(BOULDER, level, u.ux, u.uy, TRUE, FALSE, rng_main);
-        losehp(rnd(12), "crushed by a hallucinatory boulder");
-        /* No luck penalty in this case. */
+        if (uarmh && is_metallic(uarmh)) {
+            losehp(rnd(4), "crushed by a hallucinatory boulder, despite wearing a hard helmet.");
+        } else {
+            losehp(rnd(12), "crushed by a hallucinatory boulder");
+        }
+        /* No luck penalty if you get the hallucinatory boulder. */
         return;
-    } else if (flags.verbose)
-        pline("You feel like a cheater.");
-
+    }
+    pline("You feel like a cheater.");
     change_luck(-1);
 }
 
@@ -863,6 +871,11 @@ adjalign(int n)
 {
     int cnt; /* for loop initial declarations are only allowed in C99 mode */
     int newalign = u.ualign.record + n;
+    int minalign = 0 - ALIGNLIM - 20;
+    if (newalign > ALIGNLIM)
+        newalign = ALIGNLIM;
+    if (newalign < minalign)
+        newalign = minalign;
 
     if (n < 0) {
         if (newalign < u.ualign.record) {
@@ -870,11 +883,33 @@ adjalign(int n)
                 break_conduct(conduct_lostalign);
             }
             u.ualign.record = newalign;
+            if (u.ualign.record < SEARED_CONSCIENCE) {
+                /* No warning -- your conscience no longer works. */
+            } else if (u.ualign.record < SINNED) {
+                pline("Your transgressions are more than you can bear to think about.");
+            } else if (u.ualign.record < STRAYED) {
+                pline("You worry that your sins will catch up with you.");
+            } else if (u.ualign.record < HALTINGLY) {
+                pline("Your conscience bothers you, but you dismiss it.");
+            } else if (u.ualign.record < FERVENT) {
+                pline("Your conscience bothers you.");
+            } else if (u.ualign.record < PIOUS) {
+                pline("You hesitate for a moment, bothered by your conscience.");
+            }
         }
     } else if (newalign > u.ualign.record) {
         u.ualign.record = newalign;
-        if (u.ualign.record > ALIGNLIM)
-            u.ualign.record = ALIGNLIM;
+        if (u.uconduct[conduct_lostalign]) {
+            if (u.ualign.record < SINNED) {
+                /* No message -- let 'em sweat a bit. */
+            } else if (u.ualign.record < NOMINALLY) {
+                pline("Your conscience bothers you just a little less.");
+            } else if (u.ualign.record < PIOUS) {
+                pline("Your conscience bothers you a little less.");
+            } else if (u.ualign.record == PIOUS) {
+                pline("Your conscience is assuaged.");
+            }
+        }
     }
 }
 

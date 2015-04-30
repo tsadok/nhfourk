@@ -44,6 +44,34 @@ categories:
 
 Chronological Changelog (most recent at top):
 =============================================
+=============================================
+
+
+Changes in 4.3.0.1:
+-------------------
+
+ * Shamelessly copied the multiple-bones-pools implementation from
+   NAO, then enhanced it to keep separate pools for each game mode
+   (normal, explore, wizmode, setseed, polyinit).
+
+ * Some monsters have been given more interesting attacks.  Notably,
+   pit fiends now have an attack that creates pits.
+
+ * Fixing status ailments with a unicorn horn is now mostly free; the
+   only penalty is that a blessed horn can become uncursed.  Blessed
+   horns are now guaranteed to fix at least one trouble (assuming you
+   have any they can fix).  However, restoring lost attributes with a
+   unicorn horn now always degrades its enchantment.
+
+ * When you lose alignment points, you now get warning messages
+   about it.  You also get messages when you regain alignment.
+
+ * Engraving Elbereth no longer exercises wisdom.
+
+ * Engravings are no longer degraded by walking, and the probability
+   that random actions or inactions (including resting, searching)
+   will erode an engraving is greatly reduced.  However, engraving
+   additional text degrades what is already there.
 
  * Cavemen have had their race and alignment options adjusted.
 
@@ -298,12 +326,8 @@ Chronological Changelog (most recent at top):
    get used to the new colors for these monsters now.
 
  * Unicorn horns are now a technically finite resource (unless you can
-   cast cancellation).  What happens is, applying a non-cursed unicorn
-   horn when you have a problem it can fix has a 33% chance of
-   reducing its enchantment by one point, unless it is already at or
-   below -3, in which case it is simply destroyed without providing
-   any benefit.  Cursed unicorn horns and the "Nothing happens" case
-   are unchanged.
+   cast cancellation).  Cursed unicorn horns and the "Nothing happens"
+   case are unchanged.
 
  * The formula for the player's odds of hitting monsters has been
    adjusted significantly.  Luck and experience level are now only

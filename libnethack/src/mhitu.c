@@ -1412,6 +1412,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             }
         }
         break;
+    case AD_PITS:
+        do_pit_attack(level, &youmonst, mtmp);
+        break;
     default:
         dmg = 0;
         break;

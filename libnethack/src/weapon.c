@@ -95,6 +95,50 @@ static const char kebabable[] = {
     S_XORN, S_DRAGON, S_JABBERWOCK, S_NAGA, S_GIANT, '\0'
 };
 
+/* weapon's skill category name for use as generalized description of weapon */
+const char *
+weapon_descr(struct obj *obj)
+{
+    int skill = weapon_type(obj);
+    const char *descr = P_NAME(skill);
+    
+    /* assorted special cases */
+    switch (skill) {
+    case P_NONE:
+        /* not a weapon: use item class name; override "food" for corpses */
+        descr = (obj->otyp == CORPSE || obj->otyp == TIN || obj->otyp == EGG) ?
+            OBJ_NAME(objects[obj->otyp]) :
+            oclass_names[(int)obj->oclass];
+        break;
+    case P_SLING:
+        if (is_ammo(obj))
+            descr = (obj->otyp == ROCK || is_graystone(obj)) ? "stone" :
+                (objects[obj->otyp].oc_name_known &&
+                 objects[obj->otyp].oc_material == GLASS) ? "piece of glass" :
+                (obj->oclass == GEM_CLASS) ? "gem" :
+                /* in case somebody adds odd sling ammo */
+                oclass_names[(int)obj->oclass];
+        break;
+    case P_BOW:
+        if (is_ammo(obj)) descr = "arrow";
+        break;
+    case P_CROSSBOW:
+        if (is_ammo(obj)) descr = "bolt";
+        break;
+    case P_FLAIL:
+        if (obj->otyp == GRAPPLING_HOOK) descr = "hook";
+        break;
+    case P_PICK_AXE:
+        /* even if "dwarvish mattock" hasn't been discovered yet */
+        if (obj->otyp == DWARVISH_MATTOCK) descr = "mattock";
+        break;
+    default:
+        break;
+    }
+    return makesingular(descr);
+}
+
+
 /*
  * hitval returns an integer representing the "to hit" bonuses
  * of "otmp" against the monster.
@@ -770,8 +814,12 @@ mon_wield_item(struct monst *mon)
             pline("%s wields %s%s", Monnam(mon), singular(obj, doname),
                   mon->mtame ? "." : "!");
             if (mwelded(mon, obj)) {
-                pline("%s %s to %s %s!", Tobjnam(obj, "weld"),
+                pline("%s %s %sto %s %s!",
+                      Tobjnam(obj, (objects[obj->otyp].oc_material == WOOD) ?
+                              "grow" : "weld"),
                       is_plural(obj) ? "themselves" : "itself",
+                      (objects[obj->otyp].oc_material == WOOD) ?
+                                                           "right in" : "",
                       s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
                 obj->bknown = 1;
             }

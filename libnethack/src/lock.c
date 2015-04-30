@@ -22,7 +22,7 @@ uwep_can_force(void)
         (uwep->oclass != WEAPON_CLASS && !is_weptool(uwep) &&
          uwep->oclass != ROCK_CLASS) ||
         (objects[uwep->otyp].oc_skill < P_DAGGER) ||
-        (objects[uwep->otyp].oc_skill > P_LANCE) || uwep->otyp == FLAIL ||
+        (objects[uwep->otyp].oc_skill >= P_BOW) || uwep->otyp == FLAIL ||
         uwep->otyp == AKLYS || uwep->otyp == RUBBER_HOSE) {
         pline("You can't force anything without a %sweapon.",
               (uwep) ? "proper " : "");
@@ -504,8 +504,18 @@ doforce(const struct nh_cmd_arg *arg)
     int c;
     const char *qbuf;
 
+    if (Engulfed) {
+        pline("You can't force anything from inside here.");
+        return 0;
+    }
+
     if (!uwep_can_force())
         return 0;
+
+    if (!can_reach_floor()) {
+        pline("You can't reach the %s.", surface(u.ux, u.uy));
+        return 0;
+    }
 
     if (u.utracked[tos_lock] && u.uoccupation_progress[tos_lock]) {
         if (turnstate.continue_message)

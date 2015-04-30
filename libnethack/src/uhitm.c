@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-30 */
+/* Last modified by Alex Smith, 2015-04-05 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -164,7 +164,7 @@ attack_checks(struct monst *mtmp,
     if (canspotmon(mtmp) && !Confusion && !Hallucination && !Stunned) {
 
         if (uim <= uim_displace) {
-            pline("There's a monster there.");
+            pline("There's a monster in the way.");
             return ac_cancel; /* no interaction with monsters at all */
         }
 
@@ -706,7 +706,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     silverobj = TRUE;
                 }
                 if (u.usteed && !thrown && tmp > 0 &&
-                    weapon_type(obj) == P_LANCE && mon != u.ustuck) {
+                    obj->otyp == LANCE && mon != u.ustuck) {
                     jousting = joust(mon, obj);
                     /* exercise skill even for minimal damage hits */
                     if (jousting)
@@ -1726,6 +1726,9 @@ damageum(struct monst *mdef, const struct attack *mattk)
                 pline("%s looks confused.", Monnam(mdef));
             mdef->mconf = 1;
         }
+        break;
+    case AD_PITS:
+        do_pit_attack(level, mdef, &youmonst);
         break;
     default:
         tmp = 0;

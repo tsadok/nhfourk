@@ -79,7 +79,8 @@
 # define AD_ENCH 41     /* remove enchantment (disenchanter) */
 # define AD_CORR 42     /* corrode armor (black pudding) */
 # define AD_FLPN 43     /* you feel the monster's pain -- very special-cased */
-# define AD_OTHER 44    /* Numbers starting here can be used for non-damage
+# define AD_PITS 45     /* creates pits */
+# define AD_OTHER 46    /* Numbers starting here can be used for non-damage
                          * constants stored in a damage type field, such as the
                          * field in the artilist that governs what an artifact
                          * grants when equipped, which in vanilla can only be a

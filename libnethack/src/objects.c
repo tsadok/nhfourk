@@ -202,7 +202,7 @@ const struct objclass const_objects[] = {
     WEAPON("glaive", "single-edged polearm",
            0, 0, 1, 8, 75, 6, 6, 10, 0, S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("lance", NULL,
-           1, 0, 0, 4, 180, 10, 6, 8, 0, P, P_LANCE, IRON, HI_METAL),
+           1, 0, 0, 4, 180, 10, 6, 8, 0, P, P_POLEARMS, IRON, HI_METAL),
 /* axe-type */
     WEAPON("halberd", "angled poleaxe",
            0, 0, 1, 8, 150, 10, 10, 6, 0, P | S, P_POLEARMS, IRON, HI_METAL),
@@ -654,7 +654,7 @@ const struct objclass const_objects[] = {
             0, 0, 0, 5, 30, 50, 2, 6, WHACK, P_FLAIL, IRON, HI_METAL),
 /* 3.4.1: unicorn horn left classified as "magic" */
     WEPTOOL("unicorn horn", NULL,
-            1, 1, 1, 0, 20, 100, 12, 12, PIERCE, P_UNICORN_HORN, BONE,
+            1, 1, 1, 0,  8, 100, 12, 12, PIERCE, P_UNICORN_HORN, BONE,
             CLR_WHITE),
 
 /* two special unique artifact "tools" */
