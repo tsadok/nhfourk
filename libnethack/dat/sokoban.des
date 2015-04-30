@@ -356,6 +356,136 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# Open the Door
+MAZE: "soko4-6",' '
+FLAGS:noteleport,hardfloor
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+       ----------- 
+   -----.........| 
+   |.............| 
+----.|.|...-----.| 
+|....-----....--.| 
+|................| 
+|-.|.......--.--.| 
+|-.|--------|.||.| 
+|..------...|.--.--
+|...........+.....|
+---------...|.....|
+        |...|------
+        -----      
+ENDMAP
+STAIR:(16,09),down
+STAIR:(10,10),up
+DOOR:locked,(12,09)
+REGION:(00,00,18,12),lit,"ordinary"
+NON_DIGGABLE:(00,00,18,12)
+NON_PASSWALL:(00,00,18,12)
+
+# Boulders
+OBJECT:'`',"boulder",(06,02)
+OBJECT:'`',"boulder",(12,02)
+OBJECT:'`',"boulder",(14,02)
+OBJECT:'`',"boulder",(09,03)
+OBJECT:'`',"boulder",(11,04)
+OBJECT:'`',"boulder",(16,04)
+OBJECT:'`',"boulder",(08,05)
+OBJECT:'`',"boulder",(10,05)
+OBJECT:'`',"boulder",(10,09)
+OBJECT:'`',"boulder",(11,09)
+OBJECT:'`',"boulder",(14,09)
+
+# Traps
+TRAP:"pit",(02,06)
+TRAP:"pit",(02,07)
+TRAP:"pit",(04,09)
+TRAP:"pit",(05,09)
+TRAP:"pit",(06,09)
+TRAP:"pit",(07,09)
+TRAP:"pit",(08,09)
+
+# A little help
+OBJECT:'?',"earth",(01,08)
+OBJECT:'?',"earth",(01,09)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+# Picking out the Seeds
+MAZE: "soko4-7",' '
+FLAGS:noteleport,hardfloor
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+   ---------   
+ ---..|....--- 
+ |....|......| 
+--..........---
+|.....|.....|.|
+|.........---.|
+|------...|...|
+|.......---...|
+--...........--
+ |......---..| 
+ ---......|--- 
+   ---------   
+ENDMAP
+STAIR:(12,02),down
+STAIR:(13,04),up
+REGION:(00,00,14,11),lit,"ordinary"
+NON_DIGGABLE:(00,00,14,11)
+NON_PASSWALL:(00,00,14,11)
+
+# Boulders
+OBJECT:'`',"boulder",(03,02)
+OBJECT:'`',"boulder",(09,02)
+OBJECT:'`',"boulder",(11,02)
+OBJECT:'`',"boulder",(05,03)
+OBJECT:'`',"boulder",(06,03)
+OBJECT:'`',"boulder",(10,03)
+OBJECT:'`',"boulder",(09,04)
+OBJECT:'`',"boulder",(02,05)
+OBJECT:'`',"boulder",(04,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(04,07)
+OBJECT:'`',"boulder",(06,07)
+OBJECT:'`',"boulder",(03,09)
+OBJECT:'`',"boulder",(07,09)
+
+# Traps
+TRAP:"pit",(13,05)
+TRAP:"pit",(07,06)
+TRAP:"pit",(12,06)
+TRAP:"pit",(13,06)
+TRAP:"pit",(07,07)
+TRAP:"pit",(12,07)
+TRAP:"pit",(07,08)
+TRAP:"pit",(08,08)
+TRAP:"pit",(09,08)
+TRAP:"pit",(10,08)
+TRAP:"pit",(11,08)
+TRAP:"pit",(12,08)
+
+# A little help
+OBJECT:'?',"earth",(11,09)
+OBJECT:'?',"earth",(12,09)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
 
 ### Second level ###
 MAZE:"soko3-1",' '
