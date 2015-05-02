@@ -91,6 +91,8 @@ Changes in 4.3.0.2:
 Changes in 4.3.0.1:
 -------------------
 
+ * Changed the Caveman/Cavewoman rank titles.
+
  * Chaotics get alignment points for killing (hostile members of)
    their own race.
 
