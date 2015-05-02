@@ -91,6 +91,16 @@ Changes in 4.3.0.2:
 Changes in 4.3.0.1:
 -------------------
 
+ * Chaotics get alignment points for killing (hostile members of)
+   their own race.
+
+ * Neutrals can get alignment points for successful prayer (when not
+   in trouble) even if their alignment record is already positive.
+
+ * Lawfuls now reliably get an alignment point each time they help
+   someone out of a trap (previously, you had a random chance of
+   getting the point, depending on luck).
+
  * Slings have been buffed.  They now get a damage bonus (albeit, a
    reduced one compared to melee).  Cavemen get a multishot bonus for
    using a sling.  Flint and hard gems are less likely to break.

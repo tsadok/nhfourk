@@ -778,6 +778,12 @@ pleased(aligntyp g_align)
         return;
     } else if (u.ualign.record < 2 && trouble <= 0)
         adjalign(1);
+    else if (trouble <= 0 && u.ualign.type == A_NEUTRAL) {
+        int oldalign = u.ualign.record;
+        adjalign(1);
+        if (u.ualign.record > oldalign)
+            pline("You feel more balanced.");
+    }
 
     /* depending on your luck & align level, the god you prayed to will: - fix
        your worst problem if it's major. - fix all your major problems. - fix
