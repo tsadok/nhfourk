@@ -1823,6 +1823,7 @@ extern enum attack_check_status attack(
     struct monst *, schar, schar, enum u_interaction_mode);
 extern boolean hmon(struct monst *, struct obj *, int);
 extern int damageum(struct monst *, const struct attack *);
+extern int do_iceblock(struct monst *, int);
 extern void missum(struct monst *, const struct attack *);
 extern int passive(struct monst *, boolean, int, uchar);
 extern void passive_obj(struct monst *, struct obj *, const struct attack *);
@@ -2036,6 +2037,8 @@ extern struct monst *boomhit(int, int);
 extern int burn_floor_paper(struct level *, int, int, boolean, boolean);
 extern void buzz(int, int, xchar, xchar, int, int);
 extern void melt_ice(struct level *, xchar, xchar);
+extern void remove_iceblock(int, int, const char *);
+extern void poly_iceblock(int, int);
 extern int zap_over_floor(xchar, xchar, int, boolean *);
 extern void fracture_rock(struct obj *);
 extern boolean break_statue(struct obj *);

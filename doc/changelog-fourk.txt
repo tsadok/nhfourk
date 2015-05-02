@@ -54,6 +54,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Ice devils now have an attack that immobilizes the target
+   in ice.  (Fiery monsters, such as fire elementals, are not
+   immobilized but sustain damage.)
+
  * Piranha generate in larger groups and have more attacks.
 
  * Mazes in Gehennom can now have wall and/or corridor widths

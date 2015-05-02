@@ -1760,9 +1760,7 @@ mintrap(struct monst *mtmp)
     const struct permonst *mptr = mtmp->data;
     struct obj *otmp;
 
-    if (!trap) {
-        mtmp->mtrapped = 0;     /* perhaps teleported? */
-    } else if (mtmp->mtrapped) {        /* is currently in the trap */
+    if (trap && mtmp->mtrapped) {        /* is currently in the trap */
         if (!trap->tseen && cansee(mtmp->mx, mtmp->my) && canseemon(mtmp) &&
             (trap->ttyp == SPIKED_PIT || trap->ttyp == BEAR_TRAP ||
              trap->ttyp == HOLE || trap->ttyp == PIT || trap->ttyp == WEB)) {
@@ -1797,7 +1795,7 @@ mintrap(struct monst *mtmp)
                 mtmp->meating = 5;
             }
         }
-    } else {
+    } else if (trap) {
         int tt = trap->ttyp;
         boolean in_sight, tear_web, see_it, inescapable =
             ((tt == HOLE || tt == PIT) && In_sokoban(&u.uz) && !trap->madeby_u);
@@ -2310,6 +2308,10 @@ mintrap(struct monst *mtmp)
             impossible("Some monster encountered a strange trap of type %d.",
                        tt);
         }
+    } else if (mtmp->mtrapped) {
+        /* Monster is encased in ice.  Can it get free? */
+        if (!rn2(5))
+            mtmp->mtrapped = 0;
     }
     if (trapkilled)
         return 2;
@@ -2409,6 +2411,9 @@ float_up(void)
         } else if (u.utraptype == TT_INFLOOR) {
             pline("Your %s pulls upward, but your %s are still stuck.",
                   body_part(BODY), makeplural(body_part(LEG)));
+        } else if (u.utraptype == TT_ICEBLOCK) {
+            pline("Your %s pulls upward but remains embedded in the ice.",
+                  body_part(BODY));
         } else {
             pline("You float up, only your %s is still stuck.", body_part(LEG));
         }
@@ -3803,6 +3808,18 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
 
         stumble_onto_mimic(mtmp, dx, dy);
         return 1;
+    }
+
+    if ((mtmp = m_at(level, x, y)) && mtmp->mtrapped && !t_at(level, x, y)) {
+        /* If the monster is trapped and there's no trap, it's iced. */
+        if (flaming(youmonst.data)) {
+            mtmp->mtrapped = 0;
+            pline("You melt some of the ice from around %s.  "
+                  "The rest softens and falls apart on its own.",
+                  mon_nam(mtmp));
+        } else {
+            pline("How exactly do you intend to free %s?", mon_nam(mtmp));
+        }
     }
 
     if (!IS_DOOR(level->locations[x][y].typ)) {

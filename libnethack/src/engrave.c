@@ -544,6 +544,11 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         pline ("You can't write on the %s while embedded therein.",
                surface(u.ux, u.uy));
         return 0;
+    } else if (u.utrap && u.utraptype == TT_ICEBLOCK) {
+        pline("You cannot write on the %s while embedded in a block of %s.",
+              surface(u.ux,u.uy),
+              (level->locations[u.ux][u.uy].typ == ICE) ? "it" : "ice");
+        return 0;
     } else if (!accessible(level, u.ux, u.uy)) {
         /* stone, tree, wall, secret corridor, pool, lava, bars */
         pline("You can't write here.");

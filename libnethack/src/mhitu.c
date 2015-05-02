@@ -1412,6 +1412,18 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             }
         }
         break;
+    case AD_ICEB:
+        if (flaming(youmonst.data)) {
+            pline("A sudden chill sweeps through you.");
+            dmg *= 2;
+        } else {
+            u.utrap = dmg;
+            dmg = 0;
+            if (!Passes_walls)
+                u.utraptype = TT_ICEBLOCK;
+            pline("A block of ice surrounds you!");
+        }
+        break;
     case AD_PITS:
         do_pit_attack(level, &youmonst, mtmp);
         break;

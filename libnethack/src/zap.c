@@ -21,6 +21,8 @@ static void create_polymon(struct obj *, int);
 static boolean zap_updown(struct obj *, schar);
 static int zap_hit_mon(struct monst *, int, int, struct obj **);
 static void zap_hit_u(int, int, const char *, xchar, xchar);
+static void weaken_iceblock(int, int);
+static void strengthen_iceblock(int, int);
 static void revive_egg(struct obj *);
 static boolean zap_steed(struct obj *);
 static void cancel_item(struct obj *);
@@ -2755,6 +2757,35 @@ beam_hit(int ddx, int ddy, int range,   /* direction and range */
                 break;
             }
 
+
+        /* All of these iceblock functions will usually do nothing.
+           That's fine.  Call them in case they need to do something. */
+        if (weapon == ZAPPED_WAND)
+            switch (obj->otyp) {
+            case WAN_STRIKING:
+            case SPE_FORCE_BOLT:
+                remove_iceblock(bhitpos.x, bhitpos.y, "shatters!");
+                break;
+            case WAN_POLYMORPH:
+            case SPE_POLYMORPH:
+                poly_iceblock(bhitpos.x, bhitpos.y);
+                break;
+            case WAN_TELEPORTATION:
+            case SPE_TELEPORT_AWAY:
+            case WAN_OPENING:
+            case SPE_KNOCK:
+            case WAN_CANCELLATION:
+                remove_iceblock(bhitpos.x, bhitpos.y, "vanishes.");
+                break;
+            case WAN_DIGGING:
+            case SPE_DIG:
+                remove_iceblock(bhitpos.x, bhitpos.y, "crumbles away.");
+                break;
+            case SPE_DRAIN_LIFE:
+                weaken_iceblock(bhitpos.x, bhitpos.y);
+                break;
+            }
+
         /* Affect objects on the square. */
         if (fhito) {
             if (bhitpile(obj, fhito, bhitpos.x, bhitpos.y))
@@ -3630,6 +3661,8 @@ melt_ice(struct level *lev, xchar x, xchar y)
         loc->typ = (loc->icedpool == ICED_POOL ? POOL : MOAT);
         loc->icedpool = 0;
     }
+    remove_iceblock(x, y, "melts and falls away.");
+
     obj_ice_effects(lev, x, y, FALSE);
     unearth_objs(lev, x, y);
 
@@ -3654,6 +3687,108 @@ melt_ice(struct level *lev, xchar x, xchar y)
     }
     if (lev == level && x == u.ux && y == u.uy)
         spoteffects(TRUE);      /* possibly drown, notice objects */
+}
+
+/* remove_iceblock is called any time an iceblock would be removed if it existed
+   at the tile in question.  It checks to see if there is one (around either the
+   player or a monster) and if so removes it with the given message. */
+void
+remove_iceblock(int x, int y, const char *message)
+{
+    struct monst *mtmp = m_at(level, x, y);
+    if (x == u.ux && y == u.uy) {
+        if (u.utrap && u.utraptype == TT_ICEBLOCK) {
+            u.utrap = 0;
+            pline("The ice around you %s", message);
+        }
+    } else if (mtmp && mtmp->mtrapped && !t_at(level, x, y)) {
+        mtmp->mtrapped = 0;
+        if (canseemon(mtmp))
+            pline("The ice around %s %s", mon_nam(mtmp), message);
+    }
+}
+
+void
+weaken_iceblock(int x, int y)
+{
+    struct monst *mtmp = m_at(level, x, y);
+    const char *weakenmsg = Blind ? "weakens noticeably" : "weakens visibly";
+    const char *removemsg = "falls apart.";
+    if (x == u.ux && y == u.uy) {
+        if (u.utrap && u.utraptype == TT_ICEBLOCK) {
+            int remaining_time = u.utrap - rn2(5);
+            if (remaining_time < 0)
+                remaining_time = 0;
+            pline("The ice around you %s",
+                  (remaining_time > 0) ? weakenmsg : removemsg);
+        }
+    /* Because mtrapped is a single bit, a monster's ice can't really
+       be "weakened" in the sense of the time being reduced.  We fake
+       it with a percentage chance. */
+    } else if (!rn2(3)) {
+        remove_iceblock(x, y, removemsg);
+    } else if (mtmp && mtmp->mtrapped && !t_at(level, x, y)) {
+        /* This message is purely for flavor. */
+        if (canseemon(mtmp))
+            pline("The ice around %s %s", mon_nam(mtmp), weakenmsg);
+    }
+}
+
+void
+strengthen_iceblock(int x, int y)
+{
+    struct monst *mtmp = m_at(level, x, y);
+    if (x == u.ux && y == u.uy) {
+        if (u.utrap && u.utraptype == TT_ICEBLOCK) {
+            u.utrap += rnd(5);
+            pline("The ice around you seems more solid.");
+        }
+    } else if (mtmp && mtmp->mtrapped && !t_at(level, x, y)) {
+        /* Because mtrapped is a single bit, a monster's ice can't really
+           be "strengthened" in the sense of the time being reduced.
+           Ergo, this message is purely for flavor. */
+        if (canseemon(mtmp))
+            pline("The ice around %s seems more solid.",
+                  mon_nam(mtmp));
+    }
+}
+
+void
+poly_iceblock(int x, int y)
+{
+    struct monst *mtmp = m_at(level, x, y);
+    boolean isyou = ((u.ux == x) && (u.uy == y));
+    int i;
+    if (!mtmp && !isyou)
+        return;
+    switch(rn2_on_rng(5, rng_poly_obj)) {
+    case 1:
+        for (i = 1; i < 3; i++)
+            mksobj_at(BOULDER, level, x, y, FALSE, FALSE, rng_main);
+        /* Fall Through */
+    case 2:
+        for (i = 1; i < 3; i++)
+            mksobj_at(ROCK, level, x, y, FALSE, FALSE, rng_main);
+        pline("The ice around %s turns to stone and crumbles from around %s.",
+              (isyou ? "you" : mon_nam(mtmp)), isyou ? "you" : mhim(mtmp));
+        break;
+    case 3:
+        for (i = 1; i < 3; i++)
+            mksobj_at(WORTHLESS_PIECE_OF_WHITE_GLASS,
+                      level, x, y, FALSE, FALSE, rng_main);
+        pline("The ice around %s turns to glass and crumbles from around %s.",
+              (isyou ? "you" : mon_nam(mtmp)), isyou ? "you" : mhim(mtmp));
+        break;        
+    default:
+        level->locations[x][y].typ = STONE;
+        pline("The ice around %s turns to stone.",
+              isyou ? "you" : mon_nam(mtmp));
+        break;
+    }
+    if (isyou)
+        u.utrap = 0;
+    else if (mtmp)
+        mtmp->mtrapped = 0;
 }
 
 /* Burn floor scrolls, evaporate pools, etc...  in a single square.  Used
@@ -3846,6 +3981,24 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
                 ghod_hitsu(mon);
             if (mon->isshk && !*u.ushops)
                 hot_pursuit(mon);
+        }
+        if (mon->mtrapped && !t_at(level, x, y)) {
+            /* Monster is encased in a block of ice. */
+            switch (abstype) {
+            case ZT_DEATH:
+                if (abs(type) == ZT_BREATH(ZT_DEATH)) {
+                    remove_iceblock(x, y, "sublimates into thin air.");
+                }
+                break;
+            case ZT_MAGIC_MISSILE:
+                weaken_iceblock(x, y);
+                /* TODO: if the ice is still intact, reflect the beam. */
+                break;
+            case ZT_COLD:
+                strengthen_iceblock(x, y);
+                break;
+            /* TODO: force bolt should shatter the block. */
+            }
         }
     }
     return rangemod;

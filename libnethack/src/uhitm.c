@@ -1731,6 +1731,9 @@ damageum(struct monst *mdef, const struct attack *mattk)
             mdef->mconf = 1;
         }
         break;
+    case AD_ICEB:
+        tmp = do_iceblock(mdef, tmp);
+        break;
     case AD_PITS:
         do_pit_attack(level, mdef, &youmonst);
         break;
@@ -1754,6 +1757,93 @@ damageum(struct monst *mdef, const struct attack *mattk)
         return 2;
     }
     return 1;
+}
+
+/* do_iceblock handles the trapping-in-ice stuff (which can have effects that
+   change terrain and/or traps), returning the amount of damage to do to the
+   monster outright.  Currently only used when defender is NOT the player,
+   because mtrapped and utrapped are different. */
+int
+do_iceblock(struct monst * mdef, int dmg)
+{
+    struct trap *t = t_at(level, mdef->mx, mdef->my);
+    if (flaming(mdef->data))
+        return dmg * 2;
+    if (passes_walls(mdef->data)) {
+        if (canseemon(mdef))
+            pline("A block of ice surrounds %s but cannot contain %s.",
+                  mon_nam(mdef), mhim(mdef));
+    }
+    switch(t ? t->ttyp : NO_TRAP) {
+        /* TODO: provide unique handling for LANDMINE. */
+    case VIBRATING_SQUARE:
+        if (canseemon(mdef)) {
+            pline("%s is momentarily encased in a block of ice.",
+                  Monnam(mdef));
+            pline("The block of ice vibrates strangely and shatters.");
+        }
+        t->tseen = 1;
+        break;
+    case MAGIC_PORTAL:
+    case TELEP_TRAP:
+    case LEVEL_TELEP:
+        if (canseemon(mdef)) {
+            pline("%s is momentarily encased in a block of ice.",
+                  Monnam(mdef));
+            pline("The block of ice suddenly disappears!");
+        }
+        t->tseen = 1;
+        break;
+    case MAGIC_TRAP:
+        /* For now, magic traps always give the fire-trap case here. */
+        /* Fall Through */
+    case FIRE_TRAP:
+        if (canseemon(mdef)) {
+            pline("%s is momentarily encased in a block of ice.",
+                  Monnam(mdef));
+            pline("The ice melts away from %s.", mon_nam(mdef));
+        }
+        break;
+    case POLY_TRAP:
+        if (canseemon(mdef))
+            pline("%s is momentarily encased in a block of ice.",
+                  Monnam(mdef));
+        mdef->mtrapped = 1; /* so poly_icetrap has something to do */
+        poly_iceblock(mdef->mx, mdef->my);
+        t->tseen = 1;
+        break;
+    case PIT:
+    case SPIKED_PIT:
+    case HOLE:
+    case TRAPDOOR:
+        level->locations[mdef->mx][mdef->my].typ = ICE;
+        level->locations[mdef->mx][mdef->my].icedpool = ICED_POOL;
+        if (canseemon(mdef))
+            pline("The %s below %s is filled in with ice.",
+                  (t->ttyp == HOLE) ? "hole" :
+                  (t->ttyp == TRAPDOOR) ? "trap door" : "pit",
+                  mon_nam(mdef));
+        deltrap(level, t);
+        /* fall through */
+    case NO_TRAP:
+    default:
+        mdef->mtrapped = 1; /* Using dmg here would make sense, if mtrapped
+                               supported that, but it's only one bit, and
+                               the escape chance is random per turn.  This
+                               is why the player case is special. */
+        if (canseemon(mdef))
+            pline("%s is encased in a block of ice.", Monnam(mdef));
+        /*
+        if ((t = t_at(level, mdef->mx, mdef->my))) {
+            if ((t->tseen) && (canseemon(mdef)))
+                pline("%s is destroyed by the ice.",
+                      An(trapexplain[t->ttyp - 1]));
+            deltrap(level, t);
+        }
+        */
+    }
+    newsym(mdef->mx, mdef->my);
+    return 0;
 }
 
 static int

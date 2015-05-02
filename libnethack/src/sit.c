@@ -96,6 +96,8 @@ dosit(const struct nh_cmd_arg *arg)
             } else if (u.utraptype == TT_INFLOOR) {
                 pline("You can't maneuver to sit!");
                 u.utrap++;
+            } else if (u.utraptype == TT_ICEBLOCK) {
+                pline("The block of ice holds you in position.");
             }
         } else {
             pline("You sit down.");

@@ -1571,13 +1571,15 @@ canwearobj(struct obj *otmp, long *mask,
 
     case os_armf:
         if (u.utrap &&
-                   (u.utraptype == TT_BEARTRAP || u.utraptype == TT_INFLOOR)) {
+                   (u.utraptype == TT_BEARTRAP || u.utraptype == TT_INFLOOR ||
+                    u.utraptype == TT_ICEBLOCK)) {
             if (u.utraptype == TT_BEARTRAP) {
                 if (noisy)
                     pline("Your %s is trapped!", body_part(FOOT));
             } else {
                 if (noisy)
                     pline("Your %s are stuck in the %s!",
+                          u.utraptype == TT_ICEBLOCK ? "ice" :
                           makeplural(body_part(FOOT)), surface(u.ux, u.uy));
             }
             return FALSE;
@@ -1776,10 +1778,13 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
                 pline("The bear trap prevents you from pulling your %s out.",
                       body_part(FOOT));
             return FALSE;
-        } else if (u.utrap && u.utraptype == TT_INFLOOR) {
+        } else if (u.utrap && (u.utraptype == TT_INFLOOR ||
+                               u.utraptype == TT_LAVA ||
+                               u.utraptype == TT_ICEBLOCK)) {
             if (noisy)
                 pline("You are stuck in the %s, and cannot pull your %s out.",
-                      surface(u.ux, u.uy), makeplural(body_part(FOOT)));
+                      u.utraptype == TT_ICEBLOCK ? "ice" : surface(u.ux, u.uy),
+                      makeplural(body_part(FOOT)));
             return FALSE;
         }
     }

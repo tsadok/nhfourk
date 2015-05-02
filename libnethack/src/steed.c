@@ -272,7 +272,7 @@ mount_steed(struct monst * mtmp,        /* The animal */
         struct trap *t = t_at(level, mtmp->mx, mtmp->my);
 
         pline("You can't mount %s while %s's trapped in %s.", mon_nam(mtmp),
-              mhe(mtmp), an(trapexplain[t->ttyp - 1]));
+              mhe(mtmp), t ? an(trapexplain[t->ttyp - 1]) : "ice");
         return FALSE;
     }
 

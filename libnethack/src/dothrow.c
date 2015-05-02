@@ -604,6 +604,7 @@ hurtle(int dx, int dy, int range, boolean verbose)
         pline("You are anchored by the %s.",
               u.utraptype == TT_WEB ? "web" :
               u.utraptype == TT_LAVA ? "lava" :
+              u.utraptype == TT_ICEBLOCK ? "ice" :
               u.utraptype == TT_INFLOOR ? surface(u.ux, u.uy) : "trap");
         action_completed();
         return;
@@ -1002,7 +1003,8 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             range = 20; /* you must be giant */
         else if (obj->oartifact == ART_MJOLLNIR)
             range = (range + 1) / 2;    /* it's heavy */
-        else if (obj == uball && u.utrap && u.utraptype == TT_INFLOOR)
+        else if (obj == uball && u.utrap && (u.utraptype == TT_INFLOOR ||
+                                             u.utraptype == TT_ICEBLOCK))
             range = 1;
 
         if (Underwater)
