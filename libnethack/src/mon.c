@@ -2179,6 +2179,13 @@ cleanup:
        absolutely sure the following condition is correct, but we'll test it: */
     if (mtmp->malign < 0)
         adjalign(mtmp->malign);
+    /* However, chaotics now get a point for killing their own race. */
+    else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
+        int oldalign = u.ualign.record;
+        adjalign(1);
+        if (u.ualign.record > oldalign)
+            pline("You feel more chaotic.");
+    }
 }
 
 /* changes the monster into a stone monster of the same type */

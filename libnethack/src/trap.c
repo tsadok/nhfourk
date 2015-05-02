@@ -3418,7 +3418,7 @@ reward_untrap(struct trap *ttmp, struct monst *mtmp)
         }
         /* Helping someone out of a trap is a nice thing to do, A lawful may be
            rewarded, but not too often.  */
-        if (!rn2(3) && !rnl(8) && u.ualign.type == A_LAWFUL) {
+        if (u.ualign.type == A_LAWFUL) {
             adjalign(1);
             pline("You feel that you did the right thing.");
         }
