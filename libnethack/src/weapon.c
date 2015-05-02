@@ -1312,6 +1312,9 @@ weapon_hit_bonus(struct obj *weapon)
     type = (u.twoweap &&
             (weapon == uwep ||
              weapon == uswapwep)) ? P_TWO_WEAPON_COMBAT : wep_type;
+    /* special exception: do not use two-weapon skill for launchers */
+    if (is_launcher(weapon))
+        type = wep_type;
     if (type == P_NONE) {
         bonus = 0;
     } else if (type <= P_LAST_WEAPON) {
@@ -1322,7 +1325,7 @@ weapon_hit_bonus(struct obj *weapon)
             bonus = -6;
             break;
         case P_UNSKILLED:
-            bonus = -4;
+            bonus = -3;
             break;
         case P_BASIC:
             bonus = 0;

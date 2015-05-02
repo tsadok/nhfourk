@@ -23,7 +23,7 @@
 
 # define TELL           1
 # define NOTELL         0
-# define BOLT_LIM       8       /* from this distance ranged attacks will be
+# define BOLT_LIM       12      /* from this distance ranged attacks will be
                                    made */
 # define MAX_CARR_CAP   1000    /* so that boulders can be heavier */
 
