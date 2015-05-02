@@ -958,11 +958,16 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
          *      *OR* if attacking bare-handed!! */
 
     if (get_dmg_bonus && tmp > 0) {
+        int dbonus;
         tmp += u.udaminc;
         /* If you throw using a propellor, you don't get a strength bonus but
            you do get an increase-damage bonus. */
         if (!thrown || !obj || !uwep || !ammo_and_launcher(obj, uwep))
             tmp += dbon();
+        else if (P_SKILL(weapon_type(uwep)) == P_SLING) {
+            dbonus = dbon();
+            tmp += (dbonus > 1) ? rnd(dbonus / 2) : dbonus;
+        }
     }
 
     if (valid_weapon_attack) {

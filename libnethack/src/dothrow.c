@@ -124,6 +124,10 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
             if (obj->otyp == YA && uwep && uwep->otyp == YUMI)
                 multishot++;
             break;
+        case PM_CAVEMAN:
+            if (skill == P_SLING)
+                multishot++; /* This gets doubled if you dual-wield slings. */
+            break;
         default:
             break;      /* No bonus */
         }
@@ -137,6 +141,10 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
             if (obj->otyp == ORCISH_ARROW && uwep && uwep->otyp == ORCISH_BOW)
                 multishot++;
             break;
+        case PM_GNOME:
+            if (uwep && ammo_and_launcher(obj, uwep) &&
+                weapon_type(uwep) == P_CROSSBOW)
+                multishot++;
         default:
             break;      /* No bonus */
         }
@@ -147,6 +155,11 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
     if (multishot > 1 && (int)ACURRSTR < (Race_if(PM_GNOME) ? 16 : 18) &&
         ammo_and_launcher(obj, uwep) && weapon_type(uwep) == P_CROSSBOW)
         multishot = rnd(multishot);
+
+    /* Sling buff: dual-wielding two slings allows double multishot. */
+    if (ammo_and_launcher(obj, uwep) && (weapon_type(uwep) == P_SLING) &&
+        uswapwep && (weapon_type(uswapwep) == P_SLING))
+        multishot *= 2;
 
     if ((long)multishot > obj->quan)
         multishot = (int)obj->quan;
@@ -984,7 +997,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
                 if (crossbowing)
                     range = BOLT_LIM;
                 else
-                    range++;
+                    range += 2;
             } else if (obj->oclass != GEM_CLASS)
                 range /= 2;
         }
@@ -1221,11 +1234,13 @@ thitmonst(struct monst *mon, struct obj *obj)
     boolean guaranteed_hit = (Engulfed && mon == u.ustuck);
 
     /* Differences from melee weapons: Dex still gives a bonus, but strength
-       does not. Polymorphed players lacking attacks may still throw. There's a 
-       base -1 to hit. No bonuses for fleeing or stunned targets (they don't
-       dodge melee blows as readily, but dodging arrows is hard anyway). Not
-       affected by traps, etc. Certain items which don't in themselves do
-       damage ignore tmp. Distance and monster size affect chance to hit. */
+       does not (unless it's a stone fired from a sling, and even then the
+       strength bonus is reduced compared to melee). Polymorphed players lacking
+       attacks may still throw. There's a base -1 to hit. No bonuses for fleeing
+       or stunned targets (they don't dodge melee blows as readily, but dodging
+       arrows is hard anyway). Not affected by traps, etc. Certain items which
+       don't in themselves do damage ignore tmp. Distance and monster size
+       affect chance to hit. */
     tmp =
         -1 + Luck + find_mac(mon) + u.uhitinc +
         maybe_polyd(youmonst.data->mlevel, u.ulevel);
@@ -1380,6 +1395,13 @@ thitmonst(struct monst *mon, struct obj *obj)
                 /* Cursed objects have an additional chance to break. */
                 if (obj->cursed && !broken && rnl(10) > 5)
                     broken = 1;
+
+                /* Hard stones are harder to break. */
+                if (broken && (obj->otyp == FLINT ||
+                               ((obj->oclass == GEM_CLASS) &&
+                                objects[obj->otyp].oc_tough))
+                    && rn2(1))
+                    broken = 0;
 
                 if (broken) {
                     if (*u.ushops)

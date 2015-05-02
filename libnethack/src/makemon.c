@@ -365,6 +365,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 break;
             case 2:
                 mongets(mtmp, SLING, rng);
+                if (!rn2_on_rng(4, rng))
+                    mongets(mtmp, FLINT, rng);
                 break;
             }
             if (!rn2_on_rng(10, rng))

@@ -91,9 +91,22 @@ Changes in 4.3.0.2:
 Changes in 4.3.0.1:
 -------------------
 
+ * Slings have been buffed.  They now get a damage bonus (albeit, a
+   reduced one compared to melee).  Cavemen get a multishot bonus for
+   using a sling.  Flint and hard gems are less likely to break.
+   Dual-wielding two slings lets you fire (on average) twice as many
+   projectiles, provided your stack of projectiles is large enough;
+   this uses your sling skill, not two-weapon skill (although you do
+   still have to be capable of two-weapon combat to do it).
+
+ * The range for projectiles fired from a launcher has been increased,
+   especially for crossbow bolts.
+
  * Shamelessly copied the multiple-bones-pools implementation from
    NAO, then enhanced it to keep separate pools for each game mode
-   (normal, explore, wizmode, setseed, polyinit).
+   (normal, explore, wizmode, setseed, polyinit).  I'd like to see
+   this eventually go in upstream (but not until the next save break,
+   because bones files from before the change won't load after).
 
  * Some monsters have been given more interesting attacks.  Notably,
    pit fiends now have an attack that creates pits.
