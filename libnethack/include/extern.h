@@ -136,6 +136,7 @@ extern long arti_cost(const struct obj *);
 /* ### attrib.c ### */
 
 extern boolean adjattrib(int, int, int);
+extern int addattrib(int, int, int);
 extern void change_luck(schar);
 extern void sokoban_guilt(void);
 extern int stone_luck(boolean);

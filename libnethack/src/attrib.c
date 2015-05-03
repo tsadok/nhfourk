@@ -201,6 +201,55 @@ adjattrib(int ndx, int incr, int msgflg)
     return TRUE;
 }
 
+/* This function is only necessary because the strength number is weird. */
+/* Note that it does NOT add like gaining a single point of strength.
+   That would be easier.  This is adding for purposes of determining
+   the maximum, which is delimited in larger increments from 18 to 19. */
+int
+addattrib(int attr, int value, int addend)
+{
+    if (attr != A_STR)
+        return value + addend;
+
+    while (addend < 0) {
+        addend++;
+        if (value > STR19(0))
+            value -= 1;
+        else if (value > STR18(75))
+            value = STR18(75);
+        else if (value > STR18(50))
+            value = STR18(50);
+        else if (value > STR18(25))
+            value = STR18(25);
+        else if (value > 18)
+            value = 18;
+        else
+            value--;
+    }
+    if (value > 18) {
+        while (value > STR19(0)) {
+            addend++;
+            value--;
+        }
+        while (value > 18) {
+            addend++;
+            value -= 25;
+        }
+    } else {
+        while (value < 18 && addend > 0) {
+            value++;
+            addend--;
+        }
+    }
+    if (addend > 4) {
+        return STR19(addend - 4);
+    } else if (addend > 0) {
+        return STR18(addend * 25);
+    } else {
+        return value;
+    }
+}
+
 void
 gainstr(struct obj *otmp, int incr)
 {

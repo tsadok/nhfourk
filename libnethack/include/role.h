@@ -68,6 +68,7 @@ struct Role {
         /*** Attributes (from attrib.c and exper.c) ***/
     xchar attrbase[A_MAX];      /* lowest initial attributes */
     xchar attrdist[A_MAX];      /* distribution of initial attributes */
+    xchar attrmaxm[A_MAX];      /* modifiers for attribute maxima */
     struct RoleAdvance hpadv;   /* hit point advancement */
     struct RoleAdvance enadv;   /* energy advancement */
     xchar xlev; /* cutoff experience level */

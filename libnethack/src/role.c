@@ -51,6 +51,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {7, 10, 10, 7, 7, 7},
      {20, 20, 20, 10, 20, 10},
+     {1, 1, 1, 1, 1, 1},
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
@@ -76,6 +77,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {16, 7, 7, 15, 16, 6},
      {30, 6, 7, 20, 30, 7},
+     {2, 0, 0, 2, 2, 0},
      /* Init Lower Higher */
      {14, 0, 0, 10, 2, 0},      /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
@@ -100,6 +102,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {10, 7, 7, 7, 8, 6},
      {30, 6, 7, 20, 30, 7},
+     {3, 0, 0, 1, 1, 1},
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
@@ -124,6 +127,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {7, 7, 13, 7, 11, 16},
      {15, 20, 20, 15, 25, 5},
+     {0, 1, 2, 1, 1, 1},
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 20,    /* Energy */
@@ -148,6 +152,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {13, 7, 14, 8, 10, 17},
      {30, 15, 15, 10, 20, 10},
+     {2, 2, 0, 0, 0, 2},
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 10,    /* Energy */
@@ -174,6 +179,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {10, 7, 8, 8, 7, 7},
      {25, 10, 20, 20, 15, 10},
+     {2, 1, 2, 1, 0, 0},
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {2, 2, 0, 2, 0, 2}, 10,    /* Energy */
@@ -199,6 +205,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {7, 7, 10, 7, 7, 7},
      {15, 10, 30, 15, 20, 10},
+     {1, 2, 0, 1, 2, 0},
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 2}, 10,    /* Energy */
@@ -225,6 +232,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {7, 7, 7, 10, 7, 6},
      {20, 10, 10, 30, 20, 10},
+     {1, 1, 0, 2, 1, 1},
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 11,    /* Energy */
@@ -250,6 +258,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {13, 13, 13, 9, 13, 7},
      {30, 10, 10, 20, 20, 10},
+     {1, 1, 1, 2, 0, 1},
      /* Init Lower Higher */
      {13, 0, 0, 6, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 12,    /* Energy */
@@ -274,6 +283,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {10, 8, 7, 10, 17, 6},
      {30, 10, 8, 30, 14, 8},
+     {2, 0, 1, 2, 1, 0},
      /* Init Lower Higher */
      {13, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 11,    /* Energy */
@@ -298,6 +308,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {7, 10, 6, 7, 7, 10},
      {15, 10, 10, 15, 30, 20},
+     {0, 1, 2, 1, 0, 2},
      /* Init Lower Higher */
      {8, 0, 0, 8, 0, 0},        /* Hit points */
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
@@ -322,6 +333,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {10, 7, 7, 7, 10, 7},
      {30, 6, 7, 20, 30, 7},
+     {1, 1, 1, 2, 1, 0},
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
@@ -347,6 +359,7 @@ const struct Role roles[] = {
      /* Str Int Wis Dex Con Cha */
      {7, 10, 7, 7, 7, 7},
      {10, 30, 10, 20, 20, 10},
+     {0, 2, 2, 1, 0, 1},
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 3}, 12,    /* Energy */
