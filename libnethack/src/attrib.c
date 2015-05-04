@@ -213,7 +213,7 @@ addattrib(int attr, int value, int addend)
 
     while (addend < 0) {
         addend++;
-        if (value > STR19(0))
+        if (value > STR18(100))
             value -= 1;
         else if (value > STR18(75))
             value = STR18(75);
@@ -227,11 +227,11 @@ addattrib(int attr, int value, int addend)
             value--;
     }
     if (value > 18) {
-        while (value > STR19(0)) {
+        while (value > STR18(100)) {
             addend++;
             value--;
         }
-        while (value > 18) {
+        while (value >= STR18(25)) {
             addend++;
             value -= 25;
         }
