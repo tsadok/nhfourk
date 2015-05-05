@@ -128,6 +128,14 @@ static const struct innate orc_abil[] = {
     {0, 0, 0, 0}
 };
 
+static const struct innate sylph_abil[] = {
+    {1, &(u.uintrinsic[SEE_INVIS]), "", ""},
+    /* They also get slotless hungerless regeneration, but only when nude (and
+       normal regen is blocked when non-nude), so that's special-cased
+       elsewhere. */
+    {0, 0, 0, 0}
+};
+
 static void exerper(void);
 static void postadjabil(unsigned int *);
 

@@ -1515,6 +1515,8 @@ extern int str2role(char *);
 extern int str2race(char *);
 extern int str2gend(char *);
 extern int str2align(char *);
+extern boolean can_feel_ground(struct monst *);
+extern boolean can_draw_from_environment(struct monst *);
 extern int randrole(enum rng);
 extern boolean validrole(int rolenum);
 extern boolean validrace(int rolenum, int racenum);

@@ -857,7 +857,9 @@ you_moved(void)
                     u.mh++;
                 }
             } else if (u.uhp < u.uhpmax &&
-                       (wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)) {
+                       (can_draw_from_environment(&youmonst) ||
+                        (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)
+                          && !Race_if(PM_SYLPH))))) {
                 if (u.ulevel > 9 && !(moves % 3)) {
                     int heal, Con = (int)ACURR(A_CON);
 
@@ -872,10 +874,22 @@ you_moved(void)
                     if (u.uhp > u.uhpmax)
                         u.uhp = u.uhpmax;
                 } else if (Regeneration ||
+                           can_draw_from_environment(&youmonst) ||
                            (u.ulevel <= 9 &&
                             !(moves % ((MAXULEV + 12) / (u.ulevel + 2) + 1)))) {
                     u.uhp++;
                 }
+            } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2))) {
+                if (!Inhell)
+                    if (!can_feel_ground(&youmonst))
+                        pline("You try to draw healing from your surroundings, "
+                              "but your toes cannot even feel the %s.",
+                              surface(u.ux, u.uy));
+                    else
+                        pline("You try to draw healing from your surroundings, "
+                              "but they are blocked off from your skin.");
+                else
+                    pline("You cannot draw healing from these surroundings.");
             }
 
             /* moving around while encumbered is hard work */
@@ -895,11 +909,12 @@ you_moved(void)
             }
 
             if ((u.uen < u.uenmax) &&
-                ((wtcap < MOD_ENCUMBER &&
+                ((wtcap < MOD_ENCUMBER && !Race_if(PM_SYLPH) &&
                   (!(moves %
                      ((MAXULEV + 8 -
                        u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
-                 || Energy_regeneration)) {
+                 || Energy_regeneration
+                 || can_draw_from_environment(&youmonst))) {
                 u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
