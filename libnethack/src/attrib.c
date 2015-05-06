@@ -871,7 +871,7 @@ adjalign(int n)
 {
     int cnt; /* for loop initial declarations are only allowed in C99 mode */
     int newalign = u.ualign.record + n;
-    int minalign = 0 - ALIGNLIM - 20;
+    int minalign = 0 - ALIGNLIM;
     if (newalign > ALIGNLIM)
         newalign = ALIGNLIM;
     if (newalign < minalign)

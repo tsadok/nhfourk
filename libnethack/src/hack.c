@@ -1872,18 +1872,9 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 newexplevel();      /* will decide if you go up */
             }
                 if (rn2(4)) {
-                    /* That's no way to treat a pet!  Your god gets angry.
-                     *
-                     * [This has always been pretty iffy.  Why does your
-                     * patron deity care at all, let alone enough to get mad?]
-                     *
-                     * [Yeah, IMO, this should hit your alignment record, rather than
-                     * anger, and probably only for non-chaotics; but that can wait
-                     * for the next alignment/luck/anger rebalance/overhaul -- NAE]
-                     */
+                    /* That's no way to treat a pet! */
                     pline("You feel guilty about losing your pet like this.");
-                    u.ugangr++;
-                    adjalign(-15);
+                    adjalign(-5);
                 }
 
                 break;
