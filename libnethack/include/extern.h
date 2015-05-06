@@ -132,6 +132,7 @@ extern void arti_speak(struct obj *);
 extern boolean artifact_light(const struct obj *);
 extern boolean artifact_has_invprop(struct obj *, uchar);
 extern long arti_cost(const struct obj *);
+extern int retouch_object(struct obj **, boolean);
 
 /* ### attrib.c ### */
 
