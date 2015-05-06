@@ -202,13 +202,6 @@ init_game_paths(const char *argv0)
             pathlist[LOCKPREFIX] = override_hackdir;
             pathlist[TROUBLEPREFIX] = override_hackdir;
         }
-        if (override_userdir) {
-            /* player-specific */
-            pathlist[DUMPPREFIX] = override_userdir;
-            /* config and save are also player-specific, but we don't pass
-               those as filenames to the engine; rather, get_gamedir looks at
-               them */
-        }
 #ifdef UNIX
     }
 #endif
