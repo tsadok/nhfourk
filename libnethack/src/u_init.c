@@ -219,6 +219,13 @@ static const struct trobj GnomeStuff[] = {
     {0, 0, 0, 0, 0}
 };
 
+static const struct trobj SylphStuff[] = {
+#define SYL_HEALINGPOT 1
+    {POT_GAIN_ENERGY, 0, POTION_CLASS, 1, UNDEF_BLESS},
+    {POT_HEALING, 0, POTION_CLASS, 1, UNDEF_BLESS},
+    {0, 0, 0, 0, 0}
+};
+
 static const struct trobj Boomer[] = {
     {BOOMERANG, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
@@ -873,6 +880,14 @@ u_init_inv_skills(void)
         knows_object(ORCISH_CLOAK);
         break;
 
+    case PM_SYLPH:
+        trobj_list = copy_trobj_list(SylphStuff);
+        if (Role_if(PM_HEALER)) {
+            trobj_list[SYL_HEALINGPOT].trotyp = MAGIC_HARP;
+        }
+        ini_inv(trobj_list, nclist, rng_main);
+        break;
+
     default:   /* impossible */
         break;
     }
@@ -1116,8 +1131,13 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                inventory.
             
                TODO: Does this provide numerical extrinsics, like brilliance?
-               The situation nonetheless probably can't currently come up. */
-            if (canwearobj(obj, &mask, FALSE, TRUE, TRUE) && mask & W_ARMOR)
+               The situation nonetheless probably can't currently come up.
+
+               Sylphs start with armor that would block their healing, as
+               a hint to the player.  (Many players will probably go ahead
+               and wear them, until they need to heal.) */
+            if (canwearobj(obj, &mask, FALSE, TRUE, TRUE) && (mask & W_ARMOR)
+                && (!Race_if(PM_SYLPH) || (is_shield(obj) && obj->owt <= 30)))
                 setworn(obj, mask);
         }
 

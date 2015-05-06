@@ -69,6 +69,19 @@
 # define MR2_STRENGTH   0x2000  /* gauntlets of power */
 # define MR2_FUMBLING   0x4000  /* clumsy */
 
+/* The MRACE_FOO replace both the old M2_FOO flags and also the corresponding
+   MH_FOO.  In monst.c, they are only needed for monsters that count as being
+   the "same race" for some player characters.  All others use MRACE_NONE.
+   Note that orcs get both, because they need the M2 flag for Sting/Orcrist. */
+# define MRACE_NONE     0x00000000L     /* not a playable race */
+/* These start at 8 for historical reasons because they used to be in M2 */
+# define MRACE_HUMAN    0x00000008L     /* is a human */
+# define MRACE_ELF      0x00000010L     /* is an elf */
+# define MRACE_DWARF    0x00000020L     /* is a dwarf */
+# define MRACE_GNOME    0x00000040L     /* is a gnome */
+# define MRACE_ORC      0x00000080L     /* is an orc */
+# define MRACE_FAIRY    0x00000100L     /* is a fairy creature */
+# define MRACE_SYLPH    MRACE_FAIRY     /* for clarity in role.c */
 
 # define M1_FLY         0x00000001L     /* can fly or float */
 # define M1_SWIM        0x00000002L     /* can traverse water */
@@ -107,10 +120,7 @@
 # define M2_NOPOLY      0x00000001L     /* players mayn't poly into one */
 # define M2_UNDEAD      0x00000002L     /* is walking dead */
 # define M2_WERE        0x00000004L     /* is a lycanthrope */
-# define M2_HUMAN       0x00000008L     /* is a human */
-# define M2_ELF         0x00000010L     /* is an elf */
-# define M2_DWARF       0x00000020L     /* is a dwarf */
-# define M2_GNOME       0x00000040L     /* is a gnome */
+/* The race flags used to be here, but now they're their own field. */
 # define M2_ORC         0x00000080L     /* is an orc */
 # define M2_DEMON       0x00000100L     /* is a demon */
 # define M2_MERC        0x00000200L     /* is a guard or soldier */
@@ -163,15 +173,6 @@
 # define MZ_LARGE       3       /* 7-12' */
 # define MZ_HUGE        4       /* 12-25' */
 # define MZ_GIGANTIC    7       /* off the scale */
-
-
-/* Monster races -- must stay within ROLE_RACEMASK */
-/* Eventually this may become its own field */
-# define MH_HUMAN       M2_HUMAN
-# define MH_ELF         M2_ELF
-# define MH_DWARF       M2_DWARF
-# define MH_GNOME       M2_GNOME
-# define MH_ORC         M2_ORC
 
 
 /* for mons[].geno (constant during game) */

@@ -128,6 +128,14 @@ static const struct innate orc_abil[] = {
     {0, 0, 0, 0}
 };
 
+static const struct innate sylph_abil[] = {
+    {1, &(u.uintrinsic[SEE_INVIS]), "", ""},
+    /* They also get slotless hungerless regeneration, but only when nude (and
+       normal regen is blocked when non-nude), so that's special-cased
+       elsewhere. */
+    {0, 0, 0, 0}
+};
+
 static void exerper(void);
 static void postadjabil(unsigned int *);
 
@@ -199,6 +207,55 @@ adjattrib(int ndx, int incr, int msgflg)
     if (moves > 1 && (ndx == A_STR || ndx == A_CON))
         encumber_msg();
     return TRUE;
+}
+
+/* This function is only necessary because the strength number is weird. */
+/* Note that it does NOT add like gaining a single point of strength.
+   That would be easier.  This is adding for purposes of determining
+   the maximum, which is delimited in larger increments from 18 to 19. */
+int
+addattrib(int attr, int value, int addend)
+{
+    if (attr != A_STR)
+        return value + addend;
+
+    while (addend < 0) {
+        addend++;
+        if (value > STR18(100))
+            value -= 1;
+        else if (value > STR18(75))
+            value = STR18(75);
+        else if (value > STR18(50))
+            value = STR18(50);
+        else if (value > STR18(25))
+            value = STR18(25);
+        else if (value > 18)
+            value = 18;
+        else
+            value--;
+    }
+    if (value > 18) {
+        while (value > STR18(100)) {
+            addend++;
+            value--;
+        }
+        while (value >= STR18(25)) {
+            addend++;
+            value -= 25;
+        }
+    } else {
+        while (value < 18 && addend > 0) {
+            value++;
+            addend--;
+        }
+    }
+    if (addend > 4) {
+        return STR19(addend - 4);
+    } else if (addend > 0) {
+        return STR18(addend * 25);
+    } else {
+        return value;
+    }
 }
 
 void

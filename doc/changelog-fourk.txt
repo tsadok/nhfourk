@@ -54,6 +54,27 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Attribute maxima now depend on role as well as race.
+   The role contributions are as follows (where 1 places
+   the character's overall maximum where it was in vanilla):
+   Rol | Str Int Wis Dex Con Cha
+   ----+-------------------------
+   Arc |  1   1   1   1   1   1
+   Bar |  2   0   0   2   2   0
+   Cav |  3   0   0   1   1   1
+   Hea |  0   1   2   1   1   1
+   Kni |  2   2   0   0   0   2
+   Mon |  2   1   2   1   0   0
+   Pri |  1   2   0   1   2   0
+   Rog |  1   1   0   2   1   1
+   Ran |  1   1   1   2   0   1
+   Sam |  2   0   1   2   1   0
+   Tou |  0   1   2   1   0   2
+   Val |  1   1   1   2   1   0
+   Wiz |  0   2   2   1   0   1
+   These values are experimental; some of them will probably
+   need to be adjusted, but this is a starting point.
+
  * Ice devils now have an attack that immobilizes the target
    in ice.  (Fiery monsters, such as fire elementals, are not
    immobilized but sustain damage.)
