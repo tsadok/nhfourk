@@ -13,7 +13,9 @@
 int
 network_motd(void)
 {
+#ifdef MOTD_SERVER
     char errmsg[256];
+#endif
     char motdmsg[4096];
     int fd = -1;
 
