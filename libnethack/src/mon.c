@@ -2143,24 +2143,24 @@ cleanup:
 
     /* adjust alignment points */
     if (mtmp->m_id == u.quest_status.leader_m_id) {       /* REAL BAD! */
-        adjalign(-(u.ualign.record + (int)ALIGNLIM / 2));
+        adjalign(-30);
         pline("That was %sa bad idea...",
               u.uevent.qcompleted ? "probably " : "");
     } else if (mdat->msound == MS_NEMESIS)      /* Real good! */
-        adjalign((int)(ALIGNLIM / 4));
+        adjalign(20);
     else if (mdat->msound == MS_GUARDIAN) {     /* Bad */
-        adjalign(-(int)(ALIGNLIM / 8));
+        adjalign(-10);
         if (!Hallucination)
             pline("That was probably a bad idea...");
         else
             pline("Whoopsie-daisy!");
     } else if (mtmp->ispriest) {
-        adjalign((p_coaligned(mtmp)) ? -2 : 2);
+        adjalign((p_coaligned(mtmp)) ? -3 : 3);
         /* cancel divine protection for killing your priest */
         if (p_coaligned(mtmp))
             u.ublessed = 0;
         if (mdat->maligntyp == A_NONE)
-            adjalign((int)(ALIGNLIM / 4));      /* BIG bonus */
+            adjalign(10);
     } else if (mtmp->mtame) {
         adjalign(-15);  /* bad!! */
         /* your god is mighty displeased... */
@@ -2178,7 +2178,7 @@ cleanup:
        want a penalty for killing monsters that generated peaceful.  I'm not
        absolutely sure the following condition is correct, but we'll test it: */
     if (mtmp->malign < 0)
-        adjalign(mtmp->malign);
+        adjalign(always_peaceful(mtmp->data) ? -5 : -1);
     /* However, chaotics now get a point for killing their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
         int oldalign = u.ualign.record;
