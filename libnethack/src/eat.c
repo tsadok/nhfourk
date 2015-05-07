@@ -1724,9 +1724,11 @@ edibility_prompts(struct obj *otmp)
             return 2;
     }
     if (cadaver && !vegetarian(&mons[mnum]) &&
-        !u.uconduct[conduct_vegetarian] && Role_if(PM_MONK)) {
-        buf = msgprintf("%s unsuitable for a vegetarian monk. %s",
-                        foodsmell, eat_it_anyway);
+        !u.uconduct[conduct_vegetarian] &&
+        (Role_if(PM_MONK) || Race_if(PM_SYLPH))) {
+        buf = msgprintf("%s unsuitable for a vegetarian %s. %s",
+                        foodsmell, (Role_if(PM_MONK) ? "monk" : "sylph"),
+                        eat_it_anyway);
         if (yn_function(buf, ynchars, 'n') == 'n')
             return 1;
         else
