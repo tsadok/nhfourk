@@ -50,6 +50,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.1:
 -------------------
 
+ * The alignment record penalties for killing peaceful monsters have
+   been rebalanced, and your maximum and minimum alignment record
+   are always 100 and -100, respectively.
+
  * Changed the Caveman/Cavewoman rank titles.
 
  * Chaotics get alignment points for killing (hostile members of)
