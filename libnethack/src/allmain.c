@@ -28,6 +28,10 @@ static void command_input(int cmdidx, struct nh_cmd_arg *arg);
 
 static void decrement_helplessness(void);
 
+static void constitution_based_healing(int minlevel);
+
+static void deluxe_sylph_healing(void);
+
 const char *const *
 nh_get_copyright_banner(void)
 {
@@ -689,6 +693,56 @@ normal_exit:
 }
 
 static void
+constitution_based_healing(int minlevel)
+{
+    int heal, Con = (int)ACURR(A_CON);
+
+    if ((Con <= 12) || (u.ulevel <= minlevel)) {
+        heal = 1;
+    } else {
+        heal = rnd(Con);
+        if (heal > u.ulevel - minlevel)
+            heal = u.ulevel - minlevel;
+    }
+    u.uhp += heal;
+    if (u.uhp > u.uhpmax)
+        u.uhp = u.uhpmax;
+}
+
+/* This is the deluxe, maybe-more-than-one-point healing that sylphs get on
+   turns when a non-sylph character without regeneration would also heal.
+   It can also cure some of the nastier status effects. */
+static void
+deluxe_sylph_healing(void)
+{
+    if (!Race_if(PM_SYLPH)) {
+        impossible("Trying to do sylph healing while not a sylph.");
+        return;
+    } else if (!can_draw_from_environment(&youmonst)) {
+        impossible("Trying to do sylph healing without the environment.");
+        return;
+    } else if (Sick || Vomiting || HHallucination || HStun || HConfusion ||
+               (Blinded > (unsigned long)u.ucreamed)) {
+        if (Sick)
+            make_sick(0L, NULL, TRUE, SICK_ALL);
+        if (Vomiting)
+            make_vomiting(0L, TRUE);
+        if (HHallucination)
+            make_hallucinated(0L, TRUE);
+        if (HStun)
+            make_stunned(0L, TRUE);
+        if (HConfusion && !rn2(3))
+            make_confused(0L, TRUE);
+        if (Blinded > (unsigned long)u.ucreamed)
+            make_blinded((long)u.ucreamed, TRUE);
+        return;
+    } else {
+        constitution_based_healing(u.ulevel > 11 ? 9 : u.ulevel - 2);
+        return;
+    }
+}
+
+static void
 you_moved(void)
 {
     int wtcap = 0, change = 0;
@@ -856,27 +910,19 @@ you_moved(void)
                          (wtcap < MOD_ENCUMBER && !(moves % 20))) {
                     u.mh++;
                 }
-            } else if (u.uhp < u.uhpmax &&
-                       (can_draw_from_environment(&youmonst) ||
+            } else if (can_draw_from_environment(&youmonst) ||
                         (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)
-                          && !Race_if(PM_SYLPH))))) {
-                if (u.ulevel > 9 && !(moves % 3)) {
-                    int heal, Con = (int)ACURR(A_CON);
-
-                    if (Con <= 12) {
-                        heal = 1;
-                    } else {
-                        heal = rnd(Con);
-                        if (heal > u.ulevel - 9)
-                            heal = u.ulevel - 9;
-                    }
-                    u.uhp += heal;
-                    if (u.uhp > u.uhpmax)
-                        u.uhp = u.uhpmax;
-                } else if (Regeneration ||
-                           can_draw_from_environment(&youmonst) ||
-                           (u.ulevel <= 9 &&
-                            !(moves % ((MAXULEV + 12) / (u.ulevel + 2) + 1)))) {
+                          && !Race_if(PM_SYLPH)))) {
+                if (Race_if(PM_SYLPH) && !(moves % 3)) {
+                    deluxe_sylph_healing();
+                } else if (u.ulevel > 9 && !(moves % 3)) {
+                    constitution_based_healing(9);
+                } else if (u.uhp < u.uhpmax &&
+                           (Regeneration ||
+                            can_draw_from_environment(&youmonst) ||
+                            (u.ulevel <= 9 &&
+                             !(moves % ((MAXULEV + 12)
+                                        / (u.ulevel + 2) + 1))))) {
                     u.uhp++;
                 }
             } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2))) {
