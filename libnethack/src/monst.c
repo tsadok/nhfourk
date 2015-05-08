@@ -917,7 +917,7 @@ const struct permonst mons[] = {
         LVL(3, 1, 3, 0, 0), (G_GENO | 4),
         A(ATTK(AT_BITE, AD_PHYS, 2, 6),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0,
+        SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0, MRACE_NONE,
         M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
         M1_NOTAKE,
         M2_HOSTILE, 0, CLR_BROWN),
@@ -925,7 +925,7 @@ const struct permonst mons[] = {
         LVL(5, 1, 0, 0, 0), (G_GENO | 2),
         A(ATTK(AT_BITE, AD_PHYS, 3, 6),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), 0, 0,
+        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), 0, 0, MRACE_NONE,
         M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
         M1_NOTAKE,
         M2_HOSTILE, 0, CLR_CYAN),
@@ -933,7 +933,7 @@ const struct permonst mons[] = {
         LVL(7, 1, 0, 0, 0), (G_GENO | 1),
         A(ATTK(AT_BITE, AD_PHYS, 4, 6), NO_ATTK, NO_ATTK,
           NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), MR_ACID, 0,
+        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), MR_ACID, 0, MRACE_NONE,
         M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
         M1_NOTAKE,
         M2_HOSTILE, 0, CLR_WHITE),
