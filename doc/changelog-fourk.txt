@@ -54,6 +54,18 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Large deep-rock dwellers (X) now include xorns, umber hulks,
+   ettins, and deep ettins.
+
+ * Gelatinous cubes, acid blobs, and quivering blobs now appear
+   as lowercase j, along with jellies.
+
+ * Lizards (everything that formerly looked like a colon, :) are
+   now represented by a lowercase l, which stands for lizard.
+
+ * Piercers are now in mlet t, things that pretend to be part of
+   the ceiling/wall/floor until you wander into them, then attack.
+
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
    the character's overall maximum where it was in vanilla):

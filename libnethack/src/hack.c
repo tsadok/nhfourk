@@ -2104,25 +2104,29 @@ stillinwater:
     if ((mtmp = m_at(level, u.ux, u.uy)) && !Engulfed) {
         mtmp->mundetected = mtmp->msleeping = 0;
         switch (mtmp->data->mlet) {
-        case S_PIERCER:
-            pline("%s suddenly drops from the %s!", Amonnam(mtmp),
-                  ceiling(u.ux, u.uy));
-            if (mtmp->mtame)    /* jumps to greet you, not attack */
-                ;
-            else if (uarmh && is_metallic(uarmh))
-                pline("Its blow glances off your %s.", helmet_name(uarmh));
-            else if (get_player_ac() + 3 <= rnd(20))
-                pline("You are almost hit by %s!",
-                      x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
-            else {
-                int dmg;
-
-                pline("You are hit by %s!",
-                      x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
-                dmg = dice(4, 6);
-                if (Half_physical_damage)
-                    dmg = (dmg + 1) / 2;
-                mdamageu(mtmp, dmg);
+        case S_TRAPPER:
+            if (mtmp->data == &mons[PM_ROCK_PIERCER] ||
+                mtmp->data == &mons[PM_IRON_PIERCER] ||
+                mtmp->data == &mons[PM_GLASS_PIERCER]) {
+                pline("%s suddenly drops from the %s!", Amonnam(mtmp),
+                      ceiling(u.ux, u.uy));
+                if (mtmp->mtame)    /* jumps to greet you, not attack */
+                    ;
+                else if (uarmh && is_metallic(uarmh))
+                    pline("Its blow glances off your %s.", helmet_name(uarmh));
+                else if (get_player_ac() + 3 <= rnd(20))
+                    pline("You are almost hit by %s!",
+                          x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
+                else {
+                    int dmg;
+                    
+                    pline("You are hit by %s!",
+                          x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
+                    dmg = dice(4, 6);
+                    if (Half_physical_damage)
+                        dmg = (dmg + 1) / 2;
+                    mdamageu(mtmp, dmg);
+                }
             }
             break;
         default:       /* monster surprises you. */

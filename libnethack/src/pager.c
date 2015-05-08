@@ -28,15 +28,14 @@ static int do_look(boolean, const struct nh_cmd_arg *);
  */
 const char *const monexplain[MAXMCLASSES] = {
     0,
-    "ant or other insect", "blob", "cockatrice",
+    "ant or other insect", "[unused]", "cockatrice",
     "dog or other canine", "eye or sphere", "feline",
     "gremlin", "humanoid", "impish spirit",
-    "jelly", "kobold",
-    "mimic", "nymph", "orc",
-    "piercer", "quadruped", "rodent",
-    "arachnid or centipede", "trapper or lurker above", "unicorn or horse",
-    "vortex", "worm", "xan or other fantastic insect",
-    "light",
+    "jelly or blob", "kobold", "lizard, reptile, or amphibian",
+    "mimic", "nymph", "orc", "[unused]", "quadruped", "rodent",
+    "arachnid or centipede", "trapper, piercer, or lurker above",
+    "unicorn or horse", "vortex", "worm",
+    "xan or other fantastic insect", "light",
 
     "angelic being", "bat or bird", "centaur",
     "dragon", "elemental", "fungus or mold",
@@ -44,11 +43,12 @@ const char *const monexplain[MAXMCLASSES] = {
     "jabberwock", "Keystone Kop", "lich",
     "mummy", "naga", "ogre",
     "pudding or ooze", "quantum mechanic", "rust monster or disenchanter",
-    "snake", "troll", "umber hulk",
-    "vampire", "wraith or ghost", "xorn",
+    "snake", "troll", "[unused]",
+    "vampire", "wraith or ghost",
+    "xorn, umber hulk, or other large deep-rock dweller",
     "apelike creature", "zombie",
 
-    "human or elf", "golem", "major demon", "sea monster", "lizard",
+    "human or elf", "golem", "major demon", "sea monster",
     "long worm tail", "mimic"
 };
 
