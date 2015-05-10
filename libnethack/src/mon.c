@@ -2310,6 +2310,11 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
               plural ? "were" : "was");
     }
 
+    if (Poison_resistance) {
+        pline("The poison doesn't seem to affect you.");
+        return;
+    }
+
     fatal += 20 * thrown_weapon;
     switch (fatal) {
     case  8: rng = rng_deadlypoison_8;  break;
@@ -2327,6 +2332,7 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     if (i == 0 && typ != A_CHA) {
         deadly_poison("The poison was deadly...", POISONING,
                       killer, !strcmp(string, "blast"));
+        /* deadly_poison checks Poison_resistance itself. */
     } else if (i <= 5) {
         /* Check that a stat change was made */
         if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3, 3), 1))
