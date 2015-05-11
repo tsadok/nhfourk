@@ -564,49 +564,47 @@ FLAGS: noteleport
 # First part
 GEOMETRY:half-right,center
 MAP
- ---------------------
- |........|.....|....|
- |........+.....|....|
- |........|.....|--S-|
--|........|--S--|....|
-.|---S----|.....|....|
-.S........|..{..S....|
--|FFFF....S.....|....|
- |...S....|.....|FFFF|
- |...|-----FFFFF|....|
- |...S....+.....S....|
- ---------------------
+  ----------------
+  |......|...|...|
+  |......+...|...|
+  |......|...|--S|
+-------S-|-S-|...|
+.........|...|...|
+.........|.{.S...|
+---FFFF..S...|...|
+  |...S..|...|FFF|
+  |...|---FFF|...|
+  |...S..+...S...|
+  ----------------
 ENDMAP
-STAIR:(17,01),down
-STAIR:levregion(00,00,5,20),levregion(6,1,69,16),up
-BRANCH:levregion(00,00,5,20),levregion(6,1,69,16)
-TELEPORT_REGION:levregion(00,00,5,20),levregion(5,1,69,16)
+STAIR:(15,01),down
+STAIR:levregion(00,00,05,20),levregion(06,01,69,16),up
+BRANCH:levregion(00,00,05,20),levregion(06,01,69,16)
+TELEPORT_REGION:levregion(00,00,05,20),levregion(05,01,69,16)
 #
-DOOR:locked,(01,06)
-DOOR:closed,(05,05)
-DOOR:locked,(05,08)
-DOOR:locked,(05,10)
-DOOR:closed,(10,02)
-DOOR:locked,(10,07)
-DOOR:closed,(10,10)
-DOOR:locked,(13,04)
-DOOR:locked,(16,06)
-DOOR:locked,(16,10)
-DOOR:locked,(19,03)
+DOOR:closed,(09,02)
+DOOR:locked,(07,04)
+DOOR:locked,(06,08)
+DOOR:locked,(06,10)
+DOOR:locked,(09,07)
+DOOR:closed,(09,10)
+DOOR:locked,(11,04)
+DOOR:locked,(13,06)
+DOOR:locked,(13,10)
+DOOR:locked,(16,03)
 #
-NON_DIGGABLE:(00,00,21,11)
-REGION:(01,01,20,10),unlit,"ordinary"
-MONSTER:'&',"Asmodeus",(18,02)
-MONSTER:'D',random,(02,08)
-MONSTER:'D',random,(03,09)
-MONSTER:'D',random,(04,10)
+NON_DIGGABLE:(00,00,17,11)
+REGION:(01,01,17,10),unlit,"ordinary"
+MONSTER:'&',"Asmodeus",(15,02)
+MONSTER:'D',random,(03,08)
+MONSTER:'D',random,(04,09)
+MONSTER:'D',random,(05,10)
+MONSTER:'D',random,(10,10)
+MONSTER:'D',random,(11,10)
 MONSTER:'D',random,(12,10)
-MONSTER:'D',random,(13,10)
-MONSTER:'D',random,(14,10)
-MONSTER:'D',random,(17,09)
-MONSTER:'D',random,(18,09)
-MONSTER:'D',random,(19,09)
-MONSTER:'D',random,(20,09)
+MONSTER:'D',random,(14,09)
+MONSTER:'D',random,(15,09)
+MONSTER:'D',random,(16,09)
 #
 # Some assorted junk
 OBJECT:'[',random,random
@@ -632,28 +630,28 @@ MONSTER:'&',random,random
 MONSTER:'&',random,random
 MONSTER:'L',random,random
 # Second part of that same level:
-GEOMETRY:half-left,center
+GEOMETRY:center,center
 MAP
- --------------------- 
--|...........+.......| 
-.---+-----+------S---|-
-.......|....LLL......+.
-.......|.....LLL.....+.
-.---+-----+---L------|-
--|...........+.......| 
- --------------------- 
+----------------|.
+|........+......|.
+-+----+------S--|-
+....|...LLL.....+.
+....|....LLL....+.
+-+----+---L-----|F
+|........+......|.
+----------------|.
 ENDMAP
 MAZEWALK:(00,04),west
-NON_DIGGABLE:(00,00,22,07)
-DOOR:locked,(04,02)
-DOOR:locked,(04,05)
-DOOR:locked,(10,02)
-DOOR:locked,(10,05)
-DOOR:locked,(13,01)
-DOOR:locked,(13,06)
-DOOR:locked,(17,02)
-DOOR:locked,(21,03)
-DOOR:locked,(21,04)
+NON_DIGGABLE:(00,00,17,07)
+DOOR:locked,(01,02)
+DOOR:locked,(01,05)
+DOOR:locked,(06,02)
+DOOR:locked,(06,05)
+DOOR:locked,(09,01)
+DOOR:locked,(09,06)
+DOOR:locked,(13,02)
+DOOR:locked,(16,03)
+DOOR:locked,(16,04)
 MONSTER:'&',random,random
 MONSTER:'&',random,random
 MONSTER:'&',random,random
@@ -661,6 +659,135 @@ TRAP:random, random
 TRAP:random, random
 TRAP:random, random
 
+#
+# Alternate Baalzebub level
+# (Version B:  Baalzebub's Fortress)
+#
+MAZE:"asbaal-4",random
+FLAGS: noteleport,nommap
+GEOMETRY:center,center
+MAP
+----------------------------------------------------------------------------
+|..+......|....+.......|...+.....|..+..|..+.....|...+.......|....+......|..|
+|..|......+....|.......+...|.....+..|..+..|.....+...|.......+....|......+..|
+|-+-----------------------------------------------------------------------+|
+|..|                                                                    |..|
+|..|                                                                    |..|
+|..|                                                                    |..|
+|..|                                                                    |..|
+|+-|                                                                    |+-|
+|..+...                                .                                |..|
+|..|                                   .                                +..|
+|-+|                                                                    |-+|
+|..|                                                                    |..|
+|..|                                                                    |..|
+|..|                                                                    |..|
+|..|                                                                    |..|
+|+-----------------------------------------------------------------------+-|
+|..+......|....+.......|...+.....|..+..|..+.....|...+.......|....+......|..|
+|..|......+....|.......+...|.....+..|..+..|.....+...|.......+....|......+..|
+----------------------------------------------------------------------------
+ENDMAP
+STAIR:(00,00,75,19),(03,03,72,16),up
+STAIR:(00,00,75,19),(03,03,72,16),down
+BRANCH:(00,00,75,19),(03,03,72,16)
+TELEPORT_REGION:(00,00,75,19),(03,03,72,16)
+#
+MAZEWALK:(72,10),west
+#
+DOOR:locked,(03,01)
+DOOR:locked,(10,02)
+DOOR:locked,(15,01)
+DOOR:locked,(23,02)
+DOOR:locked,(27,01)
+DOOR:locked,(33,02)
+DOOR:locked,(36,01)
+DOOR:locked,(39,02)
+DOOR:locked,(42,01)
+DOOR:locked,(48,02)
+DOOR:locked,(52,01)
+DOOR:locked,(60,02)
+DOOR:locked,(65,01)
+DOOR:locked,(72,02)
+#
+DOOR:locked,(02,03)
+DOOR:locked,(01,08)
+DOOR:locked,(03,09)
+DOOR:locked,(02,11)
+DOOR:locked,(01,16)
+#
+DOOR:locked,(03,17)
+DOOR:locked,(10,18)
+DOOR:locked,(15,17)
+DOOR:locked,(23,18)
+DOOR:locked,(27,17)
+DOOR:locked,(33,18)
+DOOR:locked,(36,17)
+DOOR:locked,(39,18)
+DOOR:locked,(42,17)
+DOOR:locked,(48,18)
+DOOR:locked,(52,17)
+DOOR:locked,(60,18)
+DOOR:locked,(65,17)
+DOOR:locked,(72,18)
+#
+DOOR:locked,(74,03)
+DOOR:locked,(73,08)
+DOOR:locked,(72,10)
+DOOR:locked,(74,11)
+DOOR:locked,(73,16)
+#
+MONSTER:'&',"Baalzebub",random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+#
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+#
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+#
+# Some random junk:
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Some traps.
+TRAP:"fire", random
+TRAP:"sleep gas", random
+TRAP:"magic", random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
 
 #
 # Yeenoghu's Plaza, Version 1
@@ -681,21 +808,21 @@ MAP
 |..---.......LLLL.......| |....|
 |..| |........LL........---...--
 --.---...---..................||
-.|.......| |................---|
-.|......L---....LL.---......| ||
-.|......LLL....LLLL| |......----
-----....LLL..---LLL---........|.
-|  |...LLL...| |.LLLLL........+.
-----..LLLL...---LLLLLLLLL.....--
-||...LL---.LLLLLLLLLLLLLLL.....|
-|------- -----------------------
---                            --
+ |.......| |................---|
+ |......L---....LL.---......| ||
+ |......LLL....LLLL| |......----
+ ---....LLL..---LLL---........|.
+ | |...LLL...| |.LLLLL........+.
+ ---..LLLL...---LLLLLLLLL.....--
+ |...LL---.LLLLLLLLLLLLLLL.....|
+ ------- --------LLLLLL---------
+--              --------      --
 ENDMAP
 #
 RANDOM_PLACES:(02,18),(24,01),(15,05),(29,09),(06,12),(11,16)
 #
-MAZEWALK:(01,05),west
-MAZEWALK:(30,16),east
+MAZEWALK:(01,06),west
+MAZEWALK:(30,15),east
 #
 STAIR:levregion(00,00,5,20),levregion(5,1,69,16),up
 BRANCH:levregion(00,00,69,20),(00,00,31,20)
@@ -754,10 +881,10 @@ MAP
  |..L.--.----F-.FFFFFF+-----  
  ----.--F----.---......#...|  
     |.............----.|----  
-    |.---.---L---.-  |.|      
-    |.| |.| |.| |.| .S.|      
-    --- |.| |.| ---  ---      
-        --- ---               
+    |.---.---L---.---|.|      
+    |.| |.| |.| |.||.S.|      
+    --- |.| |.|-----.---      
+        --- ---|...S.S.|      
 ------------------------------
 ------------------------------
 ENDMAP
@@ -776,6 +903,8 @@ DOOR:random,(00,06)
 DOOR:random,(29,07)
 DOOR:random,(22,12)
 DOOR:locked,(21,16)
+DOOR:locked,(19,18)
+DOOR:locked,(21,18)
 MONSTER:'&',"Dispater",place[0]
 MONSTER:'&',random,place[1]
 MONSTER:'&',random,place[2]
@@ -834,10 +963,11 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-
+OBJECT:random,random,(20,16)
+OBJECT:random,random,(20,17)
+OBJECT:random,random,(20,18)
+OBJECT:'(',"chest",(16,18)
+OBJECT:'(',"chest",(22,18)
 #
 # The Sanctum Level
 #
