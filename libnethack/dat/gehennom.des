@@ -270,9 +270,455 @@ TRAP:"anti magic",random
 TRAP:"magic",random
 TRAP:"magic",random
 #
-# The Orcus Level
+# The Orcus Level, Version B
 #
-MAZE:"orcus",random
+MAZE:"orcus-1",random
+FLAGS: noteleport,shortsighted
+GEOMETRY:right,center
+#         1         2         3         4
+#12345678901234567890123456789012345678901234567
+MAP
+ -----------------------------------------------
+-|.|..............|............................|
+.|.|..............|............................|
+.|.|..............|.....--------------.........|
+.|.---+-------+---|.....|............|.........|
+..................|.....|............+.........|
+..................---+---...-----....|.........|
+.|....----+---..............|...|....----------|
+.|.|.........|..............|...+.......|......|
+.|.|.........|-----.........-----.......+......|
+.|.|..............|-----................|......|
+.|.|...|..........|....|.........----+---------|
+.|.--+-------.....+....|....{.............|....|
+.|............--+-|....+..................|....|
+.|.--+--..........|....|...------|........|....|
+.|.|...|---+---...------...|.....|--....----+--|
+.|.|...|......|............+.....|.............|
+.|.|...|......|............|.....|.............|
+.|.|...|......|............|.....|.............|
+------------------------------------------------
+ENDMAP
+#12345678901234567890123456789012345678901234567
+MAZEWALK:(00,06),west
+# Entire O-town area
+REGION:(01,01,46,17),unlit,"ordinary"
+STAIR:(44,13),down
+STAIR:levregion(00,00,11,20),levregion(19,01,69,20),up
+BRANCH:levregion(00,00,11,20),levregion(19,01,69,20)
+TELEPORT_REGION:levregion(00,00,11,20),levregion(19,01,69,20)
+# Wall "ruins"
+OBJECT:'`',"boulder",(03,13)
+OBJECT:'`',"boulder",(03,07)
+OBJECT:'`',"boulder",(04,07)
+OBJECT:'`',"boulder",(05,07)
+OBJECT:'`',"boulder",(07,08)
+OBJECT:'`',"boulder",(07,09)
+OBJECT:'`',"boulder",(07,10)
+OBJECT:'`',"boulder",(10,01)
+OBJECT:'`',"boulder",(10,02)
+OBJECT:'`',"boulder",(10,03)
+OBJECT:'`',"boulder",(24,01)
+OBJECT:'`',"boulder",(24,02)
+OBJECT:'`',"boulder",(37,01)
+OBJECT:'`',"boulder",(37,02)
+OBJECT:'`',"boulder",(13,10)
+OBJECT:'`',"boulder",(13,11)
+OBJECT:'`',"boulder",(13,12)
+OBJECT:'`',"boulder",(13,13)
+OBJECT:'`',"boulder",(33,12)
+OBJECT:'`',"boulder",(33,13)
+OBJECT:'`',"boulder",(36,15)
+OBJECT:'`',"boulder",(37,15)
+OBJECT:'`',"boulder",(38,15)
+OBJECT:'`',"boulder",(39,15)
+# Doors
+DOOR:random,(06,04)
+DOOR:random,(14,04)
+DOOR:random,(21,06)
+DOOR:random,(37,05)
+DOOR:locked,(40,09)
+DOOR:random,(32,08)
+DOOR:random,(37,11)
+DOOR:locked,(44,15)
+DOOR:random,(27,16)
+DOOR:random,(23,13)
+DOOR:random,(18,12)
+DOOR:random,(16,13)
+DOOR:random,(11,15)
+DOOR:random,(05,14)
+DOOR:random,(05,12)
+DOOR:random,(10,07)
+# Special rooms
+ALTAR:(44,09),noalign,sanctum
+REGION:(34,12,41,14),unlit,"morgue"
+REGION:(04,08,06,11),lit,"shop"
+REGION:(19,01,23,05),lit,"shop"
+REGION:(29,07,31,08),lit,"shop"
+# Some traps.
+TRAP:"spiked pit", random
+TRAP:"sleep gas", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"magic", random
+TRAP:"magic", random
+# Some random objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:'?',"wishing",random
+# The resident nasty
+MONSTER:'&',"Orcus",(44,13)
+# And its preferred companions
+MONSTER:'Z',random,(43,12)
+MONSTER:'W',"shade",(45,12)
+MONSTER:'W',"shade",(43,14)
+MONSTER:'V',"vampire lord",(42,16)
+MONSTER:'V',"vampire",(45,14)
+MONSTER:'V',random,(46,13)
+MONSTER:'V',random,(45,16)
+# Randomly placed companions
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'Z',"giant zombie",random
+MONSTER:'Z',"giant zombie",random
+MONSTER:'Z',"giant zombie",random
+MONSTER:'Z',"ettin zombie",random
+MONSTER:'Z',"ettin zombie",random
+MONSTER:'Z',"ettin zombie",random
+MONSTER:'Z',"human zombie",random
+MONSTER:'Z',"human zombie",random
+MONSTER:'Z',"human zombie",random
+MONSTER:'V',"vampire",random
+MONSTER:'V',"vampire",random
+MONSTER:'V',"vampire",random
+MONSTER:'V',"vampire lord",random
+MONSTER:'V',"vampire lord",random
+# A few more for the party
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
+#
+# The Orcus Level (Version C)
+# a.k.a. "Pudding Town"
+#
+MAZE:"orcus-2",random
+FLAGS: noteleport,shortsighted
+GEOMETRY:right,center
+#         1         2         3         4
+#1234567890123456789012345678901234567890123456
+MAP
+-----------------------------------------------
+|.|..............................|...|........|
+|.|..............................|...|........|
+|.|.......+.................{....--+-|........|
+|.|.......|....----------............|........|
+|.|-----.......|........|-------.....|........|
+|.|............+........|......+.....-........|
+|.|............|........|......|.......----+--|
+|.|......|.....|........|--...-|..............|
+|.|......|.....---------|......+..............|
+|.|......|........|.....S......|......|.......|
+|.----+---...{....+.....|-------......|.......|
+ .................|.....|....|........-----+--|
+..................|.....|....|.....|..........|
+|.---+-----+----..---...|....+.....|..........|
+|.|....|................|....|.....+..........|
+|.|....|................|....|.....|..........|
+|.|....|.......|........------.....|..........|
+|.|....|.......|...................|..........|
+-----------------------------------------------
+ENDMAP
+MAZEWALK:(01,12),west
+# Entire O-town area
+REGION:(01,01,45,17),unlit,"ordinary"
+STAIR:(40,03),down
+STAIR:levregion(00,00,11,20),levregion(19,01,69,20),up
+BRANCH:levregion(00,00,11,20),levregion(19,01,69,20)
+TELEPORT_REGION:levregion(00,00,11,20),levregion(19,01,69,20)
+# Wall "ruins"
+OBJECT:'`',"boulder",(10,01)
+OBJECT:'`',"boulder",(10,02)
+OBJECT:'`',"boulder",(08,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(10,05)
+OBJECT:'`',"boulder",(09,06)
+OBJECT:'`',"boulder",(09,07)
+OBJECT:'`',"boulder",(15,15)
+OBJECT:'`',"boulder",(15,16)
+OBJECT:'`',"boulder",(21,14)
+OBJECT:'`',"boulder",(22,14)
+OBJECT:'`',"boulder",(23,14)
+OBJECT:'`',"boulder",(27,08)
+OBJECT:'`',"boulder",(28,08)
+OBJECT:'`',"boulder",(29,08)
+OBJECT:'`',"boulder",(35,12)
+OBJECT:'`',"boulder",(36,12)
+OBJECT:'`',"boulder",(37,12)
+OBJECT:'`',"boulder",(38,06)
+OBJECT:'`',"boulder",(38,07)
+OBJECT:'`',"boulder",(38,08)
+OBJECT:'`',"boulder",(38,09)
+DOOR:random,(05,14)
+DOOR:random,(11,14)
+DOOR:random,(29,14)
+DOOR:random,(35,15)
+DOOR:random,(43,12)
+DOOR:locked,(43,07)
+DOOR:random,(35,03)
+DOOR:random,(31,06)
+DOOR:random,(31,09)
+DOOR:random,(18,11)
+DOOR:locked,(15,06)
+DOOR:random,(06,11)
+DOOR:random,(10,03)
+DOOR:locked,(24,10)
+# Special rooms
+ALTAR:(19,06),noalign,sanctum
+REGION:(03,01,09,04),unlit,"morgue"
+REGION:(08,15,14,17),lit,"shop"
+REGION:(25,09,30,10),lit,"shop"
+REGION:(34,01,36,02),lit,"shop"
+# Some traps.
+TRAP:"spiked pit", random
+TRAP:"sleep gas", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"fire", random
+TRAP:"magic", random
+TRAP:"magic", random
+# Some random objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:'?',"wishing",random
+# The resident nasty
+MONSTER:'&',"Orcus",(40,03)
+# Placed companions
+MONSTER:'Z',random,(42,02)
+MONSTER:'W',"shade",(40,02)
+MONSTER:'W',"shade",(39,04)
+MONSTER:'V',"vampire lord",(42,04)
+MONSTER:'V',"vampire",(41,06)
+MONSTER:'V',random,(40,05)
+MONSTER:'V',random,(44,06)
+# Randomly placed companions
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'Z',"giant zombie",random
+MONSTER:'Z',"giant zombie",random
+MONSTER:'Z',"giant zombie",random
+MONSTER:'Z',"ettin zombie",random
+MONSTER:'Z',"ettin zombie",random
+MONSTER:'Z',"ettin zombie",random
+MONSTER:'Z',"human zombie",random
+MONSTER:'Z',"human zombie",random
+MONSTER:'Z',"human zombie",random
+MONSTER:'P',"green slime",random
+MONSTER:'P',"green slime",random
+MONSTER:'P',"green slime",random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+
+#
+# The Orcus Level (Version D)
+#
+MAZE:"orcus-3",random
+FLAGS: noteleport,shortsighted
+GEOMETRY:right,center
+#         1         2         3         4
+#123456789012345678901234567890123456789012345
+MAP
+-----------------------------------------------
+|.|.......|.............................|.....|
+|.|.......+........................+....|.....|
+|.|.......|.......------...------.....--|.....|
+|.|--------.....................|.......|.....|
+|.|.......+.....+........|......+.......+.....|
+|.|.............|--------.......|.......|.....|
+|.|------.......|...........-----.....--------|
+|.|.............+..............|......|.......|
+|.|.......+.....|..............+......+.......|
+|.---------....----------|............|.......|
+...............S.........|----........|--...--|
+ ..............|--------.|............+.......|
+...............|.......|.|.......+....|.......|
+|.--------.....|.......|.|.......|....|---...-|
+|.|......|.....|.......|S---------....|.......|
+|.|......+.....+.......|..............+.......|
+|.|......|.....|.......|..............|.......|
+|.|......|.....|.......|..............|.......|
+-----------------------------------------------
+ENDMAP
+MAZEWALK:(01,12),west
+# Entire O-town area
+REGION:(01,01,45,17),unlit,"ordinary"
+STAIR:(43,02),down
+STAIR:levregion(00,00,11,20),levregion(19,01,69,20),up
+BRANCH:levregion(00,00,11,20),levregion(19,01,69,20)
+TELEPORT_REGION:levregion(00,00,11,20),levregion(19,01,69,20)
+# Wall "ruins"
+OBJECT:'`',"boulder",(09,07)
+OBJECT:'`',"boulder",(10,06)
+OBJECT:'`',"boulder",(10,07)
+OBJECT:'`',"boulder",(10,08)
+OBJECT:'`',"boulder",(16,03)
+OBJECT:'`',"boulder",(17,03)
+OBJECT:'`',"boulder",(16,04)
+OBJECT:'`',"boulder",(24,03)
+OBJECT:'`',"boulder",(25,03)
+OBJECT:'`',"boulder",(26,03)
+OBJECT:'`',"boulder",(25,04)
+OBJECT:'`',"boulder",(25,06)
+OBJECT:'`',"boulder",(25,07)
+OBJECT:'`',"boulder",(26,07)
+OBJECT:'`',"boulder",(27,07)
+OBJECT:'`',"boulder",(25,08)
+OBJECT:'`',"boulder",(25,09)
+OBJECT:'`',"boulder",(31,10)
+OBJECT:'`',"boulder",(30,11)
+OBJECT:'`',"boulder",(31,11)
+OBJECT:'`',"boulder",(32,11)
+OBJECT:'`',"boulder",(33,11)
+OBJECT:'`',"boulder",(33,12)
+OBJECT:'`',"boulder",(35,01)
+OBJECT:'`',"boulder",(35,03)
+OBJECT:'`',"boulder",(36,03)
+OBJECT:'`',"boulder",(37,03)
+OBJECT:'`',"boulder",(41,11)
+OBJECT:'`',"boulder",(42,11)
+OBJECT:'`',"boulder",(43,11)
+OBJECT:'`',"boulder",(42,14)
+OBJECT:'`',"boulder",(43,14)
+OBJECT:'`',"boulder",(44,14)
+# Doors:
+DOOR:random,(10,02)
+DOOR:random,(10,05)
+DOOR:random,(10,09)
+DOOR:locked,(09,16)
+DOOR:random,(15,16)
+DOOR:locked,(15,11)
+DOOR:random,(16,08)
+DOOR:random,(16,05)
+DOOR:locked,(24,15)
+DOOR:random,(33,13)
+DOOR:random,(31,09)
+DOOR:random,(32,05)
+DOOR:random,(35,02)
+DOOR:locked,(40,05)
+DOOR:random,(38,09)
+DOOR:random,(38,12)
+DOOR:random,(38,16)
+# Special rooms
+ALTAR:(05,17),noalign,sanctum
+REGION:(26,12,32,14),unlit,"morgue"
+REGION:(16,13,22,18),lit,"shop"
+REGION:(17,07,24,09),lit,"shop"
+# Some traps.
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+# Random objects:
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:'?',"wishing",random
+# The resident nasty
+MONSTER:'&',"Orcus",(43,05)
+# Companions:
+MONSTER:'W',"shade",(41,02)
+MONSTER:'W',"shade",(44,03)
+MONSTER:'V',"vampire lord",(41,04)
+MONSTER:'V',"vampire",(45,04)
+MONSTER:'V',random,(43,01)
+MONSTER:'V',random,(41,06)
+# Randomly placed companions
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'W',"shade",random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'J',random,random
+MONSTER:'X',random,random
+MONSTER:'X',random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
+#
+# The Orcus Level
+# (Vanilla Version = A)
+#
+MAZE:"orcus-4",random
 FLAGS: noteleport,shortsighted
 GEOMETRY:right,center
 # A ghost town
