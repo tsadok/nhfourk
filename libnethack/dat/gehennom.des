@@ -1236,6 +1236,104 @@ TRAP:random, random
 TRAP:random, random
 
 #
+# Alternate Baalzebub level
+# (Version C: Box of Baalzebub)
+#
+MAZE:"asbaal-5",random
+FLAGS: noteleport
+GEOMETRY:center,center
+#1234567890123456789012
+MAP
+.........................
+.|.---------.---------.|.
+.|.|...|...+.+...|...|.|.
+.|.|...+...|.|...+...|.|.
+.|.|...|FFFFFFFFF|...|.|.
+.|.|...+.........+...|.|.
+...|---|.........|---|...
+.|.|...+.........+...|.|.
+.|.|...|FFFFFFFFF|...|.|.
+.|.|...+...|.|...+...|.|.
+.|.|...|...+.+...|...|.|.
+.|.---------.---------.|.
+.........................
+ENDMAP
+MAZEWALK:(24,06),east
+STAIR:(12,06),down
+STAIR:levregion(00,00,69,20),(00,00,24,12),up
+BRANCH:levregion(00,00,69,20),(00,00,24,12)
+TELEPORT_REGION:levregion(00,00,69,20),(00,00,24,12)
+NON_DIGGABLE:(01,01,23,11)
+#
+DOOR:locked,(07,03)
+DOOR:locked,(07,05)
+DOOR:locked,(07,07)
+DOOR:locked,(07,09)
+#
+DOOR:locked,(11,02)
+DOOR:locked,(13,02)
+DOOR:locked,(11,10)
+DOOR:locked,(13,10)
+#
+DOOR:locked,(17,03)
+DOOR:locked,(17,05)
+DOOR:locked,(17,07)
+DOOR:locked,(17,09)
+#
+REGION:(01,01,23,11),unlit,"ordinary"
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+#
+MONSTER:'&',"Baalzebub",(12,06)
+#
+# Some random junk:
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'(',"chest",random
+OBJECT:'(',"chest",random
+OBJECT:'(',"chest",random
+OBJECT:'(',"chest",random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Some traps.
+TRAP:"fire", random
+TRAP:"sleep gas", random
+TRAP:"magic", random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+TRAP:random, random
+#
+# And the inner room:
+REGION:(08,05,16,07),unlit,"ordinary"
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
+#
 # Yeenoghu's Plaza, Version 1
 #
 MAZE:"yeedis-1",random
