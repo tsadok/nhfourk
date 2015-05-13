@@ -270,7 +270,7 @@ makeroguerooms(struct level *lev)
                    but since Rogue rooms are only encountered below level 10,
                    use !rn2(7). */
                 add_room(lev, lowx, lowy, hix, hiy,
-                         (boolean)!mklev_rn2(7, lev), OROOM, FALSE);
+                         (boolean)!mklev_rn2(7, lev), OROOM, FALSE, FALSE);
             }
         }
 

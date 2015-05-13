@@ -289,7 +289,7 @@ join_map(struct level *lev, schar bg_typ, schar fg_typ)
                 flood_fill_rm(lev, i, j, lev->nroom + ROOMOFFSET, FALSE, FALSE);
                 if (n_loc_filled > 3) {
                     add_room(lev, min_rx, min_ry, max_rx, max_ry, FALSE, OROOM,
-                             TRUE);
+                             TRUE, FALSE);
                     lev->rooms[lev->nroom - 1].irregular = TRUE;
                     if (lev->nroom >= (MAXNROFROOMS * 2))
                         goto joinm;

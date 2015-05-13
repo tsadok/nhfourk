@@ -29,13 +29,15 @@ static int do_comp(const void *, const void *);
 static void dosdoor(struct level *lev, xchar, xchar, struct mkroom *, int);
 static void join(struct level *lev, int a, int b, boolean);
 static void do_room_or_subroom(struct level *lev, struct mkroom *, int, int,
-                               int, int, boolean, schar, boolean, boolean);
+                               int, int, boolean, schar, boolean, boolean,
+                               boolean);
 static void makerooms(struct level *lev);
 static void finddpos(struct level *lev, coord *, xchar, xchar, xchar, xchar);
 static void mkinvpos(xchar, xchar, int);
 static void mk_knox_portal(struct level *lev, xchar, xchar);
 
-#define create_vault(lev) create_room(lev, -1, -1, 2, 2, -1, -1, VAULT, TRUE)
+#define create_vault(lev) create_room(lev, -1, -1, 2, 2, -1, -1, \
+                                      VAULT, TRUE, FALSE)
 #define do_vault()        (vault_x != -1)
 static xchar vault_x, vault_y;
 static boolean made_branch;     /* used only during level creation */
@@ -101,7 +103,7 @@ sort_rooms(struct level *lev)
 static void
 do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                    int hix, int hiy, boolean lit, schar rtype, boolean special,
-                   boolean is_room)
+                   boolean is_room, boolean canbeshaped)
 {
     int x, y;
     struct rm *loc;
@@ -164,7 +166,138 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
             lev->locations[hix + 1][lowy - 1].typ = TRCORNER;
             lev->locations[lowx - 1][hiy + 1].typ = BLCORNER;
             lev->locations[hix + 1][hiy + 1].typ = BRCORNER;
-        } else {        /* a subroom */
+        }
+        if (canbeshaped && (hix - lowx > 3) && (hiy - lowy > 3)) {
+            int xcut = 0, ycut = 0;
+            boolean dotl = FALSE, dotr = FALSE, dobl = FALSE, dobr = FALSE;
+            switch (mrn2(10)) {
+            case 1:
+            case 2:
+            case 3:
+                /* L-shaped */
+                xcut = 1 + mrn2(((hix - lowx) / 2) - 1);
+                ycut = 1 + mrn2(((hiy - lowy) / 2) - 1);
+                switch(mrn2(4)) {
+                case 1:
+                    dotr = TRUE;
+                    break;
+                case 2:
+                    dobr = TRUE;
+                    break;
+                case 3:
+                    dotl = TRUE;
+                    break;
+                default:
+                    dobl = TRUE;
+                    break;
+                }
+                break;
+            case 4:
+            case 5:
+                /* T-shaped */
+                xcut = 1 + mrn2(((hix - lowx) / 3));
+                ycut = 1 + mrn2(((hiy - lowy) / 3));
+                switch(mrn2(4)) {
+                case 1:
+                    dotr = TRUE;
+                    dotl = TRUE;
+                case 2:
+                    dobr = TRUE;
+                    dobl = TRUE;
+                case 3:
+                    dotr = TRUE;
+                    dobr = TRUE;
+                default:
+                    dotl = TRUE;
+                    dobl = TRUE;
+                }
+                break;
+            case 6:
+                /* S/Z shaped ("Tetris Piece") */
+                xcut = 1 + mrn2(((hix - lowx) / 3));
+                ycut = 1 + mrn2(((hiy - lowy) / 3));
+                switch(mrn2(2)) {
+                case 1:
+                    dotr = TRUE;
+                    dobl = TRUE;
+                default:
+                    dotl = TRUE;
+                    dobr = TRUE;
+                }
+                break;
+            case 7:
+                /* Plus Shaped */
+                xcut = 1 + mrn2(((hix - lowx) / 3));
+                ycut = 1 + mrn2(((hiy - lowy) / 3));
+                dotr = TRUE;
+                dotl = TRUE;
+                dobr = TRUE;
+                dobl = TRUE;
+                break;
+                /* TODO: O shaped (pillar in middle) */
+                /* TODO: oval */
+            default:
+                /* Rectangular -- nothing to do */
+                break;
+            }
+            if (dotr) {
+                /* top-right cutout */
+                for (y = 0; y < ycut; y++) {
+                    for (x = 0; x < xcut; x++) {
+                        lev->locations[hix + 1 - x][lowy + y - 1].typ = STONE;
+                    }
+                    lev->locations[hix + 1 - xcut][lowy + y - 1].typ = VWALL;
+                }
+                for (x = 0; x < xcut; x++)
+                    lev->locations[hix + 1 - x][lowy + ycut - 1].typ = HWALL;
+                lev->locations[hix + 1 - xcut][lowy + ycut - 1].typ = BLCORNER;
+                lev->locations[hix + 1][lowy + ycut - 1].typ = TRCORNER;
+                lev->locations[hix + 1 - xcut][lowy - 1].typ = TRCORNER;
+            }
+            if (dobr) {
+                /* bottom-right cutout */
+                for (y = 0; y < ycut; y++) {
+                    for (x = 0; x < xcut; x++) {
+                        lev->locations[hix + 1 - x][hiy + 1 - y].typ = STONE;
+                    }
+                    lev->locations[hix + 1 - xcut][hiy + 1 - y].typ = VWALL;
+                }
+                for (x = 0; x < xcut; x++)
+                    lev->locations[hix + 1 - x][hiy + 1 - ycut].typ = HWALL;
+                lev->locations[hix + 1 - xcut][hiy + 1 - ycut].typ = BRCORNER;
+                lev->locations[hix + 1][hiy + 1 - ycut].typ = TLCORNER;
+                lev->locations[hix + 1 - xcut][hiy + 1].typ = TLCORNER;
+            }
+            if (dotl) {
+                /* top-left cutout */
+                for (y = 0; y < ycut; y++) {
+                    for (x = 0; x < xcut; x++) {
+                        lev->locations[lowx + x - 1][lowy + y - 1].typ = STONE;
+                    }
+                    lev->locations[lowx + xcut - 1][lowy + y - 1].typ = VWALL;
+                }
+                for (x = 0; x < xcut; x++)
+                    lev->locations[lowx + x - 1][lowy + ycut - 1].typ = HWALL;
+                lev->locations[lowx + xcut - 1][lowy + ycut - 1].typ = TLCORNER;
+                lev->locations[lowx - 1][lowy + ycut - 1].typ = BRCORNER;
+                lev->locations[lowx + xcut - 1][lowy - 1].typ = BRCORNER;
+            }
+            if (dobl) {
+                /* bottom-left cutout */
+                for (y = 0; y < ycut; y++) {
+                    for (x = 0; x < xcut; x++) {
+                        lev->locations[lowx + x - 1][hiy + 1 - y].typ = STONE;
+                    }
+                    lev->locations[lowx + xcut - 1][hiy + 1 - y].typ = VWALL;
+                }
+                for (x = 0; x < xcut; x++)
+                    lev->locations[lowx + x - 1][hiy + 1 - ycut].typ = HWALL;
+                lev->locations[lowx + xcut - 1][hiy + 1 - ycut].typ = BLCORNER;
+                lev->locations[lowx - 1][hiy + 1 - ycut].typ = TRCORNER;
+                lev->locations[lowx + xcut - 1][hiy + 1].typ = TRCORNER;
+            }
+        }
+        if (!is_room) {        /* a subroom */
             wallification(lev, lowx - 1, lowy - 1, hix + 1, hiy + 1);
         }
     }
@@ -173,13 +306,13 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
 
 void
 add_room(struct level *lev, int lowx, int lowy, int hix, int hiy, boolean lit,
-         schar rtype, boolean special)
+         schar rtype, boolean special, boolean canbeshaped)
 {
     struct mkroom *croom;
 
     croom = &lev->rooms[lev->nroom];
     do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit, rtype, special,
-                       (boolean) TRUE);
+                       (boolean) TRUE, canbeshaped);
     croom++;
     croom->hx = -1;
     lev->nroom++;
@@ -193,7 +326,7 @@ add_subroom(struct level *lev, struct mkroom *proom, int lowx, int lowy,
 
     croom = &lev->subrooms[lev->nsubroom];
     do_room_or_subroom(lev, croom, lowx, lowy, hix, hiy, lit, rtype, special,
-                       FALSE);
+                       FALSE, FALSE);
     proom->sbrooms[proom->nsubrooms++] = croom;
     croom++;
     croom->hx = -1;
@@ -216,7 +349,8 @@ makerooms(struct level *lev)
                 vault_y = lev->rooms[lev->nroom].ly;
                 lev->rooms[lev->nroom].hx = -1;
             }
-        } else if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1))
+        } else if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1,
+                                (depth(&lev->z) > 2)))
             return;
     }
     return;
@@ -648,7 +782,7 @@ makelevel(struct level *lev)
         if (check_room(lev, &vault_x, &w, &vault_y, &h, TRUE)) {
         fill_vault:
             add_room(lev, vault_x, vault_y, vault_x + w, vault_y + h, TRUE,
-                     VAULT, FALSE);
+                     VAULT, FALSE, FALSE);
             ++room_threshold;
             fill_room(lev, &lev->rooms[lev->nroom - 1], FALSE);
             mk_knox_portal(lev, vault_x + w, vault_y + h);
