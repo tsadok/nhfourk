@@ -129,10 +129,10 @@ static const struct innate orc_abil[] = {
 };
 
 static const struct innate sylph_abil[] = {
-    {1,  &(HHunger), "", ""},
     {1,  &(HSee_invisible), "", ""},
-    /* They also get a form of slotless hungerless regeneration, but only under
-       certain conditions, so that's special-cased elsewhere. */
+    /* They also get a form of slotless regeneration, but only under
+       certain conditions, and with hunger implications so that's
+       special-cased elsewhere. */
     {4,  &(HStealth), "stealthy", "obvious"},
     {6,  &(HInfravision), "perceptive", "half blind"},
     {18, &(HDetect_monsters), "perceptive", "dull"},

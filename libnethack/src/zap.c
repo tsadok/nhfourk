@@ -1543,7 +1543,7 @@ end:
     if (smell) {
         if (herbivorous(youmonst.data) &&
             (!carnivorous(youmonst.data) || Role_if(PM_MONK) ||
-             !u.uconduct[conduct_vegetarian]))
+             Race_if(PM_SYLPH) || !u.uconduct[conduct_vegetarian]))
             pline_once("You smell the odor of meat.");
         else
             pline_once("You smell a delicious smell.");

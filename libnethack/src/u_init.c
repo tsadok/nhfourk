@@ -1048,6 +1048,11 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                    otyp == WAN_NOTHING
                    /* Monks don't use weapons */
                    || (otyp == SCR_ENCHANT_WEAPON && Role_if(PM_MONK))
+                   /* Sylphs and monks shouldn't get tins of meat.
+                      (Other non-veggie foods are ok to feed pets.) */
+                   || ((Race_if(PM_SYLPH) || Role_if(PM_MONK)) &&
+                       (otyp == TIN) && (obj->spe < 1) && 
+                       !vegetarian(&mons[obj->corpsenm]))
                    /* wizard patch -- they already have one */
                    || (otyp == SPE_FORCE_BOLT && Role_if(PM_WIZARD))
                    || (otyp == SPE_MAGIC_MISSILE && Role_if(PM_WIZARD))
@@ -1133,11 +1138,14 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                TODO: Does this provide numerical extrinsics, like brilliance?
                The situation nonetheless probably can't currently come up.
 
-               Sylphs start with armor that would block their healing, as
-               a hint to the player.  (Many players will probably go ahead
-               and wear them, until they need to heal.) */
+               Sylphs start out not wearing armor that would block their
+               healing, as a hint to the player.  (Some players may go ahead
+               and wear them, until they need to heal, but starting with them
+               not worn is supposed to be a clue.) */
             if (canwearobj(obj, &mask, FALSE, TRUE, TRUE) && (mask & W_ARMOR)
-                && (!Race_if(PM_SYLPH) || (is_shield(obj) && obj->owt <= 30)))
+                && (!Race_if(PM_SYLPH) ||
+                    objects[obj->otyp].oc_material == WOOD ||
+                    objects[obj->otyp].oc_material == CLOTH))
                 setworn(obj, mask);
         }
 

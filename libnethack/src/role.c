@@ -4,10 +4,12 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "hungerstatus.h"
 
 static boolean ok_race(int, int, int, int);
 static boolean ok_gend(int, int, int, int);
 static boolean ok_align(int, int, int, int);
+static boolean only_sylph_safe_armor(struct monst *, enum objslot);
 
 
 /*** Table of all roles ***/
@@ -228,7 +230,7 @@ const struct Role roles[] = {
      PM_MASTER_OF_THIEVES, PM_THUG, PM_MASTER_ASSASSIN,
      PM_LEPRECHAUN, PM_GUARDIAN_NAGA, S_NYMPH, S_NAGA,
      ART_MASTER_KEY_OF_THIEVERY,
-     MRACE_HUMAN | MRACE_ORC | MRACE_ELF | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC,
+     MRACE_HUMAN | MRACE_ORC | MRACE_ELF | MRACE_SYLPH | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {7, 7, 7, 10, 7, 6},
      {20, 10, 10, 30, 20, 10},
@@ -498,23 +500,33 @@ can_feel_ground(struct monst *mon)
           floortype == THRONE || floortype == ICE);
 }
 
+static
+boolean
+only_sylph_safe_armor(struct monst *mon, enum objslot slot)
+{
+    struct obj *armor = which_armor(mon, slot);
+    return !armor || objects[armor->otyp].oc_material == WOOD ||
+                     objects[armor->otyp].oc_material == CLOTH;
+    /* Leather is not ok mostly for gameplay reasons (allowing leather would
+       allow a lot of armor), but there's also a flavor justification:  leather
+       is too worked/unnatural and doesn't "breathe" at all.  (Wood doesn't
+       really breathe either, but the only wooden armors are shields, which are
+       more held than worn and so don't really cover the skin.) */
+}
+
 boolean
 can_draw_from_environment(struct monst *mon)
 {
-    struct obj *shield = which_armor(mon, os_arms);
+    enum objslot s;
     if (monsndx(mon->data) == PM_SYLPH ||
         (mon == &youmonst && Race_if(PM_SYLPH))) {
         /* Can you feel the air on your skin? */
-        return (!which_armor(mon, os_arm) &&
-                !which_armor(mon, os_armc) &&
-                !which_armor(mon, os_armh) &&
-                !which_armor(mon, os_armg) &&
-                !which_armor(mon, os_armu) &&
-                /* shield is permitted, as long as it's small */
-                (!shield || shield->owt <= 30) &&
-                /* can your toes feel the ground? (water is ok) */
-                can_feel_ground(mon) &&
-                !Inhell);
+        for (s = 0; s <= os_last_armor; s++)
+            if (!only_sylph_safe_armor(mon, s))
+                return FALSE;
+        return (/* can your toes feel the ground? (water is ok) */
+                can_feel_ground(mon) && !Inhell &&
+                (u.uhs < WEAK));
     }
     return FALSE;
 }

@@ -735,9 +735,12 @@ deluxe_sylph_healing(void)
             make_confused(0L, TRUE);
         if (Blinded > (unsigned long)u.ucreamed)
             make_blinded((long)u.ucreamed, TRUE);
+        morehungry(15);
         return;
     } else {
+        int oldhp = u.uhp;
         constitution_based_healing(u.ulevel > 11 ? 9 : u.ulevel - 2);
+        morehungry((u.uhp - oldhp) * 4);
         return;
     }
 }
@@ -931,6 +934,9 @@ you_moved(void)
                         pline("You try to draw healing from your surroundings, "
                               "but your toes cannot even feel the %s.",
                               surface(u.ux, u.uy));
+                    else if (u.uhs >= WEAK)
+                        pline("You try to draw healing from your surroundings, "
+                              "but you are too weak.");
                     else
                         pline("You try to draw healing from your surroundings, "
                               "but they are blocked off from your skin.");
@@ -961,9 +967,12 @@ you_moved(void)
                        u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
                  || Energy_regeneration
                  || can_draw_from_environment(&youmonst))) {
+                int olduen = u.uen;
                 u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
+                if (Race_if(PM_SYLPH) && u.uen > olduen)
+                    morehungry((u.uen - olduen) * 3);
             }
 
             if (!u.uinvulnerable) {
@@ -1421,7 +1430,8 @@ break_conduct(enum player_conduct conduct)
         u.uconduct_time[conduct] = moves;
 
     /* Monks avoid breaking vegetarian conduct. */
-    if(conduct == conduct_vegetarian && Role_if(PM_MONK)) {
+    if(conduct == conduct_vegetarian &&
+       (Role_if(PM_MONK) || Race_if(PM_SYLPH))) {
         pline("You feel guilty.");
         adjalign(-1);
     }
