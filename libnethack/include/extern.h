@@ -968,7 +968,7 @@ extern int lminion(void);
 extern struct level *alloc_level(d_level * levnum);
 extern void sort_rooms(struct level *lev);
 extern void add_room(struct level *lev, int, int, int, int, boolean, schar,
-                     boolean);
+                     boolean, boolean);
 extern void add_subroom(struct level *lev, struct mkroom *, int, int, int, int,
                         boolean, schar, boolean);
 extern void makecorridors(struct level *lev);
@@ -1646,7 +1646,7 @@ extern int dotalk(const struct nh_cmd_arg *);
 extern boolean check_room(struct level *lev, xchar *, xchar *, xchar *, xchar *,
                           boolean);
 extern boolean create_room(struct level *lev, xchar, xchar, xchar, xchar, xchar,
-                           xchar, xchar, xchar);
+                           xchar, xchar, xchar, boolean);
 extern void create_secret_door(struct level *lev, struct mkroom *croom,
                                xchar walls);
 extern boolean dig_corridor(struct level *lev, coord *, coord *, boolean, schar,
