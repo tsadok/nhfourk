@@ -119,16 +119,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
     if (hiy >= ROWNO - 1)
         hiy = ROWNO - 2;
 
-    if (lit) {
-        for (x = lowx - 1; x <= hix + 1; x++) {
-            loc = &lev->locations[x][max(lowy - 1, 0)];
-            for (y = lowy - 1; y <= hiy + 1; y++)
-                loc++->lit = 1;
-        }
-        croom->rlit = 1;
-    } else
-        croom->rlit = 0;
-
     croom->lx = lowx;
     croom->hx = hix;
     croom->ly = lowy;
@@ -168,26 +158,39 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
             lev->locations[hix + 1][hiy + 1].typ = BRCORNER;
         }
         if (canbeshaped && (hix - lowx > 3) && (hiy - lowy > 3)) {
-            int xcut = 0, ycut = 0;
-            boolean dotl = FALSE, dotr = FALSE, dobl = FALSE, dobr = FALSE;
-            switch (mrn2(10)) {
+            int xcmax = 0, ycmax = 0, xcut = 0, ycut = 0;
+            boolean dotl = FALSE, dotr = FALSE, dobl = FALSE, dobr = FALSE,
+                    docenter = FALSE;
+            switch (mrn2(12)) {
             case 1:
             case 2:
             case 3:
                 /* L-shaped */
-                xcut = 1 + mrn2(((hix - lowx) / 2) - 1);
-                ycut = 1 + mrn2(((hiy - lowy) / 2) - 1);
+                xcmax = (hix - lowx) * 2 / 3;
+                ycmax = (hiy - lowy) * 2 / 3;
                 switch(mrn2(4)) {
                 case 1:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: L, tr, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotr = TRUE;
                     break;
                 case 2:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: L, br, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dobr = TRUE;
                     break;
                 case 3:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: L, tl, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotl = TRUE;
                     break;
                 default:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: L, bl, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dobl = TRUE;
                     break;
                 }
@@ -195,51 +198,121 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
             case 4:
             case 5:
                 /* T-shaped */
-                xcut = 1 + mrn2(((hix - lowx) / 3));
-                ycut = 1 + mrn2(((hiy - lowy) / 3));
+                xcmax = (hix - lowx) * 2 / 5;
+                ycmax = (hiy - lowy) * 2 / 5;
                 switch(mrn2(4)) {
                 case 1:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: T, top, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotr = TRUE;
                     dotl = TRUE;
+                    break;
                 case 2:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: T, bottom, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dobr = TRUE;
                     dobl = TRUE;
+                    break;
                 case 3:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: T, right, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotr = TRUE;
                     dobr = TRUE;
+                    break;
                 default:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: T, left, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotl = TRUE;
                     dobl = TRUE;
+                    break;
                 }
                 break;
             case 6:
+            case 7:
                 /* S/Z shaped ("Tetris Piece") */
-                xcut = 1 + mrn2(((hix - lowx) / 3));
-                ycut = 1 + mrn2(((hiy - lowy) / 3));
+                xcmax = (hix - lowx) / 3;
+                ycmax = (hiy - lowy) / 3;
                 switch(mrn2(2)) {
                 case 1:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: Z, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotr = TRUE;
                     dobl = TRUE;
+                    break;
                 default:
+#ifdef DEBUG_SHAPED_ROOMS
+                    pline("Shaped: S, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                     dotl = TRUE;
                     dobr = TRUE;
+                    break;
                 }
                 break;
-            case 7:
+            case 8:
                 /* Plus Shaped */
-                xcut = 1 + mrn2(((hix - lowx) / 3));
-                ycut = 1 + mrn2(((hiy - lowy) / 3));
+                xcmax = (hix - lowx) * 2 / 5;
+                ycmax = (hiy - lowy) * 2 / 5;
+#ifdef DEBUG_SHAPED_ROOMS
+                pline("Shaped: +, cut up to (%d,%d)", xcmax, ycmax);
+#endif
                 dotr = TRUE;
                 dotl = TRUE;
                 dobr = TRUE;
                 dobl = TRUE;
                 break;
-                /* TODO: O shaped (pillar in middle) */
-                /* TODO: oval */
+            case 9:
+                /* square-O shaped (pillar cut out of middle) */
+                xcmax = (hix - lowx) / 2;
+                ycmax = (hiy - lowy) / 2;
+#ifdef DEBUG_SHAPED_ROOMS
+                pline("Shaped: O, cut up to (%d,%d)", xcmax, ycmax);
+#endif
+                docenter = TRUE;
+                break;
+            case 10:
+                /* X-shaped */
+                xcmax = (hix - lowx) / 3;
+                ycmax = (hiy - lowy) / 3;
+#ifdef DEBUG_SHAPED_ROOMS
+                pline("Shaped: X, cut up to (%d,%d)", xcmax, ycmax);
+#endif
+                dotr = TRUE;
+                dotl = TRUE;
+                dobr = TRUE;
+                dobl = TRUE;
+                docenter = TRUE;
+                break;
+            /* TODO: oval */
             default:
+#ifdef DEBUG_SHAPED_ROOMS
+                pline("Shaped: Rectangular");
+#endif
                 /* Rectangular -- nothing to do */
                 break;
             }
+            if (dotr || dotl || dobr || dobl || docenter) {
+                xcut = 1 + mrn2(xcmax);
+                ycut = 1 + mrn2(ycmax);
+#ifdef DEBUG_SHAPED_ROOMS
+                pline("Tentative cut: (%d,%d)", xcut, ycut);
+#endif
+                /* Sometimes, instead of a small cut, do a max cut.
+                   This improves the probability of a larger cut,
+                   without removing the possibility for small ones. */
+                if ((xcut < (xcmax / 2)) && !rn2(3))
+                    xcut = xcmax;
+                if ((ycut < (ycmax / 2)) && !rn2(3))
+                    ycut = ycmax;
+#ifdef DEBUG_SHAPED_ROOMS
+                pline("Actual cut: (%d,%d)", xcut, ycut);
+#endif
+            }
+            /* Now do the actual cuts. */
             if (dotr) {
                 /* top-right cutout */
                 for (y = 0; y < ycut; y++) {
@@ -264,9 +337,9 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 }
                 for (x = 0; x < xcut; x++)
                     lev->locations[hix + 1 - x][hiy + 1 - ycut].typ = HWALL;
-                lev->locations[hix + 1 - xcut][hiy + 1 - ycut].typ = BRCORNER;
-                lev->locations[hix + 1][hiy + 1 - ycut].typ = TLCORNER;
-                lev->locations[hix + 1 - xcut][hiy + 1].typ = TLCORNER;
+                lev->locations[hix + 1 - xcut][hiy + 1 - ycut].typ = TLCORNER;
+                lev->locations[hix + 1][hiy + 1 - ycut].typ = BRCORNER;
+                lev->locations[hix + 1 - xcut][hiy + 1].typ = BRCORNER;
             }
             if (dotl) {
                 /* top-left cutout */
@@ -278,9 +351,9 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 }
                 for (x = 0; x < xcut; x++)
                     lev->locations[lowx + x - 1][lowy + ycut - 1].typ = HWALL;
-                lev->locations[lowx + xcut - 1][lowy + ycut - 1].typ = TLCORNER;
-                lev->locations[lowx - 1][lowy + ycut - 1].typ = BRCORNER;
-                lev->locations[lowx + xcut - 1][lowy - 1].typ = BRCORNER;
+                lev->locations[lowx + xcut - 1][lowy + ycut - 1].typ = BRCORNER;
+                lev->locations[lowx - 1][lowy + ycut - 1].typ = TLCORNER;
+                lev->locations[lowx + xcut - 1][lowy - 1].typ = TLCORNER;
             }
             if (dobl) {
                 /* bottom-left cutout */
@@ -292,15 +365,56 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 }
                 for (x = 0; x < xcut; x++)
                     lev->locations[lowx + x - 1][hiy + 1 - ycut].typ = HWALL;
-                lev->locations[lowx + xcut - 1][hiy + 1 - ycut].typ = BLCORNER;
-                lev->locations[lowx - 1][hiy + 1 - ycut].typ = TRCORNER;
-                lev->locations[lowx + xcut - 1][hiy + 1].typ = TRCORNER;
+                lev->locations[lowx + xcut - 1][hiy + 1 - ycut].typ = TRCORNER;
+                lev->locations[lowx - 1][hiy + 1 - ycut].typ = BLCORNER;
+                lev->locations[lowx + xcut - 1][hiy + 1].typ = BLCORNER;
+            }
+            if (docenter) {
+                /* pillar in the middle */
+                int xcenter = lowx + ((hix - lowx) / 2);
+                int ycenter = lowy + ((hiy - lowy) / 2);
+                int xparity = ((hix - lowx) % 2) ? 1 : 0;
+                int yparity = ((hiy - lowy) % 2) ? 1 : 0;
+                int xradius = (xcut + 1) / 2;
+                int yradius = (ycut + 1) / 2;
+                for (x = xcenter - xradius; x <= xcenter + xradius + xparity; x++) {
+                    for (y = ycenter - yradius; y <= ycenter + yradius + yparity; y++) {
+                        lev->locations[x][y].typ =
+                            ((x == xcenter - xradius) &&
+                             (y == ycenter - yradius)) ? TLCORNER :
+                            ((x == xcenter - xradius) &&
+                             (y == ycenter + yradius + yparity)) ? BLCORNER :
+                            ((x == xcenter + xradius + xparity) &&
+                             (y == ycenter - yradius)) ? TRCORNER :
+                            ((x == xcenter + xradius + xparity) &&
+                             (y == ycenter + yradius + yparity)) ? BRCORNER :
+                            ((x == xcenter - xradius) ||
+                             (x == xcenter + xradius + xparity)) ? VWALL :
+                            ((y == ycenter - yradius) ||
+                             (y == ycenter + yradius + yparity)) ? HWALL : STONE;
+                    }
+                }
             }
         }
         if (!is_room) {        /* a subroom */
             wallification(lev, lowx - 1, lowy - 1, hix + 1, hiy + 1);
         }
     }
+    /* Now that we know for sure which tiles are part of the final
+       room or not, light up the room, if desired. */
+    if (lit) {
+        for (x = lowx - 1; x <= hix + 1; x++) {
+            loc = &lev->locations[x][max(lowy - 1, 0)];
+            for (y = lowy - 1; y <= hiy + 1; y++) {
+                if (loc->typ != STONE)
+                    loc->lit = 1;
+                loc++;
+            }
+        }
+        croom->rlit = 1;
+    } else
+        croom->rlit = 0;
+
 }
 
 
@@ -743,8 +857,14 @@ makelevel(struct level *lev)
     /* construct stairs (up and down in different rooms if possible) */
     croom = &lev->rooms[mrn2(lev->nroom)];
     if (!Is_botlevel(&lev->z)) {
+        int tries = 50;
         y = somey(croom, mrng());
         x = somex(croom, mrng());
+        /* Try to put them on the floor. */
+        while (lev->locations[x][y].typ != ROOM && tries--) {
+            x = somex(croom, mrng());
+            y = somey(croom, mrng());
+        }
         mkstairs(lev, x, y, 0, croom);  /* down */
     }
     if (lev->nroom > 1) {
@@ -848,8 +968,14 @@ skip0:
            anyway. */
 
         if (!mrn2(3)) {
+            int tries = 20;
             x = somex(croom, mrng());
             y = somey(croom, mrng());
+            /* Try to put it on the floor. */
+            while (lev->locations[x][y].typ != ROOM && tries--) {
+                x = somex(croom, mrng());
+                y = somey(croom, mrng());
+            }
             tmonst = makemon(NULL, lev, x, y, MM_ALLLEVRNG);
             if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
                 !occupied(lev, x, y))
@@ -862,8 +988,14 @@ skip0:
         while (!mrn2(x))
             mktrap(lev, 0, 0, croom, NULL);
         if (!mrn2(3)) {
+            int tries = 20;
             y = somey(croom, mrng());
             x = somex(croom, mrng());
+            /* Try to put it on the floor. */
+            while (lev->locations[x][y].typ != ROOM && tries--) {
+                x = somex(croom, mrng());
+                y = somey(croom, mrng());
+            }
             mkgold(0L, lev, x, y, mrng());
         }
         if (Is_rogue_level(&lev->z))
@@ -882,12 +1014,19 @@ skip0:
 
         /* put statues inside */
         if (!mrn2(20)) {
+            int tries = 20;
             y = somey(croom, mrng());
             x = somex(croom, mrng());
+            /* Try to put it on the floor. */
+            while (lev->locations[x][y].typ != ROOM && tries--) {
+                x = somex(croom, mrng());
+                y = somey(croom, mrng());
+            }
             mkcorpstat(STATUE, NULL, NULL, lev, x, y, TRUE, mrng());
         }
         /* and some rocks */
         if (!mrn2(7)) {
+            /* Here if the rocks are in a wall we don't care. */
             y = somey(croom, mrng());
             x = somex(croom, mrng());
             mksobj_at(ROCK, lev, x, y, TRUE, FALSE, mrng());
@@ -896,12 +1035,18 @@ skip0:
            number of rooms; about 5 - 7.5% for 2 boxes, least likely when few
            rooms; chance for 3 or more is neglible. */
         if (!mrn2(lev->nroom * 5 / 2)) {
+            int tries = 20;
             /* Fix: somex and somey should not be called from the arg list for
                mksobj_at(). Arg evaluation order is not standardized and may
                differ between compilers and optimization levels, which breaks
                replays. */
             y = somey(croom, mrng());
             x = somex(croom, mrng());
+            /* Try to put it on the floor. */
+            while (lev->locations[x][y].typ != ROOM && tries--) {
+                x = somex(croom, mrng());
+                y = somey(croom, mrng());
+            }
             mksobj_at((mrn2(3)) ? LARGE_BOX : CHEST, lev, x, y,
                       TRUE, FALSE, mrng());
         }
@@ -924,34 +1069,54 @@ skip0:
 
     skip_nonrogue:
         if (!mrn2(3)) {
+            int tries = 20;
             y = somey(croom, mrng());
             x = somex(croom, mrng());
+            /* Try to put it on the floor. */
+            while (lev->locations[x][y].typ != ROOM && tries--) {
+                x = somex(croom, mrng());
+                y = somey(croom, mrng());
+            }
             mkobj_at(0, lev, x, y, TRUE, mrng());
             tryct = 0;
             while (!mrn2(5)) {
+                int tries = 20;
                 if (++tryct > 100) {
                     impossible("tryct overflow4");
                     break;
                 }
                 y = somey(croom, mrng());
                 x = somex(croom, mrng());
+                /* Try to put it on the floor. */
+                while (lev->locations[x][y].typ != ROOM && tries--) {
+                    x = somex(croom, mrng());
+                    y = somey(croom, mrng());
+                }
                 mkobj_at(0, lev, x, y, TRUE, mrng());
             }
         }
     }
     /* Supply small numbers of certain normally rare items early: */
-    if ((lev->z.dlevel > 1) && (lev->z.dlevel < 7) && (mrn2(5))) {
+    if ((lev->z.dlevel > 1) && (lev->z.dlevel < 7) && (mrn2(8))) {
+        int tries = 20;
         croom = &lev->rooms[mrn2(lev->nroom - 1)];
         y = somey(croom, mrng());
         x = somex(croom, mrng());
-        switch (mrn2(6)) {
+        /* Try to put it on the floor. */
+        while (lev->locations[x][y].typ != ROOM && tries--) {
+            x = somex(croom, mrng());
+            y = somey(croom, mrng());
+        }
+        switch (mrn2(12)) {
         case 1:
+        case 2:
             mksobj_at(WAN_ENLIGHTENMENT, lev, x, y, TRUE, FALSE, mrng());
             break;
-        case 2:
+        case 3:
             mksobj_at(EUCALYPTUS_LEAF, lev, x, y, TRUE, FALSE, mrng());
             break;
-        case 3:
+        case 4:
+        case 5:
             mksobj_at(SPRIG_OF_WOLFSBANE, lev, x, y, TRUE, FALSE, mrng());
             break;
         default:
@@ -1306,6 +1471,8 @@ occupied(struct level * lev, xchar x, xchar y)
 {
     return ((boolean) (t_at(lev, x, y)
                        || IS_FURNITURE(lev->locations[x][y].typ)
+                       || IS_WALL(lev->locations[x][y].typ)
+                       || (lev->locations[x][y].typ == STONE)
                        || is_lava(lev, x, y)
                        || is_pool(lev, x, y)
                        || invocation_pos(&lev->z, x, y)

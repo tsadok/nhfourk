@@ -538,7 +538,7 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
     if (!vault) {
         smeq[lev->nroom] = lev->nroom;
         add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1,
-                 rlit, rtype, FALSE, TRUE);
+                 rlit, rtype, FALSE, canbeshaped);
     } else {
         lev->rooms[lev->nroom].lx = xabs;
         lev->rooms[lev->nroom].ly = yabs;
