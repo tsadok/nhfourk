@@ -548,8 +548,12 @@ somexy(struct level *lev, struct mkroom *croom, coord *c, enum rng rng)
     }
 
     if (!croom->nsubrooms) {
-        c->x = somex(croom, rng);
-        c->y = somey(croom, rng);
+        try_cnt = 0;
+        do {
+            c->x = somex(croom, rng);
+            c->y = somey(croom, rng);
+        } while (lev->locations[c->x][c->y].typ != ROOM &&
+                 (try_cnt++ < 30));
         return TRUE;
     }
 
@@ -558,7 +562,8 @@ somexy(struct level *lev, struct mkroom *croom, coord *c, enum rng rng)
     while (try_cnt++ < 100) {
         c->x = somex(croom, rng);
         c->y = somey(croom, rng);
-        if (IS_WALL(lev->locations[c->x][c->y].typ))
+        if (IS_WALL(lev->locations[c->x][c->y].typ) ||
+            lev->locations[c->x][c->y].typ == STONE)
             continue;
         for (i = 0; i < croom->nsubrooms; i++)
             if (inside_room(croom->sbrooms[i], c->x, c->y))

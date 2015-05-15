@@ -367,8 +367,19 @@ chk:
  */
 boolean
 create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
-            xchar yal, xchar rtype, xchar rlit)
+            xchar yal, xchar rtype, xchar rlit, boolean canbeshaped)
 {
+    /*
+     * numeric args that are -1 mean random
+     * x and y are position within the rectangle grid for the level
+     *        I *think* these values range from 1 to 5.
+     * w and h are size (width and height)
+     * xal and yal are alignment (LEFT/TOP, CENTER, RIGHT/BOTTOM).
+     * footmp is the current working value of foo; this is typically
+     *        equal to foo, unless foo is -1 (random).
+     * xabs and yabs are the actual x and y coordinates where the
+     *        room will be placed on the level map.
+     * */
     xchar xabs = 0, yabs = 0;
     int wtmp, htmp, xaltmp, yaltmp, xtmp, ytmp;
     struct nhrect *r1 = NULL, r2;
@@ -381,6 +392,7 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
 
     if (rtype == VAULT) {
         vault = TRUE;
+        canbeshaped = FALSE;
         xlim++;
         ylim++;
     }
@@ -525,8 +537,8 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
 
     if (!vault) {
         smeq[lev->nroom] = lev->nroom;
-        add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1, rlit, rtype,
-                 FALSE);
+        add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1,
+                 rlit, rtype, FALSE, canbeshaped);
     } else {
         lev->rooms[lev->nroom].lx = xabs;
         lev->rooms[lev->nroom].ly = yabs;
@@ -1601,7 +1613,7 @@ build_room(struct level *lev, room * r, room * pr)
         aroom = &lev->rooms[lev->nroom];
         okroom =
             create_room(lev, r->x, r->y, r->w, r->h, r->xalign, r->yalign,
-                        rtype, r->rlit);
+                        rtype, r->rlit, FALSE);
         r->mkr = aroom;
     }
 
@@ -2357,12 +2369,13 @@ load_maze(struct level *lev, dlb * fd)
                 flood_fill_rm(lev, tmpregion.x1, tmpregion.y1,
                               lev->nroom + ROOMOFFSET, tmpregion.rlit, TRUE);
                 add_room(lev, min_rx, min_ry, max_rx, max_ry, FALSE,
-                         tmpregion.rtype, TRUE);
+                         tmpregion.rtype, TRUE, FALSE);
                 troom->rlit = tmpregion.rlit;
                 troom->irregular = TRUE;
             } else {
                 add_room(lev, tmpregion.x1, tmpregion.y1, tmpregion.x2,
-                         tmpregion.y2, tmpregion.rlit, tmpregion.rtype, TRUE);
+                         tmpregion.y2, tmpregion.rlit, tmpregion.rtype,
+                         TRUE, FALSE);
                 topologize(lev, troom); /* set roomno */
             }
         }
