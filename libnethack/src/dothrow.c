@@ -1329,6 +1329,15 @@ thitmonst(struct monst *mon, struct obj *obj)
         return 0;
     }
 
+    if (obj->oclass == ARMOR_CLASS &&
+        objects[obj->otyp].oc_armcat == ARM_GLOVES &&
+        mon->mpeaceful && !mon->mtame) {
+        mon->mpeaceful = 0;
+        pline("%s accepts your challenge!", Monnam(mon));
+        set_malign(mon);
+        return 0;
+    }
+
     if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
         obj->oclass == GEM_CLASS) {
         if (is_ammo(obj)) {
