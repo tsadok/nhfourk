@@ -304,9 +304,9 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 /* Sometimes, instead of a small cut, do a max cut.
                    This improves the probability of a larger cut,
                    without removing the possibility for small ones. */
-                if ((xcut < (xcmax / 2)) && !rn2(3))
+                if ((xcut < (xcmax / 2)) && !mrn2(3))
                     xcut = xcmax;
-                if ((ycut < (ycmax / 2)) && !rn2(3))
+                if ((ycut < (ycmax / 2)) && !mrn2(3))
                     ycut = ycmax;
 #ifdef DEBUG_SHAPED_ROOMS
                 pline("Actual cut: (%d,%d)", xcut, ycut);
@@ -377,6 +377,10 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 int yparity = ((hiy - lowy) % 2) ? 1 : 0;
                 int xradius = (xcut + 1) / 2;
                 int yradius = (ycut + 1) / 2;
+                int vcorrmin = xcenter - xradius + 1;
+                int vcorrmax = xcenter + xradius + xparity - 1;
+                int hcorrmin = ycenter - yradius + 1;
+                int hcorrmax = ycenter + yradius + yparity - 1;
                 for (x = xcenter - xradius; x <= xcenter + xradius + xparity; x++) {
                     for (y = ycenter - yradius; y <= ycenter + yradius + yparity; y++) {
                         lev->locations[x][y].typ =
@@ -394,6 +398,25 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                              (y == ycenter + yradius + yparity)) ? HWALL : STONE;
                     }
                 }
+                if ((vcorrmax - vcorrmin) > 1 && mrn2(3)) {
+                    x = vcorrmin + mrn2(vcorrmax - vcorrmin);
+                    for (y = ycenter - yradius; y <= ycenter + yradius + yparity; y++) {
+                        lev->locations[x][y].typ =
+                            ((y == ycenter - yradius) ||
+                             (y == ycenter + yradius + yparity)) ? SDOOR : SCORR;
+                        if (lev->locations[x][y].typ == SDOOR) {
+                            lev->locations[x][y].horizontal = 1;
+                        }
+                    }
+                }
+                if ((hcorrmax - hcorrmin) > 1 && mrn2(3)) {
+                    y = hcorrmin + mrn2(hcorrmax - hcorrmin);
+                    for (x = xcenter - xradius; x <= xcenter + xradius + xparity; x++) {
+                        lev->locations[x][y].typ =
+                            ((x == xcenter - xradius) ||
+                             (x == xcenter + xradius + xparity)) ? SDOOR : SCORR;
+                    }
+                }
             }
         }
         if (!is_room) {        /* a subroom */
@@ -406,7 +429,8 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
         for (x = lowx - 1; x <= hix + 1; x++) {
             loc = &lev->locations[x][max(lowy - 1, 0)];
             for (y = lowy - 1; y <= hiy + 1; y++) {
-                if (loc->typ != STONE)
+                if (loc->typ != STONE &&
+                    loc->typ != SDOOR && loc->typ != SCORR)
                     loc->lit = 1;
                 loc++;
             }
