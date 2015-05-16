@@ -483,6 +483,10 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             }
         }
         break;
+    case S_XORN:
+        if (ptr == &mons[PM_ETTIN])
+            mongets(mtmp, PICK_AXE, rng);
+        break;
     case S_WRAITH:
         if (!noncorporeal(mtmp->data)) {
             mongets(mtmp, KNIFE, rng);
