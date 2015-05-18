@@ -275,7 +275,7 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 docenter = TRUE;
                 break;
             case 10:
-                /* X-shaped */
+                /* X-shaped (corners _and_ middle cut out) */
                 xcmax = (hix - lowx) / 3;
                 ycmax = (hiy - lowy) / 3;
 #ifdef DEBUG_SHAPED_ROOMS
@@ -296,6 +296,7 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 break;
             }
             if (dotr || dotl || dobr || dobl || docenter) {
+                croom->irregular = TRUE;
                 xcut = 1 + mrn2(xcmax);
                 ycut = 1 + mrn2(ycmax);
 #ifdef DEBUG_SHAPED_ROOMS
@@ -304,9 +305,9 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 /* Sometimes, instead of a small cut, do a max cut.
                    This improves the probability of a larger cut,
                    without removing the possibility for small ones. */
-                if ((xcut < (xcmax / 2)) && !rn2(3))
+                if ((xcut < (xcmax / 2)) && !mrn2(3))
                     xcut = xcmax;
-                if ((ycut < (ycmax / 2)) && !rn2(3))
+                if ((ycut < (ycmax / 2)) && !mrn2(3))
                     ycut = ycmax;
 #ifdef DEBUG_SHAPED_ROOMS
                 pline("Actual cut: (%d,%d)", xcut, ycut);
@@ -377,6 +378,10 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 int yparity = ((hiy - lowy) % 2) ? 1 : 0;
                 int xradius = (xcut + 1) / 2;
                 int yradius = (ycut + 1) / 2;
+                int vcorrmin = xcenter - xradius + 1;
+                int vcorrmax = xcenter + xradius + xparity - 1;
+                int hcorrmin = ycenter - yradius + 1;
+                int hcorrmax = ycenter + yradius + yparity - 1;
                 for (x = xcenter - xradius; x <= xcenter + xradius + xparity; x++) {
                     for (y = ycenter - yradius; y <= ycenter + yradius + yparity; y++) {
                         lev->locations[x][y].typ =
@@ -394,6 +399,25 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                              (y == ycenter + yradius + yparity)) ? HWALL : STONE;
                     }
                 }
+                if ((vcorrmax - vcorrmin) > 1 && mrn2(3)) {
+                    x = vcorrmin + mrn2(vcorrmax - vcorrmin);
+                    for (y = ycenter - yradius; y <= ycenter + yradius + yparity; y++) {
+                        lev->locations[x][y].typ =
+                            ((y == ycenter - yradius) ||
+                             (y == ycenter + yradius + yparity)) ? SDOOR : SCORR;
+                        if (lev->locations[x][y].typ == SDOOR) {
+                            lev->locations[x][y].horizontal = 1;
+                        }
+                    }
+                }
+                if ((hcorrmax - hcorrmin) > 1 && mrn2(3)) {
+                    y = hcorrmin + mrn2(hcorrmax - hcorrmin);
+                    for (x = xcenter - xradius; x <= xcenter + xradius + xparity; x++) {
+                        lev->locations[x][y].typ =
+                            ((x == xcenter - xradius) ||
+                             (x == xcenter + xradius + xparity)) ? SDOOR : SCORR;
+                    }
+                }
             }
         }
         if (!is_room) {        /* a subroom */
@@ -406,7 +430,8 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
         for (x = lowx - 1; x <= hix + 1; x++) {
             loc = &lev->locations[x][max(lowy - 1, 0)];
             for (y = lowy - 1; y <= hiy + 1; y++) {
-                if (loc->typ != STONE)
+                if (loc->typ != STONE &&
+                    loc->typ != SDOOR && loc->typ != SCORR)
                     loc->lit = 1;
                 loc++;
             }
@@ -804,7 +829,7 @@ makelevel(struct level *lev)
 {
     struct mkroom *croom, *troom;
     int tryct;
-    int x, y;
+    int x, y, i;
     struct monst *tmonst;       /* always put a web with a spider */
     branch *branchp;
     int room_threshold;
@@ -851,8 +876,23 @@ makelevel(struct level *lev)
         makeroguerooms(lev);
         makerogueghost(lev);
     } else
-        makerooms(lev);
+        makerooms(lev); /* Some rooms may get shaped. */
     sort_rooms(lev);
+    /* after sorting the rooms, fix up the shaped rooms
+       so that somexy can work with them */
+    for (i = 0; i < lev->nroom; i++) {
+        int rno;
+        croom = &lev->rooms[i];
+        rno = (croom - lev->rooms) + ROOMOFFSET;
+        if (croom->irregular) {
+            for (x = croom->lx; x <= croom->hx; x++) {
+                for (y = croom->ly; y <= croom->hy; y++) {
+                    if (lev->locations[x][y].typ == ROOM)
+                        lev->locations[x][y].roomno = rno;
+                }
+            }
+        }
+    }
 
     /* construct stairs (up and down in different rooms if possible) */
     croom = &lev->rooms[mrn2(lev->nroom)];
@@ -1417,6 +1457,34 @@ place_branch(struct level *lev, branch * br,    /* branch to place */
 }
 
 static boolean
+bywall(struct level *lev, xchar x, xchar y)
+{
+    int typ;
+
+    if (isok(x + 1, y)) {
+        typ = lev->locations[x + 1][y].typ;
+        if (IS_WALL(typ) || typ == SDOOR)
+            return TRUE;
+    }
+    if (isok(x - 1, y)) {
+        typ = lev->locations[x - 1][y].typ;
+        if (IS_WALL(typ) || typ == SDOOR)
+            return TRUE;
+    }
+    if (isok(x, y + 1)) {
+        typ = lev->locations[x][y + 1].typ;
+        if (IS_WALL(typ) || typ == SDOOR)
+            return TRUE;
+    }
+    if (isok(x, y - 1)) {
+        typ = lev->locations[x][y - 1].typ;
+        if (IS_WALL(typ) || typ == SDOOR)
+            return TRUE;
+    }
+    return FALSE;
+}
+
+static boolean
 bydoor(struct level *lev, xchar x, xchar y)
 {
     int typ;
@@ -1487,6 +1555,7 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
 {
     int kind;
     coord m;
+    boolean holeok = can_fall_thru(lev); /* HOLE or TRAPDOOR */
 
     /* no traps in pools */
     if (tm && is_pool(lev, tm->x, tm->y))
@@ -1574,14 +1643,14 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
                 break;
             case HOLE:
                 /* make these much less often than other traps */
-                if (mrn2(7))
+                if (!holeok || mrn2(7))
                     kind = NO_TRAP;
                 break;
             }
         } while (kind == NO_TRAP);
     }
 
-    if ((kind == TRAPDOOR || kind == HOLE) && !can_fall_thru(lev))
+    if ((kind == TRAPDOOR || kind == HOLE) && !holeok)
         kind = ROCKTRAP;
 
     if (tm)
@@ -1680,7 +1749,8 @@ mksink(struct level *lev, struct mkroom *croom)
             return;
         if (!somexy(lev, croom, &m, mrng()))
             return;
-    } while (occupied(lev, m.x, m.y) || bydoor(lev, m.x, m.y));
+    } while (occupied(lev, m.x, m.y) || bydoor(lev, m.x, m.y) ||
+             (tryct < 50 && !bywall(lev, m.x, m.y)));
 
     /* Put a sink at m.x, m.y */
     lev->locations[m.x][m.y].typ = SINK;
