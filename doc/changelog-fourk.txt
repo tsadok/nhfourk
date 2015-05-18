@@ -50,6 +50,22 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.1:
 -------------------
 
+ * Sinks are usually placed next to walls.
+
+ * Throwing gauntlets at a peaceful monster makes it hostile,
+   allowing you to kill it without incurring the usual alignment
+   penalty for angering or killing a generated-peaceful monster.
+
+ * There are now four versions of Orcus Town.
+
+ * There are now two versions of Asmodeus' Lair and two versions
+   of Baalzebub's, but in any given game you only get one of them
+   (i.e., you either get Asmo or Baal, not both).  However, you also
+   get either Yeenoghu's Plaza or Dispater's Gauntlet, so the total
+   number of demon lairs per game is the same as vanilla.
+
+ * Random rooms, if large enough, can sometimes be non-rectangular.
+
  * The alignment record penalties for killing peaceful monsters have
    been rebalanced, and your maximum and minimum alignment record
    are always 100 and -100, respectively.
