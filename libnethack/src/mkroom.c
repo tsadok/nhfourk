@@ -30,7 +30,6 @@ static void save_room(struct memfile *mf, struct mkroom *);
 static void rest_room(struct memfile *mf, struct level *lev, struct mkroom *r);
 static boolean has_dnstairs(struct level *lev, struct mkroom *);
 static boolean has_upstairs(struct level *lev, struct mkroom *);
-static void rectangularize(struct level *lev, struct mkroom *);
 
 #define sq(x) ((x)*(x))
 
@@ -90,114 +89,6 @@ mkroom(struct level *lev, int roomtype)
         default:
             impossible("Tried to make a room of type %d.", roomtype);
         }
-}
-
-/* This is buggy where doors are concerned and should not be used
-   without fixups.  Among other things, it messes up door indexes
-   on both the level and the room. */
-static void
-rectangularize(struct level *lev, struct mkroom *croom)
-{
-    int x, y;
-    int lowx = croom->lx, lowy = croom->ly;
-    int hix = croom->hx, hiy = croom->hy;
-    int doorcount = 0;
-    for (x = lowx - 1; x <= hix + 1; x++) {
-        for (y = lowy - 1; y <= hiy + 1; y++) {
-            if (lev->locations[x][y].typ == STONE ||
-                lev->locations[x][y].typ == SCORR ||
-                ((lev->locations[x][y].typ == SDOOR ||
-                  lev->locations[x][y].typ == DOOR) &&
-                 ((x >= lowx && x <= hix) ||
-                  (y >= lowy && y <= hiy))) ||
-                IS_WALL(lev->locations[x][y].typ))
-                lev->locations[x][y].typ =
-                    (x < lowx && y < lowy) ? TLCORNER :
-                    (x < lowx && y > hiy) ? BLCORNER :
-                    (x > hix && y < lowy) ? TRCORNER :
-                    (x > hix && y > hiy) ? BRCORNER :
-                    (x < lowx || x > hix) ? VWALL :
-                    (y < lowy || y > hiy) ? HWALL :
-                    ROOM;
-            if (lev->locations[x][y].typ == DOOR ||
-                lev->locations[x][y].typ == SDOOR)
-                doorcount++;
-        }
-    }
-    croom->doorct = doorcount;
-/* The way these constants are used here, it doesn't actually
-   matter that they happen to match the ones in sp_lev.h */
-#define W_NORTH 1
-#define W_SOUTH 2
-#define W_EAST  4
-#define W_WEST  8
-    /* Ensure that the room has a door. */
-    if (doorcount < 1) {
-        int roomside[4] = { W_NORTH, W_SOUTH, W_EAST, W_WEST };
-        int i, j, k;
-        for (i = 0; i < 4; i++) {
-            k = roomside[i];
-            j = mklev_rn2(4, lev);
-            roomside[i] = roomside[j];
-            roomside[j] = k;
-        }
-        for (i = 0; i < 4; i++) {
-            switch (roomside[i]) {
-            case W_NORTH:
-                for (x = lowx; x <= hix; x++) {
-                    if (isok(x, lowy - 2) &&
-                        (lev->locations[x][lowy - 2].typ == CORR ||
-                         lev->locations[x][lowy - 2].typ == SCORR)) {
-                        lev->locations[x][lowy - 1].typ = DOOR;
-                        lev->locations[x][lowy - 1].doormask =
-                            mklev_rn2(5, lev) ? D_CLOSED : D_LOCKED;
-                        return;
-                    }
-                }
-                break;
-            case W_SOUTH:
-                for (x = lowx; x <= hix; x++) {
-                    if (isok(x, hiy + 2) &&
-                        (lev->locations[x][hiy + 2].typ == CORR ||
-                         lev->locations[x][hiy + 2].typ == SCORR)) {
-                        lev->locations[x][hiy + 1].typ = DOOR;
-                        lev->locations[x][hiy + 1].doormask =
-                            mklev_rn2(5, lev) ? D_CLOSED : D_LOCKED;
-                        return;
-                    }
-                }
-                break;
-            case W_WEST:
-                for (y = lowy; y <= hiy; y++) {
-                    if (isok(lowx - 2, y) &&
-                        (lev->locations[lowx - 2][y].typ == CORR ||
-                         lev->locations[lowx - 2][y].typ == SCORR)) {
-                        lev->locations[lowx - 1][y].typ = DOOR;
-                        lev->locations[lowx - 1][y].doormask =
-                            mklev_rn2(5, lev) ? D_CLOSED : D_LOCKED;
-                        return;
-                    }
-                }
-                break;
-            case W_EAST:
-                for (y = lowy; y <= hiy; y++) {
-                    if (isok(hix + 2, y) &&
-                        (lev->locations[hix + 2][y].typ == CORR ||
-                         lev->locations[hix + 2][y].typ == SCORR)) {
-                        lev->locations[hix + 1][y].typ = DOOR;
-                        lev->locations[hix + 1][y].doormask =
-                            mklev_rn2(5, lev) ? D_CLOSED : D_LOCKED;
-                        return;
-                    }
-                }
-                break;
-            }
-        }
-    }
-    /* This shouldn't happen provided the room wasn't created connectionless
-       in the first place. */
-    impossible("rectangularize() found nowhere to put a door (%d,%d,%d,%d).",
-               lowx, lowy, hix, hiy);
 }
 
 static void
