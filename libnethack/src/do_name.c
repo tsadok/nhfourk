@@ -516,7 +516,7 @@ x_monnam(const struct monst *mtmp,
          int article, /* ARTICLE_NONE, ARTICLE_THE, ARTICLE_A: obvious
                          ARTICLE_YOUR: "your" on pets, "the" on
                          everything else
-                         If the monster would be referred to as "it"
+                         If the monster would be referred to as "something"
                          or if the monster has a name _and_ there is
                          no adjective, "invisible", "saddled", etc.,
                          override this and always use no article. */
@@ -546,9 +546,9 @@ x_monnam(const struct monst *mtmp,
         !(suppress & SUPPRESS_IT);
     do_saddle = !(suppress & SUPPRESS_SADDLE);
 
-    /* unseen monsters, etc.  Use "it" */
+    /* unseen monsters, etc.  Use "something" */
     if (do_it) {
-        return "it";
+        return "something";
     }
 
     /* priests and minions: don't even use this function */
