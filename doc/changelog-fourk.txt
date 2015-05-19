@@ -50,6 +50,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.1:
 -------------------
 
+ * The game calls unseen monsters "something" rather than "it",
+   since in many cases there is no (or a misleading) antecedent.
+
  * Sinks are usually placed next to walls.
 
  * Throwing gauntlets at a peaceful monster makes it hostile,
