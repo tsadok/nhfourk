@@ -34,6 +34,7 @@ static const char * spoiloneattack(const struct attack *attk);
 static const char * spoilattacks(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
 static const char * spoilmonsize(int i);
+static const char * spoilmrace(int i);
 static const char * spoilmonflags(int i);
 static void spoilobjclass(FILE *file, const char *hrname, const char *aname,
                           int classone, int classtwo);
@@ -261,11 +262,31 @@ spoilmonsize(int i)
 }
 
 static const char *
+spoilmrace(int i)
+{
+    int race = mons[i].mflagsr;
+    if (race == MRACE_HUMAN)
+        return "<span class=\"mrace humanrace\">human</span>";
+    if (race == MRACE_ELF)
+        return "<span class=\"mrace elfrace\">elf</span>";
+    if (race == MRACE_DWARF)
+        return "<span class=\"mrace dwarfrace\">dwarf</span>";
+    if (race == MRACE_GNOME)
+        return "<span class=\"mrace gnomerace\">gnome</span>";
+    if (race == MRACE_ORC)
+        return "<span class=\"mrace orcrace\">orc</span>";
+    if (race == MRACE_FAIRY)
+        return "<span class=\"mrace fairyrace\">fairy</span>";
+
+    return "<span class=\"mrace norace\">N/A</span>";
+}
+
+static const char *
 spoilmonflags(int i)
 {
     return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M1 */
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s" /* M1 */
-                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s"       /* M2 */
+                     "%s%s%s%s"         "%s%s%s%s%s%s"       /* M2 */
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M2 */
                      "%s%s%s%s%s%s%s%s" "%s%s",              /* M3 */
                      /* M1 least significant byte */
@@ -312,10 +333,7 @@ spoilmonflags(int i)
                      ((mons[i].mflags2 & M2_NOPOLY)     ? "<span class=\"flgnopoly\">NoPoly</span> " : ""),
                      ((mons[i].mflags2 & M2_UNDEAD)     ? "<span class=\"flgundead\">Undead</span> " : ""),
                      ((mons[i].mflags2 & M2_WERE)       ? "<span class=\"flgwere\">Lycanthrope</span> " : ""),
-                     ((mons[i].mflags2 & M2_HUMAN)      ? "<span class=\"flghuman\">Human</span> " : ""),
-                     ((mons[i].mflags2 & M2_ELF)        ? "<span class=\"flgelf\">Elf</span> " : ""),
-                     ((mons[i].mflags2 & M2_DWARF)      ? "<span class=\"flgdwarf\">Dwarf</span> " : ""),
-                     ((mons[i].mflags2 & M2_GNOME)      ? "<span class=\"flggnome\">Gnome</span> " : ""),
+                     /* human, dwarf, elf, and gnome are moved to MRACE, q.v. */
                      ((mons[i].mflags2 & M2_ORC)        ? "<span class=\"flgorc\">Orc</span> " : ""),
                      /* M2 second least byte */
                      ((mons[i].mflags2 & M2_DEMON)      ? "<span class=\"flgdemon\">Demon</span> " : ""),
@@ -584,6 +602,7 @@ makespoilers(void)
                 "<th class=\"numeric nutrition\">nutr</th>"
                 "<th class=\"numeric weight\">wt</th>"
                 "<th class=\"size\">sz</th>"
+                "<th class=\"mrace\">race</th>"
                 "<th class=\"flags\">flags</th>"
                 "</tr>\n</thead><tbody>\n");
 
@@ -614,6 +633,7 @@ makespoilers(void)
                     "<td class=\"numeric nutrition\">%d</td>"
                     "<td class=\"numeric weight\">%d</td>"
                     "<td class=\"size\">%s</td>"
+                    "<td class=\"mrace\">%s</td>"
                     "<td class=\"flags\">%s</td>"
                     "</tr>\n", mlet, mons[i].mname, mons[i].mlevel,
                     monstr[i], mons[i].mmove, mons[i].ac, mons[i].mr,
@@ -621,7 +641,7 @@ makespoilers(void)
                     spoilresistances(mons[i].mresists, FALSE, i),
                     spoilresistances(mons[i].mconveys, TRUE, i),
                     mons[i].cnutrit, mons[i].cwt, spoilmonsize(i),
-                    spoilmonflags(i));
+                    spoilmrace(i), spoilmonflags(i));
         }
         fprintf(outfile, "\n</tbody></table>\n</html>\n");
 
