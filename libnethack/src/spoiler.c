@@ -14,8 +14,8 @@
 #include <fcntl.h>
 
 #define SPOILPREFIX SCOREPREFIX
-#define VARIANTNAME "NetHack 4"
-#define VERSION msgprintf("%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL)
+#define VARIANTNAME "NetHack Fourk"
+#define VERSION msgprintf("4.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL)
 
 static const char * semicolonjoin(const char *a, const char *b);
 /* poor man's join function */
@@ -177,7 +177,7 @@ spoiloneattack(const struct attack *attk)
         {"passive", "claw", "bite", "kick", "butt", "touch",
          "sting", "hug", "AT_8", "AT_9", "spit", "engulf", "breath",
          "actively explode", "passively explode", "gaze", "tentacles"};
-    const char *ad[43] =
+    const char *ad[45] =
         {"physical", "magic missile", "fire", "cold", "sleep", "disint",
          "shock", "strength drain", "acid", "special1", "special2",
          "blinding", "stun", "slow", "paralysis", "level drain",
@@ -187,7 +187,7 @@ spoiloneattack(const struct attack *attk)
          "lycanthropy", "dexterity drain", "constitution drain",
          "intelligence drain", "disease", "rotting", "seduction (SSEX)",
          "hallucination", "death", "pestilence", "famine", "sliming",
-         "disenchantment", "corrosion"};
+         "disenchantment", "corrosion", "vicarous suffering", "pits"};
     if (!attk->aatyp && !attk->adtyp && !attk->damn && !attk->damd)
         return "";
     return msgprintf("<span class=\"attack\">%dd%d <span class=\"aatyp\">%s</span> <span type=\"adtype\">%s</span></span>",
@@ -201,7 +201,7 @@ spoiloneattack(const struct attack *attk)
                       (attk->adtyp == AD_RBRE) ? "random breath weapon" :
                       (attk->adtyp == AD_SAMU) ? "amulet stealing" :
                       (attk->adtyp == AD_CURS) ? "item cursing" :
-                      (attk->adtyp < 43 /* && attk->adtyp >= 0 */) ?
+                      (attk->adtyp < 45 /* && attk->adtyp >= 0 */) ?
                       ad[attk->adtyp] : "unknown damage"));
 }
 
