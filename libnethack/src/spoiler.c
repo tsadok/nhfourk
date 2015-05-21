@@ -582,8 +582,8 @@ makespoilers(void)
                 "<th class=\"resistances\">resists</th>"
                 "<th class=\"resgranted\">grants</th>"
                 "<th class=\"numeric nutrition\">nutr</th>"
-                "<th class=\"numeric weight\">wt</td>"
-                "<th class=\"size\">sz</td>"
+                "<th class=\"numeric weight\">wt</th>"
+                "<th class=\"size\">sz</th>"
                 "<th class=\"flags\">flags</th>"
                 "</tr>\n</thead><tbody>\n");
 
