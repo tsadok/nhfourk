@@ -162,8 +162,8 @@ static const char *
 spoilaligntyp(int i)
 {
     aligntyp aln = mons[i].maligntyp;
-    if (i == PM_WIZARD_OF_YENDOR)
-        return "<span class=\"alnmoloch\">N/A</span>";
+    if (aln == A_NONE)
+        return "<span class=\"alnmoloch\">una</span>";
     if (aln >  0)  return "<span class=\"alnlaw\">law</span>";
     if (aln == 0) return "<span class=\"alnneu\">neu</span>";
     if (aln <  0) return "<span class=\"alncha\">cha</span>";
