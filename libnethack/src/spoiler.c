@@ -636,8 +636,8 @@ makespoilers(void)
                     "<td class=\"mrace\">%s</td>"
                     "<td class=\"flags\">%s</td>"
                     "</tr>\n", mlet, mons[i].mname, mons[i].mlevel,
-                    monstr[i], mons[i].mmove, mons[i].ac, mons[i].mr,
-                    spoilaligntyp(i), spoilattacks(i),
+                    monstr[i], mons[i].mmove, (10 - mons[i].ac),
+                    mons[i].mr, spoilaligntyp(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
                     spoilresistances(mons[i].mconveys, TRUE, i),
                     mons[i].cnutrit, mons[i].cwt, spoilmonsize(i),
