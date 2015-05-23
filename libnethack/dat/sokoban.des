@@ -437,7 +437,7 @@ MAP
  ---......|--- 
    ---------   
 ENDMAP
-STAIR:(12,02),down
+BRANCH:(12,02,12,02),levregion()
 STAIR:(13,04),up
 REGION:(00,00,14,11),lit,"ordinary"
 NON_DIGGABLE:(00,00,14,11)
@@ -488,6 +488,8 @@ OBJECT:'/',random,random
 
 
 ### Second level ###
+
+# Squared Off (a Vanilla level)
 MAZE:"soko3-1",' '
 FLAGS:noteleport
 GEOMETRY:center,center
