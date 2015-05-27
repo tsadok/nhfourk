@@ -27,7 +27,8 @@ make_bones_id(char *buf, d_level * dlev)
     sprintf(buf + 4, ".%s%x",
             flags.debug ? "W" : flags.explore ? "X" :
             *flags.setseed ? "S" :
-            (flags.polyinit_mnum != -1) ? "P" : "N",
+            (flags.polyinit_mnum != -1) ? "P" :
+            flags.challenge ? "C" : "N",
             (unsigned int) (u.ubirthday % 16));
 
     return buf;

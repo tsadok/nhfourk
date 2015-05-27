@@ -223,6 +223,8 @@ struct flag {
     boolean desync;     /* set this to desync the save */
     boolean explore;    /* in exploration mode */
 # define discover flags.explore
+    boolean challenge;  /* challenge mode -- harder than normal */
+# define challengemode flags.challenge
     boolean friday13;   /* it's Friday the 13th */
     boolean legacy;     /* print game entry "story" */
     boolean made_amulet;

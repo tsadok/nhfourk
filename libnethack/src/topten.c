@@ -281,7 +281,8 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
     fprintf(rfile, SEP "mode=%s",
             (flags.debug ? "debug" : flags.explore ? "explore" :
              *flags.setseed ? "setseed" :
-             flags.polyinit_mnum != -1 ? "polyinit" : "normal"));
+             flags.polyinit_mnum != -1 ? "polyinit" :
+             flags.challenge ? "challenge" : "normal"));
 
     fprintf(rfile, "\n");
 }
