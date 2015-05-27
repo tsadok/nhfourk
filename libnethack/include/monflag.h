@@ -165,6 +165,7 @@
  *    only honored by the corpse revival code.  In the Dev Team's
  *    unreleased code, monster movement also uses it, which is
  *    something we could consider importing in the future. */
+# define M3_BLINKAWAY    0x0800 /* teleports only in LOS, when fleeing */
 
 # define MZ_TINY        0       /* < 2' */
 # define MZ_SMALL       1       /* 2-4' */

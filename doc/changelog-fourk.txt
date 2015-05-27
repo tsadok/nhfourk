@@ -54,6 +54,16 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Nymphs now blink away when they steal something.  Blinking normally
+   works on a straight-line clear-path basis (sort of like line of
+   sight, but they can blink into the dark or when blind) with a
+   distance based on the nymph's level.  (However, if there are no
+   available spaces to blink to, the nymph may be placed farther
+   away.)  This replaces their ability to teleport at random times or
+   warp to an entirely random location when stealing.  One side-effect
+   of this change is that you can no longer get intrinsic teleportitis
+   by eating them, which seems fair.
+
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
    the character's overall maximum where it was in vanilla):

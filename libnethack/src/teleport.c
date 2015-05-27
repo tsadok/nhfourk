@@ -11,6 +11,7 @@ static boolean tele_jump_ok(int, int, int, int);
 static boolean teleok(int, int, boolean, boolean wizard_tele);
 static void vault_tele(void);
 static boolean rloc_pos_ok(int, int, struct monst *);
+static coord polartorect(int, int);
 static void mvault_tele(struct monst *);
 
 /*
@@ -945,6 +946,26 @@ rloc_to(struct monst *mtmp, int x, int y)
         make_angry_shk(mtmp, oldx, oldy);
 }
 
+/* Bhaskara Approximation.  Note lack of parens around it,
+   because that would cause incorrect rounding; we want
+   the numerator to get multiplied by the radius first,
+   for the polar-to-rectangular conversion below. */
+#define SIN(x) (((x % 360) > 180) ? -1 : 1) * \
+    (4 * (x % 180) * (180 - (x % 180)))       \
+    / (40500 - (x % 180) * (180 - (x % 180)))
+#define COS(x) SIN(((x + 90) % 360))
+
+/* NOTE: this implementation rounds to the nearest 15 degrees. */
+coord
+polartorect(int radius, int degrees)
+{
+    coord cc;
+    int deg = (((degrees + 8) / 15) % 24) * 15;
+    cc.x = radius * COS(deg);
+    cc.y = radius * SIN(deg);
+    return cc;
+}
+
 /* place a monster at a random location, typically due to teleport */
 /* return TRUE if successful, FALSE if not */
 boolean
@@ -973,7 +994,53 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
             goto found_xy;
     }
 
-    for (relaxed_goodpos = 0; relaxed_goodpos < 2; relaxed_goodpos++) {
+    for (relaxed_goodpos = -1; relaxed_goodpos < 2; relaxed_goodpos++) {
+
+        /* If this is a monster that blinks, try to do that first. */
+        if (relaxed_goodpos < 0) {
+            if ((isok(mtmp->mx, mtmp->my)) &&
+                mtmp->data->mflags3 & M3_BLINKAWAY) {
+                /* We're going to do a polar-to-rectangular conversion here,
+                   because it's a convenient way to select positions at the
+                   correct distance from where we're starting.  We'll try
+                   with the maximum radius then back it off. */
+                int maxradius = 2 * mtmp->data->mlevel;
+                int minradius = 2;
+                int theta[24] = {   0,  15,  30,  45,  60,  75,
+                                    90, 105, 120, 135, 150, 165,
+                                    180, 195, 210, 225, 240, 255,
+                                    270, 285, 300, 315, 330, 345 };
+                int angle, swi, sw;
+                coord rectcoord;
+                if (maxradius < minradius + 3)
+                    maxradius = minradius + 3;
+                /* Shuffle the order of the angles so we don't always get the same
+                   one tried first. */
+                for (angle = 0; angle < 24; angle++) {
+                    swi          = rn2(24);
+                    sw           = theta[swi];
+                    theta[swi]   = theta[angle];
+                    theta[angle] = sw;
+                }
+                for (trycount = maxradius; trycount >= minradius; trycount--) {
+                    for (angle = 0; angle < 24; angle++) {
+                        rectcoord = polartorect(trycount, theta[angle]);
+                        x = mtmp->mx + rectcoord.x;
+                        y = mtmp->my + rectcoord.y;
+                        if (isok(x,y) && !m_at(level,x,y) &&
+                            /* TODO: evaluate whether goodpos() should be used here */
+                            (level->locations[x][y].typ >= CORR) &&
+                            /* Blinking only works with line-of-sight, but for now
+                               I am not requiring the monster to actually _see_ the
+                               tile, so e.g. blinking into the dark works ok. */
+                            clear_path(mtmp->mx, mtmp->my, x, y, viz_array)) {
+                            goto found_xy;
+                        }
+                    }           
+                }
+            }
+            continue;
+        }
 
         /* first try sensible terrain; if none exists, ignore water,
            doors and boulders */
