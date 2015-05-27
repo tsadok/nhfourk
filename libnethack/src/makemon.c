@@ -1389,11 +1389,11 @@ restore_rndmonst_state(struct memfile *mf)
    of monsters that "want" to generate, and we pick the first appropriate
    monster from the list.)
 
-   Arguments: dlev = level to generate on, class = class to generate or 0, flags
-   = generation rules to /ignore/ (e.g. G_NOGEN or G_INDEPTH), rng = random
-   number generator to use */
+   Arguments: dlev = level to generate on, class = class to generate or 0,
+   ignoreflags = generation rules to /ignore/ (e.g. G_NOGEN or G_INDEPTH),
+   rng = random number generator to use */
 static const struct permonst *
-rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
+rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
 {
     const struct permonst *ptr = NULL;
     int tryct = 1000;
@@ -1417,11 +1417,16 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
     else
         maxmlev = (zlevel + u.ulevel) / 2;
 
+    if (challengemode) {
+        minmlev++;
+        maxmlev *= 1.25;
+    }
+
     boolean hell = In_hell(dlev);
     boolean rogue = Is_rogue_level(dlev);
     boolean elem_plane = In_endgame(dlev) && !Is_astralevel(dlev);
 
-    int geno = ptr ? ptr->geno & ~flags : 0;
+    int geno = ptr ? ptr->geno & ~ignoreflags : 0;
 
     int lowest_legal = LOW_PM;
     int beyond_highest_legal = SPECIAL_PM;
@@ -1474,17 +1479,17 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
                                              lowest_legal, rng);
 
         ptr = mons + mndx;
-        geno = ptr->geno & ~flags;
+        geno = ptr->geno & ~ignoreflags;
 
         /* Soft checks: these stop monsters generating unless they've been
            suggested by Quest bias or the like.
 
            Potential TODO: Make some of these less strict as tryct gets
            smaller (something like this was a TODO in the old code too). */
-        if (ptr && !(flags & G_INDEPTH) &&
+        if (ptr && !(ignoreflags & G_INDEPTH) &&
             (tooweak(mndx, minmlev) || toostrong(mndx, maxmlev)))
             ptr = NULL;             /* monster is out of depth or under-depth */
-        if (ptr && hell && !(flags & G_ALIGN) && ptr->maligntyp > A_NEUTRAL)
+        if (ptr && hell && !(ignoreflags & G_ALIGN) && ptr->maligntyp > A_NEUTRAL)
             ptr = NULL;                        /* lawful monsters in Gehennom */
 
         /* Rejection probabilities. */
@@ -1499,14 +1504,14 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
            is doing). Take care not to generate probability-0 monsters on a
            nonaligned level (we don't want to give them the +1 boost for being
            in-depth). */
-        if (ptr && !(flags & G_FREQ)) {
+        if (ptr && !(ignoreflags & G_FREQ)) {
             int genprob = geno & G_FREQ;
             int maxgenprob = 5;
-            if (!(flags & G_ALIGN)) {
+            if (!(ignoreflags & G_ALIGN)) {
                 genprob += align_shift(dlev, ptr);
                 maxgenprob += 5;
             }
-            if (flags & G_INDEPTH && genprob) {
+            if (ignoreflags & G_INDEPTH && genprob) {
                 maxgenprob++;
                 if (toostrong(mndx, maxmlev))
                     genprob /= 2;
