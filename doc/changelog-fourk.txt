@@ -54,15 +54,24 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
- * Nymphs now blink away when they steal something.  Blinking normally
-   works on a straight-line clear-path basis (sort of like line of
-   sight, but they can blink into the dark or when blind) with a
-   distance based on the nymph's level.  (However, if there are no
-   available spaces to blink to, the nymph may be placed farther
-   away.)  This replaces their ability to teleport at random times or
-   warp to an entirely random location when stealing.  One side-effect
-   of this change is that you can no longer get intrinsic teleportitis
-   by eating them, which seems fair.
+ * Lower-level nymphs now blink away when they steal something.
+   Blinking normally works on a straight-line clear-path basis (sort
+   of like line of sight, but they can blink into the dark or when
+   blind) with a distance based on the nymph's level.  (However, if
+   there are no available spaces to blink to, the nymph may be placed
+   farther away.)  For wood and water nymphs, this replaces their
+   ability to teleport at random times or warp to an entirely random
+   location when stealing.  One side-effect of this change is that you
+   can no longer get intrinsic teleportitis by eating them, which
+   seems fair.  Mountain nymphs, which are higher level, blink when
+   they steal but can also teleport at other times; and you CAN get
+   teleportitis by eating them.  I reduced the mountain nymphs'
+   frequency number (from 2 to 1), but they can now generate in small
+   groups (the only n to do so).  Also, a fourth, even higher level
+   type of nymph has been added, the island nymph.  These warp away
+   just like vanilla nymphs; of course you can get teleportitis by
+   eating them.  They normally generate infrequently but can be
+   summoned by the Summon Nasties monster spell.
 
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
