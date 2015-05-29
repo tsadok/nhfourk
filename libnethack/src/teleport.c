@@ -955,14 +955,12 @@ rloc_to(struct monst *mtmp, int x, int y)
     / (40500 - (x % 180) * (180 - (x % 180)))
 #define COS(x) SIN(((x + 90) % 360))
 
-/* NOTE: this implementation rounds to the nearest 15 degrees. */
 coord
 polartorect(int radius, int degrees)
 {
     coord cc;
-    int deg = (((degrees + 8) / 15) % 24) * 15;
-    cc.x = radius * COS(deg);
-    cc.y = radius * SIN(deg);
+    cc.x = radius * COS(degrees);
+    cc.y = radius * SIN(degrees);
     return cc;
 }
 
@@ -1010,7 +1008,7 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
                                     90, 105, 120, 135, 150, 165,
                                     180, 195, 210, 225, 240, 255,
                                     270, 285, 300, 315, 330, 345 };
-                int angle, swi, sw;
+                int angle, fineangle, swi, sw;
                 coord rectcoord;
                 if (maxradius < minradius + 3)
                     maxradius = minradius + 3;
@@ -1023,20 +1021,32 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
                     theta[angle] = sw;
                 }
                 for (trycount = maxradius; trycount >= minradius; trycount--) {
-                    for (angle = 0; angle < 24; angle++) {
-                        rectcoord = polartorect(trycount, theta[angle]);
-                        x = mtmp->mx + rectcoord.x;
-                        y = mtmp->my + rectcoord.y;
-                        if (isok(x,y) && !m_at(level,x,y) &&
-                            /* TODO: evaluate whether goodpos() should be used here */
-                            (level->locations[x][y].typ >= CORR) &&
-                            /* Blinking only works with line-of-sight, but for now
-                               I am not requiring the monster to actually _see_ the
-                               tile, so e.g. blinking into the dark works ok. */
-                            clear_path(mtmp->mx, mtmp->my, x, y, viz_array)) {
-                            goto found_xy;
+                    for (angle = 0; angle < 24; angle++)
+                        for (fineangle = 0; fineangle < 15; fineangle += 3) {
+                            /* theta is shuffled so that the angle isn't the
+                               same all the time, but it isn't necessary to
+                               shuffle over a hundred different angles; we use
+                               fineangle to allow positions that don't line up
+                               to the 15-degree increments, but the randomness
+                               of the blink direction doesn't need that much
+                               precision. */
+                            rectcoord = polartorect(trycount, theta[angle] +
+                                                    fineangle);
+                            x = mtmp->mx + rectcoord.x;
+                            y = mtmp->my + rectcoord.y;
+                            if (isok(x,y) && !m_at(level,x,y) &&
+                                /* TODO: evaluate whether goodpos() should be
+                                 * used here */
+                                (level->locations[x][y].typ >= CORR) &&
+                                /* Blinking only works with line-of-sight, but
+                                   for now I am not requiring the monster to
+                                   actually _see_ the tile, so e.g. blinking
+                                   into the dark works ok. */
+                                clear_path(mtmp->mx, mtmp->my, x, y, viz_array)
+                                ) {
+                                goto found_xy;
+                            }
                         }
-                    }           
                 }
             }
             continue;
