@@ -639,12 +639,20 @@ const struct permonst mons[] = {
         M1_HUMANOID | M1_SWIM, M2_HOSTILE | M2_FEMALE | M2_COLLECT,
         M3_INFRAVISIBLE | M3_BLINKAWAY, CLR_BLUE),
     MON("mountain nymph", S_NYMPH,
-        LVL(5, 15, 2, 50, 0), (G_GENO | 2),
+        LVL(5, 15, 2, 50, 0), (G_GENO | G_SGROUP | 1),
         A(ATTK(AT_CLAW, AD_SITM, 0, 0), ATTK(AT_CLAW, AD_SEDU, 0, 0),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(600, 300, 0, MS_SEDUCE, MZ_HUMAN), 0, 0, MRACE_NONE,
-        M1_HUMANOID, M2_HOSTILE | M2_FEMALE | M2_COLLECT,
+        M1_HUMANOID | M1_TPORT, M2_HOSTILE | M2_FEMALE | M2_COLLECT,
         M3_INFRAVISIBLE | M3_BLINKAWAY, CLR_BROWN),
+    MON("island nymph", S_NYMPH,
+        LVL(7, 18, -2, 60, 0), (G_GENO | 1),
+        A(ATTK(AT_CLAW, AD_SITM, 0, 0), ATTK(AT_CLAW, AD_SEDU, 0, 0),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(600, 300, 0, MS_SEDUCE, MZ_HUMAN), 0, 0, MRACE_NONE,
+        M1_HUMANOID | M1_TPORT | M1_SWIM | M1_REGEN | M1_SEE_INVIS,
+        M2_HOSTILE | M2_FEMALE | M2_COLLECT | M2_LORD | M2_NASTY | M2_MAGIC,
+        M3_INFRAVISIBLE, CLR_BRIGHT_CYAN),
 /*
  * orcs
  */
