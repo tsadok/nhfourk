@@ -911,24 +911,26 @@ you_moved(void)
                     rehumanize(DIED, NULL);
                 else if (Regeneration ||
                          (wtcap < MOD_ENCUMBER && !(moves % 20))) {
+                    if (!challengemode || !(moves % 3))
                     u.mh++;
                 }
             } else if (can_draw_from_environment(&youmonst) ||
                         (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)
                           && !Race_if(PM_SYLPH)))) {
-                if (Race_if(PM_SYLPH) && !(moves % 3)) {
+                if (Race_if(PM_SYLPH) && !(moves % challengemode ? 6 : 3)) {
                     deluxe_sylph_healing();
-                } else if (u.ulevel > 9 && !(moves % 3)) {
+                } else if (u.ulevel > 9 && !(moves % challengemode ? 9 : 3)) {
                     constitution_based_healing(9);
                 } else if (u.uhp < u.uhpmax &&
                            (Regeneration ||
                             can_draw_from_environment(&youmonst) ||
                             (u.ulevel <= 9 &&
-                             !(moves % ((MAXULEV + 12)
+                             !(moves % ((MAXULEV + challengemode ? 48 : 12)
                                         / (u.ulevel + 2) + 1))))) {
                     u.uhp++;
                 }
-            } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2))) {
+            } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2)) &&
+                !challengemode) {
                 if (!Inhell)
                     if (!can_feel_ground(&youmonst))
                         pline("You try to draw healing from your surroundings, "
