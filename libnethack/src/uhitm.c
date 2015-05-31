@@ -730,6 +730,42 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     if (obj->opoisoned && is_poisonable(obj))
                         ispoisoned = TRUE;
                 }
+                if (is_axe(obj) && !obj->axeinuse && !Engulfed &&
+                    (P_SKILL(P_AXE) >= P_SKILLED) &&
+                    (P_MAX_SKILL(P_AXE) >= P_EXPERT)) {
+                    /* Axes also hit adjacent enemies */
+                    coord posn1, posn2;
+                    struct monst *ctarg; /* collateral target */
+                    pline("You swing %s in a wide arc.", shk_your(obj));
+                    obj->axeinuse = 1;
+                    if (u.ux == mon->mx) {
+                        posn1.x = mon->mx + 1;
+                        posn2.x = mon->mx - 1;
+                        posn1.y = mon->my;
+                        posn2.y = mon->my;
+                    } else if (u.uy == mon->my) {
+                        posn1.x = mon->mx;
+                        posn2.x = mon->mx;
+                        posn1.y = mon->my + 1;
+                        posn2.y = mon->my - 1;
+                    } else {
+                        posn1.x = u.ux;
+                        posn1.y = mon->my;
+                        posn2.x = mon->mx;
+                        posn2.y = u.uy;
+                    }
+                    if (isok(posn1.x, posn1.y) &&
+                        (ctarg = m_at(level, posn1.x, posn1.y)) &&
+                        !ctarg->mtame && !ctarg->mpeaceful) {
+                        hmon(ctarg, obj, thrown);
+                    }
+                    if (isok(posn2.x, posn2.y) &&
+                        (ctarg = m_at(level, posn2.x, posn2.y)) &&
+                        !ctarg->mtame && !ctarg->mpeaceful) {
+                        hmon(ctarg, obj, thrown);
+                    }
+                    obj->axeinuse = 0;
+                }
             }
         } else if (obj->oclass == POTION_CLASS) {
             if (obj->quan > 1L)

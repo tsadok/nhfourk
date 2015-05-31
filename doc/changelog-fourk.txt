@@ -54,6 +54,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Barbarians attacking with an axe or battle-axe at Skilled or better
+   get free bonus attacks against adjacent enemies.  In each of the
+   diagrams below, you (@) attack a monster at target position (T),
+   and any monsters at either of the free-attack positions (F) will
+   be attacked as well.
+   .....  .....  .....  .....  .....  .....  .....  .....
+   ...F.  .F...  .FTF.  .....  .TF..  ..FT.  .....  .....
+   ..@T.  .T@..  ..@..  ..@..  .F@..  ..@F.  ..@F.  .F@..
+   ...F.  .F...  .....  .FTF.  .....  .....  ..FT.  .TF..
+   .....  .....  .....  .....  .....  .....  .....  .....
+
  * Lower-level nymphs now blink away when they steal something.
    Blinking normally works on a straight-line clear-path basis (sort
    of like line of sight, but they can blink into the dark or when
