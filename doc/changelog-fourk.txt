@@ -54,6 +54,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * There's an option to allow implicit alternate menu accelerators:
+   if the option is set, you can use a for the first choice, b for
+   the second, c for the third, etc., as long as they don't conflict
+   with the explicit accelerators.  This is not recommended except
+   possibly for players whose muscle-memory was trained on NAO.
+
  * Barbarians attacking with an axe or battle-axe at Skilled or better
    get free bonus attacks against adjacent enemies.  In each of the
    diagrams below, you (@) attack a monster at target position (T),
