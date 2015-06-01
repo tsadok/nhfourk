@@ -148,6 +148,8 @@ static struct nh_option_desc curses_options[] = {
      {.b = TRUE}},
     {"menupaging", "scrolling behaviour of menus", FALSE, OPTTYPE_ENUM,
      {.e = MP_LINES}},
+    {"menu_use_abc", "accept a, b, c, ... as alternate menu keys", FALSE,
+     OPTTYPE_BOOL, {.b = FALSE }},
     {"msgheight", "message window height", FALSE, OPTTYPE_INT, {.i = 8}},
     {"msghistory", "number of messages saved for prevmsg", FALSE, OPTTYPE_INT,
      {.i = 256}},
@@ -188,6 +190,7 @@ static struct nhlib_boolopt_map boolopt_map[] = {
     {"extmenu", &settings.extmenu},
     {"invweight", &settings.invweight},
     {"mouse", &settings.mouse},
+    {"menu_use_abc", &settings.menu_use_abc},
     {"prompt_inline", &settings.prompt_inline},
     {"scores_own", &settings.end_own},
     {"status3", &settings.status3},
@@ -334,6 +337,8 @@ curses_set_option(const char *name, union nh_optvalue value)
         settings.show_motd = option->value.e;
     } else if (!strcmp(option->name, "menupaging")) {
         settings.menupaging = option->value.e;
+    } else if (!strcmp(option->name, "menu_use_abc")) {
+        settings.menu_use_abc = option->value.b;
     } else if (!strcmp(option->name, "optstyle")) {
         settings.optstyle = option->value.e;
     } else if (!strcmp(option->name, "msgheight")) {
