@@ -353,10 +353,10 @@ do_naming(const struct nh_cmd_arg *arg)
     init_menulist(&menu);
 
     add_menuitem(&menu, 1, "Name a monster", 'C', FALSE);
-    add_menuitem(&menu, 2, "Name the current level", 'f', FALSE);
-    add_menuitem(&menu, 3, "Name an individual item", 'y', FALSE);
-    add_menuitem(&menu, 4, "Name all items of a certain type", 'n', FALSE);
-    add_menuitem(&menu, 5, "Name an item type by appearance", 'A', FALSE);
+    add_menuitem(&menu, 2, "Name an individual item", 'y', FALSE);
+    add_menuitem(&menu, 3, "Name all items of a certain type", 'n', FALSE);
+    add_menuitem(&menu, 4, "Name an item type by appearance", 'A', FALSE);
+    add_menuitem(&menu, 5, "Name the current level", 'f', FALSE);
     if (flags.recently_broken_otyp != STRANGE_OBJECT) {
         const char *buf;
 
@@ -380,18 +380,14 @@ do_naming(const struct nh_cmd_arg *arg)
         break;
 
     case 1:
-        donamelevel(&(struct nh_cmd_arg){.argtype = 0});
-        break;
-
-    case 2:
         do_oname(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
-    case 3:
+    case 2:
         do_tname(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
-    case 4:
+    case 3:
         strcpy(classes, flags.inv_order);
         init_menulist(&menu);
 
@@ -441,6 +437,10 @@ do_naming(const struct nh_cmd_arg *arg)
         if (n == 1)
             docall_inner(&(struct nh_cmd_arg){.argtype = 0},
                          selected[0]);
+        break;
+
+    case 4:
+        donamelevel(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
     case 5:
