@@ -120,7 +120,9 @@
 # define M2_NOPOLY      0x00000001L     /* players mayn't poly into one */
 # define M2_UNDEAD      0x00000002L     /* is walking dead */
 # define M2_WERE        0x00000004L     /* is a lycanthrope */
-/* The race flags used to be here, but now they're their own field. */
+/* The race flags used to be here; they are now on their own field (MRACE_FOO),
+   but ones that are needed for artifact SPFX_DFLAG2 are duplicated here. */
+# define M2_ELF         0x00000010L     /* is an elf */
 # define M2_ORC         0x00000080L     /* is an orc */
 # define M2_DEMON       0x00000100L     /* is a demon */
 # define M2_MERC        0x00000200L     /* is a guard or soldier */

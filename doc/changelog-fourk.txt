@@ -54,11 +54,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Grimtooth is permanently poisoned and also grants poison resistance;
+   additionally it warns of elves and does extra damage to them, even
+   if they are poison resistant.
+
  * There's an option to allow implicit alternate menu accelerators:
    if the option is set, you can use a for the first choice, b for
    the second, c for the third, etc., as long as they don't conflict
    with the explicit accelerators.  This is not recommended except
    possibly for players whose muscle-memory was trained on NAO.
+   This feature will probably later be removed in favor of using
+   group accelerators to allow NAO keys just for certain menus.
 
  * Barbarians attacking with an axe or battle-axe at Skilled or better
    get free bonus attacks against adjacent enemies.  In each of the
