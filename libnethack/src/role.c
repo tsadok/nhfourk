@@ -518,6 +518,8 @@ boolean
 can_draw_from_environment(struct monst *mon)
 {
     enum objslot s;
+    if (Race_if(PM_SYLPH) && Upolyd)
+        return FALSE;
     if (monsndx(mon->data) == PM_SYLPH ||
         (mon == &youmonst && Race_if(PM_SYLPH))) {
         /* Can you feel the air on your skin? */

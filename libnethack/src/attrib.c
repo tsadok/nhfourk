@@ -130,12 +130,14 @@ static const struct innate orc_abil[] = {
 
 static const struct innate sylph_abil[] = {
     {1,  &(HSee_invisible), "", ""},
+    {1,  &(HProt_shapechangers), "", ""},
     /* They also get a form of slotless regeneration, but only under
        certain conditions, and with hunger implications so that's
        special-cased elsewhere. */
-    {4,  &(HStealth), "stealthy", "obvious"},
-    {6,  &(HInfravision), "perceptive", "half blind"},
-    {18, &(HDetect_monsters), "perceptive", "dull"},
+    {3,  &(HStealth), "stealthy", "obvious"},
+    {5,  &(HInfravision), "perceptive", "half blind"},
+    {7,  &(HDisplacement), "elusive", "exposed"},
+    {16, &(HDetect_monsters), "perceptive", "dull"},
     {0, 0, 0, 0}
 };
 
