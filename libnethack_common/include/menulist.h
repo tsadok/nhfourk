@@ -12,6 +12,8 @@ extern void set_menuitem(struct nh_menuitem *, int, enum nh_menuitem_role,
                          const char *, char, nh_bool);
 extern void add_menu_item(struct nh_menulist *, int,
                           const char *, char, nh_bool);
+extern void add_menu_item_dualaccel(struct nh_menulist *, int,
+                                    const char *, char, char, nh_bool);
 extern void add_menu_txt(struct nh_menulist *, const char *,
                          enum nh_menuitem_role);
 extern void init_menulist(struct nh_menulist *);

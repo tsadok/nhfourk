@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+void set_menuitem_with_two_accelerators(struct nh_menuitem *, int,
+                                        enum nh_menuitem_role, const char *,
+                                        char, char, nh_bool);
+
 /* Ensures that the given menu list has space for at least one more item. */
 static void
 expand_menulist(struct nh_menulist *ml)
@@ -61,15 +65,23 @@ dealloc_objmenulist(struct nh_objlist *ml)
     init_objmenulist(ml);
 }
 
-
 void
 set_menuitem(struct nh_menuitem *item, int id, enum nh_menuitem_role role,
              const char *caption, char accel, nh_bool selected)
 {
+    set_menuitem_with_two_accelerators(item, id, role, caption,
+                                       accel, 0, selected);
+}
+void
+set_menuitem_with_two_accelerators(struct nh_menuitem *item, int id,
+                                   enum nh_menuitem_role role,
+                                   const char *caption, char accel,
+                                   char gaccel, nh_bool selected)
+{
     item->id = id;
     item->role = role;
     item->accel = accel;
-    item->group_accel = 0;
+    item->group_accel = gaccel;
     item->selected = selected;
 
     strncpy(item->caption, caption, (sizeof item->caption) - 1);
@@ -80,9 +92,17 @@ void
 add_menu_item(struct nh_menulist *ml, int id, const char *caption,
               char accel, nh_bool selected)
 {
+    add_menu_item_dualaccel(ml, id, caption, accel, 0, selected);
+}
+
+void
+add_menu_item_dualaccel(struct nh_menulist *ml, int id, const char *caption,
+                        char accel, char gaccel, nh_bool selected)
+{
     expand_menulist(ml);
-    set_menuitem(ml->items + ml->icount, id, MI_NORMAL,
-                 caption, accel, selected);
+    set_menuitem_with_two_accelerators(ml->items + ml->icount, id,
+                                       MI_NORMAL, caption, accel,
+                                       gaccel, selected);
     ml->icount++;
 }
 
