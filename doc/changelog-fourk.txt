@@ -54,6 +54,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Rogues now get the "backstab" bonus if the target monster is
+   fleeing (strike from behind); frozen, trapped, or unable to move
+   (catch at a disadvantage); or sleeping, blind, confused, or stunned
+   (strike unaware).
+
  * Grimtooth is permanently poisoned and also grants poison resistance;
    additionally it warns of elves and does extra damage to them, even
    if they are poison resistant.

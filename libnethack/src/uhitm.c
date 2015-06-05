@@ -658,8 +658,20 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                 valid_weapon_attack = (tmp > 1);
                 if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
                     ;   /* no special bonuses */
-                } else if (mon->mflee && Role_if(PM_ROGUE) && !Upolyd) {
-                    pline("You strike %s from behind!", mon_nam(mon));
+                } else if ((mon->mflee || mon->mtrapped || mon->mfrozen ||
+                            !mon->mcanmove || mon->msleeping || mon->mstun ||
+                            mon->mconf || mon->mblinded || mon->mpeaceful) &&
+                           Role_if(PM_ROGUE) && !Upolyd) {
+                    pline("You %s %s %s!",
+                          (mon->mpeaceful || mon->mtrapped || mon->mfrozen ||
+                           (!mon->mcanmove && !mon->msleeping))
+                                     ? "catch" : "strike",
+                          mon_nam(mon),
+                          (mon->mpeaceful ? "off guard" :
+                           (mon->mtrapped || mon->mfrozen ||
+                            (!mon->mcanmove && !mon->msleeping)) ?
+                           "at a disadvantage" : mon->mflee ? "from behind" :
+                           "unaware"));
                     tmp += rnd(3);
                     if ((wtype = uwep_skill_type()) != P_NONE)
                         tmp += rnd(1 + (3 * P_SKILL(wtype) * P_SKILL(wtype) / 2));
