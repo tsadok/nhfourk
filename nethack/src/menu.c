@@ -336,16 +336,6 @@ find_accel(int accel, struct win_menu *mdat)
                 return i;
             }
 
-    /*
-     * If a user pref is set, also allow a, b, c, to accommodate muscle memory
-     * trained on nethack.alt.org
-     */
-    if (settings.menu_use_abc && mdat->offset == 0) {
-        i = ((int) accel) - ((int) 'a');
-        if (i >= 0 && i < mdat->icount)
-            return i;
-    }
-
     return -1;
 }
 
