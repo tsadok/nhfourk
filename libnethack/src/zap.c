@@ -4024,8 +4024,12 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
             }
             bounce = 0;
             range--;
-            if (range && isok(lsx, lsy) && cansee(lsx, lsy))
-                pline(msgc_consequence, "%s bounces!", The(fltxt));
+            if (range && isok(lsx, lsy) && cansee(lsx, lsy)) {
+                pline(msgc_consequence, "%s %s!", The(fltxt),
+                      Is_airlevel(&u.uz) ? "vanishes into thin air" :
+                      "bounces");
+                if (Is_airlevel(&u.uz)) goto get_out_buzz;
+            }
             if (!dx || !dy || !rn2(20)) {
                 dx = -dx;
                 dy = -dy;
@@ -4075,6 +4079,7 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
             chain_explode(sx, sy, type, dice(nd, 6),
                           WAND_CLASS, expltype, NULL, raylevel, rnd(5));
     }
+get_out_buzz:
     if (shopdamage)
         pay_for_damage(abstype == ZT_FIRE ? "burn away" : abstype ==
                        ZT_COLD ? "shatter" : abstype ==
