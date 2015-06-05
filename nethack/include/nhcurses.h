@@ -283,7 +283,6 @@ struct settings {
     nh_bool floorcolor; /* draw stepped-on information for the floor */
     nh_bool status3;    /* draw 3 line status */
     nh_bool mouse;      /* accept mouse input */
-    nh_bool menu_use_abc;  /* implicit alternate menu accelerators */
     nh_bool prompt_inline; /* draw prompts in the message window */
 };
 

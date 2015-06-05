@@ -352,9 +352,11 @@ do_naming(const struct nh_cmd_arg *arg)
 
     init_menulist(&menu);
 
-    add_menuitem(&menu, 1, "Name a monster", 'C', FALSE);
-    add_menuitem(&menu, 2, "Name an individual item", 'y', FALSE);
-    add_menuitem(&menu, 3, "Name all items of a certain type", 'n', FALSE);
+    add_menu_item_dualaccel(&menu, 1, "Name a monster", 'C', 'a', FALSE);
+    add_menu_item_dualaccel(&menu, 2, "Name an individual item",
+                            'y', 'b', FALSE);
+    add_menu_item_dualaccel(&menu, 3, "Name all items of a certain type",
+                            'n', 'c', FALSE);
     add_menuitem(&menu, 4, "Name an item type by appearance", 'A', FALSE);
     add_menuitem(&menu, 5, "Name the current level", 'f', FALSE);
     if (flags.recently_broken_otyp != STRANGE_OBJECT) {
