@@ -71,14 +71,15 @@ Changes in 4.3.0.2:
    get free bonus attacks against adjacent enemies.  In each of the
    diagrams below, you (@) attack a monster at target position (T),
    and any monsters at either of the free-attack positions (F) will
-   be attacked as well.
+   be attacked as well.  Also, Barbarians can now get Master skill
+   in axe.  They can afford the skill slots because no spellcasting.
    Skilled ("wide arc"):
    .....  .....  .....  .....  .....  .....  .....  .....
    ...F.  .F...  .FTF.  .....  .TF..  ..FT.  .....  .....
    ..@T.  .T@..  ..@..  ..@..  .F@..  ..@F.  ..@F.  .F@..
    ...F.  .F...  .....  .FTF.  .....  .....  ..FT.  .TF..
    .....  .....  .....  .....  .....  .....  .....  .....
-   Expert ("tremendous arc"):
+   Master ("tremendous arc"):
    .....  .....  .....  .....  .....  .....  .....  .....
    ..FF.  .FF..  .FTF.  .....  .TFF.  .FFT.  ...F.  .F...
    ..@T.  .T@..  .F@F.  .F@F.  .F@..  ..@F.  ..@F.  .F@..

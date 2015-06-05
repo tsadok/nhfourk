@@ -750,7 +750,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     struct monst *ctarg; /* collateral target */
                     pline("You swing %s %s in a %s arc.", shk_your(obj),
                           xname(obj),
-                          (P_SKILL(P_AXE) >= P_EXPERT) ? "tremendous" : "wide");
+                          (P_SKILL(P_AXE) >= P_MASTER) ? "tremendous" : "wide");
                     obj->axeinuse = 1;
                     if (u.ux == mon->mx) {
                         posn1.x = mon->mx + 1;
@@ -800,7 +800,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                         !ctarg->mtame && !ctarg->mpeaceful) {
                         hmon(ctarg, obj, thrown);
                     }
-                    if (P_SKILL(P_AXE) >= P_EXPERT) {
+                    if (P_SKILL(P_AXE) >= P_MASTER) {
                         if (isok(posn3.x, posn3.y) &&
                             (ctarg = m_at(level, posn3.x, posn1.y)) &&
                             !ctarg->mtame && !ctarg->mpeaceful) {

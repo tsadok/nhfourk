@@ -341,7 +341,7 @@ static const struct def_skill Skill_A[] = {
 };
 
 static const struct def_skill Skill_B[] = {
-    {P_DAGGER, P_BASIC}, {P_AXE, P_EXPERT},
+    {P_DAGGER, P_BASIC}, {P_AXE, P_MASTER},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_EXPERT},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_EXPERT},
     {P_TWO_HANDED_SWORD, P_EXPERT}, {P_SCIMITAR, P_EXPERT},

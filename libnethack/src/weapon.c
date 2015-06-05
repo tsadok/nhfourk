@@ -1325,10 +1325,14 @@ weapon_hit_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 5;
             break;
+        case P_MASTER:
+            bonus = 7;
+            break;
         }
         switch (P_MAX_SKILL(type)) {
             /* Note fall-through at every step, e.g. 2+2+2 = 6 for P_EXPERT. */
         default:
+        case P_MASTER:
         case P_EXPERT:
             bonus += 2;
         case P_SKILLED:
@@ -1434,6 +1438,9 @@ weapon_dam_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 2;
             break;
+        case P_MASTER:
+            bonus = 3;
+            break;
         }
     } else if (type == P_TWO_WEAPON_COMBAT) {
         skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1452,6 +1459,7 @@ weapon_dam_bonus(struct obj *weapon)
             bonus = 0;
             break;
         case P_EXPERT:
+        case P_MASTER:
             bonus = 1;
             break;
         }
