@@ -736,7 +736,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     /* Axes also hit adjacent enemies */
                     coord posn1, posn2, posn3, posn4;
                     struct monst *ctarg; /* collateral target */
-                    pline("You swing %s in a %s arc.", shk_your(obj),
+                    pline("You swing %s %s in a %s arc.", shk_your(obj),
+                          xname(obj),
                           (P_SKILL(P_AXE) >= P_EXPERT) ? "tremendous" : "wide");
                     obj->axeinuse = 1;
                     if (u.ux == mon->mx) {
