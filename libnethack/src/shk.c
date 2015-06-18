@@ -2878,6 +2878,11 @@ add_damage(xchar x, xchar y, long cost)
     struct damage *tmp_dam;
     char *shops;
 
+    if (!level) {
+        impossible("add_damage on an undefined level");
+        return;
+    }
+
     if (IS_DOOR(level->locations[x][y].typ)) {
         struct monst *mtmp;
 
