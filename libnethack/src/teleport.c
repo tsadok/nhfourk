@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-25 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -488,8 +488,7 @@ dotele(const struct nh_cmd_arg *arg)
         boolean castit = FALSE;
         int sp_no = 0, energy = 0;
 
-        if (!Teleportation || (u.ulevel < (Role_if(PM_WIZARD) ? 8 : 12)
-                               && !can_teleport(youmonst.data))) {
+        if (!supernatural_ability_available(SPID_RLOC)) {
             /* Try to use teleport away spell. */
             if (objects[SPE_TELEPORT_AWAY].oc_name_known && !Confusion)
                 for (sp_no = 0; sp_no < MAXSPELL; sp_no++)
@@ -1018,7 +1017,7 @@ mvault_tele(struct monst *mtmp)
         rloc_to(mtmp, c.x, c.y);
         return;
     }
-    rloc(mtmp, FALSE);
+    rloc(mtmp, TRUE);
 }
 
 boolean
@@ -1049,7 +1048,7 @@ mtele_trap(struct monst *mtmp, struct trap *trap, int in_sight)
         if (trap->once)
             mvault_tele(mtmp);
         else
-            rloc(mtmp, FALSE);
+            rloc(mtmp, TRUE);
 
         if (in_sight) {
             if (canseemon(mtmp))
@@ -1278,10 +1277,10 @@ u_teleport_mon(struct monst * mtmp, boolean give_feedback)
         unstuck(mtmp);
         rloc(mtmp, FALSE);
     } else if (is_rider(mtmp->data) && rn2(13) &&
-               enexto(&cc, level, u.ux, u.uy, mtmp->data))
+               enexto(&cc, level, u.ux, u.uy, mtmp->data)) {
         rloc_to(mtmp, cc.x, cc.y);
-    else
-        rloc(mtmp, FALSE);
+    } else
+        return rloc(mtmp, TRUE);
     return TRUE;
 }
 
