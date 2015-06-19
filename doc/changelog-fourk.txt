@@ -54,6 +54,15 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Further alignment record adjustments have been made.  The penalties
+   for killing generated-peaceful and always-peaceful monsters have
+   been adjusted again.  Chaotics now get no penalty for killing
+   mundane peaceful monsters; killing always-peaceful ones still has a
+   penalty for all alignments, but it is smaller than before.  The
+   alignment benefits of sacrifice have been restored to their vanilla
+   level of effectiveness.  Using a poisoned weapon while lawful will
+   no longer take your record below 0.
+
  * Sokoban tries to give you a prize you don't already have.  For
    example, if the level you get would normally have a bag of holding
    but you already have one and don't yet have reflection, an amulet

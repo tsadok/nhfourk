@@ -1508,8 +1508,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
                 value = MAXVALUE;
             if (value > -u.ualign.record)
                 value = -u.ualign.record;
-            adjalign((abs(value) > 5) ? (value / 3) :
-                     (abs(value) > 1) ? (value / 2) : value);
+            adjalign(value);
             pline("You feel partially absolved.");
         } else if (u.ublesscnt > 0) {
             u.ublesscnt -=

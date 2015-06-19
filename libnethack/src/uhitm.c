@@ -1074,7 +1074,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
             (PM_SAMURAI) {
             pline("You dishonorably use a poisoned weapon!");
             adjalign(-sgn(u.ualign.type));
-        } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > -10)) {
+        } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > 0)) {
             pline("You feel like an evil coward for using a poisoned weapon.");
             adjalign(-1);
         }
