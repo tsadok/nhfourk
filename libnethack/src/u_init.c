@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-04-01 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -341,7 +341,7 @@ static const struct def_skill Skill_A[] = {
 };
 
 static const struct def_skill Skill_B[] = {
-    {P_DAGGER, P_BASIC}, {P_AXE, P_EXPERT},
+    {P_DAGGER, P_BASIC}, {P_AXE, P_MASTER},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_EXPERT},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_EXPERT},
     {P_TWO_HANDED_SWORD, P_EXPERT}, {P_SCIMITAR, P_EXPERT},
@@ -610,8 +610,11 @@ u_init(microseconds birthday)
     u.urexp = -1;       /* indicates that score is calculated not remembered */
 
     init_uhunger();
+
     for (i = 0; i <= MAXSPELL; i++)
         spl_book[i].sp_id = NO_SPELL;
+    update_supernatural_abilities();
+    
     u.ublesscnt = 300;  /* no prayers just yet */
     u.ualignbase[A_CURRENT] = u.ualignbase[A_ORIGINAL] = u.ualign.type =
         aligns[u.initalign].value;

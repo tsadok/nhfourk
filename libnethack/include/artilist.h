@@ -158,10 +158,6 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_GIANT,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM, 200L),
 
-    A("Ogresmasher", WAR_HAMMER,
-      (SPFX_RESTR | SPFX_DCLAS), 0, S_OGRE,
-      PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 200L),
-
     A("Trollsbane", MORNING_STAR,
       (SPFX_RESTR | SPFX_DCLAS), 0, S_TROLL,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 200L),
