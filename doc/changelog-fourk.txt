@@ -54,6 +54,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Intelligence-draining attacks no longer also cause amnesia.
+
+ * Multi-firing is more difficult when using silver projectiles.
+   (They're still advantageous against silver-fearing targets, of
+   course, because the increased silver damage is worth more than
+   a higher multi-fire rate.)
+
+ * Added a new type of stone, silver nuggets.  These count as sling
+   ammo and do silver damage.  The best place to find silver nuggets
+   is on the caveman quest, but they can also be generated randomly.
+
  * The Rogue quest now contains a guaranteed spellbook of sleep.
 
  * Further alignment record adjustments have been made.  The penalties
