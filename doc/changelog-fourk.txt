@@ -54,6 +54,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * The Rogue quest now contains a guaranteed spellbook of sleep.
+
  * Further alignment record adjustments have been made.  The penalties
    for killing generated-peaceful and always-peaceful monsters have
    been adjusted again.  Chaotics now get no penalty for killing
