@@ -740,7 +740,7 @@ const struct objclass const_objects[] = {
     SCROLL("food detection", "YUM YUM", 1, 25, 100),
     SCROLL("identify", "KERNOD WEL", 1, 180, 20),
     SCROLL("magic mapping", "ELAM EBOW", 1, 45, 100),
-    SCROLL("amnesia", "DUAM XNAHT", 1, 35, 200),
+    SCROLL("water", "DUAM XNAHT", 1, 35, 200),
     SCROLL("fire", "ANDOVA BEGARIN", 1, 30, 100),
     SCROLL("earth", "KIRJE", 1, 18, 200),
     SCROLL("punishment", "VE FORBRYDERNE", 1, 15, 300),

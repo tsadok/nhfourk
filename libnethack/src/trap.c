@@ -3061,7 +3061,7 @@ drown(void)
             return FALSE;
     }
 
-    if (!u.uinwater) {
+    if (!u.uinwater && !Engulfed) {
         pline("You %s into the water%c",
               Is_waterlevel(&u.uz) ? "plunge" : "fall", Amphibious ||
               Swimming ? '.' : '!');
@@ -3154,7 +3154,7 @@ drown(void)
                 goto crawl;
             }
 crawl:
-    if (crawl_ok) {
+    if (crawl_ok && !Engulfed) {
         boolean lost = FALSE;
 
         /* time to do some strip-tease... */
@@ -3175,14 +3175,16 @@ crawl:
     pline("You drown.");
     done(DROWNING,
          killer_msg(DROWNING,
-                    Is_waterlevel(&u.uz) ? "the Plane of Water"
+                    Is_waterlevel(&u.uz) ? "the Plane of Water" :
+                    Engulfed             ? mbodypart(u.ustuck, STOMACH)
                                          : a_waterbody(u.ux, u.uy)));
     /* oops, we're still alive.  better get out of the water. */
     while (!safe_teleds(TRUE)) {
         pline("You're still drowning.");
         done(DROWNING,
              killer_msg(DROWNING,
-                        msgcat(Is_waterlevel(&u.uz) ? "the Plane of Water"
+                        msgcat(Is_waterlevel(&u.uz) ? "the Plane of Water" :
+                               Engulfed ? mbodypart(u.ustuck, STOMACH)
                                : a_waterbody(u.ux, u.uy),
                                " despite being life-saved")));
     }

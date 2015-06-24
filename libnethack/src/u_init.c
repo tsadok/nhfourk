@@ -1031,10 +1031,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
              * items: wand of wishing, ring of levitation, or the
              * polymorph/polymorph control combination.  Specific objects,
              * i.e. the discovery wishing, are still OK.
-             * Also, don't get a couple of really useless items.  (Note:
-             * punishment isn't "useless".  Some players who start out with
-             * one will immediately read it and use the iron ball as a
-             * weapon.)
+             * Also, don't get a couple of really useless items.
              */
             obj = mkobj(level, trop->trclass, FALSE, rng);
             otyp = obj->otyp;
@@ -1045,7 +1042,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                    || (otyp == RIN_LEVITATION && flags.elbereth_enabled)
                    /* 'useless' items */
                    || otyp == POT_HALLUCINATION || otyp == POT_ACID ||
-                   otyp == SCR_AMNESIA || otyp == SCR_FIRE ||
+                   otyp == SCR_PUNISHMENT || otyp == SCR_FIRE ||
                    otyp == SCR_BLANK_PAPER || otyp == SPE_BLANK_PAPER ||
                    otyp == RIN_AGGRAVATE_MONSTER || otyp == RIN_HUNGER ||
                    otyp == WAN_NOTHING

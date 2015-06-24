@@ -54,6 +54,19 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * The scroll of amnesia has been removed from the game.  It is
+   replaced with the scroll of water, which generally creates pools
+   around the player.  (Some dungeon features can be destroyed by
+   this, replaced with a pool; others, such as stairs, cannot.)  If
+   cursed, one of the pools will be placed at the player's location.
+   If blessed, there is a small chance to get a fountain instead.
+   Although the scroll of amnesia was one of the most useless items
+   and thus was never given as starting inventory, I consider the
+   scroll of water to be potentially more useful than the scroll of
+   punishment, which previously could be; so scroll of water can be
+   given as starting inventory, and scroll of punishment now cannot.
+   Note that the scroll of water will not work on the Planes.
+
  * Intelligence-draining attacks no longer also cause amnesia.
 
  * Multi-firing is more difficult when using silver projectiles.
