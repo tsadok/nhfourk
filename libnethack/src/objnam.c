@@ -160,7 +160,9 @@ obj_typename(int otyp)
         } else {
             buf = dn ? dn : actualn;
             if (ocl->oc_class == GEM_CLASS)
-                buf = msgcat(buf, (ocl->oc_material == MINERAL) ?
+                buf = msgcat(buf, (ocl->oc_material == MINERAL ||
+                                   (ocl->oc_material >= SILVER &&
+                                    ocl->oc_material <= MITHRIL)) ?
                              " stone" : " gem");
             if (un)
                 buf = msgcat_many(buf, " called ", un, NULL);
