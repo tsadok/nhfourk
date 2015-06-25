@@ -21,6 +21,8 @@ static void get_free_room_loc(struct level *lev, schar * x, schar * y,
                               struct mkroom *croom);
 static void create_trap(struct level *lev, trap * t, struct mkroom *croom);
 static int noncoalignment(aligntyp, struct level *);
+static struct obj * make_sokoprize(int, struct level *, int, int, boolean,
+                                   boolean, enum rng);
 static void create_monster(struct level *lev, monster *, struct mkroom *);
 static void create_object(struct level *lev, object *, struct mkroom *);
 static void create_engraving(struct level *lev, engraving *, struct mkroom *);
@@ -920,6 +922,34 @@ m_done:
     Free(m->appear_as.str);
 }
 
+struct obj *
+make_sokoprize(int origotyp, struct level *lev, int x, int y,
+               boolean init, boolean artif, enum rng rng)
+{
+    int otyp = origotyp;
+    if (otyp == BAG_OF_HOLDING && carrying(BAG_OF_HOLDING) &&
+        !u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
+        otyp = AMULET_OF_REFLECTION;
+    if (otyp == AMULET_OF_REFLECTION &&
+        u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
+        if (!carrying(BAG_OF_HOLDING) && !carrying(OILSKIN_SACK))
+            otyp = rn2_on_rng(3, rng) ? OILSKIN_SACK : BAG_OF_HOLDING;
+    /* TODO: else, maybe another useful amulet? */
+    if (otyp == RIN_POLYMORPH_CONTROL &&
+        (carrying(RIN_POLYMORPH_CONTROL) ||
+         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE)) &&
+        !carrying(RIN_TELEPORT_CONTROL) &&
+        !u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE))
+        otyp = RIN_TELEPORT_CONTROL;
+    if (otyp == RIN_TELEPORT_CONTROL &&
+        (carrying(RIN_TELEPORT_CONTROL) ||
+         u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE)) &&
+        !carrying(RIN_POLYMORPH_CONTROL) &&
+        !u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE))
+        otyp = RIN_POLYMORPH_CONTROL;
+    return mksobj_at(otyp, lev, x, y, init, artif, rng);
+}
+
 /*
  * Create an object in a room.
  */
@@ -948,7 +978,13 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
         else
             c = 0;
 
-        if (!c)
+        /* Is this the Sokoban prize?  Can we make sure it's something
+           the player can use? */
+        if (In_sokoban(&lev->z) && c && o->id != -1 &&
+            (o->id == BAG_OF_HOLDING || o->id == AMULET_OF_REFLECTION ||
+             o->id == RIN_POLYMORPH_CONTROL || o->id == RIN_TELEPORT_CONTROL))
+            otmp = make_sokoprize(o->id, lev, x, y, TRUE, !named, mrng());
+        else if (!c)
             otmp = mkobj_at(RANDOM_CLASS, lev, x, y, !named, mrng());
         else if (o->id != -1)
             otmp = mksobj_at(o->id, lev, x, y, TRUE, !named, mrng());

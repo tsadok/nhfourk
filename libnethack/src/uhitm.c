@@ -658,8 +658,20 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                 valid_weapon_attack = (tmp > 1);
                 if (!valid_weapon_attack || mon == u.ustuck || u.twoweap) {
                     ;   /* no special bonuses */
-                } else if (mon->mflee && Role_if(PM_ROGUE) && !Upolyd) {
-                    pline("You strike %s from behind!", mon_nam(mon));
+                } else if ((mon->mflee || mon->mtrapped || mon->mfrozen ||
+                            !mon->mcanmove || mon->msleeping || mon->mstun ||
+                            mon->mconf || mon->mblinded || mon->mpeaceful) &&
+                           Role_if(PM_ROGUE) && !Upolyd) {
+                    pline("You %s %s %s!",
+                          (mon->mpeaceful || mon->mtrapped || mon->mfrozen ||
+                           (!mon->mcanmove && !mon->msleeping))
+                                     ? "catch" : "strike",
+                          mon_nam(mon),
+                          (mon->mpeaceful ? "off guard" :
+                           (mon->mtrapped || mon->mfrozen ||
+                            (!mon->mcanmove && !mon->msleeping)) ?
+                           "at a disadvantage" : mon->mflee ? "from behind" :
+                           "unaware"));
                     tmp += rnd(3);
                     if ((wtype = uwep_skill_type()) != P_NONE)
                         tmp += rnd(1 + (3 * P_SKILL(wtype) * P_SKILL(wtype) / 2));
@@ -729,6 +741,78 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     }
                     if (obj->opoisoned && is_poisonable(obj))
                         ispoisoned = TRUE;
+                }
+                if (is_axe(obj) && !obj->axeinuse && !Engulfed &&
+                    (P_SKILL(P_AXE) >= P_SKILLED) &&
+                    (P_MAX_SKILL(P_AXE) >= P_EXPERT)) {
+                    /* Axes also hit adjacent enemies */
+                    coord posn1, posn2, posn3, posn4;
+                    struct monst *ctarg; /* collateral target */
+                    pline("You swing %s %s in a %s arc.", shk_your(obj),
+                          xname(obj),
+                          (P_SKILL(P_AXE) >= P_MASTER) ? "tremendous" : "wide");
+                    obj->axeinuse = 1;
+                    if (u.ux == mon->mx) {
+                        posn1.x = mon->mx + 1;
+                        posn2.x = mon->mx - 1;
+                        posn3.x = mon->mx + 1;
+                        posn4.x = mon->mx - 1;
+                        posn1.y = mon->my;
+                        posn2.y = mon->my;
+                        posn3.y = u.uy;
+                        posn4.y = u.uy;
+                    } else if (u.uy == mon->my) {
+                        posn1.x = mon->mx;
+                        posn2.x = mon->mx;
+                        posn3.x = u.ux;
+                        posn4.x = u.ux;
+                        posn1.y = mon->my + 1;
+                        posn2.y = mon->my - 1;
+                        posn3.y = mon->my + 1;
+                        posn4.y = mon->my - 1;
+                    } else {
+                        posn1.x = u.ux;
+                        posn1.y = mon->my;
+                        posn2.x = mon->mx;
+                        posn2.y = u.uy;
+                        if (u.ux > mon->mx) {
+                            posn3.x = u.ux + 1;
+                            posn4.x = u.ux - 1;
+                        } else {
+                            posn3.x = u.ux - 1;
+                            posn4.x = u.ux + 1;
+                        }
+                        if (u.uy > mon->my) {
+                            posn3.y = u.uy - 1;
+                            posn4.y = u.uy + 1;
+                        } else {
+                            posn3.y = u.uy + 1;
+                            posn4.y = u.uy - 1;
+                        }
+                    }
+                    if (isok(posn1.x, posn1.y) &&
+                        (ctarg = m_at(level, posn1.x, posn1.y)) &&
+                        !ctarg->mtame && !ctarg->mpeaceful) {
+                        hmon(ctarg, obj, thrown);
+                    }
+                    if (isok(posn2.x, posn2.y) &&
+                        (ctarg = m_at(level, posn2.x, posn2.y)) &&
+                        !ctarg->mtame && !ctarg->mpeaceful) {
+                        hmon(ctarg, obj, thrown);
+                    }
+                    if (P_SKILL(P_AXE) >= P_MASTER) {
+                        if (isok(posn3.x, posn3.y) &&
+                            (ctarg = m_at(level, posn3.x, posn1.y)) &&
+                            !ctarg->mtame && !ctarg->mpeaceful) {
+                            hmon(ctarg, obj, thrown);
+                        }
+                        if (isok(posn4.x, posn4.y) &&
+                            (ctarg = m_at(level, posn4.x, posn4.y)) &&
+                            !ctarg->mtame && !ctarg->mpeaceful) {
+                            hmon(ctarg, obj, thrown);
+                        }
+                    }
+                    obj->axeinuse = 0;
                 }
             }
         } else if (obj->oclass == POTION_CLASS) {
@@ -990,7 +1074,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
             (PM_SAMURAI) {
             pline("You dishonorably use a poisoned weapon!");
             adjalign(-sgn(u.ualign.type));
-        } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > -10)) {
+        } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > 0)) {
             pline("You feel like an evil coward for using a poisoned weapon.");
             adjalign(-1);
         }

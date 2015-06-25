@@ -2188,7 +2188,8 @@ cleanup:
        want a penalty for killing monsters that generated peaceful.  I'm not
        absolutely sure the following condition is correct, but we'll test it: */
     if (mtmp->malign < 0)
-        adjalign(always_peaceful(mtmp->data) ? -5 : -1);
+        adjalign(always_peaceful(mtmp->data) ? -3 :
+                 (u.ualign.type == A_CHAOTIC) ? 0 : -1);
     /* However, chaotics now get a point for killing their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
         int oldalign = u.ualign.record;

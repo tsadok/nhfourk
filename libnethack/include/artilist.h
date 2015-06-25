@@ -34,6 +34,7 @@ static const char *artifact_names[] = {
 # define     FIRE(a,b)  {0,AD_FIRE,a,b}
 # define     ELEC(a,b)  {0,AD_ELEC,a,b} /* electrical shock */
 # define     STUN(a,b)  {0,AD_STUN,a,b} /* magical attack */
+# define     POIS(a,b)  {0,AD_DRST,a,b} /* poison */
 
 static const struct artifact const_artilist[] = {
 #endif /* ARTINAMES_C */
@@ -102,8 +103,8 @@ static const struct artifact const_artilist[] = {
       PHYS(3, 6), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_BARBARIAN, NON_PM, 1500L),
 
     A("Grimtooth", ORCISH_DAGGER,
-      SPFX_RESTR, 0, 0,
-      PHYS(2, 6), NO_DFNS, NO_CARY, 0, A_CHAOTIC, NON_PM, PM_ORC, 300L),
+      SPFX_RESTR | SPFX_ATTK | SPFX_DEFN | SPFX_WARN | SPFX_DFLAG2, 0, M2_ELF,
+      POIS(2, 6), POIS(0,0), NO_CARY, 0, A_CHAOTIC, NON_PM, PM_ORC, 300L),
 /*
  *      Orcrist and Sting have same alignment as elves.
  */
@@ -156,10 +157,6 @@ static const struct artifact const_artilist[] = {
     A("Giantslayer", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_GIANT,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM, 200L),
-
-    A("Ogresmasher", WAR_HAMMER,
-      (SPFX_RESTR | SPFX_DCLAS), 0, S_OGRE,
-      PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 200L),
 
     A("Trollsbane", MORNING_STAR,
       (SPFX_RESTR | SPFX_DCLAS), 0, S_TROLL,

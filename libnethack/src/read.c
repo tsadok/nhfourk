@@ -24,9 +24,8 @@ static void do_class_genocide(void);
 static void stripspe(struct obj *);
 static void p_glow1(struct obj *);
 static void p_glow2(struct obj *, const char *);
-static void randomize(int *, int);
-static void forget_single_object(int);
-static void forget(int);
+/* static void randomize(int *, int); */
+static void do_scroll_water(int, int, int, schar);
 static void maybe_tame(struct monst *, struct obj *);
 
 static void set_lit(int, int, void *);
@@ -465,33 +464,8 @@ recharge(struct obj *obj, int curse_bless)
 }
 
 
-/* Forget known information about this object class. */
-static void
-forget_single_object(int obj_id)
-{
-    const char *knownname;
-    char *new_uname;
-
-    if (!objects[obj_id].oc_name_known)
-        return; /* nothing to do */
-    knownname = simple_typename(obj_id);
-    objects[obj_id].oc_name_known = 0;
-    if (objects[obj_id].oc_uname) {
-        free(objects[obj_id].oc_uname);
-        objects[obj_id].oc_uname = 0;
-    }
-    undiscover_object(obj_id);  /* after clearing oc_name_known */
-
-    /* Record what the object was before we forgot it. Doing anything else is
-       an interface screw. (In other words, we're formally-unIDing objects, but 
-       not forcing the player to write down what they were. */
-    new_uname = strcpy(malloc((unsigned)strlen(knownname) + 1), knownname);
-    objects[obj_id].oc_uname = new_uname;
-    discover_object(obj_id, FALSE, TRUE, FALSE);
-}
-
-
 /* randomize the given list of numbers  0 <= i < count */
+/* This was used by the amnesia code.
 static void
 randomize(int *indices, int count)
 {
@@ -505,75 +479,7 @@ randomize(int *indices, int count)
         indices[iswap] = temp;
     }
 }
-
-
-/* Forget % of known objects. */
-void
-forget_objects(int percent)
-{
-    int i, count;
-    int indices[NUM_OBJECTS];
-
-    if (percent == 0)
-        return;
-    if (percent <= 0 || percent > 100) {
-        impossible("forget_objects: bad percent %d", percent);
-        return;
-    }
-
-    for (count = 0, i = 1; i < NUM_OBJECTS; i++)
-        if (OBJ_DESCR(objects[i]) && (objects[i].oc_name_known))
-            indices[count++] = i;
-
-    randomize(indices, count);
-
-    /* forget first % of randomized indices */
-    count = ((count * percent) + 50) / 100;
-    for (i = 0; i < count; i++)
-        forget_single_object(indices[i]);
-}
-
-/*
- * Forget some things (e.g. after reading a scroll of amnesia).  When called,
- * the following are always forgotten:
- *
- *      - felt ball & chain
- *      - skill training
- *
- * Other things are subject to flags:
- *
- *      howmuch & ALL_SPELLS    = forget all spells
- *      howmuch & ALL_MAP       = forget all objects (no more map amnesia)
- */
-static void
-forget(int howmuch)
-{
-
-    if (Punished)
-        u.bc_felt = 0;  /* forget felt ball&chain */
-
-    /* People complain that this is silly and it doesn't work anyway, so it's
-       disabled for now */
-    /* forget_objects(howmuch & ALL_MAP ? 100 : rn2(25)+25); */
-
-    if (howmuch & ALL_SPELLS)
-        losespells();
-
-    /* Forget some skills. */
-    drain_weapon_skill(rnd(howmuch ? 5 : 3));
-
-    /* 
-     * Make sure that what was seen is restored correctly.  To do this,
-     * we need to go blind for an instant --- turn off the display,
-     * then restart it.  All this work is needed to correctly handle
-     * walls which are stone on one side and wall on the other.  Turning
-     * off the seen bits above will make the wall revert to stone,  but
-     * there are cases where we don't want this to happen.  The easiest
-     * thing to do is to run it through the vision system again, which
-     * is always correct.
-     */
-    doredraw(); /* this correctly will reset vision */
-}
+*/
 
 /* monster is hit by scroll of taming's effect */
 static void
@@ -637,6 +543,192 @@ do_uncurse_effect(boolean blessedeffect, boolean confusable)
         }
     }
     update_inventory();
+}
+
+void
+do_scroll_water(int cx, int cy, int radius, schar newterrain)
+{
+    int x = cx, y = cy, tries = 100, i;
+    boolean killengulfer = FALSE;
+    struct monst *mtmp;
+    struct trap  *ttmp;
+    static const char *const a_your[2] = { "a", "your" };
+    /* Currently no traps require an(), or we'd need an_your() */
+
+    while ((radius > 0) && (tries-- > 0) &&
+           ((x == cx && y == cy) ||
+            !isok(x,y) ||
+            abs(x - cx) + abs(y - cy) > radius)) {
+        x = cx - radius + rn2(radius * 2);
+        y = cy - radius + rn2(radius * 2);
+    }
+    if (Engulfed) {
+        if (noncorporeal(u.ustuck->data)) {
+            if (Hallucination)
+                pline("Oh, the leaks of Egypt!");
+            else if (!Blind)
+                pline("The water gushes right out through %s.",
+                      mon_nam(u.ustuck));
+            else
+                pline("It doesn't seem as wet in here as you expected.");
+            killengulfer = FALSE;
+        } else if (flaming(u.ustuck->data)) {
+            if (Hallucination)
+                pline("Billy Joel lyrics run through your mind.");
+            else 
+                pline("The water extinguishes %s!", mon_nam(u.ustuck));
+            killengulfer = TRUE;
+        } else if (monsndx(u.ustuck->data) == PM_FOG_CLOUD ||
+                   monsndx(u.ustuck->data) == PM_STEAM_VORTEX) {
+            /* Why do fog clouds count as whirly?
+               Nevermind, they're a special case here anyway. */
+            if (Hallucination)
+                pline("You feel a rainstorm coming on!");
+            else
+                pline("The %s feels denser as it absorbs the water.",
+                      mon_nam(u.ustuck));
+            u.ustuck->mhpmax += 2;
+            u.ustuck->mhp = u.ustuck->mhpmax;
+            killengulfer = FALSE;
+        } else if (is_whirly(u.ustuck->data)) {
+            /* TODO: should ice vortices be special-cased immune? */
+            pline("%s slows as it takes up the water, stops whirling,"
+                  " and lets you go.", Monnam(u.ustuck));
+            killengulfer = TRUE;
+        } else if (is_swimmer(u.ustuck->data) || amphibious(u.ustuck->data) ||
+            breathless(u.ustuck->data)) {
+            /* The engulfer survives, but what happens to YOU in there? */
+            pline("The %s fills with water!", mbodypart(u.ustuck, STOMACH));
+            (void) drown();
+            return;
+        } else {
+            /* Engulfer drowns, you get released. */
+            if (Hallucination) {
+                pline("It's not the heat, really.  "
+                      "It's the humidity that gets ya.");
+            } else {
+                pline("The water fills the %s.", mbodypart(u.ustuck, STOMACH));
+                pline("%s drowns.", Monnam(u.ustuck));
+            }
+            x = u.ux; y = u.uy;
+            killengulfer = TRUE;
+        }
+    }
+    ttmp = t_at(level, x, y);
+    if (ttmp) {
+        ttmp->tseen = 1;
+        switch(ttmp->ttyp) {
+        case HOLE:
+        case TRAPDOOR:
+        case TELEP_TRAP:
+        case LEVEL_TELEP:
+        case MAGIC_PORTAL:
+            if (!Blind && Hallucination)
+                pline("Pee pee go down the hooole!");
+            else if (!Blind)
+                pline("The water disappears into %s %s.",
+                      a_your[ttmp->madeby_u], trapexplain[ttmp->ttyp - 1]);
+            break;
+        case PIT:
+        case SPIKED_PIT:
+            if (!Blind && Hallucination)
+                pline("That's just about the nicest outhouse you've seen!");
+            else if (!Blind)
+                pline("The water fills the pit.");
+            deltrap(level, ttmp);
+            level->locations[x][y].typ = POOL;
+            break;
+        case VIBRATING_SQUARE:
+            if (Hallucination && !Blind)
+                pline("Woah, dude, look at the water shake!");
+            else if (!Blind)
+                pline("A mysterious force whisks the water away.");
+            break;
+        case POLY_TRAP:
+            if (Hallucination && !Blind)
+                pline("If you ever drop your keys into molten lava, "
+                      "let 'em go, because man, they're gone.");
+            else if (!Blind)
+                pline("The water changes into lava!");
+            deltrap(level, ttmp);
+            level->locations[x][y].typ = LAVAPOOL;
+            break;
+        default:
+            if (!Blind)
+                pline("The water washes away %s %s.", 
+                      a_your[ttmp->madeby_u], trapexplain[ttmp->ttyp - 1]);
+            deltrap(level, ttmp);
+            break;
+        }
+    } else {
+        switch(level->locations[x][y].typ) {
+        case SDOOR:
+        case SCORR:
+            pline("Water flows into a space you didn't see before.");
+            level->locations[x][y].typ = newterrain;
+            break;
+        case POOL:
+        case MOAT:
+            pline("The water level increases slightly.");
+            break;
+        case DRAWBRIDGE_UP:
+            level->locations[x][y].drawbridgemask &= ~DB_UNDER;
+            /* fall through */
+        case DBWALL:
+            pline("That's water under the bridge, now.");
+            break;
+        case LAVAPOOL:
+            pline("Great clouds of steam swirl up as the water hits the lava.");
+            for (i = 0; i <= rn2(3); i++) {
+                makemon(&mons[PM_STEAM_VORTEX], level, u.ux, u.uy, MM_ALLLEVRNG);
+                makemon(&mons[PM_FOG_CLOUD], level, u.ux, u.uy, MM_ALLLEVRNG);
+            }
+            pline("The lava cools and solidifies.");
+            level->locations[x][y].typ = ROOM;
+            break;
+        case IRONBARS:
+            pline("The iron bars rust away.");
+            level->locations[x][y].typ = newterrain;
+            break;
+        case ICE:
+            pline("The water freezes.");
+            break;
+        case FOUNTAIN:
+            if (newterrain == FOUNTAIN)
+                break;
+        case DOOR:
+        case SINK:
+        case THRONE:
+        case GRAVE:
+            pline("The %s is washed away by the torrent.",
+                  surface(x,y));
+            /* fall through */
+        case ROOM:
+        case CORR:
+            level->locations[x][y].typ = newterrain;
+            break;
+        case ALTAR:
+        case LADDER:
+        case STAIRS:
+            pline("A mysterious force whisks the water away.");
+            break;
+        default:
+            ; /* do nothing -- don't mess with walls, etc. */
+        }
+    }
+    newsym(x,y);
+    if (killengulfer) {
+        mtmp = u.ustuck;
+        expels(mtmp, mtmp->data, FALSE);
+        xkilled(mtmp, 0);
+        return;
+    }
+    mtmp = m_at(level, x, y);
+    if (mtmp == &youmonst) {
+        spoteffects(FALSE);
+    } else if (mtmp) {
+        minliquid(mtmp);
+    }
 }
 
 int
@@ -1102,20 +1194,34 @@ seffects(struct obj *sobj, boolean *known)
             pline("Unfortunately, you can't grasp the details.");
         }
         break;
-    case SCR_AMNESIA:
+    case SCR_WATER:
         *known = TRUE;
-        forget((!sobj->blessed ? ALL_SPELLS : 0) |
-               (!confused || sobj->cursed ? ALL_MAP : 0));
-        if (Hallucination)      /* Ommmmmm! */
-            pline("Your mind releases itself from mundane concerns.");
-        else if (!strncmpi(u.uplname, "Maud", 4))
-            pline("As your mind turns inward on itself, you forget everything "
-                  "else.");
-        else if (rn2(2))
-            pline("Who was that Maud person anyway?");
+        if (Is_airlevel(&u.uz) || Is_earthlevel(&u.uz) || Is_firelevel(&u.uz)) {
+            pline("Nothing happens.");
+            break;
+        }
+        if (Hallucination)
+            pline("Your %s start peeing all over the place!",
+                  makeplural(body_part(HAND)));
         else
-            pline("Thinking of Maud you forget everything else.");
-        exercise(A_WIS, FALSE);
+            pline("Water gushes out of the scroll!");
+        if (Is_waterlevel(&u.uz)) {
+            pline("The water level cannot increase any further.");
+            break;
+        }
+        if (sobj->blessed && ! rn2(6)) {
+            do_scroll_water(u.ux, u.uy, 0, FOUNTAIN);
+        } else {
+            int i, max = rnd(6) + rnd(6);
+            for (i = 1; i <= max; i++) {
+                do_scroll_water(u.ux, u.uy, 4, POOL);
+            }
+            if (sobj->cursed) {
+                do_scroll_water(u.ux, u.uy, 0, POOL);
+            }
+        }
+        if (!Blind)
+            vision_recalc(0);
         break;
     case SCR_FIRE:
         /* 

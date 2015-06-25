@@ -95,7 +95,7 @@ MONSTER:'T',"water troll",(51,03)
 MONSTER:'T',"water troll",(64,11)
 MONSTER:'S',random,(38,07)
 MONSTER:'S',random,(38,12)
-MONSTER:random,random,random
+MONSTER:'n',"island nymph",(30,10)
 MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random

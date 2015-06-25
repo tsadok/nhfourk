@@ -225,6 +225,7 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
+OBJECT:'+',"sleep",random
 # Random traps
 TRAP:random,random
 TRAP:random,random

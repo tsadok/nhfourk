@@ -909,10 +909,11 @@ you_moved(void)
             } else if (Upolyd && u.mh < u.mhmax) {
                 if (u.mh < 1)
                     rehumanize(DIED, NULL);
-                else if (Regeneration ||
-                         (wtcap < MOD_ENCUMBER && !(moves % 20))) {
+                else if ((Regeneration ||
+                          (wtcap < MOD_ENCUMBER && !(moves % 20)))
+                         && !Race_if(PM_SYLPH)) {
                     if (!challengemode || !(moves % 3))
-                    u.mh++;
+                        u.mh++;
                 }
             } else if (can_draw_from_environment(&youmonst) ||
                         (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)

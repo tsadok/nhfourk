@@ -566,6 +566,7 @@ enlightenment(int final)
         const char *buf = msgcat(
             "aware of the presence of ",
             (warntype & M2_ORC) ? "orcs" :
+            (warntype & M2_ELF) ? "elves" :
             (warntype & M2_DEMON) ? "demons" : "something");
         you_are(&menu, buf);
     }
