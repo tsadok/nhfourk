@@ -676,6 +676,15 @@ m_move(struct monst *mtmp, int after)
     int omx = mtmp->mx, omy = mtmp->my;
     struct obj *mw_tmp;
 
+    if ((mtmp->mx == COLNO && mtmp->my == 0) ||
+        (mtmp->mx == 0 && mtmp->my == ROWNO)) {
+        /* This can only happen due to a bug.  This is not a good fix, but... */
+        mtmp->mx = u.ux;
+        mtmp->my = u.uy;
+        xkilled(mtmp, 0);
+        pline("A trickery dies at your feet.");
+    }
+
     if (mtmp->mtrapped) {
         int i = mintrap(mtmp);
 
