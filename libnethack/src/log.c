@@ -1018,7 +1018,8 @@ log_newgame(microseconds start_time)
     base64_encode(u.uplname, encbuf);
     lprintf("%0" PRIxLEAST64 " %x %d %s %.3s %.3s %.3s %.3s\x0a",
             start_time_l64, 0, wizard ? MODE_WIZARD : discover ?
-            MODE_EXPLORE : *flags.setseed ? MODE_SETSEED : MODE_NORMAL,
+            MODE_EXPLORE : *flags.setseed ? MODE_SETSEED :
+            challengemode ? MODE_CHALLENGE : MODE_NORMAL,
             encbuf, role, races[u.initrace].noun, genders[u.initgend].adj,
             aligns[u.initalign].adj);
 

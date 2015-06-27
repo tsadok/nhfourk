@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-02-15 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -995,10 +995,10 @@ static const struct skill_range {
     const char *name;
     short first, last;
 } skill_ranges[] = {
-    {
-    "Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H}, {
-    "Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON}, {
-"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL},};
+    {"Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
+    {"Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON},
+    {"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL}
+};
 
 /*
  * The `#enhance' extended command.  What we _really_ would like is
@@ -1325,10 +1325,14 @@ weapon_hit_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 5;
             break;
+        case P_MASTER:
+            bonus = 7;
+            break;
         }
         switch (P_MAX_SKILL(type)) {
             /* Note fall-through at every step, e.g. 2+2+2 = 6 for P_EXPERT. */
         default:
+        case P_MASTER:
         case P_EXPERT:
             bonus += 2;
         case P_SKILLED:
@@ -1434,6 +1438,9 @@ weapon_dam_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 2;
             break;
+        case P_MASTER:
+            bonus = 3;
+            break;
         }
     } else if (type == P_TWO_WEAPON_COMBAT) {
         skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1452,6 +1459,7 @@ weapon_dam_bonus(struct obj *weapon)
             bonus = 0;
             break;
         case P_EXPERT:
+        case P_MASTER:
             bonus = 1;
             break;
         }

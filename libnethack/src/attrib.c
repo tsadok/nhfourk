@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright 1988, 1989, 1990, 1992, M. Stephenson                */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -129,13 +129,15 @@ static const struct innate orc_abil[] = {
 };
 
 static const struct innate sylph_abil[] = {
-    {1,  &(HHunger), "", ""},
     {1,  &(HSee_invisible), "", ""},
-    /* They also get a form of slotless hungerless regeneration, but only under
-       certain conditions, so that's special-cased elsewhere. */
-    {4,  &(HStealth), "stealthy", "obvious"},
-    {6,  &(HInfravision), "perceptive", "half blind"},
-    {18, &(HDetect_monsters), "perceptive", "dull"},
+    {1,  &(HProt_shapechangers), "", ""},
+    /* They also get a form of slotless regeneration, but only under
+       certain conditions, and with hunger implications so that's
+       special-cased elsewhere. */
+    {3,  &(HStealth), "stealthy", "obvious"},
+    {5,  &(HInfravision), "perceptive", "half blind"},
+    {7,  &(HDisplacement), "elusive", "exposed"},
+    {16, &(HDetect_monsters), "perceptive", "dull"},
     {0, 0, 0, 0}
 };
 
@@ -666,7 +668,6 @@ adjabil(int oldlevel, int newlevel)
     const struct innate *abil, *rabil;
     long mask = FROMEXPER;
 
-
     switch (Role_switch) {
     case PM_ARCHEOLOGIST:
         abil = arc_abil;
@@ -775,6 +776,8 @@ adjabil(int oldlevel, int newlevel)
             add_weapon_skill(newlevel - oldlevel);
         else
             lose_weapon_skill(oldlevel - newlevel);
+
+        update_supernatural_abilities();
     }
 }
 

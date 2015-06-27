@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -359,7 +359,7 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         loc = &lev->locations[x][y];
         if (*in_rooms(lev, x, y, SHOPBASE) &&
             (typ == HOLE || typ == TRAPDOOR || typ == PIT || IS_DOOR(loc->typ)
-             || IS_WALL(loc->typ)))
+             || IS_WALL(loc->typ)) && (lev == level))
             add_damage(x, y,    /* schedule repair */
                        ((IS_DOOR(loc->typ) || IS_WALL(loc->typ))
                         && !flags.mon_moving) ? 200L : 0L);
@@ -2874,7 +2874,8 @@ fire_damage(struct obj *chain, boolean force, boolean here, xchar x, xchar y)
 
 
 void
-acid_damage(struct obj *obj) {
+acid_damage(struct obj *obj)
+{
     if (!obj)
         return;
 
@@ -3060,7 +3061,7 @@ drown(void)
             return FALSE;
     }
 
-    if (!u.uinwater) {
+    if (!u.uinwater && !Engulfed) {
         pline("You %s into the water%c",
               Is_waterlevel(&u.uz) ? "plunge" : "fall", Amphibious ||
               Swimming ? '.' : '!');
@@ -3112,6 +3113,7 @@ drown(void)
         turnstate.vision_full_recalc = TRUE;
         return FALSE;
     }
+    /* TODO: Isn't this u_helpless check backwards? */
     if ((Teleportation || can_teleport(youmonst.data)) &&
         u_helpless(hm_unconscious) && (Teleport_control || rn2(3) < Luck + 2)) {
         pline("You attempt a teleport spell."); /* utcsri!carroll */
@@ -3152,7 +3154,7 @@ drown(void)
                 goto crawl;
             }
 crawl:
-    if (crawl_ok) {
+    if (crawl_ok && !Engulfed) {
         boolean lost = FALSE;
 
         /* time to do some strip-tease... */
@@ -3173,14 +3175,16 @@ crawl:
     pline("You drown.");
     done(DROWNING,
          killer_msg(DROWNING,
-                    Is_waterlevel(&u.uz) ? "the Plane of Water"
+                    Is_waterlevel(&u.uz) ? "the Plane of Water" :
+                    Engulfed             ? mbodypart(u.ustuck, STOMACH)
                                          : a_waterbody(u.ux, u.uy)));
     /* oops, we're still alive.  better get out of the water. */
     while (!safe_teleds(TRUE)) {
         pline("You're still drowning.");
         done(DROWNING,
              killer_msg(DROWNING,
-                        msgcat(Is_waterlevel(&u.uz) ? "the Plane of Water"
+                        msgcat(Is_waterlevel(&u.uz) ? "the Plane of Water" :
+                               Engulfed ? mbodypart(u.ustuck, STOMACH)
                                : a_waterbody(u.ux, u.uy),
                                " despite being life-saved")));
     }

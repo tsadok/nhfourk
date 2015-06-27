@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Steve Creps, 1988.                               */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -49,6 +49,7 @@ struct obj;
 struct object_pick;
 struct permonst;
 struct pet_weapons;
+struct polyform_ability;
 struct region;
 struct rm;
 struct tmp_sym;
@@ -968,7 +969,7 @@ extern int lminion(void);
 extern struct level *alloc_level(d_level * levnum);
 extern void sort_rooms(struct level *lev);
 extern void add_room(struct level *lev, int, int, int, int, boolean, schar,
-                     boolean);
+                     boolean, boolean);
 extern void add_subroom(struct level *lev, struct mkroom *, int, int, int, int,
                         boolean, schar, boolean);
 extern void makecorridors(struct level *lev);
@@ -1353,16 +1354,11 @@ extern void set_uasmon(void);
 extern void change_sex(void);
 extern void polyself(boolean);
 extern int polymon(int, boolean);
+extern int domonability(const struct nh_cmd_arg *);
+extern boolean has_polyform_ability(const struct permonst *,
+                                    struct polyform_ability *);
 extern boolean touched_monster(int);
 extern void rehumanize(int how, const char *killer);
-extern int dobreathe(const struct nh_cmd_arg *);
-extern int dospit(const struct nh_cmd_arg *);
-extern int doremove(void);
-extern int dospinweb(void);
-extern int dosummon(void);
-extern int dogaze(enum u_interaction_mode uim);
-extern int dohide(void);
-extern int domindblast(void);
 extern struct obj *uskin(void);
 extern const char *mbodypart(struct monst *, int);
 extern const char *body_part(int);
@@ -1467,7 +1463,6 @@ extern const struct permonst *qt_montype(const d_level *, enum rng);
 extern int doread(const struct nh_cmd_arg *);
 extern boolean is_chargeable(struct obj *);
 extern void recharge(struct obj *, int);
-extern void forget_objects(int);
 extern void do_uncurse_effect(boolean, boolean);
 extern int seffects(struct obj *scroll, boolean * known);
 extern void litroom(boolean, struct obj *);
@@ -1486,6 +1481,7 @@ extern struct nhrect *rnd_rect(void);
 extern void split_rects(struct nhrect *, struct nhrect *);
 
 /* ### region.c ### */
+
 extern void run_regions(struct level *lev);
 extern boolean in_out_region(struct level *lev, xchar x, xchar y);
 extern boolean m_in_out_region(struct monst *, xchar, xchar);
@@ -1646,7 +1642,7 @@ extern int dotalk(const struct nh_cmd_arg *);
 extern boolean check_room(struct level *lev, xchar *, xchar *, xchar *, xchar *,
                           boolean);
 extern boolean create_room(struct level *lev, xchar, xchar, xchar, xchar, xchar,
-                           xchar, xchar, xchar);
+                           xchar, xchar, xchar, boolean);
 extern void create_secret_door(struct level *lev, struct mkroom *croom,
                                xchar walls);
 extern boolean dig_corridor(struct level *lev, coord *, coord *, boolean, schar,
@@ -1660,6 +1656,8 @@ extern void fixup_special(struct level *lev);
 extern void deadbook(struct obj *book2, boolean invoked);
 extern int study_book(struct obj *, const struct nh_cmd_arg *);
 extern void age_spells(void);
+extern void update_supernatural_abilities(void);
+extern boolean supernatural_ability_available(int);
 extern int docast(const struct nh_cmd_arg *);
 extern int spell_skilltype(int);
 extern int spelleffects(int, boolean, const struct nh_cmd_arg *);
@@ -2054,6 +2052,8 @@ extern void makewish(void);
 
 /* ### livelog.c ### */
 extern void livelog_write_event(const char *);
+extern void livelog_wish(const char *);
+extern void livelog_flubbed_wish(const char *, const struct obj *);
 extern void livelog_unique_monster(const struct monst *);
 
 #endif /* EXTERN_H */

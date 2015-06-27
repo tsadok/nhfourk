@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-19 */
+/* Last modified by Alex Smith, 2015-05-19 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -744,7 +744,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
        takes into account certain armor's special magic protection.  Otherwise just
        use !mtmp->mcan. */
     armpro = magic_negation(&youmonst);
-    uncancelled = !mtmp->mcan && ((rn2(3) >= armpro) || !rn2(50));
+    uncancelled = !mtmp->mcan && ((rn2(3) >= armpro) ||
+                                  !rn2(challengemode ? 12 : 50));
 
     permdmg = 0;
 
@@ -846,8 +847,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         if (uncancelled) {
             pline("You're covered in frost!");
             if (Cold_resistance) {
-                pline("The frost doesn't seem cold!");
-                dmg = 0;
+                pline("The frost doesn't seem %s", challengemode ? "all that cold." : "cold!");
+                dmg = challengemode ? (dmg / 3) : 0;
             }
             if ((int)mtmp->m_lev > rn2(20))
                 destroy_item(POTION_CLASS, AD_COLD);
@@ -859,8 +860,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         if (uncancelled) {
             pline("You get zapped!");
             if (Shock_resistance) {
-                pline("The zap doesn't shock you!");
-                dmg = 0;
+                pline("The zap doesn't shock you%s", challengemode ? " very much." : "!");
+                dmg = challengemode ? dmg / 3 : 0;
             }
             if ((int)mtmp->m_lev > rn2(20))
                 destroy_item(WAND_CLASS, AD_ELEC);
@@ -874,7 +875,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         if (uncancelled && !u_helpless(hm_all) && !rn2(5)) {
             if (Sleep_resistance)
                 break;
-            helpless(rnd(10), hr_asleep, "sleeping", NULL);
+            helpless(rnd(challengemode ? 50 : 10), hr_asleep, "sleeping", NULL);
             if (Blind)
                 pline("You are put to sleep!");
             else
@@ -901,7 +902,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         ptmp = A_CON;
     dopois:
         hitmsg(mtmp, mattk);
-        if (uncancelled && !rn2(8)) {
+        if (uncancelled && !rn2(challengemode ? 3 : 8)) {
             poisoned(msgprintf("%s %s", s_suffix(Monnam(mtmp)),
                                mpoisons_subj(mtmp, mattk)),
                      ptmp, killer_msg_mon(POISONING, mtmp), 30);
@@ -961,7 +962,6 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         }
         /* adjattrib gives dunce cap message when appropriate */
         adjattrib(A_INT, -rnd(2), FALSE);
-        forget_objects(50);     /* lose memory of 50% of objects */
         exercise(A_WIS, FALSE);
         break;
     case AD_PLYS:
@@ -1030,7 +1030,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
     case AD_STON:      /* cockatrice */
     {
         hitmsg(mtmp, mattk);
-        boolean stiffen = !rn2_on_rng(10,rng_slow_stoning);
+        boolean stiffen = !rn2_on_rng(challengemode ? 4 : 10,rng_slow_stoning);
         if (!rn2(3)) {
             if (mtmp->mcan)
                 You_hear("a cough from %s!", mon_nam(mtmp));
@@ -1062,7 +1062,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             boolean drownable = is_pool(level, mtmp->mx, mtmp->my) &&
                 !Swimming && !Amphibious;
             if (!u.ustuck &&
-                !rn2_on_rng(10, drownable ? rng_eel_drowning : rng_main)) {
+                !rn2_on_rng(challengemode ? 4 : 10,
+                            drownable ? rng_eel_drowning : rng_main)) {
                 if (u_slip_free(mtmp, mattk)) {
                     dmg = 0;
                 } else {
@@ -1132,7 +1133,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                   "brags about the goods some dungeon explorer provided" :
                   "makes some remarks about how difficult theft is lately");
             if (!tele_restrict(mtmp))
-                rloc(mtmp, FALSE);
+                rloc(mtmp, TRUE);
             return 3;
         } else if (mtmp->mcan) {
             if (!Blind) {
@@ -1143,7 +1144,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             }
             if (rn2(3)) {
                 if (!tele_restrict(mtmp))
-                    rloc(mtmp, FALSE);
+                    rloc(mtmp, TRUE);
                 return 3;
             }
             break;
@@ -1159,7 +1160,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 break;
             default:
                 if (!is_animal(mtmp->data) && !tele_restrict(mtmp))
-                    rloc(mtmp, FALSE);
+                    rloc(mtmp, TRUE);
                 if (is_animal(mtmp->data) && *buf) {
                     if (canseemon(mtmp))
                         pline("%s tries to %s away with %s.", Monnam(mtmp),
@@ -1182,7 +1183,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         /* when the Wiz hits, 1/20 steals the amulet */
         if (Uhave_amulet || Uhave_bell || Uhave_book || Uhave_menorah ||
             Uhave_questart)  /* carrying the Quest Artifact */
-            if (!rn2(20))
+            if (!rn2(challengemode ? 5 : 20))
                 stealamulet(mtmp);
         break;
 
@@ -1250,9 +1251,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 u.uhp += rnd(7);
                 if (!rn2(7)) {
                     /* hard upper limit via nurse care: 25 * ulevel */
-                    if (u.uhpmax < 5 * u.ulevel + dice(2 * u.ulevel, 10))
+                    if (u.uhpmax < 5 * u.ulevel + dice(2 * u.ulevel, challengemode ? 2 : 10))
                         u.uhpmax++;
-                    if (!rn2(13))
+                    if (!rn2(challengemode ? 5 : 13))
                         goaway = TRUE;
                 }
                 if (u.uhp > u.uhpmax)
@@ -1269,7 +1270,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 return 2;
             } else if (!rn2(33)) {
                 if (!tele_restrict(mtmp))
-                    rloc(mtmp, FALSE);
+                    rloc(mtmp, TRUE);
                 monflee(mtmp, dice(3, 6), TRUE, FALSE);
                 return 3;
             }
@@ -1288,7 +1289,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hitmsg(mtmp, mattk);
         if (!night() && mdat == &mons[PM_GREMLIN])
             break;
-        if (!mtmp->mcan && !rn2(10)) {
+        if (!mtmp->mcan && !rn2(challengemode ? 3 : 10)) {
             if (canhear()) {
                 if (Blind)
                     You_hear("laughter.");
@@ -1305,7 +1306,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         break;
     case AD_STUN:
         hitmsg(mtmp, mattk);
-        if (!mtmp->mcan && !rn2(4)) {
+        if (!mtmp->mcan && !rn2(challengemode ? 2 : 4)) {
             make_stunned(HStun + dmg, TRUE);
             dmg /= 2;
         }
@@ -1324,18 +1325,19 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         break;
     case AD_SLOW:
         hitmsg(mtmp, mattk);
-        if (uncancelled && HFast && !defends(AD_SLOW, uwep) && !rn2(4))
+        if (uncancelled && HFast && !defends(AD_SLOW, uwep) &&
+            !rn2(challengemode ? 2 : 4))
             u_slow_down();
         break;
     case AD_DREN:
         hitmsg(mtmp, mattk);
-        if (uncancelled && !rn2(4))
+        if (uncancelled && (challengemode || !rn2(4)))
             drain_en(dmg);
         dmg = 0;
         break;
     case AD_CONF:
         hitmsg(mtmp, mattk);
-        if (!mtmp->mcan && !rn2(4) && !mtmp->mspec_used) {
+        if (!mtmp->mcan && (challengemode || !rn2(4)) && !mtmp->mspec_used) {
             mtmp->mspec_used = mtmp->mspec_used + (dmg + rn2(6));
             if (Confusion)
                 pline("You are getting even more confused.");
@@ -1482,9 +1484,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             permdmg = rn2_on_rng(dmg / 2 + 1, rng_deathtouch);
             if (Upolyd || u.uhpmax > 25 * u.ulevel)
                 permdmg = dmg;
-            else if (u.uhpmax > 10 * u.ulevel)
+            else if (u.uhpmax > 10 * u.ulevel && !challengemode)
                 permdmg += dmg / 2;
-            else if (u.uhpmax > 5 * u.ulevel)
+            else if (u.uhpmax > 5 * u.ulevel && !challengemode)
                 permdmg += dmg / 4;
 
             if (Upolyd) {
@@ -1664,9 +1666,9 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
             pline("The air around you crackles with electricity.");
             if (Shock_resistance) {
                 shieldeff(u.ux, u.uy);
-                pline("You seem unhurt.");
+                pline("You %s.", challengemode ? "tingle a bit" : "seem unhurt");
                 ugolemeffects(AD_ELEC, tmp);
-                tmp = 0;
+                tmp = challengemode ? tmp / 3 : 0;
             }
         } else
             tmp = 0;
@@ -1675,9 +1677,9 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
         if (!mtmp->mcan && rn2(2)) {
             if (Cold_resistance) {
                 shieldeff(u.ux, u.uy);
-                pline("You feel mildly chilly.");
+                pline("You feel %schilly.", challengemode ? "" : "mildly ");
                 ugolemeffects(AD_COLD, tmp);
-                tmp = 0;
+                tmp = challengemode ? tmp / 3 : 0;
             } else
                 pline("You are freezing to death!");
         } else
@@ -1687,9 +1689,9 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
         if (!mtmp->mcan && rn2(2)) {
             if (Fire_resistance) {
                 shieldeff(u.ux, u.uy);
-                pline("You feel mildly hot.");
+                pline("You feel %shot.", challengemode ? "" : "mildly ");
                 ugolemeffects(AD_FIRE, tmp);
-                tmp = 0;
+                tmp = challengemode ? tmp / 3 : 0;
             } else
                 pline("You are burning to a crisp!");
             burn_away_slime();
@@ -2137,7 +2139,7 @@ doseduce(struct monst *mon)
         verbalize("You're such a %s; I wish...",
                   u.ufemale ? "sweet lady" : "nice guy");
         if (!tele_restrict(mon))
-            rloc(mon, FALSE);
+            rloc(mon, TRUE);
         return 1;
     }
     if (u.ualign.type == A_CHAOTIC)
@@ -2255,7 +2257,7 @@ doseduce(struct monst *mon)
     if (!rn2_on_rng(25, rng_foocubus_results))
         mon->mcan = 1;  /* monster is worn out */
     if (!tele_restrict(mon))
-        rloc(mon, FALSE);
+        rloc(mon, TRUE);
     return 1;
 }
 

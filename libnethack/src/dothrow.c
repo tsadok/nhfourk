@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-05-19 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -147,6 +147,13 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
                 multishot++;
         default:
             break;      /* No bonus */
+        }
+        /* Multi-shot malus for silver projectiles, for balance reasons */
+        if (objects[obj->otyp].oc_material == SILVER) {
+            if (multishot > 2)
+                multishot -= 2;
+            else if (multishot > 1)
+                multishot--;
         }
     }
     /* crossbows are slow to load and probably shouldn't allow multiple
@@ -1329,6 +1336,15 @@ thitmonst(struct monst *mon, struct obj *obj)
         return 0;
     }
 
+    if (obj->oclass == ARMOR_CLASS &&
+        objects[obj->otyp].oc_armcat == ARM_GLOVES &&
+        mon->mpeaceful && !mon->mtame) {
+        mon->mpeaceful = 0;
+        pline("%s accepts your challenge!", Monnam(mon));
+        set_malign(mon);
+        return 0;
+    }
+
     if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
         obj->oclass == GEM_CLASS) {
         if (is_ammo(obj)) {
@@ -1555,7 +1571,7 @@ nopick:
     if (!Blind)
         pline("%s", buf);
     if (!tele_restrict(mon))
-        rloc(mon, FALSE);
+        rloc(mon, TRUE);
     return ret;
 }
 

@@ -21,6 +21,8 @@ static void get_free_room_loc(struct level *lev, schar * x, schar * y,
                               struct mkroom *croom);
 static void create_trap(struct level *lev, trap * t, struct mkroom *croom);
 static int noncoalignment(aligntyp, struct level *);
+static struct obj * make_sokoprize(int, struct level *, int, int, boolean,
+                                   boolean, enum rng);
 static void create_monster(struct level *lev, monster *, struct mkroom *);
 static void create_object(struct level *lev, object *, struct mkroom *);
 static void create_engraving(struct level *lev, engraving *, struct mkroom *);
@@ -367,8 +369,19 @@ chk:
  */
 boolean
 create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
-            xchar yal, xchar rtype, xchar rlit)
+            xchar yal, xchar rtype, xchar rlit, boolean canbeshaped)
 {
+    /*
+     * numeric args that are -1 mean random
+     * x and y are position within the rectangle grid for the level
+     *        I *think* these values range from 1 to 5.
+     * w and h are size (width and height)
+     * xal and yal are alignment (LEFT/TOP, CENTER, RIGHT/BOTTOM).
+     * footmp is the current working value of foo; this is typically
+     *        equal to foo, unless foo is -1 (random).
+     * xabs and yabs are the actual x and y coordinates where the
+     *        room will be placed on the level map.
+     * */
     xchar xabs = 0, yabs = 0;
     int wtmp, htmp, xaltmp, yaltmp, xtmp, ytmp;
     struct nhrect *r1 = NULL, r2;
@@ -381,6 +394,7 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
 
     if (rtype == VAULT) {
         vault = TRUE;
+        canbeshaped = FALSE;
         xlim++;
         ylim++;
     }
@@ -525,8 +539,8 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
 
     if (!vault) {
         smeq[lev->nroom] = lev->nroom;
-        add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1, rlit, rtype,
-                 FALSE);
+        add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1,
+                 rlit, rtype, FALSE, canbeshaped);
     } else {
         lev->rooms[lev->nroom].lx = xabs;
         lev->rooms[lev->nroom].ly = yabs;
@@ -908,6 +922,34 @@ m_done:
     Free(m->appear_as.str);
 }
 
+struct obj *
+make_sokoprize(int origotyp, struct level *lev, int x, int y,
+               boolean init, boolean artif, enum rng rng)
+{
+    int otyp = origotyp;
+    if (otyp == BAG_OF_HOLDING && carrying(BAG_OF_HOLDING) &&
+        !u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
+        otyp = AMULET_OF_REFLECTION;
+    if (otyp == AMULET_OF_REFLECTION &&
+        u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
+        if (!carrying(BAG_OF_HOLDING) && !carrying(OILSKIN_SACK))
+            otyp = rn2_on_rng(3, rng) ? OILSKIN_SACK : BAG_OF_HOLDING;
+    /* TODO: else, maybe another useful amulet? */
+    if (otyp == RIN_POLYMORPH_CONTROL &&
+        (carrying(RIN_POLYMORPH_CONTROL) ||
+         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE)) &&
+        !carrying(RIN_TELEPORT_CONTROL) &&
+        !u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE))
+        otyp = RIN_TELEPORT_CONTROL;
+    if (otyp == RIN_TELEPORT_CONTROL &&
+        (carrying(RIN_TELEPORT_CONTROL) ||
+         u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE)) &&
+        !carrying(RIN_POLYMORPH_CONTROL) &&
+        !u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE))
+        otyp = RIN_POLYMORPH_CONTROL;
+    return mksobj_at(otyp, lev, x, y, init, artif, rng);
+}
+
 /*
  * Create an object in a room.
  */
@@ -936,7 +978,13 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
         else
             c = 0;
 
-        if (!c)
+        /* Is this the Sokoban prize?  Can we make sure it's something
+           the player can use? */
+        if (In_sokoban(&lev->z) && c && o->id != -1 &&
+            (o->id == BAG_OF_HOLDING || o->id == AMULET_OF_REFLECTION ||
+             o->id == RIN_POLYMORPH_CONTROL || o->id == RIN_TELEPORT_CONTROL))
+            otmp = make_sokoprize(o->id, lev, x, y, TRUE, !named, mrng());
+        else if (!c)
             otmp = mkobj_at(RANDOM_CLASS, lev, x, y, !named, mrng());
         else if (o->id != -1)
             otmp = mksobj_at(o->id, lev, x, y, TRUE, !named, mrng());
@@ -1601,7 +1649,7 @@ build_room(struct level *lev, room * r, room * pr)
         aroom = &lev->rooms[lev->nroom];
         okroom =
             create_room(lev, r->x, r->y, r->w, r->h, r->xalign, r->yalign,
-                        rtype, r->rlit);
+                        rtype, r->rlit, FALSE);
         r->mkr = aroom;
     }
 
@@ -2357,12 +2405,13 @@ load_maze(struct level *lev, dlb * fd)
                 flood_fill_rm(lev, tmpregion.x1, tmpregion.y1,
                               lev->nroom + ROOMOFFSET, tmpregion.rlit, TRUE);
                 add_room(lev, min_rx, min_ry, max_rx, max_ry, FALSE,
-                         tmpregion.rtype, TRUE);
+                         tmpregion.rtype, TRUE, FALSE);
                 troom->rlit = tmpregion.rlit;
                 troom->irregular = TRUE;
             } else {
                 add_room(lev, tmpregion.x1, tmpregion.y1, tmpregion.x2,
-                         tmpregion.y2, tmpregion.rlit, tmpregion.rtype, TRUE);
+                         tmpregion.y2, tmpregion.rlit, tmpregion.rtype,
+                         TRUE, FALSE);
                 topologize(lev, troom); /* set roomno */
             }
         }

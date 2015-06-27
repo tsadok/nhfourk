@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-04-01 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -341,7 +341,7 @@ static const struct def_skill Skill_A[] = {
 };
 
 static const struct def_skill Skill_B[] = {
-    {P_DAGGER, P_BASIC}, {P_AXE, P_EXPERT},
+    {P_DAGGER, P_BASIC}, {P_AXE, P_MASTER},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_EXPERT},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_EXPERT},
     {P_TWO_HANDED_SWORD, P_EXPERT}, {P_SCIMITAR, P_EXPERT},
@@ -503,7 +503,7 @@ static const struct def_skill Skill_T[] = {
 };
 
 static const struct def_skill Skill_V[] = {
-    {P_DAGGER, P_EXPERT}, {P_AXE, P_EXPERT},
+    {P_DAGGER, P_EXPERT}, {P_AXE, P_SKILLED},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_SKILLED},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_SKILLED},
     {P_TWO_HANDED_SWORD, P_BASIC}, {P_SCIMITAR, P_SKILLED},
@@ -610,8 +610,11 @@ u_init(microseconds birthday)
     u.urexp = -1;       /* indicates that score is calculated not remembered */
 
     init_uhunger();
+
     for (i = 0; i <= MAXSPELL; i++)
         spl_book[i].sp_id = NO_SPELL;
+    update_supernatural_abilities();
+    
     u.ublesscnt = 300;  /* no prayers just yet */
     u.ualignbase[A_CURRENT] = u.ualignbase[A_ORIGINAL] = u.ualign.type =
         aligns[u.initalign].value;
@@ -1028,10 +1031,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
              * items: wand of wishing, ring of levitation, or the
              * polymorph/polymorph control combination.  Specific objects,
              * i.e. the discovery wishing, are still OK.
-             * Also, don't get a couple of really useless items.  (Note:
-             * punishment isn't "useless".  Some players who start out with
-             * one will immediately read it and use the iron ball as a
-             * weapon.)
+             * Also, don't get a couple of really useless items.
              */
             obj = mkobj(level, trop->trclass, FALSE, rng);
             otyp = obj->otyp;
@@ -1042,12 +1042,17 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                    || (otyp == RIN_LEVITATION && flags.elbereth_enabled)
                    /* 'useless' items */
                    || otyp == POT_HALLUCINATION || otyp == POT_ACID ||
-                   otyp == SCR_AMNESIA || otyp == SCR_FIRE ||
+                   otyp == SCR_PUNISHMENT || otyp == SCR_FIRE ||
                    otyp == SCR_BLANK_PAPER || otyp == SPE_BLANK_PAPER ||
                    otyp == RIN_AGGRAVATE_MONSTER || otyp == RIN_HUNGER ||
                    otyp == WAN_NOTHING
                    /* Monks don't use weapons */
                    || (otyp == SCR_ENCHANT_WEAPON && Role_if(PM_MONK))
+                   /* Sylphs and monks shouldn't get tins of meat.
+                      (Other non-veggie foods are ok to feed pets.) */
+                   || ((Race_if(PM_SYLPH) || Role_if(PM_MONK)) &&
+                       (otyp == TIN) && (obj->spe < 1) && 
+                       !vegetarian(&mons[obj->corpsenm]))
                    /* wizard patch -- they already have one */
                    || (otyp == SPE_FORCE_BOLT && Role_if(PM_WIZARD))
                    || (otyp == SPE_MAGIC_MISSILE && Role_if(PM_WIZARD))
@@ -1065,7 +1070,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
 
             /* Don't start with +0 or negative rings */
             if (objects[otyp].oc_charged && obj->spe <= 0)
-                obj->spe = rne_on_rng(3, rng);
+                obj->spe = rne_on_rng(challengemode ? 4 : 2, rng);
 
             /* Heavily relies on the fact that 1) we create wands before rings, 
                2) that we create rings before spellbooks, and that 3) not more
@@ -1133,11 +1138,14 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                TODO: Does this provide numerical extrinsics, like brilliance?
                The situation nonetheless probably can't currently come up.
 
-               Sylphs start with armor that would block their healing, as
-               a hint to the player.  (Many players will probably go ahead
-               and wear them, until they need to heal.) */
+               Sylphs start out not wearing armor that would block their
+               healing, as a hint to the player.  (Some players may go ahead
+               and wear them, until they need to heal, but starting with them
+               not worn is supposed to be a clue.) */
             if (canwearobj(obj, &mask, FALSE, TRUE, TRUE) && (mask & W_ARMOR)
-                && (!Race_if(PM_SYLPH) || (is_shield(obj) && obj->owt <= 30)))
+                && (!Race_if(PM_SYLPH) ||
+                    objects[obj->otyp].oc_material == WOOD ||
+                    objects[obj->otyp].oc_material == CLOTH))
                 setworn(obj, mask);
         }
 

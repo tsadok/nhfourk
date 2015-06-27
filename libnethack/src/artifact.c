@@ -599,19 +599,25 @@ spec_applies(const struct artifact *weap, const struct monst *mtmp)
     ptr = mtmp->data;
 
     if (weap->spfx & SPFX_DMONS) {
-        return ptr == &mons[(int)weap->mtype];
+        if (ptr == &mons[(int)weap->mtype])
+            return TRUE;
     } else if (weap->spfx & SPFX_DCLAS) {
-        return weap->mtype == (unsigned long)ptr->mlet;
+        if (weap->mtype == (unsigned long)ptr->mlet)
+            return TRUE;
     } else if (weap->spfx & SPFX_DFLAG1) {
-        return (ptr->mflags1 & weap->mtype) != 0L;
+        if ((ptr->mflags1 & weap->mtype) != 0L)
+            return TRUE;;
     } else if (weap->spfx & SPFX_DFLAG2) {
-        return ((ptr->mflags2 & weap->mtype) ||
+        if ((ptr->mflags2 & weap->mtype) ||
                 (yours &&
                  ((!Upolyd && (urace.selfmask & weap->mtype)) ||
-                  ((weap->mtype & M2_WERE) && u.ulycn >= LOW_PM))));
+                  ((weap->mtype & M2_WERE) && u.ulycn >= LOW_PM))))
+            return TRUE;
     } else if (weap->spfx & SPFX_DALIGN) {
-        return yours ? (u.ualign.type != weap->alignment) :
-          (ptr->maligntyp == A_NONE || sgn(ptr->maligntyp) != weap->alignment);
+        if (yours ? (u.ualign.type != weap->alignment) :
+            (ptr->maligntyp == A_NONE ||
+             sgn(ptr->maligntyp) != weap->alignment))
+            return TRUE;
     } else if (weap->spfx & SPFX_ATTK) {
         struct obj *defending_weapon = (yours ? uwep : MON_WEP(mtmp));
 
@@ -620,20 +626,34 @@ spec_applies(const struct artifact *weap, const struct monst *mtmp)
             return FALSE;
         switch (weap->attk.adtyp) {
         case AD_FIRE:
-            return !(yours ? Fire_resistance : resists_fire(mtmp));
+            if (!(yours ? Fire_resistance : resists_fire(mtmp)))
+                return TRUE;
+            break;
         case AD_COLD:
-            return !(yours ? Cold_resistance : resists_cold(mtmp));
+            if (!(yours ? Cold_resistance : resists_cold(mtmp)))
+                return TRUE;
+            break;
         case AD_ELEC:
-            return !(yours ? Shock_resistance : resists_elec(mtmp));
+            if (!(yours ? Shock_resistance : resists_elec(mtmp)))
+                return TRUE;
+            break;
         case AD_MAGM:
         case AD_STUN:
-            return !(yours ? Antimagic : (rn2(100) < ptr->mr));
+            if (!(yours ? Antimagic : (rn2(100) < ptr->mr)))
+                return TRUE;
+            break;
         case AD_DRST:
-            return !(yours ? Poison_resistance : resists_poison(mtmp));
+            if (!(yours ? Poison_resistance : resists_poison(mtmp)))
+                return TRUE;
+            break;
         case AD_DRLI:
-            return !(yours ? Drain_resistance : resists_drli(mtmp));
+            if (!(yours ? Drain_resistance : resists_drli(mtmp)))
+                return TRUE;
+            break;
         case AD_STON:
-            return !(yours ? Stone_resistance : resists_ston(mtmp));
+            if (!(yours ? Stone_resistance : resists_ston(mtmp)))
+                return TRUE;
+            break;
         default:
             impossible("Weird weapon special attack.");
         }
@@ -1055,7 +1075,6 @@ artifact_hit_behead(struct monst *magr, struct monst *mdef, struct obj *otmp,
     return FALSE;
 }
 
-
 static boolean
 artifact_hit_drainlife(struct monst *magr, struct monst *mdef, struct obj *otmp,
                        int *dmgptr)
@@ -1147,6 +1166,7 @@ artifact_hit(struct monst * magr, struct monst * mdef, struct obj * otmp,
                        (youattack && mdef == u.ustuck));
 
     /* the four basic attacks: fire, cold, shock and missiles */
+    /* also there is now poison */
     if (attacks(AD_FIRE, otmp)) {
         if (realizes_damage)
             pline("The fiery blade %s %s%c",
@@ -1190,6 +1210,24 @@ artifact_hit(struct monst * magr, struct monst * mdef, struct obj * otmp,
                   !spec_dbon_applies ? "" :
                   "!  A hail of magic missiles strikes", hittee,
                   !spec_dbon_applies ? '.' : '!');
+        return realizes_damage;
+    }
+    if (attacks(AD_DRST, otmp)) {
+        if (realizes_damage)
+            pline("The toxic blade %s %s%c",
+                  !spec_dbon_applies ? "hits" : "poisons",
+                  hittee, !spec_dbon_applies ? '.' : '!');
+        if (!(dieroll % 5)) { /* Deadly poison */
+            if (youdefend) {
+                deadly_poison("The poison was deadly...",
+                              POISONING, xname(otmp), FALSE);
+            /* TODO:  if you survive and are hallucinating, should this shock
+                      you back to your senses? */
+            } else {
+                pline("The poison was deadly.");
+                *dmgptr = 2 * mdef->mhp + FATAL_DAMAGE_MODIFIER;
+            }
+        }
         return realizes_damage;
     }
 

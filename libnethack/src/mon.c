@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-05-19 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -383,6 +383,7 @@ minliquid(struct monst *mtmp)
     }
 
     if (inlava) {
+        boolean alive_means_lifesaved = TRUE;
         /*
          * Lava effects much as water effects. Lava likers are able to
          * protect their stuff. Fire resistant monsters can only protect
@@ -401,12 +402,20 @@ minliquid(struct monst *mtmp)
                     if (cansee(mtmp->mx, mtmp->my))
                         pline("%s surrenders to the fire.", Monnam(mtmp));
                     mondead(mtmp);
-                } else if (cansee(mtmp->mx, mtmp->my))
-                    pline("%s burns slightly.", Monnam(mtmp));
+                } else {
+                    alive_means_lifesaved = FALSE;
+                    if (cansee(mtmp->mx, mtmp->my))
+                        pline("%s burns slightly.", Monnam(mtmp));
+                }
             }
             if (mtmp->mhp > 0) {
                 fire_damage(mtmp->minvent, FALSE, FALSE, mtmp->mx, mtmp->my);
-                rloc(mtmp, FALSE);
+                if (alive_means_lifesaved) {
+                    rloc(mtmp, TRUE);
+                    /* Analogous to player case: if we have nowhere to place the
+                       monster, it ends up back in the lava, and dies again */
+                    minliquid(mtmp);
+                }
                 return 0;
             }
             return 1;
@@ -428,8 +437,9 @@ minliquid(struct monst *mtmp)
             }
             mondead(mtmp);
             if (mtmp->mhp > 0) {
-                rloc(mtmp, FALSE);
+                rloc(mtmp, TRUE);
                 water_damage_chain(mtmp->minvent, FALSE);
+                minliquid(mtmp);
                 return 0;
             }
             return 1;
@@ -2178,7 +2188,8 @@ cleanup:
        want a penalty for killing monsters that generated peaceful.  I'm not
        absolutely sure the following condition is correct, but we'll test it: */
     if (mtmp->malign < 0)
-        adjalign(always_peaceful(mtmp->data) ? -5 : -1);
+        adjalign(always_peaceful(mtmp->data) ? -3 :
+                 (u.ualign.type == A_CHAOTIC) ? 0 : -1);
     /* However, chaotics now get a point for killing their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
         int oldalign = u.ualign.record;
@@ -2310,6 +2321,11 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
               plural ? "were" : "was");
     }
 
+    if (Poison_resistance) {
+        pline("The poison doesn't seem to affect you.");
+        return;
+    }
+
     fatal += 20 * thrown_weapon;
     switch (fatal) {
     case  8: rng = rng_deadlypoison_8;  break;
@@ -2327,6 +2343,7 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     if (i == 0 && typ != A_CHA) {
         deadly_poison("The poison was deadly...", POISONING,
                       killer, !strcmp(string, "blast"));
+        /* deadly_poison checks Poison_resistance itself. */
     } else if (i <= 5) {
         /* Check that a stat change was made */
         if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3, 3), 1))

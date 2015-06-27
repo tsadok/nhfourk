@@ -162,6 +162,7 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.debug);
     mwrite8(mf, flags.desync);
     mwrite8(mf, flags.explore);
+    mwrite8(mf, flags.challenge);
     mwrite8(mf, flags.elbereth_enabled);
     mwrite8(mf, flags.end_disclose);
     mwrite8(mf, flags.friday13);

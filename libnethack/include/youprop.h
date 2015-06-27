@@ -110,6 +110,10 @@
 # define Infravision            u_any_property(INFRAVISION)
 # define HDetect_monsters       u.uintrinsic[DETECT_MONSTERS]
 # define Detect_monsters        u_any_property(DETECT_MONSTERS)
+# define HProt_shapechangers    u.uintrinsic[PROT_FROM_SHAPE_CHANGERS]
+# define Prot_shapechangers     u_any_property(PROT_FROM_SHAPE_CHANGERS)
+# define HDisplacement          u.uintrinsic[DISPLACED]
+# define Displacement           u_any_property(DISPLACED)
 
 /*** Appearance and behavior ***/
 # define Adornment              worn_extrinsic(ADORNED)

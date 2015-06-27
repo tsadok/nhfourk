@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-25 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -11,6 +11,7 @@ static boolean tele_jump_ok(int, int, int, int);
 static boolean teleok(int, int, boolean, boolean wizard_tele);
 static void vault_tele(void);
 static boolean rloc_pos_ok(int, int, struct monst *);
+static coord polartorect(int, int);
 static void mvault_tele(struct monst *);
 
 /*
@@ -488,8 +489,7 @@ dotele(const struct nh_cmd_arg *arg)
         boolean castit = FALSE;
         int sp_no = 0, energy = 0;
 
-        if (!Teleportation || (u.ulevel < (Role_if(PM_WIZARD) ? 8 : 12)
-                               && !can_teleport(youmonst.data))) {
+        if (!supernatural_ability_available(SPID_RLOC)) {
             /* Try to use teleport away spell. */
             if (objects[SPE_TELEPORT_AWAY].oc_name_known && !Confusion)
                 for (sp_no = 0; sp_no < MAXSPELL; sp_no++)
@@ -945,6 +945,24 @@ rloc_to(struct monst *mtmp, int x, int y)
         make_angry_shk(mtmp, oldx, oldy);
 }
 
+/* Bhaskara Approximation.  Note lack of parens around it,
+   because that would cause incorrect rounding; we want
+   the numerator to get multiplied by the radius first,
+   for the polar-to-rectangular conversion below. */
+#define SIN(x) (((x % 360) > 180) ? -1 : 1) * \
+    (4 * (x % 180) * (180 - (x % 180)))       \
+    / (40500 - (x % 180) * (180 - (x % 180)))
+#define COS(x) SIN(((x + 90) % 360))
+
+coord
+polartorect(int radius, int degrees)
+{
+    coord cc;
+    cc.x = radius * COS(degrees);
+    cc.y = radius * SIN(degrees);
+    return cc;
+}
+
 /* place a monster at a random location, typically due to teleport */
 /* return TRUE if successful, FALSE if not */
 boolean
@@ -973,7 +991,65 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
             goto found_xy;
     }
 
-    for (relaxed_goodpos = 0; relaxed_goodpos < 2; relaxed_goodpos++) {
+    for (relaxed_goodpos = -1; relaxed_goodpos < 2; relaxed_goodpos++) {
+
+        /* If this is a monster that blinks, try to do that first. */
+        if (relaxed_goodpos < 0) {
+            if ((isok(mtmp->mx, mtmp->my)) &&
+                mtmp->data->mflags3 & M3_BLINKAWAY) {
+                /* We're going to do a polar-to-rectangular conversion here,
+                   because it's a convenient way to select positions at the
+                   correct distance from where we're starting.  We'll try
+                   with the maximum radius then back it off. */
+                int maxradius = 2 * mtmp->data->mlevel;
+                int minradius = 2;
+                int theta[24] = {   0,  15,  30,  45,  60,  75,
+                                    90, 105, 120, 135, 150, 165,
+                                    180, 195, 210, 225, 240, 255,
+                                    270, 285, 300, 315, 330, 345 };
+                int angle, fineangle, swi, sw;
+                coord rectcoord;
+                if (maxradius < minradius + 3)
+                    maxradius = minradius + 3;
+                /* Shuffle the order of the angles so we don't always get the same
+                   one tried first. */
+                for (angle = 0; angle < 24; angle++) {
+                    swi          = rn2(24);
+                    sw           = theta[swi];
+                    theta[swi]   = theta[angle];
+                    theta[angle] = sw;
+                }
+                for (trycount = maxradius; trycount >= minradius; trycount--) {
+                    for (angle = 0; angle < 24; angle++)
+                        for (fineangle = 0; fineangle < 15; fineangle += 3) {
+                            /* theta is shuffled so that the angle isn't the
+                               same all the time, but it isn't necessary to
+                               shuffle over a hundred different angles; we use
+                               fineangle to allow positions that don't line up
+                               to the 15-degree increments, but the randomness
+                               of the blink direction doesn't need that much
+                               precision. */
+                            rectcoord = polartorect(trycount, theta[angle] +
+                                                    fineangle);
+                            x = mtmp->mx + rectcoord.x;
+                            y = mtmp->my + rectcoord.y;
+                            if (isok(x,y) && !m_at(level,x,y) &&
+                                /* TODO: evaluate whether goodpos() should be
+                                 * used here */
+                                (level->locations[x][y].typ >= CORR) &&
+                                /* Blinking only works with line-of-sight, but
+                                   for now I am not requiring the monster to
+                                   actually _see_ the tile, so e.g. blinking
+                                   into the dark works ok. */
+                                clear_path(mtmp->mx, mtmp->my, x, y, viz_array)
+                                ) {
+                                goto found_xy;
+                            }
+                        }
+                }
+            }
+            continue;
+        }
 
         /* first try sensible terrain; if none exists, ignore water,
            doors and boulders */
@@ -1018,7 +1094,7 @@ mvault_tele(struct monst *mtmp)
         rloc_to(mtmp, c.x, c.y);
         return;
     }
-    rloc(mtmp, FALSE);
+    rloc(mtmp, TRUE);
 }
 
 boolean
@@ -1049,7 +1125,7 @@ mtele_trap(struct monst *mtmp, struct trap *trap, int in_sight)
         if (trap->once)
             mvault_tele(mtmp);
         else
-            rloc(mtmp, FALSE);
+            rloc(mtmp, TRUE);
 
         if (in_sight) {
             if (canseemon(mtmp))
@@ -1278,10 +1354,10 @@ u_teleport_mon(struct monst * mtmp, boolean give_feedback)
         unstuck(mtmp);
         rloc(mtmp, FALSE);
     } else if (is_rider(mtmp->data) && rn2(13) &&
-               enexto(&cc, level, u.ux, u.uy, mtmp->data))
+               enexto(&cc, level, u.ux, u.uy, mtmp->data)) {
         rloc_to(mtmp, cc.x, cc.y);
-    else
-        rloc(mtmp, FALSE);
+    } else
+        return rloc(mtmp, TRUE);
     return TRUE;
 }
 
