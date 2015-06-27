@@ -376,7 +376,7 @@ MAP
         |...|------
         -----      
 ENDMAP
-STAIR:(16,09),down
+STAIR:(08,06),down
 STAIR:(10,10),up
 DOOR:locked,(12,09)
 REGION:(00,00,18,12),lit,"ordinary"

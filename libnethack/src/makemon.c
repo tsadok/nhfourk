@@ -1903,18 +1903,15 @@ peace_minded(const struct permonst *ptr)
 }
 
 /*
- * Set malign to have the proper effect on player alignment if monster is
- * killed. Negative numbers mean it's bad to kill this monster; positive
- * numbers mean it's good. Since there are more hostile monsters than
- * peaceful monsters, the penalty for killing a peaceful monster should be
- * greater than the bonus for killing a hostile monster to maintain balance.
- * (TODO: This balance attempt doesn't actually work; alignment still drifts
- * up to infinity with any playstyle that isn't outright insane)
- *
- * Rules:
- *   it's bad to kill peaceful monsters, potentially worse to kill always-
- *      peaceful monsters
- *   it's never bad to kill a hostile monster, although it may not be good
+ * The semantics of this were designed around the old player alignment
+ * record system wherein killing anything cross-aligned gained you points.
+ * No amount of tweaking the relative alignments of various monsters could
+ * ever make that balanced, so for Fourk I opted to remove the alignment
+ * record bonus for killing cross-aligned monsters entirely.
+ * 
+ * Until I rebalance it, this function still sets malign according to the
+ * old vanilla rules, which means malign is basically only useful for its
+ * sign (negative = co-aligned and bad to kill).
  */
 void
 set_malign(struct monst *mtmp)

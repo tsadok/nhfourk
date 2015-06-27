@@ -2971,7 +2971,7 @@ doapply(const struct nh_cmd_arg *arg)
         return doloot(arg);
     }
 
-    if (obj->oartifact && !touch_artifact(obj, &youmonst))
+    if (!retouch_object(&obj, FALSE))
         return 1;       /* evading your grasp costs a turn; just be grateful
                            that you don't drop it as well */
 

@@ -156,7 +156,11 @@ static struct nh_option_desc curses_options[] = {
     {"optstyle", "option menu display style", FALSE, OPTTYPE_ENUM,
      {.e = OPTSTYLE_FULL}},
     {"palette", "color palette used for text", FALSE, OPTTYPE_ENUM,
+#ifdef WIN32
      {.e = PALETTE_DEFAULT}},
+#else
+     {.e = PALETTE_NONE}},
+#endif
     {"prompt_inline", "place prompts in the message window", FALSE,
      OPTTYPE_BOOL, {.b = FALSE}},
     {"scores_own", "show all your own scores in the list", FALSE, OPTTYPE_BOOL,
