@@ -73,6 +73,8 @@ LADDER:(11,05),up
 LADDER:(03,07),down
 DOOR:locked,(10,04)
 DOOR:locked,(09,07)
+# Unattended Altar - player must align it.
+ALTAR:(06,05),noalign,altar
 MONSTER:'&',random,place[0]
 MONSTER:'&',random,place[1]
 MONSTER:'d',"hell hound pup",place[2]
