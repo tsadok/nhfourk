@@ -1070,7 +1070,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
 
             /* Don't start with +0 or negative rings */
             if (objects[otyp].oc_charged && obj->spe <= 0)
-                obj->spe = rne_on_rng(3, rng);
+                obj->spe = rne_on_rng(challengemode ? 4 : 2, rng);
 
             /* Heavily relies on the fact that 1) we create wands before rings, 
                2) that we create rings before spellbooks, and that 3) not more

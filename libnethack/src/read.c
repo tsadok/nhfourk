@@ -1129,6 +1129,8 @@ seffects(struct obj *sobj, boolean *known)
         useup(sobj);
         makeknown(SCR_IDENTIFY);
     id:
+        if (cval > 1 && challengemode)
+            cval--;
         if (invent && !confused) {
             identify_pack(cval);
         }
@@ -1146,6 +1148,8 @@ seffects(struct obj *sobj, boolean *known)
         pline("This is a charging scroll.");
 
         cval = sobj->cursed ? -1 : (sobj->blessed ? 1 : 0);
+        if (challengemode && cval > 0 && rn2(3))
+            cval--;
         if (!objects[sobj->otyp].oc_name_known)
             more_experienced(0, 10);
         useup(sobj);
@@ -1410,7 +1414,7 @@ seffects(struct obj *sobj, boolean *known)
         }
     case SCR_WISHING:
         *known = TRUE;
-        if (Luck + rn2(5) < 0) {
+        if (Luck + (challengemode ? 0 : rn2(5)) < 0) {
             pline("Unfortunately, nothing happens.");
             break;
         } else if (sobj->cursed) {
