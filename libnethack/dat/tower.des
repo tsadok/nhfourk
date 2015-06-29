@@ -45,6 +45,7 @@ OBJECT:'(',"chest",(03,01)
 OBJECT:'(',"chest",(07,01)
 OBJECT:'(',"chest",(11,01)
 OBJECT:'?',"wishing",random
+OBJECT:'!',"water",random,cursed,0
 # We have to protect the tower against outside attacks
 NON_DIGGABLE:(00,00,14,10)
 
