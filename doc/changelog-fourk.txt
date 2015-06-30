@@ -54,6 +54,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Vlad has been buffed.  His level and AC have been improved, and he
+   has received cold resistance, shock resistance, infravision, see
+   invisible, and a vampire-blood spitting attack that drains levels.
+
+ * There is now unholy water on the top level of Vlad's Tower.
+
  * Any weapon you get in starting inventory will have a skill cap
    no less than basic.  (Your starting skill was already being
    raised to basic.  This prevents you from being above your max.)

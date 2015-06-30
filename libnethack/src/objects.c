@@ -1007,6 +1007,9 @@ const struct objclass const_objects[] = {
     OBJECT(OBJ("blinding venom", "splash of venom"),
            BITS(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, P_NONE, LIQUID), 0,
            VENOM_CLASS, 500, 0, 1, 0, 0, 0, 0, 0, 0, HI_ORGANIC),
+    OBJECT(OBJ("vampire blood", "splash of blood"), /* GFP: Vlad */
+           BITS(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, P_NONE, LIQUID), 0,
+           VENOM_CLASS,   0, 0, 1, 1, 9, 9, 0, 0, 0, HI_ORGANIC),
     OBJECT(OBJ("acid venom", "splash of venom"),
            BITS(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, P_NONE, LIQUID), 0,
            VENOM_CLASS, 500, 0, 1, 0, 6, 6, 0, 0, 0, HI_ORGANIC),
