@@ -179,6 +179,8 @@ int ohitmon(struct monst *mtmp, /* accidental target */
 
         if (otmp->otyp == ACID_VENOM && resists_acid(mtmp))
             damage = 0;
+        if (otmp->otyp == VAMPIRE_BLOOD && resists_drli(mtmp))
+            damage = 0;
         if (ismimic)
             seemimic(mtmp);
         mtmp->msleeping = 0;
@@ -246,6 +248,23 @@ int ohitmon(struct monst *mtmp, /* accidental target */
             if (tmp > 127)
                 tmp = 127;
             mtmp->mblinded = tmp;
+        }
+
+        if (otmp->otyp == VAMPIRE_BLOOD) {
+            if (!resists_drli(mtmp)) {
+                int xtmp = dice(2, 6);
+                if (vis)
+                    pline("%s suddenly seems weaker!", Monnam(mtmp));
+                mtmp->mhpmax -= xtmp;
+                if ((mtmp->mhp -= xtmp) <= 0 || !mtmp->m_lev) {
+                    if (vis)
+                        pline("%s dies!", Monnam(mtmp));
+                    xkilled(mtmp, 0);
+                } else
+                    mtmp->m_lev--;
+            }
+            // obfree(otmp, (struct obj*) 0);
+            return 1;
         }
 
         if (is_pole(otmp))
@@ -431,6 +450,11 @@ m_throw(struct monst *mon, int x, int y, int dx, int dy, int range,
                               (num_eyes ==
                                1) ? body_part(EYE) : makeplural(body_part(EYE)),
                               (num_eyes == 1) ? "s" : "");
+                }
+            }
+            if (hitu && singleobj->otyp == VAMPIRE_BLOOD) {
+                if (!Drain_resistance) {
+                    losexp("vampire blood", FALSE);
                 }
             }
             if (hitu && singleobj->otyp == EGG) {
@@ -800,6 +824,9 @@ spitmq(struct monst *mtmp, int xdef, int ydef, const struct attack *mattk)
         case AD_BLND:
         case AD_DRST:
             otmp = mktemp_sobj(level, BLINDING_VENOM);
+            break;
+        case AD_DRLI:
+            otmp = mktemp_sobj(level, VAMPIRE_BLOOD);
             break;
         default:
             impossible("bad attack type in spitm");

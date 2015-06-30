@@ -257,8 +257,11 @@ recharge(struct obj *obj, int curse_bless)
          * separately, or a mixture, and this woud throw off the RNG.
          */
         n = (int)obj->recharged;
-        if ((obj->otyp == WAN_WISHING) || /* never recharge these */
-            ((n > 0) && (n * n * n > rn2(7 * 7 * 7)))) { /* recharge_limit */
+        if (obj->otyp == WAN_WISHING) { /* never recharge these */
+            verbalize("Ixnay on the wishing for more wishes.");
+            return;
+        } else if ((n > 0) && (n * n * n > rn2(7 * 7 * 7))) {
+            /* recharge_limit */
             wand_explode(obj);
             return;
         }

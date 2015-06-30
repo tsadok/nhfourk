@@ -69,6 +69,31 @@ Changes in 4.3.0.3:
 Changes in 4.3.0.2:
 -------------------
 
+ * Vlad has been buffed.  His level and AC have been improved, and he
+   has received cold resistance, shock resistance, infravision, see
+   invisible, and a vampire-blood spitting attack that drains levels.
+
+ * There is now unholy water on the top level of Vlad's Tower.
+
+ * Any weapon you get in starting inventory will have a skill cap
+   no less than basic.  (Your starting skill was already being
+   raised to basic.  This prevents you from being above your max.)
+
+ * Dwarves can now always get to at least skilled in pick-axe,
+   and can get to expert if a human of the same role would be
+   able to get to skilled.
+
+ * Gnomes can always get to skilled in crossbow and aklys and can
+   go two skill ranks higher than a human of the same role, up to
+   a maximum of expert (crossbow) or master (club).
+
+ * Orcs can get at least skilled in scimitar and two ranks higher
+   than a human of the same role up to a maximum of master.
+
+ * Sylphs can always get at least basic skill in healing spells,
+   regardless of their role, and can get to skilled if a human of
+   the same role could get to basic.
+
  * The scroll of amnesia has been removed from the game.  It is
    replaced with the scroll of water, which generally creates pools
    around the player.  (Some dungeon features can be destroyed by
