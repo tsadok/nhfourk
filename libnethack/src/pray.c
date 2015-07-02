@@ -421,7 +421,8 @@ fix_worst_trouble(int trouble)
         }
         break;
     default:
-        impossible("Invalid trouble in fix_worst_trouble");
+        impossible(msgprintf("Invalid trouble in fix_worst_trouble: %d",
+                             trouble));
         break;
     }
 }
@@ -812,13 +813,17 @@ pleased(aligntyp g_align)
         case 5:
             pat_on_head = 1;
         case 4:
-            do
-                fix_worst_trouble(trouble);
-            while ((trouble = in_trouble()) != 0);
+            if (trouble != 0)
+                do
+                    fix_worst_trouble(trouble);
+                while ((trouble = in_trouble()) != 0);
             break;
 
         case 3:
-            fix_worst_trouble(trouble);
+            if (trouble != 0)
+                fix_worst_trouble(trouble);
+            else
+                godvoice(u.ualign.type, "You seem to be doing fine so far!");
         case 2:
             while ((trouble = in_trouble()) > 0)
                 fix_worst_trouble(trouble);

@@ -359,7 +359,7 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         loc = &lev->locations[x][y];
         if (*in_rooms(lev, x, y, SHOPBASE) &&
             (typ == HOLE || typ == TRAPDOOR || typ == PIT || IS_DOOR(loc->typ)
-             || IS_WALL(loc->typ)))
+             || IS_WALL(loc->typ)) && (lev == level))
             add_damage(x, y,    /* schedule repair */
                        ((IS_DOOR(loc->typ) || IS_WALL(loc->typ))
                         && !flags.mon_moving) ? 200L : 0L);

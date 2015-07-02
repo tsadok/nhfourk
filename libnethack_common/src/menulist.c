@@ -61,7 +61,6 @@ dealloc_objmenulist(struct nh_objlist *ml)
     init_objmenulist(ml);
 }
 
-
 void
 set_menuitem(struct nh_menuitem *item, int id, enum nh_menuitem_role role,
              const char *caption, char accel, nh_bool selected)
@@ -81,8 +80,8 @@ add_menu_item(struct nh_menulist *ml, int id, const char *caption,
               char accel, nh_bool selected)
 {
     expand_menulist(ml);
-    set_menuitem(ml->items + ml->icount, id, MI_NORMAL,
-                 caption, accel, selected);
+    set_menuitem(ml->items + ml->icount, id, MI_NORMAL, caption,
+                 accel, selected);
     ml->icount++;
 }
 
