@@ -130,28 +130,36 @@ Contact
 =======
 
 Bugs in NetHack Fourk that can also be reproduced in NetHack 4 should
-ideally be reported upstream at http://trac.nethack4.org, our bug
+preferably be reported upstream at http://trac.nethack4.org, our bug
 tracker.  The homepage for NetHack 4 itself is http://nethack4.org,
 and contains many other resources about the game and its community.
 
-At the time of this writing, NetHack Fourk does not have its own bug
-tracker or website, but bug reports or other correspondance specific
-to NetHack Fourk may be reported to Jonadab either on the Freenode IRC
-network or by email (at columbus.rr.com).
+Bugs that are specific to NetHack Fourk, or have not been reproduced
+upstream in NH4, MAY also be reported in trac, since at the time of
+this writing, NetHack Fourk does not have its own bug tracker or
+website.  If reporting bugs in trac that have only been sighted in
+Fourk, please be sure to set the Version field to indicate that the
+bug was seen in Fourk.  Bug reports or other correspondance specific
+to NetHack Fourk may also be reported to jonadab either on the
+Freenode IRC network or by email (at columbus.rr.com).
 
-You can discuss NetHack 4 on IRC.  irc:irc.freenode.net/nethack4 is the
-specific channel for NetHack 4, and typically discusses development.  For
-gameplay advice, the best place is the general NetHack discussion channel at
-irc:irc.freenode.net/nethack (which also covers NetHack 3 and Slash'EM).  
-A channel specifically for NetHack Fourk will be created if it turns
-out to be needed.
+You can discuss NetHack 4 and NetHack Fourk on IRC.
+irc:irc.freenode.net/nethack4 is the channel for NetHack 4, and
+typically discusses development.  There is also a channel for NetHack
+Fourk at irc:irc.freenode.net/nhfourk that can be used to make feature
+requests or discuss balance or other issues pertaining either to
+changes that NetHack Fourk has already made or perhaps should make.
+For gameplay advice, the best place is the general NetHack discussion
+channel at irc:irc.freenode.net/nethack (which also covers NetHack 3
+and Slash'EM).
 
 If you're more old-fashioned, you can use Usenet instead; the appropriate
 newsgroup is rec.games.roguelike.nethack (although they would appreciate it if
-you put `[NetHack 4]` in the subject line to make it clear that you aren't
+you put `[NetHack Fourk]` in the subject line to make it clear that you aren't
 talking about NetHack 3).
 
 If you want to contact the developers directly, you can use IRC, or email;
+`jonadab` (Nathan Eady) can receive email using that username, at columbus.rr.com.
 `ais523` (Alex Smith) can receive email using that username, at nethack4.org.
 
 
@@ -160,29 +168,54 @@ Selected Changes
 
 Here are a few of the highlights in NetHack Fourk:
 
-  * Barbarians are now categorically the best role for melee and probably
-    the easiest role for new players.  Samurai, Knights, and especially
-    Valkyries have been compensated with other advantages.
+  * Player race now has an impact on attribute caps, adjusting some of
+    them up or down a point from the value for your role.  Additionally,
+    some races get higher skill caps in certain weapon skills.
+
+  * A new playable race, Sylph, has been added.
+
+  * Barbarians are now categorically the best role for melee and
+    probably the easiest role for new players.  Samurai, Knights, and
+    especially Valkyries have been compensated with other advantages.
+    Some of the other roles also have changes, geared toward
+    encouraging the use of role-appropriate weapons and tactics.
+
+  * Some weapons that previously saw little use (e.g., sling, axe) are
+    enhanced, particularly if you are playing the right roles for them.
+    Ranged weapons have been rebalanced, especially multi-fire.
 
   * Players will need to pay somewhat more attention to alignment-record
     penalties (like dishonorably attacking the innocent, being a caitiff,
-    feeling guilty, etc.).
+    feeling guilty, etc.).  The limits are now always -100 to 100.  New
+    alignment-dependent methods for improving your record have been added,
+    and one important one (killing ordinary monsters) no longer works.
 
   * Sokoban now has more versions of its levels, and there are a couple of
     new ways for players who dislike the puzzle aspect of the branch to dodge
     the luck penalties.
 
-  * Certain monsters have been enhanced, notably monkeys and the Oracle.
+  * Amnesia has been removed from the game; the scroll of amnesia is
+    replaced with the scroll of water.
 
-  * Floating eyes have had their behavior changed again.
+  * Certain monsters have been enhanced, notably monkeys, the Oracle,
+    hezrou, pit fiends, ice devils, and the Wizard of Yendor.
+  
+  * Nymphs have a difficulty progression (wood / water / mountain / island).
+
+  * Some level features have been enhanced, e.g., rooms can be
+    non-rectangular and mazes can have wide walls or corridors.
+
+  * Floating eyes had their behavior changed in 4.3.0.1.
 
   * Certain early-game instadeaths are more avoidable now.
 
   * A few monsters have a slightly different appearance than before.
 
-  * Some probability formulae have been adjusted.  Notable ones include
-    your chance to hit a monster, your chance to successfully engrave,
-    and a monster's chance to drop a corpse and/or a random item.
+  * Some probability formulae have been adjusted.  Notable ones
+    include your chance to hit a monster, your chance to successfully
+    engrave, the chance for engravings to erode, a monster's chance to
+    drop a corpse and/or a random item, and the chance for projectiles
+    to break on impact.
 
   * Wands of wishing are no longer rechargeable, but now there are
     also scrolls of wishing.
@@ -190,10 +223,11 @@ Here are a few of the highlights in NetHack Fourk:
   * Permanently converting your alignment before the quest no longer makes
     the game unwinnable (though it is still not recommended.)
 
-For a list of changes in NetHack Fourk compared to the NetHack 4, see
-`doc/changelog-fourk.txt`.  (If greater detail is wanted, you can also look
-at the git log.)  Additionally, changelog.txt, listing the changes in NetHack
-4 as compared to 3.x, is still available.
+For a more complete list of changes in NetHack Fourk compared to the
+NetHack 4, see `doc/changelog-fourk.txt`.  (If greater detail is
+wanted, you can also look at the git log.)  Additionally,
+changelog.txt, listing the changes in NetHack 4 as compared to 3.x, is
+still available.
 
 For a full list of changes in NetHack 4 compared to the NetHack 3 series, see
 `doc/changelog.txt`.  Some of the most interesting or noticeable of these
