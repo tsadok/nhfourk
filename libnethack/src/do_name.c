@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-09 */
+/* Last modified by Alex Smith, 2015-03-19 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -352,17 +352,11 @@ do_naming(const struct nh_cmd_arg *arg)
 
     init_menulist(&menu);
 
-    /* group_accel settings are for keystroke-compatibility with nethack.alt.org
-       (which uses a/b/c/d); they shouldn't show in the interface because
-       there's no good reason to use them other than muscle memory */
     add_menuitem(&menu, 1, "Name a monster", 'C', FALSE);
-    menu.items[menu.icount-1].group_accel = 'a';
-    add_menuitem(&menu, 2, "Name an individual item", 'y', FALSE);
-    menu.items[menu.icount-1].group_accel = 'b';
-    add_menuitem(&menu, 3, "Name all items of a certain type", 'n', FALSE);
-    menu.items[menu.icount-1].group_accel = 'c';
-    add_menuitem(&menu, 4, "Name an item type by appearance", 'A', FALSE);
-    add_menuitem(&menu, 5, "Name the current level", 'f', FALSE);
+    add_menuitem(&menu, 2, "Name the current level", 'f', FALSE);
+    add_menuitem(&menu, 3, "Name an individual item", 'y', FALSE);
+    add_menuitem(&menu, 4, "Name all items of a certain type", 'n', FALSE);
+    add_menuitem(&menu, 5, "Name an item type by appearance", 'A', FALSE);
     if (flags.recently_broken_otyp != STRANGE_OBJECT) {
         const char *buf;
 
@@ -386,14 +380,18 @@ do_naming(const struct nh_cmd_arg *arg)
         break;
 
     case 1:
-        do_oname(&(struct nh_cmd_arg){.argtype = 0});
+        donamelevel(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
     case 2:
-        do_tname(&(struct nh_cmd_arg){.argtype = 0});
+        do_oname(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
     case 3:
+        do_tname(&(struct nh_cmd_arg){.argtype = 0});
+        break;
+
+    case 4:
         strcpy(classes, flags.inv_order);
         init_menulist(&menu);
 
@@ -443,10 +441,6 @@ do_naming(const struct nh_cmd_arg *arg)
         if (n == 1)
             docall_inner(&(struct nh_cmd_arg){.argtype = 0},
                          selected[0]);
-        break;
-
-    case 4:
-        donamelevel(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
     case 5:
