@@ -17,7 +17,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
     options => {
         packagename => 'nhfourk',
         packagename_text => 'NetHack Fourk',
-        packageversion => '3.0.1',
+        packageversion => '3.0.2',
         companyname => 'NetHack Fourk DevTeam',
 
         AM_CPPFLAGS => '-DNETCLIENT -D_REENTRANT',
