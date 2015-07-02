@@ -1477,9 +1477,9 @@ MONSTER:monster[1],random,(20,11)
 MONSTER:'d',"hell hound",(13,04)
 MONSTER:monster[2],random,(18,05)
 MONSTER:'d',"hell hound",(18,06)
-MONSTER:':',"chameleon",random
-MONSTER:':',"chameleon",random
-MONSTER:':',"chameleon",random
+MONSTER:'l',"chameleon",random
+MONSTER:'l',"chameleon",random
+MONSTER:'l',"chameleon",random
 MONSTER:'&',random,(08,09)
 MONSTER:monster[3],random,(11,09)
 MONSTER:monster[0],random,(26,13)
