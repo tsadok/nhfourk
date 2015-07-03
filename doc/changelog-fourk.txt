@@ -54,6 +54,51 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Any weapon you get in starting inventory will have a skill cap
+   no less than basic.  (Your starting skill was already being
+   raised to basic.  This prevents you from being above your max.)
+
+ * Dwarves can now always get to at least skilled in pick-axe,
+   and can get to expert if a human of the same role would be
+   able to get to skilled.
+
+ * Gnomes can always get to skilled in crossbow and aklys and can
+   go two skill ranks higher than a human of the same role, up to
+   a maximum of expert (crossbow) or master (club).
+
+ * Orcs can get at least skilled in scimitar and two ranks higher
+   than a human of the same role up to a maximum of master.
+
+ * Sylphs can always get at least basic skill in healing spells,
+   regardless of their role, and can get to skilled if a human of
+   the same role could get to basic.
+
+ * The scroll of amnesia has been removed from the game.  It is
+   replaced with the scroll of water, which generally creates pools
+   around the player.  (Some dungeon features can be destroyed by
+   this, replaced with a pool; others, such as stairs, cannot.)  If
+   cursed, one of the pools will be placed at the player's location.
+   If blessed, there is a small chance to get a fountain instead.
+   Although the scroll of amnesia was one of the most useless items
+   and thus was never given as starting inventory, I consider the
+   scroll of water to be potentially more useful than the scroll of
+   punishment, which previously could be; so scroll of water can be
+   given as starting inventory, and scroll of punishment now cannot.
+   Note that the scroll of water will not work on the Planes.
+
+ * Intelligence-draining attacks no longer also cause amnesia.
+
+ * Multi-firing is more difficult when using silver projectiles.
+   (They're still advantageous against silver-fearing targets, of
+   course, because the increased silver damage is worth more than
+   a higher multi-fire rate.)
+
+ * Added a new type of stone, silver nuggets.  These count as sling
+   ammo and do silver damage.  The best place to find silver nuggets
+   is on the caveman quest, but they can also be generated randomly.
+
+ * The Rogue quest now contains a guaranteed spellbook of sleep.
+
  * Further alignment record adjustments have been made.  The penalties
    for killing generated-peaceful and always-peaceful monsters have
    been adjusted again.  Chaotics now get no penalty for killing

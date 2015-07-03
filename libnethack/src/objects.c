@@ -740,7 +740,7 @@ const struct objclass const_objects[] = {
     SCROLL("food detection", "YUM YUM", 1, 25, 100),
     SCROLL("identify", "KERNOD WEL", 1, 180, 20),
     SCROLL("magic mapping", "ELAM EBOW", 1, 45, 100),
-    SCROLL("amnesia", "DUAM XNAHT", 1, 35, 200),
+    SCROLL("water", "DUAM XNAHT", 1, 35, 200),
     SCROLL("fire", "ANDOVA BEGARIN", 1, 30, 100),
     SCROLL("earth", "KIRJE", 1, 18, 200),
     SCROLL("punishment", "VE FORBRYDERNE", 1, 15, 300),
@@ -976,7 +976,8 @@ const struct objclass const_objects[] = {
     ROCK("luckstone", "gray", 0, 10, 10, 60, 3, 3, 1, 10, 7, MINERAL, CLR_GRAY),
     ROCK("loadstone", "gray", 0, 10, 500, 1, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
     ROCK("touchstone", "gray", 0, 8, 10, 45, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
-    ROCK("flint", "gray", 0, 10, 10, 1, 6, 6, 0, 10, 7, MINERAL, CLR_GRAY),
+    ROCK("flint", "gray", 0, 9, 10, 1, 6, 6, 0, 10, 7, MINERAL, CLR_GRAY),
+    ROCK("silver nugget", "shiny", 0, 1, 10, 1, 6, 6, 0, 10, 7, SILVER, HI_SILVER),
     ROCK("rock", NULL, 1, 100, 10, 0, 3, 3, 0, 10, 7, MINERAL, CLR_GRAY),
 #undef GEM
 #undef ROCK

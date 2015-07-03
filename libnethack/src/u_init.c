@@ -19,6 +19,7 @@ static void role_ini_inv(const struct trobj *, short nocreate[4]);
 static void race_ini_inv(const struct trobj *, short nocreate[4]);
 static void knows_object(int);
 static void knows_class(char);
+static void augment_skill_cap(int skill, int augment, int minimum, int maximum);
 static boolean restricted_spell_discipline(int);
 
 #define UNDEF_TYP       0
@@ -630,6 +631,17 @@ u_init(microseconds birthday)
         u.delayed_killers.stoning = u.delayed_killers.sliming = NULL;
 }
 
+/* Raise the player character's skill cap for a particular skill. */
+void
+augment_skill_cap(int skill, int augment, int minimum, int maximum)
+{
+    int count = 0;
+    while (count < augment && P_MAX_SKILL(skill) < maximum)
+        P_MAX_SKILL(skill) = P_MAX_SKILL(skill) + 1;
+    if (P_MAX_SKILL(skill) < minimum)
+        P_MAX_SKILL(skill) = minimum;
+}
+
 
 void
 u_init_inv_skills(void)
@@ -859,10 +871,13 @@ u_init_inv_skills(void)
         knows_object(DWARVISH_MITHRIL_COAT);
         knows_object(DWARVISH_CLOAK);
         knows_object(DWARVISH_ROUNDSHIELD);
+        augment_skill_cap(P_PICK_AXE, 1, P_SKILLED, P_EXPERT);
         break;
 
     case PM_GNOME:
         ini_inv(GnomeStuff, nclist, rng_main);
+        augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
+        augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
         break;
 
     case PM_ORC:
@@ -881,6 +896,7 @@ u_init_inv_skills(void)
         knows_object(ORCISH_SHIELD);
         knows_object(URUK_HAI_SHIELD);
         knows_object(ORCISH_CLOAK);
+        augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
         break;
 
     case PM_SYLPH:
@@ -888,6 +904,7 @@ u_init_inv_skills(void)
         if (Role_if(PM_HEALER)) {
             trobj_list[SYL_HEALINGPOT].trotyp = MAGIC_HARP;
         }
+        augment_skill_cap(P_HEALING_SPELL, 1, P_BASIC, P_SKILLED);
         ini_inv(trobj_list, nclist, rng_main);
         break;
 
@@ -1031,10 +1048,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
              * items: wand of wishing, ring of levitation, or the
              * polymorph/polymorph control combination.  Specific objects,
              * i.e. the discovery wishing, are still OK.
-             * Also, don't get a couple of really useless items.  (Note:
-             * punishment isn't "useless".  Some players who start out with
-             * one will immediately read it and use the iron ball as a
-             * weapon.)
+             * Also, don't get a couple of really useless items.
              */
             obj = mkobj(level, trop->trclass, FALSE, rng);
             otyp = obj->otyp;
@@ -1045,7 +1059,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                    || (otyp == RIN_LEVITATION && flags.elbereth_enabled)
                    /* 'useless' items */
                    || otyp == POT_HALLUCINATION || otyp == POT_ACID ||
-                   otyp == SCR_AMNESIA || otyp == SCR_FIRE ||
+                   otyp == SCR_PUNISHMENT || otyp == SCR_FIRE ||
                    otyp == SCR_BLANK_PAPER || otyp == SPE_BLANK_PAPER ||
                    otyp == RIN_AGGRAVATE_MONSTER || otyp == RIN_HUNGER ||
                    otyp == WAN_NOTHING
@@ -1073,7 +1087,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
 
             /* Don't start with +0 or negative rings */
             if (objects[otyp].oc_charged && obj->spe <= 0)
-                obj->spe = rne_on_rng(3, rng);
+                obj->spe = rne_on_rng(challengemode ? 4 : 2, rng);
 
             /* Heavily relies on the fact that 1) we create wands before rings, 
                2) that we create rings before spellbooks, and that 3) not more

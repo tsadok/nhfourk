@@ -86,7 +86,9 @@ livelog_write_event(const char *buffer) {
                                               flags.explore ? "explore" :
                                               flags.setseed ? "setseed" :
                                               (flags.polyinit_mnum != -1) ?
-                                              "polyinit" : "normal")));
+                                              "polyinit" :
+                                              flags.challenge ? "challenge"
+                                              : "normal")));
 }
 
 void

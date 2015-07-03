@@ -775,6 +775,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->debug = mread8(mf);
     f->desync = mread8(mf);
     f->explore = mread8(mf);
+    f->challenge = mread8(mf);
     f->elbereth_enabled = mread8(mf);
     f->end_disclose = mread8(mf);
     f->friday13 = mread8(mf);

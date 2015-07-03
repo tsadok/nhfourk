@@ -1528,8 +1528,10 @@ skill_init(const struct def_skill *class_skill)
         if (obj->otyp == TOUCHSTONE || obj->otyp == LUCKSTONE)
             continue;
         skill = weapon_type(obj);
-        if (skill != P_NONE)
-            P_SKILL(skill) = P_BASIC;
+        if (skill != P_NONE) {
+            P_MAX_SKILL(skill) = P_BASIC;
+            P_SKILL(skill)     = P_BASIC;
+        }
     }
 
     /* set skills for magic */

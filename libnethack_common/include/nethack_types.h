@@ -225,6 +225,7 @@ enum nh_path_prefix {
 
 enum nh_game_modes {
     MODE_NORMAL,
+    MODE_CHALLENGE,
     MODE_EXPLORE,
     MODE_WIZARD,
     MODE_SETSEED

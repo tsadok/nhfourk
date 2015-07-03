@@ -798,6 +798,9 @@ enlightenment(int final)
             enl_msg(&menu, You_, "have been killed ", p, buf);
     }
 
+    if (challengemode)
+        enl_msg(&menu, You_, "face", "faced", " a greater challenge");
+
     display_menu(&menu, title, PICK_NONE, PLHINT_ANYWHERE,
                  NULL);
     return;

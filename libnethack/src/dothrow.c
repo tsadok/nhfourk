@@ -148,6 +148,13 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
         default:
             break;      /* No bonus */
         }
+        /* Multi-shot malus for silver projectiles, for balance reasons */
+        if (objects[obj->otyp].oc_material == SILVER) {
+            if (multishot > 2)
+                multishot -= 2;
+            else if (multishot > 1)
+                multishot--;
+        }
     }
     /* crossbows are slow to load and probably shouldn't allow multiple
        shots at all, but that would result in players never using them;

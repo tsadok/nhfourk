@@ -1900,7 +1900,7 @@ dozap(const struct nh_cmd_arg *arg)
 
     /* zappable addition done by GAN 11/03/86 */
     if (!zappable(obj)) {       /* zappable prints the message itself */
-    } else if (obj->cursed && !rn2(100)) {
+    } else if (obj->cursed && !rn2(challengemode ? 10 : 100)) {
         backfire(obj);  /* the wand blows up in your face! */
         exercise(A_STR, FALSE);
         return 1;
