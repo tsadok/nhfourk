@@ -473,12 +473,13 @@ static int artifact_score(struct obj *list,
     total = 0;
 
     for (otmp = list; otmp; otmp = otmp->nobj) {
-        if (otmp->oartifact || otmp->otyp == BELL_OF_OPENING ||
-            otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
-            otmp->otyp == CANDELABRUM_OF_INVOCATION) {
+        /* we now only list artifacts here -- count unique items seperately. */
+        if (otmp->oartifact) {
+            /* artifact costs are stupid, only list them as a
+               curiousity. Should quest arti give a bonus? */
             value = arti_cost(otmp);    /* zorkmid value */
             if (counting) {
-                total += value;
+                total++;
             } else {
                 makeknown(otmp->otyp);
                 otmp->known = otmp->dknown = otmp->bknown = otmp->rknown = 1;
@@ -503,17 +504,32 @@ static int artifact_score(struct obj *list,
 long
 calc_score(int how, boolean show, long umoney)
 {
-    /* The principle here is that each category is worth up to 30000 points;
-       most categories are calculated via base-2 logarithm, to give massive
-       diminishing returns to farming in any particular category; categories
-       which have an intrinsic maximum anyway (such as the percentages) instead 
-       are based on the square root of the percentage progress made. */
+    /* Score is awarded linearly based on a few accomplishments.
+       To discourage farming, all "unbounded" variables have an
+       upper cap. */
     long total = 0;
     long category_raw;
-    double category_ratio;
     long category_points;
-
-    const long long max_squared = 30000LL * 30000LL;
+    /* Caps */
+    const double cap_gold = 2000;
+    const double cap_experience = 2000;
+    const double cap_discoveries = 2000;
+    const double cap_monsters = 2000;
+    const double cap_valuables = 2000;
+    const double cap_artifacts = 4000;
+    /* Dungeon achievement stuff */
+    /* Currently unused
+    boolean ach_minetown = FALSE;
+    boolean ach_minesend = FALSE;
+    boolean ach_beginner = FALSE; */
+    boolean ach_sokoban = FALSE;
+    boolean ach_quest = FALSE;
+    boolean ach_vlad = FALSE;
+    boolean ach_wizard = FALSE;
+    boolean ach_invocation = FALSE;
+    boolean ach_invocation2 = FALSE;
+    boolean ach_amulet = FALSE;
+    boolean ach_ascended = FALSE;
 
     struct nh_menulist menu;
     const char *buf;
@@ -522,17 +538,15 @@ calc_score(int how, boolean show, long umoney)
     if (show)
         init_menulist(&menu);
 
-    /* Gold. x gold scores log2(x+1)*1000 points (maxing at 30000 for MAXINT
-       gold; just in case gold can be 64-bit, we cap it at the 32-bit MAXINT
-       first). This counts profit from starting inventory, rather than the
-       amount, to avoid giving bonuses to early-game Healers. */
+    /* Gold. x/10 gold is 1 point. Discard starting gold to
+       avoid rewarding Healers/Tourists arbitrarily.  */
     category_raw = umoney;
     category_raw -= u.umoney0;
     if (category_raw < 0)
         category_raw = 0;
-    category_points = ilog2(category_raw + 1);
-    if (category_points > 30000)
-        category_points = 30000;
+    category_points = category_raw / 10;
+    if (category_points > cap_gold)
+        category_points = cap_gold;
     total += category_points;
 
     if (show) {
@@ -542,9 +556,12 @@ calc_score(int how, boolean show, long umoney)
         add_menutext(&menu, buf);
     }
 
-    /* Experience. Although this maxes at 30, the ratio isn't displayed. */
+    /* Experience. Avoid mindless farming to XL30 by imposing a cap
+       earlier than that (XL21 with current cap as above) */
     category_raw = u.ulevel;
-    category_points = isqrt(((u.ulevel - 1) * max_squared) / 29);
+    category_points = category_raw * 100 - 100;
+    if (category_points > cap_experience)
+        category_points = cap_experience;
     total += category_points;
 
     if (show) {
@@ -554,85 +571,39 @@ calc_score(int how, boolean show, long umoney)
         add_menutext(&menu, buf);
     }
 
-    /* Exploration. This is based on the ratio of the Sanctum depth to the
-       deepest level reached, and is based on the square root of the ratio. */
+    /* Lowest dungeon depth. Bonus points if you reach Sanctum. */
     category_raw = deepest_lev_reached(FALSE);
-    category_ratio = category_raw * 100.0 / depth(&sanctum_level);
-    category_points = isqrt(((category_raw - 1) * max_squared) /
-                            (depth(&sanctum_level) - 1));
+    category_points = category_raw * 30 - 30;
+    if (deepest_lev_reached(FALSE) == depth(&sanctum_level))
+        category_points = 2000;
     total += category_points;
 
     if (show) {
         buf = msgprintf(
-            "Exploration:     %10ld level%s   (%6.2f%%) (%5ld points)",
-            category_raw, category_raw == 1 ? " " : "s", category_ratio,
+            "Exploration:     %10ld level%s             (%5ld points)",
+            category_raw, category_raw == 1 ? " " : "s",
             category_points);
         add_menutext(&menu, buf);
     }
 
-    /* Discoveries. Based on the ratio of the number of items discovered, to
-       the maximum possible number of items discovered. */
+    /* Discoveries. Matters early, caps at 40+. Items you knew
+       from the start will not count. */
     {
         int curd, maxd;
 
         count_discovered_objects(&curd, &maxd);
         category_raw = curd;
-        category_ratio = curd * 100.0 / maxd;
-        category_points = isqrt((curd * max_squared) / maxd);
+        category_points = category_raw * 50;
+        if (category_points > cap_discoveries)
+            category_points = cap_discoveries;
     }
     total += category_points;
 
     if (show) {
         buf = msgprintf(
-            "Discoveries:     %10ld item%s    (%6.2f%%) (%5ld points)",
-            category_raw, category_raw == 1 ? " " : "s", category_ratio,
+            "Discoveries:     %10ld item%s              (%5ld points)",
+            category_raw, category_raw == 1 ? " " : "s",
             category_points);
-        add_menutext(&menu, buf);
-    }
-
-    /* Valuables. Scored the same way as gold, based on their gp values. Scores 
-       only on ascension or escape. */
-    category_raw = 0;
-    if (how == ESCAPED || how == ASCENDED) {
-        const struct val_list *val;
-        int i;
-
-        for (val = valuables; val->list; val++)
-            for (i = 0; i < val->size; i++) {
-                val->list[i].count = 0L;
-            }
-        get_valuables(invent);
-        for (val = valuables; val->list; val++)
-            for (i = 0; i < val->size; i++)
-                if (val->list[i].count != 0L)
-                    category_raw +=
-                        val->list[i].count *
-                        (long)objects[val->list[i].typ].oc_cost;
-        category_points = ilog2(category_raw + 1);
-        if (category_points > 30000)
-            category_points = 30000;
-        total += category_points;
-
-        if (show) {
-            buf = msgprintf(
-                "Valuables value: %10ld                    (%5ld points)",
-                category_raw, category_points);
-            add_menutext(&menu, buf);
-        }
-    } else if (show) {
-        add_menutext(&menu,
-                     "Valuables value: (no points given unless you survive)");
-    }
-
-    /* Artifacts. */
-    category_raw = artifact_score(invent, TRUE, 0);
-    category_points = ilog2(category_raw + 1);
-    total += category_points;
-
-    if (show) {
-        buf = msgprintf(
-            "Artifact value:  %10ld                    (%5ld points)",
-            category_raw, category_points);
         add_menutext(&menu, buf);
     }
 
@@ -649,48 +620,272 @@ calc_score(int how, boolean show, long umoney)
                 category_raw++;
         }
     }
-    category_ratio = category_raw * 100.0 / (NUMMONS - LOW_PM);
-    category_points = isqrt((category_raw * max_squared) / (NUMMONS - LOW_PM));
+    category_points = category_raw * 50;
+    if (category_points > cap_monsters)
+        category_points = cap_monsters;
     total += category_points;
 
     if (show) {
         buf = msgprintf(
-            "Variety of kills:%10ld monster%s (%6.2f%%) (%5ld points)",
-            category_raw, category_raw == 1 ? " " : "s", category_ratio,
+            "Variety of kills:%10ld monster%s           (%5ld points)",
+            category_raw, category_raw == 1 ? " " : "s",
             category_points);
         add_menutext(&menu, buf);
     }
 
-    /* Time penalty. */
-    category_raw = moves;
-    category_points = ilog2(max(moves, 2000)) - ilog2(2000);
-    total -= category_points;
-
+    /* Best achievement. These are major in-game goals
+       that add a score, such as completing Sokoban.
+       Please note that as you complete better achievements,
+       you accumulate more points, but the earlier ones
+       no longer count. This is by design -- if you've
+       performed the invocation, there's no reason to go and
+       grab the luckstone from Mines End.
+       TODO:
+       FIXME: stuff marked with * isn't implemented
+       
+       Achievements are:
+       reached Minetown:  500p*
+       reached Minesend:  1000p*
+       finished Sokoban:  1000p
+       Sokoban+Minesend:  1500p*
+       finished quest:    2000p
+       Killed Vlad:       2500p
+       Killed the Wizard: 3000p
+       Invocation ready:  3500p
+       Invocation:        4000p
+       Found the Amulet:  4500p
+       Ascended:          5000p */
+    category_raw = 0;
+    
+    if (historysearch("entered the Sokoban zoo", TRUE))
+        ach_sokoban = TRUE;
+    if (historysearch("completed the quest", TRUE))
+        ach_quest = TRUE;
+    if (historysearch("killed Vlad the Impaler", TRUE))
+        ach_vlad = TRUE;
+    if (historysearch("killed Wizard of Yendor", TRUE))
+        ach_wizard = TRUE;
+    if (ach_quest && ach_vlad && ach_wizard)
+        ach_invocation = TRUE;
+    if (historysearch("performed the invocation", TRUE))
+        ach_invocation2 = TRUE;
+    /* TODO: this event currently isn't placed in the history */
+    if (historysearch("found the Amulet of Yendor", TRUE))
+        ach_amulet = TRUE;
+    if (how == ASCENDED)
+        ach_ascended = TRUE;
+    
+    if (ach_sokoban)
+        category_raw = 1000;
+    if (ach_quest)
+        category_raw = 2000;
+    if (ach_vlad)
+        category_raw = 2500;
+    if (ach_wizard)
+        category_raw = 3000;
+    if (ach_invocation)
+        category_raw = 3500;
+    if (ach_invocation2)
+        category_raw = 4000;
+    if (ach_amulet)
+        category_raw = 4500;
+    if (ach_ascended)
+        category_raw = 5000;
+    
+    category_points = category_raw;
+    total += category_points;
+    
     if (show) {
         buf = msgprintf(
-            "Time penalty:    %10ld turn%s              (%5ld points)",
-            category_raw, category_raw == 1 ? " " : "s", -category_points);
+            "Major goal: %30s     (%5ld points)",
+            ach_ascended ? "ascended"
+          : ach_amulet ? "found the Amulet"
+          : ach_invocation2 ? "performed the invocation"
+          : ach_invocation ? "ready for invocation"
+          : ach_wizard ? "killed Wizard of Yendor"
+          : ach_vlad ? "killed Vlad the Impaler"
+          : ach_quest ? "finished the Quest"
+          : ach_sokoban ? "finished Sokoban"
+          : "(nothing yet)",
+            category_points);
         add_menutext(&menu, buf);
+    }
+
+    /* Ascension-only scores */
+    category_raw = 0;
+    if (how == ASCENDED) {
+        if (show) {
+            add_menutext(&menu, "");
+            add_menutext(&menu, "Ascension bonuses");
+        }
+
+        /* Valuables */
+        const struct val_list *val;
+        int i;
+
+        for (val = valuables; val->list; val++)
+            for (i = 0; i < val->size; i++) {
+                val->list[i].count = 0L;
+            }
+        get_valuables(invent);
+        for (val = valuables; val->list; val++)
+            for (i = 0; i < val->size; i++)
+                if (val->list[i].count != 0L)
+                    category_raw +=
+                        val->list[i].count *
+                        (long)objects[val->list[i].typ].oc_cost;
+        category_points = category_raw / 10;
+        if (category_points > cap_valuables)
+            category_points = cap_valuables;
+        total += category_points;
+
+        if (show) {
+            buf = msgprintf(
+                "Valuables value: %10ld                    (%5ld points)",
+                category_raw, category_points);
+            add_menutext(&menu, buf);
+        }
+
+        /* Artifacts */
+        category_raw = artifact_score(invent, TRUE, 0);
+        category_points = category_raw * 1000;
+        if (category_points > cap_artifacts)
+            category_points = cap_artifacts;
+        total += category_points;
+
+        if (show) {
+            buf = msgprintf(
+                "Artifact value:  %10ld                    (%5ld points)",
+                category_raw, category_points);
+            add_menutext(&menu, buf);
+        }
+
+        /* Speedrun bonus. Used to be time penalty -- bad idea.
+           Encourage winning fast, don't punish slow people. */
+        category_raw = moves;
+        
+        /* Very speedy bonus (T<20k) */
+        category_points = 20000 - category_raw;
+        if (category_points < 0)
+            category_points = 0;
+        
+        /* At least you weren't unusually slow, give a small bonus (T<100k) */
+        category_points += (100000 - category_raw) / 20;
+        if (category_points < 0)
+            category_points = 0;
+        total += category_points;
+
+        if (show) {
+            buf = msgprintf(
+                "Speed bonus:     %10ld turn%s              (%5ld points)",
+                category_raw, category_raw == 1 ? " " : "s", category_points);
+            add_menutext(&menu, buf);
+        }
+        
+        /* Conduct bonuses */
+        category_raw = 0;
+        category_points = 0;
+        
+        if (!u.uconduct[conduct_food]) {
+            category_raw++;
+            category_points += 4000;
+        } if (!u.uconduct[conduct_vegan]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_vegetarian]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_gnostic]) {
+            category_raw++;
+            category_points += 6000;
+        } if (!u.uconduct[conduct_weaphit]) {
+            category_raw++;
+            category_points += 3000;
+        } if (!u.uconduct[conduct_killer]) {
+            category_raw++;
+            category_points += 10000;
+        } if (!u.uconduct[conduct_illiterate]) {
+            category_raw++;
+            category_points += 7000;
+        } if (!u.uconduct[conduct_genocide]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_polypile]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_polyself]) {
+            category_raw++;
+            category_points += 500;
+        } if (!u.uconduct[conduct_sokoban_guilt]) {
+            category_raw++;
+            category_points += 500;
+        } if (!u.uconduct[conduct_wish]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_artiwish]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_puddingsplit]) {
+            category_raw++;
+            category_points += 1000;
+        } if (!u.uconduct[conduct_elbereth]) {
+            category_raw++;
+            category_points += 1000;
+        } if (!u.uconduct[conduct_lostalign]) {
+            category_raw++;
+            category_points += 2000;
+        }
+        
+        /* Conduct combinations */
+        if (!u.uconduct[conduct_elbereth] && !u.uconduct[conduct_illiterate])
+            category_points += 2000;
+        if (!u.uconduct[conduct_wish] && !u.uconduct[conduct_polypile])
+            category_points += 4000;
+        if (!u.uconduct[conduct_food] && !u.uconduct[conduct_gnostic])
+            category_points += 6000;
+        if (!u.uconduct[conduct_killer] && !u.uconduct[conduct_illiterate])
+            category_points += 8000;
+        
+        /* Conduct amount bonus */
+        category_points += category_raw * 1000;
+        if (category_raw > 10)
+            category_points += (category_raw - 10) * 1000;
+        if (category_raw == 16)
+            category_points += 8000;
+        
+        total += category_points;
+        if (show) {
+            buf = msgprintf(
+                "Conduct bonus:   %10ld conduct%s           (%5ld points)",
+                category_raw, category_raw == 1 ? " " : "s", category_points);
+            add_menutext(&menu, buf);
+        }                
     }
 
     /* Survival. A multiplier. */
     if (how == ASCENDED)
-        category_raw = 200;
+        category_raw = 10;
     else if (how == ESCAPED)
-        category_raw = 100;
+        category_raw = 5;
+    /* do not encourage quitting
     else if (how == QUIT)
-        category_raw = 90;
+        category_raw = 50; */
     else
-        category_raw = 80;
+        category_raw = 3;
+    /* Difficulty Multiplier */
+    if (challengemode) {
+        category_raw *= 2;
+    }
     total *= category_raw;
-    total /= 100;
 
     if (show) {
         buf = msgprintf(
-            "Survival:        %10s  (score multiplied by %3ld%%)",
-            category_raw == 80 ? (how ==
-                                  -1 ? "unknown" : "died") : category_raw ==
-            90 ? "quit" : category_raw == 200 ? "ascended" : "survived",
+            "Survival:        %10s  (score multiplied by %3ld)",
+            how == -1 ? "unknown"
+          : how == QUIT ? "quit"
+          : how == ASCENDED ? "ascended"
+          : how == ESCAPED ? "escaped"
+          : "died",
             category_raw);
         add_menutext(&menu, buf);
         add_menutext(&menu, "");
