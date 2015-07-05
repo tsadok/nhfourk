@@ -180,12 +180,15 @@ static const struct trobj Tourist[] = {
 
 static const struct trobj Valkyrie[] = {
 #define V_SPEAR  0
+#define V_DAGGER 1
 #define V_SHIELD 2
 #define V_ARMOR  3
+#define V_WAND   4
     {SPEAR, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     {DAGGER, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 3, ARMOR_CLASS, 1, UNDEF_BLESS},
     {LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_COLD, 5, WAND_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
     {OIL_LAMP, 1, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
@@ -780,9 +783,10 @@ u_init_inv_skills(void)
         break;
     case PM_VALKYRIE:
     {
-        boolean docold = FALSE;
         trobj_list = copy_trobj_list(Valkyrie);
-        switch (rolern2(6)) {
+        trobj_list[V_WAND].trspe = 3 +
+            rne_on_rng(3, rng_charstats_role);
+        switch (rolern2(4)) {
         case 1:
             trobj_list[V_SPEAR].trspe  = 3;
             trobj_list[V_SHIELD].trspe = 2;
@@ -792,24 +796,15 @@ u_init_inv_skills(void)
             trobj_list[V_ARMOR].trotyp = SPEED_BOOTS;
             break;
         case 3:
-        case 4:
-            trobj_list[V_SPEAR].trspe  = 1;
-            trobj_list[V_ARMOR].trotyp = STUDDED_LEATHER_ARMOR;
-            trobj_list[V_ARMOR].trspe  = 1;
-            break;
-        case 5:
             trobj_list[V_SPEAR].trotyp = SILVER_SPEAR;
-            docold = TRUE;
             break;
         default:
             trobj_list[V_SPEAR].trquan =
                 2 + rne_on_rng(3, rng_charstats_role);
-            docold = TRUE;
+            trobj_list[V_DAGGER].trquan = 4;
             break;
         }
         role_ini_inv(trobj_list, nclist);
-        if (docold)
-            role_ini_inv(Coldwand, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
