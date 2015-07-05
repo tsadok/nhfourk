@@ -108,6 +108,10 @@ Changes in 4.3.0.2:
    level of effectiveness.  Using a poisoned weapon while lawful will
    no longer take your record below 0.
 
+ * Valkyrie starting inventory has been rebalanced again.  They
+   always get the wand of cold now, and their starting enchants
+   have been rebalanced again.
+
  * Sokoban tries to give you a prize you don't already have.  For
    example, if the level you get would normally have a bag of holding
    but you already have one and don't yet have reflection, an amulet
@@ -422,11 +426,12 @@ Changes in 4.3.0.1:
    + Valkyries, Knights, and Samurai have had their melee prowess
      reduced a bit (so that their melee options are worse than
      Barbarians) but are compensated in other ways.
-     - Valkyries now start with a +3 spear and an attack spell and can
-       find a spellbook of cone of cold on quest home.  Their casting
+     - Valkyries now start with different inventory and can find a
+       spellbook of cone of cold on quest home.  Their casting
        abilities still need to be balanced so they can use attack
        spells without becomming general-purpose casters.  I may need
-       to give them starting skill in attack, we'll see.
+       to give them starting skill in attack, we'll see.  Also,
+       Valkyries fly now.
      - Knights can now get expert in crossbow, can find spare lances
        and a spare saddle on quest home, will not fall off and die
        when mounting their pony on turn 1, and will not break their
