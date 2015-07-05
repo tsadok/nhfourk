@@ -669,8 +669,7 @@ calc_score(int how, boolean show, long umoney)
         ach_invocation = TRUE;
     if (historysearch("performed the invocation", TRUE))
         ach_invocation2 = TRUE;
-    /* TODO: this event currently isn't placed in the history */
-    if (historysearch("found the Amulet of Yendor", TRUE))
+    if (historysearch("gained the Amulet of Yendor", TRUE))
         ach_amulet = TRUE;
     if (how == ASCENDED)
         ach_ascended = TRUE;
