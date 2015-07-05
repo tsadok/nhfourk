@@ -1,0 +1,86 @@
+Score rework -- this is how it works now
+
+MAIN BREAKDOWN (award as you go)
+           Money :    1/10 gold amount   cap 2000 (20k$ + starting gold amount)
+           Level :  100/level            cap 2000 (XL21)
+       Discovery :   50/discovery        cap 2000 (40 discoveries)
+ Monster variety :   50/monster          cap 2000 (40 monsters)
+  Dungeon levels :   30/level            set to 2k when sanctum is reached
+
+CHALLENGE BREAKDOWN (award only the last score)
+        Minetown :  500*
+       Luckstone : 1000*
+         Sokoban : 1000
+   Mines+Sokoban : 1500*  NO LONGER CONSIDERED BEGINNER
+
+           Quest : 2000
+            Vlad : 2500
+          Rodney : 3000
+Invocation ready : 3500
+      Invocation : 4000
+          Amulet : 4500
+       Ascension : 5000
+*: not practical in current code
+
+SCORE MULTIPLIER (Quits are counted as deaths)
+            Died : x0.3
+          Escape : x0.5
+        Ascended : x1.0
+
+---------------- awarded on ascension only ----------------
+
+VALUABLES BREAKDOWN
+           Gems :    1/10 gem value     cap 2000
+      Artifacts : 1000/artifact         cap 4000
+
+SPEED BREAKDOWN
+       T< 20000 : 20000 - turncount
+       T<100000 : (100000 - turncount) / 20
+
+CONDUCTS
+  Sokocheatless : 500
+   Polyselfless : 500 TODO: figure something out to avoid polytrap-luck shenanigans
+    Puddingless : 1000
+   Elberethless : 1000
+   Artiwishless : 2000
+   Polypileless : 2000
+      Moralcode : 2000
+   Genocideless : 2000
+     Vegetarian : 2000
+       Wishless : 2000 (+ artiwishless)
+          Vegan : 2000 (+ vegetarian)
+     Weaponless : 3000
+       Foodless : 4000 (+ vegan)
+        Atheist : 6000
+     Illiterate : 7000
+       Pacifist : 10000
+
+CONDUCT AMOUNT
+              1 : 1000
+              2 : 2000
+              3 : 3000
+              4 : 4000
+              5 : 5000
+              6 : 6000
+              7 : 7000
+              8 : 8000
+              9 : 9000
+             10 : 10000
+             11 : 12000
+             12 : 14000
+             13 : 16000
+             14 : 18000
+             15 : 20000
+             16 : 30000
+
+CONDUCT COMBINATIONS
+        Elb+Ill : 2000
+   Wish+Pud+Ppl : 4000
+       Food+Ath : 6000
+       Paci+Ill : 8000 (5000 if you started knowing Charm Monster)
+
+A 16-conduct run, not counting other score would award:
+  47000
+ +30000
+ +20000
+ =97000
