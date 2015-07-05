@@ -473,11 +473,7 @@ static int artifact_score(struct obj *list,
     total = 0;
 
     for (otmp = list; otmp; otmp = otmp->nobj) {
-        /* we now only list artifacts here -- count unique items 
-           seperately.
-        if (otmp->oartifact || otmp->otyp == BELL_OF_OPENING ||
-            otmp->otyp == SPE_BOOK_OF_THE_DEAD ||
-            otmp->otyp == CANDELABRUM_OF_INVOCATION) { */
+        /* we now only list artifacts here -- count unique items seperately. */
         if (otmp->oartifact) {
             /* artifact costs are stupid, only list them as a
                curiousity. Should quest arti give a bonus? */
@@ -509,7 +505,7 @@ long
 calc_score(int how, boolean show, long umoney)
 {
     /* Score is awarded linearly based on a few accomplishments.
-       To discourage farming, all "unbounded" variables has an
+       To discourage farming, all "unbounded" variables have an
        upper cap. */
     long total = 0;
     long category_raw;
@@ -644,6 +640,7 @@ calc_score(int how, boolean show, long umoney)
        no longer count. This is by design -- if you've
        performed the invocation, there's no reason to go and
        grab the luckstone from Mines End.
+       TODO:
        FIXME: stuff marked with * isn't implemented
        
        Achievements are:
@@ -660,7 +657,7 @@ calc_score(int how, boolean show, long umoney)
        Ascended:          5000p */
     category_raw = 0;
     
-    if (historysearch("found the Sokoban zoo", TRUE))
+    if (historysearch("entered the Sokoban zoo", TRUE))
         ach_sokoban = TRUE;
     if (historysearch("completed the quest", TRUE))
         ach_quest = TRUE;
@@ -672,6 +669,7 @@ calc_score(int how, boolean show, long umoney)
         ach_invocation = TRUE;
     if (historysearch("performed the invocation", TRUE))
         ach_invocation2 = TRUE;
+    /* TODO: this event currently isn't placed in the history */
     if (historysearch("found the Amulet of Yendor", TRUE))
         ach_amulet = TRUE;
     if (how == ASCENDED)
@@ -712,7 +710,7 @@ calc_score(int how, boolean show, long umoney)
             category_points);
         add_menutext(&menu, buf);
     }
-    
+
     /* Ascension-only scores */
     category_raw = 0;
     if (how == ASCENDED) {
@@ -866,20 +864,23 @@ calc_score(int how, boolean show, long umoney)
 
     /* Survival. A multiplier. */
     if (how == ASCENDED)
-        category_raw = 100;
+        category_raw = 10;
     else if (how == ESCAPED)
-        category_raw = 50;
+        category_raw = 5;
     /* do not encourage quitting
     else if (how == QUIT)
         category_raw = 50; */
     else
-        category_raw = 30;
+        category_raw = 3;
+    /* Difficulty Multiplier */
+    if (challengemode) {
+        category_raw *= 2;
+    }
     total *= category_raw;
-    total /= 100;
 
     if (show) {
         buf = msgprintf(
-            "Survival:        %10s  (score multiplied by %3ld%%)",
+            "Survival:        %10s  (score multiplied by %3ld)",
             how == -1 ? "unknown"
           : how == QUIT ? "quit"
           : how == ASCENDED ? "ascended"
