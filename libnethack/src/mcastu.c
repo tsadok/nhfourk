@@ -767,7 +767,7 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
     /* Can the aggressor see the square it thinks the defender is on? */
     int believed_mdef_mx = mdef ? m_mx(mdef) : 0;
     int believed_mdef_my = mdef ? m_my(mdef) : 0;
-    if (mdef == &youmonst && !engulfing_u(mdef)) {
+    if (mdef == &youmonst) {
         believed_mdef_mx = magr->mux;
         believed_mdef_my = magr->muy;
     }
