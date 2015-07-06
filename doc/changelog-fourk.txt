@@ -74,6 +74,9 @@ Changes in 4.3.0.3:
 Changes in 4.3.0.2:
 -------------------
 
+ * Wands of digging now dig multiple tiles in Gehennom (and other
+   maze levels), the same as everywhere else.
+
  * Any weapon you get in starting inventory will have a skill cap
    no less than basic.  (Your starting skill was already being
    raised to basic.  This prevents you from being above your max.)
