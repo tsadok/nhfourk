@@ -50,6 +50,26 @@ Chronological Changelog (most recent at top):
 =============================================
 =============================================
 
+Changes in 4.3.0.3:
+-------------------
+
+ * Large deep-rock dwellers (X) now include xorns, umber hulks,
+   ettins, and deep ettins.
+
+ * Gelatinous cubes, acid blobs, and quivering blobs now appear
+   as lowercase j, along with jellies.
+
+ * Lizards (everything that formerly looked like a colon, :) are
+   now represented by a lowercase l, which stands for lizard.
+
+ * Piercers are now in mlet t, things that pretend to be part of
+   the ceiling/wall/floor until you wander into them, then attack.
+
+ * Vlad has been buffed.  His level and AC have been improved, and he
+   has received cold resistance, shock resistance, infravision, see
+   invisible, and a vampire-blood spitting attack that drains levels.
+
+ * There is now unholy water on the top level of Vlad's Tower.
 
 Changes in 4.3.0.2:
 -------------------

@@ -184,8 +184,7 @@
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
 /* Maybe someday this could be in mflags... */
-# define vegan(ptr)             ((ptr)->mlet == S_BLOB || \
-                                 (ptr)->mlet == S_JELLY ||            \
+# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||            \
                                  (ptr)->mlet == S_FUNGUS ||           \
                                  (ptr)->mlet == S_VORTEX ||           \
                                  (ptr)->mlet == S_LIGHT ||            \

@@ -133,35 +133,9 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_ANIMAL | M1_FLY | M1_NOHANDS | M1_OVIPAROUS | M1_POIS,
         M2_HOSTILE | M2_FEMALE | M2_PRINCE, 0, HI_LORD),
 /*
- * blobs
+ * b is available (blobs are moved to j)
  */
-    MON("acid blob", S_BLOB,
-        LVL(1, 3, 8, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_NONE, AD_ACID, 1, 8),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(30, 10, 0, MS_SILENT, MZ_TINY),
-        MR_SLEEP | MR_POISON | MR_ACID | MR_STONE, MR_STONE, MRACE_NONE,
-        M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
-        M1_MINDLESS | M1_ACID,
-        M2_WANDER | M2_NEUTER, 0, CLR_YELLOW),
-    MON("quivering blob", S_BLOB,
-        LVL(5, 1, 8, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_TUCH, AD_PHYS, 1, 8),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(200, 100, 0, MS_SILENT, MZ_SMALL),
-        MR_SLEEP | MR_POISON, MR_POISON,
-        MRACE_NONE, M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS,
-        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_WHITE),
-    MON("gelatinous cube", S_BLOB,
-        LVL(6, 6, 8, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_TUCH, AD_PLYS, 2, 4), ATTK(AT_NONE, AD_PLYS, 1, 4),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(600, 150, 0, MS_SILENT, MZ_LARGE),
-        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP | MR_POISON | MR_ACID | MR_STONE,
-        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP, MRACE_NONE,
-        M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS | M1_OMNIVORE |
-        M1_ACID,
-        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_CYAN),
+
 /*
  * cockatrice
  */
@@ -530,8 +504,35 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_TPORT | M1_TPORT_CNTRL, M2_STALK,
         M3_INFRAVISIBLE | M3_INFRAVISION, CLR_CYAN),
 /*
- * jellies
+ * jellies and blobs
  */
+    MON("acid blob", S_JELLY,
+        LVL(1, 3, 8, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_NONE, AD_ACID, 1, 8),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(30, 10, 0, MS_SILENT, MZ_TINY),
+        MR_SLEEP | MR_POISON | MR_ACID | MR_STONE, MR_STONE, MRACE_NONE,
+        M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
+        M1_MINDLESS | M1_ACID,
+        M2_WANDER | M2_NEUTER, 0, CLR_YELLOW),
+    MON("quivering blob", S_JELLY,
+        LVL(5, 1, 8, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_TUCH, AD_PHYS, 1, 8),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(200, 100, 0, MS_SILENT, MZ_SMALL),
+        MR_SLEEP | MR_POISON, MR_POISON, MRACE_NONE,
+        M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS,
+        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_WHITE),
+    MON("gelatinous cube", S_JELLY,
+        LVL(6, 6, 8, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_TUCH, AD_PLYS, 2, 4), ATTK(AT_NONE, AD_PLYS, 1, 4),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(600, 150, 0, MS_SILENT, MZ_LARGE),
+        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP | MR_POISON | MR_ACID | MR_STONE,
+        MR_FIRE | MR_COLD | MR_ELEC | MR_SLEEP, MRACE_NONE,
+        M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS | M1_OMNIVORE |
+        M1_ACID,
+        M2_WANDER | M2_HOSTILE | M2_NEUTER, 0, CLR_CYAN),
     MON("blue jelly", S_JELLY,
         LVL(4, 0, 8, 10, 0), (G_GENO | 2),
         A(ATTK(AT_NONE, AD_COLD, 0, 6),
@@ -593,6 +594,66 @@ const struct permonst mons[] = {
 /*
  * leprechauns have been moved to S_IMP
  */
+/*
+ * l is now lizards, &c
+ */
+    MON("newt", S_LIZARD,
+        LVL(0, 6, 8, 0, 0), (G_GENO | 5),
+        A(ATTK(AT_BITE, AD_PHYS, 1, 2),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(10, 20, 0, MS_SILENT, MZ_TINY), 0, 0, MRACE_NONE,
+        M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE,
+        M2_HOSTILE, 0, CLR_YELLOW),
+    MON("gecko", S_LIZARD,
+        LVL(1, 6, 8, 0, 0), (G_GENO | 5),
+        A(ATTK(AT_BITE, AD_PHYS, 1, 3),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(10, 20, 0, MS_SQEEK, MZ_TINY), 0, 0, MRACE_NONE,
+        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_HOSTILE, 0, CLR_BRIGHT_GREEN),
+    MON("iguana", S_LIZARD,
+        LVL(2, 6, 7, 0, 0), (G_GENO | 5),
+        A(ATTK(AT_BITE, AD_PHYS, 1, 4),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(30, 30, 0, MS_SILENT, MZ_TINY), 0, 0, MRACE_NONE,
+        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_HOSTILE, 0, CLR_RED),
+    MON("baby crocodile", S_LIZARD,
+        LVL(3, 6, 7, 0, 0), G_GENO,
+        A(ATTK(AT_BITE, AD_PHYS, 1, 4),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(200, 200, 0, MS_SILENT, MZ_MEDIUM), 0, 0, MRACE_NONE,
+        M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE,
+        M2_HOSTILE, 0, CLR_BROWN),
+    MON("lizard", S_LIZARD,
+        LVL(5, 6, 6, 10, 0), (G_GENO | 5),
+        A(ATTK(AT_BITE, AD_PHYS, 1, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(10, 40, 0, MS_SILENT, MZ_TINY), MR_STONE, MR_STONE, MRACE_NONE,
+        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_HOSTILE, 0, CLR_GREEN),
+    MON("chameleon", S_LIZARD,
+        LVL(6, 5, 6, 10, 0), (G_GENO | 2),
+        A(ATTK(AT_BITE, AD_PHYS, 4, 2),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(100, 100, 0, MS_SILENT, MZ_TINY), 0, 0, MRACE_NONE,
+        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_NOPOLY | M2_HOSTILE, 0,
+        CLR_GRAY),
+    MON("crocodile", S_LIZARD,
+        LVL(6, 9, 5, 0, 0), (G_GENO | 1),
+        A(ATTK(AT_BITE, AD_PHYS, 4, 2), ATTK(AT_CLAW, AD_PHYS, 1, 12),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(WT_HUMAN, 400, 0, MS_SILENT, MZ_LARGE), 0, 0, MRACE_NONE,
+        M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_THICK_HIDE | M1_NOHANDS |
+        M1_OVIPAROUS | M1_CARNIVORE,
+        M2_STRONG | M2_HOSTILE, 0, CLR_BROWN | HI_ULINE),
+    MON("salamander", S_LIZARD,
+        LVL(8, 12, -1, 0, -9), (G_HELL | 1),
+        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_TUCH, AD_FIRE, 1, 6),
+          ATTK(AT_HUGS, AD_PHYS, 2, 6), ATTK(AT_HUGS, AD_FIRE, 3, 6),
+          NO_ATTK, NO_ATTK),
+        SIZ(1500, 400, 0, MS_MUMBLE, MZ_HUMAN), MR_SLEEP | MR_FIRE, MR_FIRE,
+        MRACE_NONE, M1_HUMANOID | M1_SLITHY | M1_THICK_HIDE | M1_POIS,
+        M2_STALK | M2_HOSTILE | M2_COLLECT | M2_MAGIC, M3_INFRAVISIBLE,
+        CLR_ORANGE),
+
 /*
  * mimics
  */
@@ -720,31 +781,9 @@ const struct permonst mons[] = {
         M2_ORC | M2_STRONG | M2_GREEDY | M2_JEWELS | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION, HI_LORD),
 /*
- * piercers
+ * p, formerly piercers, now available
  */
-    MON("rock piercer", S_PIERCER,
-        LVL(3, 1, 3, 0, 0), (G_GENO | 4),
-        A(ATTK(AT_BITE, AD_PHYS, 2, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0, MRACE_NONE,
-        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS |
-        M1_CARNIVORE | M1_NOTAKE, M2_HOSTILE, 0, CLR_BROWN),
-    MON("iron piercer", S_PIERCER,
-        LVL(5, 1, 0, 0, 0), (G_GENO | 2),
-        A(ATTK(AT_BITE, AD_PHYS, 3, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), 0, 0,
-        MRACE_NONE, M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES |
-        M1_NOLIMBS | M1_CARNIVORE | M1_NOTAKE,
-        M2_HOSTILE, 0, CLR_CYAN),
-    MON("glass piercer", S_PIERCER,
-        LVL(7, 1, 0, 0, 0), (G_GENO | 1),
-        A(ATTK(AT_BITE, AD_PHYS, 4, 6), NO_ATTK, NO_ATTK,
-          NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), MR_ACID, 0,
-        MRACE_NONE, M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES |
-        M1_NOLIMBS | M1_CARNIVORE | M1_NOTAKE,
-        M2_HOSTILE, 0, CLR_WHITE),
+
 /*
  * quadrupeds
  */
@@ -882,6 +921,30 @@ const struct permonst mons[] = {
 /*
  * trappers, lurkers, &c
  */
+    MON("rock piercer", S_TRAPPER,
+        LVL(3, 1, 3, 0, 0), (G_GENO | 4),
+        A(ATTK(AT_BITE, AD_PHYS, 2, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), 0, 0, MRACE_NONE,
+        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
+        M1_NOTAKE,
+        M2_HOSTILE, 0, CLR_BROWN),
+    MON("iron piercer", S_TRAPPER,
+        LVL(5, 1, 0, 0, 0), (G_GENO | 2),
+        A(ATTK(AT_BITE, AD_PHYS, 3, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), 0, 0, MRACE_NONE,
+        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
+        M1_NOTAKE,
+        M2_HOSTILE, 0, CLR_CYAN),
+    MON("glass piercer", S_TRAPPER,
+        LVL(7, 1, 0, 0, 0), (G_GENO | 1),
+        A(ATTK(AT_BITE, AD_PHYS, 4, 6), NO_ATTK, NO_ATTK,
+          NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(400, 300, 0, MS_SILENT, MZ_MEDIUM), MR_ACID, 0, MRACE_NONE,
+        M1_CLING | M1_HIDE | M1_ANIMAL | M1_NOEYES | M1_NOLIMBS | M1_CARNIVORE |
+        M1_NOTAKE,
+        M2_HOSTILE, 0, CLR_WHITE),
     MON("lurker above", S_TRAPPER,
         LVL(10, 3, 3, 0, 0), (G_GENO | 2),
         A(ATTK(AT_ENGL, AD_DGST, 1, 8),
@@ -1533,14 +1596,6 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_HUMANOID | M1_CARNIVORE,
         M2_GIANT | M2_STRONG | M2_ROCKTHROW | M2_NASTY | M2_COLLECT | M2_JEWELS,
         M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BLUE),
-    MON("ettin", S_GIANT,
-        LVL(10, 12, 3, 0, 0), (G_GENO | 1),
-        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_WEAP, AD_PHYS, 3, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(1700, 500, 0, MS_GRUNT, MZ_HUGE), 0, 0,
-        MRACE_NONE, M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE,
-        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_COLLECT,
-        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BRIGHT_BLUE),
     MON("titan", S_GIANT,
         LVL(16, 18, -3, 70, 9), (1),
         A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_MAGC, AD_SPEL, 0, 0),
@@ -1977,16 +2032,9 @@ const struct permonst mons[] = {
         M2_STRONG | M2_STALK | M2_HOSTILE | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION, HI_LORD),
 /*
- * Umber hulk
+ * Unused (formerly umber hulk)
  */
-    MON("umber hulk", S_UMBER,
-        LVL(9, 6, 2, 25, 0), (G_GENO | 2),
-        A(ATTK(AT_CLAW, AD_PHYS, 3, 4), ATTK(AT_CLAW, AD_PHYS, 3, 4),
-          ATTK(AT_BITE, AD_PHYS, 2, 5), ATTK(AT_GAZE, AD_CONF, 0, 0),
-          NO_ATTK, NO_ATTK),
-        SIZ(1200, 500, 0, MS_SILENT, MZ_LARGE), 0, 0,
-        MRACE_NONE, M1_TUNNEL | M1_CARNIVORE, M2_STRONG, M3_INFRAVISIBLE,
-        CLR_BROWN | HI_ULINE),
+
 /*
  * Vampires
  */
@@ -2009,14 +2057,17 @@ const struct permonst mons[] = {
         M2_MALE,
         M3_INFRAVISIBLE, CLR_BLUE),
     MON("Vlad the Impaler", S_VAMPIRE,
-        LVL(14, 18, -3, 80, -10), (G_NOGEN | G_NOCORPSE | G_UNIQ),
+        LVL(20, 18, -15, 80, -10), (G_NOGEN | G_NOCORPSE | G_UNIQ),
         A(ATTK(AT_WEAP, AD_PHYS, 1, 10), ATTK(AT_BITE, AD_DRLI, 1, 10),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(WT_HUMAN, 400, 0, MS_VAMPIRE, MZ_HUMAN), MR_SLEEP | MR_POISON, 0,
-        MRACE_NONE, M1_FLY | M1_BREATHLESS | M1_HUMANOID | M1_POIS | M1_REGEN,
+          ATTK(AT_SPIT, AD_DRLI, 2, 5), NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(WT_HUMAN, 400, 0, MS_VAMPIRE, MZ_HUMAN),
+        MR_SLEEP | MR_POISON | MR_COLD | MR_ELEC, 0,
+        MRACE_NONE, M1_FLY | M1_BREATHLESS | M1_HUMANOID | M1_POIS | M1_REGEN |
+                    M1_SEE_INVIS,
         M2_NOPOLY | M2_UNDEAD | M2_STALK | M2_HOSTILE | M2_PNAME | M2_STRONG |
         M2_NASTY | M2_PRINCE | M2_MALE,
-        M3_WAITFORU | M3_WANTSCAND | M3_INFRAVISIBLE, CLR_BRIGHT_MAGENTA),
+        M3_WAITFORU | M3_WANTSCAND | M3_INFRAVISIBLE | M3_INFRAVISION,
+        CLR_BRIGHT_MAGENTA),
 /*
  * Wraiths
  */
@@ -2072,7 +2123,7 @@ const struct permonst mons[] = {
         M2_NOPOLY | M2_UNDEAD | M2_WANDER | M2_STALK | M2_HOSTILE | M2_NASTY,
         M3_INFRAVISION, CLR_BRIGHT_BLUE),
 /*
- * Xorn
+ * Large Deep-Rock Dwellers
  */
     MON("xorn", S_XORN,
         LVL(8, 9, -2, 20, 0), (G_GENO | 1),
@@ -2083,6 +2134,30 @@ const struct permonst mons[] = {
         MR_FIRE | MR_COLD | MR_STONE, MR_STONE, MRACE_NONE,
         M1_BREATHLESS | M1_WALLWALK | M1_THICK_HIDE | M1_METALLIVORE,
         M2_HOSTILE | M2_STRONG, 0, CLR_RED),
+    MON("umber hulk", S_XORN,
+        LVL(9, 6, 2, 25, 0), (G_GENO | 2),
+        A(ATTK(AT_CLAW, AD_PHYS, 3, 4), ATTK(AT_CLAW, AD_PHYS, 3, 4),
+          ATTK(AT_BITE, AD_PHYS, 2, 5), ATTK(AT_GAZE, AD_CONF, 0, 0),
+          NO_ATTK, NO_ATTK),
+        SIZ(1200, 500, 0, MS_SILENT, MZ_LARGE), 0, 0, MRACE_NONE,
+        M1_TUNNEL | M1_CARNIVORE, M2_STRONG, M3_INFRAVISIBLE,
+        CLR_BROWN | HI_ULINE),
+    MON("ettin", S_XORN,
+        LVL(10, 12, 3, 0, 0), (G_GENO | 1),
+        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_WEAP, AD_PHYS, 3, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(1700, 500, 0, MS_GRUNT, MZ_HUGE), 0, 0, MRACE_NONE,
+        M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE | M1_TUNNEL | M1_NEEDPICK,
+        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_COLLECT,
+        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_BRIGHT_BLUE),
+    MON("deep ettin", S_XORN,
+        LVL(16, 12, -6, 50, 0), (G_GENO | G_SGROUP | 1),
+        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_WEAP, AD_PHYS, 3, 6),
+          ATTK(AT_MAGC, AD_SPEL, 0, 0), NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(1700, 500, 0, MS_GRUNT, MZ_HUGE), 0, 0, MRACE_FAIRY,
+        M1_TUNNEL | M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE,
+        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_COLLECT,
+        M3_INFRAVISIBLE | M3_INFRAVISION, CLR_MAGENTA),
 /*
  * Apelike beasts
  */
@@ -2858,66 +2933,6 @@ const struct permonst mons[] = {
         SIZ(1800, 1000, 0, MS_SILENT, MZ_HUGE), 0, 0, MRACE_NONE,
         M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE,
         M2_NOPOLY | M2_HOSTILE | M2_STRONG, M3_INFRAVISIBLE, HI_LORD),
-/*
- * lizards, &c
- */
-    MON("newt", S_LIZARD,
-        LVL(0, 6, 8, 0, 0), (G_GENO | 5),
-        A(ATTK(AT_BITE, AD_PHYS, 1, 2),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(10, 20, 0, MS_SILENT, MZ_TINY), 0, 0, MRACE_NONE,
-        M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE,
-        M2_HOSTILE, 0, CLR_YELLOW),
-    MON("gecko", S_LIZARD,
-        LVL(1, 6, 8, 0, 0), (G_GENO | 5),
-        A(ATTK(AT_BITE, AD_PHYS, 1, 3),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(10, 20, 0, MS_SQEEK, MZ_TINY), 0, 0, MRACE_NONE,
-        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_HOSTILE, 0, CLR_BRIGHT_GREEN),
-    MON("iguana", S_LIZARD,
-        LVL(2, 6, 7, 0, 0), (G_GENO | 5),
-        A(ATTK(AT_BITE, AD_PHYS, 1, 4),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(30, 30, 0, MS_SILENT, MZ_TINY), 0, 0, MRACE_NONE,
-        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_HOSTILE, 0, CLR_RED),
-    MON("baby crocodile", S_LIZARD,
-        LVL(3, 6, 7, 0, 0), G_GENO,
-        A(ATTK(AT_BITE, AD_PHYS, 1, 4),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(200, 200, 0, MS_SILENT, MZ_MEDIUM), 0, 0, MRACE_NONE,
-        M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE,
-        M2_HOSTILE, 0, CLR_BROWN),
-    MON("lizard", S_LIZARD,
-        LVL(5, 6, 6, 10, 0), (G_GENO | 5),
-        A(ATTK(AT_BITE, AD_PHYS, 1, 6),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(10, 40, 0, MS_SILENT, MZ_TINY), MR_STONE, MR_STONE, MRACE_NONE,
-        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_HOSTILE, 0, CLR_GREEN),
-    MON("chameleon", S_LIZARD,
-        LVL(6, 5, 6, 10, 0), (G_GENO | 2),
-        A(ATTK(AT_BITE, AD_PHYS, 4, 2),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(100, 100, 0, MS_SILENT, MZ_TINY), 0, 0, MRACE_NONE,
-        M1_ANIMAL | M1_NOHANDS | M1_CARNIVORE, M2_NOPOLY | M2_HOSTILE, 0,
-        CLR_GRAY),
-    MON("crocodile", S_LIZARD,
-        LVL(6, 9, 5, 0, 0), (G_GENO | 1),
-        A(ATTK(AT_BITE, AD_PHYS, 4, 2), ATTK(AT_CLAW, AD_PHYS, 1, 12),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(WT_HUMAN, 400, 0, MS_SILENT, MZ_LARGE), 0, 0,
-        MRACE_NONE, M1_SWIM | M1_AMPHIBIOUS | M1_ANIMAL | M1_THICK_HIDE |
-        M1_NOHANDS | M1_OVIPAROUS | M1_CARNIVORE,
-        M2_STRONG | M2_HOSTILE, 0, CLR_BROWN | HI_ULINE),
-    MON("salamander", S_LIZARD,
-        LVL(8, 12, -1, 0, -9), (G_HELL | 1),
-        A(ATTK(AT_WEAP, AD_PHYS, 2, 8), ATTK(AT_TUCH, AD_FIRE, 1, 6),
-          ATTK(AT_HUGS, AD_PHYS, 2, 6), ATTK(AT_HUGS, AD_FIRE, 3, 6),
-          NO_ATTK, NO_ATTK),
-        SIZ(1500, 400, 0, MS_MUMBLE, MZ_HUMAN), MR_SLEEP | MR_FIRE, MR_FIRE,
-        MRACE_NONE, M1_HUMANOID | M1_SLITHY | M1_THICK_HIDE | M1_POIS,
-        M2_STALK | M2_HOSTILE | M2_COLLECT | M2_MAGIC, M3_INFRAVISIBLE,
-        CLR_ORANGE),
-
 /*
  * dummy monster needed for visual interface
  */
