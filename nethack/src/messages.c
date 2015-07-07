@@ -390,6 +390,7 @@ update_showlines(char **intermediate, int *length, nh_bool force_more,
     char buf[strlen(*intermediate) + messagelen + 3];
 
     if (!showlines[0].nomerge && showlines[0].message &&
+        !settings.msgnomerge &&
         /* Compare negations because 2 != 1 but !2 == !1 */
         (!showlines[0].temp == !temporary)) {
         strcpy(buf, showlines[0].message);

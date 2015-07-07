@@ -74,6 +74,10 @@ Changes in 4.3.0.3:
 Changes in 4.3.0.2:
 -------------------
 
+ * Sylphs can no longer be Valkyries; but they can be Rangers and,
+   for the time being, Wizards.  (Sylph Wizard is highly tentative
+   and may get removed if it proves too unbalanced.)
+
  * Wands of digging now dig multiple tiles in Gehennom (and other
    maze levels), the same as everywhere else.
 
@@ -214,8 +218,7 @@ Changes in 4.3.0.2:
    power or healing to be drawn from the environment in Gehennom; this
    may get changed if it proves to be unbalanced.)  Sylphs are always
    female.  They can be neutral or chaotic and can currently be
-   Valkyries, Priests, Rogues, or Healers.  (Valkyrie may get changed
-   out for another role later, possibly Ranger, we'll see.)
+   Priests, Rogues, Healers, Rangers, or Wizards.
 
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
