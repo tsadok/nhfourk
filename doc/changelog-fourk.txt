@@ -216,7 +216,6 @@ Changes in 4.3.0.2:
    female.  They can be neutral or chaotic and can currently be
    Valkyries, Priests, Rogues, or Healers.  (Valkyrie may get changed
    out for another role later, possibly Ranger, we'll see.)
->>>>>>> 4.3.0.2
 
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
