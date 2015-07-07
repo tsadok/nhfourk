@@ -1021,7 +1021,11 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
     long trquan = trop->trquan;
 
     while (trop->trclass) {
-        if (trop->trotyp != UNDEF_TYP) {
+        if (trop->trotyp != UNDEF_TYP &&
+            /* if we already got a particular ring or book, try to avoid
+               duplicating it exactly, even when the type is specified */
+            ((trop->trclass != SPBOOK_CLASS && trop->trclass != RING_CLASS) ||
+             !carrying(trop->trotyp))) {
             otyp = (int)trop->trotyp;
             if (urace.malenum != PM_HUMAN) {
                 /* substitute specific items for generic ones */
@@ -1044,6 +1048,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
              * polymorph/polymorph control combination.  Specific objects,
              * i.e. the discovery wishing, are still OK.
              * Also, don't get a couple of really useless items.
+             * Also, _attempt_ to avoid giving two identical books.
              */
             obj = mkobj(level, trop->trclass, FALSE, rng);
             otyp = obj->otyp;
@@ -1073,6 +1078,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                       categories */
                    || (obj->oclass == SPBOOK_CLASS &&
                        (objects[otyp].oc_level > 3 ||
+                        carrying(otyp) ||
                         restricted_spell_discipline(otyp)))
                 ) {
                 dealloc_obj(obj);
