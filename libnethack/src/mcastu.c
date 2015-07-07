@@ -761,8 +761,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
                          unsigned int adtyp, int spellnum)
 {
     /* Can the aggressor see the square it thinks the defender is on? */
-    int believed_mdef_mx = m_mx(mdef);
-    int believed_mdef_my = m_my(mdef);
+    int believed_mdef_mx = mdef ? m_mx(mdef) : 0;
+    int believed_mdef_my = mdef ? m_my(mdef) : 0;
     if (mdef == &youmonst) {
         believed_mdef_mx = magr->mux;
         believed_mdef_my = magr->muy;
@@ -771,9 +771,9 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
     if (Engulfed && (magr == u.ustuck || mdef == u.ustuck))
         appropriate_vizarray = NULL;
 
-    boolean believed_loe = clear_path(magr->mx, magr->my,
-                                      believed_mdef_mx, believed_mdef_my,
-                                      appropriate_vizarray);
+    boolean believed_loe = mdef ? clear_path(magr->mx, magr->my,
+                                             believed_mdef_mx, believed_mdef_my,
+                                             appropriate_vizarray) : FALSE;
     boolean magr_peaceful = magr == &youmonst || magr->mpeaceful;
     boolean magr_tame = magr == &youmonst || magr->mtame;
 
@@ -835,8 +835,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
         if (!believed_loe && spellnum == CLC_INSECTS)
             return TRUE;
         /* blindness spell on blinded target */
-        if ((m_has_property(mdef, BLINDED, ANY_PROPERTY, TRUE) ||
-             !haseyes(mdef->data)) &&
+        if (mdef && (m_has_property(mdef, BLINDED, ANY_PROPERTY, TRUE) ||
+                     !haseyes(mdef->data)) &&
             spellnum == CLC_BLIND_YOU)
             return TRUE;
         /* spells that harm master while tame and not conflicted */
