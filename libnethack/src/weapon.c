@@ -84,7 +84,9 @@ give_may_advance_msg(int skill)
 static boolean could_advance(int);
 static boolean peaked_skill(int);
 static int slots_required(int);
+static const char *skill_level_name_from_constant(int);
 static const char *skill_level_name(int);
+static const char *max_skill_level_name(int);
 static void skill_advance(int);
 
 #define P_NAME(type) ((skill_names_indices[type] > 0) ? \
@@ -905,12 +907,12 @@ dbon(void)
         return 6;
 }
 
-
-/* return the level name for the given skill */
+/* return the level name for a given skill level constant;
+   this is used by skill_level_name and max_skill_level_name
+   to avoid duplicating the switch statement */
 static const char *
-skill_level_name(int skill)
-{
-    switch (P_SKILL(skill)) {
+skill_level_name_from_constant(int skill_level) {
+    switch (skill_level) {
     case P_UNSKILLED:
         return "Unskilled";
     case P_BASIC:
@@ -919,7 +921,6 @@ skill_level_name(int skill)
         return "Skilled";
     case P_EXPERT:
         return "Expert";
-        /* these are for unarmed combat/martial arts only */
     case P_MASTER:
         return "Master";
     case P_GRAND_MASTER:
@@ -927,6 +928,22 @@ skill_level_name(int skill)
     default:
         return "Unknown";
     }
+}
+
+/* return the level name of the player's current skill level 
+   for the given skill */
+static const char *
+skill_level_name(int skill)
+{
+    return skill_level_name_from_constant(P_SKILL(skill));
+}
+
+/* return the level name of the player's skill cap
+   (maximum achievable skill level) for the given skill */
+static const char *
+max_skill_level_name(int skill)
+{
+    return skill_level_name_from_constant(P_MAX_SKILL(skill));
 }
 
 /* return the # of slots required to advance the skill */
@@ -1095,9 +1112,13 @@ enhance_weapon_skill(const struct nh_cmd_arg *arg)
                     buf = msgprintf(" %s%s\t%s\t%5d(%4d)", prefix, P_NAME(i),
                                     skill_level_name(i), P_ADVANCE(i),
                                     practice_needed_to_advance(P_SKILL(i)));
-                else
+                else if (P_SKILL(i) == P_MAX_SKILL(i))
                     buf = msgprintf(" %s%s\t[%s]", prefix, P_NAME(i),
                                     skill_level_name(i));
+                else
+                    buf = msgprintf(" %s%s\t[%s / %s]", prefix, P_NAME(i),
+                                    skill_level_name(i),
+                                    max_skill_level_name(i));
 
                 if (could_advance(i) || can_advance(i, speedy))
                     buf = msgprintf("%s (%d to advance)",
