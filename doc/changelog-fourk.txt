@@ -53,6 +53,19 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Upstream (NH4) changes merged during the 4.3.0.3 cycle include the
+   user interaction mode rewrite (including the attackhostile setting
+   for the movecommand option, which stops the game from asking if you
+   want to attack peaceful monsters, assuming that if you wanted to do
+   that you would have used the Fight prefix) and the M3_SCENT monster
+   flag (which allows certain monsters, e.g., canines, to pinpoint
+   your location by scent when they are close to you, even if they
+   can't see you).
+
+ * The degree to which a worn shield adds to your AC to prevent you
+   from being hit is now a function of your skill with the shield,
+   which is exercised as you use the shield in combat.
+
  * Large deep-rock dwellers (X) now include xorns, umber hulks,
    ettins, and deep ettins.
 
@@ -73,6 +86,9 @@ Changes in 4.3.0.3:
 
 Changes in 4.3.0.2:
 -------------------
+
+ * The #enhance screen how shows you both your current skill level
+   and your skill cap (maximum level your character can achieve).
 
  * Sylphs can no longer be Valkyries; but they can be Rangers and,
    for the time being, Wizards.  (Sylph Wizard is highly tentative

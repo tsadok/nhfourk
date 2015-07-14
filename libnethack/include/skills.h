@@ -70,7 +70,8 @@
 # define P_BARE_HANDED_COMBAT   37
 # define P_MARTIAL_ARTS         P_BARE_HANDED_COMBAT    /* Role distinguishes */
 # define P_TWO_WEAPON_COMBAT    38      /* Finally implemented */
-# define P_RIDING               39      /* How well you control your steed */
+# define P_SHIELD               39      /* How well you use a shield */
+# define P_RIDING               40      /* How well you control your steed */
 # define P_LAST_H_TO_H          P_RIDING
 # define P_FIRST_H_TO_H         P_BARE_HANDED_COMBAT
 
