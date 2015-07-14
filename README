@@ -1,5 +1,5 @@
 About this document:
-Last modified by Alex Smith, 2015-04-01
+Last modified by Alex Smith, 2015-07-12
 
 Copyright (C) 2013 Alex Smith.
 Copyright (C) 2015 Nathan Eady.
@@ -9,6 +9,10 @@ See libnethack/dat/license for details.
 
 Overview
 ========
+
+NetHack is free software, and has no warranty of any sort. For more
+information on the license situation, read `COPYING` (a summary), or
+`copyright` (full details).
 
 NetHack Fourk (NHF) is based on NetHack 4 (NH4), with additional
 changes.  In order to understand the purpose of NetHack Fourk, you
@@ -438,6 +442,18 @@ at the git log.)  Additionally, changelog.txt, listing the changes in NetHack
 
 Build Instructions
 ==================
+
+General note
+------------
+
+The build instructions in this system are basic "do this, and things should
+work" advice, and do not go heavily into details of customizing a build.
+
+If you want to do something complex or unusual, you can read the build
+system manual (which lists everything in more detail than most people will
+need) via running the command
+
+    perl aimake --documentation
 
 UNIX/Linux/Mac OS X
 -------------------
