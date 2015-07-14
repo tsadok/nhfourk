@@ -54,6 +54,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * The #enhance screen how shows you both your current skill level
+   and your skill cap (maximum level your character can achieve).
+
  * Sylphs can no longer be Valkyries; but they can be Rangers and,
    for the time being, Wizards.  (Sylph Wizard is highly tentative
    and may get removed if it proves too unbalanced.)
