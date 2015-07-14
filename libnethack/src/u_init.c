@@ -339,7 +339,7 @@ static const struct def_skill Skill_A[] = {
     {P_ATTACK_SPELL, P_BASIC}, {P_HEALING_SPELL, P_BASIC},
     {P_DIVINATION_SPELL, P_EXPERT}, {P_MATTER_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_BASIC},
+    {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
     {P_NONE, 0}
 };
@@ -355,7 +355,7 @@ static const struct def_skill Skill_B[] = {
     {P_QUARTERSTAFF, P_BASIC}, {P_SPEAR, P_SKILLED},
     {P_TRIDENT, P_SKILLED}, {P_BOW, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_EXPERT},
+    {P_TWO_WEAPON_COMBAT, P_EXPERT},  {P_SHIELD, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_MASTER},
     {P_NONE, 0}
 };
@@ -370,7 +370,7 @@ static const struct def_skill Skill_C[] = {
     {P_JAVELIN, P_SKILLED}, {P_TRIDENT, P_SKILLED},
     {P_BOW, P_BASIC}, {P_SLING, P_EXPERT},
     {P_BOOMERANG, P_EXPERT}, {P_UNICORN_HORN, P_BASIC},
-    {P_BARE_HANDED_COMBAT, P_MASTER},
+    {P_BARE_HANDED_COMBAT, P_MASTER},  {P_SHIELD, P_BASIC},
     {P_NONE, 0}
 };
 
@@ -384,7 +384,7 @@ static const struct def_skill Skill_H[] = {
     {P_SLING, P_SKILLED}, {P_DART, P_EXPERT},
     {P_SHURIKEN, P_SKILLED}, {P_UNICORN_HORN, P_EXPERT},
     {P_HEALING_SPELL, P_EXPERT},
-    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
     {P_NONE, 0}
 };
 
@@ -401,7 +401,8 @@ static const struct def_skill Skill_K[] = {
     {P_TRIDENT, P_BASIC}, {P_BOW, P_BASIC}, {P_CROSSBOW, P_EXPERT},
     {P_ATTACK_SPELL, P_SKILLED}, {P_HEALING_SPELL, P_SKILLED},
     {P_CLERIC_SPELL, P_SKILLED}, {P_RIDING, P_EXPERT},
-    {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
+    {P_BARE_HANDED_COMBAT, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -413,7 +414,7 @@ static const struct def_skill Skill_Mon[] = {
     {P_DIVINATION_SPELL, P_BASIC}, {P_ENCHANTMENT_SPELL, P_BASIC},
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_MATTER_SPELL, P_BASIC},
-    {P_MARTIAL_ARTS, P_GRAND_MASTER},
+    {P_MARTIAL_ARTS, P_GRAND_MASTER},  {P_SHIELD, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -428,7 +429,7 @@ static const struct def_skill Skill_P[] = {
     {P_BOOMERANG, P_BASIC}, {P_UNICORN_HORN, P_SKILLED},
     {P_HEALING_SPELL, P_EXPERT}, {P_DIVINATION_SPELL, P_EXPERT},
     {P_CLERIC_SPELL, P_EXPERT},
-    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -445,7 +446,7 @@ static const struct def_skill Skill_R[] = {
     {P_DIVINATION_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_SKILLED},
     {P_MATTER_SPELL, P_SKILLED},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_BASIC},
+    {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_BASIC},
     {P_NONE, 0}
 };
@@ -465,7 +466,7 @@ static const struct def_skill Skill_Ran[] = {
     {P_DIVINATION_SPELL, P_EXPERT},
     {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -480,7 +481,7 @@ static const struct def_skill Skill_S[] = {
     {P_ATTACK_SPELL, P_SKILLED}, {P_CLERIC_SPELL, P_SKILLED},
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},
-    {P_MARTIAL_ARTS, P_MASTER},
+    {P_MARTIAL_ARTS, P_MASTER},  {P_SHIELD, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -501,7 +502,7 @@ static const struct def_skill Skill_T[] = {
     {P_DIVINATION_SPELL, P_BASIC}, {P_ENCHANTMENT_SPELL, P_BASIC},
     {P_ESCAPE_SPELL, P_SKILLED},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_SKILLED},
+    {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_SKILLED},
     {P_NONE, 0}
 };
@@ -517,7 +518,7 @@ static const struct def_skill Skill_V[] = {
     {P_TRIDENT, P_BASIC}, {P_SLING, P_BASIC},
     {P_ATTACK_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_SKILLED},
-    {P_TWO_WEAPON_COMBAT, P_SKILLED},
+    {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_MASTER},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
     {P_NONE, 0}
 };
@@ -535,7 +536,7 @@ static const struct def_skill Skill_W[] = {
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_EXPERT},
     {P_MATTER_SPELL, P_EXPERT},
     {P_RIDING, P_BASIC},
-    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -892,6 +893,7 @@ u_init_inv_skills(void)
         knows_object(URUK_HAI_SHIELD);
         knows_object(ORCISH_CLOAK);
         augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
+        augment_skill_cap(P_SHIELD, 1, P_BASIC, P_MASTER);
         break;
 
     case PM_SYLPH:

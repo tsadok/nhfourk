@@ -402,6 +402,32 @@ mattacku(struct monst *mtmp)
         tmp -= 2;
     if (tmp <= 0)
         tmp = 1;
+    /* If you are wearing a shield, adjust this per your shield skill */
+    if (uarms) {
+        switch ((P_MAX_SKILL(P_SHIELD) == P_ISRESTRICTED) ?
+                P_ISRESTRICTED : P_SKILL(P_SHIELD)) {
+        case P_ISRESTRICTED:
+            tmp += 5;
+            break;
+        case P_UNSKILLED:
+            tmp += 2;
+            break;
+        case P_BASIC:
+            break;
+        case P_SKILLED:
+            tmp -= 2;
+            break;
+        case P_EXPERT:
+            tmp -= 4;
+            break;
+        case P_MASTER:
+            tmp -= 6;
+            break;
+        default:
+            impossible("Unknown shield skill level: %d",
+                       P_SKILL(P_SHIELD));
+        }
+    }
 
     /* make eels visible the moment they hit/miss us */
     if (mdat->mlet == S_EEL && mtmp->minvis && cansee(mtmp->mx, mtmp->my)) {
@@ -462,8 +488,11 @@ mattacku(struct monst *mtmp)
                     if (mattk->aatyp != AT_KICK ||
                         !thick_skinned(youmonst.data))
                         sum[i] = hitmu(mtmp, mattk);
-                } else
+                } else {
                     missmu(mtmp, (tmp == j), mattk);
+                    if (uarms)
+                        use_skill(P_SHIELD, 1);
+                }
             }
             break;
 
@@ -495,6 +524,8 @@ mattacku(struct monst *mtmp)
                     sum[i] = gulpmu(mtmp, mattk);
                 } else {
                     missmu(mtmp, (tmp == j), mattk);
+                    if (uarms)
+                        use_skill(P_SHIELD, 1);
                 }
             }
             break;
@@ -529,8 +560,11 @@ mattacku(struct monst *mtmp)
                 }
                 if (tmp > (j = dieroll = rnd(20 + i)))
                     sum[i] = hitmu(mtmp, mattk);
-                else
+                else {
                     missmu(mtmp, (tmp == j), mattk);
+                    if (uarms)
+                        use_skill(P_SHIELD, 1);
+                }
                 /* KMH -- Don't accumulate to-hit bonuses */
                 if (otmp)
                     tmp -= hittmp;

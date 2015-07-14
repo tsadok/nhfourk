@@ -14,18 +14,19 @@
  */
 #define PN_BARE_HANDED       (-1)       /* includes martial arts */
 #define PN_TWO_WEAPONS       (-2)
-#define PN_RIDING            (-3)
-#define PN_POLEARMS          (-4)
-#define PN_SABER             (-5)
-#define PN_HAMMER            (-6)
-#define PN_WHIP              (-7)
-#define PN_ATTACK_SPELL      (-8)
-#define PN_HEALING_SPELL     (-9)
-#define PN_DIVINATION_SPELL  (-10)
-#define PN_ENCHANTMENT_SPELL (-11)
-#define PN_CLERIC_SPELL      (-12)
-#define PN_ESCAPE_SPELL      (-13)
-#define PN_MATTER_SPELL      (-14)
+#define PN_SHIELD            (-3)
+#define PN_RIDING            (-4)
+#define PN_POLEARMS          (-5)
+#define PN_SABER             (-6)
+#define PN_HAMMER            (-7)
+#define PN_WHIP              (-8)
+#define PN_ATTACK_SPELL      (-9)
+#define PN_HEALING_SPELL     (-10)
+#define PN_DIVINATION_SPELL  (-11)
+#define PN_ENCHANTMENT_SPELL (-12)
+#define PN_CLERIC_SPELL      (-13)
+#define PN_ESCAPE_SPELL      (-14)
+#define PN_MATTER_SPELL      (-15)
 
 static void give_may_advance_msg(int);
 
@@ -42,7 +43,7 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
     PN_DIVINATION_SPELL, PN_ENCHANTMENT_SPELL,
     PN_CLERIC_SPELL, PN_ESCAPE_SPELL,
     PN_MATTER_SPELL,
-    PN_BARE_HANDED, PN_TWO_WEAPONS,
+    PN_BARE_HANDED, PN_TWO_WEAPONS, PN_SHIELD,
     PN_RIDING
 };
 
@@ -51,6 +52,7 @@ static const char *const odd_skill_names[] = {
     "no skill",
     "bare hands",       /* use barehands_or_martial[] instead */
     "two weapon combat",
+    "shield",
     "riding",
     "polearms",
     "saber",
@@ -1521,7 +1523,11 @@ skill_init(const struct def_skill *class_skill)
     for (obj = invent; obj; obj = obj->nobj) {
         if (obj->otyp == TOUCHSTONE || obj->otyp == LUCKSTONE)
             continue;
-        skill = weapon_type(obj);
+        if (is_shield(obj))
+            skill = P_SHIELD;
+        else
+            skill = weapon_type(obj);
+
         if (skill != P_NONE) {
             P_MAX_SKILL(skill) = P_BASIC;
             P_SKILL(skill)     = P_BASIC;
