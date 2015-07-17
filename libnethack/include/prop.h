@@ -83,7 +83,8 @@ enum youprop {
     WARN_OF_MON              = 66,
     XRAY_VISION              = 67,
     DETECT_MONSTERS          = 68,
-    LAST_PROP                = DETECT_MONSTERS,
+    FAST_DIGGING             = 69,
+    LAST_PROP                = FAST_DIGGING,
 };
 
 /* This enum holds all the equipment that is tracked indirectly in struct you;

@@ -154,6 +154,11 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_HALRES), 0, 0,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 8000L),
 
+    A("Quickpick", PICK_AXE,
+      (SPFX_RESTR | SPFX_DCLAS), 0, S_XORN,
+      PHYS(5, 0), DFNS(ART_FAST_DIG), NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM,
+      300L),
+
     A("Giantslayer", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_GIANT,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM, 200L),
