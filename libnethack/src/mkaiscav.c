@@ -595,12 +595,44 @@ mkaiscav(struct level *lev)
     place_branch(lev, Is_branchlev(&lev->z), COLNO, ROWNO);
 
     /* Place traps: */
-    // TODO
+    for (i = (5 + mrn2(100 + aisdepth) / 12); i > 0; i--) {
+        int typ = mrn2(TRAPNUM);
+        while ((typ == NO_TRAP) ||
+               (typ == MAGIC_PORTAL) || (typ == VIBRATING_SQUARE) ||
+               (((typ == HOLE) || (typ == TRAPDOOR)) &&
+                !(can_fall_thru(lev)))) {
+            typ = mrn2(TRAPNUM);
+        }
+        spot = aisplace();
+        maketrap(lev, spot.x, spot.y, typ, rng);
+        
+    }
 
     /* Place boulders: */
     for (i = ((mrn2(aisdepth || 1) - 1) / 15); i > 0; i--) {
         spot = aisplace();
         mksobj_at(BOULDER, lev, spot.x, spot.y, TRUE, FALSE, rng);
+    }
+
+    /* Statuary */
+    if (!mrn2(3)) {
+        for (i = mrn2(6); i > 0; i--) {
+            spot = aisplace();
+            const struct permonst *mptr = &mons[rndmonnum(&lev->z, rng)];
+            struct obj *statue = mkcorpstat(STATUE, NULL, mptr,
+                                            lev, spot.x, spot.y, FALSE, rng);
+            struct monst *mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO, MM_NOCOUNTBIRTH);
+            if (mtmp) {
+                while (mtmp->minvent) {
+                    struct obj * otmp = mtmp->minvent;
+                    otmp->owornmask = 0;
+                    obj_extract_self(otmp);
+                    add_to_container(statue, otmp);
+                }
+                statue->owt = weight(statue);
+                mongone(mtmp);
+            }
+        }
     }
 
     /* Place demons: */
@@ -702,7 +734,7 @@ mkaiscav(struct level *lev)
         makemon(NULL, lev, spot.x, spot.y, 0);
     }
     
-    /* Place objects: */
+    /* Place random objects: */
     for (i = 12 + mrn2(8); i > 0; i--) {
         spot = aisplace();
         mkobj_at(0, lev, spot.x, spot.y, TRUE, rng);
