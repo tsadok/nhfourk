@@ -866,7 +866,11 @@ makelevel(struct level *lev)
                    (/* mrn2(5) && */
                        lev->z.dnum == medusa_level.dnum &&
                     depth(&lev->z) > depth(&medusa_level))) {
-            makemaz(lev, "");
+            if (Invocation_lev(&lev->z))
+                /* Haven't taught mkaiscav to place the VS yet. */
+                makemaz(lev, "");
+            else
+                mkaiscav(lev);
             return;
         }
     }
