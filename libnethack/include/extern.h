@@ -964,6 +964,10 @@ extern int llord(void);
 extern int ndemon(const d_level * dlev, aligntyp atyp);
 extern int lminion(void);
 
+/* mkaiscav.c */
+
+extern void mkaiscav(struct level *lev);
+
 /* ### mklev.c ### */
 
 extern struct level *alloc_level(d_level * levnum);
@@ -1072,6 +1076,8 @@ extern boolean inside_room(struct mkroom *, xchar, xchar);
 extern boolean somexy(struct level *lev, struct mkroom *, coord *, enum rng);
 extern void mkundead(struct level *lev, coord * mm, boolean revive_corpses,
                      int mmflags);
+extern const struct permonst *morguemon(const d_level *dlev, enum rng rng);
+extern const struct permonst *squadmon(const d_level *dlev);
 extern const struct permonst *courtmon(const d_level * dlev, enum rng rng);
 extern void save_rooms(struct memfile *mf, struct level *lev);
 extern void rest_rooms(struct memfile *mf, struct level *lev);
