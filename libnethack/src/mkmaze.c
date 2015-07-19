@@ -425,7 +425,7 @@ makemaz(struct level *lev, const char *s)
 
     lev->flags.is_maze_lev = TRUE;
 
-    if (In_hell(&lev->z) && (rn2_on_rng(3, rng))) {
+    if (/* In_hell(&lev->z) && */ rn2_on_rng(5, rng)) {
         xcorrwidth = 1 + rn2_on_rng(1+rn2_on_rng(6, rng), rng);
         xwallwidth = 1 + rn2_on_rng(1+rn2_on_rng(4, rng), rng);
         xtotlwidth = xcorrwidth + xwallwidth;

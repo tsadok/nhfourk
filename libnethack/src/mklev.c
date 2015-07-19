@@ -863,7 +863,8 @@ makelevel(struct level *lev)
             makemaz(lev, fillname);
             return;
         } else if (In_hell(&lev->z) ||
-                   (mrn2(5) && lev->z.dnum == medusa_level.dnum &&
+                   (/* mrn2(5) && */
+                       lev->z.dnum == medusa_level.dnum &&
                     depth(&lev->z) > depth(&medusa_level))) {
             makemaz(lev, "");
             return;
