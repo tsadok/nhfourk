@@ -47,17 +47,17 @@ BRANCH:		"The Elemental Planes" @ (1, 0) no_down up
 #		monsters can properly migrate here under certain
 #		circumstances.
 #
-DUNGEON:	"Gehennom" "G" (20, 5)
+DUNGEON:	"Gehennom" "G" (25, 5)
 DESCRIPTION:	mazelike
 DESCRIPTION:	hellish
 ALIGNMENT:	noalign
-BRANCH:		"Vlad's Tower" @ (9, 5) up
+BRANCH:		"Vlad's Tower" @ (9, 7) up
 LEVEL:		"valley" "V" @ (1, 0)
 LEVEL:		"sanctum" "none" @ (-1, 0)
-LEVEL:		"juiblex" "J" @ (4, 4)
-RNDLEVEL:	"yeedis" "B" @ (6, 4) 2
-RNDLEVEL:	"asbaal" "A" @ (2, 6) 5
-LEVEL:		"wizard1" "none" @ (11, 6)
+LEVEL:		"juiblex" "J" @ (7, 3)
+RNDLEVEL:	"yeedis" "B" @ (11, 3) 2
+RNDLEVEL:	"asbaal" "A" @ (3, 3) 5
+LEVEL:		"wizard1" "none" @ (15, 4)
 CHAINLEVEL:	"wizard2" "X" "wizard1" + (1, 0)
 CHAINLEVEL:	"wizard3" "Y" "wizard1" + (2, 0)
 RNDLEVEL:	"orcus" "O" @ (10, 6) 4
