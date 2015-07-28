@@ -52,6 +52,7 @@ int map[COLNO + 1][ROWNO + 1];
 coord shuffledcoord[(COLNO - 1) * (ROWNO - 1)];
 coord upstair, dnstair;
 int aisdepth, liqcount;
+#define RNGSAFEDEPTH ((aisdepth > 1) ? aisdepth : 1)
 int liquid = AIS_WATER;
 boolean river;
 int rng = rng_main; /* mkaiscav sets this first thing */
@@ -291,6 +292,7 @@ mkaiscav(struct level *lev)
     int x, y, i, nidx;
     int num_of_shuffledcoord = ((COLNO - 1) * (ROWNO - 1));
     coord spot;
+    struct branch *br = Is_branchlev(&lev->z);
     
     /* Initialize the map to undecided, except the edges: */
     i = 0;
@@ -350,7 +352,7 @@ mkaiscav(struct level *lev)
             }
             map[x][y] = (transitioncount > 2) ? AIS_FLOOR :
                 (transitioncount == 2) ? AIS_SOLID :
-                (mrn2(100) < (aisdepth * aisdepth * aisdepth
+                (mrn2(100) < ( RNGSAFEDEPTH * RNGSAFEDEPTH * RNGSAFEDEPTH
                               / (100 * 100))) ? AIS_SOLID : AIS_FLOOR;
             if (map[x][y] == AIS_SOLID)
                 ais_block_pt(x, y, FALSE, FALSE);
@@ -526,7 +528,7 @@ mkaiscav(struct level *lev)
     placestairs(0);
 
     liquid = (aisdepth > (mrn2(1000) / 9)) ? AIS_LAVA : AIS_WATER;
-    if (2 > mrn2(aisdepth || 1)) { /* river */
+    if (2 > mrn2( RNGSAFEDEPTH )) { /* river */
         int minbreadth = 1 + mrn2(1);
         int cx = (COLNO / 4) + mrn2(COLNO / 2);
         int cy = 0, cydir = 1, cxdir = 0;
@@ -554,7 +556,7 @@ mkaiscav(struct level *lev)
             cy += cydir;
         }
     } else { /* No river.  0 or more pools. */
-        int pcount = ((mrn2(6) * mrn2((aisdepth * 8) || 1)) - 150) / 100;
+        int pcount = ((mrn2(6) * mrn2( RNGSAFEDEPTH * 8)) - 150) / 100;
         for (i = 0; i < pcount; i++) {
             liqcount++;
             int cx = mrn2(COLNO);
@@ -595,7 +597,7 @@ mkaiscav(struct level *lev)
     place_branch(lev, Is_branchlev(&lev->z), COLNO, ROWNO);
 
     /* Place traps: */
-    for (i = (5 + mrn2(100 + aisdepth) / 12); i > 0; i--) {
+    for (i = (5 + mrn2(100 + RNGSAFEDEPTH ) / 12); i > 0; i--) {
         int typ = mrn2(TRAPNUM);
         while ((typ == NO_TRAP) ||
                (typ == MAGIC_PORTAL) || (typ == VIBRATING_SQUARE) ||
@@ -609,7 +611,7 @@ mkaiscav(struct level *lev)
     }
 
     /* Place boulders: */
-    for (i = ((mrn2(aisdepth || 1) - 1) / 15); i > 0; i--) {
+    for (i = ((mrn2( RNGSAFEDEPTH )) / 15); i > 0; i--) {
         spot = aisplace();
         mksobj_at(BOULDER, lev, spot.x, spot.y, TRUE, FALSE, rng);
     }
@@ -637,7 +639,7 @@ mkaiscav(struct level *lev)
 
     /* Place demons: */
     if (In_hell(&lev->z)) {
-        for (i = (3 + mrn2(2 + aisdepth / 10)); i > 0; i--) {
+        for (i = (3 + mrn2(2 + ( RNGSAFEDEPTH / 10))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_DEMON, 0, rng), lev, spot.x, spot.y, 0);
         }
@@ -648,9 +650,9 @@ mkaiscav(struct level *lev)
     case 1:
         spot = aisplace();
         makemon(&mons[PM_TITAN], lev, spot.x, spot.y, 0);
-        break;
+        /* fall through */
     case 2:
-        for (i = mrn2(1 + (aisdepth / 8)); i > 0; i--) {
+        for (i = mrn2(1 + ( RNGSAFEDEPTH / 8)); i > 0; i--) {
             spot = aisplace();
             makemon(((liquid == AIS_LAVA) ?
                      &mons[PM_FIRE_ELEMENTAL] : &mons[PM_GREMLIN]),
@@ -658,42 +660,42 @@ mkaiscav(struct level *lev)
         }
         break;
     case 3:
-        for (i = (3 + mrn2(1 + (aisdepth / 25))); i > 0; i--) {
+        for (i = (3 + mrn2(1 + ( RNGSAFEDEPTH / 25))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_XORN, 0, rng),
                     lev, spot.x, spot.y, 0);
         }
         break;
     case 4:
-        for (i = (3 + mrn2(1 + (aisdepth / 18))); i > 0; i--) {
+        for (i = (3 + mrn2(1 + ( RNGSAFEDEPTH / 18))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_DRAGON, 0, rng),
                     lev, spot.x, spot.y, 0);
         }
         break;
     case 5:
-        for (i = (1 + mrn2(1 + (aisdepth / 30))); i > 0; i--) {
+        for (i = (1 + mrn2(1 + ( RNGSAFEDEPTH / 30))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_JABBERWOCK, 0, rng),
                     lev, spot.x, spot.y, 0);
         }
         break;
     case 6:
-        for (i = (1 + mrn2(1 + (aisdepth / 40))); i > 0; i--) {
+        for (i = (1 + mrn2(1 + ( RNGSAFEDEPTH / 40))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_LICH, 0, rng),
                     lev, spot.x, spot.y, 0);
         }
         break;
     case 7:
-        for (i = (4 + mrn2(1 + (aisdepth / 15))); i > 0; i--) {
+        for (i = (4 + mrn2(1 + ( RNGSAFEDEPTH / 15))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_RUSTMONST, 0, rng),
                     lev, spot.x, spot.y, 0);
         }
         break;
     case 8:
-        for (i = (5 + mrn2(1 + (aisdepth / 10))); i > 0; i--) {
+        for (i = (5 + mrn2(1 + ( RNGSAFEDEPTH / 10))); i > 0; i--) {
             spot = aisplace();
             makemon(mkclass(&lev->z, S_TROLL, 0, rng),
                     lev, spot.x, spot.y, 0);
@@ -701,13 +703,13 @@ mkaiscav(struct level *lev)
         break;
     case 9:
         lev->flags.graveyard = 1;
-        for (i = (10 + mrn2(10 + (aisdepth / 10))); i > 0; i--) {
+        for (i = (10 + mrn2(10 + ( RNGSAFEDEPTH / 10))); i > 0; i--) {
             spot = aisplace();
             makemon(morguemon(&lev->z, rng), lev, spot.x, spot.y, 0);
         }
         break;
     case 10:
-        for (i = (5 + mrn2(1 + aisdepth / 15)); i > 0; i--) {
+        for (i = (5 + mrn2(1 + ( RNGSAFEDEPTH / 15))); i > 0; i--) {
             spot = aisplace();
             makemon(((i % 2) ? &mons[PM_WEREWOLF] :
                      (i % 3) ? &mons[PM_WEREJACKAL] : &mons[PM_WERERAT]),
@@ -715,13 +717,13 @@ mkaiscav(struct level *lev)
         }
         break;
     case 11:
-        for (i = (10 + mrn2(1 + aisdepth / 15)); i > 0; i--) {
+        for (i = (10 + mrn2(1 + ( RNGSAFEDEPTH / 15))); i > 0; i--) {
             spot = aisplace();
             makemon(squadmon(&lev->z), lev, spot.x, spot.y, 0);
         }
         break;
     default:
-        for (i = (3 + mrn2(1 + aisdepth / 25)); i > 0; i--) {
+        for (i = (3 + mrn2(1 + ( RNGSAFEDEPTH / 25))); i > 0; i--) {
             spot = aisplace();
             makemon(&mons[PM_DOPPELGANGER], lev, spot.x, spot.y, 0);
         }
@@ -729,7 +731,8 @@ mkaiscav(struct level *lev)
     }
 
     /* Place random monsters: */
-    for (i = (5 + (aisdepth / 25) + mrn2(1 + aisdepth / 30)); i > 0; i--) {
+    for (i = (5 + ( RNGSAFEDEPTH / 25) +
+              mrn2(1 + ( RNGSAFEDEPTH / 30))); i > 0; i--) {
         spot = aisplace();
         makemon(NULL, lev, spot.x, spot.y, 0);
     }
