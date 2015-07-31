@@ -570,10 +570,16 @@ mkaiscav(struct level *lev)
         for (y = 0; y < ROWNO; y++) {
             lev->locations[x][y].typ = STONE; /* Default */
             if ((x == upstair.x) && (y == upstair.y)) {
-                mkstairs(lev, x, y, 1, NULL);
+                if (x && y)
+                    mkstairs(lev, x, y, 1, NULL);
+                else
+                    impossible("Badly chosen upstair location, (%d,%d)", upstair.x, upstair.y);
             } else if ((x == dnstair.x) && (y == dnstair.y)) {
                 if (!Invocation_lev(&lev->z))
-                    mkstairs(lev, x, y, 0, NULL);
+                    if (x && y)
+                        mkstairs(lev, x, y, 0, NULL);
+                    else
+                        impossible("Badly chosen downstair location, (%d,%d)", dnstair.x, dnstair.y);
                 else {
                     panic("mkaiscav: not programmed to make the VS.");
                 }
