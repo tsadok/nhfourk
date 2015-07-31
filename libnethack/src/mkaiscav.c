@@ -84,6 +84,7 @@ static struct neighborhood neighbors(int x, int y);
 static void ais_block_pt(int x, int y, boolean check, boolean mark_corridors);
 static void markwalldirs(int x, int y, int dirone, int dirtwo);
 static void unmarkwalldir(int x, int y, int subtract);
+static coord aisstairloc(int baseprob, int edge, int dir, const char *which);
 static void placestairs(int trycount);
 static boolean xor(boolean conda, boolean condb);
 static void dopool(int cx, int cy, int radius, int jitter);
@@ -170,6 +171,65 @@ unmarkwalldir(int x, int y, int subtract)
         /* everything except _FLOOR, for the same reason as in markwalldirs */
         map[x][y] &= ~subtract;
     }
+}
+
+coord
+aisstairloc(int baseprob, int edge, int dir, const char *which)
+{
+    int stairx, stairy, i;
+    int shuffy[ROWNO];                                                                                                                             
+    int prob = baseprob;
+    int poscount = 0;
+    coord sloc;
+    /* Initialize list of y coordinates: */
+    for (i = 1; i < ROWNO; i++) {
+        shuffy[i - 1] = i;
+    }
+    /* Now shuffle that list (so high base probabilities don't always give us
+       stairs in the same corners): */
+    for (i = 0; i < ROWNO - 1; i++) {
+        int swapi = mrn2(ROWNO - 2);
+        int swap  = shuffy[i];
+        shuffy[i] = shuffy[swapi];
+        shuffy[swapi] = swap;
+    }
+    sloc.x = 0;
+    /* We start with prob set to baseprob and gradually ease it up until
+       we successfully place the stairs.  At low prob, the odds of placing
+       them on any given tile are low, so if baseprob is low we can get
+       pretty far from the edge.  If prob starts high, the stairs almost
+       always end up with an x coordinate very near edge. */
+    while (prob <= 2000) {
+        stairx = edge;
+        while ((stairx > 0) && (stairx < COLNO)) {
+            for (i = 0; i < ROWNO - 1; i++) {
+                stairy = shuffy[i];
+                poscount++;
+                if ((map[stairx][stairy] == AIS_FLOOR) &&
+                    (sloc.x == 0) && (prob > mrn2(1000))) {
+                    sloc.x = stairx;
+                    sloc.y = stairy;
+                    map[stairx][stairy] = AIS_STAIR;
+                    if (wizard)
+                        pline("Chose %s stair location (%d,%d)"
+                              " at prob %d (starting from %d)"
+                              " having considered %d positions.",
+                              which, upstair.x, upstair.y,
+                              prob, baseprob, poscount);
+                    return sloc;
+                }
+            }
+            stairx += dir;
+        }
+        prob++;
+    }
+    if (wizard)
+        pline("Failed to find %s stair location"
+              " at prob %d (starting from %d)"
+              " having considered %d positions",
+              which, prob, baseprob, poscount);
+    sloc.x = 0; /* signal retry */
+    return sloc;
 }
 
 void
@@ -600,7 +660,12 @@ mkaiscav(struct level *lev)
         }
     }
     /* Ok, that takes care of the terrain. */
-    place_branch(lev, Is_branchlev(&lev->z), COLNO, ROWNO);
+
+    /* Place branch stairs/ladder, if applicable: */
+    if (br) {
+        coord brloc = aisstairloc(0, 1, 1, "branch");
+        place_branch(lev, br, brloc.x, brloc.y);
+    }
 
     /* Place traps: */
     for (i = (5 + mrn2(100 + RNGSAFEDEPTH ) / 12); i > 0; i--) {
