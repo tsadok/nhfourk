@@ -211,11 +211,13 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
                     sloc.x = stairx;
                     sloc.y = stairy;
                     map[stairx][stairy] = AIS_STAIR;
+                    /*
                     if (wizard)
                         pline("Chose %s stair location (%d,%d)"
                               " at prob %d (starting from %d)"
                               " having considered %d positions.",
                               which, stairx, stairy, prob, baseprob, poscount);
+                    */
                     return sloc;
                 }
             }
