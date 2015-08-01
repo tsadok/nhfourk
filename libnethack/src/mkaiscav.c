@@ -86,6 +86,7 @@ static void markwalldirs(int x, int y, int dirone, int dirtwo);
 static void unmarkwalldir(int x, int y, int subtract);
 static coord aisstairloc(int baseprob, int edge, int dir, const char *which);
 static void aisplacestairs(int trycount);
+static void mkaisvs(struct level *lev, int x, int y);
 static boolean xor(boolean conda, boolean condb);
 static void dopool(int cx, int cy, int radius, int jitter);
 static coord aisplace(void);
@@ -250,6 +251,44 @@ aisplacestairs(int trycount)
         aisplacestairs(trycount);
     }
 }
+
+void mkaisvs(struct level *lev, int x, int y)
+{
+    /* The suggested x and y coordinates may not be suitable for this.
+       We'll be checking and possibly replacing them with a fresh spot. */
+    int xmargin = 4;
+    int ymargin = 3;
+    int mindist = 11;
+    int tries = 0;
+    coord cc;
+
+    /* Some basic sanity checks that should never trigger unless COLNO and ROWNO
+       get much smaller in the future... */
+    if ((COLNO - 1 - xmargin * 2) < 2)
+        panic("Not enough columns for invocation position to fit.");
+    else if ((COLNO - 1 - xmargin * 2) < 2 + mindist * 2)
+        panic("Not enough columns for invocation position to fit"
+              " reliably, depending on stair placement.");
+    if ((ROWNO - 1 - ymargin * 2) < 2)
+        panic("Not enough rows for invocation position to fit.");
+
+    inv_pos.x = inv_pos.y = 0;
+    while ((x == upstair.x) || (y == upstair.y) || /* ortho line */
+           (abs(x - upstair.x) == abs(y - upstair.y)) || /* 45-degree line */
+           (distmin(x, y, upstair.x, upstair.y) <= mindist) ||
+           (x <= xmargin) || (x + xmargin >= COLNO) ||
+           (y <= ymargin) || (y + ymargin >= ROWNO) ||
+           (occupied(lev, x, y) && tries < 500)) {
+        cc = aisplace(); x = cc.x; y = cc.y;
+        tries++;
+    }
+    inv_pos.x = x;
+    inv_pos.y = y;
+    lev->locations[x][y].typ = ROOM; /* Just in case we ran past 500 tries,
+                                        e.g., level was packed with lava. */
+    maketrap(lev, x, y, VIBRATING_SQUARE, rng);
+}
+
 
 boolean
 xor(boolean conda, boolean condb)
@@ -584,7 +623,7 @@ mkaiscav(struct level *lev)
                     else
                         impossible("Badly chosen downstair location, (%d,%d)", dnstair.x, dnstair.y);
                 else {
-                    panic("mkaiscav: not programmed to make the VS.");
+                    mkaisvs(lev, x, y);
                 }
             } else if ((map[x][y] & AIS_CORRIDOR) &&
                        (map[x][y] & AIS_SOLID)) {
