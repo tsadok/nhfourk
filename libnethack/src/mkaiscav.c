@@ -85,7 +85,7 @@ static void ais_block_pt(int x, int y, boolean check, boolean mark_corridors);
 static void markwalldirs(int x, int y, int dirone, int dirtwo);
 static void unmarkwalldir(int x, int y, int subtract);
 static coord aisstairloc(int baseprob, int edge, int dir, const char *which);
-static void placestairs(int trycount);
+static void aisplacestairs(int trycount);
 static boolean xor(boolean conda, boolean condb);
 static void dopool(int cx, int cy, int radius, int jitter);
 static coord aisplace(void);
@@ -214,8 +214,7 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
                         pline("Chose %s stair location (%d,%d)"
                               " at prob %d (starting from %d)"
                               " having considered %d positions.",
-                              which, upstair.x, upstair.y,
-                              prob, baseprob, poscount);
+                              which, stairx, stairy, prob, baseprob, poscount);
                     return sloc;
                 }
             }
@@ -233,15 +232,8 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
 }
 
 void
-placestairs(int trycount)
+aisplacestairs(int trycount)
 {
-    int stairx = 1;
-    int shuffy[ROWNO];
-    int i;
-    for (i = 1; i < ROWNO; i++) {
-        shuffy[i - 1] = i;
-    }
-    trycount++;
     /* Base stair-placement probability, as each tile is considered:
        high values tend to give you stairs very near the left and
        right edges, so you have to cross the whole map.  Low values
@@ -250,61 +242,12 @@ placestairs(int trycount)
        which has the same maximum as mrn2(26) but gives us really
        low values much more often: */
     int baseprob = mrn2(6) * mrn2(6);
-    int prob = baseprob;
-    /* Shuffle the y coordinates, so high probabilities don't
-       always give us stairs in the same corner. */
-    for (i = 0; i < ROWNO - 1; i++) {
-        int swapi = mrn2(ROWNO - 2);
-        int swap  = shuffy[i];
-        shuffy[i] = shuffy[swapi];
-        shuffy[swapi] = swap;
-    }
-    while (prob++ <= 2000 && !(upstair.x)) {
-        while (stairx < COLNO && !(upstair.x)) {
-            for (i = 0; i < ROWNO - 1; i++) {
-                int stairy = shuffy[i];
-                if ((map[stairx][stairy] == AIS_FLOOR) &&
-                    !(upstair.x) && (prob > mrn2(1000))) {
-                    coord ups;
-                    ups.x = stairx;
-                    ups.y = stairy;
-                    upstair = ups;
-                    map[stairx][stairy] = AIS_STAIR;
-                }
-                stairx++;
-            }
-        }
-    }
-    /* Reshuffle the stair order for doing the other stairs, so high
-       baseprobs don't tend to position the up and down stairs in the
-       same row. */
-    for (i = 0; i < ROWNO - 1; i++) {
-        int swapi = mrn2(ROWNO - 2);
-        int swap  = shuffy[i];
-        shuffy[i] = shuffy[swapi];
-        shuffy[swapi] = swap;
-    }
-    stairx = COLNO - 1;
-    prob   = baseprob;
-    while (prob++ <= 2000 && !(dnstair.x)) {
-        while (stairx > 0 && !(dnstair.x)) {
-            for (i = 0; i < ROWNO - 1; i++) {
-                int stairy = shuffy[i];
-                if ((map[stairx][stairy] == AIS_FLOOR) &&
-                    !(dnstair.x) && (prob > mrn2(1000))) {
-                    coord dns;
-                    dns.x = stairx;
-                    dns.y = stairy;
-                    dnstair = dns;
-                    map[stairx][stairy] = AIS_STAIR;
-                }
-                stairx--;
-            }
-        }
-    }
+    upstair = aisstairloc(baseprob, 1, 1, "up");
+    dnstair = aisstairloc(baseprob, COLNO - 1, -1, "down");
+    trycount++;
     if ((trycount < 1000) && !(upstair.x && dnstair.x)) {
         /* The prob loop makes this unlikely, but just in case */
-        placestairs(trycount);
+        aisplacestairs(trycount);
     }
 }
 
@@ -585,7 +528,7 @@ mkaiscav(struct level *lev)
     /* Go ahead and place the stairs before laying down liquids.  So
        on the off chance the whole level fills up with liquid, we
        won't be without any place to put the stairs. */
-    placestairs(0);
+    aisplacestairs(0);
 
     liquid = (aisdepth > (mrn2(1000) / 9)) ? AIS_LAVA : AIS_WATER;
     if (2 > mrn2( RNGSAFEDEPTH )) { /* river */
