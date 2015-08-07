@@ -119,13 +119,15 @@ Changes in 4.3.0.2:
  * The Rogue quest now contains a guaranteed spellbook of sleep.
 
  * Further alignment record adjustments have been made.  The penalties
-   for killing generated-peaceful and always-peaceful monsters have
-   been adjusted again.  Chaotics now get no penalty for killing
-   mundane peaceful monsters; killing always-peaceful ones still has a
-   penalty for all alignments, but it is smaller than before.  The
-   alignment benefits of sacrifice have been restored to their vanilla
-   level of effectiveness.  Using a poisoned weapon while lawful will
-   no longer take your record below 0.
+   for attacking peacefuls and for killing generated-peaceful and
+   always-peaceful monsters have been adjusted again.  Non-lawfuls now
+   get no penalty for killing mundane peaceful monsters; killing
+   always-peaceful ones still has a penalty for all alignments, but it
+   is smaller than before.  Lawful characters can regain alignment
+   points by killing hostile chaotic demons.  The alignment benefits
+   of sacrifice have been restored to their vanilla level of
+   effectiveness.  Using a poisoned weapon while lawful will no longer
+   take your record below 0.
 
  * Valkyrie starting inventory has been rebalanced again.  They
    always get the wand of cold now, and their starting enchants
