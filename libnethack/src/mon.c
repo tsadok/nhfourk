@@ -2165,38 +2165,46 @@ cleanup:
         else
             pline("Whoopsie-daisy!");
     } else if (mtmp->ispriest) {
-        adjalign((p_coaligned(mtmp)) ? -3 : 3);
+        if (mdat->maligntyp == A_NONE)
+            adjalign(10);
+        else
+            adjalign((p_coaligned(mtmp)) ? -3 : 3);
         /* cancel divine protection for killing your priest */
         if (p_coaligned(mtmp))
             u.ublessed = 0;
-        if (mdat->maligntyp == A_NONE)
-            adjalign(10);
     } else if (mtmp->mtame) {
-        adjalign(-15);  /* bad!! */
+        adjalign(-5);  /* bad!! */
         /* your god is mighty displeased... */
         if (!Hallucination)
             You_hear("the rumble of distant thunder...");
         else
             You_hear("the studio audience applaud!");
     } else if (mtmp->mpeaceful)
-        adjalign(-5);
+        adjalign(-1);
 
     /* malign was already adjusted for u.ualign.type and randomization */
     /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
        monster killing.  That completely defeats the purpose of even bothering
-       to keep track of player alignment record.  So no.  However, we do still
-       want a penalty for killing monsters that generated peaceful.  I'm not
-       absolutely sure the following condition is correct, but we'll test it: */
-    if (mtmp->malign < 0)
-        adjalign(always_peaceful(mtmp->data) ? -3 :
-                 (u.ualign.type == A_CHAOTIC) ? 0 : -1);
-    /* However, chaotics now get a point for killing their own race. */
+       to keep track of player alignment record.  So no.  We still have an
+       alignment penalty for killing always-peacefuls, however, and lawfuls
+       have a penalty for killing generated-peacefuls as well. */
+    if (mtmp->malign < 0) {
+        if (always_peaceful(mtmp->data))
+            adjalign(-3);
+        else if (u.ualign.type == A_LAWFUL)
+            adjalign(-1);
+    }
+    /* Chaotics now get a point for killing hostiles of their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
         int oldalign = u.ualign.record;
         adjalign(1);
         if (u.ualign.record > oldalign)
             pline("You feel more chaotic.");
     }
+    /* Lawful characters gain alignment for killing hostile chaotic demons. */
+    else if (u.ualign.type == A_LAWFUL && is_demon(mtmp->data) &&
+             mtmp->data->maligntyp < 0)
+        adjalign(1);
 }
 
 /* changes the monster into a stone monster of the same type */
