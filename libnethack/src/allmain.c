@@ -720,7 +720,7 @@ deluxe_sylph_healing(void)
     if (!Race_if(PM_SYLPH)) {
         impossible("Trying to do sylph healing while not a sylph.");
         return;
-    } else if (!can_draw_from_environment(&youmonst)) {
+    } else if (!can_draw_from_environment(&youmonst, TRUE)) {
         impossible("Trying to do sylph healing without the environment.");
         return;
     } else if (Sick || Vomiting || HHallucination || HStun || HConfusion ||
@@ -741,7 +741,9 @@ deluxe_sylph_healing(void)
         return;
     } else {
         int oldhp = u.uhp;
-        constitution_based_healing(u.ulevel > 11 ? 9 : u.ulevel - 2);
+        constitution_based_healing(Inhell ? u.ulevel :
+                                   u.ulevel > 11 ? 9 :
+                                   u.ulevel - 2);
         morehungry((u.uhp - oldhp) * 4);
         return;
     }
@@ -915,7 +917,7 @@ you_moved(void)
                     if (!challengemode || !(moves % 3))
                         u.mh++;
                 }
-            } else if (can_draw_from_environment(&youmonst) ||
+            } else if (can_draw_from_environment(&youmonst, TRUE) ||
                         (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)
                           && !Race_if(PM_SYLPH)))) {
                 if (Race_if(PM_SYLPH) && !(moves % (challengemode ? 6 : 3))) {
@@ -924,14 +926,14 @@ you_moved(void)
                     constitution_based_healing(9);
                 } else if (u.uhp < u.uhpmax &&
                            (Regeneration ||
-                            can_draw_from_environment(&youmonst) ||
+                            can_draw_from_environment(&youmonst, TRUE) ||
                             (u.ulevel <= 9 &&
                              !(moves % ((MAXULEV + challengemode ? 48 : 12)
                                         / (u.ulevel + 2) + 1))))) {
                     u.uhp++;
                 }
             } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2)) &&
-                !challengemode) {
+                       !(moves % 4) && !challengemode) {
                 if (!Inhell)
                     if (!can_feel_ground(&youmonst))
                         pline("You try to draw healing from your surroundings, "
@@ -969,13 +971,15 @@ you_moved(void)
                      ((MAXULEV + 8 -
                        u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
                  || Energy_regeneration
-                 || can_draw_from_environment(&youmonst))) {
+                 || (can_draw_from_environment(&youmonst, FALSE) &&
+                     !(u.uhs >= WEAK)))) {
                 int olduen = u.uen;
                 u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
-                if (Race_if(PM_SYLPH) && u.uen > olduen)
-                    morehungry((u.uen - olduen) * 3);
+                if (Race_if(PM_SYLPH) && (u.uen > olduen) &&
+                    !Energy_regeneration)
+                    morehungry(u.uen - olduen);
             }
 
             if (!u.uinvulnerable) {
