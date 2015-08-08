@@ -515,7 +515,7 @@ only_sylph_safe_armor(struct monst *mon, enum objslot slot)
 }
 
 boolean
-can_draw_from_environment(struct monst *mon)
+can_draw_from_environment(struct monst *mon, boolean healing)
 {
     enum objslot s;
     if (Race_if(PM_SYLPH) && Upolyd)
@@ -527,8 +527,10 @@ can_draw_from_environment(struct monst *mon)
             if (!only_sylph_safe_armor(mon, s))
                 return FALSE;
         return (/* can your toes feel the ground? (water is ok) */
-                can_feel_ground(mon) && !Inhell &&
-                (u.uhs < WEAK));
+            can_feel_ground(mon) &&
+            /* Can't draw healing in Gehennom most of the time */
+            (!Inhell || !healing || !(moves % 7)) &&
+            (u.uhs < WEAK));
     }
     return FALSE;
 }

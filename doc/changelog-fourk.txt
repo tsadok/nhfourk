@@ -208,11 +208,10 @@ Changes in 4.3.0.2:
    to feel the natural world around them -- the air on their skin, the
    ground under their toes, etc.  Thus, they cannot draw power and
    health if wearing armor made of anything but cloth or wood, or if
-   they are levitating, or while polymorphed.  (Also, there is no
-   power or healing to be drawn from the environment in Gehennom; this
-   may get changed if it proves to be unbalanced.)  Sylphs are always
-   female.  They can be neutral or chaotic and can currently be
-   Priests, Rogues, Healers, Rangers, or Wizards.
+   they are levitating, or while polymorphed.  (Also, there is very
+   little healing to be drawn from the environment in Gehennom.)
+   Sylphs are always female.  They can be neutral or chaotic and can
+   currently be Priests, Rogues, Healers, Rangers, or Wizards.
 
  * Attribute maxima now depend on role as well as race.
    The role contributions are as follows (where 1 places
