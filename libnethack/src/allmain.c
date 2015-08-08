@@ -979,7 +979,7 @@ you_moved(void)
                     u.uen = u.uenmax;
                 if (Race_if(PM_SYLPH) && (u.uen > olduen) &&
                     !Energy_regeneration)
-                    morehungry((u.uen - olduen) * 3);
+                    morehungry(u.uen - olduen);
             }
 
             if (!u.uinvulnerable) {
