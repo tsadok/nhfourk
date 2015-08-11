@@ -1086,6 +1086,10 @@ write_keymap(void)
     if (fd == -1)
         return;
 
+#ifdef UNIX
+    fchmod(fd, 0644);
+#endif
+
     for (key = 1; key <= KEY_MAX; key++) {
         name =
             keymap[key] ? keymap[key]->name : (unknown_keymap[key] ?
