@@ -1840,7 +1840,7 @@ zapnodir(struct obj *obj)
             pline("Unfortunately, nothing happens.");
             break;
         }
-        makewish();
+        makewish(1);
         break;
     case WAN_ENLIGHTENMENT:
         known = TRUE;
@@ -4403,7 +4403,13 @@ resist(struct monst *mtmp, char oclass, int damage, int domsg)
 }
 
 void
-makewish(void)
+makewish(int wishquality)
+/* wishquality is as follows:
+ *  1 for most sources of wishes
+ *  2 for unblessed scroll of wishing
+ *  3 for blessed scroll of wishing
+ * 99 for debug-mode Ctrl-W
+ */
 {
     const char *origbuf;
     struct obj *otmp, nothing;
@@ -4430,13 +4436,13 @@ retry:
      *  has been denied.  Wishing for "nothing" requires a separate
      *  value to remain distinct.
      */
-    otmp = readobjnam(buf, &nothing, TRUE);
+    otmp = readobjnam(buf, &nothing, TRUE, wishquality);
     if (!otmp) {
         pline("Nothing fitting that description exists in the game.");
         if (++tries < 5)
             goto retry;
         pline("That's enough tries!");
-        otmp = readobjnam(NULL, NULL, TRUE);
+        otmp = readobjnam(NULL, NULL, TRUE, wishquality);
         livelog_flubbed_wish(origbuf, otmp);
         if (!otmp)
             return;     /* for safety; should never happen */
