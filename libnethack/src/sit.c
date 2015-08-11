@@ -204,7 +204,7 @@ dosit(const struct nh_cmd_arg *arg)
                     pline("You feel your luck is changing.");
                     change_luck(1);
                 } else
-                    makewish();
+                    makewish(1);
                 break;
             case 7:
             {

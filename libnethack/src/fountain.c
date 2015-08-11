@@ -91,7 +91,7 @@ dowaterdemon(void)
             if (wish_available(20 - level_difficulty(&u.uz), NULL)) {
                 pline("Grateful for %s release, %s grants you a wish!",
                       mhis(mtmp), mhe(mtmp));
-                makewish();
+                makewish(1);
                 mongone(mtmp);
             } else if (t_at(level, mtmp->mx, mtmp->my))
                 mintrap(mtmp);

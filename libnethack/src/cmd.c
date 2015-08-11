@@ -352,7 +352,7 @@ wiz_wish(const struct nh_cmd_arg *arg)
        wishing for the same item. */
 
     flags.verbose = FALSE;
-    makewish();
+    makewish(99);
     flags.verbose = save_verbose;
     encumber_msg();
 
