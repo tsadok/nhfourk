@@ -1936,7 +1936,7 @@ djinni_from_bottle(struct obj *obj)
     if (wish_available(obj->blessed ? 80 : obj->cursed ? 5 : 20, &dieroll)) {
         msethostility(mtmp, FALSE, TRUE); /* show as peaceful while wishing */
         verbalize("I am in your debt.  I will grant one wish!");
-        makewish();
+        makewish(1);
         mongone(mtmp);
         return;
     }

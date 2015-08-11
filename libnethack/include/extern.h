@@ -1302,7 +1302,8 @@ extern const char *Yname2(const struct obj *);
 extern const char *ysimple_name(const struct obj *);
 extern const char *makeplural(const char *);
 extern const char *makesingular(const char *);
-extern struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user);
+extern struct obj *readobjnam(char *bp, struct obj *no_wish, boolean from_user,
+                              int wishtype);
 extern int rnd_class(int, int, enum rng);
 extern const char *cloak_simple_name(const struct obj *cloak);
 extern const char *mimic_obj_name(const struct monst *mimic);
@@ -2062,7 +2063,7 @@ extern void destroy_item(int, int);
 extern void set_candles_afire(void);
 extern int destroy_mitem(struct monst *, int, int);
 extern int resist(struct monst *, char, int, int);
-extern void makewish(void);
+extern void makewish(int);
 
 /* ### livelog.c ### */
 extern void livelog_write_event(const char *);

@@ -1425,7 +1425,7 @@ seffects(struct obj *sobj, boolean *known)
                   (Hallucination ? "horse" : "scroll"));
             break;
         }
-        makewish();
+        makewish((sobj->blessed) ? 3 : 2);
         break;
     default:
         impossible("What weird effect is this? (%u)", sobj->otyp);
