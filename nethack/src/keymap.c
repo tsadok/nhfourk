@@ -7,6 +7,7 @@
 #include "common_options.h"
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <signal.h>
