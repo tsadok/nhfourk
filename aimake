@@ -1,10 +1,10 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use utf8;     # this source file is UTF-8
 use warnings;
 use strict;
 
 # aimake: automated build system for C programs
-# Copyright © 2013, 2014 Alex Smith.
+# Copyright © 2013, 2014, 2015 Alex Smith.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -423,9 +423,10 @@ rights.
 
 =item B<--filelist=>I<format>
 
-This option can only be used when B<--destdir> is set.  It generates a list of
-files being installed in the specified format, designed for use as input to an
-installer program:
+This option generates a list of files being installed in the specified format,
+designed for use as input to an installer program.  If B<--destdir> is set,
+the file list will be placed in the root of that directory.  Otherwise, it
+will be placed in the root of the build directory.
 
 =over 4
 
@@ -480,10 +481,11 @@ Show the full documentation for aimake.
 
 Show the license/copyright information for aimake.
 
-=item B<--no-carriage-return>
+=item B<--absent-terminal>
 
-Don't use carriage returns to provide progress information.  (This is mostly
-only useful if stdout is not a terminal).
+Don't assume that whatever is connected to stdout supports any control codes
+but newline (not even carriage return).  (This is mostly only useful if stdout
+is not a terminal).
 
 =item B<--nonempty-directory>
 
@@ -518,10 +520,6 @@ It is possible to specify a subset of the statefile to dump as a
 comma-separated sequence of keys (e.g. 'xuse_by_object,config_option:libdir').
 On large projects, this is considerably faster than dumping the entire
 statefile if you are only interested in a small portion of it.
-
-This option is currently not particularly useful, because the statefile is
-stored in a compressed format in memory in order to save memory, and this
-option does not currently decompress it.  This may change in the future.
 
 =item B<--profile>
 
@@ -3272,7 +3270,7 @@ newline, unlike most POD directives.)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2013, 2014 Alex Smith.
+Copyright (C) 2013, 2014, 2015 Alex Smith.
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -4001,7 +3999,7 @@ use PerlIO;
 use PerlIO::encoding;
 use Encode qw/encode :fallbacks/;
 use Data::Dumper;
-use Digest::SHA qw/sha256_hex/;
+use Digest::SHA qw/sha1_hex sha256_hex/;
 use Scalar::Util qw/refaddr/;
 use Safe;
 use Storable qw/store_fd fd_retrieve dclone/; # why the naming inconsistency?
@@ -4146,7 +4144,9 @@ my %unintern;
 sub intern ($) {
     my $i = $state->{_intern}{$_[0]};
     $i and return $i;
-    $i = $state->{_intern_number} = defined_or($state->{_intern_number}, 0) + 1;
+    # Note: start _intern_number high enough that it doesn't interfere with, say,
+    # the use of 1 as a boolean
+    $i = $state->{_intern_number} = defined_or($state->{_intern_number}, 100) + 1;
     $state->{_intern}{$_[0]} = $i;
     $unintern{$i} = $_[0];
     return $i;
@@ -4154,6 +4154,29 @@ sub intern ($) {
 sub unintern ($) {
     return $unintern{$_[0]};
 }
+
+# Note: modifies the first argument in-place exploiting @_ alias behaviour
+# A little obscure, but easier to read than the other versions I tried
+sub recursive_unintern;
+sub recursive_unintern {
+    defined $_[0] or return;
+    if (!ref $_[0]) {
+        my $u = unintern $_[0];
+        defined $u and $_[0] = $u;
+    } elsif (ref $_[0] eq 'ARRAY') {
+        recursive_unintern $_ for @{$_[0]};
+    } elsif (ref $_[0] eq 'HASH') {
+        for my $k (keys %{$_[0]}) {
+            recursive_unintern $_[0]{$k};
+            my $u = unintern $k;
+            if (defined $u) {
+                $_[0]{$u} = $_[0]{$k};
+                delete $_[0]{$k};
+            }
+        }
+    }
+}
+
 
 # We don't want the statefile to grow indefinitely due to unused strings. So
 # find unused strings, and remove them from _intern. This is done by copying
@@ -4273,14 +4296,18 @@ sub sv_hash {
     return sha256_hex(serialize_sv(shift));
 }
 
-# Here's an attempt to make globally unique values that are consistent from
-# one run of aimake to another.  This is bascially half a SHA-256, with
-# hyphens inserted in appropriate places.
+# Convert a string to a GUID (actually UUID), using the algorithm from RFC 4122.
 sub guid_from_string {
-    my $guid = uc sha256_hex ("aimake $longrandomstring " . shift);
-    substr $guid, 32, 32, "";
+    my $guid = uc sha1_hex (
+        # This magic hex string means "treat the rest of the string as a URL".
+        "\x6b\xa7\xb8\x11\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8" .
+        # We use a namespace inside the aimake website for uniqueness.
+        "http://nethack4.org/aimake/uuid/" . shift);
+    substr $guid, 32, 8, "";
     substr $guid, 20, 0, "-";
+    (substr $guid, 16, 1) =~ y/0123456789ABCDEF/89AB89AB89AB89AB/;
     substr $guid, 16, 0, "-";
+    substr $guid, 12, 1, "5"; # means "this UUID is SHA-1 based".
     substr $guid, 12, 0, "-";
     substr $guid, 8, 0, "-";
     return $guid;
@@ -4906,9 +4933,22 @@ sub calculate_permissions;
 sub calculate_installation_path {
     my $install_dir = shift;
     my $install_name = shift;
+
+    my $feature = shift;
+
+    my $permission = shift;
+    my $elevation = shift;
+    my $readable = shift;
+
+    my $shortcut_target = shift;
+    my $shortcut_description = shift;
+
+    my $create_subdir = shift;
+
+    my $executable = $create_subdir ? 2 : $install_dir =~ /bindir$|libdir$/;
+
     my $instpath = $install_dir =~ /^[bs]?path:/ ?
         $install_dir : $config->{options}{$install_dir};
-    my $executable = $install_dir =~ /bindir$|libdir$/;
 
     $install_name eq 'sys:touch_only' and $executable = 2;
 
@@ -4919,19 +4959,12 @@ sub calculate_installation_path {
             and $instpath .= "/man$1";
     }
 
-    my $feature = shift;
-
-    my $permission = shift;
-    my $elevation = shift;
-    my $readable = shift;
     my ($octal, undef, undef) = calculate_permissions
         $permission, $elevation, $readable, $executable,
         scalar ($install_dir =~ /(?:state|lock|log)dir$/);
 
-    my $shortcut_target = shift;
-    my $shortcut_description = shift;
-
     my $aipath = "$instpath/$install_name";
+
     my $outpath = ($shortcut_target || $install_dir =~ /^[bs]?path:/)
         ? $aipath : destdir_transform $aipath;
 
@@ -4953,7 +4986,7 @@ sub calculate_installation_path {
     # In some cases, we're installing to a different directory than
     # instpath.
     my @aipath = parse_aipath $aipath;
-    $install_name eq 'sys:touch_only' or pop @aipath;
+    $install_name eq 'sys:touch_only' or $create_subdir or pop @aipath;
     my $instdir = deparse_aipath @aipath;
 
     $opt_filelist ||= '';
@@ -5014,7 +5047,7 @@ sub calculate_installation_path {
         # we have consistency if WiX ever changes its ideas on GUIDs (which
         # has happened once in the past).
         my $pname = $config->{options}{packagename};
-        my $guid = guid_from_string "$pname $aipath";
+        my $guid = guid_from_string "$pname/$aipath";
 
         my $filelist_entry;
         my $in_component;
@@ -5073,7 +5106,8 @@ sub calculate_installation_path {
             </Component>
         </DirectoryRef>
 ];
-                $id eq $dirref or die "Folder component mismatch";
+                $id eq $dirref or
+                    die "Folder component mismatch: $aipath != $instdir";
                 $filelist_folder_removers{$dirref} = $id;
             } else {
                 $filelist_entry = qq[
@@ -5102,7 +5136,8 @@ sub calculate_installation_path {
             </Component>
         </DirectoryRef>
 ];
-            $id eq $dirref or die "Folder component mismatch";
+            $id eq $dirref or
+                die "Folder component mismatch: $aipath != $instdir";
             $filelist_folder_removers{$dirref} = $id;
         } else {
             $filelist_entry = qq[
@@ -5189,6 +5224,7 @@ sub calculate_installation_path {
         $filelist_directories{$instpath}{$install_dir} = 1
             unless $install_dir eq 'mandir' ||
             $install_dir =~ /^[bs]?path:/;
+
         # All its parents need to be present, too, going back to the root. And
         # their removers are all dependencies of the feature, apart from those
         # for the CSIDL_s themselves (which don't exist).
@@ -5245,23 +5281,24 @@ my %wixfolders = (
 );
 sub write_filelist {
     $opt_filelist ||= '';
+    my $fns = $opt_prefix ? "spath" : "bpath";
     if ($opt_filelist eq 'basic' || $opt_filelist eq 'listing') {
         $filelist_body = defined_or($filelist_body, '');
-        my $aifilelist = destdir_transform "spath:filelist.txt";
+        my $aifilelist = destdir_transform "$fns:filelist.txt";
         open my $fh, '>', aipath2ospath $aifilelist or return $!;
         print $fh $filelist_body;
         close $fh or return $!;
     } elsif ($opt_filelist eq 'wix') {
         $filelist_body = defined_or($filelist_body, '');
         my $pname = $config->{options}{packagename};
-        my $aifilelist = destdir_transform "spath:$pname.wxs";
+        my $aifilelist = destdir_transform "$fns:$pname.wxs";
         open my $fh, ">$utf8_layers", aipath2ospath $aifilelist or return $!;
         my $pnametext = $config->{options}{packagename_text};
         $pnametext =~ s/&/&amp;/g; $pnametext =~ s/"/&quot;/g;
         my $cname = $config->{options}{companyname};
         my $pversion = pvtransform $config->{options}{packageversion};
         my $guid = guid_from_string $pname;
-        my $pguid = guid_from_string "$pname $pversion";
+        my $pguid = guid_from_string "$pname/version:$pversion";
         my $ui = 'WixUI_FeatureTree';
         keys %filelist_features == 1 and $ui = 'WixUI_Minimal';
         # TODO: Should Language always be 1033?
@@ -5279,6 +5316,7 @@ sub write_filelist {
         <MajorUpgrade DowngradeErrorMessage=
             "To install an older version of $pnametext, please first uninstall any newer versions." />
 ];
+        # Fix a bug in Emacs' syntax highlighter: qq[];
 
         # Create a variable for each directory we use. We use a (lowercase)
         # SHA-256 name if the directory isn't one of the install directories
@@ -6319,7 +6357,7 @@ sub set_exeparams {
             my $written = 0;
             for my $i (@imageindexes) {
                 my $iconfile = calculate_installation_path 'datarootdir',
-                    "/icons/hicolor/" .
+                    "icons/hicolor/" .
                     "$png_width[$i]x$png_height[$i]/apps/$basename.png",
                         $feature;
                 my $fif = friendly_objname($iconfile);
@@ -6409,7 +6447,7 @@ sub calculate_permissions {
             if (($executable || 0) >= 2) {
                 $octal = $readable ? 0775 : 0770;
             } elsif ($executable) {
-                $octal = $readable ? 0774 : 0770;
+                $octal = $readable ? 0754 : 0750;
             } elsif ($in_statedir) {
                 $octal = $readable ? 0664 : 0660;
             } else {
@@ -8064,7 +8102,7 @@ GetOptions('verbose|v:+' => \$opt_verbose,
            'profile' => \$opt_profile,
            'dump-status:s' => \$opt_dump,
            'show-warnings|W=s' => \@opt_warnings,
-           'no-carriage-return' => \$opt_nocr,
+           'absent-terminal' => \$opt_nocr,
            'nonempty-directory' => \$opt_nonempty_directory,
            'documentation' => \$opt_documentation,
            'directory-layout=s' => \$opt_dlayout,
@@ -8082,7 +8120,7 @@ $opt_license and pod2usage('-exitval' => 0, '-verbose' => 99,
 if ($opt_version) {
     print <<EOF;
 aimake version $::VERSION, running under Perl version $^V.
-Copyright (C) 2013, 2014 Alex Smith.
+Copyright (C) 2013, 2014, 2015 Alex Smith.
 
 This program is licensed under version 3 of the GNU General Public License;
 you are welcome to redistribute it under certain conditions, but it comes with
@@ -8144,7 +8182,15 @@ if (defined $opt_dump) {
         $Data::Dumper::Deepcopy = 1; # don't use cross-references
         $Data::Dumper::Terse = 1;    # don't prefix '$VAR1 = '
         my @path = split /,/, $opt_dump;
-        my $subset = $state;
+
+        # So as to make the dump easier (i.e. possible) to read, undo all
+        # the string interning; note that recursive_unintern changes the
+        # arrayrefs and hashrefs that make up its argument directly, so we
+        # need to dclone first
+        my $subset = dclone $state;
+        recursive_unintern $subset;
+        delete $subset->{_intern};
+
         for my $key (@path) {
             if (defined_or(ref $subset, 'undef') eq 'HASH') {
                 if (exists $subset->{$key}) {
@@ -8235,12 +8281,15 @@ our $pointerbits = $Config{ptrsize} * 8;
 $exeext eq '' and $exeext = '.bin';
 our $dllext =       {MSWin32 => '.dll',
                      linux   => '.so',
+                     freebsd => '.so',
                      darwin  => '.dylib'}->{$os_parsed};
 our $impext =       {MSWin32 => '.dll.a', # MinGW uses this
                      linux   => '.so',
+                     freebsd => '.so',
                      darwin  => '.dylib'}->{$os_parsed};
 our $symbolprefix = {MSWin32 => '',
                      linux   => '',
+                     freebsd => '_',
                      darwin  => '_'}->{$os_parsed};
 $configsafe->share('$libext', '$objext', '$exeext', '$dllext', '$impext',
                    '$symbolprefix', '$pointerbits', '$longrandomstring',
@@ -8454,9 +8503,21 @@ atomically {
 # -S is not also given. However, if we can create the directory, it isn't
 # unwritable. (And if it is writable, it clearly already exists.) This creates
 # the install directory early, but that's not a problem if we're installing.
+my $transformed_ipath = destdir_transform $ipath;
 if ($installing && !defined $opt_elevate_permissions &&
     !-w (aipath2ospath $ipath)) {
-    ensure_directory $ipath, 0, 1, 1 or $installing = 0;
+    ensure_directory $transformed_ipath, 0, 1, 1 or $installing = 0;
+}
+
+# Complain and exit if -S or --install-only were specified, but we're
+# nonetheless failing to install.
+if ((defined $opt_elevate_permissions || defined $opt_install_only) &&
+    !$installing) {
+    die "Cannot obey the requested install options: -S and --install-only " .
+        "are useful only when installing, but the install path '" .
+        (aipath2ospath $transformed_ipath) .
+        "' is not writable and cannot be created " .
+        "(a combination which normally causes aimake to skip the install)";
 }
 
 # Directory options need substitutions.
@@ -8869,6 +8930,7 @@ MAINLOOP: while (1) {
                 $rebuild_late_locked = 0;
                 mark_object_sure 'parse_configuration sys:no_object',
                     'sys:rebuild_late', 'unlocking rebuild_late';
+                progress_report 3, "Moving to rebuild_late phase...";
                 $find_another = 1;
                 %unlikely_runnable = (%unlikely_runnable, %not_runnable_yet);
                 %not_runnable_yet = ();
@@ -8876,6 +8938,7 @@ MAINLOOP: while (1) {
                 $installing_locked = 0;
                 mark_object_sure 'parse_configuration sys:no_object',
                     'sys:installing', 'unlocking install';
+                progress_report 3, "Moving to install phase...";
                 $find_another = 1;
                 %unlikely_runnable = (%unlikely_runnable, %not_runnable_yet);
                 %not_runnable_yet = ();
@@ -8907,6 +8970,8 @@ MAINLOOP: while (1) {
                 $not_runnable_yet{$curpair} = 1;
                 delete $likely_runnable{$curpair};
                 $find_another = 1;
+                progress_report 3,
+                    "Pair '$curpair' is unsure: not installing yet.";
             } else {
                 charge_profiled_time_to('Looking for a rule to run');
                 if (!$state->{outdep_by_pair}{$icurpair} &&
@@ -8953,6 +9018,7 @@ MAINLOOP: while (1) {
                     %unlikely_runnable =
                         (%unlikely_runnable, %not_runnable_yet);
                     %not_runnable_yet = ();
+                    progress_report 3, "Pair '$curpair' is sure.";
                 } else {
                     $not_runnable_yet{$curpair} = 1;
                     delete $likely_runnable{$curpair};
@@ -8962,8 +9028,15 @@ MAINLOOP: while (1) {
                     # just try that one next, if it happens to be a changed
                     # pair.
                     my $ilikely_pair = $iunsure_list->[-1];
-                    $state->{changed_pairs}{$ilikely_pair} and
-                        prioritize_pair unintern $ilikely_pair;
+                    if ($state->{changed_pairs}{$ilikely_pair}) {
+                        my $likely_pair = unintern $ilikely_pair;
+                        progress_report 3, "Pair '$curpair' is unsure: " .
+                            "blocked by '$likely_pair'";
+                        prioritize_pair $likely_pair;
+                    } else {
+                        progress_report 3, "Pair '$curpair' is unsure, ".
+                            "for an unknown reason.";
+                    }
                 }
                 charge_profiled_time_to("Rule '$rulename': sureness");
             }
@@ -9295,7 +9368,8 @@ MAINLOOP: while (1) {
                 (calculate_installation_path $a->{install_dir},
                  $a->{output_basename}, $a->{install_feature},
                  $a->{install_permission}, $a->{install_elevation},
-                 $a->{install_readable});
+                 $a->{install_readable}, undef, undef,
+                 $objname eq 'sys:create_subdir' ? 2 : undef);
 
             @known_output_locations = ($output_location);
 
@@ -11341,7 +11415,7 @@ EOF
             command => ['intcmd:assert_equal',
                         'optstring:linux', "optstring:$os_parsed"],
             hide_errors => 1,
-            output => ['optionset:os_linux', 'optionset:os_osx_linux'],
+            output => ['optionset:os_linux', 'optionset:os_posix'],
             outdepends => [],
         },
         os_detect_windows => {
@@ -11355,7 +11429,14 @@ EOF
             command => ['intcmd:assert_equal',
                         'optstring:darwin', "optstring:$os_parsed"],
             hide_errors => 1,
-            output => ['optionset:os_osx', 'optionset:os_osx_linux'],
+            output => ['optionset:os_osx', 'optionset:os_posix'],
+            outdepends => [],
+        },
+        os_detect_freebsd=> {
+            command => ['intcmd:assert_equal',
+                        'optstring:freebsd', "optstring:$os_parsed"],
+            hide_errors => 1,
+            output => ['optionset:os_freebsd', 'optionset:os_posix'],
             outdepends => [],
         },
 
@@ -11459,18 +11540,18 @@ EOF
             avoid_built_from => "extend:$impext:",
         },
 
-        osx_linux_cflags => {
-            command => ['intcmd:nop', 'optionset:os_osx_linux'],
+        posix_cflags => {
+            command => ['intcmd:nop', 'optionset:os_posix'],
             output => ['optionset:AM_CFLAGS', 'optionset:AM_CXXFLAGS'],
             outdepends => 'optstring:-fvisibility=hidden',
         },
-        osx_linux_lflags => {
-            command => ['intcmd:nop', 'optionset:os_osx_linux'],
+        posix_lflags => {
+            command => ['intcmd:nop', 'optionset:os_posix'],
             output => 'optionset:AM_LFLAGS',
             outdepends => 'optstring:-rdynamic',
         },
-        osx_linux_headerlines => {
-            command => ['intcmd:nop', 'optionset:os_osx_linux'],
+        posix_headerlines => {
+            command => ['intcmd:nop', 'optionset:os_posix'],
             output => 'optionset:aimake_header_lines',
             outdepends => 'optstring:' .
                 '#_ifndef_AIMAKE\\_OVERRIDE\\_DEFINES ' .
