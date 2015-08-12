@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1990,6 +1990,7 @@ zapyourself(struct obj *obj, boolean ordinary)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
+        set_candles_afire();
         break;
 
     case WAN_COLD:
@@ -2872,10 +2873,10 @@ beam_hit(int ddx, int ddy, int range,   /* direction and range */
                           an(xname(bobj)));
                 range = 0;
             } else if (obj == uball) {
+                struct test_move_cache cache;
+                init_test_move_cache(&cache);
                 if (!test_move(x - ddx, y - ddy, ddx, ddy, 0, TEST_MOVE,
-                               uim_standard, !!Blind, !!Stunned,
-                               !!Fumbling, !!Hallucination,
-                               !!Passes_walls, !!Ground_based)) {
+                               &cache)) {
                     /* nb: it didn't hit anything directly */
                     if (cansee(x, y))
                         pline("%s jerks to an abrupt halt.",
@@ -3154,6 +3155,8 @@ zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy)
                 destroy_item(SCROLL_CLASS, AD_FIRE);
             if (!rn2(5))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if (!rn2(4))
+                set_candles_afire();
         }
         break;
     case ZT_COLD:
@@ -3911,6 +3914,38 @@ struct destroy_message destroy_messages[num_destroy_msgs] = {
 };
 
 void
+set_candles_afire(void)
+{ /* modeled after destroy_item */
+    struct obj *obj, *obj2;
+    int eroded;
+    for (obj = invent; obj; obj = obj2) {
+        obj2 = obj->nobj;
+        if (!Is_candle(obj)) continue;
+        if (obj->oartifact) /* There are currently no artifact candles, but. */
+            continue;
+        if (obj->in_use && obj->quan == 1)
+            continue;   /* not available */
+        eroded = candle_erosion_level(obj->age);
+        obj->oeroded = (eroded >= 0) ? eroded : 0;
+        if (!obj->lamplit) {
+            int fuelleft = obj->age;
+            fuelleft -= WAX_EROSION_AMOUNT;
+            obj->age = (fuelleft > 1) ? fuelleft : 1;
+            begin_burn(obj, FALSE);
+        } /* else {
+             I thought about using up some of the candle's remaining wax
+             in this already-lit case as well, but that would require
+             messing with an existing timer.  Out of laziness, I haven't
+             implemented that part yet.  Ergo, correct strategy when fire
+             damage is destroying your candles is to leave them lit until
+             the source of damage can be neutralized, _then_ snuff them.
+             This is counterintuitive.  Bad programmer, no cookie :-(
+             See also the similar case in erode_obj in zap.c
+        } */
+    }
+}
+
+void
 destroy_item(int osym, int dmgtyp)
 {
     struct obj *obj, *obj2;
@@ -4058,6 +4093,7 @@ destroy_mitem(struct monst *mtmp, int osym, int dmgtyp)
 
     if (mtmp == &youmonst) {    /* this simplifies artifact_hit() */
         destroy_item(osym, dmgtyp);
+        if (dmgtyp == AD_FIRE) set_candles_afire();
         return 0;       /* arbitrary; value doesn't matter to artifact_hit() */
     }
 

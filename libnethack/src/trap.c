@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -35,7 +35,6 @@ static const char tower_of_flame[] = "tower of flame";
 static const char *const A_gush_of_water_hits = "A gush of water hits";
 static const char *const blindgas[6] =
     { "humid", "odorless", "pungent", "chilling", "acrid", "biting" };
-
 
 /* called when you're hit by fire (dofiretrap,buzz,zapyourself,explode) */
 /* returns TRUE if hit on torso */
@@ -103,8 +102,14 @@ burnarmor(struct monst *victim)
 #undef burn_dmg
 }
 
-/*
- * Generic erode-item function.  Returns TRUE if any change in state occurred,
+int
+candle_erosion_level(int fuelremaining)
+{
+    return ((WAX_EROSION_AMOUNT * MAX_ERODE + 1)
+            - fuelremaining) / WAX_EROSION_AMOUNT;
+}
+
+/* Generic erode-item function.  Returns TRUE if any change in state occurred,
  * or if grease protected item.
  * "check_grease", if FALSE, means that grease is not checked for.
  * "print", if set, means to print a message even if no change occurs.
@@ -132,8 +137,14 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
 
     switch (type) {
     case ERODE_BURN:
-        vulnerable = is_flammable(otmp);
+        vulnerable = is_flammable(otmp) || Is_candle(otmp);
         check_grease = FALSE;
+        if (Is_candle(otmp)) {
+            /* Recalculate the current erosion level
+               based on remaining fuel (otmp->age): */
+            int eroded = candle_erosion_level(otmp->age);
+            otmp->oeroded = (eroded >= 0) ? eroded : 0;
+        }
         break;
     case ERODE_RUST:
         vulnerable = is_rustprone(otmp);
@@ -205,6 +216,25 @@ erode_obj(struct obj * otmp, const char *ostr, enum erode_type type,
 
         if (otmp->unpaid)
             costly_damage_obj(otmp);
+
+        if (Is_candle(otmp) && (type == ERODE_BURN)) {
+            if (!otmp->lamplit) {
+                int fuelleft = otmp->age;
+                fuelleft -= WAX_EROSION_AMOUNT;
+                otmp->age = (fuelleft > 1) ? fuelleft : 1;
+                begin_burn(otmp, FALSE);    
+            } /* else {
+                 I thought about using up some of the candle's remaining wax
+                 in this already-lit case as well, but that would require
+                 messing with an existing timer.  Out of laziness, I haven't
+                 implemented that part yet.  Ergo, correct strategy when fire
+                 damage is destroying your candles is to leave them lit until
+                 the source of damage can be neutralized, _then_ snuff them.
+                 This is counterintuitive.  Bad programmer, no cookie :-(
+                 See also the similar case in set_candles_afire() in zap.c
+            } */
+        }
+
         update_inventory();
         return TRUE;
     } else {
@@ -2555,6 +2585,7 @@ dofiretrap(struct obj *box)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
+        set_candles_afire();
     }
     if (!box && burn_floor_paper(level, u.ux, u.uy, see_it, TRUE) && !see_it)
         pline("You smell paper burning.");
@@ -2780,7 +2811,8 @@ fire_damage(struct obj *chain, boolean force, boolean here, xchar x, xchar y)
 
 
 void
-acid_damage(struct obj *obj) {
+acid_damage(struct obj *obj)
+{
     if (!obj)
         return;
 
@@ -3018,6 +3050,7 @@ drown(void)
         turnstate.vision_full_recalc = TRUE;
         return FALSE;
     }
+    /* TODO: Isn't this u_helpless check backwards? */
     if ((Teleportation || can_teleport(youmonst.data)) &&
         u_helpless(hm_unconscious) && (Teleport_control || rn2(3) < Luck + 2)) {
         pline("You attempt a teleport spell."); /* utcsri!carroll */
@@ -4145,6 +4178,7 @@ burn_stuff:
     destroy_item(SCROLL_CLASS, AD_FIRE);
     destroy_item(SPBOOK_CLASS, AD_FIRE);
     destroy_item(POTION_CLASS, AD_FIRE);
+    set_candles_afire();
     return FALSE;
 }
 
