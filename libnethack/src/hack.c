@@ -2134,17 +2134,37 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 adjalign(-3);
                 break;
             case 2:
-                /* it may have drowned or died.  that's no way to treat a pet!
-                   your god gets angry. */
+                    /* drowned or died...
+                     * you killed your pet by direct action, so get experience
+                     * and possibly penalties;
+                     * we want the level gain message, if it happens, to occur
+                     * before the guilt message below
+                     */ {
+                /* minliquid() and mintrap() call mondead() rather than
+                   killed() so we duplicate some of the latter here */
+                int tmp, mndx;
+                
+                break_conduct(conduct_killer);
+                mndx = monsndx(mtmp->data);
+                tmp = experience(mtmp, (int)mvitals[mndx].died + 1);
+                more_experienced(tmp, 0);
+                newexplevel();      /* will decide if you go up */
+            }
                 if (rn2(4)) {
+                    /* That's no way to treat a pet!  Your god gets angry.
+                     *
+                     * [This has always been pretty iffy.  Why does your
+                     * patron deity care at all, let alone enough to get mad?]
+                     *
+                     * [Yeah, IMO, this should hit your alignment record, rather than
+                     * anger, and probably only for non-chaotics; but that can wait
+                     * for the next alignment/luck/anger rebalance/overhaul -- NAE]
+                     */
                     pline("You feel guilty about losing your pet like this.");
                     u.ugangr++;
                     adjalign(-15);
                 }
 
-                /* you killed your pet by direct action. minliquid and mintrap
-                   don't know to do this */
-                break_conduct(conduct_killer);
                 break;
             default:
                 pline("that's strange, unknown mintrap result!");

@@ -654,7 +654,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     int armpro, num, tmp = dice((int)mattk->damn, (int)mattk->damd);
     boolean cancelled;
 
-    if (touch_petrifies(pd) && !resists_ston(magr)) {
+    if ((touch_petrifies(pd)
+         || (mattk->adtyp == AD_DGST && pd == &mons[PM_MEDUSA]))
+        && !resists_ston(magr)) {
         long protector = attk_protection((int)mattk->aatyp);
         long wornitems = magr->misc_worn_check;
 

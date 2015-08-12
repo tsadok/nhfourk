@@ -1574,6 +1574,7 @@ gulpum(struct monst *mdef, const struct attack *mattk)
     int tmp;
     int dam = dice((int)mattk->damn, (int)mattk->damd);
     struct obj *otmp;
+    boolean fatal_gulp;
 
     /* Not totally the same as for real monsters.  Specifically, these don't
        take multiple moves.  (It's just too hard, for too little result, to
@@ -1589,8 +1590,13 @@ gulpum(struct monst *mdef, const struct attack *mattk)
         for (otmp = mdef->minvent; otmp; otmp = otmp->nobj)
             snuff_lit(otmp);
 
-        /* KMH, conduct */
-        if (mattk->adtyp == AD_DGST) {
+        fatal_gulp = (touch_petrifies(mdef->data) && !Stone_resistance) ||
+            (mattk->adtyp == AD_DGST &&
+             (is_rider(mdef->data) ||
+              ((mdef->data == &mons[PM_MEDUSA]) && !Stone_resistance)));
+
+        if ((mattk->adtyp == AD_DGST && !Slow_digestion) || fatal_gulp) {
+            /* KMH, conduct */
             break_conduct(conduct_food);
             if (!vegan(mdef->data))
                 break_conduct(conduct_vegan);
@@ -1598,7 +1604,12 @@ gulpum(struct monst *mdef, const struct attack *mattk)
                 break_conduct(conduct_vegetarian);
         }
 
-        if (!touch_petrifies(mdef->data) || Stone_resistance) {
+        if (fatal_gulp && !is_rider(mdef->data)) {  /* petrification */
+            const char *mname = mdef->data->mname;
+            if (!type_is_pname(mdef->data)) mname = an(mname);
+            pline("You bite into %s.", mon_nam(mdef));
+            instapetrify(killer_msg(STONING, msgprintf("swallowing %s whole", mname)));
+        } else {
             start_engulf(mdef);
             switch (mattk->adtyp) {
             case AD_DGST:
@@ -1730,10 +1741,6 @@ gulpum(struct monst *mdef, const struct attack *mattk)
                 pline("Obviously, you didn't like %s taste.",
                       s_suffix(mon_nam(mdef)));
             }
-        } else {
-            pline("You bite into %s.", mon_nam(mdef));
-            instapetrify(killer_msg(STONING,
-                msgprintf("swallowing %s whole", an(mdef->data->mname))));
         }
     }
     return 0;
