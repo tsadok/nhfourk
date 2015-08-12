@@ -407,8 +407,8 @@ fall_through(boolean td)
 
     if (td) {
         struct trap *t = t_at(level, u.ux, u.uy);
+        feeltrap(t);
 
-        seetrap(t);
         if (!In_sokoban(&u.uz)) {
             if (t->ttyp == TRAPDOOR)
                 pline("A trap door opens up under you!");
@@ -716,7 +716,7 @@ dotrap(struct trap *trap, unsigned trflags)
             break;
         }
         trap->once = 1;
-        seetrap(trap);
+        feeltrap(trap);
         pline("An arrow shoots out at you!");
         otmp = mksobj(level, ARROW, TRUE, FALSE, rng_main);
         otmp->quan = 1L;
@@ -822,7 +822,7 @@ dotrap(struct trap *trap, unsigned trflags)
     case BEAR_TRAP:
         if (Levitation || Flying)
             break;
-        seetrap(trap);
+        feeltrap(trap);
         if (amorphous(youmonst.data) || is_whirly(youmonst.data) ||
             unsolid(youmonst.data)) {
             pline("%s bear trap closes harmlessly through you.",
@@ -922,7 +922,7 @@ dotrap(struct trap *trap, unsigned trflags)
         /* KMH -- You can't escape the Sokoban level traps */
         if (!In_sokoban(&u.uz) && (Levitation || Flying))
             break;
-        seetrap(trap);
+        feeltrap(trap);
         if (!In_sokoban(&u.uz) && is_clinger(youmonst.data)) {
             if (trap->tseen) {
                 pline("You see %s %spit below you.", a_your[trap->madeby_u],
@@ -1018,7 +1018,7 @@ dotrap(struct trap *trap, unsigned trflags)
         break;
 
     case WEB:  /* Our luckless player has stumbled into a web. */
-        seetrap(trap);
+        feeltrap(trap);
         if (amorphous(youmonst.data) || is_whirly(youmonst.data) ||
             unsolid(youmonst.data)) {
             if (acidic(youmonst.data) || u.umonnum == PM_GELATINOUS_CUBE ||
@@ -1172,7 +1172,7 @@ dotrap(struct trap *trap, unsigned trflags)
             if (Levitation || Flying) {
                 if (!already_seen && rn2(3))
                     break;
-                seetrap(trap);
+                feeltrap(trap);
                 pline("%s %s in a pile of soil below you.",
                       already_seen ? "There is" : "You discover",
                       trap->madeby_u ? "the trigger of your mine" :
@@ -1193,7 +1193,7 @@ dotrap(struct trap *trap, unsigned trflags)
                 if (recursive_mine)
                     break;
 
-                seetrap(trap);
+                feeltrap(trap);
                 pline("KAABLAMM!!!  You triggered %s land mine!",
                       a_your[trap->madeby_u]);
                 if (u.usteed)
@@ -1222,7 +1222,7 @@ dotrap(struct trap *trap, unsigned trflags)
     case ROLLING_BOULDER_TRAP:{
             int style = ROLL | (trap->tseen ? LAUNCH_KNOWN : 0);
 
-            seetrap(trap);
+            feeltrap(trap);
             pline("Click! You trigger a rolling boulder trap!");
             if (!launch_obj
                 (BOULDER, trap->launch.x, trap->launch.y, trap->launch2.x,
@@ -1234,7 +1234,7 @@ dotrap(struct trap *trap, unsigned trflags)
             break;
         }
     case MAGIC_PORTAL:
-        seetrap(trap);
+        feeltrap(trap);
         domagicportal(trap);
         break;
 
@@ -1245,7 +1245,7 @@ dotrap(struct trap *trap, unsigned trflags)
         break;
 
     default:
-        seetrap(trap);
+        feeltrap(trap);
         impossible("You hit a trap of type %u", trap->ttyp);
     }
 }
@@ -1618,6 +1618,16 @@ seetrap(struct trap *trap)
         map_trap(trap, 1, TRUE);
         newsym(trap->tx, trap->ty);
     }
+}
+
+/* feeltrap is like seetrap but overrides vision */
+void
+feeltrap(struct trap *trap)
+{
+    trap->tseen = 1;
+    map_trap(trap, 1, FALSE);
+    /* in case it's beneath something, redisplay the something */
+    newsym(trap->tx, trap->ty);
 }
 
 

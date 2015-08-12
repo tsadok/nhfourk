@@ -1107,10 +1107,9 @@ dospinweb(void)
     }
     ttmp = maketrap(level, u.ux, u.uy, WEB, rng_main);
     if (ttmp) {
-        ttmp->tseen = 1;
         ttmp->madeby_u = 1;
+        feeltrap(ttmp);
     }
-    newsym(u.ux, u.uy);
     return 1;
 }
 
