@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Sean Hunt, 2014-12-29 */
+/* Last modified by Alex Smith, 2015-07-25 */
 /* Copyright (c) 2013 Alex Smith. */
 /* The 'uncursed' rendering library may be distributed under either of the
  * following licenses:
@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>      /* for vsnprintf, this file does no I/O */
+#include <stdbool.h>
 
 #define UNCURSED_MAIN_PROGRAM
 #include "uncursed.h"
@@ -574,6 +575,7 @@ int COLOR_PAIRS = 32767;        /* externally visible; must fit into 15 bits */
 
 static uncursed_color (*pair_content_list)[2] = 0;   /* dynamically allocated */
 static uncursed_color pair_content_alloc_count = -1;
+static bool need_noutwin_recolor = true;
 
 int
 start_color(void)
@@ -611,22 +613,6 @@ color_on_screen_for_attr(attr_t a)
 
     return f | (b << 5) | (!!(a & A_UNDERLINE) << 10);
 }
-
-/* Handle the palette when the palette or screen changes. */
-static void
-recolor_nout_win(int ymin, int ymax, int xmin, int xmax)
-{
-    int y, x;
-    if (!nout_win)
-        return;
-
-    for (y = ymin; y <= ymax; y++)
-        for (x = xmin; x <= xmax; x++) {
-            cchar_t *nwct = nout_win->chararray + y * nout_win->stride + x;
-            nwct->color_on_screen = color_on_screen_for_attr(nwct->attr);
-        }
-}
-
 
 #define DEFAULT_FOREGROUND COLOR_WHITE
 #define DEFAULT_BACKGROUND COLOR_BLACK
@@ -668,8 +654,7 @@ init_pair(uncursed_color pairnum,
     pair_content_list[pairnum][0] = fgcolor;
     pair_content_list[pairnum][1] = bgcolor;
 
-    if (nout_win)
-        recolor_nout_win(0, nout_win->maxy, 0, nout_win->maxx);
+    need_noutwin_recolor = true;
 
     return OK;
 }
@@ -1621,34 +1606,84 @@ copywin(const WINDOW *from, const WINDOW *to, int from_miny, int from_minx,
 
     int i, j;
 
-    for (j = to_miny; j <= to_maxy; j++) {
-        if (j < 0 || j - to_miny + from_miny < 0)
-            continue;
-        if (j > to->maxy || j - to_miny + from_miny > from->maxy)
-            continue;
+    const int xoffset = to_minx - from_minx;
+    const int yoffset = to_miny - from_miny;
 
-        for (i = to_minx; i <= to_maxx; i++) {
-            if (i < 0 || i - to_minx + from_minx < 0)
-                continue;
-            if (i > to->maxx || i - to_minx + from_minx > from->maxx)
-                continue;
+    int imin = from_minx;
+    if (imin < 0)
+        imin = 0;
+    if (imin < -xoffset)
+        imin = -xoffset;
 
-            cchar_t *f =
-                from->chararray + i - to_minx + from_minx +
-                (j - to_miny + from_miny) * from->stride;
-            cchar_t *t = to->chararray + i + j * to->stride;
+    int imax = to_maxx - xoffset;
+    if (imax > from->maxx)
+        imax = from->maxx;
+    if (imax > to->maxx - xoffset) /* note: to->maxx might not be to_maxx */
+        imax = to->maxx - xoffset;
 
-            if (skip_blanks && f->chars[0] == 32)
-                continue;
+    int irange = imax + 1 - imin;
 
-            *t = *f;
+    int jmin = from_miny;
+    if (jmin < 0)
+        jmin = 0;
+    if (jmin < -yoffset)
+        jmin = -yoffset;
 
-            void **rf =
-                from->regionarray + i - to_minx + from_minx +
-                (j - to_miny + from_miny) * (from->maxx + 1);
-            void **rt = to->regionarray + i + j * (to->maxx + 1);
+    int jmax = to_maxy - yoffset;
+    if (jmax > from->maxy)
+        jmax = from->maxy;
+    if (jmax > to->maxy - yoffset) /* note: to->maxy might not be to_maxy */
+        jmax = to->maxy - yoffset;
 
-            *rt = *rf;
+    for (j = jmin; j <= jmax; j++) {
+
+        /* Note: C doesn't allow pointers to go more than one byte past the
+           end of an array. This makes it hard to dead-reckon these pointers
+           with respect to j, because we can't be an entire stride past the
+           start or the end. The easiest solution is to just calculate them
+           anew on each loop iteration (especially because this isn't the
+           inner loop; the loop on i is the inner loop). */
+
+        cchar_t *fc = from->chararray + j * from->stride;
+        cchar_t *tc = to->chararray + xoffset + ((j + yoffset) * to->stride);
+        void **fr = from->regionarray + j * (from->maxx + 1);
+        void **tr = to->regionarray + xoffset +
+            ((j + yoffset) * (to->maxx + 1));
+
+        if (skip_blanks) {
+            /* Conceptually "for (i = imin; i <= imax; i++)", but we don't use
+               the value of i, so make the loop as optimizable as possible. */
+            for (i = 0; i < irange; i++) {
+                if (fc->chars[0] != 32) {
+                    *tc = *fc;
+                    *tr = *fr;
+
+                    if (to == nout_win)
+                        tc->color_on_screen =
+                            color_on_screen_for_attr(tc->attr);
+                }
+
+                /* Dead-reckon these pointers for performance. This function is
+                   often the inner loop of libuncursed (depending on what the
+                   application using us wants). */
+                tc++;
+                fc++;
+                tr++;
+                fr++;
+            }
+        } else {
+            /* We could use a dead-reckoned loop like the above. However,
+               there's no particular reason to copy one cchar/void * at a time
+               when we could copy as opaque objects (which is even faster). */
+            memcpy(tc, fc, irange * sizeof *tc);
+            memcpy(tr, fr, irange * sizeof *tr);
+
+            if (to == nout_win)
+                for (i = 0; i < irange; i++) {
+                    tc->color_on_screen =
+                        color_on_screen_for_attr(tc->attr);
+                    tc++;
+                }
         }
     }
     return OK;
@@ -1864,7 +1899,7 @@ keyname(int c)
     if (c > KEY_MAX) {
         snprintf(keybuf, sizeof(keybuf), "KEY_MAX + %d", c - KEY_MAX);
         return keybuf;
-    } 
+    }
 
     strcpy(keybuf, "KEY_");
     if (c & KEY_CTRL)
@@ -2432,8 +2467,6 @@ wnoutrefresh(WINDOW *win)
     win->clear_on_refresh = 0;
     copywin(win, nout_win, 0, 0, win->scry, win->scrx, win->scry + win->maxy,
             win->scrx + win->maxx, 0);
-    recolor_nout_win(win->scry, win->scry + win->maxy,
-                     win->scrx, win->scrx + win->maxx);
 
     return wmove(nout_win, win->scry + win->y, win->scrx + win->x);
 }
@@ -2458,6 +2491,9 @@ doupdate(void)
         for (i = 0; i <= nout_win->maxx; i++) {
             int k;
 
+            if (need_noutwin_recolor)
+                p->color_on_screen = color_on_screen_for_attr(p->attr);
+
             if (p->color_on_screen != q->color_on_screen ||
                 *rp != *rq || *rq == &invalid_region)
                 uncursed_hook_update(j, i);
@@ -2475,6 +2511,7 @@ doupdate(void)
 
     uncursed_hook_positioncursor(nout_win->y, nout_win->x);
     uncursed_hook_flush();
+    need_noutwin_recolor = false;
     return OK;
 }
 
