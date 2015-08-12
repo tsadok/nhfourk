@@ -605,6 +605,13 @@ delobj(struct obj *obj)
            exploding chests, and golem creation, and ... */
         return;
     }
+
+    if (obj->where == OBJ_INVENT && obj->owornmask & W_MASK(os_wep)) {
+        impossible("Deleting wielded object.");
+        uwepgone();  /* Pre-emptively unwield before deleting; fix C343-295. */
+    }
+    setnotworn(obj); /* Just in case there are other, similar bugs lurking. */
+
     update_map = (obj->where == OBJ_FLOOR);
     obj_extract_self(obj);
     if (!OBJ_AT_LEV(obj->olev, obj->ox, obj->oy) &&

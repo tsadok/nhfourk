@@ -902,7 +902,7 @@ magicbane_hit(struct monst *magr,   /* attacker */
     if (youattack || youdefend || vis) {
         hittee = msgupcasefirst(hittee);
         if (resisted) {
-            pline("%s %s!", hittee, vtense(hittee, "resist"));
+            pline("%s resist%s!", hittee, youdefend ? "" : "s");
             shieldeff(m_mx(mdef), m_my(mdef));
         }
         if (flags.verbose) {
@@ -916,8 +916,8 @@ magicbane_hit(struct monst *magr,   /* attacker */
                 buf = "confused";
 
             if (buf)
-                pline("%s %s %s%c", hittee, vtense(hittee, "are"), buf,
-                      (do_stun && do_confuse) ? '!' : '.');
+                pline("%s %s %s%c", hittee, youdefend ? "are" : "is",
+                      buf, (do_stun && do_confuse) ? '!' : '.');
         }
     }
 

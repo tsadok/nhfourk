@@ -1508,6 +1508,8 @@ hito_stone_to_flesh(struct obj *obj)
             refresh_y = ooy;
             mon = makemon(&mons[obj->corpsenm], level, oox, ooy, NO_MM_FLAGS);
             if (mon) {
+                if (obj->where == OBJ_INVENT && obj->owornmask & W_MASK(os_wep))
+                    uwepgone();
                 delobj(obj);
                 if (cansee(mon->mx, mon->my))
                     pline("The figurine animates!");

@@ -1544,7 +1544,11 @@ dosacrifice(const struct nh_cmd_arg *arg)
                         exercise(A_WIS, TRUE);
                         /* make sure we can use this weapon */
                         unrestrict_weapon_skill(weapon_type(otmp));
-                        discover_artifact(otmp->oartifact);
+                        if (!Hallucination && !Blind) {
+                            otmp->dknown = 1;
+                            makeknown(otmp->otyp);
+                            discover_artifact(otmp->oartifact);
+                        }
                         return 1;
                     }
                 } else {
