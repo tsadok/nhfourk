@@ -1416,6 +1416,9 @@ write_nh_config(void)
 
     if (get_config_name(filename, FALSE) &&
         (fp = open_config_file(filename))) {
+#ifdef UNIX
+        fchmod(fileno(fp), 0644);
+#endif
         write_config_options(fp, nh_options);
         fclose(fp);
     }
@@ -1430,6 +1433,9 @@ write_ui_config(void)
 
     if (get_config_name(filename, TRUE) &&
         (fp = open_config_file(filename))) {
+#ifdef UNIX
+        fchmod(fileno(fp), 0644);
+#endif
         write_config_options(fp, curses_options);
         fclose(fp);
     }
