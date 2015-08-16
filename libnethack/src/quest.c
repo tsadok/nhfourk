@@ -44,10 +44,19 @@ on_start(const d_level * orig_lev)
 static void
 on_locate(const d_level * orig_lev)
 {
-    if (!Qstat(first_locate)) {
-        qt_pager(QT_FIRSTLOCATE);
+    /* the locate messages are phrased in a manner such that they only
+       make sense when arriving on the level from above */
+    boolean from_above = (orig_lev->dlevel < u.uz.dlevel);
+
+    if (Qstat(killed_nemesis)) {
+        return;
+    } else if (!Qstat(first_locate)) {
+        if (from_above) qt_pager(QT_FIRSTLOCATE);
+        /* if we've arrived from below this will be a lie, but there won't
+           be any point in delivering the message upon a return visit from
+           above later since the level has now been seen */
         Qstat(first_locate) = TRUE;
-    } else if (orig_lev->dlevel < u.uz.dlevel && !Qstat(killed_nemesis))
+    } else if (from_above)
         qt_pager(QT_NEXTLOCATE);
 }
 
@@ -76,7 +85,7 @@ onquest(const d_level * orig_lev)
 
     if (Is_qstart(&u.uz))
         on_start(orig_lev);
-    else if (Is_qlocate(&u.uz) && u.uz.dlevel > orig_lev->dlevel)
+    else if (Is_qlocate(&u.uz))
         on_locate(orig_lev);
     else if (Is_nemesis(&u.uz))
         on_goal();

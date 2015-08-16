@@ -393,17 +393,27 @@ fall_through(boolean td)
 {       /* td == TRUE : trap door or hole */
     d_level dtmp;
     const char *dont_fall = NULL;
-    int newlevel = dunlev(&u.uz);
+    int newlevel, bottom;
     const char *msgbuf;
 
     /* KMH -- You can't escape the Sokoban level traps */
     if (Blind && Levitation && !In_sokoban(&u.uz))
         return;
 
+    bottom = dunlevs_in_dungeon(&u.uz);
+    /* when in the upper half of the quest, don't fall past the
+       middle "quest locate" level if hero hasn't been there yet */
+    if (In_quest(&u.uz)) {
+        int qlocate_depth = qlocate_level.dlevel;
+        /* deepest reached < qlocate implies current < qlocate */
+        if (dunlev_reached(&u.uz) < qlocate_depth)
+            bottom = qlocate_depth; /* early cut-off */
+    }
+    newlevel = dunlev(&u.uz);       /* current level */
+
     do
         newlevel++;
-    while (!rn2_on_rng(4, rng_trapdoor_result) &&
-           newlevel < dunlevs_in_dungeon(&u.uz));
+    while (!rn2_on_rng(4, rng_trapdoor_result) && newlevel < bottom);
 
     if (td) {
         struct trap *t = t_at(level, u.ux, u.uy);
@@ -424,7 +434,7 @@ fall_through(boolean td)
     else if (Levitation || u.ustuck || !can_fall_thru(level)
              || Flying || is_clinger(youmonst.data)
              || (Inhell && !u.uevent.invoked &&
-                 newlevel == dunlevs_in_dungeon(&u.uz))) {
+                 newlevel == bottom)) {
         dont_fall = "You don't fall in.";
     } else if (youmonst.data->msize >= MZ_HUGE) {
         dont_fall = "You don't fit through.";
@@ -3310,18 +3320,30 @@ try_disarm(struct trap *ttmp, boolean force_failure, schar dx, schar dy)
                         killed(mtmp);
                 } else if (ttype == WEB) {
                     if (!webmaker(youmonst.data)) {
-                        struct trap *ttmp2 =
-                            maketrap(level, u.ux, u.uy, WEB, rng_main);
+                        if (!On_stairs(u.ux, u.uy) &&
+                            !t_at(level, u.ux, u.uy)) {
+                            struct trap *ttmp2 =
+                                maketrap(level, u.ux, u.uy, WEB, rng_main);
 
-                        if (ttmp2) {
-                            pline("The webbing sticks to you. You're caught "
-                                  "too!");
-                            dotrap(ttmp2, NOWEBMSG);
-                            if (u.usteed && u.utrap) {
-                                /* you, not steed, are trapped */
-                                dismount_steed(DISMOUNT_FELL);
+                            if (ttmp2) {
+                                pline("The webbing sticks to you. "
+                                      "You're caught too!");
+                                dotrap(ttmp2, NOWEBMSG);
+                                if (u.usteed && u.utrap) {
+                                    /* you, not steed, are trapped */
+                                    dismount_steed(DISMOUNT_FELL);
+                                }
                             }
-                        }
+                        } /* Else, don't make a web on an existing trap (because
+                           * we can only have one trap at a time per tile, the
+                           * way the data structure currently is set up), and
+                           * don't make web on the stairs; besides being
+                           * inconsistent with other traps (which cannot occur
+                           * on furniture, including stairs) and a glyph
+                           * conflict (which confuses travel), putting web on
+                           * stairs causes additional strange bugs, such as
+                           * inconsistency as to whether you are stuck depending
+                           * on which direction you're moving.  Ticket #477.  */
                     } else
                         pline("%s remains entangled.", Monnam(mtmp));
                 }

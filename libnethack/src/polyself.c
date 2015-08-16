@@ -910,11 +910,14 @@ rehumanize(int how, const char *killer)
         del_light_source(level, LS_MONSTER, &youmonst);
     polyman("You return to %s form!", urace.adj);
 
-    if (u.uhp < 1)
+    if (u.uhp < 1) {
+        /* can only happen if some bit of code reduces u.uhp
+         * instead of u.mh while poly'd */
+        pline("Your old form was not healthy enough to survive.");
         done(DIED,
              killer_msg(DIED, msgcat_many("reverting to unhealthy ", urace.adj,
                                           " form", NULL)));
-
+    }
     action_interrupted();
 
     turnstate.vision_full_recalc = TRUE;

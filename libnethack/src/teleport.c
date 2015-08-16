@@ -1210,12 +1210,23 @@ random_teleport_level(void)
      * monsters sometimes level teleporting out of it into main dungeon. Also
      * prevent monsters reaching the Sanctum prior to invocation.
      */
-    min_depth = In_quest(&u.uz) ? find_dungeon(&u.uz).depth_start : 1;
-    max_depth =
-        dunlevs_in_dungeon(&u.uz) + (find_dungeon(&u.uz).depth_start - 1);
-    /* can't reach the Sanctum if the invocation hasn't been performed */
-    if (Inhell && !u.uevent.invoked)
-        max_depth -= 1;
+    if (In_quest(&u.uz)) {
+        int bottom = dunlevs_in_dungeon(&u.uz),
+            qlocate_depth = qlocate_level.dlevel;
+        /* if hero hasn't reached the middle locate level yet,
+           no one can randomly teleport past it */
+        if (dunlev_reached(&u.uz) < qlocate_depth)
+            bottom = qlocate_depth;
+        min_depth = find_dungeon(&u.uz).depth_start;
+        max_depth = bottom + (find_dungeon(&u.uz).depth_start - 1);
+    } else {
+        min_depth = 1;
+        max_depth = dunlevs_in_dungeon(&u.uz) +
+            (find_dungeon(&u.uz).depth_start - 1);
+        /* can't reach the Sanctum if the invocation hasn't been performed */
+        if (Inhell && !u.uevent.invoked)
+            max_depth -= 1;
+    }
 
     /* Get a random value relative to the current dungeon */
     /* Range is 1 to current+3, current not counting */
