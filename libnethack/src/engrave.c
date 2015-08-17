@@ -1092,6 +1092,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                a +0 anything (except an athame) to engrave "Elbereth" all at
                once.  However, you could now engrave "Elb", then "ere", then
                "th". */
+            if (otmp->quan > 1L)
+                otmp = splitobj(otmp, 1L);
             pline("Your %s dull.", aobjnam(otmp, "get"));
             if (otmp->unpaid) {
                 struct monst *shkp = shop_keeper(level, *u.ushops);
