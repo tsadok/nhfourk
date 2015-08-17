@@ -1379,9 +1379,10 @@ mswingsm(struct monst *magr, struct monst *mdef, struct obj *otemp)
     if (!flags.verbose || Blind || !mon_visible(magr))
         return;
 
-    pline("%s %s %s %s at %s.", Monnam(magr),
+    pline("%s %s %s%s %s at %s.", Monnam(magr),
           (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-          mhis(magr), singular(otemp, xname), mon_nam(mdef));
+          ((otemp->quan > 1L) ? "one of " : ""),
+          mhis(magr), xname(otemp), mon_nam(mdef));
 }
 
 /*
