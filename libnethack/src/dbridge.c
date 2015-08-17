@@ -90,16 +90,22 @@ is_moat(struct level * lev, int x, int y)
 
 /*
  * We want to know whether a wall (or a door) is the portcullis (passageway)
- * of an eventual drawbridge.
+ * of an eventual drawbridge, and in which direction.
  *
- * Return value:  the direction of the drawbridge.
+ * Return value:  the direction of the drawbridge (or -1 for none).
+ *
+ * If you want to know UP vs DOWN, use is_db_wall().
  */
 
 int
-is_drawbridge_wall(int x, int y)
+drawbridge_wall_direction(int x, int y)
 {
     struct rm *loc;
 
+    if (!isok(x,y)) {
+        impossible("drawbridge_wall_direction(%d,%d) not ok.", x, y);
+        return -1;
+    }
     loc = &level->locations[x][y];
     if (loc->typ != DOOR && loc->typ != DBWALL)
         return -1;
@@ -121,13 +127,20 @@ is_drawbridge_wall(int x, int y)
 }
 
 /*
- * Use is_db_wall where you want to verify that a
- * drawbridge "wall" is UP in the location x, y
- * (instead of UP or DOWN, as with is_drawbridge_wall).
+ * Use is_db_wall where you want to verify that a drawbridge "wall" (i.e.,
+ * portcullis) is in the UP position in the location x, y.
+ *
+ * (If you want to find find out the direction or to verify the existence of a
+ * portcullis without regard to whether it's UP or DOWN, then in that case use
+ * drawbridge_wall_direction instead.)
  */
 boolean
 is_db_wall(int x, int y)
 {
+    if (!isok(x,y)) {
+        impossible("is_db_wall(%d,%d) not ok.", x, y);
+        return FALSE; /* arbitrary choice */
+    }
     return (boolean) (level->locations[x][y].typ == DBWALL);
 }
 
@@ -143,7 +156,7 @@ find_drawbridge(int *x, int *y)
 
     if (IS_DRAWBRIDGE(level->locations[*x][*y].typ))
         return TRUE;
-    dir = is_drawbridge_wall(*x, *y);
+    dir = drawbridge_wall_direction(*x, *y);
     if (dir >= 0) {
         switch (dir) {
         case DB_NORTH:

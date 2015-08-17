@@ -344,8 +344,12 @@ addinv(struct obj *obj)
 
     obj_was_thrown = obj->was_thrown;
 
-    obj->no_charge = 0; /* not meaningful for invent */
-    obj->was_thrown = 0;
+    /* normally addtobill() clears no_charge when items in a shop are
+       picked up, but won't do so if the shop has become untended */
+    obj->no_charge = 0;  /* should not be set in player inventory */
+    if (Has_contents(obj))
+        picked_container(obj); /* clear no_charge for contents, recursively */
+    obj->was_thrown = 0; /* not meaningful in player inventory */
     obj->was_dropped = 0;
 
     examine_object(obj);
@@ -1759,7 +1763,7 @@ dfeature_at(int x, int y)
             break;      /* "closed door" */
         }
         /* override door description for open drawbridge */
-        if (is_drawbridge_wall(x, y) >= 0)
+        if (drawbridge_wall_direction(x, y) >= 0)
             dfeature = "open drawbridge portcullis", cmap = -1;
     } else if (IS_FOUNTAIN(ltyp))
         cmap = S_fountain;      /* "fountain" */

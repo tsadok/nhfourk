@@ -536,7 +536,7 @@ do_play_instrument(struct obj *instr, const struct nh_cmd_arg *arg)
                     for (x = u.ux - 1; x <= u.ux + 1 && !ok; x++)
                         if (isok(x, y))
                             if (IS_DRAWBRIDGE(level->locations[x][y].typ) ||
-                                is_drawbridge_wall(x, y) >= 0)
+                                drawbridge_wall_direction(x, y) >= 0)
                                 ok = TRUE;
                 if (ok) {       /* There is a drawbridge near */
                     int tumblers, gears;

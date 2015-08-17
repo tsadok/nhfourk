@@ -527,6 +527,14 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) /* in bubble */ ) {
         pline("You can't write in thin air!");
         return 0;
+    } else if (u.utrap && u.utraptype == TT_INFLOOR) {
+        pline ("You can't write on the %s while embedded therein.",
+               surface(u.ux, u.uy));
+        return 0;
+    } else if (!accessible(level, u.ux, u.uy)) {
+        /* stone, tree, wall, secret corridor, pool, lava, bars */
+        pline("You can't write here.");
+        return 0;
     }
     if (cantwield(youmonst.data)) {
         pline("You can't even hold anything!");
