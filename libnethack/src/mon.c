@@ -2552,7 +2552,7 @@ restore_cham(struct monst *mon)
 static boolean
 restrap(struct monst *mtmp)
 {
-    if (mtmp->cham || mtmp->mcan || mtmp->m_ap_type ||
+    if (mtmp->mcan || mtmp->m_ap_type ||
         cansee(mtmp->mx, mtmp->my) || rn2(3) || (mtmp == u.ustuck) ||
         (sensemon(mtmp) && distu(mtmp->mx, mtmp->my) <= 2))
         return FALSE;
@@ -2736,6 +2736,8 @@ newcham(struct monst *mtmp, const struct permonst *mdat,
         wormgone(mtmp);
         place_monster(mtmp, mtmp->mx, mtmp->my);
     }
+    if (mtmp->m_ap_type && mdat->mlet != S_MIMIC)
+        seemimic(mtmp);     /* revert to normal monster */
 
     hpn = mtmp->mhp;
     hpd = (mtmp->m_lev < 50) ? ((int)mtmp->m_lev) * 8 : mdat->mlevel;
