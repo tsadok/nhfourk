@@ -323,12 +323,20 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         {
             struct monst *mtmp;
             struct obj *otmp, *statue;
+            const struct permonst *mptr;
+            int trycount = 50;
 
-            /* use the provided RNG for species but nothing else */
-            statue = mkcorpstat(STATUE, NULL, &mons[rndmonnum(&lev->z, rng)],
-                                lev, x, y, FALSE, rng_main);
-            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO,
-                           NO_MM_FLAGS);
+            do {    /* Avoid ultimately hostile co-aligned unicorn. */
+                    /* Also avoid cross-aligned ones, because the
+                       trap could end up in a bones file. */
+                    /* Use the provided RNG once only for species. */
+                mptr = &mons[rndmonnum(&lev->z,
+                                       ((trycount == 50) ? rng : rng_main))];
+            } while (--trycount > 0 && is_unicorn(mptr));
+
+            statue = mkcorpstat(STATUE, NULL, mptr, lev, x, y, FALSE, rng_main);
+            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO, MM_NOCOUNTBIRTH);
+
             if (!mtmp)
                 break;  /* should never happen */
             while (mtmp->minvent) {
@@ -567,6 +575,13 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
         seemimic(mon);
     else
         mon->mundetected = FALSE;
+
+    mon->msleeping = 0; /* trap releases an awake monster */
+    if (cause == ANIMATE_NORMAL || cause == ANIMATE_SHATTER) {
+        /* trap always releases hostile monster */
+        msethostility(mon, TRUE, TRUE);
+    }
+
 
     const char *comes_to_life =
         nonliving(mon->data) ? "moves" : "comes to life";
@@ -1362,12 +1377,15 @@ blow_up_landmine(struct trap *trap)
     wake_nearto(trap->tx, trap->ty, 400);
     if (IS_DOOR(level->locations[trap->tx][trap->ty].typ))
         level->locations[trap->tx][trap->ty].doormask = D_BROKEN;
-    if (!IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)) {
+    if (IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)
+        || Is_waterlevel(&u.uz) || Is_airlevel(&u.uz)) {
+        /* No pits on the Planes of Air or Water; and if it's a
+         * bridge, destroy_drawbridge (called below) does enough. */
+        deltrap(level, trap);
+    } else {
         trap->ttyp = PIT;       /* explosion creates a pit */
         trap->madeby_u = FALSE; /* resulting pit isn't yours */
-        seetrap(trap);  /* and it isn't concealed */
-    } else {
-        deltrap(level, trap);
+        seetrap(trap);          /* and it isn't concealed */
     }
     if (find_drawbridge(&x, &y)) {
         destroy_drawbridge(x, y);

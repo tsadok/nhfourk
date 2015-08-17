@@ -2082,6 +2082,10 @@ use_trap(struct obj *otmp, const struct nh_cmd_arg *arg)
              IS_ROCK(level->locations[u.ux][u.uy].typ) ||
              closed_door(level, u.ux, u.uy) || t_at(level, u.ux, u.uy))
         what = "here";
+    else if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz))
+        what = (level->locations[u.ux][u.uy].typ == AIR) ? "in midair" :
+            (level->locations[u.ux][u.uy].typ == CLOUD) ? "in a cloud" :
+            "in this place";         /* Air/Water Plane catch-all */
     if (what) {
         pline("You can't set a trap %s!", what);
         u.utracked[tos_trap] = 0;
