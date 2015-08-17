@@ -2370,7 +2370,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
 
             pline("You wrap your bullwhip around %s %s.",
                   s_suffix(mon_nam(mtmp)), onambuf);
-            if (gotit && otmp->cursed) {
+            if (gotit && mwelded(mtmp, otmp)) {
                 pline("%s welded to %s %s%c",
                       (otmp->quan == 1L) ? "It is" : "They are", mhis(mtmp),
                       mon_hand, !otmp->bknown ? '!' : '.');

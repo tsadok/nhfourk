@@ -668,5 +668,14 @@ unwield_silently(struct obj *obj)
         setuqwep(NULL);
 }
 
+/* test whether monster's wielded weapon is stuck to hand/paw/whatever */
+boolean
+mwelded(const struct monst *mon, struct obj *obj)
+{
+    if (obj && mon && (obj==MON_WEP(mon)) && will_weld(obj))
+        return TRUE;
+    return FALSE;
+}
+
 /*wield.c*/
 

@@ -3284,7 +3284,13 @@ move_into_trap(struct trap *ttmp)
         check_leash(u.ux0, u.uy0);
         if (Punished)
             move_bc(0, bc, bx, by, cx, cy);
-        spoteffects(FALSE);     /* dotrap() */
+        /* Marking the trap unseen forces dotrap() to treat it like a new
+           discovery and prevents pickup() -> look_here() -> check_here()
+           from giving a redudant "There is a <trap> here" message when
+           there are objects covering this trap: */
+        ttmp->tseen = 0;    /* hack for check_here() */
+        /* trigger the trap: */
+        spoteffects(TRUE);  /* pickup() + dotrap() */
         exercise(A_WIS, FALSE);
     }
 }
