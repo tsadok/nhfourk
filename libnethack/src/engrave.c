@@ -755,13 +755,16 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                         pline("This %s is a wand of digging!", xname(otmp));
                     doknown = TRUE;
                 }
-                if (!Blind)
+                if (!Blind) {
                     post_engr_text =
                         IS_GRAVE(level->locations[u.ux][u.uy].typ) ?
                         "Chips fly out from the headstone." :
                         is_ice(level, u.ux, u.uy) ?
                         "Ice chips fly up from the ice surface!" :
+                        (level->locations[u.ux][u.uy].typ == DRAWBRIDGE_DOWN) ?
+                        "Splinters fly up from the bridge." :
                         "Gravel flies up from the floor.";
+                }
                 else
                     post_engr_text = "You hear drilling!";
                 break;
