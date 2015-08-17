@@ -1874,7 +1874,7 @@ glibr(void)
               makeplural(body_part(HAND)));
         setuswapwep(NULL);
         xfl++;
-        if (otmp->otyp != LOADSTONE || !otmp->cursed)
+        if (canletgo(otmp, "slippery fingers"))
             dropx(otmp);
     }
     otmp = uwep;
@@ -1891,7 +1891,7 @@ glibr(void)
         pline("Your %s%s %sslips from your %s.", otherwep ? "other " : "",
               thiswep, xfl ? "also " : "", makeplural(body_part(HAND)));
         setuwep(NULL);
-        if (otmp->otyp != LOADSTONE || !otmp->cursed)
+        if (canletgo(otmp, "slippery fingers"))
             dropx(otmp);
     }
 }

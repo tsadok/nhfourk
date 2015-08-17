@@ -334,7 +334,8 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
                 what = "card";
             pline(no_longer, "hold the", what);
             return reset_pick();
-        } else if (u.utracked[tos_lock] != &zeroobj && !can_reach_floor()) {
+        } else if (Engulfed ||
+                   (u.utracked[tos_lock] != &zeroobj && !can_reach_floor())) {
             pline(no_longer, "reach the", "lock");
             return reset_pick();
         } else {
@@ -351,6 +352,10 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
     if (nohands(youmonst.data)) {
         pline("You can't hold %s -- you have no hands!", doname(pick));
         return 0;
+    } else if (Engulfed) {
+        pline("You can't %sunlock %s.",
+              ((picktyp == CREDIT_CARD) ? "" : "lock or "),
+              mon_nam(u.ustuck));
     }
 
     if ((picktyp != LOCK_PICK && picktyp != CREDIT_CARD &&
