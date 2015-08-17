@@ -116,6 +116,7 @@ extern int nartifact_exist(void);
 extern boolean spec_ability(struct obj *, unsigned long);
 extern boolean confers_luck(struct obj *);
 extern boolean arti_reflects(struct obj *);
+extern boolean shade_glare(struct obj *);
 extern boolean restrict_name(struct obj *, const char *);
 extern boolean defends(int, struct obj *);
 extern boolean protects(int, struct obj *);
