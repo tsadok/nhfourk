@@ -2329,7 +2329,8 @@ selftouch(const char *arg, const char *deathtype)
         instapetrify(killer_msg(STONING,
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uwep->corpsenm].mname))));
-        if (!Stone_resistance)
+        /* life-saved; unwield the corpse if we can't handle it */
+        if (!Stone_resistance && !uarmg)
             uwepgone();
     }
     /* Or your secondary weapon, if wielded */
@@ -2339,7 +2340,8 @@ selftouch(const char *arg, const char *deathtype)
         instapetrify(killer_msg(STONING,
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uswapwep->corpsenm].mname))));
-        if (!Stone_resistance)
+        /* life-saved; unwield the corpse */
+        if (!Stone_resistance && !uarmg)
             uswapwepgone();
     }
 }
@@ -2350,12 +2352,16 @@ mselftouch(struct monst *mon, const char *arg, boolean byplayer)
     struct obj *mwep = MON_WEP(mon);
 
     if (mwep && mwep->otyp == CORPSE &&
+        !resists_ston(mon) &&
         touch_petrifies(&mons[mwep->corpsenm])) {
         if (cansee(mon->mx, mon->my)) {
             pline("%s%s touches the %s corpse.", arg ? arg : "",
                   arg ? mon_nam(mon) : Monnam(mon), mons[mwep->corpsenm].mname);
         }
         minstapetrify(mon, byplayer);
+        /* if life-saved, might not be able to continue wielding */
+        if (mon->mhp > 0 && !which_armor(mon, os_armg) && !resists_ston(mon))
+            mwepgone(mon);
     }
 }
 

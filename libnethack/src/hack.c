@@ -1915,9 +1915,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     }
 
     /* Not attacking a monster, for whatever reason; we try to move. */
-    if (u.usteed && !u.usteed->mcanmove &&
-        (turnstate.move.dx || turnstate.move.dy)) {
-        pline("%s won't move!", msgupcasefirst(y_monnam(u.usteed)));
+    if ((turnstate.move.dx || turnstate.move.dy) && stucksteed(FALSE)) {
         action_completed();
         return 1;
     } else if (!youmonst.data->mmove) {

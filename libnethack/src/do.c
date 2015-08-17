@@ -681,11 +681,7 @@ dodown(boolean autodig_ok)
     boolean ladder_down = (u.ux == level->dnladder.sx &&
                            u.uy == level->dnladder.sy);
 
-    if (u.usteed && !u.usteed->mcanmove) {
-        pline("%s won't move!", Monnam(u.usteed));
-        return 0;
-    } else if (u.usteed && u.usteed->meating) {
-        pline("%s is still eating.", Monnam(u.usteed));
+    if (stucksteed(TRUE)) {
         return 0;
     } else if (Levitation) {
         unsigned controlled_lev = u_have_property(
@@ -808,8 +804,7 @@ doup(void)
         pline("You can't go up here.");
         return 0;
     }
-    if (u.usteed && !u.usteed->mcanmove) {
-        pline("%s won't move!", Monnam(u.usteed));
+    if (stucksteed(TRUE)) {
         return 0;
     } else if (u.usteed && u.usteed->meating) {
         pline("%s is still eating.", Monnam(u.usteed));

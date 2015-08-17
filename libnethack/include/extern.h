@@ -1687,6 +1687,7 @@ extern void exercise_steed(void);
 extern void kick_steed(void);
 extern void dismount_steed(int);
 extern void place_monster(struct monst *mon, int x, int y);
+extern boolean stucksteed(boolean);
 
 /* ### symclass.c ### */
 
@@ -1863,6 +1864,7 @@ extern int dmgval(struct obj *, struct monst *);
 extern struct obj *select_rwep(const struct monst *);
 extern struct obj *select_hwep(const struct monst *);
 extern void possibly_unwield(struct monst *, boolean);
+extern void mwepgone(struct monst *);
 extern int mon_wield_item(struct monst *);
 extern int abon(void);
 extern int dbon(void);
