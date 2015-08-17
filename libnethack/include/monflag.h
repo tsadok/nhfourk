@@ -147,6 +147,11 @@
 # define M3_INFRAVISION  0x0100         /* has infravision */
 # define M3_INFRAVISIBLE 0x0200         /* visible by infravision */
 # define M3_SCENT        0x0400         /* can pinpoint monsters by smell */
+# define M3_DISPLACES    0x0800         /* moves monsters out of its way */
+/* M3_DISPLACES is a post-3.4.3 Dev Team feature that is mostly unimplemented
+   in NH4 at this time; currently the flag is only honored by the corpse
+   revival code.  In the Dev Team's unreleased code, monster movement also
+   uses it, which is something we could consider importing in the future. */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */

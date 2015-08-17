@@ -570,6 +570,7 @@ save_you(struct memfile *mf, struct you *y)
         mwrite32(mf, 0);
 
     mwrite32(mf, y->lastinvnr);
+    mwrite64(mf, y->pickmovetime);
 }
 
 static void
