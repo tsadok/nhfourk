@@ -1817,7 +1817,9 @@ doeat(const struct nh_cmd_arg *arg)
        ridiculous amounts of coding to deal with partly eaten plate mails,
        players who polymorph back to human in the middle of their metallic
        meal, etc.... */
-    if (!is_edible(otmp, TRUE)) {
+    if (otmp->oartifact && !touch_artifact(otmp, &youmonst)) {
+        return 1;
+    } else if (!is_edible(otmp, TRUE)) {
         pline("You cannot eat that!");
         return 0;
     } else if ((otmp->owornmask & (W_ARMOR | W_MASK(os_tool) |

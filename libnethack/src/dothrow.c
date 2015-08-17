@@ -312,6 +312,14 @@ dofire(const struct nh_cmd_arg *arg)
             prinv(NULL, uquiver, 0L);
         }
     }
+    /* If the quivered item really ought to have a launcher, and
+     * no suitable launcher is wielded, warn about ineffectivness. */
+    if (is_ammo(uquiver) && !ammo_and_launcher(uquiver, uwep) &&
+        /* For rocks, only warn if the player has a sling: */
+        (!(uquiver->otyp == ROCK) || carrying(SLING)))
+        pline("You attempt to fire %s with your %s %s.",
+              an(xname(uquiver)), (uarmg ? "gloved" : "bare"),
+              makeplural(body_part(HAND)));
 
     return throw_obj(uquiver, arg, cancel_unquivers);
 }
