@@ -855,7 +855,8 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
         }
         if (bigmonst(youmonst.data) && !can_ooze(&youmonst)) {
             if (mode == DO_MOVE)
-                pline("Your body is too large to fit through.");
+                pline("Your %s is too large to fit through.",
+                      body_part(BODY));
             return FALSE;
         }
         if (invent && (inv_weight() + weight_cap() > 600)) {

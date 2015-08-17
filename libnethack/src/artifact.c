@@ -1466,10 +1466,10 @@ arti_invoke(struct obj *obj)
                 goto nothing_special;
             newsym(u.ux, u.uy);
             if (on)
-                pline("Your body takes on a %s transparency...",
+                pline("Your %s takes on a %s transparency...", body_part(BODY),
                       Hallucination ? "normal" : "strange");
             else
-                pline("Your body seems to unfade...");
+                pline("Your %s seems to unfade...", body_part(BODY));
             break;
         }
     }

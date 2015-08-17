@@ -504,7 +504,7 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
             if (equipping)
                 self_invis_message();
             else
-                pline("Your body seems to unfade%s.",
+                pline("Your %s seems to unfade%s.", body_part(BODY),
                       See_invisible ? " completely" : "..");
         }
         break;
@@ -1362,7 +1362,8 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
         /* Hobbits have an os_arm slot that can be used for elven armor only */
         (raceptr(mon) != &mons[PM_HOBBIT] || slot != os_arm)) {
         if (noisy)
-            pline("The %s will not fit on your body.", c_slotnames[slot]);
+            pline("The %s will not fit on your %s.", c_slotnames[slot],
+                  body_part(BODY));
         return 0;
     }
     /* Horned monsters /do/ have a head slot; they can wear elven leather helms
@@ -1374,7 +1375,8 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
     if ((slot == os_armg || slot == os_arms || slot == os_armh) &&
         (nohands(mon->data) || verysmall(mon->data))) {
         if (noisy)
-            pline("You can't balance the %s on your body.", c_slotnames[slot]);
+            pline("You can't balance the %s on your %s.", c_slotnames[slot],
+                  body_part(BODY));
         return 0;
     }
     if (slot == os_armf &&
@@ -1621,7 +1623,8 @@ canwearobj(struct obj *otmp, long *mask,
     case os_ringr:
         if (nolimbs(youmonst.data)) {
             if (noisy)
-                pline("You cannot make the ring stick to your body.");
+                pline("You cannot make the ring stick to your %s.",
+                      body_part(BODY));
             return FALSE;
         }
         /* It's possible to have cursed gloves and not know it. In such a case,
@@ -1687,7 +1690,8 @@ canwearobjon(struct obj *otmp, enum objslot slot,
     if (mask & W_RING && (slot == os_ringl || slot == os_ringr))
         pline("%s will only fit on your other hand.", Yname2(otmp));
     else
-        pline("%s won't fit on that part of your body.", Yname2(otmp));
+        pline("%s won't fit on that part of your %s.", Yname2(otmp),
+              body_part(BODY));
 
     return FALSE;
 }
@@ -1810,7 +1814,7 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
         }
         if (otmp == uskin()) {
             if (noisy)
-                pline("The %s is merged with your skin!",
+                pline("The %s merged with your skin!",
                       otmp->otyp >= GRAY_DRAGON_SCALES ?
                       "dragon scales are" : "dragon scale mail is");
         }

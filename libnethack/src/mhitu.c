@@ -1378,7 +1378,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         diseasemu(mdat);        /* plus the normal damage */
         break;
     case AD_FAMN:
-        pline("%s reaches out, and your body shrivels.", Monnam(mtmp));
+        pline("%s reaches out, and your %s shrivels.", Monnam(mtmp),
+              body_part(BODY));
         exercise(A_CON, FALSE);
         if (u.uhs != FAINTED)
             morehungry(rn1(40, 40));

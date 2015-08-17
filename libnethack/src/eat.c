@@ -415,7 +415,8 @@ cprefx(int pm)
             done(DIED, msgcat("unwisely ate the body of ", mons[pm].mname));
             /* It so happens that since we know these monsters cannot appear in
                tins, u.utracked[tos_food] will always be what we want, which is
-               not generally true. */
+               not generally true.  Likewise, the word "body" is hardcoded,
+               but that's ok because these monsters have a physical body. */
             if (revive_corpse(u.utracked[tos_food]))
                 u.utracked[tos_food] = NULL;
             return;
@@ -1343,8 +1344,8 @@ fprefx(struct obj *otmp)
 static void
 accessory_has_effect(struct obj *otmp)
 {
-    pline("Magic spreads through your body as you digest the %s.",
-          otmp->oclass == RING_CLASS ? "ring" : "amulet");
+    pline("Magic spreads through your %s as you digest the %s.",
+          body_part(BODY), otmp->oclass == RING_CLASS ? "ring" : "amulet");
 }
 
 static void
@@ -1390,7 +1391,8 @@ eataccessory(struct obj *otmp)
                 if (!oldprop && !worn_extrinsic(INVIS) &&
                     !worn_blocked(INVIS) && !See_invisible && !Blind) {
                     newsym(u.ux, u.uy);
-                    pline("Your body takes on a %s transparency...",
+                    pline("Your %s takes on a %s transparency...",
+                          body_part(BODY),
                           Hallucination ? "normal" : "strange");
                     makeknown(typ);
                 }

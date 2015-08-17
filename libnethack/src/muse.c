@@ -1731,7 +1731,8 @@ use_misc(struct monst *mtmp, struct musable *m)
         mon_set_minvis(mtmp);
         if (vismon && mtmp->minvis) {   /* was seen, now invisible */
             if (See_invisible)
-                pline("%s body takes on a %s transparency.", s_suffix(nambuf),
+                pline("%s %s takes on a %s transparency.", s_suffix(nambuf),
+                      mbodypart(mtmp, BODY),
                       Hallucination ? "normal" : "strange");
             else if (tp_sensemon(mtmp))
                 pline("%s disappears, but you can still %s.", nambuf,

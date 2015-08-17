@@ -454,7 +454,8 @@ exerchk(void)
                 case A_STR:
                     pline((mod_val >
                            0) ? "You must have been exercising." :
-                          "You must have been abusing your body.");
+                          "You must have been abusing your %s.",
+                          body_part(BODY));
                     break;
                 case A_WIS:
                     pline((mod_val >
