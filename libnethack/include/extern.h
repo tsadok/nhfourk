@@ -1861,6 +1861,7 @@ extern void do_clear_area(int, int, int, void (*)(int, int, void *), void *);
 /* ### weapon.c ### */
 
 extern boolean can_advance(int, boolean);
+extern const char *weapon_descr(struct obj *);
 extern int hitval(struct obj *, struct monst *);
 extern int dmgval(struct obj *, struct monst *);
 extern struct obj *select_rwep(const struct monst *);
