@@ -1,14 +1,14 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-07-21 */
 /* Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
  * Polymorph self routine.
  *
- * Note:  the light source handling code assumes that both youmonst.m_id
- * and youmonst.mx will always remain 0 when it handles the case of the
- * player polymorphed into a light-emitting monster.
+ * Note: the light source handling code assumes that youmonst.m_id will always
+ * remain 0 when it handles the case of the player polymorphed into a
+ * light-emitting monster.
  */
 
 #include "hack.h"
@@ -19,6 +19,16 @@ static void drop_weapon(int, boolean);
 static void uunstick(void);
 static int armor_to_dragon(int);
 static void newman(void);
+
+static int dobreathe(const struct nh_cmd_arg *);
+static int dospit(const struct nh_cmd_arg *);
+static int doremove(void);
+static int dospinweb(void);
+static int dosummon(void);
+static int dogaze(void);
+static int dohide(void);
+static int domindblast(void);
+
 
 /* update the youmonst.data structure pointer */
 void
@@ -88,6 +98,7 @@ polyman(const char *fmt, const char *arg)
         spoteffects(TRUE);
 
     see_monsters(FALSE);
+    update_supernatural_abilities();
 
     if (!uarmg) {
         const char *kbuf = msgprintf("returning to %s form while wielding",
@@ -141,8 +152,8 @@ newman(void)
     }
     if (u.ulevel > MAXULEV)
         u.ulevel = MAXULEV;
-    /* If your level goes down, your peak level goes down by the same amount so 
-       that you can't simply use blessed full healing to undo the decrease. But 
+    /* If your level goes down, your peak level goes down by the same amount so
+       that you can't simply use blessed full healing to undo the decrease. But
        if your level goes up, your peak level does *not* undergo the same
        adjustment; you might end up losing out on the chance to regain some
        levels previously lost to other causes. */
@@ -190,7 +201,7 @@ newman(void)
             if (u.uhpmax <= 0)
                 u.uhpmax = 1;
         } else {
-        dead:  /* we come directly here if their experience level went to 0 or 
+        dead:  /* we come directly here if their experience level went to 0 or
                    less */
             pline("Your new form doesn't seem healthy enough to survive.");
             done(DIED, killer_msg(DIED, "an unsuccessful polymorph"));
@@ -335,6 +346,151 @@ made_change:
         !breathless(youmonst.data) && !amphibious(youmonst.data) && !Swimming)
         drown();
 }
+
+static int
+docast_at_magc(void)
+{
+    return castum((struct monst *)NULL,
+                  attacktype_fordmg(youmonst.data, AT_MAGC, AD_ANY));
+}
+
+static int
+dogremlin_multiply(void)
+{
+    if (IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
+        if (split_mon(&youmonst, NULL))
+            dryup(u.ux, u.uy, TRUE);
+        return 1;
+    } else {
+        pline("There's no fountain here to multiply in.");
+        return 0;
+    }
+}
+
+static int
+dopolyself_unihorn(void)
+{
+    use_unicorn_horn(NULL);
+    return 1;
+}
+
+static int
+doshriek(void)
+{
+    pline("You shriek.");
+    if (u.uburied)
+        pline("Unfortunately sound does not carry well through rock.");
+    else
+        aggravate();
+    return 1;
+}
+
+/* Check to see if the given permonst has a polyform (#monster) ability.
+
+   Return TRUE if they do, FALSE if they don't. Additionally, return the
+   ability itself through the pointer given as argument, if it's non-NULL.
+
+   At present, this is only used for the player. It could potentially be
+   expanded to other monsters in future, but that would likely need changes to
+   struct polyform_ability. Given that its main purpose is for UI code, though,
+   it'd make sense to keep it as player-only. */
+boolean
+has_polyform_ability(const struct permonst *pm,
+                     struct polyform_ability *pa)
+{
+    struct polyform_ability dummy;
+    const struct attack *atk;
+    if (!pa)
+        pa = &dummy;
+    if ((atk = attacktype_fordmg(pm, AT_BREA, AD_ANY))) {
+        const char *breathname;
+        /* For now, we list only the breath types that at least one monster
+           has, with an "unknown" fallthrough. Perhaps someday we'll have a
+           general AT/AD rewrite. */
+        switch (atk->adtyp) {
+        case AD_MAGM: breathname = "breathe magic missiles"; break;
+        case AD_FIRE: breathname = "breathe fire"; break;
+        case AD_COLD: breathname = "breathe cold"; break;
+        case AD_SLEE: breathname = "breathe sleep gas"; break;
+        case AD_DISN: breathname = "breathe disintegration"; break;
+        case AD_ELEC: breathname = "breathe electricity"; break;
+        case AD_DRST: breathname = "breathe poison"; break;
+        case AD_ACID: breathname = "breathe acid"; break;
+        case AD_RBRE: breathname = "random breath weapon"; break;
+        default:      breathname = "unknown breath weapon"; break;
+        }
+        pa->description = breathname;
+        pa->directed = TRUE;
+        pa->handler_directed = dobreathe;
+    } else if (attacktype(pm, AT_SPIT)) {
+        pa->description = "spit venom";
+        pa->directed = TRUE;
+        pa->handler_directed = dospit;
+    } else if (attacktype(pm, AT_MAGC)) {
+        pa->description = "monster magic";
+        pa->directed = FALSE;
+        pa->handler_undirected = docast_at_magc;
+    } else if (pm->mlet == S_NYMPH) {
+        pa->description = "remove iron ball";
+        pa->directed = FALSE;
+        pa->handler_undirected = doremove;
+    } else if (attacktype(pm, AT_GAZE)) {
+        pa->description = "gaze";
+        pa->directed = FALSE; /* TODO: why undirected? */
+        pa->handler_undirected = dogaze;
+    } else if (is_were(pm)) {
+        pa->description = "summon allies";
+        pa->directed = FALSE;
+        pa->handler_undirected = dosummon;
+    } else if (webmaker(pm)) {
+        pa->description = "spin web";
+        pa->directed = FALSE;
+        pa->handler_undirected = dospinweb;
+    } else if (is_hider(pm)) {
+        pa->description = "hide";
+        pa->directed = FALSE;
+        pa->handler_undirected = dohide;
+    } else if (is_mind_flayer(pm)) {
+        pa->description = "mind blast";
+        pa->directed = FALSE;
+        pa->handler_undirected = domindblast;
+    } else if (monsndx(pm) == PM_GREMLIN) {
+        pa->description = "multiply";
+        pa->directed = FALSE;
+        pa->handler_undirected = dogremlin_multiply;
+    } else if (is_unicorn(pm)) {
+        pa->description = "activate horn";
+        pa->directed = FALSE;
+        pa->handler_undirected = dopolyself_unihorn;
+    } else if (pm->msound == MS_SHRIEK) {
+        pa->description = "shriek";
+        pa->directed = FALSE;
+        pa->handler_undirected = doshriek;
+    } else {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+/* The #monster command. Supported as a separate command for keystroke
+   compatibility with older versions. Also called indirectly from the
+   spellcasting code, to implement monster attacks. */
+int
+domonability(const struct nh_cmd_arg *arg)
+{
+    struct polyform_ability pa;
+    if (has_polyform_ability(youmonst.data, &pa)) {
+        if (pa.directed)
+            return pa.handler_directed(arg);
+        else
+            return pa.handler_undirected();
+    } else if (Upolyd)
+        pline("Any special ability you may have is purely reflexive.");
+    else
+        pline("You don't have a special ability in your normal form!");
+    return 0;
+}
+
 
 /* (try to) make a mntmp monster out of the player */
 /* returns 1 if polymorph successful */
@@ -506,36 +662,20 @@ polymon(int mntmp, boolean noisy)
             dismount_steed(DISMOUNT_POLY);
     }
 
-    if (flags.verbose && noisy) {
-        static const char use_thec[] = "Use the command #%s to %s.";
-        static const char monsterc[] = "monster";
+    /* Make sure that #monster is on the supernatural abilities list. Or
+       removed from the list, if we're turning into a monster that can't. */
+    update_supernatural_abilities();
 
-        if (attacktype(youmonst.data, AT_MAGC))
-            pline(use_thec, monsterc, "cast monster spells outside combat");
-        if (can_breathe(youmonst.data))
-            pline(use_thec, monsterc, "use your breath weapon");
-        if (attacktype(youmonst.data, AT_SPIT))
-            pline(use_thec, monsterc, "spit venom");
-        if (youmonst.data->mlet == S_NYMPH)
-            pline(use_thec, monsterc, "remove an iron ball");
-        if (attacktype(youmonst.data, AT_GAZE))
-            pline(use_thec, monsterc, "gaze at monsters");
-        if (is_hider(youmonst.data))
-            pline(use_thec, monsterc, "hide");
-        if (is_were(youmonst.data))
-            pline(use_thec, monsterc, "summon help");
-        if (webmaker(youmonst.data))
-            pline(use_thec, monsterc, "spin a web");
-        if (u.umonnum == PM_GREMLIN)
-            pline(use_thec, monsterc, "multiply in a fountain");
-        if (is_unicorn(youmonst.data))
-            pline(use_thec, monsterc, "use your horn");
-        if (is_mind_flayer(youmonst.data))
-            pline(use_thec, monsterc, "emit a mental blast");
-        if (youmonst.data->msound == MS_SHRIEK) /* worthless, actually */
-            pline(use_thec, monsterc, "shriek");
+    if (flags.verbose && noisy) {
+        struct polyform_ability pa;
+        if (has_polyform_ability(youmonst.data, &pa)) {
+            pline("You have a special ability in this form: '%s'.",
+                  pa.description);
+            pline("You can cast it like a spell.");
+        }
+
         if (lays_eggs(youmonst.data) && u.ufemale)
-            pline(use_thec, "sit", "lay an egg");
+            pline("In this form, you can lay an egg by sitting on the ground.");
     }
     /* you now know what an egg of your type looks like */
     if (lays_eggs(youmonst.data)) {
@@ -781,7 +921,7 @@ rehumanize(int how, const char *killer)
     encumber_msg();
 }
 
-int
+static int
 dobreathe(const struct nh_cmd_arg *arg)
 {
     const struct attack *mattk;
@@ -809,7 +949,7 @@ dobreathe(const struct nh_cmd_arg *arg)
     return 1;
 }
 
-int
+static int
 dospit(const struct nh_cmd_arg *arg)
 {
     struct obj *otmp;
@@ -843,7 +983,7 @@ dospit(const struct nh_cmd_arg *arg)
     return 1;
 }
 
-int
+static int
 doremove(void)
 {
     if (!Punished) {
@@ -854,7 +994,7 @@ doremove(void)
     return 1;
 }
 
-int
+static int
 dospinweb(void)
 {
     struct trap *ttmp = t_at(level, u.ux, u.uy);
@@ -974,7 +1114,7 @@ dospinweb(void)
     return 1;
 }
 
-int
+static int
 dosummon(void)
 {
     int placeholder;
@@ -992,8 +1132,8 @@ dosummon(void)
     return 1;
 }
 
-int
-dogaze(enum u_interaction_mode uim)
+static int
+dogaze(void)
 {
     struct monst *mtmp;
     int looked = 0;
@@ -1030,11 +1170,15 @@ dogaze(enum u_interaction_mode uim)
                 pline("%s seems not to notice your gaze.", Monnam(mtmp));
             else if (!canseemon(mtmp))
                 pline("You can't see where to gaze at %s.", Monnam(mtmp));
-            else if (is_safepet(mtmp, uim))
+            else if ((mtmp->mtame || mtmp->mpeaceful) && !Confusion)
                 pline("You avoid gazing at %s.", y_monnam(mtmp));
             else {
-                if (!Confusion && !confirm_attack(mtmp, uim))
-                    continue;
+                /* This used to prompt for whether to attack peacefuls, or
+                   attack them indiscriminately at uim_indiscriminate. Both of
+                   these are a UI nightmare, really. We could consider not
+                   attacking if uim_pacifist, but presumably if the player is
+                   intentionally using a gaze attack, they want to do
+                   /something/. */
                 setmangry(mtmp);
 
                 if (!mtmp->mcanmove || mtmp->mstun || mtmp->msleeping ||
@@ -1071,7 +1215,7 @@ dogaze(enum u_interaction_mode uim)
                     if (mtmp->mhp <= 0)
                         killed(mtmp);
                 }
-                /* For consistency with passive() in uhitm.c, this only affects 
+                /* For consistency with passive() in uhitm.c, this only affects
                    you if the monster is still alive. */
                 if (!DEADMONSTER(mtmp) && (mtmp->data == &mons[PM_FLOATING_EYE])
                     && !mtmp->mcan) {
@@ -1088,9 +1232,9 @@ dogaze(enum u_interaction_mode uim)
                         pline("You stiffen momentarily under %s gaze.",
                               s_suffix(mon_nam(mtmp)));
                 }
-                /* Technically this one shouldn't affect you at all because the 
+                /* Technically this one shouldn't affect you at all because the
                    Medusa gaze is an active monster attack that only works on
-                   the monster's turn, but for it to *not* have an effect would 
+                   the monster's turn, but for it to *not* have an effect would
                    be too weird. */
                 if (!DEADMONSTER(mtmp) && (mtmp->data == &mons[PM_MEDUSA]) &&
                     !mtmp->mcan) {
@@ -1110,7 +1254,7 @@ dogaze(enum u_interaction_mode uim)
     return 1;
 }
 
-int
+static int
 dohide(void)
 {
     boolean ismimic = youmonst.data->mlet == S_MIMIC;
@@ -1129,7 +1273,7 @@ dohide(void)
     return 1;
 }
 
-int
+static int
 domindblast(void)
 {
     struct monst *mtmp, *nmon;
@@ -1394,4 +1538,3 @@ armor_to_dragon(int atyp)
 }
 
 /*polyself.c*/
-
