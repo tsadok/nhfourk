@@ -188,7 +188,10 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
     else
         mon->mspeed = mon->permspeed;
 
-    if (give_msg && (mon->mspeed != oldspeed || petrify) && canseemon(mon)) {
+    /* no message if monster is immobile (temp or perm) or unseen */
+    if (give_msg && (mon->mspeed != oldspeed || petrify) &&
+        mon->data->mmove && !(mon->mfrozen || mon->msleeping) &&
+        canseemon(mon)) {
         /* fast to slow (skipping intermediate state) or vice versa */
         const char *howmuch =
             (mon->mspeed + oldspeed == MFAST + MSLOW) ? "much " : "";
