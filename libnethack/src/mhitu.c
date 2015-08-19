@@ -1100,9 +1100,18 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hitmsg(mtmp, mattk);
         if (uncancelled && !rn2(4) && u.ulycn == NON_PM &&
             !Protection_from_shape_changers && !defends(AD_WERE, uwep)) {
+            struct obj *wep; /* Need a variable so we can pass a pointer. */
             pline("You feel feverish.");
             exercise(A_CON, FALSE);
             u.ulycn = monsndx(mdat);
+            if (u.twoweap) {
+                wep = uswapwep;
+                (void)retouch_object(&wep, TRUE);
+            }
+            if (uwep) {
+                wep = uwep;
+                (void)retouch_object(&wep, TRUE);
+            }
         }
         break;
     case AD_SGLD:

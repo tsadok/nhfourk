@@ -829,12 +829,15 @@ cpostfx(int pm)
         break;
     }
 
-    if (catch_lycanthropy && defends(AD_WERE, uwep)) {
-        if (!touch_artifact(uwep, &youmonst)) {
-            struct obj *obj = uwep;
-            unwield_silently(uwep);
-            dropx(obj);
-            uwepgone();
+    if (catch_lycanthropy) {
+        struct obj *wep; /* Need a variable so we can pass a pointer. */
+        if (u.twoweap) {
+            wep = uswapwep;
+            (void)retouch_object(&wep, TRUE);
+        }
+        if (uwep) {
+            wep = uwep;
+            (void)retouch_object(&wep, TRUE);
         }
     }
 
@@ -1819,7 +1822,8 @@ doeat(const struct nh_cmd_arg *arg)
        ridiculous amounts of coding to deal with partly eaten plate mails,
        players who polymorph back to human in the middle of their metallic
        meal, etc.... */
-    if (otmp->oartifact && !touch_artifact(otmp, &youmonst)) {
+    if (!(carried(otmp) ? retouch_object(&otmp, FALSE) :
+          touch_artifact(otmp, &youmonst))) {
         return 1;
     } else if (!is_edible(otmp, TRUE)) {
         pline("You cannot eat that!");
