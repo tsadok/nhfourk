@@ -1737,6 +1737,10 @@ use_misc(struct monst *mtmp, struct musable *m)
             else if (tp_sensemon(mtmp))
                 pline("%s disappears, but you can still %s.", nambuf,
                       Hallucination ? "see its aura" : "sense its thoughts");
+            else if (canspotmon(mtmp)) /* e.g. the orc/Sting case */
+                pline("%s %s %s.", s_suffix(nambuf), mbodypart(mtmp, BODY),
+                      Hallucination ? "is totally psychedelic" :
+                      "seems to lose its definition");
             else
                 pline("Suddenly you cannot see %s.", nambuf);
             if (oseen)
