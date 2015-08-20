@@ -51,6 +51,17 @@ Development will closely track NetHack 4 as an upstream source.
 
 The following principles are put forward:
 
+ * The master branch should not break save compatibility except
+   after release, when it moves to the new version number by
+   merging material that was previously in bleeding-edge.  The
+   bleeding-edge branch may break save compatibility any time.
+   Version-number branches with a version number less than that of
+   the master branch are to receive important bugfixes only.  The
+   version-number branch that has the same version number as the
+   master branch will generally keep pace with it; and any
+   higher-numbered branches are considered to be in a preliminary,
+   bleeding-edge state and may break save compatibility at any time.
+
  * When possible, uncontroversial improvements should be committed
    upstream to NetHack 4 first and then be merged down to NetHack
    Fourk.  Priority should be given to bug fixes and to popular
@@ -58,7 +69,7 @@ The following principles are put forward:
    on very active public servers).
    
  * Changes from the stable branch of NetHack 4 (at the time of this
-   writing, called nicehack) may be merged at any time, unless we are
+   writing, called master) may be merged at any time, unless we are
    in a freeze to prepare for release.  Such freezes should be short
    in duration.
    
@@ -79,7 +90,7 @@ The following principles are put forward:
    them (e.g., new roles).
    
  * Original changes should be implemented when necessary to address
-   serious shortcomingsor or major balance issues or to improve the
+   serious shortcomings or major balance issues or to improve the
    monster AI.  Some exceptions may be made for changes that only
    impact players who choose to use them, e.g., for new playable races
    and roles.  These should always be implemented in a feature branch
@@ -87,14 +98,16 @@ The following principles are put forward:
    branch.
    
  * Improving the monster AI, if it genuinely makes monsters smarter or
-   introduces greater variety of monster behavior, may be done even if
-   it disrupts game balance; subsequently, if play testing reveals a
-   significant imbalance, steps may be taken to compensate, e.g., by
-   giving the player better ways to deal with monsters that have
-   become more dangerous.
+   introduces greater variety of monster behavior, may be done (at
+   appropriate points in the dev cycle -- typically, in bleeding-edge)
+   even if it disrupts game balance; subsequently, if play testing
+   reveals a significant imbalance, steps may be taken to compensate,
+   e.g., by giving the player better ways to deal with monsters that
+   have become more dangerous.
 
  * Improvements that enhance the variety of the gameplay experience
-   may be made during the alpha phase of the dev cycle, provided they
+   may be made during the alpha phase of the dev cycle (typically,
+   they will be merged into the bleeding-edge branch), provided they
    are kept within reasonable limits and are held to a high standard
    of balance and quality.
 

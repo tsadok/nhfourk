@@ -450,8 +450,8 @@ makerooms(struct level *lev, int *smeq)
                 vault_y = lev->rooms[lev->nroom].ly;
                 lev->rooms[lev->nroom].hx = -1;
             }
-        } else if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1, smeq,
-                                (depth(&lev->z) > 2)))
+        } else if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1,
+                                smeq, (depth(&lev->z) > 2)))
             return;
     }
     return;
@@ -831,7 +831,7 @@ makelevel(struct level *lev)
             return;
         } else if ((lev->z.dnum == medusa_level.dnum) &&
                    (depth(&lev->z) > depth(&medusa_level))) {
-            makemaz(lev, "");
+            makemaz(lev, "", smeq);
             return;
         }
     }

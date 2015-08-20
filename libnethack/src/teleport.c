@@ -1310,7 +1310,7 @@ random_teleport_level(void)
            no one can randomly teleport past it */
         if (dunlev_reached(&u.uz) < qlocate_depth)
             bottom = qlocate_depth;
-        min_depth = In_quest(&u.uz) ? find_dungeon(&u.uz).depth_start : 1;
+        min_depth = find_dungeon(&u.uz).depth_start;
         max_depth = bottom + (find_dungeon(&u.uz).depth_start - 1);
     } else {
         min_depth = 1;

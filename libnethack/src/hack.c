@@ -507,6 +507,7 @@ moverock(schar dx, schar dy)
                 pline("You try to move %s, but in vain.", the(xname(otmp)));
             if (Blind)
                 feel_location(sx, sy);
+            /* cannot_push: */
             if (throws_rocks(youmonst.data)) {
                 if (u.usteed && P_SKILL(P_RIDING) < P_BASIC) {
                     pline("You aren't skilled enough to %s %s from %s.",
@@ -533,7 +534,7 @@ moverock(schar dx, schar dy)
                 sokoban_guilt();
                 break;
             } else
-                return -1;
+                return FALSE;
         }
     }
     return anyboulders;
