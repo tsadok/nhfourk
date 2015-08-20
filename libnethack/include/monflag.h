@@ -67,15 +67,6 @@
 /* other resistances: magic, sickness */
 /* other conveyances: teleport, teleport control, telepathy */
 
-/* individual resistances */
-# define MR2_SEE_INVIS   0x0100         /* see invisible */
-# define MR2_LEVITATE    0x0200         /* levitation */
-# define MR2_WATERWALK   0x0400         /* water walking */
-# define MR2_MAGBREATH   0x0800         /* magical breathing */
-# define MR2_DISPLACED   0x1000         /* displaced */
-# define MR2_STRENGTH    0x2000         /* gauntlets of power */
-# define MR2_FUMBLING    0x4000         /* clumsy */
-
 /* The MRACE_FOO replace both the old M2_FOO flags and also the corresponding
    MH_FOO.  In monst.c, they are only needed for monsters that count as being
    the "same race" for some player characters.  All others use MRACE_NONE.
@@ -171,11 +162,10 @@
 # define M3_INFRAVISIBLE 0x0200         /* visible by infravision */
 # define M3_SCENT        0x0400         /* can pinpoint monsters by smell */
 # define M3_DISPLACES    0x0800         /* moves monsters out of its way */
-/* M3_DISPLACES is a post-3.4.3 Dev Team addition which is mostly
- *    unimplemented in NH4 at this time; currently the flag is
- *    only honored by the corpse revival code.  In the Dev Team's
- *    unreleased code, monster movement also uses it, which is
- *    something we could consider importing in the future. */
+/* M3_DISPLACES is a post-3.4.3 Dev Team feature that is mostly unimplemented
+   in NH4 at this time; currently the flag is only honored by the corpse
+   revival code.  In the Dev Team's unreleased code, monster movement also
+   uses it, which is something we could consider importing in the future. */
 # define M3_BLINKAWAY    0x1000 /* teleports only in LOS, when fleeing */
 
 # define MZ_TINY         0              /* < 2' */
