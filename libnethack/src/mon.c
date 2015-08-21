@@ -1794,27 +1794,13 @@ corpse_chance(struct monst *mon,
     if (LEVEL_SPECIFIC_NOCORPSE(mdat))
         return FALSE;
 
-    if (is_golem(mdat)
+    if (bigmonst(mdat)
+        || mdat == &mons[PM_LIZARD]
+        || is_golem(mdat)
         || is_mplayer(mdat)
         || is_rider(mdat))
         return TRUE;
 
-    /* Certain monsters reliably drop corpses for the first hundred kills. */
-    if ((mdat == &mons[PM_LIZARD] || mdat == &mons[PM_ACID_BLOB] ||
-         mdat->mlet == S_FUNGUS || mdat->mlet == S_PUDDING ||
-         mdat->mlet == S_TROLL) &&
-        mvitals[monsndx(mon->data)].died < 100)
-        return TRUE;
-
-    /* NetHack Fourk balance adjustment: any given type of monster
-       becomes unlikely to leave further corpses when lots of that
-       type of monster have been killed already. */
-    if (ilog2(mvitals[monsndx(mon->data)].died)
-        > rn2_on_rng(8000, rng_death_drop_c))
-        return FALSE;
-
-    if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
-        return TRUE;
     return (boolean) (!rn2((int) (2 + ((int)(mdat->geno & G_FREQ) < 2)
                                     + verysmall(mdat))));
 }
@@ -2008,7 +1994,6 @@ xkilled(struct monst *mtmp, int dest)
     struct trap *t;
     boolean redisp = FALSE;
     boolean wasinside = Engulfed && (u.ustuck == mtmp);
-    enum rng death_drop_rng;
 
     /* KMH, conduct */
     break_conduct(conduct_killer);
@@ -2080,38 +2065,28 @@ xkilled(struct monst *mtmp, int dest)
     if ((dest & 2) || LEVEL_SPECIFIC_NOCORPSE(mdat))
         goto cleanup;
 
-    /* NetHack Fourk balance adjustment: any given type of monster becomes
-     * unlikely to leave further death drops when lots of that type of monster
-     * have been killed already.  Removing the rn2(6) check means the first few
-     * monsters you kill of any given type are significantly more likely to drop
-     * something than before.  This is intended.  As you kill more of that kind
-     * of monster, the probabilities quickly drop off.  */
-    death_drop_rng = (mdat->msize < MZ_HUMAN) ? rng_death_drop_s
-                                              : rng_death_drop_l;
+    /* might be here after swallowed */
+    if (((x != u.ux) || (y != u.uy)) && !rn2(6) &&
+        !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
+        int typ;
 
-    if (ilog2(mvitals[monsndx(mtmp->data)].died)
-        <= rn2_on_rng(6500, death_drop_rng)) {
-        /* might be here after swallowed */
-        if (((x != u.ux) || (y != u.uy)) && !rn2(3) &&
-            !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
-            int typ;
-
-            otmp = mkobj(level, RANDOM_CLASS, TRUE, death_drop_rng);
-            /* Don't create large objects from small monsters */
-            typ = otmp->otyp;
-            if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
-                (otmp->owt > 30 ||
-                 /* oc_big is also oc_bimanual and oc_bulky */
-                 (otmp->owt > 30 || objects[typ].oc_big ||
-                  is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR))) {
-                delobj(otmp);
-            } else if (!flooreffects(otmp, x, y,
-                                     (dest & 1) ? "fall" : "")) {
+        otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
+                        ? rng_death_drop_s : rng_death_drop_l);
+        /* Don't create large objects from small monsters */
+        typ = otmp->otyp;
+        if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
+            /* oc_big is also oc_bimanual and oc_bulky */
+            (otmp->owt > 30 || objects[typ].oc_big ||
+             is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
+            delobj(otmp);
+        } else {
+            obj_extract_self(otmp);
+            if (!flooreffects(otmp, x, y,
+                              (dest & 1) ? "fall" : "")) {
                 place_object(otmp, level, x, y);
                 stackobj(otmp);
-                redisp = TRUE;
-            } else
-                redisp = TRUE;       
+            }
+            redisp = TRUE;
         }
     }
     /* Whether or not it always makes a corpse is, in theory, different from

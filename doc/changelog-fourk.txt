@@ -53,6 +53,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Corpse and death drop rates are restored to their vanilla levels
+   (with a bug fix from the 2014 leak via 4.3-maint).  My changes to
+   this were not accomplishing what they intended to accomplish and,
+   as near as I can tell, did not significantly improve game balance.
+   So they are reverted.
+
  * Upstream (NH4) changes merged during the 4.3.0.3 cycle include the
    user interaction mode rewrite (including the attackhostile setting
    for the movecommand option, which stops the game from asking if you
@@ -60,7 +66,8 @@ Changes in 4.3.0.3:
    that you would have used the Fight prefix) and the M3_SCENT monster
    flag (which allows certain monsters, e.g., canines, to pinpoint
    your location by scent when they are close to you, even if they
-   can't see you).
+   can't see you).  There were also code quality improvements for
+   maintainability, notably, more globals purge.
 
  * The degree to which a worn shield adds to your AC to prevent you
    from being hit is now a function of your skill with the shield,
