@@ -70,6 +70,7 @@ struct permonst {
         mflags2;        /* more boolean bitflags */
     unsigned short mflags3;     /* yet more boolean bitflags */
     /* mflags3 is going to need to be unsigned int one of these days */
+    unsigned int mskill;        /* proficiency bitflags */
     uchar mresists;     /* resistances */
     uchar mconveys;     /* conveyed by eating */
     uchar mcolor;       /* color to use */

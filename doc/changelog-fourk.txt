@@ -53,6 +53,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Merged FIQ's wand balance implementation: so now the effectiveness
+   of wands depends on the skill level of the player or monster
+   that is zapping the wand.  Players can exercise and enhance wand
+   skill as with other skills.  Monsters just have whatever skill
+   level they have, depending on what kind of monster it is.  If
+   the wand is blessed or cursed, the effectiveness is adjusted by
+   one level, and if an unskilled user zaps a cursed one, it explodes.
+
  * Added a "new" type of amulet, the amulet of flying.  (Slash'em
    has had this for a long time, of course.)
 

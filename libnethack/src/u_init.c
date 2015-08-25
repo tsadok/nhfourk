@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -341,6 +341,7 @@ static const struct def_skill Skill_A[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -370,7 +371,8 @@ static const struct def_skill Skill_C[] = {
     {P_JAVELIN, P_SKILLED}, {P_TRIDENT, P_SKILLED},
     {P_BOW, P_BASIC}, {P_SLING, P_EXPERT},
     {P_BOOMERANG, P_EXPERT}, {P_UNICORN_HORN, P_BASIC},
-    {P_BARE_HANDED_COMBAT, P_MASTER},  {P_SHIELD, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_MASTER},
+    {P_SHIELD, P_BASIC}, {P_WANDS, P_BASIC},
     {P_NONE, 0}
 };
 
@@ -384,7 +386,8 @@ static const struct def_skill Skill_H[] = {
     {P_SLING, P_SKILLED}, {P_DART, P_EXPERT},
     {P_SHURIKEN, P_SKILLED}, {P_UNICORN_HORN, P_EXPERT},
     {P_HEALING_SPELL, P_EXPERT},
-    {P_BARE_HANDED_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_SHIELD, P_BASIC}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -403,6 +406,7 @@ static const struct def_skill Skill_K[] = {
     {P_CLERIC_SPELL, P_SKILLED}, {P_RIDING, P_EXPERT},
     {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -414,7 +418,8 @@ static const struct def_skill Skill_Mon[] = {
     {P_DIVINATION_SPELL, P_BASIC}, {P_ENCHANTMENT_SPELL, P_BASIC},
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_MATTER_SPELL, P_BASIC},
-    {P_MARTIAL_ARTS, P_GRAND_MASTER},  {P_SHIELD, P_SKILLED},
+    {P_MARTIAL_ARTS, P_GRAND_MASTER}, {P_SHIELD, P_SKILLED},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -430,6 +435,7 @@ static const struct def_skill Skill_P[] = {
     {P_HEALING_SPELL, P_EXPERT}, {P_DIVINATION_SPELL, P_EXPERT},
     {P_CLERIC_SPELL, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_EXPERT},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -448,6 +454,7 @@ static const struct def_skill Skill_R[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -466,7 +473,8 @@ static const struct def_skill Skill_Ran[] = {
     {P_DIVINATION_SPELL, P_EXPERT},
     {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
+    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_SHIELD, P_SKILLED}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -482,6 +490,7 @@ static const struct def_skill Skill_S[] = {
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},
     {P_MARTIAL_ARTS, P_MASTER},  {P_SHIELD, P_SKILLED},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -504,6 +513,7 @@ static const struct def_skill Skill_T[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_SKILLED},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -520,6 +530,7 @@ static const struct def_skill Skill_V[] = {
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_MASTER},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -537,6 +548,7 @@ static const struct def_skill Skill_W[] = {
     {P_MATTER_SPELL, P_EXPERT},
     {P_RIDING, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
