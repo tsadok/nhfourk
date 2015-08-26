@@ -1016,7 +1016,7 @@ static const struct skill_range {
     const char *name;
     short first, last;
 } skill_ranges[] = {
-    {"Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
+    {"Miscellaneous Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
     {"Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON},
     {"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL}
 };
