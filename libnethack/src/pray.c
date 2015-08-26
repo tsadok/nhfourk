@@ -1848,7 +1848,8 @@ doturn(const struct nh_cmd_arg *arg)
             }
         }
     }
-    helpless(5, hr_busy, "trying to turn the monsters", NULL);
+    if ((5 - (u.ulevel / 6)) > 0)
+        helpless((5 - (u.ulevel / 6)), hr_busy, "trying to turn the monsters", NULL);
     return 1;
 }
 
