@@ -802,7 +802,7 @@ mfind_target(struct monst *mtmp, boolean helpful)
 
     struct monst *mret;
 
-    if (!helpful && mtmp->mpeaceful && lined_up(mtmp))
+    if (!helpful && !mtmp->mpeaceful && lined_up(mtmp))
         return &youmonst;     /* kludge - attack the player first if possible */
 
     for (dir = rn2(8); dir != origdir; dir = ((dir + 1) % 8)) {
