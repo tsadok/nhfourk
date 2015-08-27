@@ -15,8 +15,8 @@
 #define PN_BARE_HANDED       (-1)       /* includes martial arts */
 #define PN_TWO_WEAPONS       (-2)
 #define PN_SHIELD            (-3)
-#define PN_RIDING            (-4)
-#define PN_WANDS             (-5)
+#define PN_WANDS             (-4)
+#define PN_RIDING            (-5)
 #define PN_POLEARMS          (-6)
 #define PN_SABER             (-7)
 #define PN_HAMMER            (-8)
@@ -1548,11 +1548,14 @@ skill_init(const struct def_skill *class_skill)
             continue;
         if (is_shield(obj))
             skill = P_SHIELD;
+        else if (obj->oclass == WAND_CLASS)
+            skill = P_WANDS;
         else
             skill = weapon_type(obj);
 
         if (skill != P_NONE) {
-            P_MAX_SKILL(skill) = P_BASIC;
+            if (P_MAX_SKILL(skill) < P_BASIC)
+                P_MAX_SKILL(skill) = P_BASIC;
             P_SKILL(skill)     = P_BASIC;
         }
     }
@@ -1567,10 +1570,6 @@ skill_init(const struct def_skill *class_skill)
         P_SKILL(P_ENCHANTMENT_SPELL) = P_BASIC;
     }
     
-    /* set wand skills */
-    if (!Role_if(PM_BARBARIAN) && !Role_if(PM_CAVEMAN))
-        P_SKILL(P_WANDS) = P_BASIC;
-
     /* walk through array to set skill maximums */
     for (; class_skill->skill != P_NONE; class_skill++) {
         skmax = class_skill->skmax;

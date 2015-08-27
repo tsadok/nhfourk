@@ -48,6 +48,7 @@ static const struct trobj Archeologist[] = {
     {FEDORA, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 3, 0},
     {PICK_AXE, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
+    {WAN_LIGHT, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {TINNING_KIT, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {TOUCHSTONE, 0, GEM_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
@@ -99,6 +100,7 @@ static const struct trobj Knight[] = {
     {HELMET, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {LEATHER_GLOVES, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_UNDEAD_TURNING, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {APPLE, 0, FOOD_CLASS, 10, 0},
     {CARROT, 0, FOOD_CLASS, 10, 0},
     {0, 0, 0, 0, 0}
@@ -117,6 +119,7 @@ static const struct trobj Monk[] = {
     /* Yes, we know fortune cookies aren't really from China.  They were
        invented by George Jung in Los Angeles, California, USA in 1916. */
     {FORTUNE_COOKIE, 0, FOOD_CLASS, 3, UNDEF_BLESS},
+    {WAN_ENLIGHTENMENT, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -127,6 +130,7 @@ static const struct trobj Priest[] = {
     {POT_WATER, 0, POTION_CLASS, 4, 1}, /* holy water */
     {CLOVE_OF_GARLIC, 0, FOOD_CLASS, 1, 0},
     {SPRIG_OF_WOLFSBANE, 0, FOOD_CLASS, 1, 0},
+    {WAN_CANCELLATION, 1, WAND_CLASS, 1, UNDEF_BLESS},
     {UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 2, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
@@ -141,6 +145,7 @@ static const struct trobj Ranger[] = {
     {ARROW, 0, WEAPON_CLASS, 30, UNDEF_BLESS},
     {CLOAK_OF_DISPLACEMENT, 2, ARMOR_CLASS, 1, UNDEF_BLESS},
     {CRAM_RATION, 0, FOOD_CLASS, 4, 0},
+    {WAN_SLOW_MONSTER, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -153,6 +158,7 @@ static const struct trobj Rogue[] = {
     {LOCK_PICK, 9, TOOL_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
     {BLINDFOLD, 0, TOOL_CLASS, 1, 0},
+    {WAN_OPENING, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -163,6 +169,7 @@ static const struct trobj Samurai[] = {
     {YUMI, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
     {YA, 0, WEAPON_CLASS, 25, UNDEF_BLESS},     /* variable quan */
     {SPLINT_MAIL, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_PROBING, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -175,6 +182,7 @@ static const struct trobj Tourist[] = {
     {HAWAIIAN_SHIRT, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {EXPENSIVE_CAMERA, UNDEF_SPE, TOOL_CLASS, 1, 0},
     {CREDIT_CARD, 0, TOOL_CLASS, 1, 0},
+    {WAN_SECRET_DOOR_DETECTION, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -205,6 +213,7 @@ static const struct trobj Wizard[] = {
     {SPE_MAGIC_MISSILE, 0, SPBOOK_CLASS, 1, 1},
     {UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS},
     {MAGIC_MARKER, UNDEF_SPE, TOOL_CLASS, 1, 0},
+    {WAN_NOTHING, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
