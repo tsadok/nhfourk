@@ -2628,6 +2628,8 @@ check_special_room(boolean newlev)
             pline("Welcome to David's treasure zoo!");
             if (In_sokoban(&u.uz) &&
                 !historysearch("entered the Sokoban zoo.", TRUE)) {
+                if (!u.uconduct[conduct_sokoban_guilt])
+                    pluslvl(FALSE);
                 historic_event(FALSE, TRUE, "entered the Sokoban zoo.");
             }
             break;

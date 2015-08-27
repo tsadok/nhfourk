@@ -53,6 +53,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Completing Sokoban according to the rules now gets you experience.
+   This may be of interest to pacifists.
+
  * Merged FIQ's wand balance implementation: so now the effectiveness
    of wands depends on the skill level of the player or monster
    that is zapping the wand.  Players can exercise and enhance wand
