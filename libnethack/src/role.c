@@ -506,7 +506,8 @@ only_sylph_safe_armor(struct monst *mon, enum objslot slot)
 {
     struct obj *armor = which_armor(mon, slot);
     return !armor || objects[armor->otyp].oc_material == WOOD ||
-                     objects[armor->otyp].oc_material == CLOTH;
+                     objects[armor->otyp].oc_material == CLOTH ||
+                     armor->oartifact == urole.questarti;
     /* Leather is not ok mostly for gameplay reasons (allowing leather would
        allow a lot of armor), but there's also a flavor justification:  leather
        is too worked/unnatural and doesn't "breathe" at all.  (Wood doesn't
