@@ -69,6 +69,7 @@ struct you {
 
     unsigned uintrinsic[LAST_PROP + 1];     /* uses defines from prop.h */
 
+    struct obj *magicchestobjs;                   /* objects in magic chests */
     struct obj *utracked[tos_last_slot + 1];      /* occupation objects */
     int uoccupation_progress[tos_last_slot + 1];  /* time spent on occupation */
     coord utracked_location[tl_last_slot + 1];    /* occupation locations */

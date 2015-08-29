@@ -1370,6 +1370,7 @@ contained(struct nh_menulist *menu, const char *src, long *total_count,
     count_obj(invent, &count, &size, FALSE, TRUE);
     count_obj(level->objlist, &count, &size, FALSE, TRUE);
     count_obj(level->buriedobjlist, &count, &size, FALSE, TRUE);
+    count_obj(magic_chest_objs, &count, &size, FALSE, TRUE);
     /* DEADMONSTER check not required in this loop since they have no inventory
      */
     for (mon = level->monlist; mon; mon = mon->nmon)
@@ -1427,6 +1428,8 @@ wiz_show_stats(const struct nh_cmd_arg *arg)
     obj_chain(&menu, "level->objlist", level->objlist, &total_obj_count,
               &total_obj_size);
     obj_chain(&menu, "buried", level->buriedobjlist, &total_obj_count,
+              &total_obj_size);
+    obj_chain(&menu, "magic chest obj", magic_chest_objs, &total_obj_count,
               &total_obj_size);
     mon_invent_chain(&menu, "minvent", level->monlist, &total_obj_count,
                      &total_obj_size);

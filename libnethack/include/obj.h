@@ -17,6 +17,7 @@ enum obj_where {
     OBJ_BURIED, /* object buried */
     OBJ_ONBILL, /* object on shk bill */
     OBJ_MIGRATING, /* object in limbo between levels */
+    OBJ_MAGIC_CHEST, /* object in shared contents of magic chests */
     NOBJ_STATES
 };
 

@@ -2744,7 +2744,10 @@ dopickup(const struct nh_cmd_arg *arg)
         }
     }
     if (!OBJ_AT(u.ux, u.uy)) {
-        pline("There is nothing here to pick up.");
+        if (IS_MAGIC_CHEST(level->locations[u.ux][u.uy].typ))
+            pline("The magic chest is firmly attached to the floor.");
+        else
+            pline("There is nothing here to pick up.");
         return 0;
     }
     if (!can_reach_floor()) {

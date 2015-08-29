@@ -933,6 +933,12 @@ dokick(const struct nh_cmd_arg *arg)
             }
             goto ouch;
         }
+        if (IS_MAGIC_CHEST(maploc->typ)) {
+            if (Levitation) goto dumb;
+            pline("You kick %s.", (Blind ? "something" : Hallucination ?
+                                   "the Luggage" : "the magic chest"));
+            goto ouch;
+        }
         if (IS_ALTAR(maploc->typ)) {
             if (Levitation)
                 goto dumb;

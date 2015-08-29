@@ -354,6 +354,8 @@ what_map_char(char c)
         return FOUNTAIN;
     case '\\':
         return THRONE;
+    case '(':
+        return MAGIC_CHEST;
     case 'K':
         return SINK;
     case '}':

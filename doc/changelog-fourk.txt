@@ -53,6 +53,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Imported magic chests from DynaHack.  Any item put into a magic
+   chest can be looted out of any other magic chest in the dungeon,
+   placed at set locations.  This greatly reduces tedious stash
+   consolidation and transporting of items to and from stashes and
+   fixed dungeon resources like altars, shops and water.
+
  * Completing Sokoban according to the rules now gets you experience.
    This may be of interest to pacifists.
 

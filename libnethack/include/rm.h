@@ -70,12 +70,13 @@
 # define SINK            29
 # define GRAVE           30
 # define ALTAR           31
-# define ICE             32
-# define DRAWBRIDGE_DOWN 33
-# define AIR             34
-# define CLOUD           35
+# define MAGIC_CHEST     32
+# define ICE             33
+# define DRAWBRIDGE_DOWN 34
+# define AIR             35
+# define CLOUD           36
 
-# define MAX_TYPE        36
+# define MAX_TYPE        37
 # define INVALID_TYPE    127
 
 /*
@@ -99,6 +100,7 @@
 # define IS_SINK(typ)       ((typ) == SINK)
 # define IS_GRAVE(typ)      ((typ) == GRAVE)
 # define IS_ALTAR(typ)      ((typ) == ALTAR)
+# define IS_MAGIC_CHEST(typ) ((typ) == MAGIC_CHEST)
 # define IS_DRAWBRIDGE(typ) ((typ) == DRAWBRIDGE_UP || (typ) == DRAWBRIDGE_DOWN)
 # define IS_FURNITURE(typ)  ((typ) >= STAIRS && (typ) <= ALTAR)
 # define IS_AIR(typ)        ((typ) == AIR || (typ) == CLOUD)
@@ -111,6 +113,7 @@
  */
 
 /* begin dungeon characters */
+/* the order here must match defexplain and defsyms in drawing.c */
 enum dungeon_symbols {
 /* 0*/ S_unexplored,
     S_stone,
@@ -130,9 +133,9 @@ enum dungeon_symbols {
     S_pool,
     S_air,
     S_cloud,
-/*20*/ S_water,
+    S_water,
     S_ice,
-    S_lava,
+/*20*/ S_lava,
     S_ndoor,
 
     S_vodoor,
@@ -141,9 +144,9 @@ enum dungeon_symbols {
     S_hcdoor,   /* closed door, horizontal wall */
     S_bars,     /* KMH -- iron bars */
     S_tree,     /* KMH */
-/*30*/ S_upstair,
+    S_upstair,
     S_dnstair,
-    S_upladder,
+/*30*/ S_upladder,
     S_dnladder,
     S_upsstair,
     S_dnsstair,
@@ -151,8 +154,9 @@ enum dungeon_symbols {
     S_grave,
     S_throne,
     S_sink,
-/*40*/ S_fountain,
-    S_vodbridge,
+    S_fountain,
+    S_magic_chest,
+/*40*/ S_vodbridge,
     S_hodbridge,
     S_vcdbridge,        /* closed drawbridge, vertical wall */
     S_hcdbridge,        /* closed drawbridge, horizontal wall */
@@ -165,8 +169,8 @@ enum dungeon_symbols {
     S_vodoor_memt,
     S_vodoor_memlt,
     S_hodoor_meml,
-    S_hodoor_memt,
-/*50*/ S_hodoor_memlt,
+/*50*/ S_hodoor_memt,
+    S_hodoor_memlt,
     S_vcdoor_meml,
     S_vcdoor_memt,
     S_vcdoor_memlt,

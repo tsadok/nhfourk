@@ -300,10 +300,12 @@ savegamestate(struct memfile *mf)
     mtag(mf, 0, MTAG_GAMESTATE);
 
     /* must come before migrating_objs and migrating_mons are freed */
+    /* must come before freeing magic_chest_objs as well */
     save_timers(mf, level, RANGE_GLOBAL);
     save_light_sources(mf, level, RANGE_GLOBAL);
 
     saveobjchn(mf, invent);
+    saveobjchn(mf, magic_chest_objs);
     savemonchn(mf, migrating_mons, NULL);
     save_mvitals(mf);
 
@@ -993,6 +995,7 @@ freedynamicdata(void)
 
     /* game-state data */
     free_objchn(invent);
+    free_objchn(magic_chest_objs);
     free_monchn(migrating_mons);
     /* this should normally be NULL between turns, but might not be due to
        the game ending where pets can follow (e.g. ascension or dungeon escape)

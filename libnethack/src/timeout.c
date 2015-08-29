@@ -1587,6 +1587,7 @@ obj_is_local(struct obj *obj)
     switch (obj->where) {
     case OBJ_INVENT:
     case OBJ_MIGRATING:
+    case OBJ_MAGIC_CHEST:
         return FALSE;
     case OBJ_FLOOR:
     case OBJ_BURIED:

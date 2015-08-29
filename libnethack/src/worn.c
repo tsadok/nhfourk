@@ -619,6 +619,8 @@ clear_bypasses(void)
         }
     }
     /* invent and migrating_pets chains shouldn't matter here */
+    for (otmp = magic_chest_objs; otmp; otmp = otmp->nobj)
+        otmp->bypass = 0;
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         if (DEADMONSTER(mtmp))
             continue;

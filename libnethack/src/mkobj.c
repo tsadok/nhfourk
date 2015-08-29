@@ -1450,6 +1450,10 @@ obj_extract_self(struct obj *obj)
         extract_nobj(obj, &obj->olev->billobjs,
                      &turnstate.floating_objects, OBJ_FREE);
         break;
+    case OBJ_MAGIC_CHEST:
+        extract_nobj(obj, &magic_chest_objs,
+                     &turnstate.floating_objects, OBJ_FREE);
+        break;
     case OBJ_MIGRATING:
         extract_nobj(obj, &turnstate.migrating_objs,
                      &turnstate.floating_objects, OBJ_FREE);

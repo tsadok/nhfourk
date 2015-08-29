@@ -343,6 +343,7 @@ init_data(boolean including_program_state)
     gamestate.sp_levchn = NULL;
     in_mklev = stoned = FALSE;
     invent = NULL;
+    magic_chest_objs = NULL;
     in_steed_dismounting = FALSE;
     wailmsg = 0;
     bhitpos.x = bhitpos.y = 0;
