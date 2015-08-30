@@ -1555,7 +1555,8 @@ const struct permonst mons[] = {
           ATTK(AT_BUTT, AD_PHYS, 2, 8), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(1500, 700, 0, MS_SILENT, MZ_LARGE), 0, 0,
         MRACE_NONE, M1_ANIMAL | M1_HUMANOID | M1_CARNIVORE,
-        M2_HOSTILE | M2_STRONG | M2_NASTY, M3_INFRAVISIBLE | M3_INFRAVISION,
+        M2_HOSTILE | M2_STRONG | M2_NASTY,
+        M3_INFRAVISIBLE | M3_INFRAVISION | M3_VANDMGRDUC,
         CLR_BROWN),
 /* 'I' is a visual marker for all invisible monsters and must be unused */
 /*
