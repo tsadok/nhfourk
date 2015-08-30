@@ -741,6 +741,11 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
     const struct permonst *olduasmon = youmonst.data;
     int res;
     struct attack noseduce;
+    int ac_threshhold = mtmp->m_lev + (u_helpless(hm_all) ? 4 : 0) -
+        (((Invis && !perceives(mtmp->data)) || !mtmp->mcansee) ? 2 : 0) -
+        (mtmp->mtrapped ? 2 : 0);
+    ac_threshhold = (!(mtmp->data->mflags3 & M3_VANDMGRDUC) &&
+                     (ac_threshhold > 0)) ? ac_threshhold : 0;
 
     if (!flags.seduce_enabled && mattk->adtyp == AD_SSEX) {
         noseduce = *mattk;
@@ -827,7 +832,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                     hitmsg(mtmp, mattk);
                 if (!dmg)
                     break;
-                if (u.mh > 1 && u.mh > ((get_player_ac() > 0) ?
+                if (u.mh > 1 && u.mh > ((get_player_ac() > ac_threshhold) ?
                                             dmg : dmg + get_player_ac()) &&
                     objects[otmp->otyp].oc_material == IRON &&
                     (u.umonnum == PM_BLACK_PUDDING ||
@@ -1489,8 +1494,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
 
     /* Negative armor class reduces damage done instead of fully protecting
        against hits. */
-    if (dmg && get_player_ac() < 0) {
-        dmg -= rnd(-get_player_ac());
+    if (dmg && get_player_ac() < ac_threshhold) {
+        dmg -= rnd(ac_threshhold - get_player_ac());
         if (dmg < 1)
             dmg = 1;
     }

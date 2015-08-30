@@ -66,10 +66,8 @@ struct permonst {
     uchar msound;       /* noise it makes (6 bits) */
     uchar msize;        /* physical size (3 bits) */
     unsigned int mflagsr; /* race flags (formerly in mflags2) */
-    unsigned int mflags1,       /* boolean bitflags */
-        mflags2;        /* more boolean bitflags */
-    unsigned short mflags3;     /* yet more boolean bitflags */
-    /* mflags3 is going to need to be unsigned int one of these days */
+    unsigned int mflags1, /* boolean bitflags */
+        mflags2, mflags3; /* more boolean bitflags */
     unsigned int mskill;        /* proficiency bitflags */
     uchar mresists;     /* resistances */
     uchar mconveys;     /* conveyed by eating */
