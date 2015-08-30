@@ -53,6 +53,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * In addition to your defense score, damage reduction also depends
+   on the attacking monster's chance to hit you.  If the monster
+   had a higher chance to hit you, the amount of defense you need
+   in order to get damage reduction is higher.
+
  * Imported magic chests from DynaHack.  Any item put into a magic
    chest can be looted out of any other magic chest in the dungeon,
    placed at set locations.  This greatly reduces tedious stash
