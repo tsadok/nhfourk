@@ -1176,7 +1176,7 @@ zap_dig(struct monst *mon, struct obj *obj, schar dx, schar dy, schar dz)
     if (obj->oclass == WAND_CLASS)
         wandlevel = getwandlevel(mon, obj);
     else if (obj->oclass == SPBOOK_CLASS)
-        wandlevel = 1; /* TODO: use spell skill instead. */
+        wandlevel = 2; /* TODO: use spell skill instead. */
 
     /* swallowed */
     if (Engulfed) {
