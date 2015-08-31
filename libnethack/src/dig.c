@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-19 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -874,7 +874,7 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
 
     if (Engulfed) {
         enum attack_check_status attack_status =
-            attack(u.ustuck, dx, dy, apply_interaction_mode());
+            attack(u.ustuck, dx, dy, FALSE);
         if (attack_status != ac_continue)
             return attack_status != ac_cancel;
     }
@@ -909,7 +909,7 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
         loc = &level->locations[rx][ry];
         if (MON_AT(level, rx, ry)) {
             enum attack_check_status attack_status =
-                attack(m_at(level, rx, ry), dx, dy, apply_interaction_mode());
+                attack(m_at(level, rx, ry), dx, dy, FALSE);
             if (attack_status != ac_continue)
                 return attack_status != ac_cancel;
         }
@@ -1164,14 +1164,19 @@ mdig_tunnel(struct monst *mtmp)
 
    dig for digdepth positions; also down on request of Lennart Augustsson. */
 void
-zap_dig(schar dx, schar dy, schar dz)
+zap_dig(struct monst *mon, struct obj *obj, schar dx, schar dy, schar dz)
 {
     struct rm *room;
     struct monst *mtmp;
     struct obj *otmp;
     struct tmp_sym *tsym;
     int zx, zy, digdepth;
-    boolean shopdoor, shopwall, maze_dig;
+    boolean shopdoor, shopwall;
+    int wandlevel = 0;
+    if (obj->oclass == WAND_CLASS)
+        wandlevel = getwandlevel(mon, obj);
+    else if (obj->oclass == SPBOOK_CLASS)
+        wandlevel = 1; /* TODO: use spell skill instead. */
 
     /* swallowed */
     if (Engulfed) {
@@ -1221,10 +1226,9 @@ zap_dig(schar dx, schar dy, schar dz)
 
     /* normal case: digging across the level */
     shopdoor = shopwall = FALSE;
-    maze_dig = level->flags.is_maze_lev && !Is_earthlevel(&u.uz);
     zx = u.ux + dx;
     zy = u.uy + dy;
-    digdepth = rn1(18, 8);
+    digdepth = rn1(6 * wandlevel, 4 * wandlevel);
     tsym = tmpsym_init(DISP_BEAM, dbuf_effect(E_MISC, E_digbeam));
     while (--digdepth >= 0) {
         if (!isok(zx, zy))
@@ -1245,35 +1249,6 @@ zap_dig(schar dx, schar dy, schar dz)
             room->doormask = D_NODOOR;
             unblock_point(zx, zy);      /* vision */
             digdepth -= 2;
-            if (maze_dig)
-                break;
-        } else if (maze_dig) {
-            if (IS_WALL(room->typ)) {
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    if (*in_rooms(level, zx, zy, SHOPBASE)) {
-                        add_damage(zx, zy, 200L);
-                        shopwall = TRUE;
-                    }
-                    room->typ = ROOM;
-                    unblock_point(zx, zy);      /* vision */
-                } else if (!Blind)
-                    pline("The wall glows then fades.");
-                break;
-            } else if (IS_TREE(room->typ)) {    /* check trees before stone */
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    room->typ = ROOM;
-                    unblock_point(zx, zy);      /* vision */
-                } else if (!Blind)
-                    pline("The tree shudders but is unharmed.");
-                break;
-            } else if (room->typ == STONE || room->typ == SCORR) {
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    room->typ = CORR;
-                    unblock_point(zx, zy);      /* vision */
-                } else if (!Blind)
-                    pline("The rock glows then fades.");
-                break;
-            }
         } else if (IS_ROCK(room->typ)) {
             if (!may_dig(level, zx, zy))
                 break;

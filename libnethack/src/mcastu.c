@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-17 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -598,13 +598,17 @@ cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
             coord bypos;
             int quan;
 
+            /* If engulfed, the monster can be aware of you without the muxy
+               being set correctly */
+            int centered_on_muxy = aware_of_u(mtmp) && !engulfing_u(mtmp);
+
             quan = (mtmp->m_lev < 2) ? 1 : rnd((int)mtmp->m_lev / 2);
             if (quan < 3)
                 quan = 3;
             success = pm ? TRUE : FALSE;
             for (i = 0; i <= quan; i++) {
-                int spelltarget_x = aware_of_u(mtmp) ? mtmp->mux : mtmp->mx;
-                int spelltarget_y = aware_of_u(mtmp) ? mtmp->muy : mtmp->my;
+                int spelltarget_x = centered_on_muxy ? mtmp->mux : mtmp->mx;
+                int spelltarget_y = centered_on_muxy ? mtmp->muy : mtmp->my;
 
                 if (!enexto(&bypos, level,
                             spelltarget_x, spelltarget_y, mtmp->data))
@@ -761,9 +765,9 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
                          unsigned int adtyp, int spellnum)
 {
     /* Can the aggressor see the square it thinks the defender is on? */
-    int believed_mdef_mx = m_mx(mdef);
-    int believed_mdef_my = m_my(mdef);
-    if (mdef == &youmonst) {
+    int believed_mdef_mx = mdef ? m_mx(mdef) : 0;
+    int believed_mdef_my = mdef ? m_my(mdef) : 0;
+    if (mdef == &youmonst && !engulfing_u(mdef)) {
         believed_mdef_mx = magr->mux;
         believed_mdef_my = magr->muy;
     }
@@ -771,9 +775,9 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
     if (Engulfed && (magr == u.ustuck || mdef == u.ustuck))
         appropriate_vizarray = NULL;
 
-    boolean believed_loe = clear_path(magr->mx, magr->my,
-                                      believed_mdef_mx, believed_mdef_my,
-                                      appropriate_vizarray);
+    boolean believed_loe = mdef ? clear_path(magr->mx, magr->my,
+                                             believed_mdef_mx, believed_mdef_my,
+                                             appropriate_vizarray) : FALSE;
     boolean magr_peaceful = magr == &youmonst || magr->mpeaceful;
     boolean magr_tame = magr == &youmonst || magr->mtame;
 
@@ -835,8 +839,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
         if (!believed_loe && spellnum == CLC_INSECTS)
             return TRUE;
         /* blindness spell on blinded target */
-        if ((m_has_property(mdef, BLINDED, ANY_PROPERTY, TRUE) ||
-             !haseyes(mdef->data)) &&
+        if (mdef && (m_has_property(mdef, BLINDED, ANY_PROPERTY, TRUE) ||
+                     !haseyes(mdef->data)) &&
             spellnum == CLC_BLIND_YOU)
             return TRUE;
         /* spells that harm master while tame and not conflicted */
@@ -869,7 +873,7 @@ buzzmu(struct monst *mtmp, const struct attack *mattk)
                 pline("%s zaps you with a %s!", Monnam(mtmp),
                       flash_types[ad_to_typ(mattk->adtyp)]);
             buzz(-ad_to_typ(mattk->adtyp), (int)mattk->damn, mtmp->mx, mtmp->my,
-                 sgn(tbx), sgn(tby));
+                 sgn(tbx), sgn(tby), 0);
         }
     }
     return 1;

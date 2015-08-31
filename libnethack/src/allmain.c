@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-07-25 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -20,7 +20,7 @@ static const char *const copyright_banner[] =
 
 static void pre_move_tasks(boolean, boolean);
 
-static void newgame(microseconds birthday);
+static void newgame(microseconds birthday, struct newgame_options *ngo);
 
 static void handle_lava_trap(boolean didmove);
 
@@ -296,13 +296,15 @@ nh_create_game(int fd, struct nh_option_desc *opts_orig)
     init_data(TRUE);
     startup_common(TRUE);
 
+    struct newgame_options ngo;
+
     /* Set defaults in case list of options from client was incomplete. */
     struct nh_option_desc *defaults = default_options();
     for (i = 0; defaults[i].name; i++)
-        nh_set_option(defaults[i].name, defaults[i].value);
+        set_option(defaults[i].name, defaults[i].value, &ngo);
     nhlib_free_optlist(defaults);
     for (i = 0; opts[i].name; i++)
-        nh_set_option(opts[i].name, opts[i].value);
+        set_option(opts[i].name, opts[i].value, &ngo);
 
     /* Initialize the random number generator. This can use any algorithm we
        like, and is not constrained by timing rules, so we use the entropy
@@ -336,7 +338,7 @@ nh_create_game(int fd, struct nh_option_desc *opts_orig)
     log_inited = 1;
     log_newgame(birthday);
 
-    newgame(birthday);
+    newgame(birthday, &ngo);
 
     /* Handle the polyinit option. */
     if (flags.polyinit_mnum != -1) {
@@ -718,7 +720,7 @@ deluxe_sylph_healing(void)
     if (!Race_if(PM_SYLPH)) {
         impossible("Trying to do sylph healing while not a sylph.");
         return;
-    } else if (!can_draw_from_environment(&youmonst)) {
+    } else if (!can_draw_from_environment(&youmonst, TRUE)) {
         impossible("Trying to do sylph healing without the environment.");
         return;
     } else if (Sick || Vomiting || HHallucination || HStun || HConfusion ||
@@ -739,8 +741,10 @@ deluxe_sylph_healing(void)
         return;
     } else {
         int oldhp = u.uhp;
-        constitution_based_healing(u.ulevel > 11 ? 9 : u.ulevel - 2);
-        morehungry((u.uhp - oldhp) * 4);
+        constitution_based_healing(Inhell ? u.ulevel :
+                                   u.ulevel > 11 ? 9 :
+                                   u.ulevel - 2);
+        morehungry((u.uhp - oldhp) * 3);
         return;
     }
 }
@@ -881,8 +885,6 @@ you_moved(void)
             /* most turn boundary effects should be below here */
             /***************************************************/
 
-            if (flags.bypasses)
-                clear_bypasses();
             if (Glib)
                 glibr();
             nh_timeout();
@@ -915,23 +917,23 @@ you_moved(void)
                     if (!challengemode || !(moves % 3))
                         u.mh++;
                 }
-            } else if (can_draw_from_environment(&youmonst) ||
+            } else if (can_draw_from_environment(&youmonst, TRUE) ||
                         (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)
                           && !Race_if(PM_SYLPH)))) {
-                if (Race_if(PM_SYLPH) && !(moves % challengemode ? 6 : 3)) {
+                if (Race_if(PM_SYLPH) && !(moves % (challengemode ? 6 : 3))) {
                     deluxe_sylph_healing();
-                } else if (u.ulevel > 9 && !(moves % challengemode ? 9 : 3)) {
+                } else if (u.ulevel > 9 && !(moves % (challengemode ? 9 : 3))) {
                     constitution_based_healing(9);
                 } else if (u.uhp < u.uhpmax &&
                            (Regeneration ||
-                            can_draw_from_environment(&youmonst) ||
+                            can_draw_from_environment(&youmonst, TRUE) ||
                             (u.ulevel <= 9 &&
                              !(moves % ((MAXULEV + challengemode ? 48 : 12)
                                         / (u.ulevel + 2) + 1))))) {
                     u.uhp++;
                 }
             } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2)) &&
-                !challengemode) {
+                       !(moves % 4) && !challengemode) {
                 if (!Inhell)
                     if (!can_feel_ground(&youmonst))
                         pline("You try to draw healing from your surroundings, "
@@ -969,13 +971,15 @@ you_moved(void)
                      ((MAXULEV + 8 -
                        u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
                  || Energy_regeneration
-                 || can_draw_from_environment(&youmonst))) {
+                 || (can_draw_from_environment(&youmonst, FALSE) &&
+                     !(u.uhs >= WEAK)))) {
                 int olduen = u.uen;
                 u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
-                if (Race_if(PM_SYLPH) && u.uen > olduen)
-                    morehungry((u.uen - olduen) * 3);
+                if (Race_if(PM_SYLPH) && (u.uen > olduen) &&
+                    !Energy_regeneration)
+                    morehungry(u.uen - olduen);
             }
 
             if (!u.uinvulnerable) {
@@ -1088,7 +1092,7 @@ you_moved(void)
 
     /* We can only port to a new version of the save code when the player takes
        time (otherwise, the desync detector rightly gets confused). */
-    flags.save_encoding = saveenc_moverel;
+    flags.save_encoding = saveenc_levelrel;
 }
 
 
@@ -1174,6 +1178,9 @@ pre_move_tasks(boolean didmove, boolean loading_game)
        travel direction. */
     if (flags.interrupted || !last_command_was("run"))
         clear_travel_direction();
+
+    turnstate.intended_dx = 0;
+    turnstate.intended_dy = 0;
 
     /* Handle realtime change now. If we just loaded a save, always print the
        messages. Otherwise, print them only on change. */
@@ -1474,6 +1481,12 @@ command_input(int cmdidx, struct nh_cmd_arg *arg)
     if (turnstate.vision_full_recalc)
         vision_recalc(0);       /* vision! */
 
+    /* We must do this /before/ the monsters get their turn, to prevent bypass
+       flags persisting from one action to the next. (TODO: The bypass system
+       could really do with an overhaul.) */
+    if (flags.bypasses)
+        clear_bypasses();
+
     if (didmove)
         you_moved();
 
@@ -1487,7 +1500,7 @@ command_input(int cmdidx, struct nh_cmd_arg *arg)
 
 
 static void
-newgame(microseconds birthday)
+newgame(microseconds birthday, struct newgame_options *ngo)
 {
     int i;
 
@@ -1528,7 +1541,7 @@ newgame(microseconds birthday)
         mnexto(m_at(level, u.ux, u.uy));
 
     /* This can clobber the charstars RNGs, so call it late */
-    makedog();
+    makedog(ngo);
 
     /* Stop autoexplore revisiting the entrance stairs (or position). */
     level->locations[u.ux][u.uy].mem_stepped = 1;

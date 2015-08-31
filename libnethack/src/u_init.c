@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -48,6 +48,7 @@ static const struct trobj Archeologist[] = {
     {FEDORA, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 3, 0},
     {PICK_AXE, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
+    {WAN_LIGHT, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {TINNING_KIT, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {TOUCHSTONE, 0, GEM_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
@@ -99,6 +100,7 @@ static const struct trobj Knight[] = {
     {HELMET, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {LEATHER_GLOVES, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_UNDEAD_TURNING, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {APPLE, 0, FOOD_CLASS, 10, 0},
     {CARROT, 0, FOOD_CLASS, 10, 0},
     {0, 0, 0, 0, 0}
@@ -117,6 +119,7 @@ static const struct trobj Monk[] = {
     /* Yes, we know fortune cookies aren't really from China.  They were
        invented by George Jung in Los Angeles, California, USA in 1916. */
     {FORTUNE_COOKIE, 0, FOOD_CLASS, 3, UNDEF_BLESS},
+    {WAN_ENLIGHTENMENT, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -127,6 +130,7 @@ static const struct trobj Priest[] = {
     {POT_WATER, 0, POTION_CLASS, 4, 1}, /* holy water */
     {CLOVE_OF_GARLIC, 0, FOOD_CLASS, 1, 0},
     {SPRIG_OF_WOLFSBANE, 0, FOOD_CLASS, 1, 0},
+    {WAN_CANCELLATION, 1, WAND_CLASS, 1, UNDEF_BLESS},
     {UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 2, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
@@ -141,6 +145,7 @@ static const struct trobj Ranger[] = {
     {ARROW, 0, WEAPON_CLASS, 30, UNDEF_BLESS},
     {CLOAK_OF_DISPLACEMENT, 2, ARMOR_CLASS, 1, UNDEF_BLESS},
     {CRAM_RATION, 0, FOOD_CLASS, 4, 0},
+    {WAN_SLOW_MONSTER, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -153,6 +158,7 @@ static const struct trobj Rogue[] = {
     {LOCK_PICK, 9, TOOL_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
     {BLINDFOLD, 0, TOOL_CLASS, 1, 0},
+    {WAN_OPENING, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -163,6 +169,7 @@ static const struct trobj Samurai[] = {
     {YUMI, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
     {YA, 0, WEAPON_CLASS, 25, UNDEF_BLESS},     /* variable quan */
     {SPLINT_MAIL, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_PROBING, 3, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -175,17 +182,21 @@ static const struct trobj Tourist[] = {
     {HAWAIIAN_SHIRT, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {EXPENSIVE_CAMERA, UNDEF_SPE, TOOL_CLASS, 1, 0},
     {CREDIT_CARD, 0, TOOL_CLASS, 1, 0},
+    {WAN_SECRET_DOOR_DETECTION, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
 static const struct trobj Valkyrie[] = {
 #define V_SPEAR  0
+#define V_DAGGER 1
 #define V_SHIELD 2
 #define V_ARMOR  3
+#define V_WAND   4
     {SPEAR, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     {DAGGER, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 3, ARMOR_CLASS, 1, UNDEF_BLESS},
     {LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_COLD, 5, WAND_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
     {OIL_LAMP, 1, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
@@ -202,6 +213,7 @@ static const struct trobj Wizard[] = {
     {SPE_MAGIC_MISSILE, 0, SPBOOK_CLASS, 1, 1},
     {UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS},
     {MAGIC_MARKER, UNDEF_SPE, TOOL_CLASS, 1, 0},
+    {WAN_NOTHING, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -336,8 +348,9 @@ static const struct def_skill Skill_A[] = {
     {P_ATTACK_SPELL, P_BASIC}, {P_HEALING_SPELL, P_BASIC},
     {P_DIVINATION_SPELL, P_EXPERT}, {P_MATTER_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_BASIC},
+    {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -352,7 +365,7 @@ static const struct def_skill Skill_B[] = {
     {P_QUARTERSTAFF, P_BASIC}, {P_SPEAR, P_SKILLED},
     {P_TRIDENT, P_SKILLED}, {P_BOW, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_EXPERT},
+    {P_TWO_WEAPON_COMBAT, P_EXPERT},  {P_SHIELD, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_MASTER},
     {P_NONE, 0}
 };
@@ -368,6 +381,7 @@ static const struct def_skill Skill_C[] = {
     {P_BOW, P_BASIC}, {P_SLING, P_EXPERT},
     {P_BOOMERANG, P_EXPERT}, {P_UNICORN_HORN, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_MASTER},
+    {P_SHIELD, P_BASIC}, {P_WANDS, P_BASIC},
     {P_NONE, 0}
 };
 
@@ -382,6 +396,7 @@ static const struct def_skill Skill_H[] = {
     {P_SHURIKEN, P_SKILLED}, {P_UNICORN_HORN, P_EXPERT},
     {P_HEALING_SPELL, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_SHIELD, P_BASIC}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -398,7 +413,9 @@ static const struct def_skill Skill_K[] = {
     {P_TRIDENT, P_BASIC}, {P_BOW, P_BASIC}, {P_CROSSBOW, P_EXPERT},
     {P_ATTACK_SPELL, P_SKILLED}, {P_HEALING_SPELL, P_SKILLED},
     {P_CLERIC_SPELL, P_SKILLED}, {P_RIDING, P_EXPERT},
-    {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
+    {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -410,7 +427,8 @@ static const struct def_skill Skill_Mon[] = {
     {P_DIVINATION_SPELL, P_BASIC}, {P_ENCHANTMENT_SPELL, P_BASIC},
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_MATTER_SPELL, P_BASIC},
-    {P_MARTIAL_ARTS, P_GRAND_MASTER},
+    {P_MARTIAL_ARTS, P_GRAND_MASTER}, {P_SHIELD, P_SKILLED},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -425,7 +443,8 @@ static const struct def_skill Skill_P[] = {
     {P_BOOMERANG, P_BASIC}, {P_UNICORN_HORN, P_SKILLED},
     {P_HEALING_SPELL, P_EXPERT}, {P_DIVINATION_SPELL, P_EXPERT},
     {P_CLERIC_SPELL, P_EXPERT},
-    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_EXPERT},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -442,8 +461,9 @@ static const struct def_skill Skill_R[] = {
     {P_DIVINATION_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_SKILLED},
     {P_MATTER_SPELL, P_SKILLED},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_BASIC},
+    {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -463,6 +483,7 @@ static const struct def_skill Skill_Ran[] = {
     {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_SHIELD, P_SKILLED}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -477,7 +498,8 @@ static const struct def_skill Skill_S[] = {
     {P_ATTACK_SPELL, P_SKILLED}, {P_CLERIC_SPELL, P_SKILLED},
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},
-    {P_MARTIAL_ARTS, P_MASTER},
+    {P_MARTIAL_ARTS, P_MASTER},  {P_SHIELD, P_SKILLED},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -498,8 +520,9 @@ static const struct def_skill Skill_T[] = {
     {P_DIVINATION_SPELL, P_BASIC}, {P_ENCHANTMENT_SPELL, P_BASIC},
     {P_ESCAPE_SPELL, P_SKILLED},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_SKILLED},
+    {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_SKILLED},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -514,8 +537,9 @@ static const struct def_skill Skill_V[] = {
     {P_TRIDENT, P_BASIC}, {P_SLING, P_BASIC},
     {P_ATTACK_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_SKILLED},
-    {P_TWO_WEAPON_COMBAT, P_SKILLED},
+    {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_MASTER},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
+    {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -532,7 +556,8 @@ static const struct def_skill Skill_W[] = {
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_EXPERT},
     {P_MATTER_SPELL, P_EXPERT},
     {P_RIDING, P_BASIC},
-    {P_BARE_HANDED_COMBAT, P_BASIC},
+    {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
+    {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -780,9 +805,10 @@ u_init_inv_skills(void)
         break;
     case PM_VALKYRIE:
     {
-        boolean docold = FALSE;
         trobj_list = copy_trobj_list(Valkyrie);
-        switch (rolern2(6)) {
+        trobj_list[V_WAND].trspe = 3 +
+            rne_on_rng(3, rng_charstats_role);
+        switch (rolern2(4)) {
         case 1:
             trobj_list[V_SPEAR].trspe  = 3;
             trobj_list[V_SHIELD].trspe = 2;
@@ -792,24 +818,15 @@ u_init_inv_skills(void)
             trobj_list[V_ARMOR].trotyp = SPEED_BOOTS;
             break;
         case 3:
-        case 4:
-            trobj_list[V_SPEAR].trspe  = 1;
-            trobj_list[V_ARMOR].trotyp = STUDDED_LEATHER_ARMOR;
-            trobj_list[V_ARMOR].trspe  = 1;
-            break;
-        case 5:
             trobj_list[V_SPEAR].trotyp = SILVER_SPEAR;
-            docold = TRUE;
             break;
         default:
             trobj_list[V_SPEAR].trquan =
                 2 + rne_on_rng(3, rng_charstats_role);
-            docold = TRUE;
+            trobj_list[V_DAGGER].trquan = 4;
             break;
         }
         role_ini_inv(trobj_list, nclist);
-        if (docold)
-            role_ini_inv(Coldwand, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
@@ -897,6 +914,7 @@ u_init_inv_skills(void)
         knows_object(URUK_HAI_SHIELD);
         knows_object(ORCISH_CLOAK);
         augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
+        augment_skill_cap(P_SHIELD, 1, P_BASIC, P_MASTER);
         break;
 
     case PM_SYLPH:
@@ -1026,7 +1044,11 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
     long trquan = trop->trquan;
 
     while (trop->trclass) {
-        if (trop->trotyp != UNDEF_TYP) {
+        if (trop->trotyp != UNDEF_TYP &&
+            /* if we already got a particular ring or book, try to avoid
+               duplicating it exactly, even when the type is specified */
+            ((trop->trclass != SPBOOK_CLASS && trop->trclass != RING_CLASS) ||
+             !carrying(trop->trotyp))) {
             otyp = (int)trop->trotyp;
             if (urace.malenum != PM_HUMAN) {
                 /* substitute specific items for generic ones */
@@ -1049,6 +1071,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
              * polymorph/polymorph control combination.  Specific objects,
              * i.e. the discovery wishing, are still OK.
              * Also, don't get a couple of really useless items.
+             * Also, _attempt_ to avoid giving two identical books.
              */
             obj = mkobj(level, trop->trclass, FALSE, rng);
             otyp = obj->otyp;
@@ -1078,6 +1101,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                       categories */
                    || (obj->oclass == SPBOOK_CLASS &&
                        (objects[otyp].oc_level > 3 ||
+                        carrying(otyp) ||
                         restricted_spell_discipline(otyp)))
                 ) {
                 dealloc_obj(obj);

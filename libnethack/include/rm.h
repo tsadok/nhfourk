@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -70,12 +70,13 @@
 # define SINK            29
 # define GRAVE           30
 # define ALTAR           31
-# define ICE             32
-# define DRAWBRIDGE_DOWN 33
-# define AIR             34
-# define CLOUD           35
+# define MAGIC_CHEST     32
+# define ICE             33
+# define DRAWBRIDGE_DOWN 34
+# define AIR             35
+# define CLOUD           36
 
-# define MAX_TYPE        36
+# define MAX_TYPE        37
 # define INVALID_TYPE    127
 
 /*
@@ -99,6 +100,7 @@
 # define IS_SINK(typ)       ((typ) == SINK)
 # define IS_GRAVE(typ)      ((typ) == GRAVE)
 # define IS_ALTAR(typ)      ((typ) == ALTAR)
+# define IS_MAGIC_CHEST(typ) ((typ) == MAGIC_CHEST)
 # define IS_DRAWBRIDGE(typ) ((typ) == DRAWBRIDGE_UP || (typ) == DRAWBRIDGE_DOWN)
 # define IS_FURNITURE(typ)  ((typ) >= STAIRS && (typ) <= ALTAR)
 # define IS_AIR(typ)        ((typ) == AIR || (typ) == CLOUD)
@@ -111,6 +113,7 @@
  */
 
 /* begin dungeon characters */
+/* the order here must match defexplain and defsyms in drawing.c */
 enum dungeon_symbols {
 /* 0*/ S_unexplored,
     S_stone,
@@ -130,9 +133,9 @@ enum dungeon_symbols {
     S_pool,
     S_air,
     S_cloud,
-/*20*/ S_water,
+    S_water,
     S_ice,
-    S_lava,
+/*20*/ S_lava,
     S_ndoor,
 
     S_vodoor,
@@ -141,9 +144,9 @@ enum dungeon_symbols {
     S_hcdoor,   /* closed door, horizontal wall */
     S_bars,     /* KMH -- iron bars */
     S_tree,     /* KMH */
-/*30*/ S_upstair,
+    S_upstair,
     S_dnstair,
-    S_upladder,
+/*30*/ S_upladder,
     S_dnladder,
     S_upsstair,
     S_dnsstair,
@@ -151,8 +154,9 @@ enum dungeon_symbols {
     S_grave,
     S_throne,
     S_sink,
-/*40*/ S_fountain,
-    S_vodbridge,
+    S_fountain,
+    S_magic_chest,
+/*40*/ S_vodbridge,
     S_hodbridge,
     S_vcdbridge,        /* closed drawbridge, vertical wall */
     S_hcdbridge,        /* closed drawbridge, horizontal wall */
@@ -165,8 +169,8 @@ enum dungeon_symbols {
     S_vodoor_memt,
     S_vodoor_memlt,
     S_hodoor_meml,
-    S_hodoor_memt,
-/*50*/ S_hodoor_memlt,
+/*50*/ S_hodoor_memt,
+    S_hodoor_memlt,
     S_vcdoor_meml,
     S_vcdoor_memt,
     S_vcdoor_memlt,
@@ -316,22 +320,22 @@ enum dungeon_symbols {
  * the size of temporary files and save files.
  */
 struct rm {
-    unsigned mem_bg:6;  /* remembered background */
-    unsigned mem_trap:5;        /* remembered trap */
-    unsigned mem_obj:10;        /* remembered object */
+    unsigned mem_bg:6;          /* remembered background */
+    unsigned mem_trap:5;        /* remembered trap (0 = no trap) */
+    unsigned mem_obj:10;        /* remembered object, +1 (0 = no object) */
     unsigned mem_obj_mn:9;      /* monnum of remembered corpses, statues,
-                                   figurines */
+                                   figurines, +1 */
     unsigned mem_invis:1;       /* remembered invisible monster encounter */
     unsigned mem_stepped:1;     /* has this square been stepped on? */
 
-    schar typ;  /* what is really there */
-    uchar seenv;        /* seen vector */
-    unsigned flags:5;   /* extra information for typ */
+    schar typ;                  /* what is really there */
+    uchar seenv;                /* seen vector */
+    unsigned flags:5;           /* extra information for typ */
     unsigned horizontal:1;      /* wall/door/etc is horiz. (more typ info) */
-    unsigned lit:1;     /* speed hack for lit rooms */
-    unsigned waslit:1;  /* remember if a location was lit */
-    unsigned roomno:6;  /* room # for special rooms */
-    unsigned edge:1;    /* marks boundaries for special rooms */
+    unsigned lit:1;             /* speed hack for lit rooms */
+    unsigned waslit:1;          /* remember if a location was lit */
+    unsigned roomno:6;          /* room # for special rooms */
+    unsigned edge:1;            /* marks boundaries for special rooms */
 
     /* these values only have meaning if mem_bg is some sort of door, and are
        saved in mem_bg not in their own bits; they record what the player knows 

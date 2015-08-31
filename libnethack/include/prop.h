@@ -258,6 +258,7 @@ enum tracked_location {
 # define uquiver  EQUIP(os_quiver)
 # define uball    (u.utracked[tos_ball])
 # define uchain   (u.utracked[tos_chain])
+# define magic_chest_objs (u.magicchestobjs)
 
 /* Flags for intrinsics
 

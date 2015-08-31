@@ -91,7 +91,7 @@ dowaterdemon(void)
             if (wish_available(20 - level_difficulty(&u.uz), NULL)) {
                 pline("Grateful for %s release, %s grants you a wish!",
                       mhis(mtmp), mhe(mtmp));
-                makewish();
+                makewish(1);
                 mongone(mtmp);
             } else if (t_at(level, mtmp->mx, mtmp->my))
                 mintrap(mtmp);
@@ -373,6 +373,12 @@ drinkfountain(void)
 void
 dipfountain(struct obj *obj)
 {
+    int excaldifficulty = Role_if(PM_KNIGHT) ?
+        ((u.ulevel >= 5) ? 1 : 6 - u.ulevel) :
+        Role_if(PM_BARBARIAN) ?
+        ((u.ulevel >= 10) ? 1 : 10 - u.ulevel) :
+        ((u.ulevel >= 15) ? 1 : 15 - u.ulevel);
+
     if (Levitation) {
         floating_above("fountain");
         return;
@@ -380,8 +386,8 @@ dipfountain(struct obj *obj)
 
     /* Don't grant Excalibur when there's more than one object.  */
     /* (quantity could be > 1 if merged daggers got polymorphed) */
-    if (obj->otyp == LONG_SWORD && obj->quan == 1L && u.ulevel >= 5 &&
-        !obj->oartifact && !rn2_on_rng(6, rng_excalibur) &&
+    if (obj->otyp == LONG_SWORD && obj->quan == 1L &&
+        !obj->oartifact && !rn2_on_rng(excaldifficulty, rng_excalibur) &&
         !exist_artifact(LONG_SWORD, artiname(ART_EXCALIBUR))) {
 
         if (u.ualign.type != A_LAWFUL) {

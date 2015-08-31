@@ -24,8 +24,6 @@ static void mkzoo(struct level *lev, int type, enum rng rng);
 static void mkswamp(struct level *lev);
 static void mktemple(struct level *lev);
 static coord *shrine_pos(struct level *lev, int roomno);
-static const struct permonst *morguemon(const d_level *dlev, enum rng rng);
-static const struct permonst *squadmon(const d_level *dlev);
 static void save_room(struct memfile *mf, struct mkroom *);
 static void rest_room(struct memfile *mf, struct level *lev, struct mkroom *r);
 static boolean has_dnstairs(struct level *lev, struct mkroom *);
@@ -354,7 +352,7 @@ mkundead(struct level *lev, coord *mm, boolean revive_corpses, int mm_flags)
     lev->flags.graveyard = TRUE;        /* reduced chance for undead corpse */
 }
 
-static const struct permonst *
+const struct permonst *
 morguemon(const d_level *dlev, enum rng rng)
 {
     int i = rn2_on_rng(100, rng);
@@ -700,7 +698,7 @@ static const struct {
     PM_CAPTAIN, 1}
 };
 
-static const struct permonst *
+const struct permonst *
 squadmon(const d_level *dlev)
 {       /* return soldier types. */
     int sel_prob, i, cpro, mndx;

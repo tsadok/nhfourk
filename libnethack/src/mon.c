@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-05-19 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -547,7 +547,7 @@ mcalcmove(struct monst *mon)
            been shown to be a) abusable, and b) really confusing in practice.
            (flags.mv no longer exists, but the same effect could be achieved
            using flags.occupation. It's just that this is no longer an effect
-           that's worth acheiving.) */
+           that's worth achieving.) */
         if (u.ugallop) {
             /* movement is 1.50 times normal; randomization has been removed
                because mcalcmove now needs to be deterministic */
@@ -1145,7 +1145,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                     dispy = u.uy;
 
                     /* The code previously checked for (checkobj || Displaced),
-                       but that's wrong if the mu[xy] == nu[xy] check fails;
+                       but that's wrong if the mu[xy] == n[xy] check fails;
                        it'll incorrectly treat you as activating an engraving
                        on n[xy]. Instead, we check for checkobj in the other
                        branch of the if statement, and unconditionally check
@@ -1195,8 +1195,8 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                             info[cnt] |= ALLOW_TM;
                         }
                     }
-                    /* Note: ALLOW_SANCT only prevents movement, not */
-                    /* attack, into a temple. */
+                    /* Note: ALLOW_SANCT only prevents movement, not attack,
+                       into a temple. */
                     if (*in_rooms(mlevel, nx, ny, TEMPLE) &&
                         !*in_rooms(mlevel, x, y, TEMPLE) &&
                         in_your_sanctuary(NULL, nx, ny)) {
@@ -1227,12 +1227,11 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                         (curr_mon_load(mon) > 600)))
                     continue;
                 /* The monster avoids a particular type of trap if it's familiar
-                 * with the trap type.  Pets get ALLOW_TRAPS and checking is
-                 * done in dogmove.c.  In either case, "harmless" traps are
-                 * neither avoided nor marked in info[]. Quest leaders avoid
-                 * traps even if they aren't familiar with them, because they're
-                 * being careful or something.
-                 */
+                   with the trap type. Pets get ALLOW_TRAPS and checking is done
+                   in dogmove.c. In either case, "harmless" traps are neither
+                   avoided nor marked in info[]. Quest leaders avoid traps even
+                   if they aren't familiar with them, because they're being
+                   careful or something. */
                 {
                     struct trap *ttmp = t_at(mlevel, nx, ny);
 
@@ -1355,8 +1354,9 @@ mm_aggression(const struct monst *magr, /* monster that might attack */
 
     /* magr or mdef as the player is a special case; not checking Conflict is
        correct, because it shouldn't suddenly warn you of peacefuls */
-    if (magr == &youmonst && !u.uconduct[conduct_killer])
-        return mdef->mpeaceful ? 0 : (ALLOW_M | ALLOW_TM);
+    if (magr == &youmonst)
+        return (mdef->mpeaceful || !u.uconduct[conduct_killer])
+            ? 0 : (ALLOW_M | ALLOW_TM);
     if (mdef == &youmonst)
         return magr->mpeaceful ? 0 : (ALLOW_M | ALLOW_TM);
 
@@ -1784,7 +1784,7 @@ corpse_chance(struct monst *mon,
             }
 
             explode(mon->mx, mon->my, -1, tmp, MON_EXPLODE, EXPL_NOXIOUS,
-                    msgcat(s_suffix(mdat->mname), " explosion"));
+                    msgcat(s_suffix(mdat->mname), " explosion"), 0);
             return FALSE;
         }
     }
@@ -1794,27 +1794,13 @@ corpse_chance(struct monst *mon,
     if (LEVEL_SPECIFIC_NOCORPSE(mdat))
         return FALSE;
 
-    if (is_golem(mdat)
+    if (bigmonst(mdat)
+        || mdat == &mons[PM_LIZARD]
+        || is_golem(mdat)
         || is_mplayer(mdat)
         || is_rider(mdat))
         return TRUE;
 
-    /* Certain monsters reliably drop corpses for the first hundred kills. */
-    if ((mdat == &mons[PM_LIZARD] || mdat == &mons[PM_ACID_BLOB] ||
-         mdat->mlet == S_FUNGUS || mdat->mlet == S_PUDDING ||
-         mdat->mlet == S_TROLL) &&
-        mvitals[monsndx(mon->data)].died < 100)
-        return TRUE;
-
-    /* NetHack Fourk balance adjustment: any given type of monster
-       becomes unlikely to leave further corpses when lots of that
-       type of monster have been killed already. */
-    if (ilog2(mvitals[monsndx(mon->data)].died)
-        > rn2_on_rng(8000, rng_death_drop_c))
-        return FALSE;
-
-    if (bigmonst(mdat) || mdat == &mons[PM_LIZARD])
-        return TRUE;
     return (boolean) (!rn2((int) (2 + ((int)(mdat->geno & G_FREQ) < 2)
                                     + verysmall(mdat))));
 }
@@ -2008,7 +1994,6 @@ xkilled(struct monst *mtmp, int dest)
     struct trap *t;
     boolean redisp = FALSE;
     boolean wasinside = Engulfed && (u.ustuck == mtmp);
-    enum rng death_drop_rng;
 
     /* KMH, conduct */
     break_conduct(conduct_killer);
@@ -2080,38 +2065,28 @@ xkilled(struct monst *mtmp, int dest)
     if ((dest & 2) || LEVEL_SPECIFIC_NOCORPSE(mdat))
         goto cleanup;
 
-    /* NetHack Fourk balance adjustment: any given type of monster becomes
-     * unlikely to leave further death drops when lots of that type of monster
-     * have been killed already.  Removing the rn2(6) check means the first few
-     * monsters you kill of any given type are significantly more likely to drop
-     * something than before.  This is intended.  As you kill more of that kind
-     * of monster, the probabilities quickly drop off.  */
-    death_drop_rng = (mdat->msize < MZ_HUMAN) ? rng_death_drop_s
-                                              : rng_death_drop_l;
+    /* might be here after swallowed */
+    if (((x != u.ux) || (y != u.uy)) && !rn2(6) &&
+        !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
+        int typ;
 
-    if (ilog2(mvitals[monsndx(mtmp->data)].died)
-        <= rn2_on_rng(6500, death_drop_rng)) {
-        /* might be here after swallowed */
-        if (((x != u.ux) || (y != u.uy)) && !rn2(3) &&
-            !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
-            int typ;
-
-            otmp = mkobj(level, RANDOM_CLASS, TRUE, death_drop_rng);
-            /* Don't create large objects from small monsters */
-            typ = otmp->otyp;
-            if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
-                (otmp->owt > 30 ||
-                 /* oc_big is also oc_bimanual and oc_bulky */
-                 (otmp->owt > 30 || objects[typ].oc_big ||
-                  is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR))) {
-                delobj(otmp);
-            } else if (!flooreffects(otmp, x, y,
-                                     (dest & 1) ? "fall" : "")) {
+        otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
+                        ? rng_death_drop_s : rng_death_drop_l);
+        /* Don't create large objects from small monsters */
+        typ = otmp->otyp;
+        if (mdat->msize < MZ_HUMAN && typ != FIGURINE &&
+            /* oc_big is also oc_bimanual and oc_bulky */
+            (otmp->owt > 30 || objects[typ].oc_big ||
+             is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
+            delobj(otmp);
+        } else {
+            obj_extract_self(otmp);
+            if (!flooreffects(otmp, x, y,
+                              (dest & 1) ? "fall" : "")) {
                 place_object(otmp, level, x, y);
                 stackobj(otmp);
-                redisp = TRUE;
-            } else
-                redisp = TRUE;       
+            }
+            redisp = TRUE;
         }
     }
     /* Whether or not it always makes a corpse is, in theory, different from
@@ -2165,38 +2140,46 @@ cleanup:
         else
             pline("Whoopsie-daisy!");
     } else if (mtmp->ispriest) {
-        adjalign((p_coaligned(mtmp)) ? -3 : 3);
+        if (mdat->maligntyp == A_NONE)
+            adjalign(10);
+        else
+            adjalign((p_coaligned(mtmp)) ? -3 : 3);
         /* cancel divine protection for killing your priest */
         if (p_coaligned(mtmp))
             u.ublessed = 0;
-        if (mdat->maligntyp == A_NONE)
-            adjalign(10);
     } else if (mtmp->mtame) {
-        adjalign(-15);  /* bad!! */
+        adjalign(-5);  /* bad!! */
         /* your god is mighty displeased... */
         if (!Hallucination)
             You_hear("the rumble of distant thunder...");
         else
             You_hear("the studio audience applaud!");
     } else if (mtmp->mpeaceful)
-        adjalign(-5);
+        adjalign(-1);
 
     /* malign was already adjusted for u.ualign.type and randomization */
     /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
        monster killing.  That completely defeats the purpose of even bothering
-       to keep track of player alignment record.  So no.  However, we do still
-       want a penalty for killing monsters that generated peaceful.  I'm not
-       absolutely sure the following condition is correct, but we'll test it: */
-    if (mtmp->malign < 0)
-        adjalign(always_peaceful(mtmp->data) ? -3 :
-                 (u.ualign.type == A_CHAOTIC) ? 0 : -1);
-    /* However, chaotics now get a point for killing their own race. */
+       to keep track of player alignment record.  So no.  We still have an
+       alignment penalty for killing always-peacefuls, however, and lawfuls
+       have a penalty for killing generated-peacefuls as well. */
+    if (mtmp->malign < 0) {
+        if (always_peaceful(mtmp->data))
+            adjalign(-3);
+        else if (u.ualign.type == A_LAWFUL)
+            adjalign(-1);
+    }
+    /* Chaotics now get a point for killing hostiles of their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
         int oldalign = u.ualign.record;
         adjalign(1);
         if (u.ualign.record > oldalign)
             pline("You feel more chaotic.");
     }
+    /* Lawful characters gain alignment for killing hostile chaotic demons. */
+    else if (u.ualign.type == A_LAWFUL && is_demon(mtmp->data) &&
+             mtmp->data->maligntyp < 0)
+        adjalign(1);
 }
 
 /* changes the monster into a stone monster of the same type */

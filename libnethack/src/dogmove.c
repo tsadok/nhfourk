@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by FIQ, 2015-08-24 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -108,18 +108,33 @@ could_use_item(const struct monst *mtmp, struct obj *otmp)
           /* useful amulets */
           otmp->otyp == AMULET_OF_LIFE_SAVING ||
           otmp->otyp == AMULET_OF_REFLECTION ||
-          /* misc magic items that muse can use */
-          otmp->otyp == SCR_TELEPORTATION || otmp->otyp == SCR_EARTH ||
-          otmp->otyp == SCR_REMOVE_CURSE || otmp->otyp == WAN_DEATH ||
-          otmp->otyp == WAN_DIGGING || otmp->otyp == WAN_FIRE ||
-          otmp->otyp == WAN_COLD || otmp->otyp == WAN_LIGHTNING ||
-          otmp->otyp == WAN_MAGIC_MISSILE || otmp->otyp == WAN_STRIKING ||
-          otmp->otyp == WAN_TELEPORTATION || otmp->otyp == POT_HEALING ||
-          otmp->otyp == POT_EXTRA_HEALING || otmp->otyp == POT_FULL_HEALING ||
-          otmp->otyp == POT_PARALYSIS || otmp->otyp == POT_BLINDNESS ||
-          otmp->otyp == POT_CONFUSION || otmp->otyp == POT_ACID ||
-          otmp->otyp == FROST_HORN || otmp->otyp == FIRE_HORN ||
-          otmp->otyp == UNICORN_HORN));
+          /* scrolls */
+          otmp->otyp == SCR_TELEPORTATION ||
+          otmp->otyp == SCR_EARTH ||
+          otmp->otyp == SCR_REMOVE_CURSE ||
+          /* wands */
+          otmp->otyp == WAN_DEATH ||
+          otmp->otyp == WAN_DIGGING ||
+          otmp->otyp == WAN_FIRE ||
+          otmp->otyp == WAN_COLD ||
+          otmp->otyp == WAN_LIGHTNING ||
+          otmp->otyp == WAN_MAGIC_MISSILE ||
+          otmp->otyp == WAN_STRIKING ||
+          otmp->otyp == WAN_TELEPORTATION ||
+          otmp->otyp == WAN_UNDEAD_TURNING ||
+          otmp->otyp == WAN_SLOW_MONSTER ||
+          otmp->otyp == WAN_SPEED_MONSTER ||
+          /* potions */
+          otmp->otyp == POT_HEALING ||
+          otmp->otyp == POT_EXTRA_HEALING ||
+          otmp->otyp == POT_FULL_HEALING ||
+          otmp->otyp == POT_PARALYSIS ||
+          otmp->otyp == POT_BLINDNESS ||
+          otmp->otyp == POT_CONFUSION ||
+          otmp->otyp == POT_ACID ||
+          /* instruments */
+          otmp->otyp == FROST_HORN ||
+          otmp->otyp == FIRE_HORN));
 
     if (can_use) {
         /* arbitrary - greedy monsters keep any item you can use */
@@ -128,7 +143,8 @@ could_use_item(const struct monst *mtmp, struct obj *otmp)
 
         if (otmp->oclass == ARMOR_CLASS) {
             return !is_better_armor(&youmonst, otmp);
-        } else if (otmp->oclass == WAND_CLASS && otmp->spe <= 0)
+        } else if ((otmp->oclass == WAND_CLASS || otmp->otyp == FROST_HORN ||
+                   otmp->otyp == FIRE_HORN) && otmp->spe <= 0)
             return FALSE;       /* used charges or was cancelled? */
         else {
             /* Check if you've got one. If you don't, don't hoard it. */
@@ -782,7 +798,7 @@ dog_move(struct monst *mtmp, int after)
                 attacktype(mtmp->data, AT_SPIT) ||
                 (attacktype(mtmp->data, AT_WEAP) && select_rwep(mtmp))) &&
                mtmp->mlstmv != moves) {
-        struct monst *mon = mfind_target(mtmp);
+        struct monst *mon = mfind_target(mtmp, FALSE);
 
         if (mon) {
             if (mattackm(mtmp, mon) & MM_AGR_DIED)

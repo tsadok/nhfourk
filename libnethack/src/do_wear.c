@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-16 */
+/* Last modified by Alex Smith, 2015-07-21 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -412,6 +412,7 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case AMULET_OF_LIFE_SAVING:
     case AMULET_VERSUS_POISON:
     case AMULET_OF_REFLECTION:
+    case AMULET_OF_FLYING:
     case AMULET_OF_MAGICAL_BREATHING:
     case FAKE_AMULET_OF_YENDOR:
         break;
@@ -1488,7 +1489,8 @@ canwearobj(struct obj *otmp, long *mask,
     if (slot_count(&youmonst, slot, noisy) == 0) {
         return FALSE;
     } if ((verysmall(youmonst.data) || nohands(youmonst.data)) &&
-          slot != os_amul && slot != os_ringl && slot != os_ringr) {
+          slot != os_amul && slot != os_ringl && slot != os_ringr &&
+          slot != os_tool) {
         if (noisy)
             pline("You are in no state to equip armor!");
         return FALSE;

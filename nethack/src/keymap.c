@@ -7,6 +7,7 @@
 #include "common_options.h"
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <signal.h>
@@ -1085,6 +1086,10 @@ write_keymap(void)
     fd = sys_open(filename, O_TRUNC | O_CREAT | O_RDWR, 0660);
     if (fd == -1)
         return;
+
+#ifdef UNIX
+    fchmod(fd, 0644);
+#endif
 
     for (key = 1; key <= KEY_MAX; key++) {
         name =

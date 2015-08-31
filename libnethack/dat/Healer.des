@@ -21,7 +21,7 @@ PPPP....PPPPPPPPPPPP...................................PPPPP.PPPPPPPPPPPPPPP
 PPPP........PPPPP.........-----------------------........PP...PPPPPPP.....PP
 PPP............PPPPP....--|.|......S..........S.|--.....PPPP.PPPPPPP.......P
 PPPP..........PPPPP.....|.S.|......-----------|S|.|......PPPPPP.PPP.......PP
-PPPPPP......PPPPPP......|.|.|......|...|......|.|.|.....PPPPPP...PP.......PP
+PPPPPP......PPPPPP......|.|.|..(...|...|......|.|.|.....PPPPPP...PP.......PP
 PPPPPPPPPPPPPPPPPPP.....+.|.|......S.\.S......|.|.+......PPPPPP.PPPP.......P
 PPP...PPPPP...PPPP......|.|.|......|...|......|.|.|.......PPPPPPPPPPP.....PP
 PP.....PPP.....PPP......|.|S|-----------......|.S.|......PPPPPPPPPPPPPPPPPPP
@@ -56,8 +56,8 @@ DOOR:closed,(48,12)
 DOOR:locked,(50,10)
 # Hippocrates
 MONSTER:'@',"Hippocrates",(37,10)
-# The treasure of Hippocrates
-OBJECT:'(',"chest",(37,10)
+# The treasure of Hippocrates is a magic chest now.
+#OBJECT:'(',"chest",(37,10)
 # intern guards for the audience chamber
 MONSTER:'@',"attendant",(29,08)
 MONSTER:'@',"attendant",(29,09)

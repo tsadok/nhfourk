@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -555,7 +555,7 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
     boolean killengulfer = FALSE;
     struct monst *mtmp;
     struct trap  *ttmp;
-    static const char *const a_your[2] = { "a", "your" };
+    const char *liqname = (newterrain == LAVAPOOL) ? "lava" : "water";
     /* Currently no traps require an(), or we'd need an_your() */
 
     while ((radius > 0) && (tries-- > 0) &&
@@ -570,48 +570,64 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
             if (Hallucination)
                 pline("Oh, the leaks of Egypt!");
             else if (!Blind)
-                pline("The water gushes right out through %s.",
-                      mon_nam(u.ustuck));
+                pline("The %s gushes right out through %s.",
+                      liqname, mon_nam(u.ustuck));
             else
-                pline("It doesn't seem as wet in here as you expected.");
+                pline("It doesn't seem as %s in here as you expected.",
+                      ((newterrain == LAVAPOOL) ? "hot" : "wet"));
             killengulfer = FALSE;
         } else if (flaming(u.ustuck->data)) {
-            if (Hallucination)
-                pline("Billy Joel lyrics run through your mind.");
-            else 
-                pline("The water extinguishes %s!", mon_nam(u.ustuck));
-            killengulfer = TRUE;
+            if (newterrain == LAVAPOOL) {
+                u.ustuck->mhpmax += 2;
+                u.ustuck->mhp = u.ustuck->mhpmax;
+                pline("%s heats up!", Monnam(u.ustuck));
+                killengulfer = FALSE;
+            } else {
+                if (Hallucination)
+                    pline("Billy Joel lyrics run through your mind.");
+                else 
+                    pline("The water extinguishes %s!", mon_nam(u.ustuck));
+                killengulfer = TRUE;
+            }
         } else if (monsndx(u.ustuck->data) == PM_FOG_CLOUD ||
                    monsndx(u.ustuck->data) == PM_STEAM_VORTEX) {
             /* Why do fog clouds count as whirly?
                Nevermind, they're a special case here anyway. */
-            if (Hallucination)
-                pline("You feel a rainstorm coming on!");
-            else
-                pline("The %s feels denser as it absorbs the water.",
-                      mon_nam(u.ustuck));
+            if (newterrain == LAVAPOOL) {
+                pline("%s heats up!", Monnam(u.ustuck));
+                newcham(u.ustuck, &mons[PM_FIRE_VORTEX], FALSE, FALSE);
+            } else {
+                if (Hallucination)
+                    pline("You feel a rainstorm coming on!");
+                else
+                    pline("%s feels denser as it absorbs the %s.",
+                          Monnam(u.ustuck), liqname);
+            }
             u.ustuck->mhpmax += 2;
             u.ustuck->mhp = u.ustuck->mhpmax;
             killengulfer = FALSE;
         } else if (is_whirly(u.ustuck->data)) {
             /* TODO: should ice vortices be special-cased immune? */
-            pline("%s slows as it takes up the water, stops whirling,"
-                  " and lets you go.", Monnam(u.ustuck));
+            pline("%s slows as it takes up the %s, stops whirling,"
+                  " and lets you go.", Monnam(u.ustuck), liqname);
             killengulfer = TRUE;
-        } else if (is_swimmer(u.ustuck->data) || amphibious(u.ustuck->data) ||
-            breathless(u.ustuck->data)) {
+        } else if ((is_swimmer(u.ustuck->data) || amphibious(u.ustuck->data) ||
+                    breathless(u.ustuck->data)) && !(newterrain == LAVAPOOL)) {
             /* The engulfer survives, but what happens to YOU in there? */
             pline("The %s fills with water!", mbodypart(u.ustuck, STOMACH));
             (void) drown();
             return;
         } else {
-            /* Engulfer drowns, you get released. */
+            /* Engulfer drowns (or dies in the lava), you get released. */
             if (Hallucination) {
                 pline("It's not the heat, really.  "
                       "It's the humidity that gets ya.");
             } else {
-                pline("The water fills the %s.", mbodypart(u.ustuck, STOMACH));
-                pline("%s drowns.", Monnam(u.ustuck));
+                pline("The %s fills the %s.", liqname,
+                      mbodypart(u.ustuck, STOMACH));
+                pline("%s %s.", Monnam(u.ustuck),
+                      ((newterrain == LAVAPOOL) ?
+                       "perishes in the lava" : "drowns"));
             }
             x = u.ux; y = u.uy;
             killengulfer = TRUE;
@@ -629,37 +645,44 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
             if (!Blind && Hallucination)
                 pline("Pee pee go down the hooole!");
             else if (!Blind)
-                pline("The water disappears into %s %s.",
-                      a_your[ttmp->madeby_u], trapexplain[ttmp->ttyp - 1]);
+                pline("The %s disappears into %s.", liqname,
+                      (ttmp->madeby_u ?
+                       msgprintf("your %s", trapexplain[ttmp->ttyp - 1]) :
+                       an(trapexplain[ttmp->ttyp - 1])));
             break;
         case PIT:
         case SPIKED_PIT:
             if (!Blind && Hallucination)
                 pline("That's just about the nicest outhouse you've seen!");
             else if (!Blind)
-                pline("The water fills the pit.");
+                pline("The %s fills the pit.", liqname);
             deltrap(level, ttmp);
-            level->locations[x][y].typ = POOL;
+            level->locations[x][y].typ = newterrain;
             break;
         case VIBRATING_SQUARE:
             if (Hallucination && !Blind)
-                pline("Woah, dude, look at the water shake!");
+                pline("Woah, dude, look at the %s shake!", liqname);
             else if (!Blind)
-                pline("A mysterious force whisks the water away.");
+                pline("A mysterious force whisks the %s away.", liqname);
             break;
         case POLY_TRAP:
             if (Hallucination && !Blind)
                 pline("If you ever drop your keys into molten lava, "
                       "let 'em go, because man, they're gone.");
             else if (!Blind)
-                pline("The water changes into lava!");
+                pline("The %s changes into %s!", liqname,
+                      ((newterrain == LAVAPOOL) ? "water" : "lava"));
             deltrap(level, ttmp);
-            level->locations[x][y].typ = LAVAPOOL;
+            level->locations[x][y].typ =
+                (newterrain == LAVAPOOL) ? POOL : LAVAPOOL;
             break;
         default:
             if (!Blind)
-                pline("The water washes away %s %s.", 
-                      a_your[ttmp->madeby_u], trapexplain[ttmp->ttyp - 1]);
+                pline("The %s %s away %s.", liqname,
+                      ((newterrain == LAVAPOOL) ? "burns" : "washes"),
+                      (ttmp->madeby_u ?
+                       msgprintf("your %s", trapexplain[ttmp->ttyp - 1]) :
+                       an(trapexplain[ttmp->ttyp - 1])));
             deltrap(level, ttmp);
             break;
         }
@@ -667,33 +690,50 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
         switch(level->locations[x][y].typ) {
         case SDOOR:
         case SCORR:
-            pline("Water flows into a space you didn't see before.");
+            pline("%s flows into a space you didn't see before.",
+                  msgupcasefirst(liqname));
             level->locations[x][y].typ = newterrain;
             break;
         case POOL:
         case MOAT:
-            pline("The water level increases slightly.");
+            if (newterrain == LAVAPOOL) {
+                pline("The water boils away, revealing a pool of lava!");
+                level->locations[x][y].typ = LAVAPOOL;
+            } else
+                pline("The water level increases slightly.");
             break;
         case DRAWBRIDGE_UP:
             level->locations[x][y].drawbridgemask &= ~DB_UNDER;
             /* fall through */
         case DBWALL:
-            pline("That's water under the bridge, now.");
+            pline("That's %s under the bridge, now.", liqname);
             break;
         case LAVAPOOL:
-            pline("Great clouds of steam swirl up as the water hits the lava.");
+            if (newterrain == LAVAPOOL)
+                pline("The lava gives off noxious fumes and a cloud of ash.");
+            else
+                pline("Great clouds of steam swirl up "
+                      "as the water hits the lava.");
             for (i = 0; i <= rn2(3); i++) {
-                makemon(&mons[PM_STEAM_VORTEX], level, u.ux, u.uy, MM_ALLLEVRNG);
-                makemon(&mons[PM_FOG_CLOUD], level, u.ux, u.uy, MM_ALLLEVRNG);
+                makemon(&mons[PM_STEAM_VORTEX], level, u.ux, u.uy, rng_main);
+                makemon(&mons[PM_FOG_CLOUD], level, u.ux, u.uy, rng_main);
             }
-            pline("The lava cools and solidifies.");
-            level->locations[x][y].typ = ROOM;
+            if (newterrain != LAVAPOOL) {
+                pline("The lava cools and solidifies.");
+                level->locations[x][y].typ = ROOM;
+            }
             break;
         case IRONBARS:
-            pline("The iron bars rust away.");
+            pline("The iron bars %s away.",
+                  ((newterrain == LAVAPOOL) ? "melt" : "rust"));
             level->locations[x][y].typ = newterrain;
             break;
         case ICE:
+            if (newterrain == LAVAPOOL) {
+                pline("The ice melts.");
+                level->locations[x][y].typ = POOL;
+                break;
+            }
             pline("The water freezes.");
             break;
         case FOUNTAIN:
@@ -703,8 +743,9 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
         case SINK:
         case THRONE:
         case GRAVE:
-            pline("The %s is washed away by the torrent.",
-                  surface(x,y));
+            pline("The %s is %s away by the %s.", surface(x,y),
+                  ((newterrain == LAVAPOOL) ? "burned" : "washed"),
+                  ((newterrain == LAVAPOOL) ? "lava" : "torrent"));
             /* fall through */
         case ROOM:
         case CORR:
@@ -713,7 +754,7 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
         case ALTAR:
         case LADDER:
         case STAIRS:
-            pline("A mysterious force whisks the water away.");
+            pline("A mysterious force whisks the %s away.", liqname);
             break;
         default:
             ; /* do nothing -- don't mess with walls, etc. */
@@ -1203,7 +1244,8 @@ seffects(struct obj *sobj, boolean *known)
         break;
     case SCR_WATER:
         *known = TRUE;
-        if (Is_airlevel(&u.uz) || Is_earthlevel(&u.uz) || Is_firelevel(&u.uz)) {
+        if (Is_airlevel(&u.uz) || Is_earthlevel(&u.uz) || Is_firelevel(&u.uz) ||
+            (Is_waterlevel(&u.uz) && confused)) {
             pline("Nothing happens.");
             break;
         }
@@ -1211,7 +1253,8 @@ seffects(struct obj *sobj, boolean *known)
             pline("Your %s start peeing all over the place!",
                   makeplural(body_part(HAND)));
         else
-            pline("Water gushes out of the scroll!");
+            pline("%s gushes out of the scroll!",
+                  (confused ? "Lava" : "Water"));
         if (Is_waterlevel(&u.uz)) {
             pline("The water level cannot increase any further.");
             break;
@@ -1220,11 +1263,12 @@ seffects(struct obj *sobj, boolean *known)
             do_scroll_water(u.ux, u.uy, 0, FOUNTAIN);
         } else {
             int i, max = rnd(6) + rnd(6);
+            int liquid = confused ? LAVAPOOL : POOL;
             for (i = 1; i <= max; i++) {
-                do_scroll_water(u.ux, u.uy, 4, POOL);
+                do_scroll_water(u.ux, u.uy, 4, liquid);
             }
             if (sobj->cursed) {
-                do_scroll_water(u.ux, u.uy, 0, POOL);
+                do_scroll_water(u.ux, u.uy, 0, liquid);
             }
         }
         if (!Blind)
@@ -1263,7 +1307,7 @@ seffects(struct obj *sobj, boolean *known)
             burn_away_slime();
         }
         explode(u.ux, u.uy, 11, (2 * (rn1(3, 3) + 2 * cval) + 1) / 3,
-                SCROLL_CLASS, EXPL_FIERY, NULL);
+                SCROLL_CLASS, EXPL_FIERY, NULL, 0);
         return 1;
     case SCR_EARTH:
         /* TODO: handle steeds */
@@ -1425,7 +1469,7 @@ seffects(struct obj *sobj, boolean *known)
                   (Hallucination ? "horse" : "scroll"));
             break;
         }
-        makewish();
+        makewish((sobj->blessed) ? 3 : 2);
         break;
     default:
         impossible("What weird effect is this? (%u)", sobj->otyp);
@@ -1462,6 +1506,23 @@ litroom(boolean on, struct obj *obj)
 {
     char is_lit;        /* value is irrelevant; we use its address as a `not
                            null' flag for set_lit() */
+    int wandlevel = 0;
+    if (obj && obj->oclass == WAND_CLASS)
+        wandlevel = getwandlevel(&youmonst, obj);
+    /* In case monsters ever uses a light creation spell, wandlevel
+       check must be fixed -- perform a deliberate crash */
+    if (flags.mon_moving)
+        impossible("monster tries to create light?");
+    int lightradius = 5;
+    if (obj && obj->oclass == SCROLL_CLASS && obj->blessed)
+        lightradius = 9;
+    else if (wandlevel)
+        lightradius = (wandlevel == P_UNSKILLED ? 3  :
+                       wandlevel == P_BASIC     ? 5  :
+                       wandlevel == P_SKILLED   ? 9  :
+                       wandlevel == P_EXPERT    ? 15 :
+                       wandlevel == P_MASTER    ? -1 :
+                       1);
 
     /* first produce the text (provided you're not blind) */
     if (!on) {
@@ -1528,10 +1589,16 @@ do_it:
             level->rooms[rnum].rlit = on;
         }
         /* hallways remain dark on the rogue level */
-    } else
-        do_clear_area(u.ux, u.uy,
-                      (obj && obj->oclass == SCROLL_CLASS &&
-                       obj->blessed) ? 9 : 5, set_lit, (on ? &is_lit : NULL));
+    } else {
+        if (lightradius == -1) { /* entire floor */
+            int x, y;
+
+            for (x = 0; x < COLNO; x++)
+                for (y = 0; y < ROWNO; y++)
+                    set_lit(x, y, (on ? &is_lit : NULL));
+        } else
+            do_clear_area(u.ux, u.uy, lightradius, set_lit, (on ? &is_lit : NULL));
+    }
 
     /* 
      *  If we are not blind, then force a redraw on all positions in sight

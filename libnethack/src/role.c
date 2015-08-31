@@ -255,8 +255,8 @@ const struct Role roles[] = {
      PM_ORION, PM_HUNTER, PM_SCORPIUS,
      PM_FOREST_CENTAUR, PM_SCORPION, S_CENTAUR, S_SPIDER,
      ART_LONGBOW_OF_DIANA,
-     MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | ROLE_MALE | ROLE_FEMALE |
-     ROLE_NEUTRAL | ROLE_CHAOTIC,
+     MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | MRACE_SYLPH |
+     ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {13, 13, 13, 9, 13, 7},
      {30, 10, 10, 20, 20, 10},
@@ -331,7 +331,7 @@ const struct Role roles[] = {
      PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
      PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
      ART_ORB_OF_FATE,
-     MRACE_HUMAN | MRACE_SYLPH | ROLE_FEMALE | ROLE_NEUTRAL,
+     MRACE_HUMAN | ROLE_FEMALE | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
      {10, 7, 7, 7, 10, 7},
      {30, 6, 7, 20, 30, 7},
@@ -356,8 +356,8 @@ const struct Role roles[] = {
      PM_NEFERET_THE_GREEN, PM_APPRENTICE, PM_DARK_ONE,
      PM_VAMPIRE_BAT, PM_XORN, S_BAT, S_WRAITH,
      ART_EYE_OF_THE_AETHIOPICA,
-     MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | ROLE_MALE | ROLE_FEMALE |
-     ROLE_NEUTRAL | ROLE_CHAOTIC,
+     MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | MRACE_SYLPH |
+     ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {7, 10, 7, 7, 7, 7},
      {10, 30, 10, 20, 20, 10},
@@ -506,7 +506,8 @@ only_sylph_safe_armor(struct monst *mon, enum objslot slot)
 {
     struct obj *armor = which_armor(mon, slot);
     return !armor || objects[armor->otyp].oc_material == WOOD ||
-                     objects[armor->otyp].oc_material == CLOTH;
+                     objects[armor->otyp].oc_material == CLOTH ||
+                     armor->oartifact == urole.questarti;
     /* Leather is not ok mostly for gameplay reasons (allowing leather would
        allow a lot of armor), but there's also a flavor justification:  leather
        is too worked/unnatural and doesn't "breathe" at all.  (Wood doesn't
@@ -515,7 +516,7 @@ only_sylph_safe_armor(struct monst *mon, enum objslot slot)
 }
 
 boolean
-can_draw_from_environment(struct monst *mon)
+can_draw_from_environment(struct monst *mon, boolean healing)
 {
     enum objslot s;
     if (Race_if(PM_SYLPH) && Upolyd)
@@ -527,8 +528,10 @@ can_draw_from_environment(struct monst *mon)
             if (!only_sylph_safe_armor(mon, s))
                 return FALSE;
         return (/* can your toes feel the ground? (water is ok) */
-                can_feel_ground(mon) && !Inhell &&
-                (u.uhs < WEAK));
+            can_feel_ground(mon) &&
+            /* Can't draw healing in Gehennom most of the time */
+            (!Inhell || !healing || !(moves % 7)) &&
+            (u.uhs < WEAK));
     }
     return FALSE;
 }

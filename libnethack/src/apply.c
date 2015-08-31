@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-05-19 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -35,21 +35,6 @@ static boolean uhave_graystone(void);
 
 static const char no_elbow_room[] =
     "You don't have enough elbow-room to maneuver.";
-
-/* The appropriate interaction mode for an "attack" made via applying an
-   object. Also handles kicks.
-
-   The main rule here is that this must never select a mode that would allow
-   the user to chat to a monster, etc.; it's attack, or nothing. */
-enum u_interaction_mode
-apply_interaction_mode(void)
-{
-    if (flags.interaction_mode >= uim_indiscriminate)
-        return flags.interaction_mode;
-    if (!UIM_AGGRESSIVE(flags.interaction_mode))
-        return uim_nointeraction;
-    return uim_attackonly;
-}
 
 static int
 use_camera(struct obj *obj, const struct nh_cmd_arg *arg)
@@ -882,7 +867,7 @@ use_bell(struct obj **optr)
             }
 
         } else {        /* uncursed */
-            if (findit() != 0)
+            if (findit(BOLT_LIM) != 0)
                 learno = TRUE;
             else
                 pline("Nothing happens.");
@@ -2299,9 +2284,8 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
 
     if (Engulfed) {
         enum attack_check_status attack_status =
-            attack(u.ustuck, dx, dy, apply_interaction_mode());
+            attack(u.ustuck, dx, dy, FALSE);
         return attack_status != ac_cancel;
-
     } else if (Underwater) {
         pline("There is too much resistance to flick your bullwhip.");
 
@@ -2378,7 +2362,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
                 wrapped_what = mon_nam(mtmp);
             } else if (proficient) {
                 enum attack_check_status attack_status =
-                    attack(mtmp, dx, dy, apply_interaction_mode());
+                    attack(mtmp, dx, dy, FALSE);
                 if (attack_status == ac_continue)
                     pline("%s", msg_snap);
                 else
@@ -2487,7 +2471,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
                 pline("You flick your bullwhip towards %s.", mon_nam(mtmp));
             if (proficient) {
                 enum attack_check_status attack_status =
-                    attack(mtmp, dx, dy, apply_interaction_mode());
+                    attack(mtmp, dx, dy, FALSE);
                 if (attack_status == ac_continue)
                     pline("%s", msg_snap);
                 else
@@ -2572,13 +2556,9 @@ use_pole(struct obj *obj, const struct nh_cmd_arg *arg)
     /* Attack the monster there */
     if ((mtmp = m_at(level, cc.x, cc.y)) != NULL) {
         int oldhp = mtmp->mhp;
-        enum attack_check_status attack_status;
 
-        attack_status =
-            attack_checks(mtmp, obj, cc.x, cc.y, apply_interaction_mode());
-
-        if (attack_status != ac_continue)
-            return attack_status != ac_cancel;
+        if (resolve_uim(flags.interaction_mode, TRUE, cc.x, cc.y) == uia_halt)
+            return 0;
 
         bhitpos = cc;
         check_caitiff(mtmp);
@@ -2762,7 +2742,7 @@ use_grapple(struct obj *obj, const struct nh_cmd_arg *arg)
 
 /* return 1 if the wand is broken, hence some time elapsed */
 int
-do_break_wand(struct obj *obj)
+do_break_wand(struct obj *obj, boolean intentional)
 {
     static const char nothing_else_happens[] = "But nothing else happens...";
     int i, x, y;
@@ -2773,23 +2753,24 @@ do_break_wand(struct obj *obj)
     int expltype = EXPL_MAGICAL;
     const char *confirm, *the_wand, *buf;
 
-    the_wand = yname(obj);
-    confirm = msgprintf("Are you really sure you want to break %s?",
-                        safe_qbuf("", sizeof
-                                  "Are you really sure you want to break ?",
-                                  the_wand, ysimple_name(obj), "the wand"));
-    if (yn(confirm) == 'n')
-        return 0;
-
-    if (nohands(youmonst.data)) {
-        pline("You can't break %s without hands!", the_wand);
-        return 0;
-    } else if (ACURR(A_STR) < 10 || obj->oartifact) {
-        pline("You don't have the strength to break %s!", the_wand);
-        return 0;
+    if (intentional) {
+	the_wand = yname(obj);
+    	confirm = msgprintf("Are you really sure you want to break %s?",
+                             safe_qbuf("", sizeof
+                                       "Are you really sure you want to break ?",
+                                       the_wand, ysimple_name(obj), "the wand"));
+	if (yn(confirm) == 'n')
+            return 0;
+        if (nohands(youmonst.data)) {
+            pline("You can't break %s without hands!", the_wand);
+            return 0;
+        } else if (ACURR(A_STR) < 10 || obj->oartifact) {
+            pline("You don't have the strength to break %s!", the_wand);
+            return 0;
+        }
+        pline("Raising %s high above your %s, you break it in two!", the_wand,
+              body_part(HEAD));
     }
-    pline("Raising %s high above your %s, you break it in two!", the_wand,
-          body_part(HEAD));
 
     /* [ALI] Do this first so that wand is removed from bill. Otherwise, the
        freeinv() below also hides it from setpaid() which causes problems. */
@@ -2834,7 +2815,7 @@ do_break_wand(struct obj *obj)
     case WAN_MAGIC_MISSILE:
     wanexpl:
         explode(u.ux, u.uy, (obj->otyp - WAN_MAGIC_MISSILE), dmg, WAND_CLASS,
-                expltype, NULL);
+                expltype, NULL, 0);
         makeknown(obj->otyp);   /* explode described the effect */
         goto discard_broken_wand;
     case WAN_STRIKING:
@@ -2852,7 +2833,7 @@ do_break_wand(struct obj *obj)
     }
 
     /* magical explosion and its visual effect occur before specific effects */
-    explode(obj->ox, obj->oy, 0, rnd(dmg), WAND_CLASS, EXPL_MAGICAL, NULL);
+    explode(obj->ox, obj->oy, 0, rnd(dmg), WAND_CLASS, EXPL_MAGICAL, NULL, 0);
 
     /* this makes it hit us last, so that we can see the action first */
     for (i = 0; i <= 8; i++) {
@@ -2897,7 +2878,7 @@ do_break_wand(struct obj *obj)
                 }
                 bot();      /* blindness */
             } else if ((mon = m_at(level, x, y)) != 0) {
-                bhitm(mon, obj);
+                bhitm(&youmonst, mon, obj);
                 /* bot(); */
             }
             if (affects_objects && level->objects[x][y]) {

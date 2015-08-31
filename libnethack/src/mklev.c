@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -27,17 +27,17 @@ static void make_niches(struct level *lev);
 static int do_comp(const void *, const void *);
 
 static void dosdoor(struct level *lev, xchar, xchar, struct mkroom *, int);
-static void join(struct level *lev, int a, int b, boolean);
+static void join(struct level *lev, int a, int b, boolean, int *);
 static void do_room_or_subroom(struct level *lev, struct mkroom *, int, int,
                                int, int, boolean, schar, boolean, boolean,
                                boolean);
-static void makerooms(struct level *lev);
+static void makerooms(struct level *lev, int *smeq);
 static void finddpos(struct level *lev, coord *, xchar, xchar, xchar, xchar);
 static void mkinvpos(xchar, xchar, int);
 static void mk_knox_portal(struct level *lev, xchar, xchar);
 
 #define create_vault(lev) create_room(lev, -1, -1, 2, 2, -1, -1, \
-                                      VAULT, TRUE, FALSE)
+                                      VAULT, TRUE, NULL, FALSE)
 #define do_vault()        (vault_x != -1)
 static xchar vault_x, vault_y;
 static boolean made_branch;     /* used only during level creation */
@@ -170,27 +170,15 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 ycmax = (hiy - lowy) * 2 / 3;
                 switch(mrn2(4)) {
                 case 1:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, tr, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     break;
                 case 2:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, br, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dobr = TRUE;
                     break;
                 case 3:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, tl, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotl = TRUE;
                     break;
                 default:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, bl, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dobl = TRUE;
                     break;
                 }
@@ -202,30 +190,18 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 ycmax = (hiy - lowy) * 2 / 5;
                 switch(mrn2(4)) {
                 case 1:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, top, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     dotl = TRUE;
                     break;
                 case 2:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, bottom, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dobr = TRUE;
                     dobl = TRUE;
                     break;
                 case 3:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, right, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     dobr = TRUE;
                     break;
                 default:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, left, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotl = TRUE;
                     dobl = TRUE;
                     break;
@@ -238,16 +214,10 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 ycmax = (hiy - lowy) / 3;
                 switch(mrn2(2)) {
                 case 1:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: Z, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     dobl = TRUE;
                     break;
                 default:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: S, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotl = TRUE;
                     dobr = TRUE;
                     break;
@@ -257,9 +227,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 /* Plus Shaped */
                 xcmax = (hix - lowx) * 2 / 5;
                 ycmax = (hiy - lowy) * 2 / 5;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: +, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                 dotr = TRUE;
                 dotl = TRUE;
                 dobr = TRUE;
@@ -269,29 +236,30 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 /* square-O shaped (pillar cut out of middle) */
                 xcmax = (hix - lowx) / 2;
                 ycmax = (hiy - lowy) / 2;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: O, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                 docenter = TRUE;
                 break;
             case 10:
-                /* X-shaped (corners _and_ middle cut out) */
                 xcmax = (hix - lowx) / 3;
                 ycmax = (hiy - lowy) / 3;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: X, cut up to (%d,%d)", xcmax, ycmax);
-#endif
-                dotr = TRUE;
-                dotl = TRUE;
-                dobr = TRUE;
-                dobl = TRUE;
+                if ((xcmax > 1) || (ycmax > 1)) {
+                    /* X-shaped (corners _and_ middle cut out) */
+                    if (xcmax > 1)
+                        xcmax--;
+                    else
+                        ycmax--;
+                    dotr = TRUE;
+                    dotl = TRUE;
+                    dobr = TRUE;
+                    dobl = TRUE;
+                } else {
+                    /* Not large enough, convert to O: */
+                    xcmax = (hix - lowx) / 2;
+                    ycmax = (hiy - lowy) / 2;
+                }
                 docenter = TRUE;
                 break;
             /* TODO: oval */
             default:
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: Rectangular");
-#endif
                 /* Rectangular -- nothing to do */
                 break;
             }
@@ -299,9 +267,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 croom->irregular = TRUE;
                 xcut = 1 + mrn2(xcmax);
                 ycut = 1 + mrn2(ycmax);
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Tentative cut: (%d,%d)", xcut, ycut);
-#endif
                 /* Sometimes, instead of a small cut, do a max cut.
                    This improves the probability of a larger cut,
                    without removing the possibility for small ones. */
@@ -309,9 +274,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                     xcut = xcmax;
                 if ((ycut < (ycmax / 2)) && !mrn2(3))
                     ycut = ycmax;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Actual cut: (%d,%d)", xcut, ycut);
-#endif
             }
             /* Now do the actual cuts. */
             if (dotr) {
@@ -473,7 +435,7 @@ add_subroom(struct level *lev, struct mkroom *proom, int lowx, int lowy,
 }
 
 static void
-makerooms(struct level *lev)
+makerooms(struct level *lev, int *smeq)
 {
     boolean tried_vault = FALSE;
 
@@ -489,14 +451,14 @@ makerooms(struct level *lev)
                 lev->rooms[lev->nroom].hx = -1;
             }
         } else if (!create_room(lev, -1, -1, -1, -1, -1, -1, OROOM, -1,
-                                (depth(&lev->z) > 2)))
+                                smeq, (depth(&lev->z) > 2)))
             return;
     }
     return;
 }
 
 static void
-join(struct level *lev, int a, int b, boolean nxcor)
+join(struct level *lev, int a, int b, boolean nxcor, int *smeq)
 {
     coord cc, tt, org, dest;
     xchar tx, ty, xx, yy;
@@ -569,24 +531,24 @@ join(struct level *lev, int a, int b, boolean nxcor)
 }
 
 void
-makecorridors(struct level *lev)
+makecorridors(struct level *lev, int *smeq)
 {
     int a, b, i;
     boolean any = TRUE;
 
     for (a = 0; a < lev->nroom - 1; a++) {
-        join(lev, a, a + 1, FALSE);
+        join(lev, a, a + 1, FALSE, smeq);
         if (!mrn2(50))
             break;      /* allow some randomness */
     }
     for (a = 0; a < lev->nroom - 2; a++)
         if (smeq[a] != smeq[a + 2])
-            join(lev, a, a + 2, FALSE);
+            join(lev, a, a + 2, FALSE, smeq);
     for (a = 0; any && a < lev->nroom; a++) {
         any = FALSE;
         for (b = 0; b < lev->nroom; b++)
             if (smeq[a] != smeq[b]) {
-                join(lev, a, b, FALSE);
+                join(lev, a, b, FALSE, smeq);
                 any = TRUE;
             }
     }
@@ -596,7 +558,7 @@ makecorridors(struct level *lev)
             b = mrn2(lev->nroom - 2);
             if (b >= a)
                 b += 2;
-            join(lev, a, b, TRUE);
+            join(lev, a, b, TRUE, smeq);
         }
 }
 
@@ -625,7 +587,7 @@ dosdoor(struct level *lev, xchar x, xchar y, struct mkroom *aroom, int type)
 {
     boolean shdoor = ((*in_rooms(lev, x, y, SHOPBASE)) ? TRUE : FALSE);
 
-    if (!IS_WALL(lev->locations[x][y].typ))     /* avoid SDOORs on already made 
+    if (!IS_WALL(lev->locations[x][y].typ))     /* avoid SDOORs on already made
                                                    doors */
         type = DOOR;
     lev->locations[x][y].typ = type;
@@ -834,6 +796,8 @@ makelevel(struct level *lev)
     branch *branchp;
     int room_threshold;
 
+    int smeq[MAXNROFROOMS + 1];
+
     if (wiz1_level.dlevel == 0)
         init_dungeons();
 
@@ -842,13 +806,13 @@ makelevel(struct level *lev)
 
         /* check for special levels */
         if (slevnum && !Is_rogue_level(&lev->z)) {
-            makemaz(lev, slevnum->proto);
+            makemaz(lev, slevnum->proto, smeq);
             return;
-        } else if (dungeons[lev->z.dnum].proto[0]) {
-            makemaz(lev, "");
+        } else if (find_dungeon(&lev->z).proto[0]) {
+            makemaz(lev, "", smeq);
             return;
         } else if (In_mines(&lev->z)) {
-            makemaz(lev, "minefill");
+            makemaz(lev, "minefill", smeq);
             return;
         } else if (In_quest(&lev->z)) {
             char fillname[9];
@@ -860,12 +824,14 @@ makelevel(struct level *lev)
             snprintf(fillname, SIZE(fillname), "%s-fil", urole.filecode);
             strcat(fillname,
                    (lev->z.dlevel < loc_levnum->dlevel.dlevel) ? "a" : "b");
-            makemaz(lev, fillname);
+            makemaz(lev, fillname, smeq);
             return;
-        } else if (In_hell(&lev->z) ||
-                   (mrn2(5) && lev->z.dnum == medusa_level.dnum &&
-                    depth(&lev->z) > depth(&medusa_level))) {
-            makemaz(lev, "");
+        } else if (In_hell(&lev->z)) {
+            mkaiscav(lev);
+            return;
+        } else if ((lev->z.dnum == medusa_level.dnum) &&
+                   (depth(&lev->z) > depth(&medusa_level))) {
+            makemaz(lev, "", smeq);
             return;
         }
     }
@@ -873,10 +839,10 @@ makelevel(struct level *lev)
     /* otherwise, fall through - it's a "regular" level. */
 
     if (Is_rogue_level(&lev->z)) {
-        makeroguerooms(lev);
+        makeroguerooms(lev, smeq);
         makerogueghost(lev);
     } else
-        makerooms(lev); /* Some rooms may get shaped. */
+        makerooms(lev, smeq); /* Some rooms may get shaped. */
     sort_rooms(lev);
     /* after sorting the rooms, fix up the shaped rooms
        so that somexy can work with them */
@@ -930,7 +896,7 @@ makelevel(struct level *lev)
                                            allow a random special room */
     if (Is_rogue_level(&lev->z))
         goto skip0;
-    makecorridors(lev);
+    makecorridors(lev, smeq);
     make_niches(lev);
 
     /* make a secret treasure vault, not connected to the rest */
@@ -1210,7 +1176,7 @@ mineralize(struct level *lev)
         gemprob /= 6;
     }
 
-    /* 
+    /*
      * Seed rock areas with gold and/or gems.
      * We use fairly low level object handling to avoid unnecessary
      * overhead from placing things in the floor chain prior to burial.
@@ -1399,7 +1365,7 @@ place_branch(struct level *lev, branch * br,    /* branch to place */
     boolean make_stairs;
     struct mkroom *br_room;
 
-    /* 
+    /*
      * Return immediately if there is no branch to make or we have
      * already made one.  This routine can be called twice when
      * a special level is loaded that specifies an SSTAIR location
@@ -1447,7 +1413,7 @@ place_branch(struct level *lev, branch * br,    /* branch to place */
         lev->locations[x][y].ladder = lev->sstairs.up ? LA_UP : LA_DOWN;
         lev->locations[x][y].typ = STAIRS;
     }
-    /* 
+    /*
      * Set made_branch to TRUE even if we didn't make a stairwell (i.e.
      * make_stairs is false) since there is currently only one branch
      * per level, if we failed once, we're going to fail again on the
@@ -1691,7 +1657,7 @@ mkstairs(struct level *lev, xchar x, xchar y, char up, struct mkroom *croom)
         return;
     }
 
-    /* 
+    /*
      * We can't make a regular stair off an end of the dungeon.  This
      * attempt can happen when a special level is placed at an end and
      * has an up or down stair specified in its description file.
@@ -1836,8 +1802,8 @@ void
 mkinvokearea(void)
 {
     int dist;
-    xchar xmin = inv_pos.x, xmax = inv_pos.x;
-    xchar ymin = inv_pos.y, ymax = inv_pos.y;
+    xchar xmin = gamestate.inv_pos.x, xmax = gamestate.inv_pos.x;
+    xchar ymin = gamestate.inv_pos.y, ymax = gamestate.inv_pos.y;
     xchar i;
 
     pline("The floor shakes violently under you!");
@@ -2014,4 +1980,3 @@ mk_knox_portal(struct level *lev, xchar x, xchar y)
 }
 
 /*mklev.c*/
-

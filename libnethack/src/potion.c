@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -847,7 +847,7 @@ peffects(struct obj *otmp)
                     losehp(uarmh ? 1 : rnd(10),
                            killer_msg(DIED, "colliding with the ceiling"));
                 } else
-                    doup(flags.interaction_mode);
+                    doup();
             }
         } else
             nothing++;
@@ -1174,7 +1174,7 @@ potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
             }
             break;
         case POT_POLYMORPH:
-            bhitm(mon, obj);
+            bhitm(&youmonst, mon, obj);
             break;
 /*
         case POT_GAIN_LEVEL:
@@ -1822,7 +1822,7 @@ more_dips:
         /* Turn off engine before fueling, turn off fuel too :-) */
         if (obj->lamplit || potion->lamplit) {
             useup(potion);
-            explode(u.ux, u.uy, 11, dice(6, 6), 0, EXPL_FIERY, NULL);
+            explode(u.ux, u.uy, 11, dice(6, 6), 0, EXPL_FIERY, NULL, 0);
             exercise(A_WIS, FALSE);
             return 1;
         }
@@ -1936,7 +1936,7 @@ djinni_from_bottle(struct obj *obj)
     if (wish_available(obj->blessed ? 80 : obj->cursed ? 5 : 20, &dieroll)) {
         msethostility(mtmp, FALSE, TRUE); /* show as peaceful while wishing */
         verbalize("I am in your debt.  I will grant one wish!");
-        makewish();
+        makewish(1);
         mongone(mtmp);
         return;
     }

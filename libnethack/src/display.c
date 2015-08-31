@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-04-02 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) Dean Luick, with acknowledgements to Kevin Darcy */
 /* and Dave Cohrs, 1990.                                          */
 /* NetHack may be freely redistributed.  See license for details. */
@@ -1555,18 +1555,6 @@ dbuf_get_mon(int x, int y)
 }
 
 
-/*
- * warning_at: return TRUE if there is a warning symbol at the given position
- *
- * attack_checks() needs to know and there is no other way to get this info
- */
-boolean
-warning_at(int x, int y)
-{
-    return (dbuf[y][x].mon > NUMMONS) && (dbuf[y][x].monflags & MON_WARNING);
-}
-
-
 void
 cls(void)
 {
@@ -1705,6 +1693,9 @@ back_to_cmap(struct level *lev, xchar x, xchar y)
         break;
     case THRONE:
         idx = S_throne;
+        break;
+    case MAGIC_CHEST:
+        idx = S_magic_chest;
         break;
     case LAVAPOOL:
         idx = S_lava;

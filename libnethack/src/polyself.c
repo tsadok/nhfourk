@@ -1,14 +1,14 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
  * Polymorph self routine.
  *
- * Note:  the light source handling code assumes that both youmonst.m_id
- * and youmonst.mx will always remain 0 when it handles the case of the
- * player polymorphed into a light-emitting monster.
+ * Note: the light source handling code assumes that youmonst.m_id will always
+ * remain 0 when it handles the case of the player polymorphed into a
+ * light-emitting monster.
  */
 
 #include "hack.h"
@@ -420,77 +420,53 @@ has_polyform_ability(const struct permonst *pm,
         case AD_RBRE: breathname = "random breath weapon"; break;
         default:      breathname = "unknown breath weapon"; break;
         }
-        *pa = (struct polyform_ability) {
-            .description = breathname,
-            .directed = TRUE,
-            .handler_directed = dobreathe
-        };
+        pa->description = breathname;
+        pa->directed = TRUE;
+        pa->handler_directed = dobreathe;
     } else if (attacktype(pm, AT_SPIT)) {
-        *pa = (struct polyform_ability) {
-            .description = "spit venom",
-            .directed = TRUE,
-            .handler_directed = dospit
-        };
+        pa->description = "spit venom";
+        pa->directed = TRUE;
+        pa->handler_directed = dospit;
     } else if (attacktype(pm, AT_MAGC)) {
-        *pa = (struct polyform_ability) {
-            .description = "monster magic",
-            .directed = FALSE,
-            .handler_undirected = docast_at_magc
-        };
+        pa->description = "monster magic";
+        pa->directed = FALSE;
+        pa->handler_undirected = docast_at_magc;
     } else if (pm->mlet == S_NYMPH) {
-        *pa = (struct polyform_ability) {
-            .description = "remove iron ball",
-            .directed = FALSE,
-            .handler_undirected = doremove
-        };
+        pa->description = "remove iron ball";
+        pa->directed = FALSE;
+        pa->handler_undirected = doremove;
     } else if (attacktype(pm, AT_GAZE)) {
-        *pa = (struct polyform_ability) {
-            .description = "gaze",
-            .directed = FALSE, /* TODO: why undirected? */
-            .handler_undirected = dogaze
-        };
+        pa->description = "gaze";
+        pa->directed = FALSE; /* TODO: why undirected? */
+        pa->handler_undirected = dogaze;
     } else if (is_were(pm)) {
-        *pa = (struct polyform_ability) {
-            .description = "summon allies",
-            .directed = FALSE,
-            .handler_undirected = dosummon
-        };
+        pa->description = "summon allies";
+        pa->directed = FALSE;
+        pa->handler_undirected = dosummon;
     } else if (webmaker(pm)) {
-        *pa = (struct polyform_ability) {
-            .description = "spin web",
-            .directed = FALSE,
-            .handler_undirected = dospinweb
-        };
+        pa->description = "spin web";
+        pa->directed = FALSE;
+        pa->handler_undirected = dospinweb;
     } else if (is_hider(pm)) {
-        *pa = (struct polyform_ability) {
-            .description = "hide",
-            .directed = FALSE,
-            .handler_undirected = dohide
-        };
+        pa->description = "hide";
+        pa->directed = FALSE;
+        pa->handler_undirected = dohide;
     } else if (is_mind_flayer(pm)) {
-        *pa = (struct polyform_ability) {
-            .description = "mind blast",
-            .directed = FALSE,
-            .handler_undirected = domindblast
-        };
+        pa->description = "mind blast";
+        pa->directed = FALSE;
+        pa->handler_undirected = domindblast;
     } else if (monsndx(pm) == PM_GREMLIN) {
-        *pa = (struct polyform_ability) {
-            .description = "multiply",
-            .directed = FALSE,
-            .handler_undirected = dogremlin_multiply
-        };
+        pa->description = "multiply";
+        pa->directed = FALSE;
+        pa->handler_undirected = dogremlin_multiply;
     } else if (is_unicorn(pm)) {
-        *pa = (struct polyform_ability) {
-            .description = "activate horn",
-            .directed = FALSE,
-            .handler_undirected = dopolyself_unihorn
-        };
+        pa->description = "activate horn";
+        pa->directed = FALSE;
+        pa->handler_undirected = dopolyself_unihorn;
     } else if (pm->msound == MS_SHRIEK) {
-        *pa = (struct polyform_ability) {
-            .description = "shriek",
-            .directed = FALSE,
-            .handler_undirected = doshriek
-        };
+        pa->description = "shriek";
+        pa->directed = FALSE;
+        pa->handler_undirected = doshriek;
     } else {
         return FALSE;
     }
@@ -1010,7 +986,7 @@ dobreathe(const struct nh_cmd_arg *arg)
         impossible("bad breath attack?");       /* mouthwash needed... */
     else
         buzz((int)(20 + mattk->adtyp - 1), (int)mattk->damn, u.ux, u.uy, dx,
-             dy);
+             dy, 0);
     return 1;
 }
 
@@ -1203,7 +1179,6 @@ dogaze(void)
     int looked = 0;
     int i;
     uchar adtyp = 0;
-    enum u_interaction_mode uim = apply_interaction_mode();
 
     for (i = 0; i < NATTK; i++) {
         if (youmonst.data->mattk[i].aatyp == AT_GAZE) {
@@ -1235,11 +1210,15 @@ dogaze(void)
                 pline("%s seems not to notice your gaze.", Monnam(mtmp));
             else if (!canseemon(mtmp))
                 pline("You can't see where to gaze at %s.", Monnam(mtmp));
-            else if (is_safepet(mtmp, uim))
+            else if ((mtmp->mtame || mtmp->mpeaceful) && !Confusion)
                 pline("You avoid gazing at %s.", y_monnam(mtmp));
             else {
-                if (!Confusion && !confirm_attack(mtmp, uim))
-                    continue;
+                /* This used to prompt for whether to attack peacefuls, or
+                   attack them indiscriminately at uim_indiscriminate. Both of
+                   these are a UI nightmare, really. We could consider not
+                   attacking if uim_pacifist, but presumably if the player is
+                   intentionally using a gaze attack, they want to do
+                   /something/. */
                 setmangry(mtmp);
 
                 if (!mtmp->mcanmove || mtmp->mstun || mtmp->msleeping ||
@@ -1532,7 +1511,7 @@ mbodypart(struct monst *mon, int part)
         return snake_parts[part];
     if (mptr->mlet == S_EYE)
         return sphere_parts[part];
-    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING || mptr->mlet == S_BLOB
+    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING
         || mptr == &mons[PM_JELLYFISH])
         return jelly_parts[part];
     if (mptr->mlet == S_VORTEX ||

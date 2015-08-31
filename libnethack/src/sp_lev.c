@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /*      Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -32,7 +32,7 @@ static void create_gold(struct level *lev, gold *, struct mkroom *);
 static void create_feature(struct level *lev, int, int, struct mkroom *, int);
 static boolean search_door(struct mkroom *, xchar *, xchar *, xchar, int);
 static void fix_stair_rooms(struct level *lev);
-static void create_corridor(struct level *lev, corridor *);
+static void create_corridor(struct level *lev, corridor *, int *);
 
 static boolean create_subroom(struct level *lev, struct mkroom *, xchar, xchar,
                               xchar, xchar, xchar, xchar);
@@ -83,12 +83,12 @@ static void load_common_data(struct level *lev, dlb *, int);
 static void load_one_monster(dlb *, monster *);
 static void load_one_object(dlb *, object *);
 static void load_one_engraving(dlb *, engraving *);
-static boolean load_rooms(struct level *lev, dlb *);
+static boolean load_rooms(struct level *lev, dlb *, int *);
 static void maze1xy(struct level *lev, coord * m, int humidity);
 static boolean load_maze(struct level *lev, dlb * fp);
 static void create_door(struct level *lev, room_door *, struct mkroom *);
 static void free_rooms(room **, int);
-static void build_room(struct level *lev, room *, room *);
+static void build_room(struct level *lev, room *, room *, int *);
 
 static char *lev_message = 0;
 static lev_region *lregions = 0;
@@ -369,7 +369,7 @@ chk:
  */
 boolean
 create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
-            xchar yal, xchar rtype, xchar rlit, boolean canbeshaped)
+            xchar yal, xchar rtype, xchar rlit, int *smeq, boolean canbeshaped)
 {
     /*
      * numeric args that are -1 mean random
@@ -1473,14 +1473,14 @@ fix_stair_rooms(struct level *lev)
  * (from a distance).
  */
 static void
-create_corridor(struct level *lev, corridor * c)
+create_corridor(struct level *lev, corridor *c, int *smeq)
 {
     coord org, dest;
 
     if (c->src.room == -1) {
         sort_rooms(lev);
         fix_stair_rooms(lev);
-        makecorridors(lev);
+        makecorridors(lev, smeq);
         return;
     }
 
@@ -1633,7 +1633,7 @@ free_rooms(room ** ro, int n)
 }
 
 static void
-build_room(struct level *lev, room * r, room * pr)
+build_room(struct level *lev, room *r, room *pr, int *smeq)
 {
     boolean okroom;
     struct mkroom *aroom;
@@ -1649,14 +1649,14 @@ build_room(struct level *lev, room * r, room * pr)
         aroom = &lev->rooms[lev->nroom];
         okroom =
             create_room(lev, r->x, r->y, r->w, r->h, r->xalign, r->yalign,
-                        rtype, r->rlit, FALSE);
+                        rtype, r->rlit, smeq, FALSE);
         r->mkr = aroom;
     }
 
     if (okroom) {
         /* Create subrooms if necessary... */
         for (i = 0; i < r->nsubroom; i++)
-            build_room(lev, r->subrooms[i], r);
+            build_room(lev, r->subrooms[i], r, smeq);
         /* And now we can fill the room! */
 
         /* Priority to the stairs */
@@ -1869,7 +1869,7 @@ err_out:
 }
 
 static boolean
-load_rooms(struct level *lev, dlb * fd)
+load_rooms(struct level *lev, dlb *fd, int *smeq)
 {
     xchar nrooms, ncorr;
     char n;
@@ -2068,7 +2068,7 @@ load_rooms(struct level *lev, dlb * fd)
 
     for (i = 0; i < nrooms; i++)
         if (!tmproom[i]->parent)
-            build_room(lev, tmproom[i], NULL);
+            build_room(lev, tmproom[i], NULL, smeq);
 
     free_rooms(tmproom, nrooms);
 
@@ -2077,7 +2077,7 @@ load_rooms(struct level *lev, dlb * fd)
     Fread(&ncorr, sizeof (ncorr), 1, fd);
     for (i = 0; i < ncorr; i++) {
         Fread(&tmpcor, 1, sizeof (tmpcor), fd);
-        create_corridor(lev, &tmpcor);
+        create_corridor(lev, &tmpcor, smeq);
     }
 
     return TRUE;
@@ -2723,7 +2723,7 @@ err_out:
  * General loader
  */
 boolean
-load_special(struct level * lev, const char *name)
+load_special(struct level *lev, const char *name, int *smeq)
 {
     dlb *fd;
     boolean result = FALSE;
@@ -2742,7 +2742,7 @@ load_special(struct level * lev, const char *name)
 
     switch (c) {
     case SP_LEV_ROOMS:
-        result = load_rooms(lev, fd);
+        result = load_rooms(lev, fd, smeq);
         break;
     case SP_LEV_MAZE:
         result = load_maze(lev, fd);

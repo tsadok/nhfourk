@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-05-19 */
+/* Last modified by Alex Smith, 2015-07-21 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -224,9 +224,14 @@ mattacku(struct monst *mtmp)
        long worm attacking. */
     boolean youseeit = canseemon(mtmp);
 
-    /* The monster knows your location now, even if it didn't before. */
-    mtmp->mux = u.ux;
-    mtmp->muy = u.uy;
+    /* The monster knows your location now, even if it didn't before.
+
+       Exception: the monster has you engulfed, in which case we want to avoid
+       setting mux and muy to the monster's own square. */
+    if (mtmp->mx != u.ux || mtmp->my != u.uy) {
+        mtmp->mux = u.ux;
+        mtmp->muy = u.uy;
+    }
 
     /* Might be attacking your image around the corner, or invisible, or you
        might be blind... so we require !ranged to ensure you're aware of it. */
@@ -402,6 +407,32 @@ mattacku(struct monst *mtmp)
         tmp -= 2;
     if (tmp <= 0)
         tmp = 1;
+    /* If you are wearing a shield, adjust this per your shield skill */
+    if (uarms) {
+        switch ((P_MAX_SKILL(P_SHIELD) == P_ISRESTRICTED) ?
+                P_ISRESTRICTED : P_SKILL(P_SHIELD)) {
+        case P_ISRESTRICTED:
+            tmp += 5;
+            break;
+        case P_UNSKILLED:
+            tmp += 2;
+            break;
+        case P_BASIC:
+            break;
+        case P_SKILLED:
+            tmp -= 2;
+            break;
+        case P_EXPERT:
+            tmp -= 4;
+            break;
+        case P_MASTER:
+            tmp -= 6;
+            break;
+        default:
+            impossible("Unknown shield skill level: %d",
+                       P_SKILL(P_SHIELD));
+        }
+    }
 
     /* make eels visible the moment they hit/miss us */
     if (mdat->mlet == S_EEL && mtmp->minvis && cansee(mtmp->mx, mtmp->my)) {
@@ -462,8 +493,11 @@ mattacku(struct monst *mtmp)
                     if (mattk->aatyp != AT_KICK ||
                         !thick_skinned(youmonst.data))
                         sum[i] = hitmu(mtmp, mattk);
-                } else
+                } else {
                     missmu(mtmp, (tmp == j), mattk);
+                    if (uarms)
+                        use_skill(P_SHIELD, 1);
+                }
             }
             break;
 
@@ -495,6 +529,8 @@ mattacku(struct monst *mtmp)
                     sum[i] = gulpmu(mtmp, mattk);
                 } else {
                     missmu(mtmp, (tmp == j), mattk);
+                    if (uarms)
+                        use_skill(P_SHIELD, 1);
                 }
             }
             break;
@@ -529,8 +565,11 @@ mattacku(struct monst *mtmp)
                 }
                 if (tmp > (j = dieroll = rnd(20 + i)))
                     sum[i] = hitmu(mtmp, mattk);
-                else
+                else {
                     missmu(mtmp, (tmp == j), mattk);
+                    if (uarms)
+                        use_skill(P_SHIELD, 1);
+                }
                 /* KMH -- Don't accumulate to-hit bonuses */
                 if (otmp)
                     tmp -= hittmp;
@@ -702,6 +741,11 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
     const struct permonst *olduasmon = youmonst.data;
     int res;
     struct attack noseduce;
+    int ac_threshhold = mtmp->m_lev + (u_helpless(hm_all) ? 4 : 0) -
+        (((Invis && !perceives(mtmp->data)) || !mtmp->mcansee) ? 2 : 0) -
+        (mtmp->mtrapped ? 2 : 0);
+    ac_threshhold = (!(mtmp->data->mflags3 & M3_VANDMGRDUC) &&
+                     (ac_threshhold > 0)) ? ac_threshhold : 0;
 
     if (!flags.seduce_enabled && mattk->adtyp == AD_SSEX) {
         noseduce = *mattk;
@@ -788,7 +832,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                     hitmsg(mtmp, mattk);
                 if (!dmg)
                     break;
-                if (u.mh > 1 && u.mh > ((get_player_ac() > 0) ?
+                if (u.mh > 1 && u.mh > ((get_player_ac() > ac_threshhold) ?
                                             dmg : dmg + get_player_ac()) &&
                     objects[otmp->otyp].oc_material == IRON &&
                     (u.umonnum == PM_BLACK_PUDDING ||
@@ -1450,8 +1494,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
 
     /* Negative armor class reduces damage done instead of fully protecting
        against hits. */
-    if (dmg && get_player_ac() < 0) {
-        dmg -= rnd(-get_player_ac());
+    if (dmg && get_player_ac() < ac_threshhold) {
+        dmg -= rnd(ac_threshhold - get_player_ac());
         if (dmg < 1)
             dmg = 1;
     }
@@ -1582,6 +1626,8 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
         win_pause_output(P_MESSAGE);
         vision_recalc(2);       /* hero can't see anything */
         Engulfed = 1;
+        mtmp->mux = COLNO;      /* don't let the muxy equal the mxy */
+        mtmp->muy = ROWNO;
         if (Punished)
             placebc();
         /* u.uswldtim always set > 1 */
