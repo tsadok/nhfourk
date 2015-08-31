@@ -1171,10 +1171,12 @@ zap_dig(struct monst *mon, struct obj *obj, schar dx, schar dy, schar dz)
     struct obj *otmp;
     struct tmp_sym *tsym;
     int zx, zy, digdepth;
-    boolean shopdoor, shopwall, maze_dig;
+    boolean shopdoor, shopwall /* , maze_dig */;
+    /*
     int wandlevel = 0;
     if (obj->oclass == WAND_CLASS)
         wandlevel = getwandlevel(mon, obj);
+    */
 
     /* swallowed */
     if (Engulfed) {
@@ -1224,8 +1226,10 @@ zap_dig(struct monst *mon, struct obj *obj, schar dx, schar dy, schar dz)
 
     /* normal case: digging across the level */
     shopdoor = shopwall = FALSE;
+    /*
     maze_dig = (level->flags.is_maze_lev && !Is_earthlevel(&u.uz) && wandlevel != P_MASTER) ||
                wandlevel == P_UNSKILLED;
+    */
     zx = u.ux + dx;
     zy = u.uy + dy;
     digdepth = rn1(18, 8);
