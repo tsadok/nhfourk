@@ -347,6 +347,7 @@ extern void heal_legs(int);
 
 /* ### do_name.c ### */
 
+extern void namewatchman(struct monst *mon, struct level *lev);
 extern struct monst *christen_monst(struct monst *, const char *);
 extern int do_oname(const struct nh_cmd_arg *);
 extern int do_tname(const struct nh_cmd_arg *);
