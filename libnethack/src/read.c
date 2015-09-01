@@ -752,6 +752,7 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
             level->locations[x][y].typ = newterrain;
             break;
         case ALTAR:
+        case MAGIC_CHEST:
         case LADDER:
         case STAIRS:
             pline("A mysterious force whisks the %s away.", liqname);

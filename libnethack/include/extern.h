@@ -1342,6 +1342,7 @@ extern int query_objlist(const char *, struct obj *, int, struct object_pick **,
                          int, boolean(*)(const struct obj *));
 extern void add_objitem(struct nh_objlist *, enum nh_menuitem_role, int,
                         const char *, struct obj *, boolean);
+extern struct obj *add_to_magic_chest(struct obj *);
 extern struct obj *pick_obj(struct obj *);
 extern void reset_encumber_msg(void);
 extern int encumber_msg(void);

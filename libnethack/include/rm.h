@@ -102,7 +102,7 @@
 # define IS_ALTAR(typ)      ((typ) == ALTAR)
 # define IS_MAGIC_CHEST(typ) ((typ) == MAGIC_CHEST)
 # define IS_DRAWBRIDGE(typ) ((typ) == DRAWBRIDGE_UP || (typ) == DRAWBRIDGE_DOWN)
-# define IS_FURNITURE(typ)  ((typ) >= STAIRS && (typ) <= ALTAR)
+# define IS_FURNITURE(typ)  ((typ) >= STAIRS && (typ) <= MAGIC_CHEST)
 # define IS_AIR(typ)        ((typ) == AIR || (typ) == CLOUD)
 # define IS_SOFT(typ)       ((typ) == AIR || (typ) == CLOUD || IS_POOL(typ))
 

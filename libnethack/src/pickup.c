@@ -18,7 +18,6 @@ static long carry_count(struct obj *, struct obj *, long, boolean, int *,
                         int *);
 static int lift_object(struct obj *, struct obj *, long *, boolean);
 static int mbag_explodes(struct obj *, int);
-static struct obj *add_to_magic_chest(struct obj *);
 static int in_container(struct obj *);
 static int out_container(struct obj *);
 static long mbag_item_gone(int, struct obj *);
@@ -1623,7 +1622,7 @@ mbag_explodes(struct obj *obj, int depthin)
  * The input obj may be deleted in the process.
  * Based on the implementation of add_to_container.
  */
-static struct obj *add_to_magic_chest(struct obj *obj)
+struct obj *add_to_magic_chest(struct obj *obj)
 {
     struct obj *otmp;
 

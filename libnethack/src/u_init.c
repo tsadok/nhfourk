@@ -20,6 +20,7 @@ static void race_ini_inv(const struct trobj *, short nocreate[4]);
 static void knows_object(int);
 static void knows_class(char);
 static void augment_skill_cap(int skill, int augment, int minimum, int maximum);
+static void augment_magic_chest_contents(int otyp, int oclass, int count);
 static boolean restricted_spell_discipline(int);
 
 #define UNDEF_TYP       0
@@ -687,6 +688,8 @@ u_init_inv_skills(void)
         knows_object(SACK);
         knows_object(TOUCHSTONE);
         skill_init(Skill_A);
+        augment_magic_chest_contents(0, RING_CLASS, 3);
+        augment_magic_chest_contents(0, GEM_CLASS, 7);
         break;
     case PM_BARBARIAN:
         trobj_list = copy_trobj_list(Barbarian);
@@ -697,6 +700,10 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
+        augment_magic_chest_contents(BATTLE_AXE, 0, 1);
+        augment_magic_chest_contents(TWO_HANDED_SWORD, 0, 1);
+        augment_magic_chest_contents(LONG_SWORD, 0, 2);
+        augment_magic_chest_contents(0, WEAPON_CLASS, 5);
         skill_init(Skill_B);
         break;
     case PM_CAVEMAN:
@@ -704,6 +711,9 @@ u_init_inv_skills(void)
         trobj_list[C_AMMO].trquan = 20 + rolern2(11);
         role_ini_inv(trobj_list, nclist);
         skill_init(Skill_C);
+        augment_magic_chest_contents(SLING, 0, 1);
+        augment_magic_chest_contents(FLINT, 0, 5);
+        augment_magic_chest_contents(SILVER_NUGGET, 0, 1);
         break;
     case PM_HEALER:
         u.umoney0 = 1001 + rolern2(1000);
@@ -712,6 +722,10 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         knows_object(POT_FULL_HEALING);
         skill_init(Skill_H);
+        augment_magic_chest_contents(SCR_ENCHANT_WEAPON, 0, 1);
+        /* the scroll is intended for Crysknife making if desired */
+        augment_magic_chest_contents(0, WAND_CLASS, 2);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
     case PM_KNIGHT:
         role_ini_inv(Knight, nclist);
@@ -721,6 +735,9 @@ u_init_inv_skills(void)
            wooledge@skybridge.scl.cwru.edu */
         HJumping |= FROMOUTSIDE;
         skill_init(Skill_K);
+        augment_magic_chest_contents(LONG_SWORD, 0, 1);
+        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
     case PM_MONK:
         trobj_list = copy_trobj_list(Monk);
@@ -744,6 +761,10 @@ u_init_inv_skills(void)
         }
         knows_class(ARMOR_CLASS);
         skill_init(Skill_Mon);
+        augment_magic_chest_contents(0, FOOD_CLASS, 5);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
+        augment_magic_chest_contents(0, SPBOOK_CLASS, 3);
+        augment_magic_chest_contents(SPE_BLANK_PAPER, 0, 1);
         break;
     case PM_PRIEST:
         role_ini_inv(Priest, nclist);
@@ -760,12 +781,19 @@ u_init_inv_skills(void)
            are literally "priests" and they have holy water. But we don't count 
            it as such.  Purists can always avoid playing priests and/or confirm 
            another player's role in their YAAP. */
+        augment_magic_chest_contents(FLAIL, 0, 1);
+        augment_magic_chest_contents(0, SPBOOK_CLASS, 3);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
     case PM_RANGER:
         trobj_list = copy_trobj_list(Ranger);
         trobj_list[RAN_TWO_ARROWS].trquan = 50 + rolern2(10);
         trobj_list[RAN_ZERO_ARROWS].trquan = 30 + rolern2(10);
         role_ini_inv(trobj_list, nclist);
+        augment_magic_chest_contents(SADDLE, 0, 1);
+        augment_magic_chest_contents(DAGGER, 0, 3);
+        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
+        augment_magic_chest_contents(ARROW, 0, 20);
         skill_init(Skill_Ran);
         break;
     case PM_ROGUE:
@@ -775,6 +803,10 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         knows_object(SACK);
         skill_init(Skill_R);
+        augment_magic_chest_contents(DAGGER, 0, 3);
+        augment_magic_chest_contents(WAN_SLEEP, 0, 1);
+        augment_magic_chest_contents(BAG_OF_HOLDING, 0, 1);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
     case PM_SAMURAI:
         trobj_list = copy_trobj_list(Samurai);
@@ -787,6 +819,11 @@ u_init_inv_skills(void)
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_S);
+        augment_magic_chest_contents(KATANA, 0, 1);
+        augment_magic_chest_contents(SHURIKEN, 0, 20);
+        augment_magic_chest_contents(YA, 0, 20);
+        augment_magic_chest_contents(SADDLE, 0, 1);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
     case PM_TOURIST:
         trobj_list = copy_trobj_list(Tourist);
@@ -802,6 +839,11 @@ u_init_inv_skills(void)
         else
             role_ini_inv(Lamp, nclist);
         skill_init(Skill_T);
+        augment_magic_chest_contents(SCIMITAR, 0, 1);
+        augment_magic_chest_contents(DART, 0, 20);
+        augment_magic_chest_contents(0, WAND_CLASS, 3);
+        augment_magic_chest_contents(SPE_IDENTIFY, 0, 1);
+        augment_magic_chest_contents(0, RANDOM_CLASS, 10);
         break;
     case PM_VALKYRIE:
     {
@@ -830,14 +872,22 @@ u_init_inv_skills(void)
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
+        augment_magic_chest_contents(0, ARMOR_CLASS, 20);
+        augment_magic_chest_contents(WAN_COLD, 0, 1);
+        augment_magic_chest_contents(BROADSWORD, 0, 2);
+        augment_magic_chest_contents(JAVELIN, 0, 10);
         break;
     }        
     case PM_WIZARD:
         role_ini_inv(Wizard, nclist);
         skill_init(Skill_W);
+        augment_magic_chest_contents(SPE_BLANK_PAPER, 0, 2);
+        augment_magic_chest_contents(SPBOOK_CLASS, 0, 5);
+        augment_magic_chest_contents(POT_GAIN_ENERGY, 0, 3);
         break;
 
     default:   /* impossible */
+        augment_magic_chest_contents(0, RANDOM_CLASS, 5);
         break;
     }
 
@@ -849,6 +899,7 @@ u_init_inv_skills(void)
     switch (Race_switch) {
     case PM_HUMAN:
         /* Nothing special */
+        augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
 
     case PM_ELF:
@@ -859,10 +910,17 @@ u_init_inv_skills(void)
         static const int trotyp[] = {
             WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP, LEATHER_DRUM
         };
+        augment_magic_chest_contents(LEMBAS_WAFER, 0, 5);
+        augment_magic_chest_contents(ELVEN_SHIELD, 0, 1);
+        augment_magic_chest_contents(ELVEN_BOOTS, 0, 5);
         if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
             trobj_list = copy_trobj_list(Instrument);
             trobj_list[0].trotyp = trotyp[rn2(SIZE(trotyp))];
             ini_inv(trobj_list, nclist, rng_main);
+        } else {
+            augment_magic_chest_contents(ELVEN_ARROW, 0, 20);
+            augment_magic_chest_contents(ELVEN_DAGGER, 0, 5);
+            augment_magic_chest_contents(ELVEN_SPEAR, 0, 3);
         }
 
         /* Elves can recognize all elvish objects */
@@ -889,12 +947,17 @@ u_init_inv_skills(void)
         knows_object(DWARVISH_CLOAK);
         knows_object(DWARVISH_ROUNDSHIELD);
         augment_skill_cap(P_PICK_AXE, 1, P_SKILLED, P_EXPERT);
+        augment_magic_chest_contents(PICK_AXE, 0, 1);
+        augment_magic_chest_contents(DWARVISH_SPEAR, 0, 5);
         break;
 
     case PM_GNOME:
         ini_inv(GnomeStuff, nclist, rng_main);
         augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
+        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
+        augment_magic_chest_contents(TALLOW_CANDLE, 0, 5);
+        augment_magic_chest_contents(WAX_CANDLE, 0, 5);
         break;
 
     case PM_ORC:
@@ -915,6 +978,7 @@ u_init_inv_skills(void)
         knows_object(ORCISH_CLOAK);
         augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
         augment_skill_cap(P_SHIELD, 1, P_BASIC, P_MASTER);
+        augment_magic_chest_contents(0, ARMOR_CLASS, 12);
         break;
 
     case PM_SYLPH:
@@ -923,6 +987,7 @@ u_init_inv_skills(void)
             trobj_list[SYL_HEALINGPOT].trotyp = MAGIC_HARP;
         }
         augment_skill_cap(P_HEALING_SPELL, 1, P_BASIC, P_SKILLED);
+        augment_magic_chest_contents(0, FOOD_CLASS, 3);
         ini_inv(trobj_list, nclist, rng_main);
         break;
 
@@ -964,6 +1029,19 @@ u_init_inv_skills(void)
     }
 
     return;
+}
+
+static void
+augment_magic_chest_contents(int otyp, int oclass, int count)
+{
+    int i;
+    struct obj *otmp;
+    for (i = 0; i <= count; i++) {
+        otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
+                        mkobj(level, oclass, FALSE, rng_main);
+        obj_extract_self(otmp);
+        add_to_magic_chest(otmp);
+    }
 }
 
 /* skills aren't initialized, so we use the role-specific skill lists */
