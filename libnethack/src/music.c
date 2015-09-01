@@ -244,6 +244,10 @@ do_earthquake(int force)
                     if (cansee(x, y))
                         pline("The altar falls into a chasm.");
                     goto do_pit;
+                case MAGIC_CHEST:
+                    if (cansee(x,y))
+                        pline("The magic chest falls into a chasm.");
+                    goto do_pit;
                 case GRAVE:
                     if (cansee(x, y))
                         pline("The headstone topples into a chasm.");
