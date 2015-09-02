@@ -247,6 +247,11 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             switch (mm) {
 
             case PM_WATCHMAN:
+                /* Naming them here ensures it happens when they are created
+                   normally, but not when they are loaded from bones or created
+                   from a statue or figurine.  Also PM_WATCH_CAPTAIN below.  */
+                namewatchman(mtmp, lev);
+                /* fall through */
             case PM_SOLDIER:
                 if (!rn2_on_rng(3, rng)) {
                     w1 = PARTISAN +
@@ -261,8 +266,10 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             case PM_LIEUTENANT:
                 w1 = rn2_on_rng(2, rng) ? BROADSWORD : LONG_SWORD;
                 break;
-            case PM_CAPTAIN:
             case PM_WATCH_CAPTAIN:
+                namewatchman(mtmp, lev);
+                /* fall through */
+            case PM_CAPTAIN:
                 w1 = rn2_on_rng(2, rng) ? LONG_SWORD : SILVER_SABER;
                 break;
             default:
