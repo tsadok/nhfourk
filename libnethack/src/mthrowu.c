@@ -263,7 +263,7 @@ int ohitmon(struct monst *mtmp, /* accidental target */
                 } else
                     mtmp->m_lev--;
             }
-            // obfree(otmp, (struct obj*) 0);
+            obfree(otmp, NULL);
             return 1;
         }
 
@@ -421,6 +421,10 @@ m_throw(struct monst *mon, int x, int y, int dx, int dy, int range,
                 hitv += 8 + singleobj->spe;
                 if (dam < 1)
                     dam = 1;
+                if (objects[singleobj->otyp].oc_class == WEAPON_CLASS ||
+                    objects[singleobj->otyp].oc_class == VENOM_CLASS) {
+                    hitv += objects[singleobj->otyp].oc_hitbon;
+                }
                 hitu = thitu(hitv, dam, singleobj, NULL);
             }
             if (hitu && singleobj->opoisoned && is_poisonable(singleobj)) {
@@ -568,6 +572,9 @@ thrwmq(struct monst *mtmp, int xdef, int ydef)
             if (bigmonst(youmonst.data))
                 hitv++;
             hitv += 8 + otmp->spe;
+            if (objects[otmp->otyp].oc_class == WEAPON_CLASS ||
+                objects[otmp->otyp].oc_class == VENOM_CLASS)
+                hitv += objects[otmp->otyp].oc_hitbon;
             if (dam < 1)
                 dam = 1;
 

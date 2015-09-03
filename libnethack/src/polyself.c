@@ -1011,6 +1011,9 @@ dospit(const struct nh_cmd_arg *arg)
     case AD_DRST:
         otmp = mktemp_sobj(level, BLINDING_VENOM);
         break;
+    case AD_DRLI:
+        otmp = mktemp_sobj(level, VAMPIRE_BLOOD);
+        break;
     default:
         impossible("dospit: bad damage type");
         /* fall-through */

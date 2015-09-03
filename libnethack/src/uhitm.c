@@ -825,6 +825,30 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     get_dmg_bonus = FALSE;
                     tmp = 0;
                     break;
+                case VAMPIRE_BLOOD:
+                    /* Currently, this is probably impossible, as I don't think
+                       any monster with this attack is a valid polyform.  But
+                       while I am cleaning up oversights regarding this new
+                       type of attack, I might as well do this one too. */
+                    if (resists_drli(mon)) {
+                        pline("Your blood hits %s and does nothing",
+                              mon_nam(mon));
+                    } else {
+                        int xtmp = dice(2,6);
+                        pline("Your blood weakens %s!", mon_nam(mon));
+                        mon->mhpmax -= xtmp;
+                        if ((mon->mhp -= xtmp) <= 0 || !mon->m_lev) {
+                            pline("%s dies.", Monnam(mon));
+                            xkilled(mon, 0);
+                        } else
+                            mon->m_lev--;
+                    }
+                    tmp = 0;
+                    if (thrown)
+                        obfree(obj, NULL);
+                    else
+                        useup(obj);
+                    break;
                 case ACID_VENOM:       /* thrown (or spit) */
                     if (resists_acid(mon)) {
                         pline("Your venom hits %s harmlessly.", mon_nam(mon));
