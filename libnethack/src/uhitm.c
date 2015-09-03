@@ -1026,7 +1026,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (newpudding) {
             pline("%s divides as you hit it!", Monnam(mon));
             newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
-            mon->mhpmax        = mon.mhpmax         * 3 / 4;
+            mon->mhpmax        = mon->mhpmax        * 3 / 4;
             if (mon->mhp > mon->mhpmax) {
                 mon->mhp = mon->mhpmax;
                 newpudding->mhp = newpudding->mhpmax;
