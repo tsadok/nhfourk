@@ -57,6 +57,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * The damage bonus for martial arts now depends on skill.
+
+ * Puddings now split slightly unevenly:  one of the two puddings will
+   be a little weaker than the original, and the other will be a
+   little stronger (in terms of max hitpoints).
+
  * Thrown weapons now receive their inherent to-hit bonus, if
    applicable.  (Previously they got a to-hit bonus based on
    enchantment but missed out on their base to-hit bonus for being the

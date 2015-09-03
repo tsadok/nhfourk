@@ -415,7 +415,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (mdat == &mons[PM_SHADE])
             tmp = 0;
         else if (martial_bonus())
-            tmp = rnd(4);       /* bonus for martial arts */
+             /* bonus for martial arts */
+            tmp = rnd(4) + P_SKILL(P_MARTIAL_ARTS);
         else
             tmp = rnd(2);
         valid_weapon_attack = (tmp > 1);
@@ -1021,8 +1022,15 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
         mon->mhp > 1 && !thrown && !mon->mcan
         /* && !destroyed -- guaranteed by mhp > 1 */ ) {
-        if (clone_mon(mon, 0, 0)) {
+        struct monst *newpudding = clone_mon(mon, 0, 0);
+        if (newpudding) {
             pline("%s divides as you hit it!", Monnam(mon));
+            newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
+            mon->mhpmax        = mon.mhpmax         * 3 / 4;
+            if (mon->mhp > mon->mhpmax) {
+                mon->mhp = mon->mhpmax;
+                newpudding->mhp = newpudding->mhpmax;
+            }
             hittxt = TRUE;
             break_conduct(conduct_puddingsplit);
         }
