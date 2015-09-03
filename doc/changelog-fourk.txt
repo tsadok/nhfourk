@@ -4,9 +4,13 @@ Written 2014-2015 by Nathan Eady.
 This document (i.e., this specific file, changelog-fourk.txt) is in
 the public domain.  The author has specifically released it to the
 public, choosing to waive any exclusivity rights that he might
-otherwise have under copyright law, reserving none of them.  You
-may read, modify, distribute, or otherwise use this document in
-any manner that you deem appropriate.
+otherwise have under copyright law, reserving none of them.  You may
+read, modify, distribute, or otherwise use this document in any manner
+that you deem appropriate.  Attribution is not required (except
+insofar as it may be required for reasons entirely unrelated to
+copyright, e.g., if you use the document in an academic context where
+failure to cite sources is frowned upon, the author of this document
+does not have the authority to suspend those rules).
 
 At your option, you may choose instead to treat this document as being
 under the NetHack General Public License.  In that case, see further
@@ -52,6 +56,13 @@ Chronological Changelog (most recent at top):
 
 Changes in 4.3.0.3:
 -------------------
+
+ * Thrown weapons now receive their inherent to-hit bonus, if
+   applicable.  (Previously they got a to-hit bonus based on
+   enchantment but missed out on their base to-hit bonus for being the
+   kind of weapon that they are.  This is relevant for daggers,
+   although it was implemented mostly for Vlad's blood spitting,
+   which needed the bonus to be able to hit late-game players.)
 
  * In addition to your defense score, damage reduction also depends
    on the attacking monster's chance to hit you.  If the monster
