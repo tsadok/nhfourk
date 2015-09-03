@@ -44,7 +44,7 @@ struct objclass {
 # define WHACK          0
 
     unsigned oc_material:5;
-# define LIQUID         1       /* currently only for venom */
+# define LIQUID         1       /* currently only for venom and vampire blood */
 /* Start of burnable items (some code cares about this order) */
 # define WAX            2
 # define VEGGY          3       /* foodstuffs */

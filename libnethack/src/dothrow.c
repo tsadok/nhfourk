@@ -1455,7 +1455,7 @@ thitmonst(struct monst *mon, struct obj *obj)
         }
 
     } else if ((otyp == EGG || otyp == CREAM_PIE || otyp == BLINDING_VENOM ||
-                otyp == ACID_VENOM)) {
+                otyp == ACID_VENOM || otyp == VAMPIRE_BLOOD)) {
         if ((guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
             hmon(mon, obj, 1);
             return 1;   /* hmon used it up */
@@ -1727,7 +1727,8 @@ boolean
 breaktest(struct obj *obj)
 {
     /* Venom can never resist destruction. */
-    if (obj->otyp == ACID_VENOM || obj->otyp == BLINDING_VENOM)
+    if (obj->otyp == ACID_VENOM || obj->otyp == BLINDING_VENOM ||
+        obj->otyp == VAMPIRE_BLOOD)
         return 1;
 
     if (obj_resists(obj, 1, 99))
@@ -1780,6 +1781,7 @@ breakmsg(struct obj *obj, boolean in_view)
         break;
     case ACID_VENOM:
     case BLINDING_VENOM:
+    case VAMPIRE_BLOOD:
         pline("Splash!");
         break;
     }
