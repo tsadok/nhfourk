@@ -57,6 +57,23 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Role starting attribute numbers have been adjusted, as follows:
+   priests now usually start with more Int than Wis, the opposite to
+   their vanilla situation, so they can read and cast a wider variety
+   of spells as early as possible -- at the expense of being able to
+   cast them frequently; and Wizards have had their starting Wis
+   buffed at the expense of several other attributes, so they can get
+   decent Pw regen early and cast often.
+
+ * Higher wisdom now improves your Pw regeneration rate,
+   for everyone except Sylphs (who have their own formula).
+
+ * Wisdom is much more difficult to exercise than before.
+   To keep things balanced, it's also harder to abuse.
+
+ * All roles now use Int as their "casting" stat to determine
+   spell failure rates.
+
  * The damage bonus for martial arts now depends on skill.
 
  * Puddings now split slightly unevenly:  one of the two puddings will

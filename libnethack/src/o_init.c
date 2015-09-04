@@ -395,8 +395,6 @@ discover_object(int oindx, boolean mark_as_known, boolean credit_hero,
             objects[oindx].oc_name_known = 1;
             if (disclose_only)
                 objects[oindx].oc_disclose_id = 1;
-            if (credit_hero)
-                exercise(A_WIS, TRUE);
         }
         if (moves > 1L)
             update_inventory();

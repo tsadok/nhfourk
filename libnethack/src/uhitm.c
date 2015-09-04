@@ -338,7 +338,6 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
             if (difference > 0) {
                 pline("As you meet %s deep, meaningful gaze, you feel "
                       "its suffering as though it were your own.", mhis(mon));
-                exercise(A_WIS, FALSE);
                 exercise(A_INT, FALSE);
                 suffering = difference * u.ulevel;
                 if (suffering > (u.uhpmax - 1) / 2)
@@ -768,7 +767,6 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                             } else {
                                 pline("Splat!");
                                 useup_eggs(obj);
-                                exercise(A_WIS, FALSE);
                             }
                         }
                         break;
@@ -1209,7 +1207,6 @@ demonpet(void)
     if ((dtmp = makemon(pm, level, u.ux, u.uy,
                         MM_CREATEMONSTER | MM_CMONSTER_T)) != 0)
         tamedog(dtmp, NULL);
-    exercise(A_WIS, TRUE);
 }
 
 /*
@@ -1602,7 +1599,6 @@ damageum(struct monst *mdef, const struct attack *mattk)
             if (ABASE(A_INT) > AMAX(A_INT))
                 ABASE(A_INT) = AMAX(A_INT);
         }
-        exercise(A_WIS, TRUE);
         break;
     case AD_STCK:
         if (!negated && !sticks(mdef->data))

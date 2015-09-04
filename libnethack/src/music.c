@@ -383,12 +383,10 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
     case TOOLED_HORN:  /* Awaken or scare monsters */
         pline("You produce a frightful, grave sound.");
         awaken_monsters(u.ulevel * 30);
-        exercise(A_WIS, FALSE);
         break;
     case BUGLE:        /* Awaken & attract soldiers */
         pline("You extract a loud noise from %s.", the(xname(instr)));
         awaken_soldiers();
-        exercise(A_WIS, FALSE);
         break;
     case MAGIC_HARP:   /* Charm monsters */
         if (do_spec && instr->spe > 0) {
@@ -422,7 +420,6 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
     case LEATHER_DRUM: /* Awaken monsters */
         pline("You beat a deafening row!");
         awaken_monsters(u.ulevel * 40);
-        exercise(A_WIS, FALSE);
         break;
     default:
         impossible("What a weird instrument (%d)!", instr->otyp);
@@ -482,7 +479,6 @@ do_play_instrument(struct obj *instr, const struct nh_cmd_arg *arg)
         /* Check if there was the Stronghold drawbridge near and if the tune
            conforms to what we're waiting for. */
         if (Is_stronghold(&u.uz)) {
-            exercise(A_WIS, TRUE);      /* just for trying */
             if (!strcmp(buf, gamestate.castle_tune)) {
                 /* Search for the drawbridge */
                 for (y = u.uy - 1; y <= u.uy + 1; y++)

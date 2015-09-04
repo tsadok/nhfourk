@@ -488,14 +488,10 @@ exerper(void)
 
     /* status checks */
     if (!(moves % 5)) {
-        if ((HClairvoyant & (INTRINSIC | TIMEOUT)) && !BClairvoyant)
-            exercise(A_WIS, TRUE);
         if (HRegeneration)
             exercise(A_STR, TRUE);
         if (Sick || Vomiting)
             exercise(A_CON, FALSE);
-        if (Confusion || Hallucination)
-            exercise(A_WIS, FALSE);
         if ((Wounded_legs && !u.usteed) || Fumbling || HStun)
             exercise(A_DEX, FALSE);
     }

@@ -996,7 +996,6 @@ dokick(const struct nh_cmd_arg *arg)
                     dealloc_obj(treefruit);
                 }
                 exercise(A_DEX, TRUE);
-                exercise(A_WIS, TRUE);  /* discovered a new food source! */
                 newsym(x, y);
                 maploc->looted |= TREE_LOOTED;
                 return 1;
@@ -1081,7 +1080,6 @@ dokick(const struct nh_cmd_arg *arg)
                     mkobj_at(RING_CLASS, level, x, y, TRUE, rng_sink_ring);
                     newsym(x, y);
                     exercise(A_DEX, TRUE);
-                    exercise(A_WIS, TRUE);      /* a discovery! */
                     maploc->looted |= S_LRING;
                 }
                 return 1;

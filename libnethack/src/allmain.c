@@ -804,6 +804,12 @@ you_moved(void)
             /* turn boundary handling starts here */
             /**************************************/
 
+            int pwregentime = (((MAXULEV + 8 - u.ulevel) *
+                                Role_if(PM_WIZARD) ? 3 : 4) / 6)
+                * (10 / ACURR(A_WIS)) - (ACURR(A_WIS) / 4);
+            if (pwregentime < 1)
+                pwregentime = 1;
+
             mcalcdistress();    /* adjust monsters' trap, blind, etc */
 
             /* No actions have happened yet this turn. (Combined with the change
@@ -967,9 +973,7 @@ you_moved(void)
 
             if ((u.uen < u.uenmax) &&
                 ((wtcap < MOD_ENCUMBER && !Race_if(PM_SYLPH) &&
-                  (!(moves %
-                     ((MAXULEV + 8 -
-                       u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
+                  (!(moves % pwregentime)))
                  || Energy_regeneration
                  || (can_draw_from_environment(&youmonst, FALSE) &&
                      !(u.uhs >= WEAK)))) {

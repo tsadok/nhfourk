@@ -527,7 +527,6 @@ dotele(const struct nh_cmd_arg *arg)
             return 1;
 
         if (castit) {
-            exercise(A_WIS, TRUE);
             if (spelleffects(sp_no, TRUE, arg))
                 return 1;
             else

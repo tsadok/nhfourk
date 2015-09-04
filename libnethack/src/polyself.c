@@ -507,7 +507,6 @@ polymon(int mntmp, boolean noisy)
     if (mvitals[mntmp].mvflags & G_GENOD) {     /* allow G_EXTINCT */
         if (noisy)
             pline("You feel rather %s-ish.", mons[mntmp].mname);
-        exercise(A_WIS, TRUE);
         return 0;
     }
 
@@ -518,7 +517,6 @@ polymon(int mntmp, boolean noisy)
      * there since the polymorph was always in effect by then, and
      * exercising other attributes has no effect when polyselfed. */
     exercise(A_CON, FALSE);
-    exercise(A_WIS, TRUE);
 
     if (!Upolyd) {
         /* Human to monster; save human stats */
@@ -1169,7 +1167,6 @@ dosummon(void)
     u.uen -= 10;
 
     pline("You call upon your brethren for help!");
-    exercise(A_WIS, TRUE);
     if (!were_summon(&youmonst, &placeholder, NULL))
         pline("But none arrive.");
     return 1;

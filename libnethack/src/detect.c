@@ -257,7 +257,6 @@ outgoldmap:
 
     newsym(u.ux, u.uy);
     pline("You feel very greedy, and sense gold!");
-    exercise(A_WIS, TRUE);
     win_pause_output(P_MAP);
     doredraw();
     u.uinwater = uw;
@@ -371,7 +370,6 @@ food_detect(struct obj *sobj, boolean * scr_known)
         } else
             pline("You sense %s.", what);
         win_pause_output(P_MAP);
-        exercise(A_WIS, TRUE);
         doredraw();
         u.uinwater = uw;
         if (Underwater)
@@ -983,7 +981,6 @@ do_mapping(void)
     for (zx = 0; zx < COLNO; zx++)
         for (zy = 0; zy < ROWNO; zy++)
             show_map_spot(zx, zy);
-    exercise(A_WIS, TRUE);
     u.uinwater = uw;
     if (!level->flags.hero_memory || Underwater) {
         flush_screen(); /* flush temp screen */
@@ -1170,7 +1167,6 @@ find_trap(struct trap *trap)
     boolean cleared = FALSE;
 
     trap->tseen = 1;
-    exercise(A_WIS, TRUE);
     if (Blind)
         feel_location(trap->tx, trap->ty);
     else
@@ -1268,7 +1264,6 @@ dosearch0(int aflag)
                             continue;
                         /* changes .type to DOOR */
                         cvt_sdoor_to_door(&level->locations[x][y], &u.uz);
-                        exercise(A_WIS, TRUE);
                         action_completed();
                         if (Blind && !aflag)
                             feel_location(x, y);   /* make sure it shows up */
@@ -1279,7 +1274,6 @@ dosearch0(int aflag)
                             continue;
                         level->locations[x][y].typ = CORR;
                         unblock_point(x, y);    /* vision */
-                        exercise(A_WIS, TRUE);
                         action_completed();
                         newsym(x, y);
                     } else {
@@ -1287,7 +1281,6 @@ dosearch0(int aflag)
                            SDOOR. */
                         if (!aflag) {
                             if (reveal_monster_at(x, y, FALSE)) {
-                                exercise(A_WIS, TRUE);
                                 /* changed mechanic = changed message; also
                                    don't imply we're touching a trice */
                                 if (m_at(level, x, y)->m_ap_type)
@@ -1303,8 +1296,6 @@ dosearch0(int aflag)
                             action_interrupted();
 
                             if (trap->ttyp == STATUE_TRAP) {
-                                if (activate_statue_trap(trap, x, y, FALSE))
-                                    exercise(A_WIS, TRUE);
                                 return 1;
                             } else {
                                 find_trap(trap);

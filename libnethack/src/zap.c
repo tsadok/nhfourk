@@ -2004,7 +2004,6 @@ zapnodir(struct obj *obj)
         win_pause_output(P_MESSAGE);
         enlightenment(FALSE);
         pline("The feeling subsides.");
-        exercise(A_WIS, TRUE);
         break;
     }
     if (known && !objects[obj->otyp].oc_name_known) {
@@ -2660,7 +2659,6 @@ weffects(struct obj *obj, schar dx, schar dy, schar dz)
     int wandlevel = getwandlevel(&youmonst, obj);
     boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
 
-    exercise(A_WIS, TRUE);
     if (u.usteed && (objects[otyp].oc_dir != NODIR) && !dx && !dy && (dz > 0) &&
         zap_steed(obj)) {
         disclose = TRUE;

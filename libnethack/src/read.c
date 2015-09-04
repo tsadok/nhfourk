@@ -783,8 +783,6 @@ seffects(struct obj *sobj, boolean *known)
     boolean confused = (Confusion != 0);
     struct obj *otmp;
 
-    if (objects[sobj->otyp].oc_magic)
-        exercise(A_WIS, TRUE);  /* just for trying */
     switch (sobj->otyp) {
     case SCR_ENCHANT_ARMOR:
         {
