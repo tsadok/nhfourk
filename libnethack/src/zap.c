@@ -2094,6 +2094,7 @@ int
 zapyourself(struct obj *obj, boolean ordinary)
 {
     int damage = 0;
+    boolean known = FALSE;
 
     switch (obj->otyp) {
     case WAN_STRIKING:
@@ -2186,6 +2187,7 @@ zapyourself(struct obj *obj, boolean ordinary)
     case WAN_POLYMORPH:
         if (!Unchanging)
             makeknown(WAN_POLYMORPH);
+        /* fall through */
     case SPE_POLYMORPH:
         if (!Unchanging)
             polyself(FALSE);
@@ -2370,6 +2372,8 @@ zapyourself(struct obj *obj, boolean ordinary)
         impossible("object %d used?", obj->otyp);
         break;
     }
+    if (known)
+        makeknown(obj->otyp);
     return damage;
 }
 
@@ -2657,8 +2661,12 @@ void
 weffects(struct obj *obj, schar dx, schar dy, schar dz)
 {
     int otyp = obj->otyp;
-    int wandlevel = getwandlevel(&youmonst, obj);
+    int wandlevel = 0;
     boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
+    if (obj->oclass == WAND_CLASS)
+        wandlevel = getwandlevel(&youmonst, obj);
+    if (wandlevel)
+        use_skill(P_WANDS, wandlevel); /* successful wand use exercises */
 
     exercise(A_WIS, TRUE);
     if (u.usteed && (objects[otyp].oc_dir != NODIR) && !dx && !dy && (dz > 0) &&
