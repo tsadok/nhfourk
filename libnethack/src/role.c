@@ -519,10 +519,10 @@ boolean
 can_draw_from_environment(struct monst *mon, boolean healing)
 {
     enum objslot s;
-    if (Race_if(PM_SYLPH) && Upolyd)
+    if (Race_if(PM_SYLPH) && Upolyd && mon == &youmonst)
         return FALSE;
     if (monsndx(mon->data) == PM_SYLPH ||
-        (mon == &youmonst && Race_if(PM_SYLPH))) {
+        ((mon == &youmonst) && Race_if(PM_SYLPH))) {
         /* Can you feel the air on your skin? */
         for (s = 0; s <= os_last_armor; s++)
             if (!only_sylph_safe_armor(mon, s))
