@@ -118,6 +118,13 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             default => 1,
             depends => 'gui',
         },
+        geoduck_tiles => {
+            description => "Geoduck tileset",
+            long_description => "Installs the 'Geoduck' ASCII-based graphical tileset by Robert M. Cook.",
+            object => qr=^path:tilesets/dat/catalogues/geoduck-=,
+            default => 1,
+            depends => 'gui',
+        },
     },
     rules => {
         _use_c11 => {
@@ -626,6 +633,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             object => qr{^bpath:tilesets/dat/merged/rltiles-.*\.nh4ct$},
             install_dir => "gamesdatadir",
             install_feature => "rltiles_tiles",
+        },
+        _install_geoduck => {
+            object => qr{^bpath:tilesets/dat/merged/geoduck.*\.nh4ct$},
+            install_dir => "gamesdatadir",
+            install_feature => "geoduck_tiles",
         },
         _install_license => {
             object => "path:libnethack/dat/license",
