@@ -439,3 +439,14 @@ The list of contributors to the original RLTiles was:
  Demogorgon, cavewoman, Elwing, dwarvish mattock,
  pickaxe, Kop Lieutenant, Kop Sergeant, elf-lord
  Oracle, Archon, Snake, pyton, cobra, Earendil
+
+=head2 Copyright of the Geoduck Tileset
+
+The Geoduck tileset is copyright Robert M. Cook, distributed from
+www.geoduckthings.net, with official permission to redistribute the
+images "as long as I get all the credit, fame and glory."  For
+official copies of the tileset, see www.geoduckthings.net.  The
+Geoduck tile set was created with JASC Inc.'s Paint Shop Pro.
+
+See also the following usenet thread:
+https://bilious.alt.org/rgrn/?132403,132408,132409,132411,132412,132414-132417

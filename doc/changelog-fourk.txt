@@ -54,6 +54,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * Added the Geoduck tileset, by Robert M. Cook.  This tileset is
+   based on the idea of prominently incorporating the traditional
+   ASCII symbols for each monster (and in many cases item) into
+   the graphical tile, but with enough added detail that you can
+   more easily see and remember what it is.  It may be of interest
+   to beginners who wish to eventually play in ASCII or Unicode
+   mode but are intimidated by it at first.
+
  * Excalibur is now easier to get for Knights, harder for others.
 
  * Gehennom is now mostly composed of a new type of cavern level,

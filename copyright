@@ -702,6 +702,13 @@ Files: tilesets/dat/catalogues/*.txt*
 License: NGPL
 Copyright: Copyright (C) 2013, 2014 Alex Smith
 
+Files: tilesets/dat/tiles/geoduck-nethack-fourk1.png
+License: geoduck
+ I officially give my permission to post the relevant .bmps elsewhere,
+ as long as I get all the credit, fame and glory.  See www.geoduckthings.net
+ for 'official' updates to the tile set.
+Copyright: Copyright (C) 2015 Robert M. Cook
+
 Files: tilesets/dat/maps/*.map
 License: NGPL
 Copyright:
