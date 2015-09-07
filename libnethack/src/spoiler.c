@@ -286,9 +286,9 @@ spoilmonflags(int i)
 {
     return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M1 */
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s" /* M1 */
-                     "%s%s%s%s"         "%s%s%s%s%s%s"       /* M2 */
+                     "%s%s%s"           "%s%s%s%s%s%s"       /* M2 */
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M2 */
-                     "%s%s%s%s%s%s%s%s" "%s%s",              /* M3 */
+                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s",      /* M3 */
                      /* M1 least significant byte */
                      ((mons[i].mflags1 & M1_FLY)       ? "<span class=\"flgfly\">Fly</span> " : ""),
                      ((mons[i].mflags1 & M1_SWIM)      ? "<span class=\"flgswim\">Swim</span> " : ""),
@@ -333,8 +333,9 @@ spoilmonflags(int i)
                      ((mons[i].mflags2 & M2_NOPOLY)     ? "<span class=\"flgnopoly\">NoPoly</span> " : ""),
                      ((mons[i].mflags2 & M2_UNDEAD)     ? "<span class=\"flgundead\">Undead</span> " : ""),
                      ((mons[i].mflags2 & M2_WERE)       ? "<span class=\"flgwere\">Lycanthrope</span> " : ""),
-                     /* human, dwarf, elf, and gnome are moved to MRACE, q.v. */
-                     ((mons[i].mflags2 & M2_ORC)        ? "<span class=\"flgorc\">Orc</span> " : ""),
+                     /* human, dwarf, elf, orc, and gnome are moved to MRACE, q.v. */
+                     /* Well, I mean, a couple of them do have M2 flags for artifact reasons, but
+                        that's an implementation detail.  MRACE tells you what you want to know. */
                      /* M2 second least byte */
                      ((mons[i].mflags2 & M2_DEMON)      ? "<span class=\"flgdemon\">Demon</span> " : ""),
                      ((mons[i].mflags2 & M2_MERC)       ? "<span class=\"flgmerc\">Mercinary</span> " : ""),
@@ -362,23 +363,29 @@ spoilmonflags(int i)
                      ((mons[i].mflags2 & M2_COLLECT)    ? "<span class=\"flgcollect\">Collects</span> " : ""),
                      ((mons[i].mflags2 & M2_MAGIC)      ? "<span class=\"flgmagic\">MagicItems</span> " : ""),
                      /* M3 least significant byte */
-                     (((mons[i].mflags3 & M3_WANTSAMUL) && !(mons[i].mflags1 & M3_COVETOUS)) ?
+                     (((mons[i].mflags3 & M3_WANTSAMUL) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsamul\">Amulet</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSBELL) && !(mons[i].mflags1 & M3_COVETOUS)) ?
+                     (((mons[i].mflags3 & M3_WANTSBELL) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsbell\">Bell</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSBOOK) && !(mons[i].mflags1 & M3_COVETOUS)) ?
+                     (((mons[i].mflags3 & M3_WANTSBOOK) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsbook\">Book</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSCAND) && !(mons[i].mflags1 & M3_COVETOUS)) ?
+                     (((mons[i].mflags3 & M3_WANTSCAND) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantscand\">Candellabrum</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSARTI) && !(mons[i].mflags1 & M3_COVETOUS)) ?
+                     (((mons[i].mflags3 & M3_WANTSARTI) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsarti\">Artifact</span> " : ""),
-                     ((mons[i].mflags3 & M3_COVETOUS)   ? "<span class=\"flgcovetous\">Covetous</span> " : ""),
+                     (((mons[i].mflags3 & M3_COVETOUS) == M3_WANTSALL) ?
+                                                          "<span class=\"flgcovetous\">Covetous</span> " : ""),
                      /* There's an open bit here */
-                     ((mons[i].mflags3 & M3_WAITFORU)   ? "<span class=\"flgwaitforu\">WaitForU</span> " : ""),
+                     ((mons[i].mflags3 & M3_WAITFORU)   ? "<span class=\"flgwaitforu\">WaitForYou</span> " : ""),
                      ((mons[i].mflags3 & M3_CLOSE)      ? "<span class=\"flgclose\">Close</span> " : ""),
                      /* M3 second byte */
                      ((mons[i].mflags3 & M3_INFRAVISION)  ? "<span class=\"flginfravision\">InfraVision</span> " : ""),
-                     ((mons[i].mflags3 & M3_INFRAVISIBLE) ? "<span class=\"flginfravisible\">InfraVisible</span> " : ""));
+                     ((mons[i].mflags3 & M3_INFRAVISIBLE) ? "<span class=\"flginfravisible\">InfraVisible</span> " : ""),
+                     ((mons[i].mflags3 & M3_SCENT)        ? "<span class=\"flgscent\">Scent</span> " : ""),
+                     ((mons[i].mflags3 & M3_DISPLACES)    ? "<span class=\"flgdisplaces\">Displaces</span> " : ""),
+                     ((mons[i].mflags3 & M3_BLINKAWAY)    ? "<span class=\"flgblinkaway\">BlinkAway</span> " : ""),
+                     ((mons[i].mflags3 & M3_VANDMGRDUC)   ? "<span class=\"flgvandmgrduc\">VanDmgReduce</span> " : "")
+        );
 }
 
 static void
@@ -585,8 +592,19 @@ makespoilers(void)
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        char lastmlet = 0;
         outfile = fdopen(fd, "w");
         fprintf(outfile, htmlheader("Monsters"));
+        /* navbar at top */
+        fprintf(outfile, "<div class=\"nav\">Jump to: ");
+        for (i = 0; mons[i].mlet; i++)
+            if ((mons[i].mlet != lastmlet) && i <= PM_ARCHEOLOGIST) {
+                fprintf(outfile, "<a href=\"#monst%d\">%c</a> ",
+                        i, def_monsyms[(int)mons[i].mlet]);
+                lastmlet = mons[i].mlet;
+            }
+        fprintf(outfile, "</div>");
+        /* then the actual monster table */
         fprintf(outfile, "\n<table id=\"monsters\"><thead>\n  "
                 "<tr><th class=\"mlet\"></th>"
                 "<th class=\"monster\">monster</th>"
@@ -619,7 +637,7 @@ makespoilers(void)
                                          (ul ? "<u>" : ""),
                                          (def_monsyms[(int)mons[i].mlet]),
                                          (ul ? "</u>" : ""));
-            fprintf(outfile, "<tr><td class=\"mlet\">%s</td>"
+            fprintf(outfile, "<tr><td id=\"monst%d\" class=\"mlet\">%s</td>"
                     "<td class=\"monster\">%s</td>"
                     "<td class=\"numeric level\">%d</td>"
                     "<td class=\"numeric monstr\">%d</td>"
@@ -635,7 +653,7 @@ makespoilers(void)
                     "<td class=\"size\">%s</td>"
                     "<td class=\"mrace\">%s</td>"
                     "<td class=\"flags\">%s</td>"
-                    "</tr>\n", mlet, mons[i].mname, mons[i].mlevel,
+                    "</tr>\n", i, mlet, mons[i].mname, mons[i].mlevel,
                     monstr[i], mons[i].mmove, (10 - mons[i].ac),
                     mons[i].mr, spoilaligntyp(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
