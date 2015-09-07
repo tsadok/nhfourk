@@ -3314,7 +3314,6 @@ move_into_trap(struct trap *ttmp)
         ttmp->tseen = 0;    /* hack for check_here() */
         /* trigger the trap: */
         spoteffects(TRUE);  /* pickup() + dotrap() */
-        exercise(A_WIS, FALSE);
     }
 }
 
@@ -3768,8 +3767,6 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
                      (force || (!confused && rn2(MAXULEV + 1 - u.ulevel) < 10)))
                     || (!force && confused && !rn2(3))) {
                     pline("You find a trap on %s!", the(xname(otmp)));
-                    if (!confused)
-                        exercise(A_WIS, TRUE);
 
                     switch (ynq("Disarm it?")) {
                     case 'q':
@@ -3850,7 +3847,6 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
          (force || (!confused && rn2(MAXULEV - u.ulevel + 11) < 10)))
         || (!force && confused && !rn2(3))) {
         pline("You find a trap on the door!");
-        exercise(A_WIS, TRUE);
         if (ynq("Disarm it?") != 'y')
             return 1;
         if (level->locations[x][y].doormask & D_TRAPPED) {

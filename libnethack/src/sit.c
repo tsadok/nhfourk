@@ -72,7 +72,6 @@ dosit(const struct nh_cmd_arg *arg)
                (u.utrap && (u.utraptype >= TT_LAVA))) {
 
         if (u.utrap) {
-            exercise(A_WIS, FALSE);     /* you're getting stuck longer */
             if (u.utraptype == TT_BEARTRAP) {
                 pline("You can't sit down with your %s in the bear trap.",
                       body_part(FOOT));

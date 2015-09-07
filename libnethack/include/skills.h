@@ -95,7 +95,8 @@
 # define P_BASIC                2
 # define P_SKILLED              3
 # define P_EXPERT               4
-# define P_MASTER               5       /* Unarmed combat/wands */
+# define P_MASTER               5       /* Unarmed combat, wands, and very
+                                           highly role-appropriate weapons */
 # define P_GRAND_MASTER         6       /* Unarmed combat/martial arts only */
 
 # define practice_needed_to_advance(level) ((level)*(level)*20)

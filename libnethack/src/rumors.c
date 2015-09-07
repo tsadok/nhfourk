@@ -167,8 +167,6 @@ outrumor(int truth,     /* 1=true, -1=false, 0=either */
         }
     }
     line = getrumor(truth, reading ? FALSE : TRUE, &truth_out, rng_main);
-    if (truth_out)
-        exercise(A_WIS, truth_out == 1);
     if (!*line)
         line = "NetHack rumors file closed for renovation.";
     switch (mechanism) {
@@ -403,7 +401,8 @@ doconsult(struct monst *oracl)
         /* ~100 pts if very 1st, ~40 pts if minor already done */
         u.uevent.major_oracle = TRUE;
         historic_event(FALSE, firsttime, "received advice from The Oracle.");
-        exercise(A_WIS, !cheapskate);
+        if (firsttime)
+            exercise(A_WIS, !cheapskate);
     }
     if (add_xpts) {
         pluslvl(FALSE);

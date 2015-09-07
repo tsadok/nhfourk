@@ -804,6 +804,13 @@ you_moved(void)
             /* turn boundary handling starts here */
             /**************************************/
 
+            int pwregentime = (MAXULEV + 2 - u.ulevel) *
+                (Role_if(PM_WIZARD) ? 3 : 4) / 6
+                * ((25 / ACURR(A_WIS)) || 1) - (ACURR(A_WIS) / 2);
+
+            if (pwregentime < 1)
+                pwregentime = 1;
+
             mcalcdistress();    /* adjust monsters' trap, blind, etc */
 
             /* No actions have happened yet this turn. (Combined with the change
@@ -967,14 +974,17 @@ you_moved(void)
 
             if ((u.uen < u.uenmax) &&
                 ((wtcap < MOD_ENCUMBER && !Race_if(PM_SYLPH) &&
-                  (!(moves %
-                     ((MAXULEV + 8 -
-                       u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
+                  !(moves % pwregentime))
                  || Energy_regeneration
                  || (can_draw_from_environment(&youmonst, FALSE) &&
                      !(u.uhs >= WEAK)))) {
+                //if (wizard) pline("YES (pwrt %d)", pwregentime);
                 int olduen = u.uen;
-                u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
+                u.uen += Race_if(PM_SYLPH) ? 
+                    /* Sylphs keep the old formula */
+                    rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1) :
+                    /* everyone else gets the new formula */
+                    1 + (u.ulevel / 3);
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
                 if (Race_if(PM_SYLPH) && (u.uen > olduen) &&

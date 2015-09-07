@@ -1133,7 +1133,6 @@ consume_offering(struct obj *otmp)
         useup(otmp);
     else
         useupf(otmp, 1L);
-    exercise(A_WIS, TRUE);
 }
 
 
@@ -1200,10 +1199,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
         if (your_race(ptr)) {
             if (is_demon(youmonst.data)) {
                 pline("You find the idea very satisfying.");
-                exercise(A_WIS, TRUE);
             } else if (u.ualign.type != A_CHAOTIC) {
                 pline("You'll regret this infamous offense!");
-                exercise(A_WIS, FALSE);
             }
 
             if (altaralign != A_CHAOTIC && altaralign != A_NONE) {
@@ -1784,7 +1781,6 @@ doturn(const struct nh_cmd_arg *arg)
 
         pline("For some reason, %s seems to ignore you.", u_gname());
         aggravate();
-        exercise(A_WIS, FALSE);
         return 0;
     }
 
@@ -1794,7 +1790,6 @@ doturn(const struct nh_cmd_arg *arg)
         return 0;
     }
     pline("Calling upon %s, you chant an arcane formula.", u_gname());
-    exercise(A_WIS, TRUE);
 
     /* note: does not perform unturn_dead() on victims' inventories */
     range = BOLT_LIM + (u.ulevel / 5);  /* 5 to 11 */

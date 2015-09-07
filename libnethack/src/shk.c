@@ -3825,7 +3825,6 @@ check_unpaid_usage(struct obj *otmp, boolean altusage)
     if (shkp->mcanmove || !shkp->msleeping)
         verbalize(fmt, arg1, arg2, tmp, currency(tmp));
     ESHK(shkp)->debit += tmp;
-    exercise(A_WIS, TRUE);      /* you just got info */
 }
 
 /* for using charges of unpaid objects "used in the normal manner" */

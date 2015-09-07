@@ -4,9 +4,13 @@ Written 2014-2015 by Nathan Eady.
 This document (i.e., this specific file, changelog-fourk.txt) is in
 the public domain.  The author has specifically released it to the
 public, choosing to waive any exclusivity rights that he might
-otherwise have under copyright law, reserving none of them.  You
-may read, modify, distribute, or otherwise use this document in
-any manner that you deem appropriate.
+otherwise have under copyright law, reserving none of them.  You may
+read, modify, distribute, or otherwise use this document in any manner
+that you deem appropriate.  Attribution is not required (except
+insofar as it may be required for reasons entirely unrelated to
+copyright, e.g., if you use the document in an academic context where
+failure to cite sources is frowned upon, the author of this document
+does not have the authority to suspend those rules).
 
 At your option, you may choose instead to treat this document as being
 under the NetHack General Public License.  In that case, see further
@@ -52,6 +56,36 @@ Chronological Changelog (most recent at top):
 
 Changes in 4.3.0.3:
 -------------------
+
+ * Role starting attribute numbers have been adjusted, as follows:
+   priests now usually start with more Int than Wis, the opposite to
+   their vanilla situation, so they can read and cast a wider variety
+   of spells as early as possible -- at the expense of being able to
+   cast them frequently; and Wizards have had their starting Wis
+   buffed at the expense of several other attributes, so they can get
+   decent Pw regen early and cast often.
+
+ * Higher wisdom now improves your Pw regeneration rate,
+   for everyone except Sylphs (who have their own formula).
+
+ * Wisdom is much more difficult to exercise than before.
+   To keep things balanced, it's also harder to abuse.
+
+ * All roles now use Int as their "casting" stat to determine
+   spell failure rates.
+
+ * The damage bonus for martial arts now depends on skill.
+
+ * Puddings now split slightly unevenly:  one of the two puddings will
+   be a little weaker than the original, and the other will be a
+   little stronger (in terms of max hitpoints).
+
+ * Thrown weapons now receive their inherent to-hit bonus, if
+   applicable.  (Previously they got a to-hit bonus based on
+   enchantment but missed out on their base to-hit bonus for being the
+   kind of weapon that they are.  This is relevant for daggers,
+   although it was implemented mostly for Vlad's blood spitting,
+   which needed the bonus to be able to hit late-game players.)
 
  * In addition to your defense score, damage reduction also depends
    on the attacking monster's chance to hit you.  If the monster
@@ -119,6 +153,14 @@ Changes in 4.3.0.3:
 
 Changes in 4.3.0.2:
 -------------------
+
+ * Added the Geoduck tileset, by Robert M. Cook.  This tileset is
+   based on the idea of prominently incorporating the traditional
+   ASCII symbols for each monster (and in many cases item) into
+   the graphical tile, but with enough added detail that you can
+   more easily see and remember what it is.  It may be of interest
+   to beginners who wish to eventually play in ASCII or Unicode
+   mode but are intimidated by it at first.
 
  * Excalibur is now easier to get for Knights, harder for others.
 

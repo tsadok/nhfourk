@@ -338,7 +338,6 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
             if (difference > 0) {
                 pline("As you meet %s deep, meaningful gaze, you feel "
                       "its suffering as though it were your own.", mhis(mon));
-                exercise(A_WIS, FALSE);
                 exercise(A_INT, FALSE);
                 suffering = difference * u.ulevel;
                 if (suffering > (u.uhpmax - 1) / 2)
@@ -415,7 +414,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (mdat == &mons[PM_SHADE])
             tmp = 0;
         else if (martial_bonus())
-            tmp = rnd(4);       /* bonus for martial arts */
+             /* bonus for martial arts */
+            tmp = rnd(4) + P_SKILL(P_MARTIAL_ARTS);
         else
             tmp = rnd(2);
         valid_weapon_attack = (tmp > 1);
@@ -767,7 +767,6 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                             } else {
                                 pline("Splat!");
                                 useup_eggs(obj);
-                                exercise(A_WIS, FALSE);
                             }
                         }
                         break;
@@ -1017,14 +1016,45 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (mon->mtame && !destroyed)
             monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
     }
-    if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING])
+    if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING] ||
+         mdat == &mons[PM_BLOOD_PUDDING])
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
         mon->mhp > 1 && !thrown && !mon->mcan
         /* && !destroyed -- guaranteed by mhp > 1 */ ) {
-        if (clone_mon(mon, 0, 0)) {
-            pline("%s divides as you hit it!", Monnam(mon));
-            hittxt = TRUE;
-            break_conduct(conduct_puddingsplit);
+        if (mon->mhp > 60) {
+            coord mm;
+            struct monst *bpud;
+            mm.x = mon->mx; mm.y = mon->my;
+            if (enexto(&mm, level, mm.x, mm.y, mon->data) &&
+                !MON_AT(level, mm.x, mm.y)) {
+                bpud = makemon(&mons[PM_BLOOD_PUDDING], level, mm.x, mm.y, 0);
+                if (bpud) {
+                    if (bpud->mhp < mon->mhp * 4 / 3) {
+                        bpud->mhp = mon->mhp * 4 / 3;
+                        if (bpud->mhp > bpud->mhpmax)
+                            bpud->mhpmax = bpud->mhp;
+                    }
+                    if (Hallucination)
+                        pline("You crave %s.", (moves % 2) ?
+                              "bubble and squeak" : "mushy peas");
+                    else
+                        pline("Something rather strange happens as %s divides.",
+                              mon_nam(mon));
+                }
+            }
+        } else {
+            struct monst *newpudding = clone_mon(mon, 0, 0);
+            if (newpudding) {
+                pline("%s divides as you hit it!", Monnam(mon));
+                newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
+                mon->mhpmax        = mon->mhpmax        * 3 / 4;
+                if (mon->mhp > mon->mhpmax) {
+                    mon->mhp = mon->mhpmax;
+                    newpudding->mhp = newpudding->mhpmax;
+                }
+                hittxt = TRUE;
+                break_conduct(conduct_puddingsplit);
+            }
         }
     }
 
@@ -1201,7 +1231,6 @@ demonpet(void)
     if ((dtmp = makemon(pm, level, u.ux, u.uy,
                         MM_CREATEMONSTER | MM_CMONSTER_T)) != 0)
         tamedog(dtmp, NULL);
-    exercise(A_WIS, TRUE);
 }
 
 /*
@@ -1594,7 +1623,6 @@ damageum(struct monst *mdef, const struct attack *mattk)
             if (ABASE(A_INT) > AMAX(A_INT))
                 ABASE(A_INT) = AMAX(A_INT);
         }
-        exercise(A_WIS, TRUE);
         break;
     case AD_STCK:
         if (!negated && !sticks(mdef->data))
@@ -2376,6 +2404,12 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
                 break;  /* no object involved */
             }
             passive_obj(mon, obj, &(ptr->mattk[i]));
+        }
+        break;
+    case AD_DRLI:
+        if (mhit && !mon->mcan && !Drain_resistance) {
+            losexp(msgprintf("drained of life by attacking %s",
+                             k_monnam(mon)), FALSE);
         }
         break;
     default:

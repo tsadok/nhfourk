@@ -177,7 +177,6 @@ dofindgem(void)
               level, u.ux, u.uy, FALSE, FALSE, rng_main);
     SET_FOUNTAIN_LOOTED(u.ux, u.uy);
     newsym(u.ux, u.uy);
-    exercise(A_WIS, TRUE);      /* a discovery! */
 }
 
 void
@@ -258,7 +257,6 @@ drinkfountain(void)
         }
         win_pause_output(P_MESSAGE);
         pline("A wisp of vapor escapes the fountain...");
-        exercise(A_WIS, TRUE);
         level->locations[u.ux][u.uy].blessedftn = 0;
         return;
     }
@@ -301,17 +299,14 @@ drinkfountain(void)
             }
             HSee_invisible |= FROMOUTSIDE;
             newsym(u.ux, u.uy);
-            exercise(A_WIS, TRUE);
             break;
         case 18:       /* See monsters */
             monster_detect(NULL, 0);
-            exercise(A_WIS, TRUE);
             break;
         case 19:       /* Self-knowledge */
             pline("You feel self-knowledgeable...");
             win_pause_output(P_MESSAGE);
             enlightenment(0);
-            exercise(A_WIS, TRUE);
             pline("The feeling subsides.");
             break;
         case 20:       /* Scare monsters */ 
@@ -491,7 +486,6 @@ dipfountain(struct obj *obj)
                     }
                 pline("You lost some of your money in the fountain!");
                 CLEAR_FOUNTAIN_LOOTED(u.ux, u.uy);
-                exercise(A_WIS, FALSE);
             }
         }
         break;
@@ -508,7 +502,6 @@ dipfountain(struct obj *obj)
                level, u.ux, u.uy, rng_main);
         if (!Blind)
             pline("Far below you, you see coins glistening in the water.");
-        exercise(A_WIS, TRUE);
         newsym(u.ux, u.uy);
         break;
     }
@@ -583,7 +576,6 @@ drinksink(void)
             pline("You find a ring in the sink!");
             mkobj_at(RING_CLASS, level, u.ux, u.uy, TRUE, rng_sink_ring);
             level->locations[u.ux][u.uy].looted |= S_LRING;
-            exercise(A_WIS, TRUE);
             newsym(u.ux, u.uy);
         } else
             pline("Some dirty water backs up in the drain.");

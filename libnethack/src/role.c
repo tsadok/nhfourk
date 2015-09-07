@@ -133,7 +133,7 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 20,    /* Energy */
-     10, 3, -3, 2, 10, A_WIS, SPE_CURE_SICKNESS, -4},
+     10, 3, -3, 2, 10, A_INT, SPE_CURE_SICKNESS, -4},
     {{"Knight", 0}, {
                      {"Gallant", 0},
                      {"Esquire", 0},
@@ -158,7 +158,7 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 10,    /* Energy */
-     10, 8, -2, 0, 9, A_WIS, SPE_TURN_UNDEAD, -4},
+     10, 8, -2, 0, 9, A_INT, SPE_TURN_UNDEAD, -4},
     {{"Monk", 0}, {
                    {"Candidate", 0},
                    {"Novice", 0},
@@ -185,7 +185,7 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {2, 2, 0, 2, 0, 2}, 10,    /* Energy */
-     10, 8, -2, 2, 20, A_WIS, SPE_RESTORE_ABILITY, -4},
+     10, 8, -2, 2, 20, A_INT, SPE_RESTORE_ABILITY, -4},
     {{"Priest", "Priestess"}, {
                                {"Aspirant", 0},
                                {"Acolyte", 0},
@@ -205,13 +205,13 @@ const struct Role roles[] = {
      MRACE_HUMAN | MRACE_ELF | MRACE_DWARF | MRACE_SYLPH | ROLE_MALE | ROLE_FEMALE
               | ROLE_LAWFUL | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
-     {7, 7, 10, 7, 7, 7},
-     {15, 10, 30, 15, 20, 10},
+     {7, 10, 7, 7, 7, 7},
+     {15, 30, 10, 15, 20, 10},
      {1, 2, 0, 1, 2, 0},
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 2}, 10,    /* Energy */
-     10, 3, -2, 2, 10, A_WIS, SPE_REMOVE_CURSE, -4},
+     10, 3, -2, 2, 10, A_INT, SPE_REMOVE_CURSE, -4},
     /* Note: Rogue precedes Ranger so that use of `-R' on the command line
        retains its traditional meaning. */
     {{"Rogue", 0}, {
@@ -339,7 +339,7 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 10, -2, 0, 9, A_WIS, SPE_CONE_OF_COLD, -4},
+     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4},
     {{"Wizard", 0}, {
                      {"Evoker", 0},
                      {"Conjurer", 0},
@@ -359,8 +359,8 @@ const struct Role roles[] = {
      MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | MRACE_SYLPH |
      ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
-     {7, 10, 7, 7, 7, 7},
-     {10, 30, 10, 20, 20, 10},
+     {6, 10, 10, 6, 7, 6},
+     {10, 25, 25, 15, 15, 10},
      {0, 2, 2, 1, 0, 1},
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
@@ -519,10 +519,8 @@ boolean
 can_draw_from_environment(struct monst *mon, boolean healing)
 {
     enum objslot s;
-    if (Race_if(PM_SYLPH) && Upolyd)
-        return FALSE;
     if (monsndx(mon->data) == PM_SYLPH ||
-        (mon == &youmonst && Race_if(PM_SYLPH))) {
+        ((mon == &youmonst) && Race_if(PM_SYLPH) && !Upolyd)) {
         /* Can you feel the air on your skin? */
         for (s = 0; s <= os_last_armor; s++)
             if (!only_sylph_safe_armor(mon, s))

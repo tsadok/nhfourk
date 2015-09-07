@@ -1006,7 +1006,6 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         }
         /* adjattrib gives dunce cap message when appropriate */
         adjattrib(A_INT, -rnd(2), FALSE);
-        exercise(A_WIS, FALSE);
         break;
     case AD_PLYS:
         hitmsg(mtmp, mattk);
@@ -2214,7 +2213,6 @@ doseduce(struct monst *mon)
         case 2:
             pline("Your senses are dulled.");
             adjattrib(A_WIS, -1, TRUE);
-            exercise(A_WIS, FALSE);
             break;
         case 3:
             if (!resists_drli(&youmonst)) {
@@ -2252,13 +2250,11 @@ doseduce(struct monst *mon)
             break;
         case 2:
             pline("You will always remember %s...", noit_mon_nam(mon));
-            adjattrib(A_WIS, 1, TRUE);
             exercise(A_WIS, TRUE);
             break;
         case 3:
             pline("That was a very educational experience.");
             pluslvl(FALSE);
-            exercise(A_WIS, TRUE);
             break;
         case 4:
             pline("You feel restored to health!");
