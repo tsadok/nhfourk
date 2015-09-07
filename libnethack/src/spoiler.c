@@ -265,8 +265,8 @@ spoilmonflags(int i)
     return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M1 */
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s" /* M1 */
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s"       /* M2 */
-                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M2 */
-                     "%s%s%s%s%s%s%s%s" "%s%s",              /* M3 */
+                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s"         /* M2 */
+                     "%s%s%s%s%s%s%s%s" "%s%s%s%s",          /* M3 */
                      /* M1 least significant byte */
                      ((mons[i].mflags1 & M1_FLY)       ? "<span class=\"flgfly\">Fly</span> " : ""),
                      ((mons[i].mflags1 & M1_SWIM)      ? "<span class=\"flgswim\">Swim</span> " : ""),
@@ -311,10 +311,7 @@ spoilmonflags(int i)
                      ((mons[i].mflags2 & M2_NOPOLY)     ? "<span class=\"flgnopoly\">NoPoly</span> " : ""),
                      ((mons[i].mflags2 & M2_UNDEAD)     ? "<span class=\"flgundead\">Undead</span> " : ""),
                      ((mons[i].mflags2 & M2_WERE)       ? "<span class=\"flgwere\">Lycanthrope</span> " : ""),
-                     ((mons[i].mflags2 & M2_HUMAN)      ? "<span class=\"flghuman\">Human</span> " : ""),
                      ((mons[i].mflags2 & M2_ELF)        ? "<span class=\"flgelf\">Elf</span> " : ""),
-                     ((mons[i].mflags2 & M2_DWARF)      ? "<span class=\"flgdwarf\">Dwarf</span> " : ""),
-                     ((mons[i].mflags2 & M2_GNOME)      ? "<span class=\"flggnome\">Gnome</span> " : ""),
                      ((mons[i].mflags2 & M2_ORC)        ? "<span class=\"flgorc\">Orc</span> " : ""),
                      /* M2 second least byte */
                      ((mons[i].mflags2 & M2_DEMON)      ? "<span class=\"flgdemon\">Demon</span> " : ""),
@@ -359,7 +356,10 @@ spoilmonflags(int i)
                      ((mons[i].mflags3 & M3_CLOSE)      ? "<span class=\"flgclose\">Close</span> " : ""),
                      /* M3 second byte */
                      ((mons[i].mflags3 & M3_INFRAVISION)  ? "<span class=\"flginfravision\">InfraVision</span> " : ""),
-                     ((mons[i].mflags3 & M3_INFRAVISIBLE) ? "<span class=\"flginfravisible\">InfraVisible</span> " : ""));
+                     ((mons[i].mflags3 & M3_INFRAVISIBLE) ? "<span class=\"flginfravisible\">InfraVisible</span> " : ""),
+                     ((mons[i].mflags3 & M3_DISPLACES)    ? "<span class=\"flgdisplaces\">Displaces</span> " : ""),
+                     ((mons[i].mflags3 & M3_BLINKAWAY)    ? "<span class=\"flgblinkaway\">BlinkAway</span> " : "")
+        );
 }
 
 static void
@@ -566,8 +566,19 @@ makespoilers(void)
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        char lastmlet = 0;
         outfile = fdopen(fd, "w");
         fprintf(outfile, htmlheader("Monsters"));
+        /* navbar at top */
+        fprintf(outfile, "<div class=\"nav\">Jump to: ");
+        for (i = 0; mons[i].mlet; i++)
+            if ((mons[i].mlet != lastmlet) && i <= PM_ARCHEOLOGIST) {
+                fprintf(outfile, "<a href=\"#monst%d\">%c</a> ",
+                        i, def_monsyms[(int)mons[i].mlet]);
+                lastmlet = mons[i].mlet;
+            }
+        fprintf(outfile, "</div>");
+        /* then the actual monster table */
         fprintf(outfile, "\n<table id=\"monsters\"><thead>\n  "
                 "<tr><th class=\"mlet\"></th>"
                 "<th class=\"monster\">monster</th>"
@@ -599,7 +610,7 @@ makespoilers(void)
                                          (ul ? "<u>" : ""),
                                          (def_monsyms[(int)mons[i].mlet]),
                                          (ul ? "</u>" : ""));
-            fprintf(outfile, "<tr><td class=\"mlet\">%s</td>"
+            fprintf(outfile, "<tr><td id=\"monst%d\" class=\"mlet\">%s</td>"
                     "<td class=\"monster\">%s</td>"
                     "<td class=\"numeric level\">%d</td>"
                     "<td class=\"numeric monstr\">%d</td>"
@@ -614,7 +625,7 @@ makespoilers(void)
                     "<td class=\"numeric weight\">%d</td>"
                     "<td class=\"size\">%s</td>"
                     "<td class=\"flags\">%s</td>"
-                    "</tr>\n", mlet, mons[i].mname, mons[i].mlevel,
+                    "</tr>\n", i, mlet, mons[i].mname, mons[i].mlevel,
                     monstr[i], mons[i].mmove, (10 - mons[i].ac),
                     mons[i].mr, spoilaligntyp(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
