@@ -511,6 +511,8 @@ digactualhole(int x, int y, struct monst *madeby, int ttyp)
     if (u.utrap && u.utraptype == TT_INFLOOR)
         u.utrap = 0;
 
+    remove_iceblock(u.ux, u.uy, "collapses in a pile of melting chunks.");
+
     /* these furniture checks were in dighole(), but wand breaking bypasses
        that routine and calls us directly */
     if (IS_FOUNTAIN(loc->typ)) {
@@ -1169,7 +1171,7 @@ zap_dig(schar dx, schar dy, schar dz)
     struct obj *otmp;
     struct tmp_sym *tsym;
     int zx, zy, digdepth;
-    boolean shopdoor, shopwall, maze_dig;
+    boolean shopdoor, shopwall;
 
     /* swallowed */
     if (Engulfed) {
@@ -1219,7 +1221,6 @@ zap_dig(schar dx, schar dy, schar dz)
 
     /* normal case: digging across the level */
     shopdoor = shopwall = FALSE;
-    maze_dig = level->flags.is_maze_lev && !Is_earthlevel(&u.uz);
     zx = u.ux + dx;
     zy = u.uy + dy;
     digdepth = rn1(18, 8);
@@ -1243,35 +1244,6 @@ zap_dig(schar dx, schar dy, schar dz)
             room->doormask = D_NODOOR;
             unblock_point(zx, zy);      /* vision */
             digdepth -= 2;
-            if (maze_dig)
-                break;
-        } else if (maze_dig) {
-            if (IS_WALL(room->typ)) {
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    if (*in_rooms(level, zx, zy, SHOPBASE)) {
-                        add_damage(zx, zy, 200L);
-                        shopwall = TRUE;
-                    }
-                    room->typ = ROOM;
-                    unblock_point(zx, zy);      /* vision */
-                } else if (!Blind)
-                    pline("The wall glows then fades.");
-                break;
-            } else if (IS_TREE(room->typ)) {    /* check trees before stone */
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    room->typ = ROOM;
-                    unblock_point(zx, zy);      /* vision */
-                } else if (!Blind)
-                    pline("The tree shudders but is unharmed.");
-                break;
-            } else if (room->typ == STONE || room->typ == SCORR) {
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    room->typ = CORR;
-                    unblock_point(zx, zy);      /* vision */
-                } else if (!Blind)
-                    pline("The rock glows then fades.");
-                break;
-            }
         } else if (IS_ROCK(room->typ)) {
             if (!may_dig(level, zx, zy))
                 break;

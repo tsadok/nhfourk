@@ -15,16 +15,16 @@ MAP
                                                                             
   ......     ..........................       ...        ....  ......       
  ......       ..........................     ........       ....    .....   
-  ..BB      .............................    .........            ....  ..  
-     ..    ......................              .......      ..     ....  .. 
+  .BBB      .............................    .........            ....  ..  
+    ...    ......................              .......      ..     ....  .. 
      ..     ....................                     ..  .......    ..  ... 
-   ..              S   BB                .....     .......   ....      .... 
-    ..        ...  .   ..               ........  ..     ..   ..       ...  
-     ..      ......     ..             ............       ..          ...   
-       .      ....       ..             ........           ..  ...........  
-  ...   ..     ..        .............                  ................... 
+   ...             S   BB                .....     .......   ....      .... 
+    ..        ... ..   ..               ........  ..     ..   ..       ...  
+     ..      ......     ..            .............       ..          ...   
+      ...     ....       ..          .. ........           ..  ...........  
+  ...   BB     ..        ................          ........................ 
  .....   .....            ...............................      ...........  
-  .....B................            ...                               ...   
+  .....B................            ...  .......                      ...   
   .....     .  ..........        .... .      ...  ..........           ...  
    ...     ..          .............  ..    ...................        .... 
           BB       ..   .........      BB    ...  ..........  ..   ...  ... 
@@ -86,6 +86,8 @@ MONSTER: 'h',"bugbear",(63,10),hostile
 MONSTER: 'h',"bugbear",(65,09),hostile
 MONSTER: 'h',"bugbear",(67,10),hostile
 MONSTER: 'h',"bugbear",(69,11),hostile
+OBJECT: '*',"silver nugget",random
+OBJECT: '*',"flint",random
 WALLIFY
 
 #
@@ -146,6 +148,9 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
+OBJECT: '*',"silver nugget",random
+OBJECT: '*',"flint",random
+OBJECT: '*',"flint",random
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -222,7 +227,7 @@ STAIR:random,up
 # Non diggable walls
 NON_DIGGABLE:(00,00,75,19)
 # Objects
-OBJECT:')',"mace",(23,10),blessed,0,"The Sceptre of Might"
+OBJECT:')',"club",(23,10),blessed,0,"Big Stick"
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
@@ -237,8 +242,10 @@ OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random
+OBJECT: '*',"flint",random
+OBJECT: '*',"silver nugget",random
 # monsters.
-MONSTER:'D',"Chromatic Dragon",(23,10),asleep
+MONSTER:'D',"Great Fierce Beast",(23,10),asleep
 MONSTER:'F',"shrieker",(26,13)
 MONSTER:'F',"shrieker",(25,8)
 MONSTER:'F',"shrieker",(45,11)

@@ -1411,6 +1411,10 @@ get_jump_coords(const struct nh_cmd_arg *arg, coord *cc, int magic)
                      makeplural(body_part(LEG)));
                 set_wounded_legs(LEFT_SIDE, rn1(10, 11));
                 set_wounded_legs(RIGHT_SIDE, rn1(10, 11));
+                break;
+            case TT_ICEBLOCK:
+                pline("The block of ice holds you fast.");
+                break;
             }
         }
     }

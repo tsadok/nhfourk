@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Steve Creps, 1988.                               */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -49,6 +49,7 @@ struct obj;
 struct object_pick;
 struct permonst;
 struct pet_weapons;
+struct polyform_ability;
 struct region;
 struct rm;
 struct tmp_sym;
@@ -137,6 +138,7 @@ extern int retouch_object(struct obj **, boolean);
 /* ### attrib.c ### */
 
 extern boolean adjattrib(int, int, int);
+extern int addattrib(int, int, int);
 extern void change_luck(schar);
 extern void sokoban_guilt(void);
 extern int stone_luck(boolean);
@@ -962,6 +964,10 @@ extern int llord(void);
 extern int ndemon(const d_level * dlev, aligntyp atyp);
 extern int lminion(void);
 
+/* mkaiscav.c */
+
+extern void mkaiscav(struct level *lev);
+
 /* ### mklev.c ### */
 
 extern struct level *alloc_level(d_level * levnum);
@@ -1070,6 +1076,8 @@ extern boolean inside_room(struct mkroom *, xchar, xchar);
 extern boolean somexy(struct level *lev, struct mkroom *, coord *, enum rng);
 extern void mkundead(struct level *lev, coord * mm, boolean revive_corpses,
                      int mmflags);
+extern const struct permonst *morguemon(const d_level *dlev, enum rng rng);
+extern const struct permonst *squadmon(const d_level *dlev);
 extern const struct permonst *courtmon(const d_level * dlev, enum rng rng);
 extern void save_rooms(struct memfile *mf, struct level *lev);
 extern void rest_rooms(struct memfile *mf, struct level *lev);
@@ -1352,16 +1360,11 @@ extern void set_uasmon(void);
 extern void change_sex(void);
 extern void polyself(boolean);
 extern int polymon(int, boolean);
+extern int domonability(const struct nh_cmd_arg *);
+extern boolean has_polyform_ability(const struct permonst *,
+                                    struct polyform_ability *);
 extern boolean touched_monster(int);
 extern void rehumanize(int how, const char *killer);
-extern int dobreathe(const struct nh_cmd_arg *);
-extern int dospit(const struct nh_cmd_arg *);
-extern int doremove(void);
-extern int dospinweb(void);
-extern int dosummon(void);
-extern int dogaze(enum u_interaction_mode uim);
-extern int dohide(void);
-extern int domindblast(void);
 extern struct obj *uskin(void);
 extern const char *mbodypart(struct monst *, int);
 extern const char *body_part(int);
@@ -1466,7 +1469,6 @@ extern const struct permonst *qt_montype(const d_level *, enum rng);
 extern int doread(const struct nh_cmd_arg *);
 extern boolean is_chargeable(struct obj *);
 extern void recharge(struct obj *, int);
-extern void forget_objects(int);
 extern void do_uncurse_effect(boolean, boolean);
 extern int seffects(struct obj *scroll, boolean * known);
 extern void litroom(boolean, struct obj *);
@@ -1485,6 +1487,7 @@ extern struct nhrect *rnd_rect(void);
 extern void split_rects(struct nhrect *, struct nhrect *);
 
 /* ### region.c ### */
+
 extern void run_regions(struct level *lev);
 extern boolean in_out_region(struct level *lev, xchar x, xchar y);
 extern boolean m_in_out_region(struct monst *, xchar, xchar);
@@ -1515,6 +1518,8 @@ extern int str2role(char *);
 extern int str2race(char *);
 extern int str2gend(char *);
 extern int str2align(char *);
+extern boolean can_feel_ground(struct monst *);
+extern boolean can_draw_from_environment(struct monst *, boolean);
 extern int randrole(enum rng);
 extern boolean validrole(int rolenum);
 extern boolean validrace(int rolenum, int racenum);
@@ -1657,6 +1662,8 @@ extern void fixup_special(struct level *lev);
 extern void deadbook(struct obj *book2, boolean invoked);
 extern int study_book(struct obj *, const struct nh_cmd_arg *);
 extern void age_spells(void);
+extern void update_supernatural_abilities(void);
+extern boolean supernatural_ability_available(int);
 extern int docast(const struct nh_cmd_arg *);
 extern int spell_skilltype(int);
 extern int spelleffects(int, boolean, const struct nh_cmd_arg *);
@@ -1828,6 +1835,7 @@ extern enum attack_check_status attack(
     struct monst *, schar, schar, enum u_interaction_mode);
 extern boolean hmon(struct monst *, struct obj *, int);
 extern int damageum(struct monst *, const struct attack *);
+extern int do_iceblock(struct monst *, int);
 extern void missum(struct monst *, const struct attack *);
 extern int passive(struct monst *, boolean, int, uchar);
 extern void passive_obj(struct monst *, struct obj *, const struct attack *);
@@ -2042,6 +2050,8 @@ extern struct monst *boomhit(int, int);
 extern int burn_floor_paper(struct level *, int, int, boolean, boolean);
 extern void buzz(int, int, xchar, xchar, int, int);
 extern void melt_ice(struct level *, xchar, xchar);
+extern void remove_iceblock(int, int, const char *);
+extern void poly_iceblock(int, int);
 extern int zap_over_floor(xchar, xchar, int, boolean *);
 extern void fracture_rock(struct obj *);
 extern boolean break_statue(struct obj *);

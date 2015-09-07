@@ -56,17 +56,17 @@ MONSTER:'H',"minotaur",(67,14)
 MONSTER:'E',"earth elemental",(52,13),hostile
 MONSTER:'E',"earth elemental",(53,13),hostile
 MONSTER:'T',"rock troll",(53,12)
-MONSTER:'H',"stone giant",(54,12)
+MONSTER:'H',"giant",(54,12)
 #
 MONSTER:'S',"pit viper",(70,05)
 MONSTER:'&',"barbed devil",(69,06)
-MONSTER:'H',"stone giant",(69,08)
+MONSTER:'H',"giant",(69,08)
 MONSTER:''',"stone golem",(71,08)
 MONSTER:'&',"pit fiend",(70,09)
 MONSTER:'E',"earth elemental",(70,08),hostile
 #
 MONSTER:'E',"earth elemental",(60,03),hostile
-MONSTER:'H',"stone giant",(61,04)
+MONSTER:'H',"giant",(61,04)
 MONSTER:'E',"earth elemental",(62,04),hostile
 MONSTER:'E',"earth elemental",(61,05),hostile
 MONSTER:'s',"scorpion",(62,05)
@@ -78,7 +78,7 @@ MONSTER:'T',"rock troll",(38,06)
 MONSTER:'E',"earth elemental",(39,06),hostile
 MONSTER:'E',"earth elemental",(41,06),hostile
 MONSTER:'E',"earth elemental",(38,07),hostile
-MONSTER:'H',"stone giant",(39,07)
+MONSTER:'H',"giant",(39,07)
 MONSTER:'E',"earth elemental",(43,07),hostile
 MONSTER:''',"stone golem",(37,08)
 MONSTER:'S',"pit viper",(43,08)
@@ -109,7 +109,7 @@ MONSTER:'E',"earth elemental",(13,10),hostile
 MONSTER:'T',"rock troll",(12,11)
 MONSTER:'E',"earth elemental",(14,12),hostile
 MONSTER:'E',"earth elemental",(15,13),hostile
-MONSTER:'H',"stone giant",(17,13)
+MONSTER:'H',"giant",(17,13)
 MONSTER:''',"stone golem",(18,13)
 MONSTER:'&',"pit fiend",(18,12)
 MONSTER:'E',"earth elemental",(18,11),hostile

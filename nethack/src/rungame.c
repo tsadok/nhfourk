@@ -413,7 +413,8 @@ rungame(nh_bool net)
     /* Check to make sure that this game will be eligible for the high score
        table. If not, print a warning, to prevent accidental nonscoring
        games. */
-    if (playmode != MODE_NORMAL || (seedopt->value.s && *seedopt->value.s) ||
+    if ((playmode != MODE_NORMAL && playmode != MODE_CHALLENGE) ||
+        (seedopt->value.s && *seedopt->value.s) ||
         polyopt->value.e != -1) {
         char prompt[BUFSZ];
         snprintf(prompt, BUFSZ, "This game is not eligible for the high score "

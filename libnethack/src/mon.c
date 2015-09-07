@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-05-19 */
+/* Last modified by Alex Smith, 2015-06-22 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -547,7 +547,7 @@ mcalcmove(struct monst *mon)
            been shown to be a) abusable, and b) really confusing in practice.
            (flags.mv no longer exists, but the same effect could be achieved
            using flags.occupation. It's just that this is no longer an effect
-           that's worth acheiving.) */
+           that's worth achieving.) */
         if (u.ugallop) {
             /* movement is 1.50 times normal; randomization has been removed
                because mcalcmove now needs to be deterministic */
@@ -1145,7 +1145,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                     dispy = u.uy;
 
                     /* The code previously checked for (checkobj || Displaced),
-                       but that's wrong if the mu[xy] == nu[xy] check fails;
+                       but that's wrong if the mu[xy] == n[xy] check fails;
                        it'll incorrectly treat you as activating an engraving
                        on n[xy]. Instead, we check for checkobj in the other
                        branch of the if statement, and unconditionally check
@@ -1195,8 +1195,8 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                             info[cnt] |= ALLOW_TM;
                         }
                     }
-                    /* Note: ALLOW_SANCT only prevents movement, not */
-                    /* attack, into a temple. */
+                    /* Note: ALLOW_SANCT only prevents movement, not attack,
+                       into a temple. */
                     if (*in_rooms(mlevel, nx, ny, TEMPLE) &&
                         !*in_rooms(mlevel, x, y, TEMPLE) &&
                         in_your_sanctuary(NULL, nx, ny)) {
@@ -1227,12 +1227,11 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                         (curr_mon_load(mon) > 600)))
                     continue;
                 /* The monster avoids a particular type of trap if it's familiar
-                 * with the trap type.  Pets get ALLOW_TRAPS and checking is
-                 * done in dogmove.c.  In either case, "harmless" traps are
-                 * neither avoided nor marked in info[]. Quest leaders avoid
-                 * traps even if they aren't familiar with them, because they're
-                 * being careful or something.
-                 */
+                   with the trap type. Pets get ALLOW_TRAPS and checking is done
+                   in dogmove.c. In either case, "harmless" traps are neither
+                   avoided nor marked in info[]. Quest leaders avoid traps even
+                   if they aren't familiar with them, because they're being
+                   careful or something. */
                 {
                     struct trap *ttmp = t_at(mlevel, nx, ny);
 
@@ -2165,37 +2164,46 @@ cleanup:
         else
             pline("Whoopsie-daisy!");
     } else if (mtmp->ispriest) {
-        adjalign((p_coaligned(mtmp)) ? -3 : 3);
+        if (mdat->maligntyp == A_NONE)
+            adjalign(10);
+        else
+            adjalign((p_coaligned(mtmp)) ? -3 : 3);
         /* cancel divine protection for killing your priest */
         if (p_coaligned(mtmp))
             u.ublessed = 0;
-        if (mdat->maligntyp == A_NONE)
-            adjalign(10);
     } else if (mtmp->mtame) {
-        adjalign(-15);  /* bad!! */
+        adjalign(-5);  /* bad!! */
         /* your god is mighty displeased... */
         if (!Hallucination)
             You_hear("the rumble of distant thunder...");
         else
             You_hear("the studio audience applaud!");
     } else if (mtmp->mpeaceful)
-        adjalign(-5);
+        adjalign(-1);
 
     /* malign was already adjusted for u.ualign.type and randomization */
     /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
        monster killing.  That completely defeats the purpose of even bothering
-       to keep track of player alignment record.  So no.  However, we do still
-       want a penalty for killing monsters that generated peaceful.  I'm not
-       absolutely sure the following condition is correct, but we'll test it: */
-    if (mtmp->malign < 0)
-        adjalign(always_peaceful(mtmp->data) ? -5 : -1);
-    /* However, chaotics now get a point for killing their own race. */
+       to keep track of player alignment record.  So no.  We still have an
+       alignment penalty for killing always-peacefuls, however, and lawfuls
+       have a penalty for killing generated-peacefuls as well. */
+    if (mtmp->malign < 0) {
+        if (always_peaceful(mtmp->data))
+            adjalign(-3);
+        else if (u.ualign.type == A_LAWFUL)
+            adjalign(-1);
+    }
+    /* Chaotics now get a point for killing hostiles of their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
         int oldalign = u.ualign.record;
         adjalign(1);
         if (u.ualign.record > oldalign)
             pline("You feel more chaotic.");
     }
+    /* Lawful characters gain alignment for killing hostile chaotic demons. */
+    else if (u.ualign.type == A_LAWFUL && is_demon(mtmp->data) &&
+             mtmp->data->maligntyp < 0)
+        adjalign(1);
 }
 
 /* changes the monster into a stone monster of the same type */
@@ -2267,7 +2275,8 @@ mnearto(struct monst * mtmp, xchar x, xchar y, boolean move_other)
         /* actually we have real problems if enexto ever fails. migrating_mons
            that need to be placed will cause no end of trouble. */
         if (!enexto(&mm, level, newx, newy, mtmp->data))
-            return FALSE;
+            panic("Nowhere to place '%s' (at (%d, %d), wanted (%d, %d))",
+                  k_monnam(mtmp), mtmp->mx, mtmp->my, x, y);
         newx = mm.x;
         newy = mm.y;
     }

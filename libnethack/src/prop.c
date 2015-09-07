@@ -566,6 +566,7 @@ enlightenment(int final)
         const char *buf = msgcat(
             "aware of the presence of ",
             (warntype & M2_ORC) ? "orcs" :
+            (warntype & M2_ELF) ? "elves" :
             (warntype & M2_DEMON) ? "demons" : "something");
         you_are(&menu, buf);
     }
@@ -796,6 +797,9 @@ enlightenment(int final)
         if (p)
             enl_msg(&menu, You_, "have been killed ", p, buf);
     }
+
+    if (challengemode)
+        enl_msg(&menu, You_, "face", "faced", " a greater challenge");
 
     display_menu(&menu, title, PICK_NONE, PLHINT_ANYWHERE,
                  NULL);

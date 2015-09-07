@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-02-15 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -82,7 +82,9 @@ give_may_advance_msg(int skill)
 static boolean could_advance(int);
 static boolean peaked_skill(int);
 static int slots_required(int);
+static const char *skill_level_name_from_constant(int);
 static const char *skill_level_name(int);
+static const char *max_skill_level_name(int);
 static void skill_advance(int);
 
 #define P_NAME(type) skill_name(type)
@@ -255,19 +257,15 @@ dmgval(struct obj *otmp, struct monst *mon)
             break;
 
         case FLAIL:
-        case RANSEUR:
-        case VOULGE:
             tmp += rnd(4);
             break;
 
         case ACID_VENOM:
         case HALBERD:
-        case SPETUM:
             tmp += rnd(6);
             break;
 
         case BATTLE_AXE:
-        case BARDICHE:
         case TRIDENT:
             tmp += dice(2, 4);
             break;
@@ -287,22 +285,16 @@ dmgval(struct obj *otmp, struct monst *mon)
         case MACE:
         case WAR_HAMMER:
         case FLAIL:
-        case SPETUM:
         case TRIDENT:
             tmp++;
             break;
 
         case BATTLE_AXE:
-        case BARDICHE:
-        case BILL_GUISARME:
-        case GUISARME:
         case LUCERN_HAMMER:
         case MORNING_STAR:
-        case RANSEUR:
         case BROADSWORD:
         case ELVEN_BROADSWORD:
         case RUNESWORD:
-        case VOULGE:
             tmp += rnd(4);
             break;
 
@@ -402,8 +394,7 @@ static const int rwep[] =
 };
 
 static const int pwep[] =
-    { HALBERD, BARDICHE, SPETUM, BILL_GUISARME, VOULGE, RANSEUR, GUISARME,
-    GLAIVE, LUCERN_HAMMER, BEC_DE_CORBIN, FAUCHARD, PARTISAN, LANCE
+    { HALBERD, GLAIVE, LUCERN_HAMMER, PARTISAN, LANCE
 };
 
 boolean
@@ -920,12 +911,12 @@ dbon(void)
         return 6;
 }
 
-
-/* return the level name for the given skill */
+/* return the level name for a given skill level constant;
+   this is used by skill_level_name and max_skill_level_name
+   to avoid duplicating the switch statement */
 static const char *
-skill_level_name(int skill)
-{
-    switch (P_SKILL(skill)) {
+skill_level_name_from_constant(int skill_level) {
+    switch (skill_level) {
     case P_UNSKILLED:
         return "Unskilled";
     case P_BASIC:
@@ -934,7 +925,6 @@ skill_level_name(int skill)
         return "Skilled";
     case P_EXPERT:
         return "Expert";
-        /* these are for unarmed combat/martial arts only */
     case P_MASTER:
         return "Master";
     case P_GRAND_MASTER:
@@ -942,6 +932,22 @@ skill_level_name(int skill)
     default:
         return "Unknown";
     }
+}
+
+/* return the level name of the player's current skill level 
+   for the given skill */
+static const char *
+skill_level_name(int skill)
+{
+    return skill_level_name_from_constant(P_SKILL(skill));
+}
+
+/* return the level name of the player's skill cap
+   (maximum achievable skill level) for the given skill */
+static const char *
+max_skill_level_name(int skill)
+{
+    return skill_level_name_from_constant(P_MAX_SKILL(skill));
 }
 
 /* return the # of slots required to advance the skill */
@@ -1012,10 +1018,10 @@ static const struct skill_range {
     const char *name;
     short first, last;
 } skill_ranges[] = {
-    {
-    "Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H}, {
-    "Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON}, {
-"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL},};
+    {"Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
+    {"Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON},
+    {"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL}
+};
 
 /*
  * The `#enhance' extended command.  What we _really_ would like is
@@ -1110,9 +1116,13 @@ enhance_weapon_skill(const struct nh_cmd_arg *arg)
                     buf = msgprintf(" %s%s\t%s\t%5d(%4d)", prefix, P_NAME(i),
                                     skill_level_name(i), P_ADVANCE(i),
                                     practice_needed_to_advance(P_SKILL(i)));
-                else
+                else if (P_SKILL(i) == P_MAX_SKILL(i))
                     buf = msgprintf(" %s%s\t[%s]", prefix, P_NAME(i),
                                     skill_level_name(i));
+                else
+                    buf = msgprintf(" %s%s\t[%s / %s]", prefix, P_NAME(i),
+                                    skill_level_name(i),
+                                    max_skill_level_name(i));
 
                 if (could_advance(i) || can_advance(i, speedy))
                     buf = msgprintf("%s (%d to advance)",
@@ -1342,10 +1352,14 @@ weapon_hit_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 5;
             break;
+        case P_MASTER:
+            bonus = 7;
+            break;
         }
         switch (P_MAX_SKILL(type)) {
             /* Note fall-through at every step, e.g. 2+2+2 = 6 for P_EXPERT. */
         default:
+        case P_MASTER:
         case P_EXPERT:
             bonus += 2;
         case P_SKILLED:
@@ -1451,6 +1465,9 @@ weapon_dam_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 2;
             break;
+        case P_MASTER:
+            bonus = 3;
+            break;
         }
     } else if (type == P_TWO_WEAPON_COMBAT) {
         skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1469,6 +1486,7 @@ weapon_dam_bonus(struct obj *weapon)
             bonus = 0;
             break;
         case P_EXPERT:
+        case P_MASTER:
             bonus = 1;
             break;
         }
@@ -1531,8 +1549,10 @@ skill_init(const struct def_skill *class_skill)
         if (obj->otyp == TOUCHSTONE || obj->otyp == LUCKSTONE)
             continue;
         skill = weapon_type(obj);
-        if (skill != P_NONE)
-            P_SKILL(skill) = P_BASIC;
+        if (skill != P_NONE) {
+            P_MAX_SKILL(skill) = P_BASIC;
+            P_SKILL(skill)     = P_BASIC;
+        }
     }
 
     /* set skills for magic */

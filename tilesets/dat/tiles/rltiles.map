@@ -99,7 +99,7 @@ leocrotta
 wumpus
 titanothere
 baluchitherium
-mastodon
+mammoth
 sewer rat
 giant rat
 rabid rat
@@ -378,7 +378,7 @@ Norn
 Neferet the Green
 Minion of Huhetotl
 Thoth Amon
-Chromatic Dragon
+Great Fierce Beast
 Goblin King
 Cyclops
 Ixoth
@@ -2039,4 +2039,6 @@ sub corpse lizard
 
 ! NetHack Fourk additions:
 RATSANOPU
-
+sylph
+island nymph
+shiny gem

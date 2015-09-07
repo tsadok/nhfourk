@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -359,7 +359,7 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         loc = &lev->locations[x][y];
         if (*in_rooms(lev, x, y, SHOPBASE) &&
             (typ == HOLE || typ == TRAPDOOR || typ == PIT || IS_DOOR(loc->typ)
-             || IS_WALL(loc->typ)))
+             || IS_WALL(loc->typ)) && (lev == level))
             add_damage(x, y,    /* schedule repair */
                        ((IS_DOOR(loc->typ) || IS_WALL(loc->typ))
                         && !flags.mon_moving) ? 200L : 0L);
@@ -1760,9 +1760,7 @@ mintrap(struct monst *mtmp)
     const struct permonst *mptr = mtmp->data;
     struct obj *otmp;
 
-    if (!trap) {
-        mtmp->mtrapped = 0;     /* perhaps teleported? */
-    } else if (mtmp->mtrapped) {        /* is currently in the trap */
+    if (trap && mtmp->mtrapped) {        /* is currently in the trap */
         if (!trap->tseen && cansee(mtmp->mx, mtmp->my) && canseemon(mtmp) &&
             (trap->ttyp == SPIKED_PIT || trap->ttyp == BEAR_TRAP ||
              trap->ttyp == HOLE || trap->ttyp == PIT || trap->ttyp == WEB)) {
@@ -1797,7 +1795,7 @@ mintrap(struct monst *mtmp)
                 mtmp->meating = 5;
             }
         }
-    } else {
+    } else if (trap) {
         int tt = trap->ttyp;
         boolean in_sight, tear_web, see_it, inescapable =
             ((tt == HOLE || tt == PIT) && In_sokoban(&u.uz) && !trap->madeby_u);
@@ -2174,7 +2172,7 @@ mintrap(struct monst *mtmp)
             case PM_IRON_GOLEM:
             case PM_BALROG:
             case PM_KRAKEN:
-            case PM_MASTODON:
+            case PM_MAMMOTH:
                 tear_web = TRUE;
                 break;
             }
@@ -2310,6 +2308,10 @@ mintrap(struct monst *mtmp)
             impossible("Some monster encountered a strange trap of type %d.",
                        tt);
         }
+    } else if (mtmp->mtrapped) {
+        /* Monster is encased in ice.  Can it get free? */
+        if (!rn2(5))
+            mtmp->mtrapped = 0;
     }
     if (trapkilled)
         return 2;
@@ -2409,6 +2411,9 @@ float_up(void)
         } else if (u.utraptype == TT_INFLOOR) {
             pline("Your %s pulls upward, but your %s are still stuck.",
                   body_part(BODY), makeplural(body_part(LEG)));
+        } else if (u.utraptype == TT_ICEBLOCK) {
+            pline("Your %s pulls upward but remains embedded in the ice.",
+                  body_part(BODY));
         } else {
             pline("You float up, only your %s is still stuck.", body_part(LEG));
         }
@@ -2869,7 +2874,8 @@ fire_damage(struct obj *chain, boolean force, boolean here, xchar x, xchar y)
 
 
 void
-acid_damage(struct obj *obj) {
+acid_damage(struct obj *obj)
+{
     if (!obj)
         return;
 
@@ -3055,7 +3061,7 @@ drown(void)
             return FALSE;
     }
 
-    if (!u.uinwater) {
+    if (!u.uinwater && !Engulfed) {
         pline("You %s into the water%c",
               Is_waterlevel(&u.uz) ? "plunge" : "fall", Amphibious ||
               Swimming ? '.' : '!');
@@ -3107,6 +3113,7 @@ drown(void)
         turnstate.vision_full_recalc = TRUE;
         return FALSE;
     }
+    /* TODO: Isn't this u_helpless check backwards? */
     if ((Teleportation || can_teleport(youmonst.data)) &&
         u_helpless(hm_unconscious) && (Teleport_control || rn2(3) < Luck + 2)) {
         pline("You attempt a teleport spell."); /* utcsri!carroll */
@@ -3147,7 +3154,7 @@ drown(void)
                 goto crawl;
             }
 crawl:
-    if (crawl_ok) {
+    if (crawl_ok && !Engulfed) {
         boolean lost = FALSE;
 
         /* time to do some strip-tease... */
@@ -3168,14 +3175,16 @@ crawl:
     pline("You drown.");
     done(DROWNING,
          killer_msg(DROWNING,
-                    Is_waterlevel(&u.uz) ? "the Plane of Water"
+                    Is_waterlevel(&u.uz) ? "the Plane of Water" :
+                    Engulfed             ? mbodypart(u.ustuck, STOMACH)
                                          : a_waterbody(u.ux, u.uy)));
     /* oops, we're still alive.  better get out of the water. */
     while (!safe_teleds(TRUE)) {
         pline("You're still drowning.");
         done(DROWNING,
              killer_msg(DROWNING,
-                        msgcat(Is_waterlevel(&u.uz) ? "the Plane of Water"
+                        msgcat(Is_waterlevel(&u.uz) ? "the Plane of Water" :
+                               Engulfed ? mbodypart(u.ustuck, STOMACH)
                                : a_waterbody(u.ux, u.uy),
                                " despite being life-saved")));
     }
@@ -3803,6 +3812,18 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
 
         stumble_onto_mimic(mtmp, dx, dy);
         return 1;
+    }
+
+    if ((mtmp = m_at(level, x, y)) && mtmp->mtrapped && !t_at(level, x, y)) {
+        /* If the monster is trapped and there's no trap, it's iced. */
+        if (flaming(youmonst.data)) {
+            mtmp->mtrapped = 0;
+            pline("You melt some of the ice from around %s.  "
+                  "The rest softens and falls apart on its own.",
+                  mon_nam(mtmp));
+        } else {
+            pline("How exactly do you intend to free %s?", mon_nam(mtmp));
+        }
     }
 
     if (!IS_DOOR(level->locations[x][y].typ)) {

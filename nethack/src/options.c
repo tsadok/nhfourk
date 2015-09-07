@@ -151,6 +151,8 @@ static struct nh_option_desc curses_options[] = {
     {"msgheight", "message window height", FALSE, OPTTYPE_INT, {.i = 8}},
     {"msghistory", "number of messages saved for prevmsg", FALSE, OPTTYPE_INT,
      {.i = 256}},
+    {"msgnomerge", "messages always start on new lines", FALSE, OPTTYPE_BOOL,
+     {.b = FALSE}},
     {"networkmotd", "get tips and announcements from the Internet", FALSE,
      OPTTYPE_ENUM, {.e = MOTD_ASK}},
     {"optstyle", "option menu display style", FALSE, OPTTYPE_ENUM,
@@ -188,6 +190,7 @@ static struct nhlib_boolopt_map boolopt_map[] = {
     {"extmenu", &settings.extmenu},
     {"invweight", &settings.invweight},
     {"mouse", &settings.mouse},
+    {"msgnomerge", &settings.msgnomerge},
     {"prompt_inline", &settings.prompt_inline},
     {"scores_own", &settings.end_own},
     {"status3", &settings.status3},
@@ -342,6 +345,8 @@ curses_set_option(const char *name, union nh_optvalue value)
     } else if (!strcmp(option->name, "msghistory")) {
         settings.msghistory = option->value.i;
         alloc_hist_array();
+    } else if (!strcmp(option->name, "msgnomerge")) {
+        settings.msgnomerge = option->value.b;
     }
     else
         return FALSE;
@@ -1391,6 +1396,9 @@ write_nh_config(void)
 
     if (get_config_name(filename, FALSE) &&
         (fp = open_config_file(filename))) {
+#ifdef UNIX
+        fchmod(fileno(fp), 0644);
+#endif
         write_config_options(fp, nh_options);
         fclose(fp);
     }
@@ -1405,6 +1413,9 @@ write_ui_config(void)
 
     if (get_config_name(filename, TRUE) &&
         (fp = open_config_file(filename))) {
+#ifdef UNIX
+        fchmod(fileno(fp), 0644);
+#endif
         write_config_options(fp, curses_options);
         fclose(fp);
     }

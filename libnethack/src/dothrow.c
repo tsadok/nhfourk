@@ -148,6 +148,13 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
         default:
             break;      /* No bonus */
         }
+        /* Multi-shot malus for silver projectiles, for balance reasons */
+        if (objects[obj->otyp].oc_material == SILVER) {
+            if (multishot > 2)
+                multishot -= 2;
+            else if (multishot > 1)
+                multishot--;
+        }
     }
     /* crossbows are slow to load and probably shouldn't allow multiple
        shots at all, but that would result in players never using them;
@@ -617,6 +624,7 @@ hurtle(int dx, int dy, int range, boolean verbose)
         pline("You are anchored by the %s.",
               u.utraptype == TT_WEB ? "web" :
               u.utraptype == TT_LAVA ? "lava" :
+              u.utraptype == TT_ICEBLOCK ? "ice" :
               u.utraptype == TT_INFLOOR ? surface(u.ux, u.uy) : "trap");
         action_completed();
         return;
@@ -1015,7 +1023,8 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             range = 20; /* you must be giant */
         else if (obj->oartifact == ART_MJOLLNIR)
             range = (range + 1) / 2;    /* it's heavy */
-        else if (obj == uball && u.utrap && u.utraptype == TT_INFLOOR)
+        else if (obj == uball && u.utrap && (u.utraptype == TT_INFLOOR ||
+                                             u.utraptype == TT_ICEBLOCK))
             range = 1;
 
         if (Underwater)
@@ -1733,7 +1742,6 @@ breaktest(struct obj *obj)
     case EXPENSIVE_CAMERA:
     case EGG:
     case CREAM_PIE:
-    case MELON:
         return 1;
     default:
         return 0;
@@ -1764,7 +1772,6 @@ breakmsg(struct obj *obj, boolean in_view)
                   to_pieces);
         break;
     case EGG:
-    case MELON:
         pline("Splat!");
         break;
     case CREAM_PIE:

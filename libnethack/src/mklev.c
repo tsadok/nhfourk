@@ -170,27 +170,15 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 ycmax = (hiy - lowy) * 2 / 3;
                 switch(mrn2(4)) {
                 case 1:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, tr, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     break;
                 case 2:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, br, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dobr = TRUE;
                     break;
                 case 3:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, tl, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotl = TRUE;
                     break;
                 default:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: L, bl, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dobl = TRUE;
                     break;
                 }
@@ -202,30 +190,18 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 ycmax = (hiy - lowy) * 2 / 5;
                 switch(mrn2(4)) {
                 case 1:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, top, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     dotl = TRUE;
                     break;
                 case 2:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, bottom, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dobr = TRUE;
                     dobl = TRUE;
                     break;
                 case 3:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, right, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     dobr = TRUE;
                     break;
                 default:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: T, left, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotl = TRUE;
                     dobl = TRUE;
                     break;
@@ -238,16 +214,10 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 ycmax = (hiy - lowy) / 3;
                 switch(mrn2(2)) {
                 case 1:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: Z, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotr = TRUE;
                     dobl = TRUE;
                     break;
                 default:
-#ifdef DEBUG_SHAPED_ROOMS
-                    pline("Shaped: S, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                     dotl = TRUE;
                     dobr = TRUE;
                     break;
@@ -257,9 +227,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 /* Plus Shaped */
                 xcmax = (hix - lowx) * 2 / 5;
                 ycmax = (hiy - lowy) * 2 / 5;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: +, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                 dotr = TRUE;
                 dotl = TRUE;
                 dobr = TRUE;
@@ -269,29 +236,30 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 /* square-O shaped (pillar cut out of middle) */
                 xcmax = (hix - lowx) / 2;
                 ycmax = (hiy - lowy) / 2;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: O, cut up to (%d,%d)", xcmax, ycmax);
-#endif
                 docenter = TRUE;
                 break;
             case 10:
-                /* X-shaped (corners _and_ middle cut out) */
                 xcmax = (hix - lowx) / 3;
                 ycmax = (hiy - lowy) / 3;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: X, cut up to (%d,%d)", xcmax, ycmax);
-#endif
-                dotr = TRUE;
-                dotl = TRUE;
-                dobr = TRUE;
-                dobl = TRUE;
+                if ((xcmax > 1) || (ycmax > 1)) {
+                    /* X-shaped (corners _and_ middle cut out) */
+                    if (xcmax > 1)
+                        xcmax--;
+                    else
+                        ycmax--;
+                    dotr = TRUE;
+                    dotl = TRUE;
+                    dobr = TRUE;
+                    dobl = TRUE;
+                } else {
+                    /* Not large enough, convert to O: */
+                    xcmax = (hix - lowx) / 2;
+                    ycmax = (hiy - lowy) / 2;
+                }
                 docenter = TRUE;
                 break;
             /* TODO: oval */
             default:
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Shaped: Rectangular");
-#endif
                 /* Rectangular -- nothing to do */
                 break;
             }
@@ -299,9 +267,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                 croom->irregular = TRUE;
                 xcut = 1 + mrn2(xcmax);
                 ycut = 1 + mrn2(ycmax);
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Tentative cut: (%d,%d)", xcut, ycut);
-#endif
                 /* Sometimes, instead of a small cut, do a max cut.
                    This improves the probability of a larger cut,
                    without removing the possibility for small ones. */
@@ -309,9 +274,6 @@ do_room_or_subroom(struct level *lev, struct mkroom *croom, int lowx, int lowy,
                     xcut = xcmax;
                 if ((ycut < (ycmax / 2)) && !mrn2(3))
                     ycut = ycmax;
-#ifdef DEBUG_SHAPED_ROOMS
-                pline("Actual cut: (%d,%d)", xcut, ycut);
-#endif
             }
             /* Now do the actual cuts. */
             if (dotr) {
@@ -862,9 +824,11 @@ makelevel(struct level *lev)
                    (lev->z.dlevel < loc_levnum->dlevel.dlevel) ? "a" : "b");
             makemaz(lev, fillname);
             return;
-        } else if (In_hell(&lev->z) ||
-                   (mrn2(5) && lev->z.dnum == medusa_level.dnum &&
-                    depth(&lev->z) > depth(&medusa_level))) {
+        } else if (In_hell(&lev->z)) {
+            mkaiscav(lev);
+            return;
+        } else if ((lev->z.dnum == medusa_level.dnum) &&
+                   (depth(&lev->z) > depth(&medusa_level))) {
             makemaz(lev, "");
             return;
         }

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -632,6 +632,7 @@ givit(int type, const struct permonst *ptr, int scalefactor)
         if (!(HTeleportation & FROMOUTSIDE)) {
             pline(Hallucination ? "You feel diffuse." : "You feel very jumpy.");
             HTeleportation |= FROMOUTSIDE;
+            update_supernatural_abilities();
         }
         break;
 
@@ -1724,9 +1725,11 @@ edibility_prompts(struct obj *otmp)
             return 2;
     }
     if (cadaver && !vegetarian(&mons[mnum]) &&
-        !u.uconduct[conduct_vegetarian] && Role_if(PM_MONK)) {
-        buf = msgprintf("%s unsuitable for a vegetarian monk. %s",
-                        foodsmell, eat_it_anyway);
+        !u.uconduct[conduct_vegetarian] &&
+        (Role_if(PM_MONK) || Race_if(PM_SYLPH))) {
+        buf = msgprintf("%s unsuitable for a vegetarian %s. %s",
+                        foodsmell, (Role_if(PM_MONK) ? "monk" : "sylph"),
+                        eat_it_anyway);
         if (yn_function(buf, ynchars, 'n') == 'n')
             return 1;
         else

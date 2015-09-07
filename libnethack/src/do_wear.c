@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-06-16 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -35,15 +35,14 @@ static const char * const c_slotnames_menu[] = {
     [os_armf]    = "Boots",
     [os_armu]    = "Shirt",
     [os_amul]    = "Amulet",
-    [os_ringl]   = "Left ring",
-    [os_ringr]   = "Right ring",
+    [os_ringl]   = "L. Ring",
+    [os_ringr]   = "R. Ring",
     [os_tool]    = "Eyewear",
     [os_wep]     = "Weapon",
-    [os_swapwep] = "Secondary weapon",
+    [os_swapwep] = "Readied", /* special case: "Offhand" if twoweaponing */
     [os_quiver]  = "Quiver",
 };
-/* Hopefully, the compiler will optimize out the strlen of a literal string. */
-#define LONGEST_SLOTNAME ((int)strlen("Secondary weapon"))
+#define LONGEST_SLOTNAME 7 /* longest length of a c_slotnames_menu entry */
 
 static const char c_that_[] = "that";
 
@@ -1571,13 +1570,15 @@ canwearobj(struct obj *otmp, long *mask,
 
     case os_armf:
         if (u.utrap &&
-                   (u.utraptype == TT_BEARTRAP || u.utraptype == TT_INFLOOR)) {
+                   (u.utraptype == TT_BEARTRAP || u.utraptype == TT_INFLOOR ||
+                    u.utraptype == TT_ICEBLOCK)) {
             if (u.utraptype == TT_BEARTRAP) {
                 if (noisy)
                     pline("Your %s is trapped!", body_part(FOOT));
             } else {
                 if (noisy)
                     pline("Your %s are stuck in the %s!",
+                          u.utraptype == TT_ICEBLOCK ? "ice" :
                           makeplural(body_part(FOOT)), surface(u.ux, u.uy));
             }
             return FALSE;
@@ -1776,10 +1777,13 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
                 pline("The bear trap prevents you from pulling your %s out.",
                       body_part(FOOT));
             return FALSE;
-        } else if (u.utrap && u.utraptype == TT_INFLOOR) {
+        } else if (u.utrap && (u.utraptype == TT_INFLOOR ||
+                               u.utraptype == TT_LAVA ||
+                               u.utraptype == TT_ICEBLOCK)) {
             if (noisy)
                 pline("You are stuck in the %s, and cannot pull your %s out.",
-                      surface(u.ux, u.uy), makeplural(body_part(FOOT)));
+                      u.utraptype == TT_ICEBLOCK ? "ice" : surface(u.ux, u.uy),
+                      makeplural(body_part(FOOT)));
             return FALSE;
         }
     }
@@ -2022,7 +2026,8 @@ doequip(const struct nh_cmd_arg *arg)
             const int linelen = 80; /* don't produce lines longer than this */
 
             buf = msgprintf("%*s: %.*s", LONGEST_SLOTNAME,
-                            c_slotnames_menu[j],
+                            ((j == os_swapwep && u.twoweap) ? "Offhand" :
+                             c_slotnames_menu[j]),
                             linelen - LONGEST_SLOTNAME - 4,
                             otmp ? doname(otmp) : "(empty)");
 

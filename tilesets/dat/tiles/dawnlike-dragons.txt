@@ -417,7 +417,7 @@ Q = (134, 150, 162)
   FFFFHEHKOEEOKBBF
   AAAAEBEBBBBBBAAA
 }
-# tile 367 (Chromatic Dragon)
+# tile 367 (Great Fierce Beast)
 {
   GAAAAAGGBCCCAAAA
   AAGAABOOGBFFCAAA

@@ -59,6 +59,7 @@ static const struct nh_enum_option movecommand_spec =
 
 static const struct nh_listitem mode_list[] = {
     {MODE_NORMAL, "normal"},
+    {MODE_CHALLENGE, "challenge"},
     {MODE_EXPLORE, "explore"},
     {MODE_WIZARD, "debug"}
 };
@@ -365,7 +366,7 @@ new_opt_struct(void)
     nhlib_find_option(options, "horsename")->s.maxlen = PL_PSIZ;
 
     struct nh_option_desc *fruit = nhlib_find_option(options, "fruit");
-    const char *def_fruit = "slime mold";
+    const char *def_fruit = "melon";
     fruit->s.maxlen = PL_FSIZ;
     fruit->value.s = malloc(strlen(def_fruit)+1);
     strcpy(fruit->value.s, def_fruit);
@@ -456,6 +457,7 @@ set_option(const char *name, union nh_optvalue value)
     else if (!strcmp("mode", option->name)) {
         flags.debug = (option->value.e == MODE_WIZARD);
         flags.explore = (option->value.e == MODE_EXPLORE);
+        flags.challenge = (option->value.e == MODE_CHALLENGE);
     } else if (!strcmp("align", option->name)) {
         u.initalign = option->value.e;
     } else if (!strcmp("gender", option->name)) {
@@ -586,7 +588,8 @@ nh_get_options(void)
         } else if (!strcmp("mode", option->name)) {
             option->value.e =
                 flags.debug ? MODE_WIZARD :
-                flags.explore ? MODE_EXPLORE : MODE_NORMAL;
+                flags.explore ? MODE_EXPLORE :
+                flags.challenge ? MODE_CHALLENGE : MODE_NORMAL;
         } else if (!strcmp("timezone", option->name)) {
             option->value.e = flags.timezone;
         } else if (!strcmp("polyinit", option->name)) {

@@ -1,7 +1,11 @@
 
+nhfourk (4.3.0.2) unstable; urgency=low
+  * Updated packages for 4.3.0.2
+ -- Jonadab <jonadab@columbus.rr.com>  Fri, 01 Jul 2015 07:26:00 -0400
+
 nhfourk (4.3.0.1) unstable; urgency=low
-  * Updated packages for 4.3
- -- Jonadab <jonadab@columbus.rr.com>  Fri, 04 Apr 2015 07:26:00 -0400
+  * Updated packages for 4.3.0.1
+ -- Jonadab <jonadab@columbus.rr.com>  Fri, 28 May 2015 07:26:00 -0400
 
 nethack4 (4.3.0~beta3) unstable; urgency=low
   * Updated packages for 4.3

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-04-01 */
+/* Last modified by Alex Smith, 2015-06-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,6 +19,7 @@ static void role_ini_inv(const struct trobj *, short nocreate[4]);
 static void race_ini_inv(const struct trobj *, short nocreate[4]);
 static void knows_object(int);
 static void knows_class(char);
+static void augment_skill_cap(int skill, int augment, int minimum, int maximum);
 static boolean restricted_spell_discipline(int);
 
 #define UNDEF_TYP       0
@@ -179,12 +180,15 @@ static const struct trobj Tourist[] = {
 
 static const struct trobj Valkyrie[] = {
 #define V_SPEAR  0
+#define V_DAGGER 1
 #define V_SHIELD 2
 #define V_ARMOR  3
+#define V_WAND   4
     {SPEAR, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     {DAGGER, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SMALL_SHIELD, 3, ARMOR_CLASS, 1, UNDEF_BLESS},
     {LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {WAN_COLD, 5, WAND_CLASS, 1, UNDEF_BLESS},
     {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
     {OIL_LAMP, 1, TOOL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
@@ -216,6 +220,13 @@ static const struct trobj Tinopener[] = {
 static const struct trobj GnomeStuff[] = {
     {AKLYS, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     /*  {CROSSBOW_BOLT, 2, WEAPON_CLASS, 12, UNDEF_BLESS}, */
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj SylphStuff[] = {
+#define SYL_HEALINGPOT 1
+    {POT_GAIN_ENERGY, 0, POTION_CLASS, 1, UNDEF_BLESS},
+    {POT_HEALING, 0, POTION_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -334,7 +345,7 @@ static const struct def_skill Skill_A[] = {
 };
 
 static const struct def_skill Skill_B[] = {
-    {P_DAGGER, P_BASIC}, {P_AXE, P_EXPERT},
+    {P_DAGGER, P_BASIC}, {P_AXE, P_MASTER},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_EXPERT},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_EXPERT},
     {P_TWO_HANDED_SWORD, P_EXPERT}, {P_SCIMITAR, P_EXPERT},
@@ -496,7 +507,7 @@ static const struct def_skill Skill_T[] = {
 };
 
 static const struct def_skill Skill_V[] = {
-    {P_DAGGER, P_EXPERT}, {P_AXE, P_EXPERT},
+    {P_DAGGER, P_EXPERT}, {P_AXE, P_SKILLED},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_SKILLED},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_SKILLED},
     {P_TWO_HANDED_SWORD, P_BASIC}, {P_SCIMITAR, P_SKILLED},
@@ -603,8 +614,11 @@ u_init(microseconds birthday)
     u.urexp = -1;       /* indicates that score is calculated not remembered */
 
     init_uhunger();
+
     for (i = 0; i <= MAXSPELL; i++)
         spl_book[i].sp_id = NO_SPELL;
+    update_supernatural_abilities();
+    
     u.ublesscnt = 300;  /* no prayers just yet */
     u.ualignbase[A_CURRENT] = u.ualignbase[A_ORIGINAL] = u.ualign.type =
         aligns[u.initalign].value;
@@ -618,6 +632,17 @@ u_init(microseconds birthday)
     
     u.delayed_killers.genocide = u.delayed_killers.illness =
         u.delayed_killers.stoning = u.delayed_killers.sliming = NULL;
+}
+
+/* Raise the player character's skill cap for a particular skill. */
+void
+augment_skill_cap(int skill, int augment, int minimum, int maximum)
+{
+    int count = 0;
+    while (count < augment && P_MAX_SKILL(skill) < maximum)
+        P_MAX_SKILL(skill) = P_MAX_SKILL(skill) + 1;
+    if (P_MAX_SKILL(skill) < minimum)
+        P_MAX_SKILL(skill) = minimum;
 }
 
 
@@ -758,9 +783,10 @@ u_init_inv_skills(void)
         break;
     case PM_VALKYRIE:
     {
-        boolean docold = FALSE;
         trobj_list = copy_trobj_list(Valkyrie);
-        switch (rolern2(6)) {
+        trobj_list[V_WAND].trspe = 3 +
+            rne_on_rng(3, rng_charstats_role);
+        switch (rolern2(4)) {
         case 1:
             trobj_list[V_SPEAR].trspe  = 3;
             trobj_list[V_SHIELD].trspe = 2;
@@ -770,24 +796,15 @@ u_init_inv_skills(void)
             trobj_list[V_ARMOR].trotyp = SPEED_BOOTS;
             break;
         case 3:
-        case 4:
-            trobj_list[V_SPEAR].trspe  = 1;
-            trobj_list[V_ARMOR].trotyp = STUDDED_LEATHER_ARMOR;
-            trobj_list[V_ARMOR].trspe  = 1;
-            break;
-        case 5:
             trobj_list[V_SPEAR].trotyp = SILVER_SPEAR;
-            docold = TRUE;
             break;
         default:
             trobj_list[V_SPEAR].trquan =
                 2 + rne_on_rng(3, rng_charstats_role);
-            docold = TRUE;
+            trobj_list[V_DAGGER].trquan = 4;
             break;
         }
         role_ini_inv(trobj_list, nclist);
-        if (docold)
-            role_ini_inv(Coldwand, nclist);
         knows_class(WEAPON_CLASS);
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
@@ -849,10 +866,13 @@ u_init_inv_skills(void)
         knows_object(DWARVISH_MITHRIL_COAT);
         knows_object(DWARVISH_CLOAK);
         knows_object(DWARVISH_ROUNDSHIELD);
+        augment_skill_cap(P_PICK_AXE, 1, P_SKILLED, P_EXPERT);
         break;
 
     case PM_GNOME:
         ini_inv(GnomeStuff, nclist, rng_main);
+        augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
+        augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
         break;
 
     case PM_ORC:
@@ -871,6 +891,16 @@ u_init_inv_skills(void)
         knows_object(ORCISH_SHIELD);
         knows_object(URUK_HAI_SHIELD);
         knows_object(ORCISH_CLOAK);
+        augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
+        break;
+
+    case PM_SYLPH:
+        trobj_list = copy_trobj_list(SylphStuff);
+        if (Role_if(PM_HEALER)) {
+            trobj_list[SYL_HEALINGPOT].trotyp = MAGIC_HARP;
+        }
+        augment_skill_cap(P_HEALING_SPELL, 1, P_BASIC, P_SKILLED);
+        ini_inv(trobj_list, nclist, rng_main);
         break;
 
     default:   /* impossible */
@@ -991,7 +1021,11 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
     long trquan = trop->trquan;
 
     while (trop->trclass) {
-        if (trop->trotyp != UNDEF_TYP) {
+        if (trop->trotyp != UNDEF_TYP &&
+            /* if we already got a particular ring or book, try to avoid
+               duplicating it exactly, even when the type is specified */
+            ((trop->trclass != SPBOOK_CLASS && trop->trclass != RING_CLASS) ||
+             !carrying(trop->trotyp))) {
             otyp = (int)trop->trotyp;
             if (urace.malenum != PM_HUMAN) {
                 /* substitute specific items for generic ones */
@@ -1013,10 +1047,8 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
              * items: wand of wishing, ring of levitation, or the
              * polymorph/polymorph control combination.  Specific objects,
              * i.e. the discovery wishing, are still OK.
-             * Also, don't get a couple of really useless items.  (Note:
-             * punishment isn't "useless".  Some players who start out with
-             * one will immediately read it and use the iron ball as a
-             * weapon.)
+             * Also, don't get a couple of really useless items.
+             * Also, _attempt_ to avoid giving two identical books.
              */
             obj = mkobj(level, trop->trclass, FALSE, rng);
             otyp = obj->otyp;
@@ -1027,12 +1059,17 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                    || (otyp == RIN_LEVITATION && flags.elbereth_enabled)
                    /* 'useless' items */
                    || otyp == POT_HALLUCINATION || otyp == POT_ACID ||
-                   otyp == SCR_AMNESIA || otyp == SCR_FIRE ||
+                   otyp == SCR_PUNISHMENT || otyp == SCR_FIRE ||
                    otyp == SCR_BLANK_PAPER || otyp == SPE_BLANK_PAPER ||
                    otyp == RIN_AGGRAVATE_MONSTER || otyp == RIN_HUNGER ||
                    otyp == WAN_NOTHING
                    /* Monks don't use weapons */
                    || (otyp == SCR_ENCHANT_WEAPON && Role_if(PM_MONK))
+                   /* Sylphs and monks shouldn't get tins of meat.
+                      (Other non-veggie foods are ok to feed pets.) */
+                   || ((Race_if(PM_SYLPH) || Role_if(PM_MONK)) &&
+                       (otyp == TIN) && (obj->spe < 1) && 
+                       !vegetarian(&mons[obj->corpsenm]))
                    /* wizard patch -- they already have one */
                    || (otyp == SPE_FORCE_BOLT && Role_if(PM_WIZARD))
                    || (otyp == SPE_MAGIC_MISSILE && Role_if(PM_WIZARD))
@@ -1041,6 +1078,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                       categories */
                    || (obj->oclass == SPBOOK_CLASS &&
                        (objects[otyp].oc_level > 3 ||
+                        carrying(otyp) ||
                         restricted_spell_discipline(otyp)))
                 ) {
                 dealloc_obj(obj);
@@ -1050,7 +1088,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
 
             /* Don't start with +0 or negative rings */
             if (objects[otyp].oc_charged && obj->spe <= 0)
-                obj->spe = rne_on_rng(3, rng);
+                obj->spe = rne_on_rng(challengemode ? 4 : 2, rng);
 
             /* Heavily relies on the fact that 1) we create wands before rings, 
                2) that we create rings before spellbooks, and that 3) not more
@@ -1116,8 +1154,16 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                inventory.
             
                TODO: Does this provide numerical extrinsics, like brilliance?
-               The situation nonetheless probably can't currently come up. */
-            if (canwearobj(obj, &mask, FALSE, TRUE, TRUE) && mask & W_ARMOR)
+               The situation nonetheless probably can't currently come up.
+
+               Sylphs start out not wearing armor that would block their
+               healing, as a hint to the player.  (Some players may go ahead
+               and wear them, until they need to heal, but starting with them
+               not worn is supposed to be a clue.) */
+            if (canwearobj(obj, &mask, FALSE, TRUE, TRUE) && (mask & W_ARMOR)
+                && (!Race_if(PM_SYLPH) ||
+                    objects[obj->otyp].oc_material == WOOD ||
+                    objects[obj->otyp].oc_material == CLOTH))
                 setworn(obj, mask);
         }
 

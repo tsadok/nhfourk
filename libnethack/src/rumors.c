@@ -406,8 +406,7 @@ doconsult(struct monst *oracl)
         exercise(A_WIS, !cheapskate);
     }
     if (add_xpts) {
-        more_experienced(add_xpts, u_pay / 50);
-        newexplevel();
+        pluslvl(FALSE);
     }
     return 1;
 }

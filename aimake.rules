@@ -1,4 +1,4 @@
-# Last modified by Alex Smith, 2015-04-05
+# Last modified by Alex Smith, 2015-05-22
 # Copyright (c) Alex Smith, 2013.
 # NetHack may be freely redistributed.  See license for details.
 # NetHack Fourk: aimake configuration.
@@ -17,7 +17,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
     options => {
         packagename => 'nhfourk',
         packagename_text => 'NetHack Fourk',
-        packageversion => '3.0.1',
+        packageversion => '3.0.2',
         companyname => 'NetHack Fourk DevTeam',
 
         AM_CPPFLAGS => '-DNETCLIENT -D_REENTRANT',
@@ -115,6 +115,13 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             long_description => "Installs a modern version of the 'RLTiles'/".
                                 "'Ikatura' tileset, enhanced by Raz.",
             object => qr=^path:tilesets/dat/catalogues/rltiles-=,
+            default => 1,
+            depends => 'gui',
+        },
+        geoduck_tiles => {
+            description => "Geoduck tileset",
+            long_description => "Installs the 'Geoduck' ASCII-based graphical tileset by Robert M. Cook.",
+            object => qr=^path:tilesets/dat/catalogues/geoduck-=,
             default => 1,
             depends => 'gui',
         },
@@ -627,6 +634,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             install_dir => "gamesdatadir",
             install_feature => "rltiles_tiles",
         },
+        _install_geoduck => {
+            object => qr{^bpath:tilesets/dat/merged/geoduck.*\.nh4ct$},
+            install_dir => "gamesdatadir",
+            install_feature => "geoduck_tiles",
+        },
         _install_license => {
             object => "path:libnethack/dat/license",
             install_dir => "gamesdatadir",
@@ -644,17 +656,17 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             install_feature => "gui",
         },
         _install_tilecompile_manpage => {
-            object => qr=bpath:doc/(?:nh4ct\.5|tilecompile\.6).*=,
+            object => qr=^bpath:doc/(?:nh4ct\.5|tilecompile\.6).*=,
             install_dir => "mandir",
             install_feature => "tilecompile",
         },
         _install_playfield_utils_manpage => {
-            object => qr=bpath:doc/$playfieldutils\.6.*=,
+            object => qr=^bpath:doc/$playfieldutils\.6.*=,
             install_dir => "mandir",
             install_feature => "playfield_utils",
         },
         _install_docs => {
-            object => qr=path:doc/(?:changelog|changelog-fourk|faq|philosophy)\.txt=,
+            object => qr=^path:doc/(?:changelog|changelog-fourk|faq|philosophy)\.txt=,
             install_dir => "docdir",
         },
         _install_copyright => {

@@ -24,8 +24,6 @@ static void mkzoo(struct level *lev, int type, enum rng rng);
 static void mkswamp(struct level *lev);
 static void mktemple(struct level *lev);
 static coord *shrine_pos(struct level *lev, int roomno);
-static const struct permonst *morguemon(const d_level *dlev, enum rng rng);
-static const struct permonst *squadmon(const d_level *dlev);
 static void save_room(struct memfile *mf, struct mkroom *);
 static void rest_room(struct memfile *mf, struct level *lev, struct mkroom *r);
 static boolean has_dnstairs(struct level *lev, struct mkroom *);
@@ -354,7 +352,7 @@ mkundead(struct level *lev, coord *mm, boolean revive_corpses, int mm_flags)
     lev->flags.graveyard = TRUE;        /* reduced chance for undead corpse */
 }
 
-static const struct permonst *
+const struct permonst *
 morguemon(const d_level *dlev, enum rng rng)
 {
     int i = rn2_on_rng(100, rng);
@@ -438,9 +436,65 @@ shrine_pos(struct level *lev, int roomno)
 {
     static coord buf;
     struct mkroom *troom = &lev->rooms[roomno - ROOMOFFSET];
+    short afcount[ROWNO + 1][COLNO + 1]; /* count of adjacent floor tiles */
+    short value[ROWNO + 1][COLNO + 1]; /* how central we think each tile is */
+    int candx[(ROWNO + 1) * (COLNO + 1)], candy[(ROWNO + 1) * (COLNO + 1)];
+    int afmax = 0, valmax = 0, candidates = 0;
+    int x, y, dx, dy;
 
     buf.x = troom->lx + ((troom->hx - troom->lx) / 2);
     buf.y = troom->ly + ((troom->hy - troom->ly) / 2);
+    if (lev->locations[buf.x][buf.y].typ == ROOM)
+        return &buf;
+    /* Count adjacent floor tiles (including the position itself) */
+    for (x = troom->lx; x <= troom->hx; x++)
+        for (y = troom->ly; y <= troom->hy; y++) {
+            afcount[x][y] = 0;
+            for (dx = -1; dx <= 1; dx++)
+                for (dy = -1; dy <= 1; dy++) {
+                    if (isok(x + dx, y + dy) &&
+                        lev->locations[x + dx][y + dy].typ == ROOM) {
+                        afcount[x][y]++;
+                    }
+                }
+            if (afcount[x][y] > afmax)
+                afmax = afcount[x][y];
+        }
+    /* Now count how many adjacent tiles have afmax adjacent tiles;
+       this is the tile's "value" as a shrine position, and any tile
+       with a maximum value here is an acceptable position. */
+    for (x = troom->lx; x <= troom->hx; x++)
+        for (y = troom->ly; y <= troom->hy; y++) {
+            value[x][y] = 0;
+            /* Only floor tiles can be considered: */
+            if (lev->locations[x][y].typ == ROOM) {
+                for (dx = -1; dx <= 1; dx++)
+                    for (dy = -1; dy <= 1; dy++) {
+                        if (isok(x + dx, y + dy) &&
+                            afcount[x + dx][y + dy] == afmax) {
+                            value[x][y]++;
+                        }
+                    }
+            }
+            if (value[x][y] > valmax)
+                valmax = value[x][y];
+        }
+    while (candidates == 0 && valmax > 0) {
+        for (x = troom->lx; x <= troom->hx; x++)
+            for (y = troom->ly; y <= troom->hy; y++) {
+                if (value[x][y] == valmax) {
+                    candx[candidates] = x;
+                    candy[candidates] = y;
+                    candidates++;
+                }
+            }
+        valmax--;
+    }
+    if (candidates > 0) {
+        int i = mklev_rn2(candidates, lev);
+        buf.x = candx[i];
+        buf.y = candy[i];
+    }
     return &buf;
 }
 
@@ -644,7 +698,7 @@ static const struct {
     PM_CAPTAIN, 1}
 };
 
-static const struct permonst *
+const struct permonst *
 squadmon(const d_level *dlev)
 {       /* return soldier types. */
     int sel_prob, i, cpro, mndx;

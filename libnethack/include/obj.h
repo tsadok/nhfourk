@@ -83,6 +83,7 @@ struct obj {
 # define norevive oeroded2
     unsigned oerodeproof:1;     /* erodeproof weapon/armor */
     unsigned olocked:1;         /* object is locked */
+# define axeinuse olocked       /* axe collateral damage does not chain */
     unsigned obroken:1;         /* lock has been broken */
     unsigned otrapped:1;        /* container is trapped */
     /* or accidental tripped rolling boulder trap */

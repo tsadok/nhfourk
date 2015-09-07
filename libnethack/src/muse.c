@@ -762,22 +762,9 @@ use_defensive(struct monst *mtmp, struct musable *m)
             return 2;
         }
         m_flee(mtmp);
-        if (Inhell && mon_has_amulet(mtmp) && !rn2(4) &&
-            (dunlev(&u.uz) < dunlevs_in_dungeon(&u.uz) - 3)) {
-            if (vismon)
-                pline("As %s climbs the stairs, a mysterious force momentarily "
-                      "surrounds %s...", mon_nam(mtmp), mhim(mtmp));
-            /* simpler than for the player; this will usually be the Wizard and 
-               he'll immediately go right to the upstairs, so there's not much
-               point in having any chance for a random position on the current
-               level */
-            migrate_to_level(mtmp, ledger_no(&u.uz) + 1, MIGR_RANDOM, NULL);
-        } else {
-            if (vismon)
-                pline("%s escapes upstairs!", Monnam(mtmp));
-            migrate_to_level(mtmp, ledger_no(&u.uz) - 1, MIGR_STAIRS_DOWN,
-                             NULL);
-        }
+        if (vismon)
+            pline("%s escapes upstairs!", Monnam(mtmp));
+        migrate_to_level(mtmp, ledger_no(&u.uz) - 1, MIGR_STAIRS_DOWN, NULL);
         return 2;
     case MUSE_DOWNSTAIRS:
         m_flee(mtmp);
@@ -2066,7 +2053,7 @@ mon_reflects(struct monst * mon, const char *str)
             pline(str, s_suffix(mon_nam(mon)), "armor");
         return TRUE;
     } else if (mon->data == &mons[PM_SILVER_DRAGON] ||
-               mon->data == &mons[PM_CHROMATIC_DRAGON]) {
+               mon->data == &mons[PM_GREAT_FIERCE_BEAST]) {
         /* Silver dragons only reflect when mature; babies do not */
         if (str)
             pline(str, s_suffix(mon_nam(mon)), "scales");

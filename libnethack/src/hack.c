@@ -1687,16 +1687,19 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 else
                     pline("You disentangle yourself.");
             }
-        } else if (u.utraptype == TT_INFLOOR) {
+        } else if (u.utraptype == TT_INFLOOR ||
+                   u.utraptype == TT_ICEBLOCK) {
             if (--u.utrap) {
                 if (flags.verbose) {
                     predicament = "stuck in the";
                     if (u.usteed)
                         pline_once("%s is %s %s.",
                                    msgupcasefirst(y_monnam(u.usteed)),
-                                   predicament, surface(u.ux, u.uy));
+                                   predicament, u.utraptype == TT_ICEBLOCK ?
+                                   "ice" : surface(u.ux, u.uy));
                     else
                         pline_once("You are %s %s.", predicament,
+                                   u.utraptype == TT_ICEBLOCK ? "ice" : 
                                    surface(u.ux, u.uy));
                 }
             } else {
@@ -1806,7 +1809,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
      */
     if (is_safepet(mtmp, uim) && !(is_hider(mtmp->data) && mtmp->mundetected)) {
         /* if trapped, there's a chance the pet goes wild */
-        if (mtmp->mtrapped) {
+        if (mtmp->mtrapped && t_at(level, mtmp->mx, mtmp->my)) {
             if (!rn2(mtmp->mtame)) {
                 mtmp->msleeping = 0;
                 msethostility(mtmp, TRUE, FALSE);
@@ -1834,6 +1837,11 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
             /* can't swap places when pet won't fit thru the opening */
             u.ux = u.ux0, u.uy = u.uy0; /* didn't move after all */
             pline("You stop.  %s won't fit through.",
+                  msgupcasefirst(y_monnam(mtmp)));
+        } else if (mtmp->mtrapped && !t_at(level, mtmp->mx, mtmp->my)) {
+            /* can't swap places if pet is trapped in a block of ice */
+            u.ux = u.ux0; u.uy = u.uy0; /* didn't move after all */
+            pline("You stop.  %s is encased in an immobile block of ice.",
                   msgupcasefirst(y_monnam(mtmp)));
         } else {
             /* save its current description in case of polymorph */

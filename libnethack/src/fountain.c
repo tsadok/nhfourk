@@ -52,7 +52,9 @@ wish_available(int percentchance, int *dieroll)
     if (!dieroll)
         dieroll = &unused;
 
-    switch (percentchance) {
+    /* Negative probabilities are allowed because it keeps dowaterdemon
+       simple while not changing its behavior relative to 3.4.3 */
+    switch ((percentchance < 0) ? 0 : percentchance) {
     case 0: case 1:
         *dieroll = rn2(100);
         return FALSE;
@@ -371,6 +373,12 @@ drinkfountain(void)
 void
 dipfountain(struct obj *obj)
 {
+    int excaldifficulty = Role_if(PM_KNIGHT) ?
+        ((u.ulevel >= 5) ? 1 : 6 - u.ulevel) :
+        Role_if(PM_BARBARIAN) ?
+        ((u.ulevel >= 10) ? 1 : 10 - u.ulevel) :
+        ((u.ulevel >= 15) ? 1 : 15 - u.ulevel);
+
     if (Levitation) {
         floating_above("fountain");
         return;
@@ -378,8 +386,8 @@ dipfountain(struct obj *obj)
 
     /* Don't grant Excalibur when there's more than one object.  */
     /* (quantity could be > 1 if merged daggers got polymorphed) */
-    if (obj->otyp == LONG_SWORD && obj->quan == 1L && u.ulevel >= 5 &&
-        !obj->oartifact && !rn2_on_rng(6, rng_excalibur) &&
+    if (obj->otyp == LONG_SWORD && obj->quan == 1L &&
+        !obj->oartifact && !rn2_on_rng(excaldifficulty, rng_excalibur) &&
         !exist_artifact(LONG_SWORD, artiname(ART_EXCALIBUR))) {
 
         if (u.ualign.type != A_LAWFUL) {

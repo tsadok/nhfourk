@@ -1,12 +1,27 @@
-! Last modified by Alex Smith, 2015-04-02
-! NetHack may be freely redistributed. See license for details.
+! This map file last modified by Jonadab, 2015-Sep-04
 !
-! This is the sequence in which tiles normally appear in NetHack 3.4.3
-! tilesets, obtained by taking the tiles from monsters.txt, objects.txt,
-! and other.txt in that order, and then renaming to NetHack 4 names.
-! Therefore, this file can be used with import_tileset to import tiles
-! from tilesets intended for use with NetHack 3.4.3.
+! The copyright on this map file, to the extent that it is eligible
+! for copyright at all (its being merely a list puts this somewhat in
+! question, at least in the US), belongs to Alex Smith, as it is based
+! on his rltiles.map file, which was written for another tileset.
+! The bulk of the list is the same, since the order is based on the
+! order of tiles in the NetHack 3.4.3 official tilesets.
 !
+! The accompanying .png file containing the actual Geoduck tileset
+! artwork is copyright by the artist, Robert M. Cook, although he has
+! publicly given me permission to produce lightly modified versions
+! for the purpose of including additional tiles as necessary to
+! support NetHack Fourk's inclusion of items not found in vanilla
+! NetHack.  See this thread:
+! https://bilious.alt.org/rgrn/?132403,132408,132409,132411,132412,132414-132417
+! Google Groups link to the same thread:
+! https://groups.google.com/forum/#!topic/rec.games.roguelike.nethack/ul2LQ6GkuDk
+! Additionally, the wording on the website from which the tileset is
+! canonically distributed (listed below) allows the unmodified tileset
+! to be distributed, provided the original author is credited.
+! The official website of the Geoduck tileset can be found here:
+! http://www.geoduckthings.net/nhack/nhack.html
+
 giant ant
 killer bee
 soldier ant
@@ -363,8 +378,8 @@ Shaman Karnov
 Earendil
 Elwing
 Hippocrates
-King Arthur
 Grand Master
+King Arthur
 Arch Priest
 Orion
 Master of Thieves
@@ -836,7 +851,7 @@ heavy iron ball
 iron chain
 splash of venom
 splash of venom
-unexplored area
+unexplored area;solid rock
 wall
 wall
 wall
@@ -855,13 +870,13 @@ closed door
 closed door
 iron bars
 tree
-the floor of a room
+the floor of a room;remembered as stepped on
 corridor
 sub lit corridor
 staircase up
 staircase down
-ladder up
-ladder down
+ladder up;long staircase up
+ladder down;long staircase down
 altar
 grave
 opulent throne
@@ -875,7 +890,7 @@ lowered drawbridge
 raised drawbridge
 raised drawbridge
 air
-cloud
+cloud;gas cloud
 underwater
 arrow trap
 dart trap
@@ -893,7 +908,7 @@ hole
 trap door
 teleportation trap
 level teleporter
-magic portal
+magic portal;vibrating square
 web
 statue trap
 magic trap
@@ -1020,28 +1035,28 @@ warning 2
 warning 3
 warning 4
 warning 5
-sub mine walls 0
-sub mine walls 1
-sub mine walls 2
-sub mine walls 3
-sub mine walls 4
-sub mine walls 5
-sub mine walls 6
-sub mine walls 7
-sub mine walls 8
-sub mine walls 9
-sub mine walls 10
-sub gehennom walls 0
-sub gehennom walls 1
-sub gehennom walls 2
-sub gehennom walls 3
-sub gehennom walls 4
-sub gehennom walls 5
-sub gehennom walls 6
-sub gehennom walls 7
-sub gehennom walls 8
-sub gehennom walls 9
-sub gehennom walls 10
+sub mine walls 0; sub bar sub questfill2 walls 0; sub bar sub questgoal walls 0; sub cav sub questfill1 walls 0; sub cav sub questlocate walls 0; sub cav sub questfill2 walls 0
+sub mine walls 1; sub bar sub questfill2 walls 1; sub bar sub questgoal walls 1; sub cav sub questfill1 walls 1; sub cav sub questlocate walls 1; sub cav sub questfill2 walls 1
+sub mine walls 2; sub bar sub questfill2 walls 2; sub bar sub questgoal walls 2; sub cav sub questfill1 walls 2; sub cav sub questlocate walls 2; sub cav sub questfill2 walls 2
+sub mine walls 3; sub bar sub questfill2 walls 3; sub bar sub questgoal walls 3; sub cav sub questfill1 walls 3; sub cav sub questlocate walls 3; sub cav sub questfill2 walls 3
+sub mine walls 4; sub bar sub questfill2 walls 4; sub bar sub questgoal walls 4; sub cav sub questfill1 walls 4; sub cav sub questlocate walls 4; sub cav sub questfill2 walls 4
+sub mine walls 5; sub bar sub questfill2 walls 5; sub bar sub questgoal walls 5; sub cav sub questfill1 walls 5; sub cav sub questlocate walls 5; sub cav sub questfill2 walls 5
+sub mine walls 6; sub bar sub questfill2 walls 6; sub bar sub questgoal walls 6; sub cav sub questfill1 walls 6; sub cav sub questlocate walls 6; sub cav sub questfill2 walls 6
+sub mine walls 7; sub bar sub questfill2 walls 7; sub bar sub questgoal walls 7; sub cav sub questfill1 walls 7; sub cav sub questlocate walls 7; sub cav sub questfill2 walls 7
+sub mine walls 8; sub bar sub questfill2 walls 8; sub bar sub questgoal walls 8; sub cav sub questfill1 walls 8; sub cav sub questlocate walls 8; sub cav sub questfill2 walls 8
+sub mine walls 9; sub bar sub questfill2 walls 9; sub bar sub questgoal walls 9; sub cav sub questfill1 walls 9; sub cav sub questlocate walls 9; sub cav sub questfill2 walls 9
+sub mine walls 10; sub bar sub questfill2 walls 10; sub bar sub questgoal walls 10; sub cav sub questfill1 walls 10; sub cav sub questlocate walls 10; sub cav sub questfill2 walls 10
+sub gehennom walls 0; sub pri sub questfill2 walls 0; sub pri sub questgoal walls 0
+sub gehennom walls 1; sub pri sub questfill2 walls 1; sub pri sub questgoal walls 1
+sub gehennom walls 2; sub pri sub questfill2 walls 2; sub pri sub questgoal walls 2
+sub gehennom walls 3; sub pri sub questfill2 walls 3; sub pri sub questgoal walls 3
+sub gehennom walls 4; sub pri sub questfill2 walls 4; sub pri sub questgoal walls 4
+sub gehennom walls 5; sub pri sub questfill2 walls 5; sub pri sub questgoal walls 5
+sub gehennom walls 6; sub pri sub questfill2 walls 6; sub pri sub questgoal walls 6
+sub gehennom walls 7; sub pri sub questfill2 walls 7; sub pri sub questgoal walls 7
+sub gehennom walls 8; sub pri sub questfill2 walls 8; sub pri sub questgoal walls 8
+sub gehennom walls 9; sub pri sub questfill2 walls 9; sub pri sub questgoal walls 9
+sub gehennom walls 10; sub pri sub questfill2 walls 10; sub pri sub questgoal walls 10
 sub knox walls 0
 sub knox walls 1
 sub knox walls 2
@@ -1064,3 +1079,22 @@ sub sokoban walls 7
 sub sokoban walls 8
 sub sokoban walls 9
 sub sokoban walls 10
+
+! NetHack Fourk additions:
+RATSANOPU
+sylph
+island nymph
+shiny gem
+deep ettin
+magic chest
+splash of blood
+convex amulet
+
+! NH4 requirements:
+remembered as locked
+remembered as unlocked
+remembered as trapped
+monster is tame
+monster is peaceful
+monster is detected
+monster is ridden

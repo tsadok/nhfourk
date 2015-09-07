@@ -16,19 +16,26 @@ static char *
 make_bones_id(char *buf, d_level * dlev)
 {
     s_level *sptr;
+    int len;
 
     sprintf(buf, "%c%s", dungeons[dlev->dnum].boneid,
             In_quest(dlev) ? urole.filecode : "0");
-    if ((sptr = Is_special(dlev)) != 0)
+    if ((sptr = Is_special(dlev)) != 0) {
         sprintf(buf + 2, ".%c", sptr->boneid);
-    else
+        len = 4;
+    } else {
         sprintf(buf + 2, ".%d", dlev->dlevel);
+        len = 3 + (dlev->dlevel > 99 ? 3 :
+                   dlev->dlevel > 9  ? 2 : 1);
+    }
 
-    sprintf(buf + 4, ".%s%x",
+    sprintf(buf + len, ".%s%x",
             flags.debug ? "W" : flags.explore ? "X" :
             *flags.setseed ? "S" :
-            (flags.polyinit_mnum != -1) ? "P" : "N",
+            (flags.polyinit_mnum != -1) ? "P" :
+            flags.challenge ? "C" : "N",
             (unsigned int) (u.ubirthday % 16));
+    /* len += 3; // but we don't use the value below this point. */
 
     return buf;
 }

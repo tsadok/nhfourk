@@ -327,7 +327,7 @@ rather than text-based, tileset.  The `libuncursed_sdl` interface is currently
 recommended for tiles play (being the only current graphical interface plugin
 for libuncursed).
 
-There are currently five tilesets available:
+There are currently six tilesets available:
 
   * The "ASCII" tileset is a very traditional 3.4.3-like text-based tileset
     that uses only ASCII characters;
@@ -346,6 +346,15 @@ There are currently five tilesets available:
     amount of detail (e.g. you can typically make out the type of monster that
     makes up a statue, or the race and gender of a player, simply from details
     in the art).
+  * The "Geoduck" tileset is based on the idea of incorporating the
+    traditional ASCII symbols prominently into the artwork but also
+    supplying additional, differentiating details so that the player
+    can easily distinguish one thing from another.  For example, the
+    tiger looks like an f but is depicted in tiger stripes.  This set
+    may be of particular interest to players who would like to learn
+    to play with the ASCII or Unicode sets but who are intimidated at
+    first and feel that they need a little extra help learning the
+    details.
 
 Note that as libuncursed plugins do not currently work correctly on Mac OS X,
 graphical tilesets will not work there either.
