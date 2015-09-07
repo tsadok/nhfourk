@@ -1902,6 +1902,17 @@ const struct permonst mons[] = {
         M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
         M1_MINDLESS | M1_OMNIVORE | M1_ACID,
         M2_HOSTILE | M2_NEUTER, 0, 0, CLR_BLACK),
+    MON("blood pudding", S_PUDDING,
+        LVL(25, 16, -10, 75, 0), (G_NOGEN | G_NOCORPSE),
+        A(ATTK(AT_BITE, AD_DRLI, 3, 8), ATTK(AT_NONE, AD_DRLI, 0, 0),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(900, 250, 0, MS_SILENT, MZ_LARGE),
+        MR_COLD | MR_ELEC | MR_POISON | MR_ACID | MR_STONE,
+        MR_COLD | MR_ELEC | MR_POISON, MRACE_NONE,
+        M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
+        M1_MINDLESS | M1_OMNIVORE | M1_ACID | M1_REGEN,
+        M2_HOSTILE | M2_NEUTER | M2_UNDEAD | M2_NASTY | M2_LORD,
+        0, 0, CLR_RED),
     MON("green slime", S_PUDDING,
         LVL(6, 6, 6, 0, 0), (G_HELL | G_GENO | 1),
         A(ATTK(AT_TUCH, AD_SLIM, 1, 4), ATTK(AT_NONE, AD_SLIM, 0, 0),

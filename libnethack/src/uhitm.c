@@ -1016,21 +1016,45 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (mon->mtame && !destroyed)
             monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
     }
-    if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING])
+    if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING] ||
+         mdat == &mons[PM_BLOOD_PUDDING])
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
         mon->mhp > 1 && !thrown && !mon->mcan
         /* && !destroyed -- guaranteed by mhp > 1 */ ) {
-        struct monst *newpudding = clone_mon(mon, 0, 0);
-        if (newpudding) {
-            pline("%s divides as you hit it!", Monnam(mon));
-            newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
-            mon->mhpmax        = mon->mhpmax        * 3 / 4;
-            if (mon->mhp > mon->mhpmax) {
-                mon->mhp = mon->mhpmax;
-                newpudding->mhp = newpudding->mhpmax;
+        if (mon->mhp > 60) {
+            coord mm;
+            struct monst *bpud;
+            mm.x = mon->mx; mm.y = mon->my;
+            if (enexto(&mm, level, mm.x, mm.y, mon->data) &&
+                !MON_AT(level, mm.x, mm.y)) {
+                bpud = makemon(&mons[PM_BLOOD_PUDDING], level, mm.x, mm.y, 0);
+                if (bpud) {
+                    if (bpud->mhp < mon->mhp * 4 / 3) {
+                        bpud->mhp = mon->mhp * 4 / 3;
+                        if (bpud->mhp > bpud->mhpmax)
+                            bpud->mhpmax = bpud->mhp;
+                    }
+                    if (Hallucination)
+                        pline("You crave %s.", (moves % 2) ?
+                              "bubble and squeak" : "mushy peas");
+                    else
+                        pline("Something rather strange happens as %s divides.",
+                              mon_nam(mon));
+                }
             }
-            hittxt = TRUE;
-            break_conduct(conduct_puddingsplit);
+        } else {
+            struct monst *newpudding = clone_mon(mon, 0, 0);
+            if (newpudding) {
+                pline("%s divides as you hit it!", Monnam(mon));
+                newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
+                mon->mhpmax        = mon->mhpmax        * 3 / 4;
+                if (mon->mhp > mon->mhpmax) {
+                    mon->mhp = mon->mhpmax;
+                    newpudding->mhp = newpudding->mhpmax;
+                }
+                hittxt = TRUE;
+                break_conduct(conduct_puddingsplit);
+            }
         }
     }
 
@@ -2380,6 +2404,12 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
                 break;  /* no object involved */
             }
             passive_obj(mon, obj, &(ptr->mattk[i]));
+        }
+        break;
+    case AD_DRLI:
+        if (mhit && !mon->mcan && !Drain_resistance) {
+            losexp(msgprintf("drained of life by attacking %s",
+                             k_monnam(mon)), FALSE);
         }
         break;
     default:
