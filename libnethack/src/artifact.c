@@ -456,6 +456,7 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         (dtyp == AD_DISN && extrinsic == DISINT_RES) ||
         (dtyp == AD_DRST && extrinsic == POISON_RES) ||
         (dtyp == AD_DISE && extrinsic == SICK_RES)   ||
+        (dtyp == AD_SLEE && extrinsic == SLEEP_RES)  ||
         (dtyp == ART_EXTR_SPEED && extrinsic == FAST))
         return mask;
 
@@ -469,6 +470,7 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
             (dtyp == AD_DISN && extrinsic == DISINT_RES) ||
             (dtyp == AD_DRST && extrinsic == POISON_RES) ||
             (dtyp == AD_DISE && extrinsic == SICK_RES)   ||
+            (dtyp == AD_SLEE && extrinsic == SLEEP_RES)  ||
             (dtyp == ART_EXTR_SPEED && extrinsic == FAST))
             return mask;
     }
@@ -647,6 +649,10 @@ spec_applies(const struct artifact *weap, const struct monst *mtmp)
             break;
         case AD_DRLI:
             if (!(yours ? Drain_resistance : resists_drli(mtmp)))
+                return TRUE;
+            break;
+        case AD_SLEE:
+            if (!(yours ? Sleep_resistance : resists_sleep(mtmp)))
                 return TRUE;
             break;
         case AD_STON:
@@ -1149,6 +1155,7 @@ artifact_hit(struct monst * magr, struct monst * mdef, struct obj * otmp,
         || (youattack && Engulfed && mdef == u.ustuck && !Blind);
     boolean realizes_damage;
     const char *hittee = youdefend ? "you" : mon_nam(mdef);
+    const struct artifact *oart = get_artifact(otmp);
 
     /* The following takes care of most of the damage, but not all-- the
        exception being for level draining, which is specially handled. Messages 
@@ -1163,6 +1170,32 @@ artifact_hit(struct monst * magr, struct monst * mdef, struct obj * otmp,
     realizes_damage = (youdefend || vis ||
                        /* feel the effect even if not seen */
                        (youattack && mdef == u.ustuck));
+    if (oart->attk.adtyp == AD_SLEE) {
+        if (youdefend) {
+            if (Sleep_resistance)
+                pline("You yawn.");
+            else {
+                helpless(challengemode ? 20 : 5, hr_asleep, "sleeping", NULL);
+                if (Blind)
+                    pline("You are put to sleep.");
+                else
+                    pline("%s sweetly-scented blade puts you to sleep.",
+                          canseemon(magr) ? s_suffix(Monnam(magr)) : "The");
+            }
+            return 1;
+        }
+        else if ((!youdefend) && !resists_sleep(mdef)) {
+            if (!mdef->msleeping && sleep_monst(mdef, 5, -1)) {
+                if (youattack)
+                    pline("Your sweetly-scented blade puts %s to sleep.",
+                          canseemon(mdef) ? Monnam(mdef) : "something");
+                else if (canseemon(mdef))
+                    pline("%s is put to sleep.", Monnam(mdef));
+                return 1;
+            }
+        }
+        return FALSE;
+    }
 
     /* the four basic attacks: fire, cold, shock and missiles */
     /* also there is now poison */
