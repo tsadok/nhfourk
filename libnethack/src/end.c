@@ -787,70 +787,93 @@ calc_score(int how, boolean show, long umoney)
         
         if (!u.uconduct[conduct_food]) {
             category_raw++;
-            category_points += 4000;
+            category_points += 3000;
         } if (!u.uconduct[conduct_vegan]) {
             category_raw++;
             category_points += 2000;
         } if (!u.uconduct[conduct_vegetarian]) {
             category_raw++;
-            category_points += 2000;
+            category_points += 1000;
         } if (!u.uconduct[conduct_gnostic]) {
             category_raw++;
-            category_points += 6000;
+            category_points += 5000;
         } if (!u.uconduct[conduct_weaphit]) {
             category_raw++;
             category_points += 3000;
         } if (!u.uconduct[conduct_killer]) {
             category_raw++;
-            category_points += 10000;
+            category_points += 8000;
         } if (!u.uconduct[conduct_illiterate]) {
             category_raw++;
-            category_points += 7000;
+            category_points += 6000;
         } if (!u.uconduct[conduct_genocide]) {
             category_raw++;
-            category_points += 2000;
+            category_points += 1500;
         } if (!u.uconduct[conduct_polypile]) {
             category_raw++;
-            category_points += 2000;
+            category_points += 1000;
         } if (!u.uconduct[conduct_polyself]) {
             category_raw++;
             category_points += 500;
         } if (!u.uconduct[conduct_sokoban_guilt]) {
             category_raw++;
-            category_points += 500;
+            category_points += 400;
         } if (!u.uconduct[conduct_wish]) {
             category_raw++;
-            category_points += 2000;
+            category_points += 1500;
         } if (!u.uconduct[conduct_artiwish]) {
             category_raw++;
-            category_points += 2000;
+            category_points += 500;
         } if (!u.uconduct[conduct_puddingsplit]) {
             category_raw++;
-            category_points += 1000;
+            category_points += 500;
         } if (!u.uconduct[conduct_elbereth]) {
             category_raw++;
             category_points += 1000;
         } if (!u.uconduct[conduct_lostalign]) {
             category_raw++;
+            category_points += 500;
+        } if (!u.uconduct[conduct_clothing]) {
+            category_raw++;
+            category_points += 4000;
+        } if (!u.uconduct[conduct_jewelry]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_tools]) {
+            category_raw++;
+            category_points += 1000; /* but unihorns and containers add to that... */
+        } if (!u.uconduct[conduct_unihorns]) {
+            category_raw++;
+            category_points += 2000;
+        } if (!u.uconduct[conduct_containers]) {
+            category_raw++;
             category_points += 2000;
         }
         
         /* Conduct combinations */
-        if (!u.uconduct[conduct_elbereth] && !u.uconduct[conduct_illiterate])
-            category_points += 2000;
         if (!u.uconduct[conduct_wish] && !u.uconduct[conduct_polypile])
-            category_points += 4000;
-        if (!u.uconduct[conduct_food] && !u.uconduct[conduct_gnostic])
-            category_points += 6000;
-        if (!u.uconduct[conduct_killer] && !u.uconduct[conduct_illiterate])
-            category_points += 8000;
+            category_points += 3000;
+        if (!u.uconduct[conduct_food] && !u.uconduct[conduct_gnostic]) {
+            category_points += 3500;
+            if (!u.uconduct[conduct_polyself])
+                category_points += 500;
+            if (!u.uconduct[conduct_jewelry]) /* no slow digestion */
+                category_points += 500;
+        }
+        if (!u.uconduct[conduct_killer] && !u.uconduct[conduct_illiterate]) {
+            category_points += 5000;
+            if (!u.uconduct[conduct_food])
+                category_points += 1000;
+        }
+        if (!u.uconduct[conduct_gnostic] && !u.uconduct[conduct_clothing])
+            category_points += 3000;
         
         /* Conduct amount bonus */
         category_points += category_raw * 1000;
         if (category_raw > 10)
             category_points += (category_raw - 10) * 1000;
-        if (category_raw == 16)
-            category_points += 8000;
+        if (category_raw > 20)
+            category_points += 5000;
         
         total += category_points;
         if (show) {
