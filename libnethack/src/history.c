@@ -159,7 +159,7 @@ historysearch(const char *substring, boolean hiddenok)
     int i;
     for (i = 0; i < histcount; i++) {
         if (hiddenok || !histevents[i].hidden) {
-            if (!strcmp(histevents[i].what, substring))
+            if (strstr(histevents[i].what, substring))
                 return histevents[i].when;
         }
     }
