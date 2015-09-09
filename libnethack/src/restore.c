@@ -775,6 +775,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->autodig = mread8(mf);
     f->autodigdown = mread8(mf);
     f->autoquiver = mread8(mf);
+    f->autowear_starting_armor = mread8(mf);
     f->beginner = mread8(mf);
     f->bones_enabled = mread8(mf);
     f->cblock = mread8(mf);

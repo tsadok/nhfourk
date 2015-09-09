@@ -321,6 +321,7 @@ struct flag {
     microseconds turntime;
 
     /* === BIRTH OPTIONS === */
+    boolean autowear_starting_armor; /* autoequip starting armor */
     boolean elbereth_enabled;   /* should the E-word repel monsters? */
     boolean rogue_enabled;      /* create a rogue level */
     boolean seduce_enabled;     /* succubus seduction */

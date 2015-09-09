@@ -157,6 +157,7 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.autodig);
     mwrite8(mf, flags.autodigdown);
     mwrite8(mf, flags.autoquiver);
+    mwrite8(mf, flags.autowear_starting_armor);
     mwrite8(mf, flags.beginner);
     mwrite8(mf, flags.bones_enabled);
     mwrite8(mf, flags.cblock);

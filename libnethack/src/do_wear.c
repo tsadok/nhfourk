@@ -203,6 +203,10 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     /* Change the item in the slot. */
     if (equipping) {
         setworn(o, W_MASK(slot));
+        if (slot <= os_last_armor)
+            break_conduct(conduct_clothing);
+        else if (slot <= os_last_worn)
+            break_conduct(conduct_jewelry);
         if (msgtype != em_silent)
             on_msg(o);
         if (o->cursed && !o->bknown) {

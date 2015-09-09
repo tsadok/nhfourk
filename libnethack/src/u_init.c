@@ -1244,7 +1244,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
         /* pre-ID oil as it's easy to check anyway */
         knows_object(POT_OIL);
 
-        if (obj->oclass == ARMOR_CLASS) {
+        if ((obj->oclass == ARMOR_CLASS) && flags.autowear_starting_armor) {
             long mask;
             if (is_shield(obj) && uswapwep)
                 setuswapwep(NULL);

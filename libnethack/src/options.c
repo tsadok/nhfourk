@@ -212,6 +212,8 @@ static const struct nh_option_desc const_options[] = {
     {"polyinit", "play in monster form (non-scoring)",
      nh_birth_lasting, OPTTYPE_ENUM, {.e = -1}},
 
+    {"autowear", "automatically equip starting armor",
+     nh_birth_creation, OPTTYPE_BOOL, {.b = TRUE}},
     {"legacy", "print introductory message",
      nh_birth_creation, OPTTYPE_BOOL, {.b = TRUE}},
     {"align", "your starting alignment",
@@ -256,6 +258,7 @@ static const struct nhlib_boolopt_map boolopt_map[] = {
     {"verbose", &flags.verbose},
 
     /* birth options */
+    {"autowear", &flags.autowear_starting_armor},
     {"elbereth", &flags.elbereth_enabled},
     {"reincarnation", &flags.rogue_enabled},
     {"seduction", &flags.seduce_enabled},

@@ -2004,6 +2004,7 @@ use_container(struct obj *obj, int held)
     }
     current_container = obj;    /* for use by in/out_container */
 
+    break_conduct(conduct_containers);
     if (!cobj_is_magic_chest(obj) && obj->spe == 1) {
         observe_quantum_cat(obj);
         used = 1;

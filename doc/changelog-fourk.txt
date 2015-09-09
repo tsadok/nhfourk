@@ -57,6 +57,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * The following behaviors (or lack thereof) are now tracked as
+   conducts:  putting on clothing or armor (starting gear counts;
+   there is a birth option to control whether it gets autoequipped);
+   putting on jewelry or eyewear; using unicorn horns; using
+   containers; and applying tools (other than for the invocation).
+   To avoid making the end-game messages any spammier than they
+   already are, these conducts are only announced if you kept them.
+
  * Role starting attribute numbers have been adjusted, as follows:
    priests now usually start with more Int than Wis, the opposite to
    their vanilla situation, so they can read and cast a wider variety
@@ -65,8 +73,10 @@ Changes in 4.3.0.3:
    buffed at the expense of several other attributes, so they can get
    decent Pw regen early and cast often.
 
- * Higher wisdom now improves your Pw regeneration rate,
-   for everyone except Sylphs (who have their own formula).
+ * Higher wisdom now improves your Pw regeneration rate, for everyone
+   except Sylphs (who have their own formula).  Players who have been
+   playing Wizards as non-casting fighters for the first half of the
+   game may wish to revisit their approach.
 
  * Wisdom is much more difficult to exercise than before.
    To keep things balanced, it's also harder to abuse.

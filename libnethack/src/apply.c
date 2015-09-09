@@ -782,6 +782,8 @@ use_bell(struct obj **optr)
                                  !On_stairs(u.ux, u.uy));
 
     pline("You ring %s.", the(xname(obj)));
+    if (!invoking)
+        break_conduct(conduct_tools);
 
     if (Underwater || (Engulfed && ordinary)) {
         pline("But the sound is muffled.");
@@ -888,6 +890,8 @@ use_candelabrum(struct obj *obj)
 {
     const char *s = (obj->spe != 1) ? "candles" : "candle";
 
+    if (!invocation_pos(&u.uz, u.ux, u.uy))
+        break_conduct(conduct_tools);
     if (Underwater) {
         pline("You cannot make fire under water.");
         return 0;
@@ -956,6 +960,7 @@ use_candle(struct obj **optr)
             pline("Sorry, fire and water don't mix.");
             return 0;
         }
+        break_conduct(conduct_tools);
         return use_lamp(obj);
     }
 
@@ -971,6 +976,7 @@ use_candle(struct obj **optr)
         }
         if (!obj->lamplit)
             pline("You try to light %s...", the(xname(obj)));
+        break_conduct(conduct_tools);
         return use_lamp(obj);
     } else {
         if ((long)otmp->spe + obj->quan > 7L)
@@ -1542,6 +1548,7 @@ use_unicorn_horn(struct obj *obj)
     int idx, val, val_limit, trouble_count, unfixable_trbl, did_prop, did_attr;
     int trouble_list[PROP_COUNT + ATTR_COUNT];
 
+    break_conduct(conduct_unihorns);
     if (obj && obj->cursed) {
         long lcount = (long)rnd(100);
 
@@ -2949,6 +2956,7 @@ doapply(const struct nh_cmd_arg *arg)
 
     if (obj == &zeroobj) {
         /* "a," for doing looting */
+        break_conduct(conduct_tools);
         return doloot(arg);
     }
 
@@ -2970,9 +2978,11 @@ doapply(const struct nh_cmd_arg *arg)
         res = use_cream_pie(&obj);
         break;
     case BULLWHIP:
+        break_conduct(conduct_tools);
         res = use_whip(obj, arg);
         break;
     case GRAPPLING_HOOK:
+        break_conduct(conduct_tools);
         res = use_grapple(obj, arg);
         break;
     case LARGE_BOX:
@@ -2981,42 +2991,53 @@ doapply(const struct nh_cmd_arg *arg)
     case SACK:
     case BAG_OF_HOLDING:
     case OILSKIN_SACK:
+        break_conduct(conduct_tools);
         res = use_container(obj, 1);
         break;
     case BAG_OF_TRICKS:
+        break_conduct(conduct_tools);
         bagotricks(obj);
         break;
     case CAN_OF_GREASE:
+        break_conduct(conduct_tools);
         res = use_grease(obj);
         break;
     case LOCK_PICK:
     case CREDIT_CARD:
     case SKELETON_KEY:
+        break_conduct(conduct_tools);
         res = pick_lock(obj, arg);
         break;
     case PICK_AXE:
     case DWARVISH_MATTOCK:
+        break_conduct(conduct_tools);
         res = use_pick_axe(obj, arg);
         break;
     case TINNING_KIT:
+        break_conduct(conduct_tools);
         res = use_tinning_kit(obj);
         break;
     case LEASH:
+        break_conduct(conduct_tools);
         res = use_leash(obj, arg);
         break;
     case SADDLE:
+        break_conduct(conduct_tools);
         res = use_saddle(obj, arg);
         break;
     case MAGIC_WHISTLE:
+        break_conduct(conduct_tools);
         res = use_magic_whistle(obj);
         break;
     case TIN_WHISTLE:
+        break_conduct(conduct_tools);
         res = use_whistle(obj);
         break;
     case EUCALYPTUS_LEAF:
         /* MRKR: Every Australian knows that a gum leaf makes an */
         /* excellent whistle, especially if your pet is a */
         /* tame kangaroo named Skippy.  */
+        break_conduct(conduct_tools);
         if (obj->blessed) {
             use_magic_whistle(obj);
             /* sometimes the blessing will be worn off */
@@ -3035,40 +3056,51 @@ doapply(const struct nh_cmd_arg *arg)
         }
         break;
     case STETHOSCOPE:
+        break_conduct(conduct_tools);
         res = use_stethoscope(obj, arg);
         break;
     case MIRROR:
+        break_conduct(conduct_tools);
         res = use_mirror(obj, arg);
         break;
     case BELL:
     case BELL_OF_OPENING:
+        /* use_bell calls break_conduct if not doing the invocation. */
         use_bell(&obj);
         break;
     case CANDELABRUM_OF_INVOCATION:
+        /* use_candelabrum calls break_conduct if not on the V.S. */
         res = use_candelabrum(obj);
         break;
     case WAX_CANDLE:
     case TALLOW_CANDLE:
+        /* use_candle calls break_conduct if appropriate */
         res = use_candle(&obj);
         break;
     case OIL_LAMP:
     case MAGIC_LAMP:
     case BRASS_LANTERN:
+        break_conduct(conduct_tools);
         res = use_lamp(obj);
         break;
     case POT_OIL:
+        /* A potion isn't really a tool; you get a pass here. */
         res = light_cocktail(obj);
         break;
     case EXPENSIVE_CAMERA:
+        break_conduct(conduct_tools);
         res = use_camera(obj, arg);
         break;
     case TOWEL:
+        break_conduct(conduct_tools);
         res = use_towel(obj);
         break;
     case CRYSTAL_BALL:
+        break_conduct(conduct_tools);
         use_crystal_ball(obj);
         break;
     case MAGIC_MARKER:
+        break_conduct(conduct_tools);
         res = dowrite(obj, arg);
         break;
     case TIN_OPENER:
@@ -3086,9 +3118,11 @@ doapply(const struct nh_cmd_arg *arg)
         goto xit;
 
     case FIGURINE:
+        break_conduct(conduct_tools);
         res = use_figurine(&obj, arg);
         break;
     case UNICORN_HORN:
+        break_conduct(conduct_tools);
         use_unicorn_horn(obj);
         break;
     case WOODEN_FLUTE:
@@ -3101,9 +3135,11 @@ doapply(const struct nh_cmd_arg *arg)
     case BUGLE:
     case LEATHER_DRUM:
     case DRUM_OF_EARTHQUAKE:
+        break_conduct(conduct_tools);
         res = do_play_instrument(obj, arg);
         break;
     case HORN_OF_PLENTY:       /* not a musical instrument */
+        break_conduct(conduct_tools);
         if (obj->spe > 0) {
             struct obj *otmp;
             const char *what;
@@ -3149,12 +3185,14 @@ doapply(const struct nh_cmd_arg *arg)
         break;
     case LAND_MINE:
     case BEARTRAP:
+        break_conduct(conduct_tools);
         res = use_trap(obj, arg);
         break;
     case FLINT:
     case LUCKSTONE:
     case LOADSTONE:
     case TOUCHSTONE:
+        break_conduct(conduct_tools);
         res = use_stone(obj);
         break;
     default:
@@ -3163,6 +3201,7 @@ doapply(const struct nh_cmd_arg *arg)
             res = use_pole(obj, arg);
             break;
         } else if (is_pick(obj) || is_axe(obj)) {
+            break_conduct(conduct_tools);
             res = use_pick_axe(obj, arg);
             break;
         }

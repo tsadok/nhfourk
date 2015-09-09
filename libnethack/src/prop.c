@@ -924,6 +924,19 @@ show_conduct(int final)
         enl_msg(&menu, You_, "", "had ", buf);
     }
 
+    if (!u.uconduct[conduct_clothing] && !u.uconduct[conduct_jewelry])
+        enl_msg(&menu, You_, "have worn", "wore",
+                " only your undergarments");
+    /* Yes, and pants, but they can't be enchanted, so who cares about them? */
+    else if (!u.uconduct[conduct_jewelry])
+        enl_msg(&menu, You_, "have not adorned", "did not adorn",
+                " yourself with jewelry or accessories");
+    /* "accessories" here means lenses, blindfold, or towel;
+       this is different from the wand shop's "accessories" */
+    else if (!u.uconduct[conduct_clothing])
+        enl_msg(&menu, You_, "have not worn", "did not wear",
+                " any clothing or armor");
+
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
     if (u.uconduct_time[conduct_gnostic] > 1800) {
@@ -947,6 +960,20 @@ show_conduct(int final)
         buf = msgprintf("a pacifist until turn %d",
                         u.uconduct_time[conduct_killer]);
         enl_msg(&menu, You_, "were ", "had been ", buf);
+    }
+
+    if (!u.uconduct[conduct_tools])
+        enl_msg(&menu, You_, "have not used", "did not use",
+                msgprintf(" tools%s",
+                          (historysearch("performed the invocation.", TRUE)) ?
+                          ", except for the invocation ritual" : ""));
+    else {
+        if (!u.uconduct[conduct_containers])
+            enl_msg(&menu, You_, "have not used", "did not use",
+                    " containers");
+        if (!u.uconduct[conduct_unihorns])
+            enl_msg(&menu, You_, "have not applied", "did not apply",
+                    " a unicorn horn");
     }
 
     if (!u.uconduct[conduct_illiterate])
