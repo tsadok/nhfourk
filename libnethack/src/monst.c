@@ -1911,7 +1911,7 @@ const struct permonst mons[] = {
         MR_COLD | MR_ELEC | MR_POISON, MRACE_NONE,
         M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS | M1_NOHEAD |
         M1_MINDLESS | M1_OMNIVORE | M1_ACID | M1_REGEN,
-        M2_HOSTILE | M2_NEUTER | M2_UNDEAD | M2_NASTY | M2_LORD,
+        M2_HOSTILE | M2_NEUTER | M2_UNDEAD | M2_NASTY | M2_LORD | M2_NOPOLY,
         0, 0, CLR_RED),
     MON("green slime", S_PUDDING,
         LVL(6, 6, 6, 0, 0), (G_HELL | G_GENO | 1),

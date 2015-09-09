@@ -2521,6 +2521,25 @@ passiveum(const struct permonst *olduasmon, struct monst *mtmp,
                              youmonst.data->mattk[i].damd);
             tmp = 0;
             break;
+        case AD_DRLI:
+            if (!resists_drli(mtmp)) {
+                int xtmp = dice(2,6);
+                if (canseemon(mtmp))
+                    pline("%s seems weaker.", Monnam(mtmp));
+                mtmp->mhpmax -= xtmp;
+                mtmp->mhp    -= xtmp;
+                if (mtmp->mhpmax < 1)
+                    mtmp->mhpmax = 1;
+                if ((mtmp->mhp <= 0) || (mtmp->m_lev <= 0)) {
+                    if (canseemon(mtmp))
+                        pline("%s dies.", Monnam(mtmp));
+                    xkilled(mtmp, 0);
+                    return 2;
+                } else
+                    mtmp->m_lev--;
+            }
+            tmp = 0;
+            break;
         default:
             tmp = 0;
             break;

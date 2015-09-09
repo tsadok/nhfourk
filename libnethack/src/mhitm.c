@@ -1471,6 +1471,28 @@ passivemm(struct monst *magr, struct monst *mdef, boolean mhit, int mdead)
             /* No message */
         }
         break;
+    case AD_DRLI:
+        if (mhit) {
+            if (magr == &youmonst) {
+                if (!Drain_resistance)
+                    losexp(msgprintf("attacking %s", mon_nam(mdef)), FALSE);
+            } else if (!resists_drli(magr)) {
+                    int xtmp = dice(2,6);
+                    if (canseemon(magr))
+                        pline("%s seems weaker.", Monnam(magr));
+                    magr->mhpmax -= xtmp;
+                    if (magr->mhp > magr->mhpmax)
+                        magr->mhp = magr->mhpmax;
+                    if (magr->mhpmax < 1)
+                        magr->mhpmax = 1;
+                    if ((magr->mhp <= 0) || (magr->m_lev <= 0)) {
+                        if (canseemon(magr))
+                            pline("%s dies.", Monnam(magr));
+                        mondead(magr);
+                    } else
+                        magr->m_lev--;
+                }
+            }
     default:
         break;
     }

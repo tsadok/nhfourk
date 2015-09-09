@@ -1021,7 +1021,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
         mon->mhp > 1 && !thrown && !mon->mcan
         /* && !destroyed -- guaranteed by mhp > 1 */ ) {
-        if (mon->mhp > 60) {
+        if ((mon->mhp > 60) && !(mdat == &mons[PM_BLOOD_PUDDING])) {
             coord mm;
             struct monst *bpud;
             mm.x = mon->mx; mm.y = mon->my;
