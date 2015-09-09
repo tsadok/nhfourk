@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * In the early game when you really need it, eating a newt corpse
+   is now significantly likely to boost your max Pw.
+
  * The following behaviors (or lack thereof) are now tracked as
    conducts:  putting on clothing or armor (starting gear counts;
    there is a birth option to control whether it gets autoequipped);

@@ -669,9 +669,11 @@ cpostfx(int pm)
     switch (pm) {
     case PM_NEWT:
         /* MRKR: "eye of newt" may give small magical energy boost */
-        if (rn2_on_rng(3, rng_newt_pw_boost) || 3 * u.uen <= 2 * u.uenmax) {
+        if (rn2_on_rng(3, rng_newt_pw_boost) || 3 * u.uen <= 2 * u.uenmax ||
+            u.uen < 15) {
             int old_uen = u.uen;
-            boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost);
+            boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost) ||
+                ((u.uen + u.uenmax) < 35);
 
             u.uen += 1 + rn2_on_rng(3, rng_newt_pw_boost);
             if (u.uen > u.uenmax) {
