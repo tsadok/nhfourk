@@ -2014,8 +2014,10 @@ use_container(struct obj *obj, int held)
        magic bag. Don't use a custom RNG: we can't know how many items were
        placed into the bag (and multiple games can't get the same bones file, so
        there's no point in synchronizing that either). */
-    if (cobj_is_magic_chest(obj))
+    if (cobj_is_magic_chest(obj)) {
         curr = magic_chest_objs;
+        historic_event(FALSE, FALSE, "opened a magic chest.");
+    }
     else
         curr = obj->cobj;
     for (; curr; curr = otmp) {

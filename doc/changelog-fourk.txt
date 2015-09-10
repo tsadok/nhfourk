@@ -57,6 +57,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Added historic events, xlogfile event bits, and livelog lines for
+   entering the Minetown temple (the first time) and for reaching the
+   bottom of the Mines.  Also added historic events and xlogfile event
+   bits for opening a magic chest and entering the Sokoban zoo and
+   an xlogfile event for entering the Astral Plane.
+
  * In the early game when you really need it, eating a newt corpse
    is now significantly likely to boost your max Pw.
 

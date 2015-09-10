@@ -377,6 +377,9 @@ intemple(int roomno)
     xchar shrined;
     const char *msg1, *msg2;
 
+    if (In_mines(&u.uz) && !historysearch("entered the Minetown temple", TRUE))
+        historic_event(FALSE, TRUE, "entered the Minetown temple");
+
     if (!temple_occupied(u.urooms0)) {
         if (tended) {
             shrined = has_shrine(priest);

@@ -12,6 +12,7 @@ static void dosinkring(struct obj *);
 static int drop(struct obj *);
 
 static int menu_drop(int);
+static void on_mines_level(const struct level *);
 static void final_level(void);
 
 /* static boolean badspot(XCHAR_P,XCHAR_P); */
@@ -1239,6 +1240,8 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
 
     if (on_level(&u.uz, &astral_level))
         final_level();
+    else if (In_mines(&u.uz))
+        on_mines_level(level);
     else
         onquest(&orig_d);
 
@@ -1251,6 +1254,18 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     pickup(1, flags.interaction_mode);
 }
 
+/* This runs when the player enters a Mines level.  Its job is to record when
+   the player first reaches the bottom, mainly for livelog and xlog purposes. */
+static void
+on_mines_level(const struct level *lev)
+{
+    if (!In_mines(&lev->z))
+        return;
+    if (!can_dig_down(lev)) {
+        if (!historysearch("reached the bottom of the Mines", TRUE))
+            historic_event(FALSE, TRUE, "reached the bottom of the Mines.");
+    }
+}
 
 /* This runs as the player arrives on Astral. At this point, the Astral level
    RNG is in a consistent state between all games. We use it as far as it keeps
