@@ -232,10 +232,9 @@ pickup(int what, enum u_interaction_mode uim)
             return 0;
         }
 
-        /* If there's anything here, stop running and travel, but not
+        /* If there's anything here, stop running, but not travel or
            autoexplore unless it picks something up, which is handled later. */
-        if (OBJ_AT(u.ux, u.uy) && (flags.occupation == occ_move ||
-                                   flags.occupation == occ_travel))
+        if (OBJ_AT(u.ux, u.uy) && flags.occupation == occ_move)
             action_completed();
     }
 
