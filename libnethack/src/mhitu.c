@@ -1572,7 +1572,7 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
     if (!Engulfed) {  /* swallows you */
         if (youmonst.data->msize >= MZ_HUGE)
             return 0;
-        if ((t && ((t->ttyp == PIT) || (t->ttyp == SPIKED_PIT))) &&
+        if ((t && is_pit_trap(t->ttyp)) &&
             sobj_at(BOULDER, level, u.ux, u.uy))
             return 0;
 

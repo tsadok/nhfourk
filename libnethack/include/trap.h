@@ -76,7 +76,10 @@ struct trap {
 # define MAGIC_TRAP           21
 # define ANTI_MAGIC           22
 # define POLY_TRAP            23
-# define TRAPNUM 24
+# define STINKING_TRAP        24
+# define TRAPNUM 25
+
+# define is_pit_trap(t) ((t) == PIT || (t) == SPIKED_PIT)
 
 #define WAX_EROSION_AMOUNT 50 /* Used when candles are lit by fire damage. */
 

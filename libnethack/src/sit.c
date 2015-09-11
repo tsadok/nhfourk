@@ -52,8 +52,8 @@ dosit(const struct nh_cmd_arg *arg)
     }
 
     if ((trap = t_at(level, u.ux, u.uy)) != 0 && !u.utrap &&
-        (trap->ttyp == HOLE || trap->ttyp == TRAPDOOR || trap->ttyp == PIT ||
-         trap->ttyp == SPIKED_PIT) && trap->tseen) {
+        (trap->ttyp == HOLE || trap->ttyp == TRAPDOOR ||
+         is_pit_trap(trap->ttyp)) && trap->tseen) {
         pline("You sit on the edge of the %s.",
               trap->ttyp == HOLE ? "hole" : trap->ttyp ==
               TRAPDOOR ? "trapdoor" : "pit");
@@ -77,10 +77,19 @@ dosit(const struct nh_cmd_arg *arg)
                       body_part(FOOT));
                 u.utrap++;
             } else if (u.utraptype == TT_PIT) {
-                if (trap->ttyp == SPIKED_PIT) {
+                if ((trap->ttyp == SPIKED_PIT) &&
+                    (!spikes_are_poisoned(level, trap) || Poison_resistance)) {
                     pline("You sit down on a spike.  Ouch!");
                     losehp(1, killer_msg(DIED, "sitting on an iron spike"));
                     exercise(A_STR, FALSE);
+                } else if (trap->ttyp == SPIKED_PIT &&
+                           spikes_are_poisoned(level, trap)) {
+                    pline("You sit down on a spike.  It is poisoned!");
+                    poisoned("poisoned spike", A_STR,
+                             killer_msg(DIED, "sitting on a poisoned spike"),
+                             8);
+                    exercise(A_STR, FALSE);
+                    exercise(A_CON, FALSE);
                 } else
                     pline("You sit down in the pit.");
                 u.utrap += rn2(5);

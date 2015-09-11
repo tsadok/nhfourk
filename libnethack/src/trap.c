@@ -305,8 +305,7 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         if (u.utrap && (x == u.ux) && (y == u.uy) &&
             ((u.utraptype == TT_BEARTRAP && typ != BEAR_TRAP) ||
              (u.utraptype == TT_WEB && typ != WEB) ||
-             (u.utraptype == TT_PIT && typ != PIT &&
-              typ != SPIKED_PIT)))
+             (u.utraptype == TT_PIT && !is_pit_trap(typ))))
             u.utrap = 0;
     } else {
         oldplace = FALSE;
@@ -695,8 +694,7 @@ dotrap(struct trap *trap, unsigned trflags)
 
     /* KMH -- You can't escape the Sokoban level traps */
     if (In_sokoban(&u.uz) &&
-        (ttype == PIT || ttype == SPIKED_PIT || ttype == HOLE ||
-         ttype == TRAPDOOR)) {
+        (is_pit_trap(ttype) || ttype == HOLE || ttype == TRAPDOOR)) {
         /* The "air currents" message is still appropriate -- even when the
            hero isn't flying or levitating -- because it conveys the reason why
            the player cannot escape the trap with a dexterity check, clinging
@@ -706,15 +704,14 @@ dotrap(struct trap *trap, unsigned trflags)
         /* then proceed to normal trap effect */
     } else if (already_seen) {
         if ((Levitation || Flying) &&
-            (ttype == PIT || ttype == SPIKED_PIT || ttype == HOLE ||
-             ttype == BEAR_TRAP)) {
+            (is_pit_trap(ttype) || ttype == HOLE || ttype == BEAR_TRAP)) {
             pline("You %s over %s %s.", Levitation ? "float" : "fly",
                   a_your[trap->madeby_u], trapexplain[ttype - 1]);
             return;
         }
         if (!Fumbling && ttype != MAGIC_PORTAL && ttype != VIBRATING_SQUARE &&
             ttype != ANTI_MAGIC && !forcebungle &&
-            (!rn2(5) || ((ttype == PIT || ttype == SPIKED_PIT) &&
+            (!rn2(5) || (is_pit_trap(ttype) &&
                          is_clinger(youmonst.data)))) {
             pline("You escape %s %s.",
                   (ttype == ARROW_TRAP &&
@@ -952,10 +949,10 @@ dotrap(struct trap *trap, unsigned trflags)
         if (!In_sokoban(&u.uz) && is_clinger(youmonst.data)) {
             if (trap->tseen) {
                 pline("You see %s %spit below you.", a_your[trap->madeby_u],
-                      ttype == SPIKED_PIT ? "spiked " : "");
+                      (ttype == SPIKED_PIT) ? "spiked " : "");
             } else {
                 pline("%s pit %sopens up under you!", A_Your[trap->madeby_u],
-                      ttype == SPIKED_PIT ? "full of spikes " : "");
+                      (ttype == SPIKED_PIT) ? "full of spikes " : "");
                 pline("You don't fall in!");
             }
             break;
@@ -1006,7 +1003,7 @@ dotrap(struct trap *trap, unsigned trflags)
         if (!steedintrap(trap, NULL)) {
             if (ttype == SPIKED_PIT) {
                 losehp(rnd(10), "fell into a pit of iron spikes");
-                if (!rn2(6))
+                if (spikes_are_poisoned(level, trap))
                     poisoned("spikes", A_STR,
                              killer_msg(DIED, "a fall onto poison spikes"),
                              8);
@@ -1260,6 +1257,10 @@ dotrap(struct trap *trap, unsigned trflags)
             }
             break;
         }
+    case STINKING_TRAP:
+        create_gas_cloud(level, u.ux, u.uy, 2 + rn2(3), 3 + rne(3));
+        break;
+
     case MAGIC_PORTAL:
         feeltrap(trap);
         domagicportal(trap);
@@ -1353,6 +1354,10 @@ steedintrap(struct trap *trap, struct obj *otmp)
             }
             steedhit = TRUE;
             break;
+        case STINKING_TRAP:
+            create_gas_cloud(level, u.ux, u.uy, 2 + rn2(3), 3 + rne(3));
+            break;
+
     default:
             return 0;
         }
@@ -1762,8 +1767,8 @@ mintrap(struct monst *mtmp)
 
     if (trap && mtmp->mtrapped) {        /* is currently in the trap */
         if (!trap->tseen && cansee(mtmp->mx, mtmp->my) && canseemon(mtmp) &&
-            (trap->ttyp == SPIKED_PIT || trap->ttyp == BEAR_TRAP ||
-             trap->ttyp == HOLE || trap->ttyp == PIT || trap->ttyp == WEB)) {
+            (is_pit_trap(trap->ttyp) || trap->ttyp == BEAR_TRAP ||
+             trap->ttyp == HOLE || trap->ttyp == WEB)) {
             /* If you come upon an obviously trapped monster, then you must be
                able to see the trap it's in too. */
             seetrap(trap);
@@ -1771,7 +1776,7 @@ mintrap(struct monst *mtmp)
 
         if (!rn2(40)) {
             if (sobj_at(BOULDER, lev, mtmp->mx, mtmp->my) &&
-                (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT)) {
+                is_pit_trap(trap->ttyp)) {
                 if (!rn2(2)) {
                     mtmp->mtrapped = 0;
                     if (canseemon(mtmp))
@@ -1788,7 +1793,9 @@ mintrap(struct monst *mtmp)
                 deltrap(lev, trap);
                 mtmp->meating = 5;
                 mtmp->mtrapped = 0;
-            } else if (trap->ttyp == SPIKED_PIT) {
+            } else if (trap->ttyp == SPIKED_PIT &&
+                       (!spikes_are_poisoned(level, trap) ||
+                        resists_poison(mtmp))) {
                 if (canseemon(mtmp))
                     pline("%s munches on some spikes!", Monnam(mtmp));
                 trap->ttyp = PIT;
@@ -2304,6 +2311,20 @@ mintrap(struct monst *mtmp)
             }
             break;
 
+        case STINKING_TRAP:
+            if (in_sight)
+                pline(Hallucination ? msgprintf("%s cuts the cheese.",
+                                                Monnam(mtmp)) : 
+                      msgprintf("A cloud of foul-smelling gas"
+                                " billows up around %s!", mon_nam(mtmp)));
+            else
+                pline(Hallucination ? "Is someone fixing breakfast?" :
+                      "You catch a whiff of rotten eggs.");
+            create_gas_cloud(level, mtmp->mx, mtmp->my,
+                             2 + rn2(3), 3 + rne(3));
+            break;
+
+
         default:
             impossible("Some monster encountered a strange trap of type %d.",
                        tt);
@@ -2449,7 +2470,7 @@ fill_pit(struct level *lev, int x, int y)
     struct obj *otmp;
     struct trap *t;
 
-    if ((t = t_at(lev, x, y)) && ((t->ttyp == PIT) || (t->ttyp == SPIKED_PIT))
+    if ((t = t_at(lev, x, y)) && is_pit_trap(t->ttyp)
         && (otmp = sobj_at(BOULDER, lev, x, y))) {
         obj_extract_self(otmp);
         flooreffects(otmp, x, y, "settle");
@@ -2481,7 +2502,7 @@ float_down(long hmask)
     if (Punished && !carried(uball) &&
         (is_pool(level, uball->ox, uball->oy) ||
          ((trap = t_at(level, uball->ox, uball->oy)) &&
-          ((trap->ttyp == PIT) || (trap->ttyp == SPIKED_PIT) ||
+          (is_pit_trap(trap->ttyp) ||
            (trap->ttyp == TRAPDOOR) || (trap->ttyp == HOLE))))) {
         u.ux0 = u.ux;
         u.uy0 = u.uy;
@@ -3681,7 +3702,7 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
         deal_with_floor_trap = TRUE;
         the_trap = the(trapexplain[ttmp->ttyp - 1]);
         if (box_here) {
-            if (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) {
+            if (is_pit_trap(ttmp->ttyp)) {
                 pline("You can't do much about %s%s.", the_trap,
                       u.utrap ? " that you're stuck in" :
                       " while standing on the edge of it");
@@ -3876,6 +3897,28 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
     }
 }
 
+boolean
+spikes_are_poisoned(struct level *lev, struct trap *t)
+{
+    int  seed, i;
+    char seedbuf[RNG_SEED_SIZE_BASE64];
+    if (depth(&lev->z) < 8)
+        return FALSE;
+    if (t->madeby_u)
+        return FALSE;
+    get_initial_rng_seed(seedbuf);
+    seed = (int)(u.ubirthday % 65535);
+    for (i = 0; i < RNG_SEED_SIZE_BASE64; i++) {
+        seed += (int) seedbuf[i];
+        seed = seed % 65635;
+    }
+    seed += t->tx + (3 * t->ty);
+    if ((depth(&lev->z) / 5) >= (seed % 7))
+        return TRUE;
+    if (seed % 10)
+        return FALSE;
+    return TRUE;
+}
 
 /* only called when the player is doing something to the chest directly */
 boolean
@@ -4107,7 +4150,7 @@ delfloortrap(struct level *lev, struct trap *ttmp)
     if (ttmp &&
         ((ttmp->ttyp == SQKY_BOARD) || (ttmp->ttyp == BEAR_TRAP) ||
          (ttmp->ttyp == LANDMINE) || (ttmp->ttyp == FIRE_TRAP) ||
-         (ttmp->ttyp == PIT) || (ttmp->ttyp == SPIKED_PIT) ||
+         is_pit_trap(ttmp->ttyp) ||
          (ttmp->ttyp == HOLE) || (ttmp->ttyp == TRAPDOOR) ||
          (ttmp->ttyp == TELEP_TRAP) || (ttmp->ttyp == LEVEL_TELEP) ||
          (ttmp->ttyp == WEB) || (ttmp->ttyp == MAGIC_TRAP) ||

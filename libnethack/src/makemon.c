@@ -2061,7 +2061,7 @@ set_mimic_sym(struct monst *mtmp, struct level *lev, enum rng rng)
     my = mtmp->my;
     tt = t_at(lev, mx, my);
     above_pit = !(!tt ||
-                  ((tt->ttyp == PIT) || (tt->ttyp == SPIKED_PIT) ||
+                  (is_pit_trap(tt->ttyp) ||
                    (tt->ttyp == HOLE) || (tt->ttyp == TRAPDOOR)));
     typ = lev->locations[mx][my].typ;
     /* only valid for INSIDE of room */

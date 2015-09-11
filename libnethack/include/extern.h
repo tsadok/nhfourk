@@ -1822,6 +1822,7 @@ extern boolean drown(void);
 extern void drain_en(int);
 extern int dountrap(const struct nh_cmd_arg *);
 extern int untrap(const struct nh_cmd_arg *, boolean);
+extern boolean spikes_are_poisoned(struct level *, struct trap *);
 extern boolean chest_trap(struct obj *, int, boolean);
 extern void deltrap(struct level *, struct trap *);
 extern boolean delfloortrap(struct level *, struct trap *);

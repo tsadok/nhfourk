@@ -340,8 +340,7 @@ moverock(schar dx, schar dy)
 
             if (mtmp && !noncorporeal(mtmp->data) &&
                 (!mtmp->mtrapped ||
-                 !(ttmp &&
-                   ((ttmp->ttyp == PIT) || (ttmp->ttyp == SPIKED_PIT))))) {
+                 !(ttmp && is_pit_trap(ttmp->ttyp)))) {
                 if (Blind)
                     feel_location(sx, sy);
                 if (canspotmon(mtmp))
@@ -2132,7 +2131,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
            back. I'm not sure if there's any cases where that matters, but if
            someone finds one, it should be reported to the NH3 devteam. */
         if (mtmp->mtrapped && (trap = t_at(level, mtmp->mx, mtmp->my)) != 0 &&
-            (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) &&
+            is_pit_trap(trap->ttyp) &&
             sobj_at(BOULDER, level, trap->tx, trap->ty)) {
             /* can't swap places with pet pinned in a pit by a boulder */
             u.ux = u.ux0, u.uy = u.uy0; /* didn't move after all */
@@ -2403,7 +2402,7 @@ stillinwater:
          * If not a pit, pickup before triggering trap.
          * If pit, trigger trap before pickup.
          */
-        pit = (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT));
+        pit = (trap && is_pit_trap(trap->ttyp));
         if (trap && pit)
             dotrap(trap, 0);    /* fall into pit */
         /* TODO: This might not be correct if you m-direction into a pit. */
@@ -2763,7 +2762,7 @@ dopickup(const struct nh_cmd_arg *arg)
         /* Allow pickup from holes and trap doors that you escaped from because
            that stuff is teetering on the edge just like you, but not pits,
            because there is an elevation discrepancy with stuff in pits. */
-        if ((traphere->ttyp == PIT || traphere->ttyp == SPIKED_PIT) &&
+        if (is_pit_trap(traphere->ttyp) &&
             (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) && !Passes_walls) {
             pline("You cannot reach the bottom of the pit.");
             return (0);

@@ -3045,8 +3045,7 @@ repair_damage(struct level *lev, struct monst *shkp, struct damage *tmp_dam,
             otmp->quan = 1;
             otmp->owt = weight(otmp);
             mpickobj(shkp, otmp);
-        } else if (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT ||
-                   ttmp->ttyp == HOLE)
+        } else if (is_pit_trap(ttmp->ttyp) || ttmp->ttyp == HOLE)
             floordamage = TRUE;
         deltrap(lev, ttmp);
         if (IS_DOOR(tmp_dam->typ)) {

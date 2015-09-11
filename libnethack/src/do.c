@@ -146,7 +146,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
     if (obj->otyp == BOULDER && boulder_hits_pool(obj, x, y, FALSE))
         return TRUE;
     else if (obj->otyp == BOULDER && (t = t_at(lev, x, y)) != 0 &&
-             (t->ttyp == PIT || t->ttyp == SPIKED_PIT || t->ttyp == TRAPDOOR ||
+             (is_pit_trap(t->ttyp) || t->ttyp == TRAPDOOR ||
               t->ttyp == HOLE)) {
         if (((mtmp = m_at(lev, x, y)) && mtmp->mtrapped) ||
             (u.utrap && u.ux == x && u.uy == y)) {
@@ -208,7 +208,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
         return water_damage(obj, NULL, FALSE) == 3;
     } else if (u.ux == x && u.uy == y && (!u.utrap || u.utraptype != TT_PIT) &&
                (t = t_at(lev, x, y)) != 0 && t->tseen &&
-               (t->ttyp == PIT || t->ttyp == SPIKED_PIT)) {
+               is_pit_trap(t->ttyp)) {
         /* you escaped a pit and are standing on the precipice */
         if (Blind)
             You_hear("%s tumble downwards.", the(xname(obj)));
@@ -726,8 +726,8 @@ dodown(boolean autodig_ok)
         trap = t_at(level, u.ux, u.uy);
         can_fall = trap && (trap->ttyp == TRAPDOOR || trap->ttyp == HOLE);
         if (!trap ||
-            (trap->ttyp != TRAPDOOR && trap->ttyp != HOLE && trap->ttyp != PIT
-             && trap->ttyp != SPIKED_PIT)
+            (trap->ttyp != TRAPDOOR && trap->ttyp != HOLE && 
+             !is_pit_trap(trap->ttyp))
             || (!can_fall_thru(level) && can_fall) || !trap->tseen) {
 
             if (flags.autodig && autodig_ok && flags.autodigdown &&
@@ -767,7 +767,7 @@ dodown(boolean autodig_ok)
     }
 
     if (trap) {
-        if (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) {
+        if (is_pit_trap(trap->ttyp)) {
             if (u.utrap && (u.utraptype == TT_PIT)) {
                 if (flags.autodig && autodig_ok && flags.autodigdown &&
                     flags.occupation == occ_none && uwep && is_pick(uwep)) {
@@ -775,7 +775,7 @@ dodown(boolean autodig_ok)
                     arg_from_delta(0, 0, 1, &arg);
                     return use_pick_axe(uwep, &arg);
                 } else {
-                    pline("You are already in the pit.");      /* YAFM needed */
+                    pline("You have already capitulated to gravity.");
                 }
             } else {
                 u.utrap = 1;

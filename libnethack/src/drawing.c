@@ -155,7 +155,8 @@ const char *const trapexplain[] = {
 /*20*/ "statue trap",
     "magic trap",
     "anti-magic field",
-    "polymorph trap"
+    "polymorph trap",
+    "stinking cloud trap",
 };
 
 /*
@@ -233,7 +234,8 @@ const struct nh_symdef trapsyms[] = {
     {'^', "statue trap", CLR_GRAY},
 /*20*/ {'^', "magic trap", HI_ZAP},
     {'^', "anti-magic field", HI_ZAP},
-    {'^', "polymorph trap", CLR_BRIGHT_GREEN}
+    {'^', "polymorph trap", CLR_BRIGHT_GREEN},
+    {'^', "stinking cloud trap", CLR_GREEN}
 };
 
 

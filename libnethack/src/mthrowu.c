@@ -111,8 +111,7 @@ drop_throw(struct obj *obj, boolean ohit, int x, int y)
 
     if (create &&
         !((mtmp = m_at(level, x, y)) && (mtmp->mtrapped) &&
-          (t = t_at(level, x, y)) && ((t->ttyp == PIT) ||
-                                      (t->ttyp == SPIKED_PIT)))) {
+          (t = t_at(level, x, y)) && (is_pit_trap(t->ttyp)))) {
         int objgone = 0;
 
         if (down_gate(x, y) != -1)

@@ -397,8 +397,7 @@ find_defensive(struct monst *mtmp, struct musable *m)
     /* kludge to cut down on trap destruction (particularly portals) */
     t = t_at(lev, x, y);
     if (t &&
-        (t->ttyp == PIT || t->ttyp == SPIKED_PIT || t->ttyp == WEB ||
-         t->ttyp == BEAR_TRAP))
+        (is_pit_trap(t->ttyp) || t->ttyp == WEB || t->ttyp == BEAR_TRAP))
         t = 0;  /* ok for monster to dig here */
 
 #define nomore(x) if (m->has_defense==x) continue;

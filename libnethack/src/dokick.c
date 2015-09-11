@@ -443,8 +443,7 @@ kick_object(xchar x, xchar y, schar dx, schar dy, struct obj **kickobj_p)
         return 0;
 
     if ((trap = t_at(level, x, y)) != 0 &&
-        (((trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) && !Passes_walls) ||
-         trap->ttyp == WEB)) {
+        ((is_pit_trap(trap->ttyp) && !Passes_walls) || trap->ttyp == WEB)) {
         if (!trap->tseen)
             find_trap(trap);
         pline("You can't kick something that's in a %s!",
