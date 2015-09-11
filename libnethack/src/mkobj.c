@@ -581,6 +581,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 curse(otmp);
             else if (otmp->otyp == ROCK)
                 otmp->quan = 6 + rn2_on_rng(6, rng);
+            else if (otmp->otyp == FLINT)
+                otmp->quan = 1 + rn2_on_rng(5, rng);
             else if (otmp->otyp != LUCKSTONE && !rn2_on_rng(6, rng))
                 otmp->quan = 2L;
             else

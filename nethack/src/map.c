@@ -475,8 +475,8 @@ curses_getpos(int xorig, int yorig, nh_bool force, const char *goal)
                         for (tx = lo_x; tx <= hi_x; tx++) {
                             k = display_buffer[ty][tx].bg;
                             t = display_buffer[ty][tx].trap;
-                            if (k && matching_feats[k]
-                                || t && matching_feats[t]) {
+                            if ((k && matching_feats[k])
+                                || (t && matching_feats[t])) {
                                 cx = tx;
                                 cy = ty;
                                 goto nxtc;

@@ -57,6 +57,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Flint generates in larger stacks than previously.
+
  * Added historic events, xlogfile event bits, and livelog lines for
    entering the Minetown temple (the first time) and for reaching the
    bottom of the Mines.  Also added historic events and xlogfile event
