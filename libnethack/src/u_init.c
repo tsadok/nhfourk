@@ -662,7 +662,9 @@ void
 augment_skill_cap(int skill, int augment, int minimum, int maximum)
 {
     int count = 0;
-    while (count < augment && P_MAX_SKILL(skill) < maximum)
+    if (P_SKILL(skill) == P_ISRESTRICTED)
+        P_SKILL(skill) = P_BASIC;
+    while (count++ < augment && P_MAX_SKILL(skill) < maximum)
         P_MAX_SKILL(skill) = P_MAX_SKILL(skill) + 1;
     if (P_MAX_SKILL(skill) < minimum)
         P_MAX_SKILL(skill) = minimum;
