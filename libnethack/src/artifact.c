@@ -1262,6 +1262,31 @@ artifact_hit(struct monst * magr, struct monst * mdef, struct obj * otmp,
         }
         return realizes_damage;
     }
+    /* Magically-lit artifact weapons petrify trolls. */
+    if ((mdef->data->mlet == S_TROLL) && (artifact_light(otmp))) {
+        if (vis) {
+            if (Hallucination && !youdefend)
+                pline("Wow, that really brings out the color in %s %s %s!",
+                      s_suffix(mon_nam(mdef)),
+                      (mdef->female ? "beautiful" : "handsome"),
+                      makeplural(mbodypart(mdef, EYE)));
+            else {
+                discover_artifact(otmp->oartifact);
+                otmp->known = otmp->dknown = 1;
+                update_inventory();
+                pline("The light from %s flares up, illuminating %s %s.",
+                      yname(otmp), (youdefend ? "you" : mon_nam(mdef)),
+                      "like the sunshine on a bright summer day");
+            }
+        }
+        if (youdefend)
+            instapetrify(killer_msg(STONING,
+                                    msgprintf("being hit with %s",
+                                              xname(otmp))));
+        else
+            minstapetrify(mdef, youattack);
+        return 1;
+    }
 
     if (attacks(AD_STUN, otmp) && dieroll <= MB_MAX_DIEROLL) {
         /* Magicbane's special attacks (possibly modifies hittee[]) */
@@ -1582,7 +1607,8 @@ arti_invoke(struct obj *obj)
 boolean
 artifact_light(const struct obj * obj)
 {
-    return get_artifact(obj) && obj->oartifact == ART_SUNSWORD;
+    return get_artifact(obj) &&
+        (obj->oartifact == ART_SUNSWORD || obj->oartifact == ART_TROLLSBANE);
 }
 
 /* KMH -- Talking artifacts are finally implemented */
