@@ -1599,6 +1599,7 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
                 if (lvl < 8)
                     kind = NO_TRAP;
                 break;
+            case STINKING_TRAP:
             case FIRE_TRAP:
                 if (!In_hell(&lev->z))
                     kind = NO_TRAP;
@@ -1623,7 +1624,7 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
         m = *tm;
     else {
         int tryct = 0;
-        boolean avoid_boulder = (kind == PIT || kind == SPIKED_PIT ||
+        boolean avoid_boulder = (is_pit_trap(kind) ||
                                  kind == TRAPDOOR || kind == HOLE);
 
         do {

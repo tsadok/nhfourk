@@ -727,8 +727,7 @@ newsym_core(int x, int y, boolean reroll_hallucinated_appearances)
                     int tt = trap ? trap->ttyp : NO_TRAP;
 
                     /* if monster is in a physical trap, you see the trap too */
-                    if (tt == BEAR_TRAP || tt == PIT || tt == SPIKED_PIT ||
-                        tt == WEB) {
+                    if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB) {
                         trap->tseen = TRUE;
                     }
                 }

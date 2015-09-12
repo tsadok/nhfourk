@@ -74,6 +74,7 @@ static struct {
     "magic", MAGIC_TRAP}, {
     "anti magic", ANTI_MAGIC}, {
     "polymorph", POLY_TRAP}, {
+    "stinking cloud", STINKING_TRAP}, {
     0, 0}
 };
 

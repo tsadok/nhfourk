@@ -2249,7 +2249,7 @@ floorfood(const char *verb, const struct nh_cmd_arg *arg)
                                                            while riding */
         ((is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy)) &&
          (Wwalking || is_clinger(youmonst.data) || (Flying && !Breathless))) ||
-        (ttmp && ttmp->tseen && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT)
+        (ttmp && ttmp->tseen && is_pit_trap(ttmp->ttyp)
          && (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) && !Passes_walls))
         goto skipfloor;
 
