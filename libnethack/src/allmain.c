@@ -744,7 +744,8 @@ deluxe_sylph_healing(void)
         constitution_based_healing(Inhell ? u.ulevel :
                                    u.ulevel > 11 ? 9 :
                                    u.ulevel - 2);
-        morehungry((u.uhp - oldhp) * 3);
+        if (u.uhp > oldhp)
+            morehungry((u.uhp - oldhp) * 3);
         return;
     }
 }
