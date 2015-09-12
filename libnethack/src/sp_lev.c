@@ -2706,7 +2706,7 @@ load_maze(struct level *lev, dlb * fd)
             maze1xy(lev, &mm, DRY);
             trytrap = rndtrap(lev);
             if (sobj_at(BOULDER, lev, mm.x, mm.y))
-                while (trytrap == PIT || trytrap == SPIKED_PIT ||
+                while (is_pit_trap(trytrap) ||
                        trytrap == TRAPDOOR || trytrap == HOLE)
                     trytrap = rndtrap(lev);
             maketrap(lev, mm.x, mm.y, trytrap, mrng());
@@ -2902,9 +2902,10 @@ fixup_special(struct level *lev)
         for (x = croom->lx; x <= croom->hx; x++)
             for (y = croom->ly; y <= croom->hy; y++) {
                 mkgold(600 + mrn2(300), lev, x, y, mrng());
-                if (!mrn2(3) && !is_pool(lev, x, y))
-                    maketrap(lev, x, y, mrn2(3) ? LANDMINE : SPIKED_PIT,
+                if (!mrn2(3) && !is_pool(lev, x, y)) {
+                    maketrap(lev, x, y, (mrn2(3) ? LANDMINE : SPIKED_PIT),
                              mrng());
+                }
             }
     } else if (Role_if(PM_PRIEST) && In_quest(&lev->z)) {
         /* less chance for undead corpses (lured from lower morgues) */

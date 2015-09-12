@@ -1244,7 +1244,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                         if ((ttmp->ttyp != RUST_TRAP ||
                              mdat == &mons[PM_IRON_GOLEM])
                             && ttmp->ttyp != STATUE_TRAP &&
-                            ((ttmp->ttyp != PIT && ttmp->ttyp != SPIKED_PIT &&
+                            ((!is_pit_trap(ttmp->ttyp) &&
                               ttmp->ttyp != TRAPDOOR && ttmp->ttyp != HOLE)
                              || (!is_flyer(mdat)
                                  && !is_floater(mdat)
@@ -1259,6 +1259,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                             && (ttmp->ttyp != SQKY_BOARD || !is_flyer(mdat))
                             && (ttmp->ttyp != WEB ||
                                 (!amorphous(mdat) && !webmaker(mdat)))
+                            && (ttmp->ttyp != STINKING_TRAP)
                             ) {
                             if (!(flag & ALLOW_TRAPS)) {
                                 if ((mon->mtrapseen & (1L << (ttmp->ttyp - 1))) ||
@@ -2018,8 +2019,7 @@ xkilled(struct monst *mtmp, int dest)
     }
 
     if (mtmp->mtrapped && (t = t_at(level, x, y)) != 0 &&
-        (t->ttyp == PIT || t->ttyp == SPIKED_PIT) &&
-        sobj_at(BOULDER, level, x, y))
+        is_pit_trap(t->ttyp) && sobj_at(BOULDER, level, x, y))
         dest |= 2;      /*
                          * Prevent corpses/treasure being created "on top"
                          * of the boulder that is about to fall in. This is

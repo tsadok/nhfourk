@@ -352,7 +352,7 @@ describe_mon(int x, int y, int monnum, char *buf)
             int tt = t ? t->ttyp : NO_TRAP;
 
             /* newsym lets you know of the trap, so mention it here */
-            if (tt == BEAR_TRAP || tt == PIT || tt == SPIKED_PIT || tt == WEB)
+            if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB)
                 sprintf(buf + strlen(buf),
                         ", trapped in %s", an(trapexplain[tt - 1]));
             if (!t)

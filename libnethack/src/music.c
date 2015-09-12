@@ -264,8 +264,8 @@ do_earthquake(int force)
                        landmines detonate, but that's more trouble than it's
                        worth. */
                     if ((oldtrap = t_at(level, x, y))) {
-                        if (oldtrap->ttyp == PIT || oldtrap->ttyp == SPIKED_PIT
-                            || oldtrap->ttyp == HOLE ||
+                        if (is_pit_trap(oldtrap->ttyp) ||
+                            oldtrap->ttyp == HOLE ||
                             oldtrap->ttyp == TRAPDOOR ||
                             oldtrap->ttyp == VIBRATING_SQUARE ||
                             oldtrap->ttyp == MAGIC_PORTAL)

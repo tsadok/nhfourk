@@ -3084,7 +3084,7 @@ beam_hit(int ddx, int ddy, int range,   /* direction and range */
                               The(distant_name(obj, xname))); /* lame */
                     range = 0;
                 } else if (In_sokoban(&u.uz) && (t = t_at(level, x, y)) != 0 &&
-                           (t->ttyp == PIT || t->ttyp == SPIKED_PIT ||
+                           (is_pit_trap(t->ttyp) ||
                             t->ttyp == HOLE || t->ttyp == TRAPDOOR)) {
                     /* hero falls into the trap, so ball stops */
                     range = 0;

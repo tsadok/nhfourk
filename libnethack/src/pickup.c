@@ -209,7 +209,7 @@ pickup(int what, enum u_interaction_mode uim)
                because that stuff is teetering on the edge just like you, but
                not pits, because there is an elevation discrepancy with stuff
                in pits. */
-            if ((ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) &&
+            if (is_pit_trap(ttmp->ttyp) &&
                 (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) &&
                 !Passes_walls) {
                 read_engr_at(u.ux, u.uy);

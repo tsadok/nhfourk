@@ -1133,6 +1133,7 @@ dospinweb(void)
         case MAGIC_TRAP:
         case ANTI_MAGIC:
         case POLY_TRAP:
+        case STINKING_TRAP:
             pline("You have triggered a trap!");
             dotrap(ttmp, 0);
             return 1;

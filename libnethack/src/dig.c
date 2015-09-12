@@ -303,7 +303,7 @@ dig(void)
 
         if (u.uoccupation_progress[tos_dig] <= 50 ||
             ((ttmp = t_at(level, dpx, dpy)) != 0 &&
-             (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT ||
+             (is_pit_trap(ttmp->ttyp) ||
               ttmp->ttyp == TRAPDOOR || ttmp->ttyp == HOLE)))
             return 1;
 
@@ -711,7 +711,7 @@ dighole(boolean pit_only)
         }
 
     } else if ((boulder_here = sobj_at(BOULDER, level, u.ux, u.uy)) != 0) {
-        if (ttmp && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) && rn2(2)) {
+        if (ttmp && is_pit_trap(ttmp->ttyp) && rn2(2)) {
             pline("The boulder settles into the pit.");
             ttmp->ttyp = PIT;   /* crush spikes */
         } else {
@@ -1581,8 +1581,7 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
             return;
         } else if (isok(x, y)) {
             oldtrap = t_at(lev, x, y);
-            if (oldtrap && ((oldtrap->ttyp == PIT) ||
-                            (oldtrap->ttyp == SPIKED_PIT))) {
+            if (oldtrap && (is_pit_trap(oldtrap->ttyp))) {
                 growlarger = TRUE;
                 newtyp     = HOLE;
             } else {
@@ -1590,8 +1589,10 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
                 case 1:
                 case 2:
                     newtyp = SPIKED_PIT;
+                    break;
                 case 3:
                     newtyp = HOLE;
+                    break;
                 default:
                     newtyp = PIT;
                 }
@@ -1603,8 +1604,7 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
                 no_pit_message(magr, mdef);
                 return;
             } else if (oldtrap && (newtyp != HOLE) &&
-                       ((oldtrap->ttyp == PIT) ||
-                        (oldtrap->ttyp == SPIKED_PIT) ||
+                       (is_pit_trap(oldtrap->ttyp) ||
                         (oldtrap->ttyp == HOLE))) {
                 mtmp = m_at(lev, x, y);
                 if (cansee(x, y))
