@@ -57,8 +57,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
- * A couple of new Sokoban levels have been added, based on some
-   of the Slash'em Sokoban puzzles (modified to be less dangerous).
+ * Several new Sokoban levels have been added, based on some of the
+   Slash'em Sokoban puzzles (modified to be less dangerous).  One of
+   these replaces both of the ring-prize levels.  If you draw this
+   level, your sokoban prize is a sack containing a ring of polymorph
+   control, a ring of teleport control, and an extra random ring.
 
  * Wresting the last charge out of a wand is somewhat less
    tedious now than before.  It can still take several tries,
