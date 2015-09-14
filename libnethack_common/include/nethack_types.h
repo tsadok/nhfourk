@@ -29,8 +29,12 @@
 # endif
 
 /* size of terminal screen is (at least) (ROWNO+3) by (COLNO+1) */
+#ifndef COLNO
 # define COLNO          79
+#endif
+#ifndef ROWNO
 # define ROWNO          21
+#endif
 
 # define BUFSZ          256     /* for getlin buffers */
 # define QBUFSZ         128     /* for building question text */
