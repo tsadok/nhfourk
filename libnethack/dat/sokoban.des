@@ -797,6 +797,75 @@ OBJECT:'/',random,random
 MONSTER:'m',random,(04,10),m_object "boulder"
 
 
+# "The Snake"
+MAZE:"soko3-5",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+  ---------                 
+ --.......--                
+ |..--.--..|                
+ |.........|     -----      
+ |..-|.|-..|     |...|      
+---..|.|..---    |.{.|      
+|...........|    |...|      
+|..|.....|..|  ----S----    
+|-.|.---.|.-|  |.......|    
+|..|.....|..|  |.......|    
+|...........|  |.......|    
+---.--.--.---  |.......|    
+  |.......|    |.......|    
+  ---...---    ----+----    
+    |...|         |.|       
+    |...-----------.|       
+    |...............|       
+    -----------------       
+ENDMAP
+STAIR:(19,10),up
+STAIR:(06,13),down
+DOOR:locked,(19,13)
+DOOR:locked,(19,07)
+REGION:(00,00,27,17),lit,"ordinary"
+NON_DIGGABLE:(00,00,27,17)
+NON_PASSWALL:(00,00,27,17)
+
+# Boulders
+OBJECT:'`',"boulder",(03,03)
+OBJECT:'`',"boulder",(05,03)
+OBJECT:'`',"boulder",(07,03)
+OBJECT:'`',"boulder",(09,03)
+OBJECT:'`',"boulder",(06,06)
+OBJECT:'`',"boulder",(06,07)
+OBJECT:'`',"boulder",(02,08)
+OBJECT:'`',"boulder",(04,08)
+OBJECT:'`',"boulder",(08,08)
+OBJECT:'`',"boulder",(10,08)
+OBJECT:'`',"boulder",(06,09)
+OBJECT:'`',"boulder",(06,10)
+
+# Traps
+TRAP:"hole",(09,16)
+TRAP:"hole",(10,16)
+TRAP:"hole",(11,16)
+TRAP:"hole",(12,16)
+TRAP:"hole",(13,16)
+TRAP:"hole",(14,16)
+TRAP:"hole",(15,16)
+TRAP:"hole",(16,16)
+TRAP:"hole",(17,16)
+TRAP:"hole",(18,16)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+
 
 ### Third level ###
 MAZE:"soko2-1",' '

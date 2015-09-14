@@ -96,7 +96,7 @@ for my $b (@boulder) {
 print OUT "\n# Traps\n";
 for my $t (@pit) {
   ($x,$y) = map { sprintf "%02d", $_ } @$t;
-  print OUT qq[TRAP:"pit",($x,$y)\n];
+  print OUT qq[TRAP:"hole",($x,$y)\n];
 }
 
 if (scalar @scroll) {
