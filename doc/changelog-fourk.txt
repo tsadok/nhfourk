@@ -60,6 +60,10 @@ Changes in 4.3.0.3:
  * A couple of new Sokoban levels have been added, based on some
    of the Slash'em Sokoban puzzles (modified to be less dangerous).
 
+ * Wresting the last charge out of a wand is somewhat less
+   tedious now than before.  It can still take several tries,
+   but it's now ridiculously unlikely to take dozens of tries.
+
  * Trollsbane now lights up and instantly petrifies trolls.
 
  * Flint generates in larger stacks than previously.

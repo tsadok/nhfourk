@@ -3900,19 +3900,14 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
 boolean
 spikes_are_poisoned(struct level *lev, struct trap *t)
 {
-    int  seed, i;
-    char seedbuf[RNG_SEED_SIZE_BASE64];
+    int  seed;
     if (depth(&lev->z) < 8)
         return FALSE;
     if (t->madeby_u)
         return FALSE;
-    get_initial_rng_seed(seedbuf);
-    seed = (int)(u.ubirthday % 65535);
-    for (i = 0; i < RNG_SEED_SIZE_BASE64; i++) {
-        seed += (int) seedbuf[i];
-        seed = seed % 65635;
-    }
-    seed += t->tx + (3 * t->ty);
+    seed = (int) (u.ubirthday % 65535)
+        + (int) (gameseed_long() % 65535)
+        + t->tx + (3 * t->ty);
     if ((depth(&lev->z) / 5) >= (seed % 7))
         return TRUE;
     if (seed % 10)
