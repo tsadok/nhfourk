@@ -1851,6 +1851,10 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
             otmp->quan = rne_on_rng(2, rng);
             otmp->owt = weight(otmp);
         }
+        if (otmp->otyp == FLINT) {
+            otmp->quan += rn2_on_rng(4, rng);
+            otmp->owt = weight(otmp);
+        }
         if (mtmp->data->mlet == S_DEMON) {
             /* demons never get blessed objects */
             if (otmp->blessed)

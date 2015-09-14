@@ -1936,7 +1936,9 @@ wrestable(struct obj *wand)
 int
 zappable(struct obj *wand)
 {
-    if (wand->spe < 0 || (wand->spe == 0 && rn2(121))) {
+    int seed = (int) (gameseed_long() % 32767);
+    if (wand->spe < 0 || (wand->spe == 0 &&
+                          rn2(1 + ((moves + seed) % 21)))) {
         pline("You feel an absence of magical power.");
         wand->known = 1;        /* we know the :0 */
         return 0;

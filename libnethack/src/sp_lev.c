@@ -937,16 +937,17 @@ make_sokoprize(int origotyp, struct level *lev, int x, int y,
     /* TODO: else, maybe another useful amulet? */
     if (otyp == RIN_POLYMORPH_CONTROL &&
         (carrying(RIN_POLYMORPH_CONTROL) ||
-         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE)) &&
-        !carrying(RIN_TELEPORT_CONTROL) &&
-        !u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE))
-        otyp = RIN_TELEPORT_CONTROL;
+         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE) ||
+         u_have_property(UNCHANGING, ANY_PROPERTY, FALSE)) &&
+        !carrying(AMULET_OF_FLYING) &&
+        !u_have_property(FLYING, ANY_PROPERTY, FALSE))
+        otyp = AMULET_OF_FLYING;
     if (otyp == RIN_TELEPORT_CONTROL &&
         (carrying(RIN_TELEPORT_CONTROL) ||
          u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE)) &&
-        !carrying(RIN_POLYMORPH_CONTROL) &&
-        !u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE))
-        otyp = RIN_POLYMORPH_CONTROL;
+        !carrying(RIN_TELEPORTATION) &&
+        !u_have_property(TELEPORT, ANY_PROPERTY, FALSE))
+        otyp = RIN_TELEPORTATION;
     return mksobj_at(otyp, lev, x, y, init, artif, rng);
 }
 

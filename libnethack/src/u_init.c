@@ -71,7 +71,7 @@ static const struct trobj Cave_man[] = {
 #define C_AMMO  2
     {CLUB, 1, WEAPON_CLASS, 1, UNDEF_BLESS},
     {SLING, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
-    {FLINT, 0, GEM_CLASS, 15, UNDEF_BLESS},     /* quan is variable */
+    {FLINT, 0, GEM_CLASS, 3, UNDEF_BLESS},     /* quan is variable */
     {ROCK, 0, GEM_CLASS, 3, 0}, /* yields 18..33 */
     {LEATHER_ARMOR, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
@@ -710,11 +710,11 @@ u_init_inv_skills(void)
         break;
     case PM_CAVEMAN:
         trobj_list = copy_trobj_list(Cave_man);
-        trobj_list[C_AMMO].trquan = 20 + rolern2(11);
+        trobj_list[C_AMMO].trquan = 3 + rolern2(2);
         role_ini_inv(trobj_list, nclist);
         skill_init(Skill_C);
         augment_magic_chest_contents(SLING, 0, 1);
-        augment_magic_chest_contents(FLINT, 0, 5);
+        augment_magic_chest_contents(FLINT, 0, 15);
         augment_magic_chest_contents(SILVER_NUGGET, 0, 1);
         break;
     case PM_HEALER:

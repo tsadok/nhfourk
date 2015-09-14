@@ -744,7 +744,8 @@ deluxe_sylph_healing(void)
         constitution_based_healing(Inhell ? u.ulevel :
                                    u.ulevel > 11 ? 9 :
                                    u.ulevel - 2);
-        morehungry((u.uhp - oldhp) * 3);
+        if (u.uhp > oldhp)
+            morehungry((u.uhp - oldhp) * 3);
         return;
     }
 }
@@ -1064,6 +1065,9 @@ you_moved(void)
 
             /* when immobile, count is in turns */
             decrement_helplessness();
+
+            if (!(moves % 100))
+                doredraw();
         }
 
         /* flags.actions is currently correct for hero and monsters. If the hero

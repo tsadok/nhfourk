@@ -57,6 +57,20 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Several new Sokoban levels have been added, based on some of the
+   Slash'em Sokoban puzzles (modified to be less dangerous).  One of
+   these replaces both of the ring-prize levels.  If you draw this
+   level, your sokoban prize is a sack containing a ring of polymorph
+   control, a ring of teleport control, and an extra random ring.
+
+ * Wresting the last charge out of a wand is somewhat less
+   tedious now than before.  It can still take several tries,
+   but it's now ridiculously unlikely to take dozens of tries.
+
+ * Trollsbane now lights up and instantly petrifies trolls.
+
+ * Flint generates in larger stacks than previously.
+
  * Added historic events, xlogfile event bits, and livelog lines for
    entering the Minetown temple (the first time) and for reaching the
    bottom of the Mines.  Also added historic events and xlogfile event
