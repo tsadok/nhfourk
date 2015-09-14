@@ -1,4 +1,4 @@
-# Last modified by Alex Smith, 2015-03-31
+# Last modified by Alex Smith, 2015-05-22
 # Copyright (c) Alex Smith, 2013.
 # NetHack may be freely redistributed.  See license for details.
 # NetHack 4: aimake configuration.
@@ -17,7 +17,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
     options => {
         packagename      => 'nethack4',
         packagename_text => 'NetHack 4',
-        packageversion   => '4.3.beta2',
+        packageversion   => '4.3.beta3',
         companyname      => 'NetHack 4 DevTeam',
 
         AM_CPPFLAGS => '-DNETCLIENT -D_REENTRANT',
@@ -644,17 +644,17 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             install_feature => "gui",
         },
         _install_tilecompile_manpage => {
-            object => qr=bpath:doc/(?:nh4ct\.5|tilecompile\.6).*=,
+            object => qr=^bpath:doc/(?:nh4ct\.5|tilecompile\.6).*=,
             install_dir => "mandir",
             install_feature => "tilecompile",
         },
         _install_playfield_utils_manpage => {
-            object => qr=bpath:doc/$playfieldutils\.6.*=,
+            object => qr=^bpath:doc/$playfieldutils\.6.*=,
             install_dir => "mandir",
             install_feature => "playfield_utils",
         },
         _install_docs => {
-            object => qr=path:doc/(?:changelog|faq|philosophy)\.txt=,
+            object => qr=^path:doc/(?:changelog|faq|philosophy)\.txt=,
             install_dir => "docdir",
         },
         _install_copyright => {

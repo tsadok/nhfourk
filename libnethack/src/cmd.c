@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-02-04 */
+/* Last modified by Alex Smith, 2015-07-22 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -18,7 +18,6 @@
 #define CMD_TRAVEL (char)0x90
 
 static int doservercancel(const struct nh_cmd_arg *);
-static int domonability(const struct nh_cmd_arg *);
 static int dotravel(const struct nh_cmd_arg *);
 static int doautoexplore(const struct nh_cmd_arg *);
 static int dowelcome(const struct nh_cmd_arg *);
@@ -82,7 +81,7 @@ const struct cmd_desc cmdlist[] = {
      doattributes, CMD_MAINMENU | CMD_NOTIME},
     {"autoexplore", "automatically explore until something happens", 'v', 0,
      FALSE, doautoexplore, 0},
-    {"cast", "cast a spell from memory", 'Z', 0, TRUE, docast,
+    {"cast", "use a magical or supernatural ability", 'Z', 0, TRUE, docast,
      CMD_ARG_SPELL | CMD_ARG_DIR | CMD_ARG_POS},
     {"chat", "talk to someone", 'c', M('c'), TRUE, dotalk,
      CMD_ARG_DIR | CMD_EXT},     /* converse? */
@@ -103,7 +102,7 @@ const struct cmd_desc cmdlist[] = {
      CMD_ARG_OBJ},
     {"elbereth", "write an Elbereth in the dust", C('e'), 0, FALSE, doelbereth,
      0},
-    {"enhance", "advance or check weapon and spell skills", M('e'), 0, TRUE,
+    {"enhance", "advance or check your character's skills", M('e'), 0, TRUE,
      enhance_weapon_skill, CMD_EXT | CMD_MAINMENU},
     {"engrave", "write on the floor", 'E', 0, FALSE, doengrave,
      CMD_ARG_OBJ | CMD_ARG_STR},
@@ -190,7 +189,7 @@ const struct cmd_desc cmdlist[] = {
     {"showworn", "list your equipment", 0, 0, TRUE, doprinuse,
      CMD_NOTIME},
     {"sit", "sit down", M('s'), 0, FALSE, dosit, CMD_EXT},
-    {"spellbook", "display and change letters of spells", '+', 0, TRUE,
+    {"spellbook", "display and organise your magical abilities", '+', 0, TRUE,
      dovspell, CMD_MAINMENU},
     {"swapweapon", "exchange wielded and alternate weapon", 'x', 0, FALSE,
      doswapweapon, 0},
@@ -342,52 +341,6 @@ static int
 doservercancel(const struct nh_cmd_arg *arg)
 {
     (void) arg;
-    return 0;
-}
-
-/* #monster command - use special monster ability while polymorphed */
-static int
-domonability(const struct nh_cmd_arg *arg)
-{
-    if (can_breathe(youmonst.data))
-        return dobreathe(arg);
-    else if (attacktype(youmonst.data, AT_SPIT))
-        return dospit(arg);
-    else if (attacktype(youmonst.data, AT_MAGC))
-        return castum((struct monst *)0,
-                      &youmonst.data->
-                      mattk[attacktype(youmonst.data, AT_MAGC)]);
-    else if (youmonst.data->mlet == S_NYMPH)
-        return doremove();
-    else if (attacktype(youmonst.data, AT_GAZE))
-        return dogaze(apply_interaction_mode());
-    else if (is_were(youmonst.data))
-        return dosummon();
-    else if (webmaker(youmonst.data))
-        return dospinweb();
-    else if (is_hider(youmonst.data))
-        return dohide();
-    else if (is_mind_flayer(youmonst.data))
-        return domindblast();
-    else if (u.umonnum == PM_GREMLIN) {
-        if (IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
-            if (split_mon(&youmonst, NULL))
-                dryup(u.ux, u.uy, TRUE);
-        } else
-            pline("There is no fountain here.");
-    } else if (is_unicorn(youmonst.data)) {
-        use_unicorn_horn(NULL);
-        return 1;
-    } else if (youmonst.data->msound == MS_SHRIEK) {
-        pline("You shriek.");
-        if (u.uburied)
-            pline("Unfortunately sound does not carry well through rock.");
-        else
-            aggravate();
-    } else if (Upolyd)
-        pline("Any special ability you may have is purely reflexive.");
-    else
-        pline("You don't have a special ability in your normal form!");
     return 0;
 }
 
@@ -1522,12 +1475,13 @@ dir_to_delta(enum nh_direction dir, schar * dx, schar * dy, schar * dz)
     return TRUE;
 }
 
-/* The caller must verify that the delta is valid. */
+/* In case of invalid input, returns DIR_NONE. */
 void
 arg_from_delta(schar dx, schar dy, schar dz, struct nh_cmd_arg *arg)
 {
     int i;
     arg->argtype = CMD_ARG_DIR;
+    arg->dir = DIR_NONE;
 
     /* TODO: Bleh at the hardcoded 11. */
     for (i = 0; i < 11; i++) {
@@ -1544,6 +1498,9 @@ getargdir(const struct nh_cmd_arg *arg, const char *query,
     if ((arg->argtype & CMD_ARG_DIR) &&
         dir_to_delta(arg->dir, dx, dy, dz) &&
         (!*dx || !*dy || u.umonnum != PM_GRID_BUG)) {
+
+        turnstate.intended_dx = *dx;
+        turnstate.intended_dy = *dy;
 
         /* getdir() has a stun/confusion check; replicate that here.
 
@@ -1579,7 +1536,7 @@ struct obj *
 getargobj(const struct nh_cmd_arg *arg, const char *let, const char *word)
 {
     struct obj *obj = NULL, *otmp;
-  
+
     /* Did the client specify an inventory letter? */
     if (arg->argtype & CMD_ARG_OBJ)
         for (otmp = invent; otmp && !obj; otmp = otmp->nobj)
@@ -1842,8 +1799,7 @@ dotravel(const struct nh_cmd_arg *arg)
 
     action_incomplete("travelling", occ_travel);
     return domove(&(struct nh_cmd_arg){.argtype = CMD_ARG_DIR, .dir = DIR_SELF},
-                  uim_nointeraction, occ_travel);
+                  exploration_interaction_status(), occ_travel);
 }
 
 /*cmd.c*/
-

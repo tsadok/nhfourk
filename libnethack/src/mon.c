@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-07-21 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -383,6 +383,7 @@ minliquid(struct monst *mtmp)
     }
 
     if (inlava) {
+        boolean alive_means_lifesaved = TRUE;
         /*
          * Lava effects much as water effects. Lava likers are able to
          * protect their stuff. Fire resistant monsters can only protect
@@ -401,12 +402,20 @@ minliquid(struct monst *mtmp)
                     if (cansee(mtmp->mx, mtmp->my))
                         pline("%s surrenders to the fire.", Monnam(mtmp));
                     mondead(mtmp);
-                } else if (cansee(mtmp->mx, mtmp->my))
-                    pline("%s burns slightly.", Monnam(mtmp));
+                } else {
+                    alive_means_lifesaved = FALSE;
+                    if (cansee(mtmp->mx, mtmp->my))
+                        pline("%s burns slightly.", Monnam(mtmp));
+                }
             }
             if (mtmp->mhp > 0) {
                 fire_damage(mtmp->minvent, FALSE, FALSE, mtmp->mx, mtmp->my);
-                rloc(mtmp, FALSE);
+                if (alive_means_lifesaved) {
+                    rloc(mtmp, TRUE);
+                    /* Analogous to player case: if we have nowhere to place the
+                       monster, it ends up back in the lava, and dies again */
+                    minliquid(mtmp);
+                }
                 return 0;
             }
             return 1;
@@ -428,8 +437,9 @@ minliquid(struct monst *mtmp)
             }
             mondead(mtmp);
             if (mtmp->mhp > 0) {
-                rloc(mtmp, FALSE);
+                rloc(mtmp, TRUE);
                 water_damage_chain(mtmp->minvent, FALSE);
+                minliquid(mtmp);
                 return 0;
             }
             return 1;
@@ -532,7 +542,7 @@ mcalcmove(struct monst *mon)
            been shown to be a) abusable, and b) really confusing in practice.
            (flags.mv no longer exists, but the same effect could be achieved
            using flags.occupation. It's just that this is no longer an effect
-           that's worth acheiving.) */
+           that's worth achieving.) */
         if (u.ugallop) {
             /* movement is 1.50 times normal; randomization has been removed
                because mcalcmove now needs to be deterministic */
@@ -1130,7 +1140,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                     dispy = u.uy;
 
                     /* The code previously checked for (checkobj || Displaced),
-                       but that's wrong if the mu[xy] == nu[xy] check fails;
+                       but that's wrong if the mu[xy] == n[xy] check fails;
                        it'll incorrectly treat you as activating an engraving
                        on n[xy]. Instead, we check for checkobj in the other
                        branch of the if statement, and unconditionally check
@@ -1180,8 +1190,8 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                             info[cnt] |= ALLOW_TM;
                         }
                     }
-                    /* Note: ALLOW_SANCT only prevents movement, not */
-                    /* attack, into a temple. */
+                    /* Note: ALLOW_SANCT only prevents movement, not attack,
+                       into a temple. */
                     if (*in_rooms(mlevel, nx, ny, TEMPLE) &&
                         !*in_rooms(mlevel, x, y, TEMPLE) &&
                         in_your_sanctuary(NULL, nx, ny)) {
@@ -1212,12 +1222,11 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                         (curr_mon_load(mon) > 600)))
                     continue;
                 /* The monster avoids a particular type of trap if it's familiar
-                 * with the trap type.  Pets get ALLOW_TRAPS and checking is
-                 * done in dogmove.c.  In either case, "harmless" traps are
-                 * neither avoided nor marked in info[]. Quest leaders avoid
-                 * traps even if they aren't familiar with them, because they're
-                 * being careful or something.
-                 */
+                   with the trap type. Pets get ALLOW_TRAPS and checking is done
+                   in dogmove.c. In either case, "harmless" traps are neither
+                   avoided nor marked in info[]. Quest leaders avoid traps even
+                   if they aren't familiar with them, because they're being
+                   careful or something. */
                 {
                     struct trap *ttmp = t_at(mlevel, nx, ny);
 
@@ -1340,8 +1349,9 @@ mm_aggression(const struct monst *magr, /* monster that might attack */
 
     /* magr or mdef as the player is a special case; not checking Conflict is
        correct, because it shouldn't suddenly warn you of peacefuls */
-    if (magr == &youmonst && !u.uconduct[conduct_killer])
-        return mdef->mpeaceful ? 0 : (ALLOW_M | ALLOW_TM);
+    if (magr == &youmonst)
+        return (mdef->mpeaceful || !u.uconduct[conduct_killer])
+            ? 0 : (ALLOW_M | ALLOW_TM);
     if (mdef == &youmonst)
         return magr->mpeaceful ? 0 : (ALLOW_M | ALLOW_TM);
 
@@ -2204,7 +2214,8 @@ mnearto(struct monst * mtmp, xchar x, xchar y, boolean move_other)
         /* actually we have real problems if enexto ever fails. migrating_mons
            that need to be placed will cause no end of trouble. */
         if (!enexto(&mm, level, newx, newy, mtmp->data))
-            return FALSE;
+            panic("Nowhere to place '%s' (at (%d, %d), wanted (%d, %d))",
+                  k_monnam(mtmp), mtmp->mx, mtmp->my, x, y);
         newx = mm.x;
         newy = mm.y;
     }
