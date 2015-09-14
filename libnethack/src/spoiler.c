@@ -183,10 +183,10 @@ spoiloneattack(const struct attack *attk)
          "shock", "strength drain", "acid", "special1", "special2",
          "blinding", "stun", "slow", "paralysis", "level drain",
          "energy drain", "leg wound", "petrification", "stick-to-you",
-         "gold theft", "item theft", "seduction (SEDU)", "teleportation",
+         "gold theft", "item theft", "charming", "teleportation",
          "rust", "confusion", "digestion", "healing", "wrap-around",
          "lycanthropy", "dexterity drain", "constitution drain",
-         "intelligence drain", "disease", "rotting", "seduction (SSEX)",
+         "intelligence drain", "disease", "rotting", "seduction",
          "hallucination", "death", "pestilence", "famine", "sliming",
          "disenchantment", "corrosion", "vicarous suffering",
          "stinking cloud", "pits", "iceblock"};
