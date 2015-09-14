@@ -54,6 +54,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.2:
 -------------------
 
+ * It is possible to specify COLNO and ROWNO at compile time (put
+   something like -ROWNO=30 in the CFLAGS environment variable
+   when running aimake).  Note that changing these values breaks
+   save compatibility and is known to be buggy at this time.
+
  * Added the Geoduck tileset, by Robert M. Cook.  This tileset is
    based on the idea of prominently incorporating the traditional
    ASCII symbols for each monster (and in many cases item) into
