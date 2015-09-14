@@ -1202,21 +1202,21 @@ OBJECT:'`',"boulder",(03,02)
 OBJECT:'`',"boulder",(04,02)
 
 # Traps
-TRAP:"pit",(14,11)
-TRAP:"pit",(15,11)
-TRAP:"pit",(16,11)
-TRAP:"pit",(17,11)
-TRAP:"pit",(18,11)
-TRAP:"pit",(19,11)
-TRAP:"pit",(20,10)
-TRAP:"pit",(20,09)
-TRAP:"pit",(20,08)
-TRAP:"pit",(20,07)
-TRAP:"pit",(20,06)
-TRAP:"pit",(20,05)
-TRAP:"pit",(20,04)
-TRAP:"pit",(20,03)
-TRAP:"pit",(20,02)
+TRAP:"hole",(14,11)
+TRAP:"hole",(15,11)
+TRAP:"hole",(16,11)
+TRAP:"hole",(17,11)
+TRAP:"hole",(18,11)
+TRAP:"hole",(19,11)
+TRAP:"hole",(20,10)
+TRAP:"hole",(20,09)
+TRAP:"hole",(20,08)
+TRAP:"hole",(20,07)
+TRAP:"hole",(20,06)
+TRAP:"hole",(20,05)
+TRAP:"hole",(20,04)
+TRAP:"hole",(20,03)
+TRAP:"hole",(20,02)
 
 # Random objects
 OBJECT:'%',random,random
@@ -1294,26 +1294,26 @@ OBJECT:'`',"boulder",(21,13)
 OBJECT:'`',"boulder",(15,14)
 
 # Traps
-TRAP:"pit",(04,06)
-TRAP:"pit",(05,06)
-TRAP:"pit",(06,06)
-TRAP:"pit",(07,06)
-TRAP:"pit",(08,06)
-TRAP:"pit",(09,06)
-TRAP:"pit",(10,06)
-TRAP:"pit",(11,06)
-TRAP:"pit",(11,07)
-TRAP:"pit",(12,08)
-TRAP:"pit",(13,08)
-TRAP:"pit",(14,09)
-TRAP:"pit",(14,10)
-TRAP:"pit",(15,10)
-TRAP:"pit",(16,10)
-TRAP:"pit",(17,10)
-TRAP:"pit",(18,10)
-TRAP:"pit",(19,10)
-TRAP:"pit",(20,10)
-TRAP:"pit",(21,10)
+TRAP:"hole",(04,06)
+TRAP:"hole",(05,06)
+TRAP:"hole",(06,06)
+TRAP:"hole",(07,06)
+TRAP:"hole",(08,06)
+TRAP:"hole",(09,06)
+TRAP:"hole",(10,06)
+TRAP:"hole",(11,06)
+TRAP:"hole",(11,07)
+TRAP:"hole",(12,08)
+TRAP:"hole",(13,08)
+TRAP:"hole",(14,09)
+TRAP:"hole",(14,10)
+TRAP:"hole",(15,10)
+TRAP:"hole",(16,10)
+TRAP:"hole",(17,10)
+TRAP:"hole",(18,10)
+TRAP:"hole",(19,10)
+TRAP:"hole",(20,10)
+TRAP:"hole",(21,10)
 
 # Random objects
 OBJECT:'%',random,random
@@ -1383,6 +1383,78 @@ TRAP:"hole",(20,10)
 TRAP:"hole",(21,10)
 TRAP:"hole",(22,10)
 TRAP:"hole",(23,10)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+# Sneak Preview
+MAZE: "soko2-8",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345678901234567890
+MAP
+           ----
+ -----------..|
+ |............|
+ |.--.-------.|
+--......|...|.|
+|.......+...|.|
+|.......|...|.|
+|-+--.--|FFF-+|
+|...|...|.....|
+|...|.|.|K....|
+|...|.|.|.....|
+----|...------|
+    |......--.|
+    |.--....|.|
+    |.....-.|.|
+    |.-.-...|.|
+    |.......-S|
+    -----.....|
+        --....|
+         ------
+ENDMAP
+STAIR:(11,09),up
+STAIR:(11,18),down
+DOOR:closed,(08,05)
+DOOR:closed,(02,07)
+DOOR:locked,(13,07)
+DOOR:locked,(13,16)
+REGION:(00,00,14,19),lit,"ordinary"
+NON_DIGGABLE:(00,00,14,19)
+NON_PASSWALL:(00,00,14,19)
+
+# Boulders
+OBJECT:'`',"boulder",(04,02)
+OBJECT:'`',"boulder",(10,05)
+OBJECT:'`',"boulder",(02,09)
+OBJECT:'`',"boulder",(05,10)
+OBJECT:'`',"boulder",(06,11)
+OBJECT:'`',"boulder",(07,12)
+OBJECT:'`',"boulder",(08,13)
+OBJECT:'`',"boulder",(09,14)
+OBJECT:'`',"boulder",(10,15)
+OBJECT:'`',"boulder",(08,16)
+OBJECT:'`',"boulder",(11,16)
+OBJECT:'`',"boulder",(12,17)
+
+# Traps
+TRAP:"hole",(06,02)
+TRAP:"hole",(07,02)
+TRAP:"hole",(08,02)
+TRAP:"hole",(09,02)
+TRAP:"hole",(10,02)
+TRAP:"hole",(11,02)
+TRAP:"hole",(13,03)
+TRAP:"hole",(13,04)
+TRAP:"hole",(13,05)
+TRAP:"hole",(13,06)
 
 # Random objects
 OBJECT:'%',random,random

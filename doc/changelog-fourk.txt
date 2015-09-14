@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * A couple of new Sokoban levels have been added, based on some
+   of the Slash'em Sokoban puzzles (modified to be less dangerous).
+
  * Trollsbane now lights up and instantly petrifies trolls.
 
  * Flint generates in larger stacks than previously.
