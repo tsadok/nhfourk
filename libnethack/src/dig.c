@@ -292,6 +292,11 @@ dig(void)
        factor is going to override almost anyting else. */
     if (Race_if(PM_DWARF))
         u.uoccupation_progress[tos_dig] *= 2;
+    if (u_have_property(FAST_DIGGING, ANY_PROPERTY, FALSE)) {
+        if (u.uoccupation_progress[tos_dig] < 20)
+            u.uoccupation_progress[tos_dig] = 20;
+        u.uoccupation_progress[tos_dig] *= 3;
+    }
     if (down) {
         struct trap *ttmp;
 
