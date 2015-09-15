@@ -98,6 +98,7 @@ static struct {
     "anthole", ANTHOLE}, {
     "cocknest", COCKNEST}, {
     "leprehall", LEPREHALL}, {
+    "dragonhall", DRAGONHALL}, {
     "shop", SHOPBASE}, {
     "armor shop", ARMORSHOP}, {
     "scroll shop", SCROLLSHOP}, {

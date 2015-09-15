@@ -57,6 +57,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Added a new special room type, dragon halls.
+
  * Several new Sokoban levels have been added, based on some of the
    Slash'em Sokoban puzzles (modified to be less dangerous).  One of
    these replaces both of the ring-prize levels.  If you draw this
