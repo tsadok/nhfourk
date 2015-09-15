@@ -3042,14 +3042,14 @@ doapply(const struct nh_cmd_arg *arg)
             use_magic_whistle(obj);
             /* sometimes the blessing will be worn off */
             if (!rn2_on_rng(49, rng_eucalyptus)) {
+                if (obj->quan > 1L)
+                    obj = splitobj(obj, 1L);
+                unbless(obj);
                 if (!Blind) {
                     pline("%s %s %s.", Shk_Your(obj), aobjnam(obj, "glow"),
                           hcolor("brown"));
                     obj->bknown = 1;
                 }
-                if (obj->quan > 1L)
-                    obj = splitobj(obj, 1L);
-                unbless(obj);
             }
         } else {
             use_whistle(obj);
