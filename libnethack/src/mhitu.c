@@ -2193,7 +2193,7 @@ doseduce(struct monst *mon)
     /* by this point you have discovered mon's identity, blind or not... */
     pline("Time stands still while you and %s lie in each other's arms...",
           noit_mon_nam(mon));
-    if (rn2_on_rng(35, rng_foocubus_results) > ACURR(A_CHA) + ACURR(A_INT)) {
+    if (rn2_on_rng(70, rng_foocubus_results) > ACURR(A_CHA) + ACURR(A_INT)) {
         /* Don't bother with mspec_used here... it didn't get tired! */
         pline("%s seems to have enjoyed it more than you...", noit_Monnam(mon));
         switch (rn2_on_rng(5, rng_foocubus_results)) {
@@ -2241,22 +2241,18 @@ doseduce(struct monst *mon)
         case 0:
             pline("You feel raised to your full potential.");
             exercise(A_CON, TRUE);
-            u.uen = (u.uenmax += rnd(5));
+            if (u.uenmax < 50)
+                u.uen = (u.uenmax += rnd(5));
             break;
         case 1:
             pline("You feel good enough to do it again.");
-            adjattrib(A_CON, 1, TRUE);
             exercise(A_CON, TRUE);
             break;
         case 2:
             pline("You will always remember %s...", noit_mon_nam(mon));
             exercise(A_WIS, TRUE);
             break;
-        case 3:
-            pline("That was a very educational experience.");
-            pluslvl(FALSE);
-            break;
-        case 4:
+        default:
             pline("You feel restored to health!");
             u.uhp = u.uhpmax;
             if (Upolyd)
