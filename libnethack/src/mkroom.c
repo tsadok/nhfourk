@@ -21,6 +21,7 @@ static boolean isbig(struct mkroom *);
 static struct mkroom *pick_room(struct level *lev, boolean strict, enum rng);
 static void mkshop(struct level *lev);
 static void mkzoo(struct level *lev, int type, enum rng rng);
+static void mkdragonhall(struct level *lev, int type, enum rng rng);
 static void mkswamp(struct level *lev);
 static void mktemple(struct level *lev);
 static coord *shrine_pos(struct level *lev, int roomno);
@@ -77,6 +78,9 @@ mkroom(struct level *lev, int roomtype)
             break;
         case LEPREHALL:
             mkzoo(lev, LEPREHALL, rng_main);
+            break;
+        case DRAGONHALL:
+            mkdragonhall(lev, DRAGONHALL, rng_main);
             break;
         case COCKNEST:
             mkzoo(lev, COCKNEST, rng_main);
@@ -184,6 +188,17 @@ mkzoo(struct level *lev, int type, enum rng rng)
     if ((sroom = pick_room(lev, FALSE, rng)) != 0) {
         sroom->rtype = type;
         fill_zoo(lev, sroom, rng);
+    }
+}
+
+static void
+mkdragonhall(struct level *lev, int type, enum rng rng)
+{
+    struct mkroom *sroom;
+
+    if ((sroom = pick_room(lev, FALSE, rng)) != 0) {
+        sroom->rtype = type;
+        fill_dragonhall(lev, sroom, rng);
     }
 }
 
@@ -330,6 +345,142 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
         /* the royal coffers */
         chest = mksobj_at(CHEST, lev, mm.x, mm.y, TRUE, FALSE, rng);
         chest->spe = 2;     /* so it can be found later */
+    }
+}
+
+void
+fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
+{
+    int px, py, i, imax, cutoffone, cutofftwo, cutoffthree;
+    int rmno = (sroom - lev->rooms) + ROOMOFFSET;
+    coord pos[ROWNO * COLNO];
+    int babypm, adultpm, greatpm,
+        gemone, gemtwo, glass,
+        itemone, itemtwo, itemthree;
+    int color = rn2_on_rng(6, rng);
+    switch (color) {
+    case 1: /* blue */
+        babypm    = PM_BABY_BLUE_DRAGON;
+        adultpm   = PM_BLUE_DRAGON;
+        greatpm   = adultpm; /* TODO */
+        gemone    = SAPPHIRE;
+        gemtwo    = AQUAMARINE;
+        glass     = WORTHLESS_PIECE_OF_BLUE_GLASS;
+        itemone   = RIN_SHOCK_RESISTANCE;
+        itemtwo   = CORNUTHAUM;
+        itemthree = WAN_LIGHTNING;
+        break;
+    case 2: /* green */
+        babypm    = PM_BABY_GREEN_DRAGON;
+        adultpm   = PM_GREEN_DRAGON;
+        greatpm   = adultpm; /* TODO */
+        gemone    = EMERALD;
+        gemtwo    = JADE;
+        glass     = WORTHLESS_PIECE_OF_GREEN_GLASS;
+        itemone   = RIN_POISON_RESISTANCE;
+        itemtwo   = POT_SICKNESS;
+        itemthree = AMULET_VERSUS_POISON;
+        break;
+    case 3: /* white */
+        babypm    = PM_BABY_WHITE_DRAGON;
+        adultpm   = PM_WHITE_DRAGON;
+        greatpm   = adultpm; /* TODO */
+        gemone    = DIAMOND;
+        gemtwo    = OPAL;
+        glass     = WORTHLESS_PIECE_OF_WHITE_GLASS;
+        itemone   = RIN_COLD_RESISTANCE;
+        itemtwo   = ICE_BOX;
+        itemthree = WAN_COLD;
+        break;
+    case 4: /* orange */
+        babypm    = PM_BABY_ORANGE_DRAGON;
+        adultpm   = PM_ORANGE_DRAGON;
+        greatpm   = adultpm; /* TODO */
+        gemone    = JACINTH;
+        gemtwo    = AGATE;
+        glass     = WORTHLESS_PIECE_OF_ORANGE_GLASS;
+        itemone   = AMULET_OF_RESTFUL_SLEEP;
+        itemtwo   = ORANGE;
+        itemthree = WAN_SLEEP;
+        break;
+    default: /* red */
+        babypm    = PM_BABY_RED_DRAGON;
+        adultpm   = PM_RED_DRAGON;
+        greatpm   = adultpm; /* TODO */
+        gemone    = RUBY;
+        gemtwo    = GARNET;
+        glass     = WORTHLESS_PIECE_OF_RED_GLASS;
+        itemone   = RIN_FIRE_RESISTANCE;
+        itemtwo   = SCR_FIRE;
+        itemthree = WAN_FIRE;
+        break;
+    }
+    i = 0;
+    /* Add all the viable floor positions in the room to a list: */
+    for (px = sroom->lx; px <= sroom->hx; px++) {
+        for (py = sroom->ly; py <= sroom->hy; py++) {
+            if (lev->locations[px][py].typ == ROOM ||
+                lev->locations[px][py].typ == CORR ||
+                lev->locations[px][py].typ == FOUNTAIN) {
+                coord p;
+                p.x = px; p.y = py;
+                pos[i] = p;
+                i++;
+                imax = i;
+            }
+        }
+    }
+    /* Shuffle the list of floor positions: */
+    for (i = 0; i <= imax; i++) {
+        int o = rn2_on_rng(imax, rng);
+        coord swap = pos[i];
+        pos[i] = pos[o];
+        pos[o] = swap;
+    }
+    cutoffone = 1 + rn2_on_rng(1 + imax / 15, rng);
+    cutofftwo = cutoffone + (imax / 10) + rn2_on_rng(1 + imax / 40, rng);
+    cutoffthree = imax - rn2_on_rng(1 + imax / 10, rng);
+    for (i = 0; i <= imax; i++) {
+        /* dragons hoard gold */
+        mkgold(10 + rn2_on_rng(7 + 5 * level_difficulty(&lev->z), rng),
+               lev, pos[i].x, pos[i].y, rng);
+        /* dragons hoard gems */
+        switch(rn2_on_rng(4,rng)) {
+        case 1:
+            mksobj_at(gemone, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 2:
+            mksobj_at(gemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        default:
+            mksobj_at(glass, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        }
+        /* dragons hoard things they like */
+        switch(rn2_on_rng(10, rng)) {
+        case 1:
+            mksobj_at(itemthree, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 2:
+            mksobj_at(CHEST, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 3:
+        case 4:
+        case 5:
+            mksobj_at(itemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        default:
+            mksobj_at(itemone, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        }
+        /* here be dragons */
+        if (i <= cutoffone) {
+            makemon(&mons[greatpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+        } else if (i <= cutofftwo) {
+            makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+        } else if (i <= cutoffthree) {
+            makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
+        }
     }
 }
 

@@ -2642,6 +2642,9 @@ check_special_room(boolean newlev)
         case LEPREHALL:
             pline("You enter a leprechaun hall!");
             break;
+        case DRAGONHALL:
+            pline("You enter a dragon hall!");
+            break;
         case MORGUE:
             if (midnight()) {
                 const char *run = locomotion(youmonst.data, "Run");

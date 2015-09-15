@@ -1552,6 +1552,9 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
                     mkgold(51 + mrn2(abs(depth(&lev->z)) * 100),
                            lev, x, y, mrng());
             break;
+        case DRAGONHALL:
+            fill_dragonhall(lev, croom, mrng());
+            break;
         case COURT:
         case ZOO:
         case BEEHIVE:
