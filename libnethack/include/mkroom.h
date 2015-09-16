@@ -62,19 +62,20 @@ extern const struct shclass shtypes[];
 # define COCKNEST       12      /* cockatrice nest (Tom Proudfoot) */
 # define ANTHOLE        13      /* ants (Tom Proudfoot) */
 # define DRAGONHALL     14      /* here be dragons */
-# define SHOPBASE       15      /* everything above this is a shop */
-# define ARMORSHOP      16      /* specific shop defines for level compiler */
-# define SCROLLSHOP     17
-# define POTIONSHOP     18
-# define WEAPONSHOP     19
-# define FOODSHOP       20
-# define RINGSHOP       21
-# define WANDSHOP       22
-# define TOOLSHOP       23
-# define BOOKSHOP       24
-# define UNIQUESHOP     25      /* shops here & above not randomly gen'd. */
-# define CANDLESHOP     25
-# define MAXRTYPE       25      /* maximum valid room type */
+# define CHESTROOM      15      /* ugly kludge for .des support */
+# define SHOPBASE       16      /* everything above this is a shop */
+# define ARMORSHOP      17      /* specific shop defines for level compiler */
+# define SCROLLSHOP     18
+# define POTIONSHOP     19
+# define WEAPONSHOP     20
+# define FOODSHOP       21
+# define RINGSHOP       22
+# define WANDSHOP       23
+# define TOOLSHOP       24
+# define BOOKSHOP       25
+# define UNIQUESHOP     26      /* shops here & above not randomly gen'd. */
+# define CANDLESHOP     26
+# define MAXRTYPE       26      /* maximum valid room type */
 
 /* Special type for search_special() */
 # define ANY_TYPE       (-1)
