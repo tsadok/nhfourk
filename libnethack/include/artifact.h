@@ -69,6 +69,7 @@ struct artifact {
 
 /* extrinsic properties supplied when equipped */
 # define ART_EXTR_SPEED (AD_OTHER + 0) /* Tsurugi of Muramasa */
+# define ART_FAST_DIG   (AD_OTHER + 1) /* Quickpick */
 
 #endif /* ARTIFACT_H */
 

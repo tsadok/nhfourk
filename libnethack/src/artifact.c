@@ -457,7 +457,8 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         (dtyp == AD_DRST && extrinsic == POISON_RES) ||
         (dtyp == AD_DISE && extrinsic == SICK_RES)   ||
         (dtyp == AD_SLEE && extrinsic == SLEEP_RES)  ||
-        (dtyp == ART_EXTR_SPEED && extrinsic == FAST))
+        (dtyp == ART_EXTR_SPEED && extrinsic == FAST) ||
+        (dtyp == ART_FAST_DIG && extrinsic == FAST_DIGGING))
         return mask;
 
     if (equipped) {
@@ -471,7 +472,8 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
             (dtyp == AD_DRST && extrinsic == POISON_RES) ||
             (dtyp == AD_DISE && extrinsic == SICK_RES)   ||
             (dtyp == AD_SLEE && extrinsic == SLEEP_RES)  ||
-            (dtyp == ART_EXTR_SPEED && extrinsic == FAST))
+            (dtyp == ART_EXTR_SPEED && extrinsic == FAST) ||
+            (dtyp == ART_FAST_DIG && extrinsic == FAST_DIGGING))
             return mask;
     }
 

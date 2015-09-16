@@ -99,6 +99,7 @@ static struct {
     "cocknest", COCKNEST}, {
     "leprehall", LEPREHALL}, {
     "dragonhall", DRAGONHALL}, {
+    "chestroom", CHESTROOM}, {
     "shop", SHOPBASE}, {
     "armor shop", ARMORSHOP}, {
     "scroll shop", SCROLLSHOP}, {
