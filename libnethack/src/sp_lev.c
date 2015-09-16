@@ -1538,6 +1538,7 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 
     if (!prefilled) {
         int x, y;
+        coord c;
 
         /* Shop ? */
         if (croom->rtype >= SHOPBASE) {
@@ -1561,6 +1562,13 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
         case MORGUE:
         case BARRACKS:
             fill_zoo(lev, croom, mrng());
+            break;
+        case CHESTROOM:
+            if (!somexy(lev, croom, &c, mrng())) {
+                c.x = croom->lx;
+                c.y = croom->ly;
+            }
+            lev->locations[c.x][c.y].typ = MAGIC_CHEST;
             break;
         }
     }

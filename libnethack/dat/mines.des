@@ -92,8 +92,6 @@ MONSTER: 'G', "gnome", random
 SUBROOM: "temple", lit, (15,9), (4,4), "town"
 DOOR: false, closed, north, random
 ALTAR:(02,02),align[0],shrine
-# magic chest next to the altar:
-#TERRAIN:(01,02),'('
 MONSTER: 'h', "dwarf", random
 
 SUBROOM: "ordinary", lit, (22,10), (2,3), "town"
@@ -103,7 +101,7 @@ SUBROOM: "ordinary", lit, (26,2), (3,3), "town"
 DOOR: false, closed, south, random
 MONSTER: 'h', "dwarf", random
 
-SUBROOM: "ordinary", unlit, (25,10), (4,3), "town"
+SUBROOM: "chestroom", unlit, (25,10), (4,3), "town"
 DOOR: false, closed, north, random
 
 ROOM: "ordinary" , random, random, random, random
@@ -153,7 +151,7 @@ DOOR: false, closed, east, random
 SUBROOM: "ordinary", lit, (16,0), (2,2), "town"
 DOOR: false, closed, west, random
 
-SUBROOM: "ordinary", unlit, (19,0), (2,2), "town"
+SUBROOM: "chestroom", unlit, (19,0), (2,2), "town"
 DOOR: false, closed, south, random
 
 SUBROOM: "ordinary", random, (22,0), (2,2), "town"
@@ -194,7 +192,6 @@ MONSTER: 'G', "gnome", random
 SUBROOM: "temple", lit, (19,5), (4,4), "town"
 DOOR: false, closed, north, random
 ALTAR:(02,02),align[0],shrine
-#TERRAIN:(01,02),'('
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
 
@@ -256,7 +253,6 @@ DOOR: false,closed,north,random
 SUBROOM:"temple",lit,(10,2),(3,4),"town"
 DOOR: false,closed,east,random
 ALTAR:(1,1),align[0],shrine
-#TERRAIN:(1,2), '('
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
 
@@ -283,7 +279,7 @@ SUBROOM:"food shop",lit,(26,8),(3,2),"town"
 CHANCE:50
 DOOR:false,closed,west,random
 
-SUBROOM:"ordinary",random,(16,2),(2,2),"town"
+SUBROOM:"chestroom",random,(16,2),(2,2),"town"
 DOOR:false,closed,west,random
 
 SUBROOM:"ordinary",random,(19,2),(2,2),"town"
@@ -333,13 +329,12 @@ MONSTER: '@', "watch captain", random, peaceful
 SUBROOM:"book shop",lit,(4,2),(3,3),"town"
 DOOR: false,closed,south,random
 
-SUBROOM:"ordinary",random,(8,2),(2,2),"town"
+SUBROOM:"chestroom",random,(8,2),(2,2),"town"
 DOOR: false,closed,south,random
 
 SUBROOM:"temple",lit,(11,3),(5,4),"town"
 DOOR: false,closed,south,random
 ALTAR:(2,1),align[0],shrine
-#TERRAIN:(3,1), '('
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
 
@@ -627,7 +622,7 @@ SUBROOM: "ordinary", random, (14,2), (4,2), "town"
 DOOR: false, closed, south, 0
 MONSTER: 'n', random, random
 
-SUBROOM: "ordinary", random, (16,5), (2,2), "town"
+SUBROOM: "chestroom", random, (16,5), (2,2), "town"
 DOOR: false, closed, south, random
 
 SUBROOM: "ordinary", unlit, (19,2), (2,2), "town"
@@ -674,7 +669,6 @@ DOOR: false, closed, west, random
 SUBROOM: "temple", lit, (24,6), (4,4), "town"
 DOOR: false, closed, west, random
 ALTAR:(02,01),align[0],shrine
-#TERRAIN:(02,02), '('
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
 

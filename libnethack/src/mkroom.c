@@ -88,6 +88,9 @@ mkroom(struct level *lev, int roomtype)
         case ANTHOLE:
             mkzoo(lev, ANTHOLE, rng_main);
             break;
+        case CHESTROOM:
+            impossible("Tried to make a magic chest room in mkroom().");
+            break;
         default:
             impossible("Tried to make a room of type %d.", roomtype);
         }
