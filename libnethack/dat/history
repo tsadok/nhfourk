@@ -1,5 +1,5 @@
-NetHack Fourk History file for release 4.3.0.3
-This file was last updated by Jonadab, 2015-07-01
+NetHack Fourk History file for release 4.3.0.4
+This file was last updated by Jonadab, 2015-09-16
 
 Behold, mortal, the origins of NetHack...
 
@@ -205,6 +205,10 @@ playtesters on nethack4.org (especially Zsbán Ambrus, who was responsible
 for most of the bug reports before 4.3 went into beta, and Morwen, who did
 much of the playtesting in the later 4.3 betas).  And finally, thank you
 for playing our game.  We hope you have fun!
+
+I would also like to thank hackedhead specially for being the first person
+to provide a great deal of very useful feedback on the changes in NetHack
+Fourk, as well as all the others who have provided useful feedback since.
 
 			   - - - - - - - - - -
 

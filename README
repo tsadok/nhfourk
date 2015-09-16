@@ -7,6 +7,10 @@ Copyright (C) 2015 Nathan Eady.
 This README file is licensed under the NetHack General Public License.
 See libnethack/dat/license for details.
 
+For information about building the game on Microsoft Windows, see
+README-MSWindows.txt.  For information about building on Unix-type
+systems (including Mac and Linux), see Build Instructions, below.
+
 Overview
 ========
 
@@ -622,8 +626,8 @@ used by computers; there's no need for humans to memorize it.)
 Finally, you need to tell inetd about the new server setup.  As root, you need
 to add two extra lines to `/etc/inetd.conf`, looking something like this:
 
-    53430 stream tcp  nowait username /path/to/nhfourk-server nhfourk-server
-    53430 stream tcp6 nowait username /path/to/nhfourk-server nhfourk-server
+    53440 stream tcp  nowait username /path/to/nhfourk-server nhfourk-server
+    53440 stream tcp6 nowait username /path/to/nhfourk-server nhfourk-server
 
 (Here, "username" is the username of the user that the server binaries should
 run as.)  Then, again as root, just send a `SIGHUP` to inetd (`killall -HUP
