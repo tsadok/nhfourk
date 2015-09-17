@@ -60,6 +60,7 @@ enum keymap_action {
     KEYMAP_ACTION_MASSREBIND_VI,     /* Manage the vi directions */
     KEYMAP_ACTION_MASSREBIND_DIGITS, /* Manage the digits */
     KEYMAP_ACTION_MASSREBIND_MODIF,  /* Manage Ctrl-/Shift-direction */
+    KEYMAP_ACTION_MASSREBIND_AXWD,   /* Manage the azwd/qezc bindings */
 
     /* Individual commands */
     KEYMAP_ACTION_ALL_SUBMENU,       /* Manage each individual command */
@@ -1558,6 +1559,112 @@ remove_all_vi_directions(void)
 }
 
 static void
+keymap_action_massrebind_axwd(void)
+{
+    struct nh_cmd_desc *cmd, *cmdlist;
+    int i, res, count = 0;
+    const char *const dialog[] = {
+        ":This set of key bindings is intended for players who have not",
+        ":previously become accustomed to typical roguelike key bindings.",
+        ":Many of the keys are chosen to be easier for new players to learn.",
+        ":",
+        ":The eight keys surrounding S are used for movement, and the key",
+        ":in the middle of them is used for search (s) and autoexplore (S).",
+        ":Holding Shift makes these keys go until you run into something.",
+        ":Holding Ctrl makes them go until you see something interesting.",
+        ":As in the traditional bindings, < and > are used for up and down.",
+        ":Pressing the Tab key before moving will cause you to keep going",
+        ":cautiously until anything interesting happens.",
+        ":",
+        ":Other notable keys:",
+        ": r - read scroll or book      R - Recite spell",
+        ": f - fire dart/arrow/etc.     F - Fight (melee)",
+        ": v - swap main/second weapon  V - invoke artifact / break wand",
+        ": t - throw an object          T - Take off armor or jewelry",
+        ": g - gobble food (eat)        G - Guzzle (drink) liquid",
+        ": h - hold main weapon (wield) Y - Yammer (talk) to creature",
+        ": H - Hold projectile (quiver) N - Name object, type, or creature",
+        ": u - use tool                 U - Use magic wand",
+        ": j - jettison (drop) object   J - Jettison multiple objects",
+        ": m - move only (no attack)    M - Monster special ability",
+        ": i - inventory (regular)      I - Inventory (type menu)",
+        ": k - kick                     # - Extended command",
+        ": o - open or close a door     O - Options",
+        ": l - look here (at your feet) L - Look somewhere else",
+        ": p - pay a shopkeeper         P - Put on armor or jewelry",
+        ": ' - write on the ground      ? - help",
+        ": ! - menu                     ~ - exit",
+        ": , - pick up object(s)        . - rest",
+        ":",
+        "[a]Bind these keys",
+        "[q]Cancel",
+        NULL
+    };
+    
+    res = simple_dialog("Mass rebind: AXWD", dialog);
+    if (res == 'a') {
+        init_keymap();  /* fully reset the keymap */
+        /* reset extcmds */
+        cmdlist = nh_get_commands(&count);
+        for (i = 0; i < count; i++) {
+            cmd = find_command(cmdlist[i].name);
+            if (cmd)
+                cmd->flags = cmdlist[i].flags;
+        }
+        remove_all_vi_directions();
+        keymap['q'] = find_command("north_west");
+        keymap['w'] = find_command("north");
+        keymap['e'] = find_command("north_east");
+        keymap['d'] = find_command("east");
+        keymap['c'] = find_command("south_east");
+        keymap['x'] = find_command("south");
+        keymap['z'] = find_command("south_west");
+        keymap['a'] = find_command("west");
+
+        keymap['Q'] = find_command("run_north_west");
+        keymap['W'] = find_command("run_north");
+        keymap['E'] = find_command("run_north_east");
+        keymap['D'] = find_command("run_east");
+        keymap['C'] = find_command("run_south_east");
+        keymap['X'] = find_command("run_south");
+        keymap['Z'] = find_command("run_south_west");
+        keymap['A'] = find_command("run_west");
+
+        keymap[Ctrl('Q')] = find_command("go_north_west");
+        keymap[Ctrl('W')] = find_command("go_north");
+        keymap[Ctrl('E')] = find_command("go_north_east");
+        keymap[Ctrl('D')] = find_command("go_east");
+        keymap[Ctrl('C')] = find_command("go_south_east");
+        keymap[Ctrl('X')] = find_command("go_south");
+        keymap[Ctrl('Z')] = find_command("go_south_west");
+        keymap[Ctrl('A')] = find_command("go_west");
+
+        keymap['~'] = find_command("save");
+        keymap['s'] = find_command("search");
+        keymap['S'] = find_command("autoexplore");
+        keymap['R'] = find_command("cast"); /* "Recite spell" */
+        keymap['v'] = find_command("swapweapon");
+        keymap['g'] = find_command("eat");   /* "gobble food" */
+        keymap['G'] = find_command("drink"); /* "Guzzle liquid" */
+        keymap['y'] = NO_KEYMAP; /* yes */
+        keymap['Y'] = find_command("chat");  /* "Yammer" */
+        keymap['h'] = find_command("wield"); /* "hold weapon" */
+        keymap['H'] = find_command("quiver");/* "hold projectile" */
+        keymap['n'] = NO_KEYMAP; /* no */
+        keymap['N'] = find_command("name");
+        keymap['u'] = find_command("apply"); /* "use tool" */
+        keymap['U'] = find_command("zap");   /* "use wand */
+        keymap['j'] = find_command("drop");  /* "jettison" */
+        keymap['J'] = find_command("multidrop");
+        keymap['k'] = find_command("kick");
+        keymap['l'] = find_command("lookhere");
+        keymap['L'] = find_command("farlook");
+        keymap['\''] = find_command("engrave"); /* single quote for write */
+        keymap['\t'] = find_command("go"); /* like tab goes to a tab stop */
+    }
+}
+
+static void
 keymap_action_massrebind_vi(void)
 {
     int i, res;
@@ -1921,6 +2028,9 @@ set_command_keys(struct win_menu *mdat, int idx)
         case KEYMAP_ACTION_MASSREBIND_MODIF:
             keymap_action_massrebind_modif();
             break;
+        case KEYMAP_ACTION_MASSREBIND_AXWD:
+            keymap_action_massrebind_axwd();
+            break;
         case KEYMAP_ACTION_ALL_SUBMENU:
             keymap_action_all_submenu(FALSE);
             break;
@@ -1961,8 +2071,10 @@ show_keymap_menu(nh_bool readonly)
         do {
             init_menulist(&menu);
 
+            add_keymap_action(&menu, KEYMAP_ACTION_MASSREBIND_AXWD, 0,
+                              "Mass rebind: axwd/qecz movement");
             add_keymap_action(&menu, KEYMAP_ACTION_MASSREBIND_VI, 0,
-                              "Mass rebind: hjklyubn");
+                              "Mass rebind: hjklyubn movement");
             add_keymap_action(&menu, KEYMAP_ACTION_MASSREBIND_DIGITS, 0,
                               "Mass rebind: digits and direction keys");
             add_keymap_action(&menu, KEYMAP_ACTION_MASSREBIND_MODIF, 0,
