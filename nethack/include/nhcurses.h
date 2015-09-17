@@ -226,6 +226,8 @@ enum nh_palette {
     PALETTE_DKPASTELS, /*  Dark Pastels, from Konsole via paxed */
     PALETTE_REDMOND,   /*  Windows console default colors */
     PALETTE_VGA,       /*  kerio says these are the VGA color values */
+    PALETTE_SEPTEMBER, /*  September Compromise  */
+    PALETTE_SEPTBRITE, /*  September Light */
 };
 
 enum nh_animation {
