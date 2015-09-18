@@ -49,6 +49,8 @@ static struct nh_enum_option menu_headings_spec =
 static struct nh_listitem palette_list[] = {
     {PALETTE_NONE,      "terminal default (may require new window)"},
     {PALETTE_DEFAULT,   "uncursed default"},
+    {PALETTE_SEPTBRITE, "September Bright"},
+    {PALETTE_SEPTEMBER, "September Compromise"},
     {PALETTE_SATURATED, "saturated bold"},
     {PALETTE_TERTIARY,  "tertiary colors"},
     {PALETTE_EQUILUM,   "equiluminous"},
