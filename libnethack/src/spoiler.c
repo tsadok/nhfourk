@@ -29,7 +29,8 @@ static const char * spoildamage(int i, boolean large, struct artifact *);
 #define LDAM TRUE
 static const char * spoiltohit(int i, struct artifact *);
 static const char * oslotname(enum objslot os);
-static const char * spoilaligntyp(int i);
+static const char * spoilmaligntyp(int i);
+static const char * spoilaligntyp(aligntyp aln);
 static const char * spoiloneattack(const struct attack *attk);
 static const char * spoilattacks(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
@@ -38,6 +39,30 @@ static const char * spoilmrace(int i);
 static const char * spoilmonflags(int i);
 static void spoilobjclass(FILE *file, const char *hrname, const char *aname,
                           int classone, int classtwo);
+static const char * spoilrolename(short rolepm);
+static const char * spoilracename(short racepm);
+static const char * spoilartalign(struct artifact *art);
+static const char * spoilarteffects(struct artifact *art,
+                                    unsigned long spfx, struct attack attk);
+static const char * spoilartinvoke(struct artifact *art);
+static const char * spoilartotherinfo(struct artifact *art);
+
+const char *at[17] =
+        {"passive", "claw", "bite", "kick", "butt", "touch",
+         "sting", "hug", "AT_8", "AT_9", "spit", "engulf", "breath",
+         "actively explode", "passively explode", "gaze", "tentacles"};
+const char *ad[47] =
+        {"physical", "magic missile", "fire", "cold", "sleep", "disint",
+         "shock", "strength drain", "acid", "special1", "special2",
+         "blinding", "stun", "slow", "paralysis", "level drain",
+         "energy drain", "leg wound", "petrification", "stick-to-you",
+         "gold theft", "item theft", "charming", "teleportation",
+         "rust", "confusion", "digestion", "healing", "wrap-around",
+         "lycanthropy", "dexterity drain", "constitution drain",
+         "intelligence drain", "disease", "rotting", "seduction",
+         "hallucination", "death", "pestilence", "famine", "sliming",
+         "disenchantment", "corrosion", "vicarous suffering",
+         "stinking cloud", "pits", "iceblock"};
 
 /* NOTE: the order of these words exactly corresponds to the
    order of oc_material values #define'd in objclass.h.  I
@@ -160,36 +185,33 @@ semicolonjoin(const char *a, const char *b)
    the way it is because of the way monster alignment interacts
    with player alignment record, which is even more horrible. */
 static const char *
-spoilaligntyp(int i)
+spoilmaligntyp(int i)
 {
     aligntyp aln = mons[i].maligntyp;
+    if (aln == A_NONE) return spoilaligntyp(A_NONE);
+    if (aln >  0) return spoilaligntyp(A_LAWFUL);
+    if (aln == 0) return spoilaligntyp(A_NEUTRAL);
+    if (aln <  0) return spoilaligntyp(A_CHAOTIC);
+    return spoilaligntyp(aln);
+}
+
+static const char *
+spoilaligntyp(aligntyp aln)
+{
     if (aln == A_NONE)
         return "<span class=\"alnmoloch\">una</span>";
-    if (aln >  0)  return "<span class=\"alnlaw\">law</span>";
-    if (aln == 0) return "<span class=\"alnneu\">neu</span>";
-    if (aln <  0) return "<span class=\"alncha\">cha</span>";
-    return "<span class=\"error alnunknown\">ERR</span>";
+    if (aln == A_LAWFUL)
+        return "<span class=\"alnlaw\">law</span>";
+    if (aln == A_NEUTRAL)
+        return "<span class=\"alnneu\">neu</span>";
+    if (aln == A_CHAOTIC)
+        return "<span class=\"alncha\">cha</span>";
+    return "<span class=\"error alnunknown\">ERR</span>";    
 }
 
 static const char *
 spoiloneattack(const struct attack *attk)
 {
-    const char *at[17] =
-        {"passive", "claw", "bite", "kick", "butt", "touch",
-         "sting", "hug", "AT_8", "AT_9", "spit", "engulf", "breath",
-         "actively explode", "passively explode", "gaze", "tentacles"};
-    const char *ad[47] =
-        {"physical", "magic missile", "fire", "cold", "sleep", "disint",
-         "shock", "strength drain", "acid", "special1", "special2",
-         "blinding", "stun", "slow", "paralysis", "level drain",
-         "energy drain", "leg wound", "petrification", "stick-to-you",
-         "gold theft", "item theft", "charming", "teleportation",
-         "rust", "confusion", "digestion", "healing", "wrap-around",
-         "lycanthropy", "dexterity drain", "constitution drain",
-         "intelligence drain", "disease", "rotting", "seduction",
-         "hallucination", "death", "pestilence", "famine", "sliming",
-         "disenchantment", "corrosion", "vicarous suffering",
-         "stinking cloud", "pits", "iceblock"};
     if (!attk->aatyp && !attk->adtyp && !attk->damn && !attk->damd)
         return "";
     return msgprintf("<span class=\"attack\">%dd%d <span class=\"aatyp\">%s</span> <span type=\"adtype\">%s</span></span>",
@@ -429,6 +451,136 @@ spoilobjclass(FILE *file, const char * hrname, const char * aname,
     fprintf(file, "</tbody></table>\n");
 }
 
+const char *
+spoilrolename(short rolepm)
+{
+    if (rolepm == NON_PM)
+        return "";
+    return msgprintf("<span class=\"role\">%s</span> ", mons[rolepm].mname);
+}
+
+const char *
+spoilracename(short racepm)
+{
+    if (racepm == NON_PM)
+        return "";
+    return msgprintf("<span class=\"race\">%s</span> ", mons[racepm].mname);
+}
+
+const char *
+spoilartalign(struct artifact *art)
+{
+    return msgprintf("%s%s%s%s",
+                     ((art->spfx & SPFX_INTEL) ?
+                      "<span class=\"artint\">Int</span> " : ""),
+                     msgprintf("<span class=\"artaln\">%s</span> ",
+                               spoilaligntyp(art->alignment)),
+                     spoilrolename(art->role),
+                     spoilracename(art->race));
+}
+
+static const char *
+spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
+{
+    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s",
+                     ((spfx & SPFX_SEEK) ?
+                      /* TODO: currently, the code checks SPFX_SEARCH for both
+                         auto-searching and the +n search bonus and never
+                         checks SPFX_SEEK at all.  Fix that. */
+                      "<span class=\"spfx spfxseek\">+n search</span> " : ""),
+                     ((spfx & SPFX_WARN) ?
+                      "<span class=\"spfx spfxwarn\">warn</span> " : ""),
+                     ((spfx & SPFX_DRLI) ?
+                      "<span class=\"spfx spfxdrli\">drain</span>" : ""),
+                     ((spfx & SPFX_SEARCH) ?
+                      "<span class=\"spfx spfxsearch\">autosrch</span> " : ""),
+                     ((spfx & SPFX_BEHEAD) ?
+                      "<span class=\"spfx spfxbehead\">vorpal</span> " : ""),
+                     ((spfx & SPFX_HALRES) ?
+                      msgprintf("<span class=\"spfx spfxhalres\">%s%s</span> ",
+                                "<abbr title=\"hallucination resistance\">",
+                                "halres</abbr>"): ""),
+                     ((spfx & SPFX_ESP) ?
+                      "<span class=\"spfx spfxesp\">ESP</span> " : ""),
+                     ((spfx & SPFX_STLTH) ?
+                      "<span class=\"spfx spfxstealth\">stealth</span> " : ""),
+                     ((spfx & SPFX_REGEN) ?
+                      "<span class=\"spfx spfxregen\">regen</span> " : ""),
+                     ((spfx & SPFX_EREGEN) ?
+                      "<span class=\"spfx spfxeregen\">eregen</span> " : ""),
+                     ((spfx & SPFX_HSPDAM) ?
+                      "<span class=\"spfx spfxhspdam\">half-spell</span> " :
+                      ""),
+                     ((spfx & SPFX_HPHDAM) ?
+                      "<span class=\"spfx spfxhphdam\">half-phys</span> " :
+                      ""),
+                     ((spfx & SPFX_TCTRL) ?
+                      "<span class=\"spfx spfxtctrl\">T-ctrl</span> " : ""),
+                     ((spfx & SPFX_LUCK) ?
+                      "<span class=\"spfx spfxluck\">luck</span> " : ""),
+                     ((spfx & SPFX_XRAY) ?
+                      "<span class=\"spfx spfxxray\">xray</span> " : ""),
+                     ((spfx & SPFX_REFLECT) ?
+                      "<span class=\"spfx spfxreflect\">reflect</span> " : ""),
+                     msgprintf("<span class=\"artattk\">%s</span>",
+                               /* TODO: handle attk.damn and attk.damd */
+                               (attk.adtyp && attk.adtyp == AD_MAGM) ? "MR" :
+                               (attk.adtyp && attk.adtyp < 47) ?
+                               ad[attk.adtyp] : "")
+        );
+}
+
+const char *
+spoilartinvoke(struct artifact *art)
+{
+    uchar i = art->inv_prop;
+    switch(i) {
+    case 0:
+        return "";
+    case TAMING:
+        return "<span class=\"invoke invoketaming\">taming</span>";
+    case HEALING:
+        return "<span class=\"invoke invokehealing\">healing</span>";
+    case ENERGY_BOOST:
+        return "<span class=\"invoke invokeenergyboost\">power</span>";
+    case UNTRAP:
+        return "<span class=\"invoke invokeuntrap\">untrap</span>";
+    case CHARGE_OBJ:
+        return "<span class=\"invoke invokecharging\">charging</span>";
+    case LEV_TELE:
+        return "<span class=\"invoke invokelevport\">levelport</span>";
+    case CREATE_PORTAL:
+        return "<span class=\"invoke invokebranchport\">branchport</span>";
+    case ENLIGHTENING:
+        return "<span class=\"invoke invokeenlight\">enlightenment</span>";
+    case CREATE_AMMO:
+        return "<span class=\"invoke invokeammo\">create ammo</span>";
+    /* TODO: handle cases FIRE_RES through LAST_PROP */
+    /* For now I'm just doing the ones used by existing artifacts. */
+    case INVIS:
+        return "<span class=\"invoke invokeinvis\">invisibility</span>";
+    case LEVITATION:
+        return "<span class=\"invoke invokelev\">levitation</span>";
+    case CONFLICT:
+        return "<span class=\"invoke invokeconflict\">conflict</span>";
+
+    default:
+        return msgprintf("<!-- unknown invoke property -->%d", (int) i);
+    }
+}
+
+const char *
+spoilartotherinfo(struct artifact *art)
+{
+    return msgprintf("%s%s%s",
+                     ((art->spfx & SPFX_NOGEN) ?
+                      "<span class=\"artother artnogen\">nogen</span> " : ""),
+                     (!(art->spfx & SPFX_RESTR) ?
+                      "<span class=\"artother artcanname\">#name</span> " : ""),
+                     ((art->spfx & SPFX_SPEAK) ?
+                      "<span class=\"artother artspeak\">speaks</span> " : ""));
+}
+
 void
 makespoilers(void)
 {
@@ -480,6 +632,8 @@ makespoilers(void)
             /* Now check for artifacts with this base item */
             for (art = artilist + 1; art->otyp; art++) {
                 if (art->otyp == i) {
+                    /* TODO: add info about which kinds of monsters
+                             the damage bonus applies against. */
                     fprintf(outfile, "<tr><td class=\"object\"></td>"
                             "<td class=\"artifact\">%s</td>"
                             "<td class=\"skill\">%s</td>"
@@ -548,6 +702,58 @@ makespoilers(void)
         fclose(outfile);
     }
 
+    /* ######################### Artifacts ######################### */
+    fd = open_datafile("artifact-spoiler.html",
+                       O_CREAT | O_WRONLY, SPOILPREFIX);
+    if (fd < 0) {
+        pline("Failed to write artifact spoiler.  Is it writable?");
+        return;
+    }
+    if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        struct artifact *art;
+        outfile = fdopen(fd, "w");
+        fprintf(outfile, htmlheader("Artifacts"));
+        fprintf(outfile, "\n<p>For weapon artifacts, see also the "
+                "<a href=\"weapon-spoiler.html\">weapon spoiler</a></p>\n");
+        fprintf(outfile, "\n<table id=\"artifacts\"><thead>\n  <tr>"
+                "<th>name</th>"
+                "<th>base object</th>"
+                "<th>alignments</th>"
+                /* "<th>attack</th>" */ /* Meh, see weapons spoiler. */
+                "<th>when equipped</th>"
+                "<th>when carried</th>"
+                "<th>when invoked</th>"
+                "<th>other info</th>"
+                "<th class=\"numeric price\">cost</th>"
+                "</tr>\n</thead><tbody>\n");
+
+        for (art = artilist + 1; art->otyp; art++) {
+            fprintf(outfile, "<tr><td class=\"artifact\">%s</td>"
+                    "<td class=\"object\">%s</td>"
+                    "<td class=\"artalign\">%s</td>"
+                    /* "<td class=\"artattack\">%s</td>" */
+                    "<td class=\"artequipped\">%s</td>"
+                    "<td class=\"artcarried\">%s</td>"
+                    "<td class=\"artinvoked\">%s</td>"
+                    "<td class=\"artotherinfo\">%s</td>"
+                    "<td class=\"numeric price\">%ld</td>"
+                    "</tr>",
+                    art->name, simple_typename(art->otyp),
+                    spoilartalign(art),
+                    /* spoilarteffects(art, 0, art->attk) */
+                    spoilarteffects(art, art->spfx, art->defn),
+                    spoilarteffects(art, art->cspfx, art->cary),
+                    spoilartinvoke(art),
+                    spoilartotherinfo(art),
+                    art->cost);
+        }
+
+        fprintf(outfile, "\n</tbody></table>\n</html>\n");
+
+        change_fd_lock(fd, FALSE, LT_NONE, 0);
+        fclose(outfile);
+    }    
+
     /* ####################### Other Objects ####################### */
     fd = open_datafile("objects-spoiler.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
@@ -566,6 +772,8 @@ makespoilers(void)
                 "Weapons Spoiler</a></p>");
         fprintf(outfile, "<p>See also: <a href=\"armor-spoiler.html\">"
                 "Armor Spoiler</a></p>");
+        fprintf(outfile, "<p>See also: <a href=\"artifact-spoiler.html\">"
+                "Artifact Spoiler</a></p>");
         spoilobjclass(outfile, "Jewelry", "jewelry", RING_CLASS, AMULET_CLASS);
         /* TODO: alchemy spoiler */
         spoilobjclass(outfile, "Potions", "potions", POTION_CLASS, POTION_CLASS);
@@ -655,7 +863,7 @@ makespoilers(void)
                     "<td class=\"flags\">%s</td>"
                     "</tr>\n", i, mlet, mons[i].mname, mons[i].mlevel,
                     monstr[i], mons[i].mmove, (10 - mons[i].ac),
-                    mons[i].mr, spoilaligntyp(i), spoilattacks(i),
+                    mons[i].mr, spoilmaligntyp(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
                     spoilresistances(mons[i].mconveys, TRUE, i),
                     mons[i].cnutrit, mons[i].cwt, spoilmonsize(i),
@@ -667,8 +875,6 @@ makespoilers(void)
         fclose(outfile);     
     }
     /* ####################### Role / Race ####################### */
-    // TODO
-    /* ######################## Artifacts ######################## */
     // TODO
 
     /* ######################### Index ########################### */
@@ -696,6 +902,7 @@ makespoilers(void)
                 "       <li><a href=\"objects-spoiler.html#food\">Comestibles</a></li>"
                 "       <li><a href=\"objects-spoiler.html#rocks\">Rocks &amp; Gems</a></li>"
                 "   </ul></li>"
+                "   <li><a href=\"artifact-spoiler.html\">Artifacts</a></li>"
                 "   <li><a href=\"monster-spoiler.html\">Monsters</a></li>"
                 "</ul>\n");
 
