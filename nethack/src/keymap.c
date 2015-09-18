@@ -70,6 +70,7 @@ enum keymap_action {
     KEYMAP_ACTION_END,               /* === Dummy action! Should be last === */
 };
 
+static unsigned int redraw_counter;
 
 /* Try to add the Ctrl modifier to the specified 'key' code.
 
@@ -458,9 +459,10 @@ get_command(void *callbackarg,
                 repeats_remaining = multi;
             }
 
-            if (cmd == find_command("redraw")) {
+            if ((cmd == find_command("redraw")) || (redraw_counter++ > 1000)) {
                 /* This needs special handling locally in addition to sending
                    it to the server */
+                redraw_counter = 0;
                 clear();
                 refresh();
                 rebuild_ui();
