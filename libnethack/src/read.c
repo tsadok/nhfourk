@@ -1846,10 +1846,6 @@ do_genocide(int how)
                 killplayer++;
                 break;
             }
-            if (is_human(ptr))
-                adjalign(-sgn(u.ualign.type));
-            if (is_demon(ptr))
-                adjalign(sgn(u.ualign.type));
 
             if (!(ptr->geno & G_GENO)) {
                 if (canhear()) {
@@ -1862,6 +1858,11 @@ do_genocide(int how)
                 }
                 continue;
             }
+            if (is_human(ptr))
+                adjalign(-sgn(u.ualign.type));
+            if (is_demon(ptr))
+                adjalign(sgn(u.ualign.type));
+
             /* KMH -- Unchanging prevents rehumanization */
             if (Unchanging && ptr == youmonst.data)
                 killplayer++;
