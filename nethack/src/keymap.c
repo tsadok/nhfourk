@@ -61,6 +61,7 @@ enum keymap_action {
     KEYMAP_ACTION_MASSREBIND_DIGITS, /* Manage the digits */
     KEYMAP_ACTION_MASSREBIND_MODIF,  /* Manage Ctrl-/Shift-direction */
     KEYMAP_ACTION_MASSREBIND_AXWD,   /* Manage the azwd/qezc bindings */
+    KEYMAP_ACTION_MASSREBIND_DVORAK, /* Manage Dvorak-layout bindings */
 
     /* Individual commands */
     KEYMAP_ACTION_ALL_SUBMENU,       /* Manage each individual command */
@@ -1559,6 +1560,93 @@ remove_all_vi_directions(void)
 }
 
 static void
+keymap_action_massrebind_dvorak(void)
+{
+    struct nh_cmd_desc *cmd, *cmdlist;
+    int i, res, count = 0;
+    const char *const dialog[] = {
+        ":This set of key bindings is intended for users of the Dvorak",
+        ":Simplified Keyboard layout.  The movement keys are in the",
+        ":middle of the keyboard, in a square around i (which is still",
+        ":inventory, as in the standard bindings).  To the left of the",
+        ":movement keys are eat/Engrave, jettison(drop), open/Options",
+        ":quaff(drink)/Quiver, rest(.)/down(>), pickup(,)/up(<),",
+        ":apply tool/Attack, and invoke(\')/show amulet(\").",
+        ":To the right of the movement keys are go/Guzzle (drink), history,",
+        ":moveonly/Monster-ability, chat/Checkout(pay), throw quivered /",
+        ":Throw object, wield/Wear, read/Remove, Name, travel(v)/explore(V),",
+        ":look here/Look there, search/Swapweapon, zap wand/Zap spell,",
+        ":and sacrifice(_).  Most other keys are the same as the defaults.",
+        ":",
+        "[a]Bind these keys",
+        "[q]Cancle",
+        NULL
+    };
+    res = simple_dialog("Mass rebind: Dvorak", dialog);
+    if (res == 'a') {
+        init_keymap();  /* fully reset the keymap */
+        /* reset extcmds */
+        cmdlist = nh_get_commands(&count);
+        for (i = 0; i < count; i++) {
+            cmd = find_command(cmdlist[i].name);
+            if (cmd)
+                cmd->flags = cmdlist[i].flags;
+        }
+        remove_all_vi_directions();
+        keymap['p'] = find_command("north_west");
+        keymap['y'] = find_command("north");
+        keymap['f'] = find_command("north_east");
+        keymap['d'] = find_command("east");
+        keymap['b'] = find_command("south_east");
+        keymap['x'] = find_command("south");
+        keymap['k'] = find_command("south_west");
+        keymap['u'] = find_command("west");
+
+        keymap['P'] = find_command("run_north_west");
+        keymap['Y'] = find_command("run_north");
+        keymap['F'] = find_command("run_north_east");
+        keymap['D'] = find_command("run_east");
+        keymap['B'] = find_command("run_south_east");
+        keymap['X'] = find_command("run_south");
+        keymap['K'] = find_command("run_south_west");
+        keymap['U'] = find_command("run_west");
+
+        keymap[Ctrl('P')] = find_command("go_north_west");
+        keymap[Ctrl('Y')] = find_command("go_north");
+        keymap[Ctrl('F')] = find_command("go_north_east");
+        keymap[Ctrl('D')] = find_command("go_east");
+        keymap[Ctrl('B')] = find_command("go_south_east");
+        keymap[Ctrl('X')] = find_command("go_south");
+        keymap[Ctrl('K')] = find_command("go_south_west");
+        keymap[Ctrl('U')] = find_command("go_west");
+
+        keymap['~'] = find_command("save");
+        keymap['\t'] = find_command("go");
+        keymap['\''] = find_command("invoke");
+        keymap['A'] = find_command("fight");
+        keymap['j'] = find_command("drop");
+        keymap['J'] = find_command("multidrop");
+        keymap['G'] = find_command("drink");
+        keymap['h'] = find_command("history");
+        keymap['H'] = find_command("prevmsg");
+        keymap['C'] = find_command("pay");
+        keymap['t'] = find_command("fire");
+        keymap['T'] = find_command("throw");
+        keymap['N'] = find_command("name");
+        keymap['n'] = NO_KEYMAP;
+        keymap['v'] = find_command("travel");
+        keymap['V'] = find_command("autoexplore");
+        keymap['l'] = find_command("lookhere");
+        keymap['L'] = find_command("farlook");
+        keymap['S'] = find_command("swapweapon");
+        keymap['{'] = find_command("equip");
+        keymap['_'] = find_command("sacrifice");
+        keymap[':'] = NO_KEYMAP; /* available for future expansion */
+        keymap[';'] = NO_KEYMAP; /* ditto */
+    }
+}
+
+static void
 keymap_action_massrebind_axwd(void)
 {
     struct nh_cmd_desc *cmd, *cmdlist;
@@ -2031,6 +2119,9 @@ set_command_keys(struct win_menu *mdat, int idx)
         case KEYMAP_ACTION_MASSREBIND_AXWD:
             keymap_action_massrebind_axwd();
             break;
+        case KEYMAP_ACTION_MASSREBIND_DVORAK:
+            keymap_action_massrebind_dvorak();
+            break;
         case KEYMAP_ACTION_ALL_SUBMENU:
             keymap_action_all_submenu(FALSE);
             break;
@@ -2079,6 +2170,8 @@ show_keymap_menu(nh_bool readonly)
                               "Mass rebind: digits and direction keys");
             add_keymap_action(&menu, KEYMAP_ACTION_MASSREBIND_MODIF, 0,
                               "Mass rebind: Ctrl- and Shift-direction");
+            add_keymap_action(&menu, KEYMAP_ACTION_MASSREBIND_DVORAK, 0,
+                              "Mass rebind: Dvorak (uydx/pfkb movement)");
             add_menu_txt(&menu, "", MI_HEADING);
             add_keymap_action(&menu, KEYMAP_ACTION_UI_SUBMENU, 0,
                               "Rebind UI commands");
