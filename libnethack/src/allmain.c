@@ -1065,9 +1065,6 @@ you_moved(void)
 
             /* when immobile, count is in turns */
             decrement_helplessness();
-
-            if (!(moves % 100))
-                doredraw();
         }
 
         /* flags.actions is currently correct for hero and monsters. If the hero
