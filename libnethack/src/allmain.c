@@ -860,7 +860,7 @@ you_moved(void)
             /* Avoid an infinite loop on corner cases (e.g. polyinit to blue
                jelly), by limiting how long the player can be stuck without
                movement points. */
-            if (u.moveamt < 1)
+            if ((u.moveamt < 1) && !(moves % 12))
                 u.moveamt = 1;
 
             /* Adjust the move offset for the change in speed. */
