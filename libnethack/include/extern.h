@@ -1690,6 +1690,10 @@ extern int dovspell(const struct nh_cmd_arg *arg);
 extern void dump_spells(void);
 extern void initialspell(struct obj *);
 
+/* ### spoiler.c ### */
+
+extern void makespoilers(void);
+
 /* ### steal.c ### */
 
 extern long somegold(long);
@@ -1911,6 +1915,7 @@ extern int weapon_dam_bonus(struct obj *);
 extern void skill_init(const struct def_skill *);
 extern boolean would_prefer_hwep(const struct monst *, struct obj *);
 extern boolean would_prefer_rwep(const struct monst *, struct obj *);
+extern const char * skill_name(int);
 
 /* ### were.c ### */
 
