@@ -15,12 +15,12 @@
 # define SPFX_RESTR  0x0000002L /* item is restricted - can't be named */
 # define SPFX_INTEL  0x0000004L /* item is self-willed - intelligent */
 # define SPFX_SPEAK  0x0000008L /* item can speak (not implemented) */
-# define SPFX_SEEK   0x0000010L /* item helps you search for things */
+# define SPFX_SEEK   0x0000010L /* item gives +spe bonus to searching */
 # define SPFX_WARN   0x0000020L /* item warns you of danger */
 # define SPFX_ATTK   0x0000040L /* item has a special attack (attk) */
 # define SPFX_DEFN   0x0000080L /* item has a special defence (defn) */
 # define SPFX_DRLI   0x0000100L /* drains a level from monsters */
-# define SPFX_SEARCH 0x0000200L /* helps searching */
+# define SPFX_SEARCH 0x0000200L /* confers auto SEARCHING, like the ring */
 # define SPFX_BEHEAD 0x0000400L /* beheads monsters */
 # define SPFX_HALRES 0x0000800L /* blocks hallucinations */
 # define SPFX_ESP    0x0001000L /* ESP (like amulet of ESP) */
