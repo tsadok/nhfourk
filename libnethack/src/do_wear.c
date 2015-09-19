@@ -350,15 +350,15 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case ORCISH_HELM:
     case HELM_OF_TELEPATHY:
         break;
-    case HELM_OF_BRILLIANCE:
-        adj_abon(o, equipsgn * o->spe);
-        break;
     case CORNUTHAUM:
         /* people think marked wizards know what they're talking about, but it
            takes trained arrogance to pull it off, and the actual enchantment
-           of the hat is irrelevant. */
+           of the hat is irrelevant (except for the brilliance effect now). */
         ABON(A_CHA) += equipsgn * (Role_if(PM_WIZARD) ? 1 : -1);
         makeknown(otyp);
+        /* fall through */
+    case HELM_OF_BRILLIANCE:
+        adj_abon(o, equipsgn * o->spe);
         break;
     case HELM_OF_OPPOSITE_ALIGNMENT:
         if (!equipping)
@@ -2206,7 +2206,8 @@ adj_abon(struct obj *otmp, schar delta)
         makeknown(uarmg->otyp);
         ABON(A_DEX) += (delta);
     }
-    if (uarmh && uarmh == otmp && otmp->otyp == HELM_OF_BRILLIANCE && delta) {
+    if (uarmh && uarmh == otmp && delta &&
+        (otmp->otyp == HELM_OF_BRILLIANCE || otmp->otyp == CORNUTHAUM)) {
         makeknown(uarmh->otyp);
         ABON(A_INT) += (delta);
         ABON(A_WIS) += (delta);

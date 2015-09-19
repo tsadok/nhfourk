@@ -939,7 +939,8 @@ seffects(struct obj *sobj, boolean *known)
                 pline("Your %s %s.", xname(otmp), otense(otmp, "vibrate"));
                 if (otmp->spe >= -6) {
                     otmp->spe--;
-                    if (otmp->otyp == HELM_OF_BRILLIANCE) {
+                    if ((otmp->otyp == HELM_OF_BRILLIANCE) ||
+                        (otmp->otyp == CORNUTHAUM)) {
                         ABON(A_INT)--;
                         ABON(A_WIS)--;
                         makeknown(otmp->otyp);

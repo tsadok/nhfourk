@@ -1022,13 +1022,12 @@ calc_attr_bonus(void)
             ABON(A_DEX) += spe;
             break;
 
+        case CORNUTHAUM:
+            ABON(A_CHA) += (Role_if(PM_WIZARD) ? 1 : -1);
+            /* Fall Through */
         case HELM_OF_BRILLIANCE:
             ABON(A_INT) += spe;
             ABON(A_WIS) += spe;
-            break;
-
-        case CORNUTHAUM:
-            ABON(A_CHA) += (Role_if(PM_WIZARD) ? 1 : -1);
             break;
         }
     }
