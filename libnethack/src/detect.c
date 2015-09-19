@@ -1248,7 +1248,7 @@ dosearch0(int aflag)
             pline("What are you looking for?  The exit?");
     } else {
         int fund = (uwep && uwep->oartifact &&
-                    spec_ability(uwep, SPFX_SEARCH)) ? uwep->spe : 0;
+                    spec_ability(uwep, SPFX_SEEK)) ? uwep->spe : 0;
         if (ublindf && ublindf->otyp == LENSES && !Blind)
             fund += 2;  /* JDS: lenses help searching */
         if (fund > 5)
