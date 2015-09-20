@@ -22,8 +22,11 @@ static void burn_object(void *, long);
 
 /* He is being petrified - dialogue by inmet!tower */
 static const char *const stoned_texts[] = {
-    "You are slowing down.",    /* 5 */
-    "Your limbs are stiffening.",       /* 4 */
+    "You seem to be slowing down.",     /* 8 */
+    "You may indeed be slowing down.",  /* 7 */
+    "You are definitely slowing down.", /* 6 */
+    "Your limbs are stiffening.",       /* 5 */
+    "Your limbs are turning to stone.", /* 4 */
     "Your limbs have turned to stone.", /* 3 */
     "You have turned to stone.",        /* 2 */
     "You are a statue." /* 1 */
@@ -39,7 +42,7 @@ stoned_dialogue(void)
         /* ensure the player is able to act on this message */
         action_interrupted();
     }
-    if (i == 5L)
+    if (i <= 6L)
         HFast = 0L;
     if (i == 3L)
         helpless(3, hr_paralyzed, "unable to move due to turning to stone",
