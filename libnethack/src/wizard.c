@@ -714,10 +714,8 @@ nasty(struct monst *mcast)
         msummon(NULL, &level->z);       /* summons like WoY */
         count++;
     } else {
-        tmp = mcast->m_lev / 3;
-        if (tmp < 1)
-            tmp = 1;
-        for (i = rnd(tmp); i > 0; --i) {
+        tmp = 3 + rnd(1 + mcast->m_lev / 5);
+        for (i = tmp; i > 0; --i) {
             int makeindex;
             j = 0;
             /* Summon selection choice:
