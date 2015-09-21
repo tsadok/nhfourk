@@ -222,7 +222,7 @@ spoiloneattack(const struct attack *attk)
                       (attk->adtyp == AD_SPEL) ? "arcane spellcasting" :
                       (attk->adtyp == AD_RBRE) ? "random breath weapon" :
                       (attk->adtyp == AD_SAMU) ? "amulet stealing" :
-                      (attk->adtyp == AD_CURS) ? "item cursing" :
+                      (attk->adtyp == AD_CURS) ? "intrinsic stealing" :
                       (attk->adtyp < 43 /* && attk->adtyp >= 0 */) ?
                       ad[attk->adtyp] : "unknown damage"));
 }
