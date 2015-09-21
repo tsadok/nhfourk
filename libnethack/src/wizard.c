@@ -714,35 +714,47 @@ nasty(struct monst *mcast)
         msummon(NULL, &level->z);       /* summons like WoY */
         count++;
     } else {
-        tmp = (u.ulevel > 3) ? u.ulevel / 3 : 1;       /* just in case -- rph */
-        for (i = rnd(tmp); i > 0; --i)
-            for (j = 0; j < 20; j++) {
-                int makeindex;
-
-                /* Don't create more spellcasters of the monsters' level or
-                   higher--avoids chain summoners filling up the level. */
-                do {
-                    makeindex = pick_nasty();
-                } while (mcast && attacktype(&mons[makeindex], AT_MAGC) &&
-                         monstr[makeindex] >= monstr[monsndx(mcast->data)]);
-                /* do this after picking the monster to place */
-                if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
-                    !enexto(&bypos, level, mcast->mux, mcast->muy,
-                            &mons[makeindex]))
-                    continue;
-                if (((mtmp = makemon(&mons[makeindex], level, bypos.x, bypos.y,
-                                     NO_MM_FLAGS))) != 0) {
-                    mtmp->msleeping = 0;
-                    msethostility(mtmp, TRUE, TRUE);
-                } else  /* GENOD? */
-                    mtmp = makemon(NULL, level, bypos.x, bypos.y, NO_MM_FLAGS);
-                if (mtmp &&
-                    (mtmp->data->maligntyp == 0 ||
-                     sgn(mtmp->data->maligntyp) == sgn(castalign))) {
+        tmp = mcast->m_lev / 3;
+        if (tmp < 1)
+            tmp = 1;
+        for (i = rnd(tmp); i > 0; --i) {
+            int makeindex;
+            j = 0;
+            /* Summon selection choice:
+             * - Don't generate higher-level spellcasters to avoid
+             *   chain summoning
+             * - Don't generate lawful if chaotic or vice versa
+             * - Also re-roll if the target is genocided
+             * Only re-roll like this 20 times. If our target still
+             * fails creation (only possible when genocided), generate
+             * a random monster instead */
+            do {
+                makeindex = pick_nasty();
+                j++;
+            } while (((mcast && attacktype(&mons[makeindex], AT_MAGC) &&
+                       monstr[makeindex] >= monstr[monsndx(mcast->data)]) ||
+                      (mons[makeindex].maligntyp &&
+                       sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
+                      (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);
+            if (wizard)
+                pline("");
+            /* do this after picking the monster to place */
+            if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
+                !enexto(&bypos, level, mcast->mux, mcast->muy,
+                        &mons[makeindex]))
+                continue;
+            mtmp = makemon(&mons[makeindex], level, bypos.x, bypos.y,
+                           NO_MM_FLAGS);
+            if (!mtmp) /* probably genocided; try for a random monster */
+                mtmp = makemon(NULL, level, bypos.x, bypos.y, NO_MM_FLAGS);
+            if (mtmp != 0) {
+                mtmp->msleeping = 0;
+                msethostility(mtmp, TRUE, TRUE);
+                /* increase counter for seen monsters */
+                if (canseemon(mtmp))
                     count++;
-                    break;
-                }
             }
+        }
     }
     return count;
 }
