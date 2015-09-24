@@ -59,6 +59,21 @@ static const struct icp rogueprobs[] = {
     {5, RING_CLASS}
 };
 
+static const struct icp mazeprobs[] = {
+    {10, WEAPON_CLASS},
+    {10, ARMOR_CLASS},
+    {20, FOOD_CLASS},
+    {10, TOOL_CLASS},
+    {3, GEM_CLASS},
+    {2, COIN_CLASS},
+    {10, POTION_CLASS},
+    {10, SCROLL_CLASS},
+    {10, SPBOOK_CLASS},
+    {10, WAND_CLASS},
+    {10, RING_CLASS},
+    {5, AMULET_CLASS}
+};
+
 static const struct icp hellprobs[] = {
     {20, WEAPON_CLASS},
     {20, ARMOR_CLASS},
@@ -110,6 +125,9 @@ mkobj(struct level *lev, char oclass, boolean artif, enum rng rng)
         const struct icp *iprobs =
             (Is_rogue_level(&lev->z)) ? (const struct icp *)rogueprobs :
             In_hell(&lev->z) ? (const struct icp *)hellprobs :
+            ((lev->z.dnum == medusa_level.dnum) &&
+             (depth(&lev->z) > depth(&medusa_level))) ?
+            (const struct icp *)mazeprobs :
             (const struct icp *) mkobjprobs;
 
         for (tprob = rn2_on_rng(100, rng) + 1;
