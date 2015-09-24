@@ -206,14 +206,8 @@ static const struct trobj Valkyrie[] = {
 static const struct trobj Wizard[] = {
     {QUARTERSTAFF, 1, WEAPON_CLASS, 1, 1},
     {CLOAK_OF_MAGIC_RESISTANCE, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
-    {UNDEF_TYP, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
-    {UNDEF_TYP, UNDEF_SPE, RING_CLASS, 2, UNDEF_BLESS},
-    {UNDEF_TYP, UNDEF_SPE, POTION_CLASS, 3, UNDEF_BLESS},
-    {UNDEF_TYP, UNDEF_SPE, SCROLL_CLASS, 3, UNDEF_BLESS},
     {SPE_FORCE_BOLT, 0, SPBOOK_CLASS, 1, 1},
-    {SPE_MAGIC_MISSILE, 0, SPBOOK_CLASS, 1, 1},
     {UNDEF_TYP, UNDEF_SPE, SPBOOK_CLASS, 1, UNDEF_BLESS},
-    {MAGIC_MARKER, UNDEF_SPE, TOOL_CLASS, 1, 0},
     {WAN_NOTHING, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
@@ -886,6 +880,8 @@ u_init_inv_skills(void)
         augment_magic_chest_contents(SPE_BLANK_PAPER, 0, 2);
         augment_magic_chest_contents(SPBOOK_CLASS, 0, 5);
         augment_magic_chest_contents(POT_GAIN_ENERGY, 0, 3);
+        augment_magic_chest_contents(SPE_MAGIC_MISSILE, 0, 1);
+        augment_magic_chest_contents(MAGIC_MARKER, 0, 1);
         break;
 
     default:   /* impossible */
