@@ -421,8 +421,7 @@ fix_worst_trouble(int trouble)
         }
         break;
     default:
-        impossible(msgprintf("Invalid trouble in fix_worst_trouble: %d",
-                             trouble));
+        impossible("Invalid trouble in fix_worst_trouble: %d", trouble);
         break;
     }
 }
