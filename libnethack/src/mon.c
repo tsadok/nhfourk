@@ -2405,7 +2405,7 @@ void deadly_poison (const char *message,    int how,
         pline("You feel drained for a moment, but the feeling passes.");
     } else {
         /* Traditional instadeath: */
-        pline(message);
+        pline("%s", message);
         done(how, killer);
     }
 }
