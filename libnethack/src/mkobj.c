@@ -796,6 +796,12 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
     if (objects[otyp].oc_unique && !otmp->oartifact)
         otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
 
+    /* Every once in a great while, an object is greased. */
+    if (((let == WEAPON_CLASS) ||
+         (let == ARMOR_CLASS)) &&
+        !rn2_on_rng(23263, rng))
+        otmp->greased = 1;
+
     otmp->owt = weight(otmp); /* update, in case we changed it */
     return otmp;
 }
