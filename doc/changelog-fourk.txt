@@ -64,6 +64,9 @@ Changes in 4.3.0.4:
 Changes in 4.3.0.3:
 -------------------
 
+ * Wizard starting inventory has been rebalanced, since they
+   can now cast spells effectively in the early game.
+
  * Added Quickpick, an artifact pick-axe that is mainly useful for
    improved digging speed; it also gets a bonus against all deep
    rock dwellers (X).

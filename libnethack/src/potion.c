@@ -817,7 +817,8 @@ peffects(struct obj *otmp)
         if (otmp->blessed && u.ulevel < u.ulevelmax) {
             /* when multiple levels have been lost, drinking multiple potions
                will only get half of them back */
-            u.ulevelmax -= 1;
+            if (challengemode)
+                u.ulevelmax -= 1;
             pluslvl(FALSE);
         }
         make_hallucinated(0L, TRUE);
@@ -1779,6 +1780,11 @@ dodip(const struct nh_cmd_arg *arg)
                     obj->oeroded++;
                 }
             }
+        } else if (Is_candle(obj) && obj->lamplit) {
+            pline("The oil catches the flame.");
+            (void) light_cocktail(potion);
+            potion->in_use = FALSE;
+            return 0;
         } else if (potion->cursed) {
             pline("The potion spills and covers your %s with oil.",
                   makeplural(body_part(FINGER)));
