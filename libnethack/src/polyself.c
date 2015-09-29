@@ -1,14 +1,14 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-19 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (C) 1987, 1988, 1989 by Ken Arromdee */
 /* NetHack may be freely redistributed.  See license for details. */
 
 /*
  * Polymorph self routine.
  *
- * Note:  the light source handling code assumes that both youmonst.m_id
- * and youmonst.mx will always remain 0 when it handles the case of the
- * player polymorphed into a light-emitting monster.
+ * Note: the light source handling code assumes that youmonst.m_id will always
+ * remain 0 when it handles the case of the player polymorphed into a
+ * light-emitting monster.
  */
 
 #include "hack.h"
@@ -507,7 +507,6 @@ polymon(int mntmp, boolean noisy)
     if (mvitals[mntmp].mvflags & G_GENOD) {     /* allow G_EXTINCT */
         if (noisy)
             pline("You feel rather %s-ish.", mons[mntmp].mname);
-        exercise(A_WIS, TRUE);
         return 0;
     }
 
@@ -518,7 +517,6 @@ polymon(int mntmp, boolean noisy)
      * there since the polymorph was always in effect by then, and
      * exercising other attributes has no effect when polyselfed. */
     exercise(A_CON, FALSE);
-    exercise(A_WIS, TRUE);
 
     if (!Upolyd) {
         /* Human to monster; save human stats */
@@ -986,7 +984,7 @@ dobreathe(const struct nh_cmd_arg *arg)
         impossible("bad breath attack?");       /* mouthwash needed... */
     else
         buzz((int)(20 + mattk->adtyp - 1), (int)mattk->damn, u.ux, u.uy, dx,
-             dy);
+             dy, 0);
     return 1;
 }
 
@@ -1010,6 +1008,9 @@ dospit(const struct nh_cmd_arg *arg)
     case AD_BLND:
     case AD_DRST:
         otmp = mktemp_sobj(level, BLINDING_VENOM);
+        break;
+    case AD_DRLI:
+        otmp = mktemp_sobj(level, VAMPIRE_BLOOD);
         break;
     default:
         impossible("dospit: bad damage type");
@@ -1132,6 +1133,7 @@ dospinweb(void)
         case MAGIC_TRAP:
         case ANTI_MAGIC:
         case POLY_TRAP:
+        case STINKING_TRAP:
             pline("You have triggered a trap!");
             dotrap(ttmp, 0);
             return 1;
@@ -1166,7 +1168,6 @@ dosummon(void)
     u.uen -= 10;
 
     pline("You call upon your brethren for help!");
-    exercise(A_WIS, TRUE);
     if (!were_summon(&youmonst, &placeholder, NULL))
         pline("But none arrive.");
     return 1;
@@ -1179,7 +1180,6 @@ dogaze(void)
     int looked = 0;
     int i;
     uchar adtyp = 0;
-    enum u_interaction_mode uim = apply_interaction_mode();
 
     for (i = 0; i < NATTK; i++) {
         if (youmonst.data->mattk[i].aatyp == AT_GAZE) {
@@ -1211,11 +1211,15 @@ dogaze(void)
                 pline("%s seems not to notice your gaze.", Monnam(mtmp));
             else if (!canseemon(mtmp))
                 pline("You can't see where to gaze at %s.", Monnam(mtmp));
-            else if (is_safepet(mtmp, uim))
+            else if ((mtmp->mtame || mtmp->mpeaceful) && !Confusion)
                 pline("You avoid gazing at %s.", y_monnam(mtmp));
             else {
-                if (!Confusion && !confirm_attack(mtmp, uim))
-                    continue;
+                /* This used to prompt for whether to attack peacefuls, or
+                   attack them indiscriminately at uim_indiscriminate. Both of
+                   these are a UI nightmare, really. We could consider not
+                   attacking if uim_pacifist, but presumably if the player is
+                   intentionally using a gaze attack, they want to do
+                   /something/. */
                 setmangry(mtmp);
 
                 if (!mtmp->mcanmove || mtmp->mstun || mtmp->msleeping ||
@@ -1508,7 +1512,7 @@ mbodypart(struct monst *mon, int part)
         return snake_parts[part];
     if (mptr->mlet == S_EYE)
         return sphere_parts[part];
-    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING || mptr->mlet == S_BLOB
+    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING
         || mptr == &mons[PM_JELLYFISH])
         return jelly_parts[part];
     if (mptr->mlet == S_VORTEX ||

@@ -82,7 +82,7 @@ const struct nh_symdef warnsyms[WARNCOUNT] = {
 /* Note: these descriptions are used to name tiles, so should not be changed
    without a good reason. If two descriptions are the same, they must be
    consecutive in the list; and the list itself must be in the same order as
-   the S_ symbols in rm.h. */
+   the S_foo dungeon_symbols in rm.h. */
 const char *const defexplain[] = {
      /* 0 */ "unexplored area",     /* unexplored */
              "solid rock",          /* stone */
@@ -124,8 +124,9 @@ const char *const defexplain[] = {
              "opulent throne",      /* throne */
              "sink",                /* sink */
              "fountain",            /* fountain */
-             "lowered drawbridge",  /* vodbridge */
-    /* 40 */ "lowered drawbridge",  /* hodbridge */
+             "magic chest",         /* magic chest */
+    /* 40 */ "lowered drawbridge",  /* vodbridge */
+             "lowered drawbridge",  /* hodbridge */
              "raised drawbridge",   /* vcdbridge */
              "raised drawbridge",   /* hcdbridge */
 };
@@ -154,57 +155,60 @@ const char *const trapexplain[] = {
 /*20*/ "statue trap",
     "magic trap",
     "anti-magic field",
-    "polymorph trap"
+    "polymorph trap",
+    "stinking cloud trap",
 };
 
 /*
  *  Default screen symbols with explanations and colors.
+ *  Probably need to stay in the same order as defexplain
+ *  (above) and dungeon_symbols (in rm.h).
  */
 const struct nh_symdef defsyms[] = {
-/* 0*/ {' ', "unexplored", CLR_GRAY},
-    {' ', "stone", CLR_GRAY},
-    {'|', "vwall", CLR_GRAY},
-    {'-', "hwall", CLR_GRAY},
-    {'-', "tlcorn", CLR_GRAY},
-    {'-', "trcorn", CLR_GRAY},
-    {'-', "blcorn", CLR_GRAY},
-    {'-', "brcorn", CLR_GRAY},
-    {'-', "crwall", CLR_GRAY},
-    {'-', "tuwall", CLR_GRAY},
+       {' ', "unexplored", CLR_GRAY}, /* 0 */
+       {' ', "stone", CLR_GRAY},
+       {'|', "vwall", CLR_GRAY},
+       {'-', "hwall", CLR_GRAY},
+       {'-', "tlcorn", CLR_GRAY},
+       {'-', "trcorn", CLR_GRAY},
+       {'-', "blcorn", CLR_GRAY},
+       {'-', "brcorn", CLR_GRAY},
+       {'-', "crwall", CLR_GRAY},
+       {'-', "tuwall", CLR_GRAY},
 /*10*/ {'-', "tdwall", CLR_GRAY},
-    {'|', "tlwall", CLR_GRAY},
-    {'|', "trwall", CLR_GRAY},
-    {'#', "corr", CLR_GRAY},
-    {'.', "room", CLR_GRAY},
-    {'}', "pool", CLR_BLUE},
-    {' ', "air", CLR_CYAN},
-    {'#', "cloud", CLR_GRAY},
-/*20*/ {'}', "water", CLR_BLUE},
-    {'.', "ice", CLR_CYAN},
-    {'}', "lava", CLR_RED},
-    {'.', "ndoor", CLR_GRAY},
-
-    {'-', "vodoor", CLR_BROWN},
-    {'|', "hodoor", CLR_BROWN},
-    {'+', "vcdoor", CLR_BROWN},
-    {'+', "hcdoor", CLR_BROWN},
-    {'#', "bars", HI_METAL},
-    {'#', "tree", CLR_GREEN},
-/*30*/ {'<', "upstair", CLR_WHITE},
-    {'>', "dnstair", CLR_WHITE},
-    {'<', "upladder", CLR_YELLOW},
-    {'>', "dnladder", CLR_YELLOW},
-    {'<', "upsstair", CLR_YELLOW | HI_ULINE},
-    {'>', "dnsstair", CLR_YELLOW | HI_ULINE},
-    {'_', "altar", CLR_GRAY},
-    {'|', "grave", CLR_BLACK},
-    {'\\', "throne", HI_GOLD},
-    {'#', "sink", CLR_GRAY},
-/*40*/ {'{', "fountain", CLR_BLUE},
-    {'#', "vodbridge", CLR_BROWN},
-    {'#', "hodbridge", CLR_BROWN},
-    {'+', "vcdbridge", CLR_YELLOW},
-    {'+', "hcdbridge", CLR_YELLOW}
+       {'|', "tlwall", CLR_GRAY},
+       {'|', "trwall", CLR_GRAY},
+       {'#', "corr", CLR_GRAY},
+       {'.', "room", CLR_GRAY},
+       {'}', "pool", CLR_BLUE},
+       {' ', "air", CLR_CYAN},
+       {'#', "cloud", CLR_GRAY},
+       {'}', "water", CLR_BLUE},
+       {'.', "ice", CLR_CYAN},
+/*20*/ {'}', "lava", CLR_RED},
+       {'.', "ndoor", CLR_GRAY},
+       {'-', "vodoor", CLR_BROWN},
+       {'|', "hodoor", CLR_BROWN},
+       {'+', "vcdoor", CLR_BROWN},
+       {'+', "hcdoor", CLR_BROWN},
+       {'#', "bars", HI_METAL},
+       {'#', "tree", CLR_GREEN},
+       {'<', "upstair", CLR_WHITE},
+       {'>', "dnstair", CLR_WHITE},
+/*30*/ {'<', "upladder", CLR_YELLOW},
+       {'>', "dnladder", CLR_YELLOW},
+       {'<', "upsstair", CLR_YELLOW | HI_ULINE},
+       {'>', "dnsstair", CLR_YELLOW | HI_ULINE},
+       {'_', "altar", CLR_GRAY},
+       {'|', "grave", CLR_BLACK},
+       {'\\', "throne", HI_GOLD},
+       {'#', "sink", CLR_GRAY},
+       {'{', "fountain", CLR_BLUE},
+       {'(', "magic chest", CLR_BRIGHT_MAGENTA},
+/*40*/ {'#', "vodbridge", CLR_BROWN},
+       {'#', "hodbridge", CLR_BROWN},
+       {'+', "vcdbridge", CLR_YELLOW},
+       {'+', "hcdbridge", CLR_YELLOW}
 };
 
 const struct nh_symdef trapsyms[] = {
@@ -230,7 +234,8 @@ const struct nh_symdef trapsyms[] = {
     {'^', "statue trap", CLR_GRAY},
 /*20*/ {'^', "magic trap", HI_ZAP},
     {'^', "anti-magic field", HI_ZAP},
-    {'^', "polymorph trap", CLR_BRIGHT_GREEN}
+    {'^', "polymorph trap", CLR_BRIGHT_GREEN},
+    {'^', "stinking cloud trap", CLR_GREEN}
 };
 
 

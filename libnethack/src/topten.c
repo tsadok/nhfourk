@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -108,9 +108,8 @@ encode_uevent(void)
     if (u.uevent.ascended)
         c |= 0x0100UL;  /* someone needs to use this variable */
 
-    /* notable other events */
-    if (u.uevent.uhand_of_elbereth)
-        c |= 0x0200UL;  /* was crowned */
+    /* 0x0200UL is in the other events section below,
+       because it was assigned before the boss kills */
 
     /* boss kills */
     if (u.quest_status.killed_nemesis)
@@ -126,6 +125,19 @@ encode_uevent(void)
     if (mvitals[PM_HIGH_PRIEST].died)
         c |= 0x8000UL;  /* defeated a high priest */
 
+    /* notable other events */
+    if (u.uevent.uhand_of_elbereth)
+        c |= 0x0200UL;  /* was crowned */
+    if (historysearch("opened a magic chest", TRUE))
+        c |= 0x00010000UL;
+    if (historysearch("entered the Sokoban zoo", TRUE))
+        c |= 0x00020000UL;
+    if (historysearch("entered the Minetown temple", TRUE))
+        c |= 0x00040000UL;
+    if (historysearch("reached the bottom of the Mines", TRUE))
+        c |= 0x00080000UL;
+    if (historysearch("reached the Astral Plane", TRUE))
+        c |= 0x000F0000UL;
     return c;
 }
 
@@ -153,8 +165,8 @@ encode_carried(void)
 static unsigned long
 encode_birthoptions(void)
 {
-    /* This function encodes birth options (excluding ones that have their own xlog fields)
-       Compare to the list in options.c */
+    /* This function encodes birth options (excluding ones that have their own
+       xlog fields). Compare to the list in options.c. */
     unsigned long c = 0UL;
     if (flags.elbereth_enabled)
         c |= 0x0001UL;
@@ -646,7 +658,8 @@ topten_level_name(int dnum, int dlev, char *outbuf)
         }
         sprintf(outbuf + strlen(outbuf), fmt, arg);
     } else {
-        sprintf(outbuf + strlen(outbuf), "in %s", dungeons[dnum].dname);
+        sprintf(outbuf + strlen(outbuf), "in %s",
+                gamestate.dungeons[dnum].dname);
         if (dnum != knox_level.dnum)
             sprintf(outbuf + strlen(outbuf), " on level %d", dlev);
     }

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -14,18 +14,20 @@
  */
 #define PN_BARE_HANDED       (-1)       /* includes martial arts */
 #define PN_TWO_WEAPONS       (-2)
-#define PN_RIDING            (-3)
-#define PN_POLEARMS          (-4)
-#define PN_SABER             (-5)
-#define PN_HAMMER            (-6)
-#define PN_WHIP              (-7)
-#define PN_ATTACK_SPELL      (-8)
-#define PN_HEALING_SPELL     (-9)
-#define PN_DIVINATION_SPELL  (-10)
-#define PN_ENCHANTMENT_SPELL (-11)
-#define PN_CLERIC_SPELL      (-12)
-#define PN_ESCAPE_SPELL      (-13)
-#define PN_MATTER_SPELL      (-14)
+#define PN_SHIELD            (-3)
+#define PN_WANDS             (-4)
+#define PN_RIDING            (-5)
+#define PN_POLEARMS          (-6)
+#define PN_SABER             (-7)
+#define PN_HAMMER            (-8)
+#define PN_WHIP              (-9)
+#define PN_ATTACK_SPELL      (-10)
+#define PN_HEALING_SPELL     (-11)
+#define PN_DIVINATION_SPELL  (-12)
+#define PN_ENCHANTMENT_SPELL (-13)
+#define PN_CLERIC_SPELL      (-14)
+#define PN_ESCAPE_SPELL      (-15)
+#define PN_MATTER_SPELL      (-16)
 
 static void give_may_advance_msg(int);
 
@@ -42,8 +44,8 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
     PN_DIVINATION_SPELL, PN_ENCHANTMENT_SPELL,
     PN_CLERIC_SPELL, PN_ESCAPE_SPELL,
     PN_MATTER_SPELL,
-    PN_BARE_HANDED, PN_TWO_WEAPONS,
-    PN_RIDING
+    PN_BARE_HANDED, PN_TWO_WEAPONS, PN_SHIELD,
+    PN_RIDING, PN_WANDS
 };
 
 /* note: entry [0] isn't used */
@@ -51,7 +53,9 @@ static const char *const odd_skill_names[] = {
     "no skill",
     "bare hands",       /* use barehands_or_martial[] instead */
     "two weapon combat",
+    "shield",
     "riding",
+    "wands",
     "polearms",
     "saber",
     "hammer",
@@ -87,11 +91,17 @@ static const char *skill_level_name(int);
 static const char *max_skill_level_name(int);
 static void skill_advance(int);
 
-#define P_NAME(type) ((skill_names_indices[type] > 0) ? \
-                      OBJ_NAME(objects[skill_names_indices[type]]) : \
-                      (type == P_BARE_HANDED_COMBAT) ? \
-                        barehands_or_martial[martial_bonus()] : \
-                        odd_skill_names[-skill_names_indices[type]])
+#define P_NAME(type) skill_name(type)
+/* This is a function, not just a macro, so we can use it in spoiler.c */
+const char *
+skill_name(int type)
+{
+    return ((skill_names_indices[type] > 0) ?
+            OBJ_NAME(objects[skill_names_indices[type]]) :
+            (type == P_BARE_HANDED_COMBAT) ?
+            barehands_or_martial[martial_bonus()] :
+            odd_skill_names[-skill_names_indices[type]]);
+}
 
 static const char kebabable[] = {
     S_XORN, S_DRAGON, S_JABBERWOCK, S_NAGA, S_GIANT, '\0'
@@ -1012,7 +1022,7 @@ static const struct skill_range {
     const char *name;
     short first, last;
 } skill_ranges[] = {
-    {"Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
+    {"Miscellaneous Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
     {"Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON},
     {"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL}
 };
@@ -1542,9 +1552,16 @@ skill_init(const struct def_skill *class_skill)
     for (obj = invent; obj; obj = obj->nobj) {
         if (obj->otyp == TOUCHSTONE || obj->otyp == LUCKSTONE)
             continue;
-        skill = weapon_type(obj);
+        if (is_shield(obj))
+            skill = P_SHIELD;
+        else if (obj->oclass == WAND_CLASS)
+            skill = P_WANDS;
+        else
+            skill = weapon_type(obj);
+
         if (skill != P_NONE) {
-            P_MAX_SKILL(skill) = P_BASIC;
+            if (P_MAX_SKILL(skill) < P_BASIC)
+                P_MAX_SKILL(skill) = P_BASIC;
             P_SKILL(skill)     = P_BASIC;
         }
     }
@@ -1558,7 +1575,7 @@ skill_init(const struct def_skill *class_skill)
         P_SKILL(P_ATTACK_SPELL) = P_BASIC;
         P_SKILL(P_ENCHANTMENT_SPELL) = P_BASIC;
     }
-
+    
     /* walk through array to set skill maximums */
     for (; class_skill->skill != P_NONE; class_skill++) {
         skmax = class_skill->skmax;

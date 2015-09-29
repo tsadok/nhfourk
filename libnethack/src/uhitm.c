@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-04-05 */
+/* Last modified by Alex Smith, 2015-07-21 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -26,179 +26,6 @@ static boolean shade_aware(struct obj *);
 static int dieroll;
 
 #define PROJECTILE(obj) ((obj) && is_ammo(obj))
-
-
-boolean
-confirm_attack(struct monst *mtmp, enum u_interaction_mode uim)
-{
-    if (!UIM_AGGRESSIVE(uim)) {
-        pline("You take care not to attack %s.", mon_nam(mtmp));
-        return FALSE; /* pacifists never confirm attacks */
-    }
-    if (mtmp->mpeaceful && !Hallucination && uim <= uim_standard) {
-        if (yn(msgprintf("Really attack %s?", mon_nam(mtmp))) != 'y')
-            return FALSE;
-    }
-
-    return TRUE;
-}
-
-/* Return values: ac_continue = OK to attack, ac_cancel = not OK to attack and
-   no time spent, ac_somethingelse = not OK to attack but time was spent.
-
-   This function ignores the item interaction mode of uim, and cares only about
-   the monster interaction mode. It also assumes that the caller is vetoing
-   displace attempts (they don't make sense to most callers of this function);
-   if callers want to be able to do those, they should check is_safepet()
-   manually. */
-enum attack_check_status
-attack_checks(struct monst *mtmp,
-              struct obj *wep, /* uwep for attack(), null for kick_monster() */
-              schar dx, schar dy, enum u_interaction_mode uim)
-{
-    /* If you're close enough to attack, alert any waiting monster. */
-    mtmp->mstrategy &= ~STRAT_WAITMASK;
-
-    /* You're always aware of an engulfing monster. */
-    if (Engulfed && mtmp == u.ustuck) {
-        if (!UIM_AGGRESSIVE(uim)) {
-            pline("You can't do that without attacking.");
-            return ac_cancel;
-        }
-        return ac_continue;
-    }
-
-    /* If the user's very insistent about attacking, always try to attack. */
-    if (uim == uim_forcefight) {
-        /* With the new memory engine, we can do this without clobbering the
-           information on what's beneath. Note: we can't call reveal_monster_at
-           unconditionally, because some callers need information about whether
-           there was an 'I', but this doesn't matter for forcefight. */
-        reveal_monster_at(u.ux + dx, u.uy + dy, TRUE);
-        return ac_continue;
-    }
-
-    /* Put up an invisible monster marker, but with exceptions for monsters
-       that hide and monsters you've been warned about. The former already
-       prints a warning message and prevents you from hitting the monster just
-       via the hidden monster code below; if we also did that here, similar
-       behavior would be happening two turns in a row.  The latter shows a
-       glyph on the screen, so you know something is there.
-
-       This happens regardless of the interaction mode (assuming it's not
-       forcefight); the character tries to move onto the square (in every mode),
-       and gets surprised. */
-    if (!canspotmonoritem(mtmp) && !warning_at(u.ux + dx, u.uy + dy) &&
-        !level->locations[u.ux + dx][u.uy + dy].mem_invis &&
-        !knownwormtail(u.ux + dx, u.uy + dy) &&
-        !(!Blind && mtmp->mundetected && hides_under (mtmp->data))) {
-        pline("Wait!  There's something there you can't see!");
-        map_invisible(u.ux + dx, u.uy + dy);
-        /* if it was an invisible mimic, treat it as if we stumbled onto a
-           visible mimic */
-        if (mtmp->m_ap_type && !Protection_from_shape_changers) {
-            if (!u.ustuck && !mtmp->mflee && dmgtype(mtmp->data, AD_STCK))
-                u.ustuck = mtmp;
-        }
-        wakeup(mtmp, FALSE);   /* always necessary; also un-mimics mimics */
-        return ac_somethingelse;
-    }
-
-    /* Duplicate the check from hack.c that prevents moving onto an
-       invisible-monster I (for situations like applying a pickaxe at an
-       invisible-monster I, etc.). */
-    if (level->locations[mtmp->mx][mtmp->my].mem_invis &&
-        !UIM_AGGRESSIVE(uim)) {
-        pline("You don't want to risk attacking something.");
-        return ac_cancel;
-    }
-    /* from now on we can attack invisible monsters safely */
-
-    if (mtmp->m_ap_type && !Protection_from_shape_changers && !sensemon(mtmp) &&
-        !warning_at(u.ux + dx, u.uy + dy)) {
-        /* If a hidden mimic was in a square where a player remembers some
-           (probably different) unseen monster, the player is in luck--he
-           attacks it even though it's hidden. */
-        if (level->locations[mtmp->mx][mtmp->my].mem_invis) {
-            seemimic(mtmp);
-            return ac_continue;
-        }
-        stumble_onto_mimic(mtmp, dx, dy);
-        return ac_somethingelse;
-    }
-
-    /* TODO: Not touching this for now, but this looks like it could be replaced
-       by a custom msensem() call, greatly simplifying the code */
-    if (mtmp->mundetected && !canseemon(mtmp) &&
-        !warning_at(u.ux + dx, u.uy + dy) && (hides_under(mtmp->data) ||
-                                              mtmp->data->mlet == S_EEL)) {
-        mtmp->mundetected = mtmp->msleeping = 0;
-        newsym(mtmp->mx, mtmp->my);
-        if (level->locations[mtmp->mx][mtmp->my].mem_invis) {
-            seemimic(mtmp);
-            return ac_continue;
-        }
-        if (!((Blind ? Blind_telepat : Unblind_telepat) || Detect_monsters)) {
-            struct obj *obj;
-
-            if (Blind || (is_pool(level, mtmp->mx, mtmp->my) && !Underwater))
-                pline("Wait!  There's a hidden monster there!");
-            else if ((obj = level->objects[mtmp->mx][mtmp->my]) != 0)
-                pline("Wait!  There's %s hiding under %s!", an(l_monnam(mtmp)),
-                      doname(obj));
-            return ac_somethingelse;
-        }
-    }
-
-    /* Make sure to wake up a monster from the above cases if the hero can sense
-       that the monster is there. */
-    if ((mtmp->mundetected || mtmp->m_ap_type) && sensemon(mtmp)) {
-        mtmp->mundetected = 0;
-        wakeup(mtmp, TRUE);
-    }
-
-    /* The remaining cases only happen if the player knows what the monster is
-       and walked into it deliberately.
-
-       TODO: This looks wrong for warning. */
-    if (canspotmon(mtmp) && !Confusion && !Hallucination && !Stunned) {
-
-        if (uim <= uim_displace) {
-            pline("There's a monster in the way.");
-            return ac_cancel; /* no interaction with monsters at all */
-        }
-
-        /* These cases only happen from movement, because they're never returned
-           by apply_interaction_mode(). */
-        if (uim == uim_pacifist || uim == uim_standard) {
-            if (mtmp->isshk && mtmp->mpeaceful &&
-                (ESHK(mtmp)->billct || ESHK(mtmp)->debit)) {
-                return dopay(&(struct nh_cmd_arg){.argtype = 0})
-                    ? ac_somethingelse : ac_cancel;
-            }
-            if (always_peaceful(mtmp->data) && mtmp->mpeaceful) {
-                if (mtmp->data->msound == MS_PRIEST)
-                    pline("The priest%s mutters a prayer.",
-                          mtmp->female ? "ess" : "");
-                else {
-                    struct nh_cmd_arg arg;
-                    arg_from_delta(dx, dy, 0, &arg);
-                    return dotalk(&arg) ? ac_somethingelse : ac_cancel;
-                }
-                return ac_cancel;
-            }
-        }
-
-        /* Prompt about whether to attack peaceful but not always-peaceful
-           monsters; also tame monsters in modes that don't support safepet;
-           also always-peacefuls in modes that don't support chatting to
-           always-peacefuls. */
-        if (!confirm_attack(mtmp, uim))
-            return ac_cancel;
-    }
-
-    return ac_continue;
-}
 
 /*
  * It is unchivalrous for a knight to attack the defenseless or from behind.
@@ -362,7 +189,12 @@ find_roll_to_hit(struct monst *mtmp)
     return tmp;
 }
 
-/* Called when the user does something that might attack a monster with uwep.
+/*
+ * Called when the user does something that might attack a monster with uwep.
+ * "confirmed" is TRUE if the caller checked that the character wants to attack;
+ * FALSE if this function needs to do the check. (This is mostly to reduce code
+ * duplication in the callers; most but not all will want a standard check
+ * against using flags.u_interaction_mode and weird_attack == TRUE.)
  *
  * Return values:
  * ac_continue = The monster dodged the attack; uwep should continue moving past
@@ -376,10 +208,9 @@ find_roll_to_hit(struct monst *mtmp)
  * ac_monsterhit = uwep hit the monster, that's it for the turn.
  */
 enum attack_check_status
-attack(struct monst * mtmp, schar dx, schar dy, enum u_interaction_mode uim)
+attack(struct monst *mtmp, schar dx, schar dy, boolean confirmed)
 {
     schar tmp;
-    enum attack_check_status ret;
 
     /* Checks that prevent attacking altogether: do this to avoid a
        map_invisible call (the player doesn't try to attack, so won't detect a
@@ -396,17 +227,13 @@ attack(struct monst * mtmp, schar dx, schar dy, enum u_interaction_mode uim)
     if (check_capacity("You cannot fight while so heavily loaded."))
         return ac_cancel;
 
-    /* This always needs doing, but it needs doing exactly once. We normally do
-       it ourselves in order that the caller doesn't have to. If the caller has
-       done a check already, they should set the interaction mode to
-       "indiscriminate" in order to avoid the second check causing problems
-       (it's always going to return ac_continue if the first check did).
-
-       Exception: "forcefight" will sometimes return ac_continue in cases when
-       "indiscriminate" returns ac_somethingelse. */
-    ret = attack_checks(mtmp, uwep, dx, dy, uim);
-    if (ret != ac_continue)
-        return ret;
+    /* if the caller didn't check to see if we even want to attack, do that
+       now */
+    if (!confirmed) {
+        if (resolve_uim(flags.interaction_mode, TRUE, u.ux + dx, u.uy + dy) ==
+            uia_halt)
+            return ac_cancel;
+    }
 
     if (u.twoweap && !can_twoweapon())
         untwoweapon();
@@ -511,7 +338,6 @@ known_hitum(struct monst *mon, int *mhit, const struct attack *uattk, schar dx,
             if (difference > 0) {
                 pline("As you meet %s deep, meaningful gaze, you feel "
                       "its suffering as though it were your own.", mhis(mon));
-                exercise(A_WIS, FALSE);
                 exercise(A_INT, FALSE);
                 suffering = difference * u.ulevel;
                 if (suffering > (u.uhpmax - 1) / 2)
@@ -566,7 +392,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
     int barehand_silver_rings = 0;
 
     /* The basic reason we need all these booleans is that we don't want a
-       "hit" message when a monster dies, so we have to know how much damage it 
+       "hit" message when a monster dies, so we have to know how much damage it
        did _before_ outputting a hit message, but any messages associated with
        the damage don't come out until _after_ outputting a hit message. */
     boolean hittxt = FALSE, destroyed = FALSE, already_killed = FALSE;
@@ -588,14 +414,15 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (mdat == &mons[PM_SHADE])
             tmp = 0;
         else if (martial_bonus())
-            tmp = rnd(4);       /* bonus for martial arts */
+             /* bonus for martial arts */
+            tmp = rnd(4) + P_SKILL(P_MARTIAL_ARTS);
         else
             tmp = rnd(2);
         valid_weapon_attack = (tmp > 1);
         /* blessed gloves give bonuses when fighting 'bare-handed' */
         if (uarmg && uarmg->blessed && (is_undead(mdat) || is_demon(mdat)))
             tmp += rnd(4);
-        /* So do silver rings.  Note: rings are worn under gloves, so you don't 
+        /* So do silver rings.  Note: rings are worn under gloves, so you don't
            get both bonuses. */
         if (!uarmg) {
             if (uleft && objects[uleft->otyp].oc_material == SILVER)
@@ -628,7 +455,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     tmp = rnd(2);
 
                 /* need to duplicate this check for silver arrows: they aren't
-                   caught below as they're weapons, and aren't caught in dmgval 
+                   caught below as they're weapons, and aren't caught in dmgval
                    as they aren't melee weapons. */
                 if (objects[obj->otyp].oc_material == SILVER &&
                     hates_silver(mdat)) {
@@ -688,7 +515,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                             !obj_resists(monwep,
                                          50 + 15 * greatest_erosion(obj),
                                          100))) {
-                    /* 
+                    /*
                      * 2.5% chance of shattering defender's weapon when
                      * using a two-handed weapon; less if uwep is rusted.
                      * [dieroll == 2 is most successful non-beheading or
@@ -940,7 +767,6 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                             } else {
                                 pline("Splat!");
                                 useup_eggs(obj);
-                                exercise(A_WIS, FALSE);
                             }
                         }
                         break;
@@ -998,6 +824,30 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     get_dmg_bonus = FALSE;
                     tmp = 0;
                     break;
+                case VAMPIRE_BLOOD:
+                    /* Currently, this is probably impossible, as I don't think
+                       any monster with this attack is a valid polyform.  But
+                       while I am cleaning up oversights regarding this new
+                       type of attack, I might as well do this one too. */
+                    if (resists_drli(mon)) {
+                        pline("Your blood hits %s and does nothing",
+                              mon_nam(mon));
+                    } else {
+                        int xtmp = dice(2,6);
+                        pline("Your blood weakens %s!", mon_nam(mon));
+                        mon->mhpmax -= xtmp;
+                        if ((mon->mhp -= xtmp) <= 0 || !mon->m_lev) {
+                            pline("%s dies.", Monnam(mon));
+                            xkilled(mon, 0);
+                        } else
+                            mon->m_lev--;
+                    }
+                    tmp = 0;
+                    if (thrown)
+                        obfree(obj, NULL);
+                    else
+                        useup(obj);
+                    break;
                 case ACID_VENOM:       /* thrown (or spit) */
                     if (resists_acid(mon)) {
                         pline("Your venom hits %s harmlessly.", mon_nam(mon));
@@ -1023,7 +873,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                         tmp = rnd(tmp);
                     if (tmp > 6)
                         tmp = 6;
-                    /* 
+                    /*
                      * Things like silver wands can arrive here so
                      * so we need another silver check.
                      */
@@ -1166,14 +1016,45 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         if (mon->mtame && !destroyed)
             monflee(mon, 10 * rnd(tmp), FALSE, FALSE);
     }
-    if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING])
+    if ((mdat == &mons[PM_BLACK_PUDDING] || mdat == &mons[PM_BROWN_PUDDING] ||
+         mdat == &mons[PM_BLOOD_PUDDING])
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
         mon->mhp > 1 && !thrown && !mon->mcan
         /* && !destroyed -- guaranteed by mhp > 1 */ ) {
-        if (clone_mon(mon, 0, 0)) {
-            pline("%s divides as you hit it!", Monnam(mon));
-            hittxt = TRUE;
-            break_conduct(conduct_puddingsplit);
+        if ((mon->mhp > 60) && !(mdat == &mons[PM_BLOOD_PUDDING])) {
+            coord mm;
+            struct monst *bpud;
+            mm.x = mon->mx; mm.y = mon->my;
+            if (enexto(&mm, level, mm.x, mm.y, mon->data) &&
+                !MON_AT(level, mm.x, mm.y)) {
+                bpud = makemon(&mons[PM_BLOOD_PUDDING], level, mm.x, mm.y, 0);
+                if (bpud) {
+                    if (bpud->mhp < mon->mhp * 4 / 3) {
+                        bpud->mhp = mon->mhp * 4 / 3;
+                        if (bpud->mhp > bpud->mhpmax)
+                            bpud->mhpmax = bpud->mhp;
+                    }
+                    if (Hallucination)
+                        pline("You crave %s.", (moves % 2) ?
+                              "bubble and squeak" : "mushy peas");
+                    else
+                        pline("Something rather strange happens as %s divides.",
+                              mon_nam(mon));
+                }
+            }
+        } else {
+            struct monst *newpudding = clone_mon(mon, 0, 0);
+            if (newpudding) {
+                pline("%s divides as you hit it!", Monnam(mon));
+                newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
+                mon->mhpmax        = mon->mhpmax        * 3 / 4;
+                if (mon->mhp > mon->mhpmax) {
+                    mon->mhp = mon->mhpmax;
+                    newpudding->mhp = newpudding->mhpmax;
+                }
+                hittxt = TRUE;
+                break_conduct(conduct_puddingsplit);
+            }
         }
     }
 
@@ -1240,7 +1121,7 @@ shade_aware(struct obj *obj)
 {
     if (!obj)
         return FALSE;
-    /* 
+    /*
      * The things in this list either
      * 1) affect shades.
      *  OR
@@ -1275,7 +1156,7 @@ m_slips_free(struct monst *mdef, const struct attack *mattk)
             obj = which_armor(mdef, os_armu);    /* shirt */
     }
 
-    /* if your cloak/armor is greased, monster slips off; this protection might 
+    /* if your cloak/armor is greased, monster slips off; this protection might
        fail (33% chance) when the armor is cursed */
     if (obj && (obj->greased || obj->otyp == OILSKIN_CLOAK) &&
         (!obj->cursed || rn2(3))) {
@@ -1283,7 +1164,7 @@ m_slips_free(struct monst *mdef, const struct attack *mattk)
               mattk->adtyp ==
               AD_WRAP ? "slip off of" : "grab, but cannot hold onto",
               s_suffix(mon_nam(mdef)), obj->greased ? "greased" : "slippery",
-              /* avoid "slippery slippery cloak" for undiscovered oilskin cloak 
+              /* avoid "slippery slippery cloak" for undiscovered oilskin cloak
                */
               (obj->greased ||
                objects[obj->otyp].
@@ -1350,7 +1231,6 @@ demonpet(void)
     if ((dtmp = makemon(pm, level, u.ux, u.uy,
                         MM_CREATEMONSTER | MM_CMONSTER_T)) != 0)
         tamedog(dtmp, NULL);
-    exercise(A_WIS, TRUE);
 }
 
 /*
@@ -1743,7 +1623,6 @@ damageum(struct monst *mdef, const struct attack *mattk)
             if (ABASE(A_INT) > AMAX(A_INT))
                 ABASE(A_INT) = AMAX(A_INT);
         }
-        exercise(A_WIS, TRUE);
         break;
     case AD_STCK:
         if (!negated && !sticks(mdef->data))
@@ -2029,7 +1908,7 @@ gulpum(struct monst *mdef, const struct attack *mattk)
        take multiple moves.  (It's just too hard, for too little result, to
        program monsters which attack from inside you, which would be necessary
        if done accurately.) Instead, we arbitrarily kill the monster
-       immediately for AD_DGST and we regurgitate them after exactly 1 round of 
+       immediately for AD_DGST and we regurgitate them after exactly 1 round of
        attack otherwise.  -KAA */
 
     if (mdef->data->msize >= MZ_HUGE)
@@ -2357,7 +2236,7 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
         case AT_MAGC:
             /* No check for uwep; if wielding nothing we want to do the normal
                1-2 points bare hand damage... */
-            /* 
+            /*
                if (i==0 && (youmonst.data->mlet==S_KOBOLD ||
                youmonst.data->mlet==S_ORC || youmonst.data->mlet==S_GNOME ))
                goto use_weapon; */
@@ -2527,6 +2406,12 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
             passive_obj(mon, obj, &(ptr->mattk[i]));
         }
         break;
+    case AD_DRLI:
+        if (mhit && !mon->mcan && !Drain_resistance) {
+            losexp(msgprintf("drained of life by attacking %s",
+                             k_monnam(mon)), FALSE);
+        }
+        break;
     default:
         break;
     }
@@ -2632,7 +2517,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
  * Assumes the attack was successful.
  */
 void
-passive_obj(struct monst *mon,
+passive_obj(struct monst *mon, /* could be youmonst */
             struct obj *obj, /* null means pick uwep, uswapwep or uarmg */
             const struct attack *mattk)
 {       /* null means we find one internally */
@@ -2801,4 +2686,3 @@ flash_hits_mon(struct monst *mtmp, struct obj *otmp)
 }
 
 /*uhitm.c*/
-

@@ -216,25 +216,4 @@ td.flags {
    display:               inline-block;
 }
 
-.norace {
-   color:                 #7F7F7F;
-}
-.humanrace {
-   color:                 #FFFFFF;
-}
-.elfrace {
-   color:                 #00FF00;
-}
-.gnomerace {
-   color:                 #AA8800;
-}
-.orcrace {
-   color:                 #CC0000;
-}
-.dwarfrace {
-   color:                 #0066DD;
-}
-.fairyrace {
-   color:                 #EE66FF;
-}
 

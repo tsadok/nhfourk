@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -58,7 +58,7 @@
    makeplural(str): returns plural version of str
    "sheep" -> "sheep", "lump of sheep" -> "lumps of sheep", "mumak" -> "mumakil"
    makesingular(str): opposite of makeplural
-   readobjname(str, default_obj, from_user): convert string to object
+   readobjname(str, default_obj, from_user, wishtype): convert string to object
    if "nothing" is given, default_obj is returned
    cloak_simple_name(cloak): return vague description of given cloak
    "robe", "wrapping", "apron", "smock", "cloak"
@@ -233,12 +233,12 @@ distant_name(const struct obj *obj, const char *(*func) (const struct obj *))
 const char *
 fruitname(boolean juice)
 {
-    const char *fruit_nam = strstri(pl_fruit, " of ");
+    const char *fruit_nam = strstri(gamestate.fruits.curname, " of ");
 
     if (fruit_nam)
         fruit_nam += 4; /* skip past " of " */
     else
-        fruit_nam = pl_fruit;   /* use it as is */
+        fruit_nam = gamestate.fruits.curname;   /* use it as is */
 
     return msgprintf("%s%s", makesingular(fruit_nam), juice ? " juice" : "");
 }
@@ -388,7 +388,7 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
         if (typ == SLIME_MOLD) {
             struct fruit *f;
 
-            for (f = ffruit; f; f = f->nextf) {
+            for (f = gamestate.fruits.chain; f; f = f->nextf) {
                 if (f->fid == obj->spe) {
                     buf = msg_from_string(f->fname);
                     break;
@@ -818,7 +818,7 @@ doname_base(const struct obj *obj, boolean with_price)
         if (obj->otyp == CORPSE) {
             if (mons[obj->corpsenm].geno & G_UNIQ) {
                 prefix = msgcat_many(
-                    prefix, (type_is_pname(&mons[obj->corpsenm]) ? "" : "the "),
+                    (type_is_pname(&mons[obj->corpsenm]) ? "" : "the "),
                     s_suffix(mons[obj->corpsenm].mname), " ", NULL);
                 if (obj->oeaten)
                     prefix = msgcat(prefix, "partly eaten ");
@@ -1372,7 +1372,7 @@ static const char *plurals_dictionary[][2] = {
     {"mouse", "mice"},
     {"louse", "lice"},
     {"child", "children"},
-    {"ox", "oxen"},
+    {"^ox", "oxen"},
     {"vax", "vaxen"},         /* according to the NetHack < 4 devteam */
     {"goose", "geese"},
 
@@ -1785,9 +1785,16 @@ static const struct alt_spellings {
  *
  * TODO: This function assumes writable space beyond the end of bp, and
  * making it work on a message rather than buffer would be nice.
+ *
+ * wishtype values are as follows:
+ *  0 readobjnam() was called by something other than makewish()
+ *  1 normal wish
+ *  2 uncursed scroll of wishing
+ *  3 blessed scroll of wishing
+ * 99 debug-mode wish
  */
 struct obj *
-readobjnam(char *bp, struct obj *no_wish, boolean from_user)
+readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
 {
     char *p;
     int i;
@@ -1803,7 +1810,7 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user)
     int islit, unlabeled, ishistoric, isdiluted;
     const struct alt_spellings *as = spellings;
     struct fruit *f;
-    int ftype = current_fruit;
+    int ftype = gamestate.fruits.current;
     const char *fruitbuf;
 
     /* Fruits may not mess up the ability to wish for real objects (since you
@@ -2330,7 +2337,7 @@ srch:
             fp += l;
         }
 
-        for (f = ffruit; f; f = f->nextf) {
+        for (f = gamestate.fruits.chain; f; f = f->nextf) {
             const char *f1 = f->fname, *f2 = makeplural(f->fname);
 
             if (!strncmp(fp, f1, strlen(f1)) || !strncmp(fp, f2, strlen(f2))) {
@@ -2397,6 +2404,12 @@ srch:
         if (!BSTRCMP(bp, p - 6, "throne")) {
             level->locations[u.ux][u.uy].typ = THRONE;
             pline("A throne.");
+            newsym(u.ux, u.uy);
+            return &zeroobj;
+        }
+        if (!BSTRCMP(bp, p - 11, "magic chest")) {
+            level->locations[u.ux][u.uy].typ = MAGIC_CHEST;
+            pline("A magic chest.");
             newsym(u.ux, u.uy);
             return &zeroobj;
         }
@@ -2500,9 +2513,9 @@ typfnd:
     if (objects[typ].oc_nowish && !wizard)
         return NULL;
 
-    /* convert magic lamps to regular lamps before lighting them or setting the 
+    /* convert magic lamps to regular lamps before lighting them or setting the
        charges */
-    if (typ == MAGIC_LAMP && !wizard)
+    if (typ == MAGIC_LAMP && !wizard && !(wishtype >= 3))
         typ = OIL_LAMP;
 
     if (typ) {
@@ -2530,7 +2543,7 @@ typfnd:
         (wizard || (cnt <= 7 && Is_candle(otmp)) ||
          (cnt <= 20 && ((oclass == WEAPON_CLASS && is_ammo(otmp))
                         || typ == ROCK || is_missile(otmp))) ||
-         cnt <= rn2_on_rng(6, rng_wish_quantity)))
+         cnt <= rn2_on_rng((wishtype > 2) ? 10 : 6, rng_wish_quantity)))
         otmp->quan = (long)cnt;
     if ((typ == SCR_WISHING) && !wizard) {
         /* If I got the thing right in objects.c, this won't happen. */
@@ -2545,7 +2558,7 @@ typfnd:
         ;
     else if (oclass == ARMOR_CLASS || oclass == WEAPON_CLASS || is_weptool(otmp)
              || (oclass == RING_CLASS && objects[typ].oc_charged)) {
-        if (spe > 1 + rn2_on_rng(5, rng_wish_quality))
+        if (spe > ((wishtype > 1) ? 3 : 1) + rn2_on_rng(5, rng_wish_quality))
             spe = 0;
         if (spe > 2 && Luck < 0)
             spesgn = -1;
@@ -2557,7 +2570,7 @@ typfnd:
             if (spe > 0 && spesgn == -1)
                 spe = 0;
         }
-        if (spe > otmp->spe)
+        if (spe > otmp->spe && wishtype <= 2)
             spe = otmp->spe;
     }
 
@@ -2738,7 +2751,8 @@ typfnd:
     /* and make them pay; charge them for the wish anyway! */
     if ((is_quest_artifact(otmp) ||
          (otmp->oartifact &&
-          rn2_on_rng(nartifact_exist(), rng_artifact_wish) > 1)) && !wizard) {
+          rn2_on_rng(nartifact_exist(), rng_artifact_wish) >
+          ((wishtype == 3) ? 2 : 1))) && !wizard) {
         artifact_exists(otmp, ONAME(otmp), FALSE);
         obfree(otmp, NULL);
         otmp = &zeroobj;

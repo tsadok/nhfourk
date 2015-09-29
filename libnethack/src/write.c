@@ -180,7 +180,6 @@ found:
        no custom RNG used: too much influence from player actions */
     actualcost = rn1(basecost / 2, basecost / 2);
     curseval = bcsign(pen) + bcsign(paper);
-    exercise(A_WIS, TRUE);
     /* dry out marker */
     if (pen->spe < actualcost) {
         pen->spe = 0;

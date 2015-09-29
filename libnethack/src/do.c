@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -12,6 +12,7 @@ static void dosinkring(struct obj *);
 static int drop(struct obj *);
 
 static int menu_drop(int);
+static void on_mines_level(const struct level *);
 static void final_level(void);
 
 /* static boolean badspot(XCHAR_P,XCHAR_P); */
@@ -30,6 +31,7 @@ dodrop(const struct nh_cmd_arg *arg)
     obj = getargobj(arg, &drop_types[i], "drop");
     if (!obj)
         return 0;
+    obj->was_dropped = 1;
     result = drop(obj);
     if (*u.ushops)
         sellobj_state(SELL_NORMAL);
@@ -144,7 +146,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
     if (obj->otyp == BOULDER && boulder_hits_pool(obj, x, y, FALSE))
         return TRUE;
     else if (obj->otyp == BOULDER && (t = t_at(lev, x, y)) != 0 &&
-             (t->ttyp == PIT || t->ttyp == SPIKED_PIT || t->ttyp == TRAPDOOR ||
+             (is_pit_trap(t->ttyp) || t->ttyp == TRAPDOOR ||
               t->ttyp == HOLE)) {
         if (((mtmp = m_at(lev, x, y)) && mtmp->mtrapped) ||
             (u.utrap && u.ux == x && u.uy == y)) {
@@ -206,7 +208,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
         return water_damage(obj, NULL, FALSE) == 3;
     } else if (u.ux == x && u.uy == y && (!u.utrap || u.utraptype != TT_PIT) &&
                (t = t_at(lev, x, y)) != 0 && t->tseen &&
-               (t->ttyp == PIT || t->ttyp == SPIKED_PIT)) {
+               is_pit_trap(t->ttyp)) {
         /* you escaped a pit and are standing on the precipice */
         if (Blind)
             You_hear("%s tumble downwards.", the(xname(obj)));
@@ -640,6 +642,7 @@ menu_drop(int retry)
     if (drop_everything) {
         for (otmp = invent; otmp; otmp = otmp2) {
             otmp2 = otmp->nobj;
+            otmp->was_dropped = 1;
             n_dropped += drop(otmp);
         }
     } else {
@@ -660,6 +663,7 @@ menu_drop(int retry)
                     } else
                         otmp = splitobj(otmp, cnt);
                 }
+                otmp->was_dropped = 1;
                 n_dropped += drop(otmp);
             }
             free(obj_pick_list);
@@ -675,7 +679,7 @@ drop_done:
 static boolean at_ladder = FALSE;
 
 int
-dodown(enum u_interaction_mode uim)
+dodown(boolean autodig_ok)
 {
     struct trap *trap = 0;
     boolean stairs_down =
@@ -722,11 +726,11 @@ dodown(enum u_interaction_mode uim)
         trap = t_at(level, u.ux, u.uy);
         can_fall = trap && (trap->ttyp == TRAPDOOR || trap->ttyp == HOLE);
         if (!trap ||
-            (trap->ttyp != TRAPDOOR && trap->ttyp != HOLE && trap->ttyp != PIT
-             && trap->ttyp != SPIKED_PIT)
+            (trap->ttyp != TRAPDOOR && trap->ttyp != HOLE && 
+             !is_pit_trap(trap->ttyp))
             || (!can_fall_thru(level) && can_fall) || !trap->tseen) {
 
-            if (flags.autodig && ITEM_INTERACTIVE(uim) && flags.autodigdown &&
+            if (flags.autodig && autodig_ok && flags.autodigdown &&
                 flags.occupation == occ_none && uwep && is_pick(uwep)) {
                 struct nh_cmd_arg arg;
                 arg_from_delta(0, 0, 1, &arg);
@@ -763,15 +767,15 @@ dodown(enum u_interaction_mode uim)
     }
 
     if (trap) {
-        if (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) {
+        if (is_pit_trap(trap->ttyp)) {
             if (u.utrap && (u.utraptype == TT_PIT)) {
-                if (flags.autodig && ITEM_INTERACTIVE(uim) && flags.autodigdown
-                    && flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                if (flags.autodig && autodig_ok && flags.autodigdown &&
+                    flags.occupation == occ_none && uwep && is_pick(uwep)) {
                     struct nh_cmd_arg arg;
                     arg_from_delta(0, 0, 1, &arg);
                     return use_pick_axe(uwep, &arg);
                 } else {
-                    pline("You are already in the pit.");      /* YAFM needed */
+                    pline("You have already capitulated to gravity.");
                 }
             } else {
                 u.utrap = 1;
@@ -799,7 +803,7 @@ dodown(enum u_interaction_mode uim)
 }
 
 int
-doup(enum u_interaction_mode uim)
+doup(void)
 {
     if ((u.ux != level->upstair.sx || u.uy != level->upstair.sy)
         && (u.ux != level->upladder.sx || u.uy != level->upladder.sy)
@@ -947,7 +951,7 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
 
     /* If the entry level is the top level, then the dungeon goes down.
        Otherwise it goes up. */
-    if (dungeons[u.uz.dnum].entry_lev == 1) {
+    if (find_dungeon(&u.uz).entry_lev == 1) {
         if (dunlev_reached(&u.uz) < dunlev(&u.uz))
             dunlev_reached(&u.uz) = dunlev(&u.uz);
     } else {
@@ -1236,6 +1240,8 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
 
     if (on_level(&u.uz, &astral_level))
         final_level();
+    else if (In_mines(&u.uz))
+        on_mines_level(level);
     else
         onquest(&orig_d);
 
@@ -1248,6 +1254,18 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     pickup(1, flags.interaction_mode);
 }
 
+/* This runs when the player enters a Mines level.  Its job is to record when
+   the player first reaches the bottom, mainly for livelog and xlog purposes. */
+static void
+on_mines_level(const struct level *lev)
+{
+    if (!In_mines(&lev->z))
+        return;
+    if (!can_dig_down(lev)) {
+        if (!historysearch("reached the bottom of the Mines", TRUE))
+            historic_event(FALSE, TRUE, "reached the bottom of the Mines.");
+    }
+}
 
 /* This runs as the player arrives on Astral. At this point, the Astral level
    RNG is in a consistent state between all games. We use it as far as it keeps

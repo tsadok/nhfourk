@@ -1757,6 +1757,8 @@ find_oid(unsigned id)
     /* first check various obj lists directly */
     if ((obj = o_on(id, invent)))
         return obj;
+    if ((obj = o_on(id, magic_chest_objs)))
+        return obj;
 
     /* not found yet; check inventory for members of various monst lists */
     for (mon = migrating_mons; mon; mon = mon->nmon)
@@ -3043,8 +3045,7 @@ repair_damage(struct level *lev, struct monst *shkp, struct damage *tmp_dam,
             otmp->quan = 1;
             otmp->owt = weight(otmp);
             mpickobj(shkp, otmp);
-        } else if (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT ||
-                   ttmp->ttyp == HOLE)
+        } else if (is_pit_trap(ttmp->ttyp) || ttmp->ttyp == HOLE)
             floordamage = TRUE;
         deltrap(lev, ttmp);
         if (IS_DOOR(tmp_dam->typ)) {
@@ -3823,7 +3824,6 @@ check_unpaid_usage(struct obj *otmp, boolean altusage)
     if (shkp->mcanmove || !shkp->msleeping)
         verbalize(fmt, arg1, arg2, tmp, currency(tmp));
     ESHK(shkp)->debit += tmp;
-    exercise(A_WIS, TRUE);      /* you just got info */
 }
 
 /* for using charges of unpaid objects "used in the normal manner" */

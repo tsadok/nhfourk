@@ -83,7 +83,8 @@ enum youprop {
     WARN_OF_MON              = 66,
     XRAY_VISION              = 67,
     DETECT_MONSTERS          = 68,
-    LAST_PROP                = DETECT_MONSTERS,
+    FAST_DIGGING             = 69,
+    LAST_PROP                = FAST_DIGGING,
 };
 
 /* This enum holds all the equipment that is tracked indirectly in struct you;
@@ -258,6 +259,7 @@ enum tracked_location {
 # define uquiver  EQUIP(os_quiver)
 # define uball    (u.utracked[tos_ball])
 # define uchain   (u.utracked[tos_chain])
+# define magic_chest_objs (u.magicchestobjs)
 
 /* Flags for intrinsics
 

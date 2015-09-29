@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-20 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -28,15 +28,14 @@ static int do_look(boolean, const struct nh_cmd_arg *);
  */
 const char *const monexplain[MAXMCLASSES] = {
     0,
-    "ant or other insect", "blob", "cockatrice",
+    "ant or other insect", "[unused]", "cockatrice",
     "dog or other canine", "eye or sphere", "feline",
     "gremlin", "humanoid", "impish spirit",
-    "jelly", "kobold",
-    "mimic", "nymph", "orc",
-    "piercer", "quadruped", "rodent",
-    "arachnid or centipede", "trapper or lurker above", "unicorn or horse",
-    "vortex", "worm", "xan or other fantastic insect",
-    "light",
+    "jelly or blob", "kobold", "lizard, reptile, or amphibian",
+    "mimic", "nymph", "orc", "[unused]", "quadruped", "rodent",
+    "arachnid or centipede", "trapper, piercer, or lurker above",
+    "unicorn or horse", "vortex", "worm",
+    "xan or other fantastic insect", "light",
 
     "angelic being", "bat or bird", "centaur",
     "dragon", "elemental", "fungus or mold",
@@ -44,11 +43,12 @@ const char *const monexplain[MAXMCLASSES] = {
     "jabberwock", "Keystone Kop", "lich",
     "mummy", "naga", "ogre",
     "pudding or ooze", "quantum mechanic", "rust monster or disenchanter",
-    "snake", "troll", "umber hulk",
-    "vampire", "wraith or ghost", "xorn",
+    "snake", "troll", "[unused]",
+    "vampire", "wraith or ghost",
+    "xorn, umber hulk, or other large deep-rock dweller",
     "apelike creature", "zombie",
 
-    "human or elf", "golem", "major demon", "sea monster", "lizard",
+    "human or elf", "golem", "major demon", "sea monster",
     "long worm tail", "mimic"
 };
 
@@ -128,6 +128,8 @@ mon_vision_summary(const struct monst *mtmp, char *outbuf)
         append_str_comma(outbuf, &outbufp, "artifact sense");
     if (msense_status & MSENSE_GOLDSMELL)
         append_str_comma(outbuf, &outbufp, "smell of gold");
+    if (msense_status & MSENSE_SCENT)
+        append_str_comma(outbuf, &outbufp, "scent");
 
     if (strcmp(outbuf, "normal vision") == 0)
         outbuf[0] = '\0';
@@ -198,7 +200,7 @@ describe_object(int x, int y, int votyp, char *buf, int known_embed,
             if (otmp->oclass == COIN_CLASS)
                 otmp->quan = 1L;        /* to force pluralization off */
             else if (otmp->otyp == SLIME_MOLD)
-                otmp->spe = current_fruit;      /* give the fruit a type */
+                otmp->spe = gamestate.fruits.current;/* give the fruit a type */
             strcpy(buf, distant_name(otmp, xname));
             dealloc_obj(otmp);
             otmp = vobj_at(x, y);       /* make sure we don't point to the temp 
@@ -350,7 +352,7 @@ describe_mon(int x, int y, int monnum, char *buf)
             int tt = t ? t->ttyp : NO_TRAP;
 
             /* newsym lets you know of the trap, so mention it here */
-            if (tt == BEAR_TRAP || tt == PIT || tt == SPIKED_PIT || tt == WEB)
+            if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB)
                 sprintf(buf + strlen(buf),
                         ", trapped in %s", an(trapexplain[tt - 1]));
             if (!t)

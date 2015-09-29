@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-05-19 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,7 +19,6 @@ static void use_bell(struct obj **);
 static int use_candelabrum(struct obj *);
 static int use_candle(struct obj **);
 static int use_lamp(struct obj *);
-static int light_cocktail(struct obj *);
 static int use_tinning_kit(struct obj *);
 static int use_figurine(struct obj **obj, const struct nh_cmd_arg *);
 static int use_grease(struct obj *);
@@ -35,21 +34,6 @@ static boolean uhave_graystone(void);
 
 static const char no_elbow_room[] =
     "You don't have enough elbow-room to maneuver.";
-
-/* The appropriate interaction mode for an "attack" made via applying an
-   object. Also handles kicks.
-
-   The main rule here is that this must never select a mode that would allow
-   the user to chat to a monster, etc.; it's attack, or nothing. */
-enum u_interaction_mode
-apply_interaction_mode(void)
-{
-    if (flags.interaction_mode >= uim_indiscriminate)
-        return flags.interaction_mode;
-    if (!UIM_AGGRESSIVE(flags.interaction_mode))
-        return uim_nointeraction;
-    return uim_attackonly;
-}
 
 static int
 use_camera(struct obj *obj, const struct nh_cmd_arg *arg)
@@ -797,6 +781,8 @@ use_bell(struct obj **optr)
                                  !On_stairs(u.ux, u.uy));
 
     pline("You ring %s.", the(xname(obj)));
+    if (!invoking)
+        break_conduct(conduct_tools);
 
     if (Underwater || (Engulfed && ordinary)) {
         pline("But the sound is muffled.");
@@ -882,7 +868,7 @@ use_bell(struct obj **optr)
             }
 
         } else {        /* uncursed */
-            if (findit() != 0)
+            if (findit(BOLT_LIM) != 0)
                 learno = TRUE;
             else
                 pline("Nothing happens.");
@@ -903,6 +889,8 @@ use_candelabrum(struct obj *obj)
 {
     const char *s = (obj->spe != 1) ? "candles" : "candle";
 
+    if (!invocation_pos(&u.uz, u.ux, u.uy))
+        break_conduct(conduct_tools);
     if (Underwater) {
         pline("You cannot make fire under water.");
         return 0;
@@ -971,6 +959,7 @@ use_candle(struct obj **optr)
             pline("Sorry, fire and water don't mix.");
             return 0;
         }
+        break_conduct(conduct_tools);
         return use_lamp(obj);
     }
 
@@ -986,6 +975,7 @@ use_candle(struct obj **optr)
         }
         if (!obj->lamplit)
             pline("You try to light %s...", the(xname(obj)));
+        break_conduct(conduct_tools);
         return use_lamp(obj);
     } else {
         if ((long)otmp->spe + obj->quan > 7L)
@@ -1189,7 +1179,7 @@ use_lamp(struct obj *obj)
     return 1;
 }
 
-static int
+int
 light_cocktail(struct obj *obj)
 {       /* obj is a potion of oil */
     if (Engulfed) {
@@ -1557,6 +1547,7 @@ use_unicorn_horn(struct obj *obj)
     int idx, val, val_limit, trouble_count, unfixable_trbl, did_prop, did_attr;
     int trouble_list[PROP_COUNT + ATTR_COUNT];
 
+    break_conduct(conduct_unihorns);
     if (obj && obj->cursed) {
         long lcount = (long)rnd(100);
 
@@ -2299,9 +2290,8 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
 
     if (Engulfed) {
         enum attack_check_status attack_status =
-            attack(u.ustuck, dx, dy, apply_interaction_mode());
+            attack(u.ustuck, dx, dy, FALSE);
         return attack_status != ac_cancel;
-
     } else if (Underwater) {
         pline("There is too much resistance to flick your bullwhip.");
 
@@ -2378,7 +2368,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
                 wrapped_what = mon_nam(mtmp);
             } else if (proficient) {
                 enum attack_check_status attack_status =
-                    attack(mtmp, dx, dy, apply_interaction_mode());
+                    attack(mtmp, dx, dy, FALSE);
                 if (attack_status == ac_continue)
                     pline("%s", msg_snap);
                 else
@@ -2487,7 +2477,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
                 pline("You flick your bullwhip towards %s.", mon_nam(mtmp));
             if (proficient) {
                 enum attack_check_status attack_status =
-                    attack(mtmp, dx, dy, apply_interaction_mode());
+                    attack(mtmp, dx, dy, FALSE);
                 if (attack_status == ac_continue)
                     pline("%s", msg_snap);
                 else
@@ -2572,13 +2562,9 @@ use_pole(struct obj *obj, const struct nh_cmd_arg *arg)
     /* Attack the monster there */
     if ((mtmp = m_at(level, cc.x, cc.y)) != NULL) {
         int oldhp = mtmp->mhp;
-        enum attack_check_status attack_status;
 
-        attack_status =
-            attack_checks(mtmp, obj, cc.x, cc.y, apply_interaction_mode());
-
-        if (attack_status != ac_continue)
-            return attack_status != ac_cancel;
+        if (resolve_uim(flags.interaction_mode, TRUE, cc.x, cc.y) == uia_halt)
+            return 0;
 
         bhitpos = cc;
         check_caitiff(mtmp);
@@ -2762,7 +2748,7 @@ use_grapple(struct obj *obj, const struct nh_cmd_arg *arg)
 
 /* return 1 if the wand is broken, hence some time elapsed */
 int
-do_break_wand(struct obj *obj)
+do_break_wand(struct obj *obj, boolean intentional)
 {
     static const char nothing_else_happens[] = "But nothing else happens...";
     int i, x, y;
@@ -2773,23 +2759,24 @@ do_break_wand(struct obj *obj)
     int expltype = EXPL_MAGICAL;
     const char *confirm, *the_wand, *buf;
 
-    the_wand = yname(obj);
-    confirm = msgprintf("Are you really sure you want to break %s?",
-                        safe_qbuf("", sizeof
-                                  "Are you really sure you want to break ?",
-                                  the_wand, ysimple_name(obj), "the wand"));
-    if (yn(confirm) == 'n')
-        return 0;
-
-    if (nohands(youmonst.data)) {
-        pline("You can't break %s without hands!", the_wand);
-        return 0;
-    } else if (ACURR(A_STR) < 10 || obj->oartifact) {
-        pline("You don't have the strength to break %s!", the_wand);
-        return 0;
+    if (intentional) {
+	the_wand = yname(obj);
+    	confirm = msgprintf("Are you really sure you want to break %s?",
+                             safe_qbuf("", sizeof
+                                       "Are you really sure you want to break ?",
+                                       the_wand, ysimple_name(obj), "the wand"));
+	if (yn(confirm) == 'n')
+            return 0;
+        if (nohands(youmonst.data)) {
+            pline("You can't break %s without hands!", the_wand);
+            return 0;
+        } else if (ACURR(A_STR) < 10 || obj->oartifact) {
+            pline("You don't have the strength to break %s!", the_wand);
+            return 0;
+        }
+        pline("Raising %s high above your %s, you break it in two!", the_wand,
+              body_part(HEAD));
     }
-    pline("Raising %s high above your %s, you break it in two!", the_wand,
-          body_part(HEAD));
 
     /* [ALI] Do this first so that wand is removed from bill. Otherwise, the
        freeinv() below also hides it from setpaid() which causes problems. */
@@ -2834,7 +2821,7 @@ do_break_wand(struct obj *obj)
     case WAN_MAGIC_MISSILE:
     wanexpl:
         explode(u.ux, u.uy, (obj->otyp - WAN_MAGIC_MISSILE), dmg, WAND_CLASS,
-                expltype, NULL);
+                expltype, NULL, 0);
         makeknown(obj->otyp);   /* explode described the effect */
         goto discard_broken_wand;
     case WAN_STRIKING:
@@ -2852,7 +2839,7 @@ do_break_wand(struct obj *obj)
     }
 
     /* magical explosion and its visual effect occur before specific effects */
-    explode(obj->ox, obj->oy, 0, rnd(dmg), WAND_CLASS, EXPL_MAGICAL, NULL);
+    explode(obj->ox, obj->oy, 0, rnd(dmg), WAND_CLASS, EXPL_MAGICAL, NULL, 0);
 
     /* this makes it hit us last, so that we can see the action first */
     for (i = 0; i <= 8; i++) {
@@ -2897,7 +2884,7 @@ do_break_wand(struct obj *obj)
                 }
                 bot();      /* blindness */
             } else if ((mon = m_at(level, x, y)) != 0) {
-                bhitm(mon, obj);
+                bhitm(&youmonst, mon, obj);
                 /* bot(); */
             }
             if (affects_objects && level->objects[x][y]) {
@@ -2968,6 +2955,7 @@ doapply(const struct nh_cmd_arg *arg)
 
     if (obj == &zeroobj) {
         /* "a," for doing looting */
+        break_conduct(conduct_tools);
         return doloot(arg);
     }
 
@@ -2989,9 +2977,11 @@ doapply(const struct nh_cmd_arg *arg)
         res = use_cream_pie(&obj);
         break;
     case BULLWHIP:
+        break_conduct(conduct_tools);
         res = use_whip(obj, arg);
         break;
     case GRAPPLING_HOOK:
+        break_conduct(conduct_tools);
         res = use_grapple(obj, arg);
         break;
     case LARGE_BOX:
@@ -3000,42 +2990,53 @@ doapply(const struct nh_cmd_arg *arg)
     case SACK:
     case BAG_OF_HOLDING:
     case OILSKIN_SACK:
+        break_conduct(conduct_tools);
         res = use_container(obj, 1);
         break;
     case BAG_OF_TRICKS:
+        break_conduct(conduct_tools);
         bagotricks(obj);
         break;
     case CAN_OF_GREASE:
+        break_conduct(conduct_tools);
         res = use_grease(obj);
         break;
     case LOCK_PICK:
     case CREDIT_CARD:
     case SKELETON_KEY:
+        break_conduct(conduct_tools);
         res = pick_lock(obj, arg);
         break;
     case PICK_AXE:
     case DWARVISH_MATTOCK:
+        break_conduct(conduct_tools);
         res = use_pick_axe(obj, arg);
         break;
     case TINNING_KIT:
+        break_conduct(conduct_tools);
         res = use_tinning_kit(obj);
         break;
     case LEASH:
+        break_conduct(conduct_tools);
         res = use_leash(obj, arg);
         break;
     case SADDLE:
+        break_conduct(conduct_tools);
         res = use_saddle(obj, arg);
         break;
     case MAGIC_WHISTLE:
+        break_conduct(conduct_tools);
         res = use_magic_whistle(obj);
         break;
     case TIN_WHISTLE:
+        break_conduct(conduct_tools);
         res = use_whistle(obj);
         break;
     case EUCALYPTUS_LEAF:
         /* MRKR: Every Australian knows that a gum leaf makes an */
         /* excellent whistle, especially if your pet is a */
         /* tame kangaroo named Skippy.  */
+        break_conduct(conduct_tools);
         if (obj->blessed) {
             use_magic_whistle(obj);
             /* sometimes the blessing will be worn off */
@@ -3054,40 +3055,51 @@ doapply(const struct nh_cmd_arg *arg)
         }
         break;
     case STETHOSCOPE:
+        break_conduct(conduct_tools);
         res = use_stethoscope(obj, arg);
         break;
     case MIRROR:
+        break_conduct(conduct_tools);
         res = use_mirror(obj, arg);
         break;
     case BELL:
     case BELL_OF_OPENING:
+        /* use_bell calls break_conduct if not doing the invocation. */
         use_bell(&obj);
         break;
     case CANDELABRUM_OF_INVOCATION:
+        /* use_candelabrum calls break_conduct if not on the V.S. */
         res = use_candelabrum(obj);
         break;
     case WAX_CANDLE:
     case TALLOW_CANDLE:
+        /* use_candle calls break_conduct if appropriate */
         res = use_candle(&obj);
         break;
     case OIL_LAMP:
     case MAGIC_LAMP:
     case BRASS_LANTERN:
+        break_conduct(conduct_tools);
         res = use_lamp(obj);
         break;
     case POT_OIL:
+        /* A potion isn't really a tool; you get a pass here. */
         res = light_cocktail(obj);
         break;
     case EXPENSIVE_CAMERA:
+        break_conduct(conduct_tools);
         res = use_camera(obj, arg);
         break;
     case TOWEL:
+        break_conduct(conduct_tools);
         res = use_towel(obj);
         break;
     case CRYSTAL_BALL:
+        break_conduct(conduct_tools);
         use_crystal_ball(obj);
         break;
     case MAGIC_MARKER:
+        break_conduct(conduct_tools);
         res = dowrite(obj, arg);
         break;
     case TIN_OPENER:
@@ -3105,9 +3117,11 @@ doapply(const struct nh_cmd_arg *arg)
         goto xit;
 
     case FIGURINE:
+        break_conduct(conduct_tools);
         res = use_figurine(&obj, arg);
         break;
     case UNICORN_HORN:
+        break_conduct(conduct_tools);
         use_unicorn_horn(obj);
         break;
     case WOODEN_FLUTE:
@@ -3120,9 +3134,11 @@ doapply(const struct nh_cmd_arg *arg)
     case BUGLE:
     case LEATHER_DRUM:
     case DRUM_OF_EARTHQUAKE:
+        break_conduct(conduct_tools);
         res = do_play_instrument(obj, arg);
         break;
     case HORN_OF_PLENTY:       /* not a musical instrument */
+        break_conduct(conduct_tools);
         if (obj->spe > 0) {
             struct obj *otmp;
             const char *what;
@@ -3168,12 +3184,14 @@ doapply(const struct nh_cmd_arg *arg)
         break;
     case LAND_MINE:
     case BEARTRAP:
+        break_conduct(conduct_tools);
         res = use_trap(obj, arg);
         break;
     case FLINT:
     case LUCKSTONE:
     case LOADSTONE:
     case TOUCHSTONE:
+        break_conduct(conduct_tools);
         res = use_stone(obj);
         break;
     default:
@@ -3182,6 +3200,7 @@ doapply(const struct nh_cmd_arg *arg)
             res = use_pole(obj, arg);
             break;
         } else if (is_pick(obj) || is_axe(obj)) {
+            break_conduct(conduct_tools);
             res = use_pick_axe(obj, arg);
             break;
         }

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-25 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -191,7 +191,7 @@ gold_detect(struct obj *sobj, boolean * scr_known)
     }
 
     if (!*scr_known) {
-        /* no gold found on floor or monster's inventory. adjust message if you 
+        /* no gold found on floor or monster's inventory. adjust message if you
            have gold in your inventory */
         const char *buf;
 
@@ -257,7 +257,6 @@ outgoldmap:
 
     newsym(u.ux, u.uy);
     pline("You feel very greedy, and sense gold!");
-    exercise(A_WIS, TRUE);
     win_pause_output(P_MAP);
     doredraw();
     u.uinwater = uw;
@@ -371,7 +370,6 @@ food_detect(struct obj *sobj, boolean * scr_known)
         } else
             pline("You sense %s.", what);
         win_pause_output(P_MAP);
-        exercise(A_WIS, TRUE);
         doredraw();
         u.uinwater = uw;
         if (Underwater)
@@ -484,7 +482,7 @@ object_detect(struct obj *detector,     /* object doing the detecting */
             } else
                 map_object(obj, 1, TRUE);
         }
-    /* 
+    /*
      * If we are mapping all objects, map only the top object of a pile or
      * the first object in a monster's inventory.  Otherwise, go looking
      * for a matching object class and display the first one encountered
@@ -543,7 +541,7 @@ object_detect(struct obj *detector,     /* object doing the detecting */
     newsym(u.ux, u.uy);
     pline("You detect the %s of %s.", ct ? "presence" : "absence", stuff);
     win_pause_output(P_MAP);
-    /* 
+    /*
      * What are we going to do when the hero does an object detect while blind
      * and the detected object covers a known pool?
      */
@@ -576,8 +574,8 @@ monster_detect(struct obj *otmp,        /* detecting object (if any) */
        detected. */
     incr_itimeout(&HDetect_monsters, 3);
 
-    /* Note: This used to just check level->monlist for a non-zero value but in 
-       versions since 3.3.0 level->monlist can test TRUE due to the presence of 
+    /* Note: This used to just check level->monlist for a non-zero value but in
+       versions since 3.3.0 level->monlist can test TRUE due to the presence of
        dmons, so we have to find at least one with positive hit-points to know
        for sure. */
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
@@ -983,7 +981,6 @@ do_mapping(void)
     for (zx = 0; zx < COLNO; zx++)
         for (zy = 0; zy < ROWNO; zy++)
             show_map_spot(zx, zy);
-    exercise(A_WIS, TRUE);
     u.uinwater = uw;
     if (!level->flags.hero_memory || Underwater) {
         flush_screen(); /* flush temp screen */
@@ -1049,13 +1046,9 @@ findone(int zx, int zy, void *num)
         magic_map_background(zx, zy, 0);
         newsym(zx, zy);
         (*(int *)num)++;
-    } else if ((ttmp = t_at(level, zx, zy)) != 0) {
-        if (!ttmp->tseen && ttmp->ttyp != STATUE_TRAP) {
-            ttmp->tseen = 1;
-            newsym(zx, zy);
-            (*(int *)num)++;
-        }
-    } else if ((mtmp = m_at(level, zx, zy)) != 0) {
+    } else if ((ttmp = t_at(level, zx, zy)) != 0)
+        sense_trap(ttmp, 0, 0, 0);
+    else if (cansee(zx, zy) && (mtmp = m_at(level, zx, zy)) != 0) {
         if (mtmp->m_ap_type && !level->locations[zx][zy].mem_invis) {
             map_invisible(zx, zy);
             (*(int *)num)++;
@@ -1129,13 +1122,20 @@ openone(int zx, int zy, void *num)
 }
 
 int
-findit(void)
+findit(int radius)
 {       /* returns number of things found */
     int num = 0;
 
     if (Engulfed)
         return 0;
-    do_clear_area(u.ux, u.uy, BOLT_LIM, findone, &num);
+    if (radius == -1) {
+        int x, y;
+
+        for (x = 0; x < COLNO; x++)
+            for (y = 0; y < ROWNO; y++)
+                findone(x, y, &num);
+    } else
+        do_clear_area(u.ux, u.uy, radius, findone, &num);
     return num;
 }
 
@@ -1167,7 +1167,6 @@ find_trap(struct trap *trap)
     boolean cleared = FALSE;
 
     trap->tseen = 1;
-    exercise(A_WIS, TRUE);
     if (Blind)
         feel_location(trap->tx, trap->ty);
     else
@@ -1199,7 +1198,8 @@ find_trap(struct trap *trap)
    do the action cautiously; searching shouldn't disturb mimics.
 
    Exception to all this: if the monster is visible and not hiding, do
-   nothing. Returns TRUE if a new monster was found. */
+   nothing. Returns TRUE if the monster wasn't known to be there before the
+   call, and it is known that there's a monster there now. */
 boolean
 reveal_monster_at(int x, int y, boolean unhide)
 {
@@ -1211,6 +1211,9 @@ reveal_monster_at(int x, int y, boolean unhide)
 
     if (mon && DEADMONSTER(mon))
         mon = NULL;
+
+    if (mon && cansuspectmon(mon))
+        unknown = FALSE;
 
     /* Clear any invisible-monster I on this square.
 
@@ -1224,12 +1227,10 @@ reveal_monster_at(int x, int y, boolean unhide)
     }
 
     if (unhide)
-        wakeup(mon, TRUE);
+        mon->msleeping = 0; /* wakeup() angers mon */
 
     if (!canspotmon(mon) && !knownwormtail(x, y))
         map_invisible(x, y);
-    else
-        unknown = FALSE;
 
     newsym(x, y);
     return unknown;
@@ -1246,7 +1247,7 @@ dosearch0(int aflag)
             pline("What are you looking for?  The exit?");
     } else {
         int fund = (uwep && uwep->oartifact &&
-                    spec_ability(uwep, SPFX_SEARCH)) ? uwep->spe : 0;
+                    spec_ability(uwep, SPFX_SEEK)) ? uwep->spe : 0;
         if (ublindf && ublindf->otyp == LENSES && !Blind)
             fund += 2;  /* JDS: lenses help searching */
         if (fund > 5)
@@ -1263,7 +1264,6 @@ dosearch0(int aflag)
                             continue;
                         /* changes .type to DOOR */
                         cvt_sdoor_to_door(&level->locations[x][y], &u.uz);
-                        exercise(A_WIS, TRUE);
                         action_completed();
                         if (Blind && !aflag)
                             feel_location(x, y);   /* make sure it shows up */
@@ -1274,7 +1274,6 @@ dosearch0(int aflag)
                             continue;
                         level->locations[x][y].typ = CORR;
                         unblock_point(x, y);    /* vision */
-                        exercise(A_WIS, TRUE);
                         action_completed();
                         newsym(x, y);
                     } else {
@@ -1282,7 +1281,6 @@ dosearch0(int aflag)
                            SDOOR. */
                         if (!aflag) {
                             if (reveal_monster_at(x, y, FALSE)) {
-                                exercise(A_WIS, TRUE);
                                 /* changed mechanic = changed message; also
                                    don't imply we're touching a trice */
                                 if (m_at(level, x, y)->m_ap_type)
@@ -1298,8 +1296,6 @@ dosearch0(int aflag)
                             action_interrupted();
 
                             if (trap->ttyp == STATUE_TRAP) {
-                                if (activate_statue_trap(trap, x, y, FALSE))
-                                    exercise(A_WIS, TRUE);
                                 return 1;
                             } else {
                                 find_trap(trap);
@@ -1368,4 +1364,3 @@ sokoban_detect(struct level *lev)
 
 
 /*detect.c*/
-

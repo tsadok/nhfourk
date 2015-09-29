@@ -1,10 +1,94 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-09 */
+/* Last modified by Fredrik Ljungdahl, 2015-09-25 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "epri.h"
+
+static void namemonsterfromlist(struct monst *mon, const char *const *nlist,
+                                struct level *lev, boolean unique);
+
+static const char *const watchname[] = {
+    "Andrews", "Ashton", "Aynesworth", "Babington", "Bartleby", "Beckingham",
+    "Billingham", "Boddenham", "Bramfield", "Bridgeman", "Brocksby",
+    "Browning", "Callthorpe", "Carlyle", "Caxton", "Chamberlain", "Chester",
+    "Chickenheart", "Clopton", "Compton", "Cooke", "Cosworth", "Craven",
+    "Crocker", "Cunningham", "Danvers", "Derington", "Digby", "Donnett",
+    "Duncombe", "Edgerton", "Eggerley", "Emerson", "Englefitch", "Epworth",
+    "Esmund", "Fackler", "Fenton", "Finch", "Fleetwilliam", "Fleming",
+    "Fraidycat", "Froggenhall", "Frye", "Gainsforth", "Gibbs", "Glendale",
+    "Glover", "Goldsmith", "Goseborne", "Grimsby", "Haddock", "Hancock",
+    "Harricott", "Harwood", "Hawkins", "Higgledy", "Hightower", "Hooks",
+    "Hornblower", "Hornebolt", "Jay", "Jameson", "Jenner", "Jones", "Kay",
+    "Killingbeck", "Kirkeby", "Kirkland", "Knivetton", "Lambert", "Lancelot",
+    "Lassard", "Leventhorpe", "Lillyliver", "Limsley", "Litchfield", "Litton",
+    "Loddington", "Malingerer", "Mahoney", "Marcheford", "Massingbird",
+    "Michelgrove", "Milsent", "Moore", "Morley", "Mouse", "Nebbish",
+    "Norwood", "Nottingham", "Olingsworth", "Oxenbrigg", "Parsons", "Peckham",
+    "Pemberton", "Poltroon", "Pratt", "Rampston", "Rawlins", "Robertson",
+    "Rochforth", "Russell", "Salter", "Sapsucker", "Saunderson", "Schtulman",
+    "Scroggs", "Seymour", "Shawe", "Shingleton", "Skulker", "Snelling",
+    "Staverton", "Styles", "Sweetchuck", "Tackleberry", "Thornton", "Thursby",
+    "Tweedy", "Vernon", "Waldegrove", "Waltham", "Welkins", "Wexcombe",
+    "Whippleton", "Whiteknuckle", "Wickwillingham", "Williams", "Withinghall",
+    "Worsley", "Yellowbelly", "Zed",
+    0
+};
+
+void
+namewatchman(struct monst *mon, struct level *lev)
+{
+    namemonsterfromlist(mon, watchname, lev, TRUE);
+}
+
+/* Assign a name to a monster, taken from a list of possible names.
+   Note that shopkeepers are special and use nameshk instead, partly
+   because it contains additional logic peculiar to them and also
+   because their name is stored in ESHK because of reasons. */
+static void
+namemonsterfromlist(struct monst *mon, const char *const *nlist,
+                    struct level *lev, boolean unique)
+{
+    int names_avail, tryct;
+    const char *ourname;
+    struct monst *mtmp;
+    if (!mon) {
+        if (wizard)
+            impossible("Cannot name a non-existent monster.");
+        return;
+    }
+    if (!nlist[0]) {
+        if (wizard)
+            impossible("No names available for the %s.", mon_nam(mon));
+        return;
+    }
+    for (names_avail = 0; nlist[names_avail]; names_avail++)
+        ;
+    for (tryct = 0; tryct < 500; tryct++) {
+        ourname = nlist[rn2(names_avail)];
+        if (!unique) {
+            christen_monst(mon, ourname);
+            return;
+        }
+        for (mtmp = lev->monlist; mtmp; mtmp = mtmp->nmon) {
+            if (DEADMONSTER(mtmp) || (mtmp == mon) ||
+                !(mtmp->data->mlet == mon->data->mlet))
+                continue;
+            if (strcmp(NAME_MUTABLE(mtmp), ourname) != 0)
+                continue;
+            break;
+        }
+        if (!mtmp) {
+            christen_monst(mon, ourname);
+            return;
+        } 
+    }
+    /* We're not going to name this monster. */
+    if (wizard)
+        pline("Failed to find %s name for the %s.",
+              (unique ? "an unused" : "a"), mon_nam(mon));
+}
 
 struct monst *
 christen_monst(struct monst *mtmp, const char *name)
@@ -829,7 +913,9 @@ s_suffix(const char *s)
     if (!*s)
         return "'s"; /* prevent underflow checking for a trailing 's' */
     if (!strcmpi(s, "it"))
-        return "its";
+        return msgcat(s, "s");
+    if (!strcmpi(s, "you")) /* not perfect if "Yours" is desired, but better than "Yous" anyway */
+        return msgcat(s, "r");
     if (s[strlen(s)-1] == 's')
         return msgcat(s, "'");
     else

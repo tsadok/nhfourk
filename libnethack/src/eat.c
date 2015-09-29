@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -669,9 +669,11 @@ cpostfx(int pm)
     switch (pm) {
     case PM_NEWT:
         /* MRKR: "eye of newt" may give small magical energy boost */
-        if (rn2_on_rng(3, rng_newt_pw_boost) || 3 * u.uen <= 2 * u.uenmax) {
+        if (rn2_on_rng(3, rng_newt_pw_boost) || 3 * u.uen <= 2 * u.uenmax ||
+            u.uen < 15) {
             int old_uen = u.uen;
-            boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost);
+            boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost) ||
+                ((u.uen + u.uenmax) < 35);
 
             u.uen += 1 + rn2_on_rng(3, rng_newt_pw_boost);
             if (u.uen > u.uenmax) {
@@ -1309,7 +1311,7 @@ fprefx(struct obj *otmp)
         /* Fall through otherwise */
     default:
         if (otmp->otyp == SLIME_MOLD && !otmp->cursed &&
-            otmp->spe == current_fruit)
+            otmp->spe == gamestate.fruits.current)
             pline("My, that was a %s %s!", Hallucination ? "primo" : "yummy",
                   singular(otmp, xname));
         else
@@ -2247,7 +2249,7 @@ floorfood(const char *verb, const struct nh_cmd_arg *arg)
                                                            while riding */
         ((is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy)) &&
          (Wwalking || is_clinger(youmonst.data) || (Flying && !Breathless))) ||
-        (ttmp && ttmp->tseen && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT)
+        (ttmp && ttmp->tseen && is_pit_trap(ttmp->ttyp)
          && (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) && !Passes_walls))
         goto skipfloor;
 

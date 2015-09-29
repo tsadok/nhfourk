@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Benson I. Margulies, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -421,8 +421,7 @@ fix_worst_trouble(int trouble)
         }
         break;
     default:
-        impossible(msgprintf("Invalid trouble in fix_worst_trouble: %d",
-                             trouble));
+        impossible("Invalid trouble in fix_worst_trouble: %d", trouble);
         break;
     }
 }
@@ -905,7 +904,7 @@ pleased(aligntyp g_align)
                     break;
                 } else if (u.uevent.uheard_tune < 2) {
                     You_hear("a divine music...");
-                    pline("It sounds like:  \"%s\".", tune);
+                    pline("It sounds like:  \"%s\".", gamestate.castle_tune);
                     u.uevent.uheard_tune++;
                     break;
                 }
@@ -917,7 +916,8 @@ pleased(aligntyp g_align)
             /* if any levels have been lost (and not yet regained), treat this
                effect like blessed full healing */
             if (u.ulevel < u.ulevelmax) {
-                u.ulevelmax -= 1;       /* see potion.c */
+                if (challengemode)
+                    u.ulevelmax -= 1;       /* see potion.c */
                 pluslvl(FALSE);
             } else {
                 u.uhpmax += 5;
@@ -1133,7 +1133,6 @@ consume_offering(struct obj *otmp)
         useup(otmp);
     else
         useupf(otmp, 1L);
-    exercise(A_WIS, TRUE);
 }
 
 
@@ -1200,10 +1199,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
         if (your_race(ptr)) {
             if (is_demon(youmonst.data)) {
                 pline("You find the idea very satisfying.");
-                exercise(A_WIS, TRUE);
             } else if (u.ualign.type != A_CHAOTIC) {
                 pline("You'll regret this infamous offense!");
-                exercise(A_WIS, FALSE);
             }
 
             if (altaralign != A_CHAOTIC && altaralign != A_NONE) {
@@ -1784,7 +1781,6 @@ doturn(const struct nh_cmd_arg *arg)
 
         pline("For some reason, %s seems to ignore you.", u_gname());
         aggravate();
-        exercise(A_WIS, FALSE);
         return 0;
     }
 
@@ -1794,7 +1790,6 @@ doturn(const struct nh_cmd_arg *arg)
         return 0;
     }
     pline("Calling upon %s, you chant an arcane formula.", u_gname());
-    exercise(A_WIS, TRUE);
 
     /* note: does not perform unturn_dead() on victims' inventories */
     range = BOLT_LIM + (u.ulevel / 5);  /* 5 to 11 */
@@ -1848,7 +1843,8 @@ doturn(const struct nh_cmd_arg *arg)
             }
         }
     }
-    helpless(5, hr_busy, "trying to turn the monsters", NULL);
+    if ((5 - (u.ulevel / 6)) > 0)
+        helpless((5 - (u.ulevel / 6)), hr_busy, "trying to turn the monsters", NULL);
     return 1;
 }
 

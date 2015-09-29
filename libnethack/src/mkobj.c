@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-07-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -59,6 +59,21 @@ static const struct icp rogueprobs[] = {
     {5, RING_CLASS}
 };
 
+static const struct icp mazeprobs[] = {
+    {10, WEAPON_CLASS},
+    {10, ARMOR_CLASS},
+    {20, FOOD_CLASS},
+    {10, TOOL_CLASS},
+    {3, GEM_CLASS},
+    {2, COIN_CLASS},
+    {10, POTION_CLASS},
+    {10, SCROLL_CLASS},
+    {10, SPBOOK_CLASS},
+    {10, WAND_CLASS},
+    {10, RING_CLASS},
+    {5, AMULET_CLASS}
+};
+
 static const struct icp hellprobs[] = {
     {20, WEAPON_CLASS},
     {20, ARMOR_CLASS},
@@ -110,6 +125,9 @@ mkobj(struct level *lev, char oclass, boolean artif, enum rng rng)
         const struct icp *iprobs =
             (Is_rogue_level(&lev->z)) ? (const struct icp *)rogueprobs :
             In_hell(&lev->z) ? (const struct icp *)hellprobs :
+            ((lev->z.dnum == medusa_level.dnum) &&
+             (depth(&lev->z) > depth(&medusa_level))) ?
+            (const struct icp *)mazeprobs :
             (const struct icp *) mkobjprobs;
 
         for (tprob = rn2_on_rng(100, rng) + 1;
@@ -468,7 +486,7 @@ mksobj_basic(struct level *lev, int otyp)
         otmp->corpsenm = NON_PM;
         break;
     case SLIME_MOLD:
-        otmp->spe = current_fruit;
+        otmp->spe = gamestate.fruits.current;
         break;
     }
 
@@ -565,7 +583,7 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 blessorcurse(otmp, 10, rng);
                 break;
             case SLIME_MOLD:
-                otmp->spe = current_fruit;
+                otmp->spe = gamestate.fruits.current;
                 break;
             case KELP_FROND:
                 otmp->quan = 1 + rn2_on_rng(2, rng);
@@ -581,6 +599,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 curse(otmp);
             else if (otmp->otyp == ROCK)
                 otmp->quan = 6 + rn2_on_rng(6, rng);
+            else if (otmp->otyp == FLINT)
+                otmp->quan = 1 + rn2_on_rng(5, rng);
             else if (otmp->otyp != LUCKSTONE && !rn2_on_rng(6, rng))
                 otmp->quan = 2L;
             else
@@ -775,6 +795,12 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
     /* unique objects may have an associated artifact entry */
     if (objects[otyp].oc_unique && !otmp->oartifact)
         otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
+
+    /* Every once in a great while, an object is greased. */
+    if (((let == WEAPON_CLASS) ||
+         (let == ARMOR_CLASS)) &&
+        !rn2_on_rng(23263, rng))
+        otmp->greased = 1;
 
     otmp->owt = weight(otmp); /* update, in case we changed it */
     return otmp;
@@ -1450,6 +1476,10 @@ obj_extract_self(struct obj *obj)
         extract_nobj(obj, &obj->olev->billobjs,
                      &turnstate.floating_objects, OBJ_FREE);
         break;
+    case OBJ_MAGIC_CHEST:
+        extract_nobj(obj, &magic_chest_objs,
+                     &turnstate.floating_objects, OBJ_FREE);
+        break;
     case OBJ_MIGRATING:
         extract_nobj(obj, &turnstate.migrating_objs,
                      &turnstate.floating_objects, OBJ_FREE);
@@ -1715,12 +1745,13 @@ restore_obj(struct memfile *mf)
     otmp->in_use = (oflags >> 8) & 1;
     otmp->was_thrown = (oflags >> 7) & 1;
     otmp->bypass = (oflags >> 6) & 1;
+    otmp->was_dropped = (oflags >> 5) & 1;
 
     if (otmp->onamelth)
         mread(mf, ONAME_MUTABLE(otmp), otmp->onamelth);
 
     if (otmp->oattached == OATTACHED_MONST) {
-        struct monst *mtmp = restore_mon(mf);
+        struct monst *mtmp = restore_mon(mf, NULL);
         int monlen = sizeof (struct monst) + mtmp->mnamelth + mtmp->mxlth;
 
         otmp = realloc_obj(otmp, monlen, mtmp, otmp->onamelth, ONAME(otmp));
@@ -1755,7 +1786,8 @@ save_obj(struct memfile *mf, struct obj *obj)
         (obj->obroken << 17) | (obj->otrapped << 16) |
         (obj->recharged << 13) | (obj->lamplit << 12) |
         (obj->greased << 11) | (obj->oattached << 9) |
-        (obj->in_use << 8) | (obj->was_thrown << 7) | (obj->bypass << 6);
+        (obj->in_use << 8) | (obj->was_thrown << 7) | (obj->bypass << 6) |
+        (obj->was_dropped << 5);
 
     mfmagic_set(mf, OBJ_MAGIC);
     mtag(mf, obj->o_id, MTAG_OBJ);
@@ -1788,7 +1820,7 @@ save_obj(struct memfile *mf, struct obj *obj)
         mwrite(mf, ONAME(obj), obj->onamelth);
 
     if (obj->oattached == OATTACHED_MONST)
-        save_mon(mf, (struct monst *)obj->oextra);
+        save_mon(mf, (struct monst *)obj->oextra, NULL);
     else if (obj->oattached == OATTACHED_M_ID) {
         unsigned m_id;
 
