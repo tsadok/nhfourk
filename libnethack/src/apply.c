@@ -19,7 +19,6 @@ static void use_bell(struct obj **);
 static int use_candelabrum(struct obj *);
 static int use_candle(struct obj **);
 static int use_lamp(struct obj *);
-static int light_cocktail(struct obj *);
 static int use_tinning_kit(struct obj *);
 static int use_figurine(struct obj **obj, const struct nh_cmd_arg *);
 static int use_grease(struct obj *);
@@ -1174,7 +1173,7 @@ use_lamp(struct obj *obj)
     return 1;
 }
 
-static int
+int
 light_cocktail(struct obj *obj)
 {       /* obj is a potion of oil */
     if (Engulfed) {
