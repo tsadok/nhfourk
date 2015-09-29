@@ -817,7 +817,8 @@ peffects(struct obj *otmp)
         if (otmp->blessed && u.ulevel < u.ulevelmax) {
             /* when multiple levels have been lost, drinking multiple potions
                will only get half of them back */
-            u.ulevelmax -= 1;
+            if (challengemode)
+                u.ulevelmax -= 1;
             pluslvl(FALSE);
         }
         make_hallucinated(0L, TRUE);
