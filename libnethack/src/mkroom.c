@@ -578,9 +578,12 @@ mkswamp(struct level *lev)
                                     MM_ALLLEVRNG);
                             eelct++;
                         }
-                    } else if (!rn2_on_rng(4, rng)) /* swamps tend to be moldy */
-                        makemon(mkclass(&lev->z, S_FUNGUS, 0, rng),
-                                lev, sx, sy, MM_ALLLEVRNG);
+                    } else {
+                        lev->locations[sx][sy].typ = PUDDLE;
+                        if (!rn2_on_rng(4, rng)) /* swamps tend to be moldy */
+                            makemon(mkclass(&lev->z, S_FUNGUS, 0, rng),
+                                    lev, sx, sy, MM_ALLLEVRNG);
+                    }
                 }
     }
 }

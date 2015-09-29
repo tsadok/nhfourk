@@ -226,6 +226,9 @@ describe_object(int x, int y, int votyp, char *buf, int known_embed,
     } else if (closed_door(level, x, y)) {
         strcat(buf, " embedded in a door");
         *feature_described = TRUE;
+    } else if (is_puddle(level, x, y)) {
+        strcat(buf, " in shallow water");
+        *feature_described = TRUE;
     } else if (is_pool(level, x, y)) {
         strcat(buf, " in water");
         *feature_described = TRUE;

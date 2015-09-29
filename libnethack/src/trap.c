@@ -2004,6 +2004,29 @@ mintrap(struct monst *mtmp)
             }
         case FIRE_TRAP:
         mfiretrap:
+            if (is_puddle(lev, mtmp->mx, mtmp->my)) {
+                if (in_sight)
+                    pline("A cascade of steamy bubbles erupts from the %s under %s!",
+                          surface(mtmp->mx,mtmp->my), mon_nam(mtmp));
+                else if (see_it)
+                    pline("A cascade of steamy bubbles erupts from the %s!",
+                          surface(mtmp->mx,mtmp->my));
+                if(rn2(2)) {
+                    if (in_sight)
+                        pline("The water evaporates!");
+                    lev->locations[mtmp->mx][mtmp->my].typ = ROOM;
+                }
+                if (resists_fire(mtmp)) {
+                    if (in_sight) {
+                        shieldeff(mtmp->mx,mtmp->my);
+                        pline("%s is uninjured.", Monnam(mtmp));
+                    }
+                } else if (thitm(0, mtmp, (struct obj *)0, rnd(3), FALSE))
+                    trapkilled = TRUE;
+                if (see_it)
+                    seetrap(trap);
+                break;
+            }
             if (in_sight)
                 pline("A %s erupts from the %s under %s!", tower_of_flame,
                       surface(mtmp->mx, mtmp->my), mon_nam(mtmp));
@@ -2616,14 +2639,18 @@ dofiretrap(struct obj *box)
  * to be done upon its contents.
  */
 
-    if ((box && !carried(box)) ? is_pool(level, box->ox, box->oy)
-                               : Underwater) {
+    if ((box && !carried(box)) ? is_pool(level, box->ox, box->oy) :
+                                 (Underwater || is_puddle(lev, u.ux, u.uy))) {
         pline("A cascade of steamy bubbles erupts from %s!",
               the(box ? xname(box) : surface(u.ux, u.uy)));
         if (Fire_resistance)
             pline("You are uninjured.");
         else
             losehp(rnd(3), killer_msg(DIED, "boiling water"));
+        if (is_puddle(level, u.ux, u.uy) && rn2(2)) {
+            pline("The water evaporates!");
+            lev->locations[u.ux][u.uy].typ = ROOM;
+        }
         return;
     }
     pline("A %s %s from %s!", tower_of_flame, box ? "bursts" : "erupts",

@@ -208,7 +208,7 @@ surface(int x, int y)
         return "maw";
     else if (IS_AIR(loc->typ) && Is_airlevel(&u.uz))
         return "air";
-    else if (is_pool(level, x, y))
+    else if (is_damp_terrain(level, x, y))
         return (Underwater && !Is_waterlevel(&u.uz)) ? "bottom" : "water";
     else if (is_ice(level, x, y))
         return "ice";
@@ -532,7 +532,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     } else if (Underwater) {
         pline("You can't write underwater!");
         return 0;
-    } else if (is_pool(level, u.ux, u.uy) ||
+    } else if (is_damp_terrain(level, u.ux, u.uy) ||
                IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
         pline("You can't write on the water!");
         return 0;

@@ -2373,6 +2373,33 @@ stillinwater:
                     return;
             } else if (!Wwalking && drown())
                 return;
+        } else if (is_puddle(level, u.ux, u.uy) && !Wwalking) {
+            /*pline("You %s through the shallow water.",
+                    verysmall(youmonst.data) ? "wade" : "splash");
+              if (!verysmall(youmonst.data) && !rn2(4)) wake_nearby();*/
+            
+            if(Upolyd && youmonst.data  == &mons[PM_GREMLIN])
+                (void) split_mon(&youmonst, NULL);
+            else if (youmonst.data == &mons[PM_IRON_GOLEM] &&
+                     /* mud boots keep the feet dry */
+                     (!uarmf ||
+                      strncmp(OBJ_DESCR(objects[uarmf->otyp]), "mud ", 4))) {
+                int dam = rnd(6);
+                pline("Your %s rust!", makeplural(body_part(FOOT)));
+                if (u.mhmax > dam)
+                    u.mhmax -= dam;
+                losehp(dam, killer_msg(DIED, "rusting away"));
+            } else if (is_longworm(youmonst.data)) {
+                int dam = dice(3, 12);
+                if (u.mhmax > dam)
+                    u.mhmax -= ((dam + 1) / 2);
+                pline("The water burns your flesh!");
+                losehp(dam, killer_msg(DIED, "contact with water"));
+            }
+            if (verysmall(youmonst.data))
+                water_damage_chain(invent, FALSE);
+            if (!u.usteed)
+                (void) water_damage(uarmf, "boots", TRUE);
         }
     }
     check_special_room(FALSE);

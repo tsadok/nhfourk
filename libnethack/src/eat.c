@@ -1133,6 +1133,9 @@ rottenfood(struct obj *obj)
             what = "you slap against the", where =
                 (u.usteed) ? "saddle" : surface(u.ux, u.uy);
         pline("The world spins and %s %s.", what, where);
+        if (!Levitation && !Flying && !u.usteed &&
+            is_damp_terrain(level, u.ux, u.uy))
+            water_damage_chain(invent, FALSE);
         helpless(rnd(10), hr_fainted, "unconscious from rotten food", NULL);
         see_monsters(FALSE);
         see_objects(FALSE);

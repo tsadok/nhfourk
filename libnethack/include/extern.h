@@ -212,6 +212,8 @@ extern const char *getarglin(const struct nh_cmd_arg *arg, const char *query);
 
 /* ### dbridge.c ### */
 
+extern boolean is_damp_terrain(struct level *lev, int x, int y);
+extern boolean is_puddle(struct level *lev, int x, int y);
 extern boolean is_pool(struct level *lev, int x, int y);
 extern boolean is_lava(struct level *lev, int x, int y);
 extern boolean is_ice(struct level *lev, int x, int y);
