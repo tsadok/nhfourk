@@ -1148,6 +1148,23 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     case S_MIMIC:
         set_mimic_sym(mtmp, lev, stats_rng);
         break;
+    case S_COCKATRICE:
+        if (in_mklev && touch_petrifies(mtmp->data)) {
+            /* Place a few random statues around the level. */
+            int count, tries;
+            for (count = 0; count < 6; count++) {
+                int dx = 0, dy = 0;
+                tries = 20;
+                while (tries && (((dx == 0) && (dy == 0)) ||
+                                 !isok(x+dx,y+dy) ||
+                                 !(lev->locations[x+dx][y+dy].typ == ROOM))) {
+                    dx = 5 - rn2_on_rng(10, rng_main);
+                    dy = 3 - rn2_on_rng(6, rng_main);
+                }
+                mksobj_at(STATUE, lev, x + dx, y + dy, TRUE, FALSE, rng_main);
+            }
+        }
+        break;
     case S_SPIDER:
     case S_SNAKE:
         /* TODO: This is awkward, because we might have fallen back to a random
