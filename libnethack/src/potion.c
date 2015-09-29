@@ -1780,6 +1780,11 @@ dodip(const struct nh_cmd_arg *arg)
                     obj->oeroded++;
                 }
             }
+        } else if (Is_candle(obj) && obj->lamplit) {
+            pline("The oil catches the flame.");
+            (void) light_cocktail(potion);
+            potion->in_use = FALSE;
+            return 0;
         } else if (potion->cursed) {
             pline("The potion spills and covers your %s with oil.",
                   makeplural(body_part(FINGER)));
