@@ -2373,7 +2373,7 @@ deadly_poison (const char *message, int how,
             shieldeff(u.ux,u.uy);
         pline("The poison doesn't seem to affect you.");
         return;
-    } else if (!rn2(1 + magic_negation(&youmonst))) {
+    } else if (rn2(1 + magic_negation(&youmonst))) {
         pline("You feel as if something is protecting you.");
     } else if (u.ulevel > 2) {
         losexp(killer, TRUE); /* Drain resistance doesn't save you here:
