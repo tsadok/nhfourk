@@ -274,7 +274,7 @@ void mkaisvs(struct level *lev, int x, int y)
     if ((ROWNO - 1 - ymargin * 2) < 2)
         panic("Not enough rows for invocation position to fit.");
 
-    inv_pos.x = inv_pos.y = 0;
+    gamestate.inv_pos.x = gamestate.inv_pos.y = 0;
     while ((x == upstair.x) || (y == upstair.y) || /* ortho line */
            (abs(x - upstair.x) == abs(y - upstair.y)) || /* 45-degree line */
            (distmin(x, y, upstair.x, upstair.y) <= mindist) ||
@@ -284,8 +284,8 @@ void mkaisvs(struct level *lev, int x, int y)
         cc = aisplace(); x = cc.x; y = cc.y;
         tries++;
     }
-    inv_pos.x = x;
-    inv_pos.y = y;
+    gamestate.inv_pos.x = x;
+    gamestate.inv_pos.y = y;
     lev->locations[x][y].typ = ROOM; /* Just in case we ran past 500 tries,
                                         e.g., level was packed with lava. */
     maketrap(lev, x, y, VIBRATING_SQUARE, rng);

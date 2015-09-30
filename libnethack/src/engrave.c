@@ -603,7 +603,6 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             pline("You disturb the undead!");
             level->locations[u.ux][u.uy].disturbed = 1;
             makemon(&mons[PM_GHOUL], level, u.ux, u.uy, NO_MM_FLAGS);
-            exercise(A_WIS, FALSE);
             return 1;
         }
     }

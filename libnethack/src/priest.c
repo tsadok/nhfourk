@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-04-02 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Izchak Miller, Steve Linhart, 1989.              */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -377,6 +377,9 @@ intemple(int roomno)
     xchar shrined;
     const char *msg1, *msg2;
 
+    if (In_mines(&u.uz) && !historysearch("entered the Minetown temple", TRUE))
+        historic_event(FALSE, TRUE, "entered the Minetown temple");
+
     if (!temple_occupied(u.urooms0)) {
         if (tended) {
             shrined = has_shrine(priest);
@@ -507,7 +510,6 @@ priest_talk(struct monst *priest)
                 money2u(priest, pmoney > 1L ? 2 : 1);
             } else
                 pline("%s preaches the virtues of poverty.", Monnam(priest));
-            exercise(A_WIS, TRUE);
         } else
             pline("%s is not interested.", Monnam(priest));
         return;
@@ -524,8 +526,6 @@ priest_talk(struct monst *priest)
                 verbalize("Cheapskate.");
             else {
                 verbalize("I thank thee for thy contribution.");
-                /* give player some token */
-                exercise(A_WIS, TRUE);
             }
         } else if (offer < (u.ulevel * 400)) {
             verbalize("Thou art indeed a pious individual.");
@@ -692,8 +692,7 @@ ghod_hitsu(struct monst *priest)
     }
 
     /* bolt of lightning */
-    buzz(-10 - (AD_ELEC - 1), 6, x, y, sgn(tbx), sgn(tby));
-    exercise(A_WIS, FALSE);
+    buzz(-10 - (AD_ELEC - 1), 6, x, y, sgn(tbx), sgn(tby), 0);
 }
 
 void

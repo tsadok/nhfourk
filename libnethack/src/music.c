@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Fredrik Ljungdahl, 2015-09-25 */
 /* Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -140,20 +140,20 @@ calm_nymphs(int distance)
 void
 awaken_soldiers(void)
 {
-    struct monst *mtmp = level->monlist;
+    struct monst *mtmp;
 
-    while (mtmp) {
+    for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         if (!DEADMONSTER(mtmp) && is_mercenary(mtmp->data) &&
-            mtmp->data != &mons[PM_GUARD]) {
+            !mtmp->isgd) {
             mtmp->mfrozen = 0;
             msethostility(mtmp, TRUE, FALSE);
             mtmp->mcanmove = 1;
+            mtmp->msleeping = 0;
             if (canseemon(mtmp))
                 pline("%s is now ready for battle!", Monnam(mtmp));
             else
                 pline_once("You hear the rattle of battle gear being readied.");
         }
-        mtmp = mtmp->nmon;
     }
 }
 
@@ -244,6 +244,10 @@ do_earthquake(int force)
                     if (cansee(x, y))
                         pline("The altar falls into a chasm.");
                     goto do_pit;
+                case MAGIC_CHEST:
+                    if (cansee(x,y))
+                        pline("The magic chest falls into a chasm.");
+                    goto do_pit;
                 case GRAVE:
                     if (cansee(x, y))
                         pline("The headstone topples into a chasm.");
@@ -260,8 +264,8 @@ do_earthquake(int force)
                        landmines detonate, but that's more trouble than it's
                        worth. */
                     if ((oldtrap = t_at(level, x, y))) {
-                        if (oldtrap->ttyp == PIT || oldtrap->ttyp == SPIKED_PIT
-                            || oldtrap->ttyp == HOLE ||
+                        if (is_pit_trap(oldtrap->ttyp) ||
+                            oldtrap->ttyp == HOLE ||
                             oldtrap->ttyp == TRAPDOOR ||
                             oldtrap->ttyp == VIBRATING_SQUARE ||
                             oldtrap->ttyp == MAGIC_PORTAL)
@@ -371,7 +375,7 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
                 }
             } else {
                 buzz((instr->otyp == FROST_HORN) ? AD_COLD - 1 : AD_FIRE - 1,
-                     rn1(6, 6), u.ux, u.uy, dx, dy);
+                     rn1(6, 6), u.ux, u.uy, dx, dy, 0);
             }
             makeknown(instr->otyp);
             break;
@@ -379,12 +383,10 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
     case TOOLED_HORN:  /* Awaken or scare monsters */
         pline("You produce a frightful, grave sound.");
         awaken_monsters(u.ulevel * 30);
-        exercise(A_WIS, FALSE);
         break;
     case BUGLE:        /* Awaken & attract soldiers */
         pline("You extract a loud noise from %s.", the(xname(instr)));
         awaken_soldiers();
-        exercise(A_WIS, FALSE);
         break;
     case MAGIC_HARP:   /* Charm monsters */
         if (do_spec && instr->spe > 0) {
@@ -418,7 +420,6 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
     case LEATHER_DRUM: /* Awaken monsters */
         pline("You beat a deafening row!");
         awaken_monsters(u.ulevel * 40);
-        exercise(A_WIS, FALSE);
         break;
     default:
         impossible("What a weird instrument (%d)!", instr->otyp);
@@ -462,7 +463,7 @@ do_play_instrument(struct obj *instr, const struct nh_cmd_arg *arg)
     }
     if (c == 'n') {
         if (u.uevent.uheard_tune == 2 && yn("Play the passtune?") == 'y') {
-            buf = msg_from_string(tune);
+            buf = msg_from_string(gamestate.castle_tune);
         } else {
             /* Note: This is explicitly not getarglin(); we don't want
                command repeat to repeat the tune. */
@@ -478,8 +479,7 @@ do_play_instrument(struct obj *instr, const struct nh_cmd_arg *arg)
         /* Check if there was the Stronghold drawbridge near and if the tune
            conforms to what we're waiting for. */
         if (Is_stronghold(&u.uz)) {
-            exercise(A_WIS, TRUE);      /* just for trying */
-            if (!strcmp(buf, tune)) {
+            if (!strcmp(buf, gamestate.castle_tune)) {
                 /* Search for the drawbridge */
                 for (y = u.uy - 1; y <= u.uy + 1; y++)
                     for (x = u.ux - 1; x <= u.ux + 1; x++)
@@ -516,13 +516,14 @@ do_play_instrument(struct obj *instr, const struct nh_cmd_arg *arg)
 
                     for (x = 0; x < (int)strlen(buf); x++)
                         if (x < 5) {
-                            if (buf[x] == tune[x]) {
+                            if (buf[x] == gamestate.castle_tune[x]) {
                                 gears++;
                                 matched[x] = TRUE;
                             } else
                                 for (y = 0; y < 5; y++)
-                                    if (!matched[y] && buf[x] == tune[y] &&
-                                        buf[y] != tune[y]) {
+                                    if (!matched[y] &&
+                                        buf[x] == gamestate.castle_tune[y] &&
+                                        buf[y] != gamestate.castle_tune[y]) {
                                         tumblers++;
                                         matched[y] = TRUE;
                                         break;

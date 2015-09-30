@@ -35,6 +35,7 @@ static const char *artifact_names[] = {
 # define     ELEC(a,b)  {0,AD_ELEC,a,b} /* electrical shock */
 # define     STUN(a,b)  {0,AD_STUN,a,b} /* magical attack */
 # define     POIS(a,b)  {0,AD_DRST,a,b} /* poison */
+# define     SLEE(a,b)  {0,AD_SLEE,a,b} /* sleep */
 
 static const struct artifact const_artilist[] = {
 #endif /* ARTINAMES_C */
@@ -130,6 +131,10 @@ static const struct artifact const_artilist[] = {
       STUN(3, 4), DFNS(AD_MAGM), NO_CARY, 0, A_NEUTRAL, PM_WIZARD, NON_PM,
       3500L),
 
+    A("Valerian", DAGGER,
+      (SPFX_RESTR | SPFX_INTEL | SPFX_DEFN | SPFX_ATTK ), 0, 0,
+      SLEE(1,1), DFNS(AD_SLEE), NO_CARY, 0, A_CHAOTIC, PM_ROGUE, 0, 700L),
+
     A("Frost Brand", LONG_SWORD,
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       COLD(5, 0), COLD(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
@@ -153,6 +158,11 @@ static const struct artifact const_artilist[] = {
     A("Grayswandir", SILVER_SABER,
       (SPFX_RESTR | SPFX_HALRES), 0, 0,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 8000L),
+
+    A("Quickpick", PICK_AXE,
+      (SPFX_RESTR | SPFX_DCLAS), 0, S_XORN,
+      PHYS(5, 0), DFNS(ART_FAST_DIG), NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM,
+      300L),
 
     A("Giantslayer", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_GIANT,

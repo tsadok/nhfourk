@@ -558,7 +558,7 @@ drag:
           !is_pool(level, uball->ox, uball->oy) ||
           level->locations[uball->ox][uball->oy].typ == POOL))
         || ((t = t_at(level, uchain->ox, uchain->oy)) &&
-            (t->ttyp == PIT || t->ttyp == SPIKED_PIT || t->ttyp == HOLE ||
+            (is_pit_trap(t->ttyp) || t->ttyp == HOLE ||
              t->ttyp == TRAPDOOR))) {
 
         if (Levitation) {
@@ -678,7 +678,7 @@ drop_ball(xchar x, xchar y, schar dx, schar dy)
         if (!Levitation && !MON_AT(level, x, y) && !u.utrap &&
             (is_pool(level, x, y) ||
              ((t = t_at(level, x, y)) &&
-              (t->ttyp == PIT || t->ttyp == SPIKED_PIT || t->ttyp == TRAPDOOR ||
+              (is_pit_trap(t->ttyp) || t->ttyp == TRAPDOOR ||
                t->ttyp == HOLE)))) {
             u.ux = x;
             u.uy = y;

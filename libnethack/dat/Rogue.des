@@ -23,7 +23,7 @@ MAP
 |..-+--.|....|-----.--------.|...|.....+.....|.|....|.....+.+......|.--....|
 |..|....|....|....+.|......|.|...-----.|.....|.--...|.....|.|......|..|....|
 |..|.-----S----...|.+....-----...|...|.----..|..|.---....--.---S-----.|----|
-|..|.|........|...------.|.S.....|...|....-----.+.|......|..|.......|.|....|
+|..|.|........|...------.|.S.....|.(.|....-----.+.|......|..|.......|.|....|
 |---.-------..|...|....|.|.|.....|...----.|...|.|---.....|.|-.......|.---..|
 ...........|..S...|....---.----S----..|...|...+.|..-------.---+-....|...--+|
 |---------.---------...|......|....S..|.---...|.|..|...........----.---....|
@@ -97,8 +97,8 @@ DOOR: closed, (65,18)
 DOOR: closed, (68,18)
 # Master of Thieves
 MONSTER:'@',"Master of Thieves",(36,11)
-# The treasure of Master of Thieves
-OBJECT:'(',"chest",(36,11)
+# The treasure of Master of Thieves is now a magic chest.
+# OBJECT:'(',"chest",(36,11)
 # thug guards, room #1
 MONSTER:'@',"thug",(28,10)
 MONSTER:'@',"thug",(29,11)
@@ -157,14 +157,14 @@ MONSTER: 'i',"leprechaun",(62,14),hostile
 MONSTER: 'n',"water nymph",(71,14),hostile
 MONSTER: 'i',"leprechaun",(39,13),hostile
 MONSTER: 'n',"water nymph",(18,14),hostile
-MONSTER: ':',"chameleon",(19,08),hostile
-MONSTER: ':',"chameleon",(22,08),hostile
-MONSTER: ':',"chameleon",(16,08),hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",(19,08),hostile
+MONSTER: 'l',"chameleon",(22,08),hostile
+MONSTER: 'l',"chameleon",(16,08),hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
 
 #
 #	The "locate" level for the quest.
@@ -262,11 +262,11 @@ MONSTER:'N',"guardian naga",random,hostile
 MONSTER:'N',random,random,hostile
 MONSTER:'N',random,random,hostile
 MONSTER:'N',random,random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
 
 #
 #	The "goal" level for the quest.  Teleportation and digging are
@@ -372,11 +372,11 @@ MONSTER:'N',"guardian naga",random,hostile
 MONSTER:'N',random,random,hostile
 MONSTER:'N',random,random,hostile
 MONSTER:'N',random,random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
-MONSTER: ':',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
+MONSTER: 'l',"chameleon",random,hostile
 MONSTER:';',"shark",(51,14),hostile
 MONSTER:';',"shark",(53,09),hostile
 MONSTER:';',"shark",(55,15),hostile

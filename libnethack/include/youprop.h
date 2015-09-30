@@ -259,6 +259,11 @@ enum player_conduct {
     conduct_lostalign,                   /* lost alignment record points */
     conduct_unused1,                     /* unused, might not be 0 in -beta1 */
     conduct_sokoban_guilt,               /* did guilt-inducing things */
+    conduct_clothing,                    /* put on any clothing or armor */
+    conduct_jewelry,                     /* wore rings, amulets, or eyewear */
+    conduct_unihorns,                    /* applied a unicorn horn */
+    conduct_containers,                  /* applied or looted containers */
+    conduct_tools,                       /* applied or looted any tools */
     num_conducts,
 };
 

@@ -4,9 +4,13 @@ Written 2014-2015 by Nathan Eady.
 This document (i.e., this specific file, changelog-fourk.txt) is in
 the public domain.  The author has specifically released it to the
 public, choosing to waive any exclusivity rights that he might
-otherwise have under copyright law, reserving none of them.  You
-may read, modify, distribute, or otherwise use this document in
-any manner that you deem appropriate.
+otherwise have under copyright law, reserving none of them.  You may
+read, modify, distribute, or otherwise use this document in any manner
+that you deem appropriate.  Attribution is not required (except
+insofar as it may be required for reasons entirely unrelated to
+copyright, e.g., if you use the document in an academic context where
+failure to cite sources is frowned upon, the author of this document
+does not have the authority to suspend those rules).
 
 At your option, you may choose instead to treat this document as being
 under the NetHack General Public License.  In that case, see further
@@ -50,6 +54,144 @@ Chronological Changelog (most recent at top):
 =============================================
 =============================================
 
+Changes in 4.3.0.3:
+-------------------
+
+ * Wizard starting inventory has been rebalanced, since they
+   can now cast spells effectively in the early game.
+
+ * Added Quickpick, an artifact pick-axe that is mainly useful for
+   improved digging speed; it also gets a bonus against all deep
+   rock dwellers (X).
+
+ * Added a new special room type, dragon halls.
+
+ * Several new Sokoban levels have been added, based on some of the
+   Slash'em Sokoban puzzles (modified to be less dangerous).  One of
+   these replaces both of the ring-prize levels.  If you draw this
+   level, your sokoban prize is a sack containing a ring of polymorph
+   control, a ring of teleport control, and an extra random ring.
+
+ * Wresting the last charge out of a wand is somewhat less
+   tedious now than before.  It can still take several tries,
+   but it's now ridiculously unlikely to take dozens of tries.
+
+ * Trollsbane now lights up and instantly petrifies trolls.
+
+ * Flint generates in larger stacks than previously.
+
+ * Added historic events, xlogfile event bits, and livelog lines for
+   entering the Minetown temple (the first time) and for reaching the
+   bottom of the Mines.  Also added historic events and xlogfile event
+   bits for opening a magic chest and entering the Sokoban zoo and
+   an xlogfile event for entering the Astral Plane.
+
+ * In the early game when you really need it, eating a newt corpse
+   is now significantly likely to boost your max Pw.
+
+ * The following behaviors (or lack thereof) are now tracked as
+   conducts:  putting on clothing or armor (starting gear counts;
+   there is a birth option to control whether it gets autoequipped);
+   putting on jewelry or eyewear; using unicorn horns; using
+   containers; and applying tools (other than for the invocation).
+   To avoid making the end-game messages any spammier than they
+   already are, these conducts are only announced if you kept them.
+
+ * Role starting attribute numbers have been adjusted, as follows:
+   priests now usually start with more Int than Wis, the opposite to
+   their vanilla situation, so they can read and cast a wider variety
+   of spells as early as possible -- at the expense of being able to
+   cast them frequently; and Wizards have had their starting Wis
+   buffed at the expense of several other attributes, so they can get
+   decent Pw regen early and cast often.
+
+ * Higher wisdom now improves your Pw regeneration rate, for everyone
+   except Sylphs (who have their own formula).  Players who have been
+   playing Wizards as non-casting fighters for the first half of the
+   game may wish to revisit their approach.
+
+ * Wisdom is much more difficult to exercise than before.
+   To keep things balanced, it's also harder to abuse.
+
+ * All roles now use Int as their "casting" stat to determine
+   spell failure rates.
+
+ * The damage bonus for martial arts now depends on skill.
+
+ * Puddings now split slightly unevenly:  one of the two puddings will
+   be a little weaker than the original, and the other will be a
+   little stronger (in terms of max hitpoints).
+
+ * Thrown weapons now receive their inherent to-hit bonus, if
+   applicable.  (Previously they got a to-hit bonus based on
+   enchantment but missed out on their base to-hit bonus for being the
+   kind of weapon that they are.  This is relevant for daggers,
+   although it was implemented mostly for Vlad's blood spitting,
+   which needed the bonus to be able to hit late-game players.)
+
+ * In addition to your defense score, damage reduction also depends
+   on the attacking monster's chance to hit you.  If the monster
+   had a higher chance to hit you, the amount of defense you need
+   in order to get damage reduction is higher.
+
+ * Imported magic chests from DynaHack.  Any item put into a magic
+   chest can be looted out of any other magic chest in the dungeon,
+   placed at set locations.  This greatly reduces tedious stash
+   consolidation and transporting of items to and from stashes and
+   fixed dungeon resources like altars, shops and water.
+
+ * Completing Sokoban according to the rules now gets you experience.
+   This may be of interest to pacifists.
+
+ * Merged FIQ's wand balance implementation: so now the effectiveness
+   of wands depends on the skill level of the player or monster
+   that is zapping the wand.  Players can exercise and enhance wand
+   skill as with other skills.  Monsters just have whatever skill
+   level they have, depending on what kind of monster it is.  If
+   the wand is blessed or cursed, the effectiveness is adjusted by
+   one level, and if an unskilled user zaps a cursed one, it explodes.
+   I also introduced wands in starting inventory for more roles.
+
+ * Added a "new" type of amulet, the amulet of flying.  (Slash'em
+   has had this for a long time, of course.)
+
+ * Corpse and death drop rates are restored to their vanilla levels
+   (with a bug fix from the 2014 leak via 4.3-maint).  My changes to
+   this were not accomplishing what they intended to accomplish and,
+   as near as I can tell, did not significantly improve game balance.
+   So they are reverted.
+
+ * Upstream (NH4) changes merged during the 4.3.0.3 cycle include the
+   user interaction mode rewrite (including the attackhostile setting
+   for the movecommand option, which stops the game from asking if you
+   want to attack peaceful monsters, assuming that if you wanted to do
+   that you would have used the Fight prefix) and the M3_SCENT monster
+   flag (which allows certain monsters, e.g., canines, to pinpoint
+   your location by scent when they are close to you, even if they
+   can't see you).  There were also code quality improvements for
+   maintainability, notably, more globals purge.
+
+ * The degree to which a worn shield adds to your AC to prevent you
+   from being hit is now a function of your skill with the shield,
+   which is exercised as you use the shield in combat.
+
+ * Large deep-rock dwellers (X) now include xorns, umber hulks,
+   ettins, and deep ettins.
+
+ * Gelatinous cubes, acid blobs, and quivering blobs now appear
+   as lowercase j, along with jellies.
+
+ * Lizards (everything that formerly looked like a colon, :) are
+   now represented by a lowercase l, which stands for lizard.
+
+ * Piercers are now in mlet t, things that pretend to be part of
+   the ceiling/wall/floor until you wander into them, then attack.
+
+ * Vlad has been buffed.  His level and AC have been improved, and he
+   has received cold resistance, shock resistance, infravision, see
+   invisible, and a vampire-blood spitting attack that drains levels.
+
+ * There is now unholy water on the top level of Vlad's Tower.
 
 Changes in 4.3.0.2:
 -------------------

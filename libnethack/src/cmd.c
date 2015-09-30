@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -24,6 +24,7 @@ static int dowelcome(const struct nh_cmd_arg *);
 static int dointerrupt(const struct nh_cmd_arg *);
 static int doattributes(const struct nh_cmd_arg *);
 static int doconduct(const struct nh_cmd_arg *);
+static int dospoilers(const struct nh_cmd_arg *);
 static int doquit(const struct nh_cmd_arg *);
 static int wiz_wish(const struct nh_cmd_arg *);
 static int wiz_identify(const struct nh_cmd_arg *);
@@ -192,6 +193,8 @@ const struct cmd_desc cmdlist[] = {
      dovspell, CMD_MAINMENU},
     {"swapweapon", "exchange wielded and alternate weapon", 'x', 0, FALSE,
      doswapweapon, 0},
+    {"spoilers", "generate spoilers automatically", 0, 0, TRUE,
+     dospoilers, CMD_DEBUG | CMD_EXT | CMD_NOTIME},
     {"takeoff", "take off an item you are wearing", 'T', 'R', FALSE, dounequip,
      CMD_ARG_OBJ},
     {"teleport", "use intrinsic or magical teleportation ability", C('t'), 0,
@@ -352,7 +355,7 @@ wiz_wish(const struct nh_cmd_arg *arg)
        wishing for the same item. */
 
     flags.verbose = FALSE;
-    makewish();
+    makewish(99);
     flags.verbose = save_verbose;
     encumber_msg();
 
@@ -428,7 +431,7 @@ wiz_detect(const struct nh_cmd_arg *arg)
 {
     (void) arg;
 
-    findit();
+    findit(BOLT_LIM);
 
     return 0;
 }
@@ -1370,6 +1373,7 @@ contained(struct nh_menulist *menu, const char *src, long *total_count,
     count_obj(invent, &count, &size, FALSE, TRUE);
     count_obj(level->objlist, &count, &size, FALSE, TRUE);
     count_obj(level->buriedobjlist, &count, &size, FALSE, TRUE);
+    count_obj(magic_chest_objs, &count, &size, FALSE, TRUE);
     /* DEADMONSTER check not required in this loop since they have no inventory
      */
     for (mon = level->monlist; mon; mon = mon->nmon)
@@ -1428,6 +1432,8 @@ wiz_show_stats(const struct nh_cmd_arg *arg)
               &total_obj_size);
     obj_chain(&menu, "buried", level->buriedobjlist, &total_obj_count,
               &total_obj_size);
+    obj_chain(&menu, "magic chest obj", magic_chest_objs, &total_obj_count,
+              &total_obj_size);
     mon_invent_chain(&menu, "minvent", level->monlist, &total_obj_count,
                      &total_obj_size);
     mon_invent_chain(&menu, "migrating minvent", migrating_mons,
@@ -1472,12 +1478,13 @@ dir_to_delta(enum nh_direction dir, schar * dx, schar * dy, schar * dz)
     return TRUE;
 }
 
-/* The caller must verify that the delta is valid. */
+/* In case of invalid input, returns DIR_NONE. */
 void
 arg_from_delta(schar dx, schar dy, schar dz, struct nh_cmd_arg *arg)
 {
     int i;
     arg->argtype = CMD_ARG_DIR;
+    arg->dir = DIR_NONE;
 
     /* TODO: Bleh at the hardcoded 11. */
     for (i = 0; i < 11; i++) {
@@ -1494,6 +1501,9 @@ getargdir(const struct nh_cmd_arg *arg, const char *query,
     if ((arg->argtype & CMD_ARG_DIR) &&
         dir_to_delta(arg->dir, dx, dy, dz) &&
         (!*dx || !*dy || u.umonnum != PM_GRID_BUG)) {
+
+        turnstate.intended_dx = *dx;
+        turnstate.intended_dy = *dy;
 
         /* getdir() has a stun/confusion check; replicate that here.
 
@@ -1529,7 +1539,7 @@ struct obj *
 getargobj(const struct nh_cmd_arg *arg, const char *let, const char *word)
 {
     struct obj *obj = NULL, *otmp;
-  
+
     /* Did the client specify an inventory letter? */
     if (arg->argtype & CMD_ARG_OBJ)
         for (otmp = invent; otmp && !obj; otmp = otmp->nobj)
@@ -1740,6 +1750,14 @@ confdir(schar * dx, schar * dy)
 }
 
 static int
+dospoilers(const struct nh_cmd_arg *arg)
+{
+    (void) arg;
+    makespoilers();
+    return 0;
+}
+
+static int
 doquit(const struct nh_cmd_arg *arg)
 {
     (void) arg;
@@ -1788,4 +1806,3 @@ dotravel(const struct nh_cmd_arg *arg)
 }
 
 /*cmd.c*/
-

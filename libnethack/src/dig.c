@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-19 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -292,6 +292,11 @@ dig(void)
        factor is going to override almost anyting else. */
     if (Race_if(PM_DWARF))
         u.uoccupation_progress[tos_dig] *= 2;
+    if (u_have_property(FAST_DIGGING, ANY_PROPERTY, FALSE)) {
+        if (u.uoccupation_progress[tos_dig] < 20)
+            u.uoccupation_progress[tos_dig] = 20;
+        u.uoccupation_progress[tos_dig] *= 3;
+    }
     if (down) {
         struct trap *ttmp;
 
@@ -303,7 +308,7 @@ dig(void)
 
         if (u.uoccupation_progress[tos_dig] <= 50 ||
             ((ttmp = t_at(level, dpx, dpy)) != 0 &&
-             (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT ||
+             (is_pit_trap(ttmp->ttyp) ||
               ttmp->ttyp == TRAPDOOR || ttmp->ttyp == HOLE)))
             return 1;
 
@@ -711,7 +716,7 @@ dighole(boolean pit_only)
         }
 
     } else if ((boulder_here = sobj_at(BOULDER, level, u.ux, u.uy)) != 0) {
-        if (ttmp && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) && rn2(2)) {
+        if (ttmp && is_pit_trap(ttmp->ttyp) && rn2(2)) {
             pline("The boulder settles into the pit.");
             ttmp->ttyp = PIT;   /* crush spikes */
         } else {
@@ -874,7 +879,7 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
 
     if (Engulfed) {
         enum attack_check_status attack_status =
-            attack(u.ustuck, dx, dy, apply_interaction_mode());
+            attack(u.ustuck, dx, dy, FALSE);
         if (attack_status != ac_continue)
             return attack_status != ac_cancel;
     }
@@ -909,7 +914,7 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
         loc = &level->locations[rx][ry];
         if (MON_AT(level, rx, ry)) {
             enum attack_check_status attack_status =
-                attack(m_at(level, rx, ry), dx, dy, apply_interaction_mode());
+                attack(m_at(level, rx, ry), dx, dy, FALSE);
             if (attack_status != ac_continue)
                 return attack_status != ac_cancel;
         }
@@ -1164,7 +1169,7 @@ mdig_tunnel(struct monst *mtmp)
 
    dig for digdepth positions; also down on request of Lennart Augustsson. */
 void
-zap_dig(schar dx, schar dy, schar dz)
+zap_dig(struct monst *mon, struct obj *obj, schar dx, schar dy, schar dz)
 {
     struct rm *room;
     struct monst *mtmp;
@@ -1172,6 +1177,11 @@ zap_dig(schar dx, schar dy, schar dz)
     struct tmp_sym *tsym;
     int zx, zy, digdepth;
     boolean shopdoor, shopwall;
+    int wandlevel = 0;
+    if (obj->oclass == WAND_CLASS)
+        wandlevel = getwandlevel(mon, obj);
+    else if (obj->oclass == SPBOOK_CLASS)
+        wandlevel = 2; /* TODO: use spell skill instead. */
 
     /* swallowed */
     if (Engulfed) {
@@ -1223,7 +1233,7 @@ zap_dig(schar dx, schar dy, schar dz)
     shopdoor = shopwall = FALSE;
     zx = u.ux + dx;
     zy = u.uy + dy;
-    digdepth = rn1(18, 8);
+    digdepth = rn1(6 * wandlevel, 4 * wandlevel);
     tsym = tmpsym_init(DISP_BEAM, dbuf_effect(E_MISC, E_digbeam));
     while (--digdepth >= 0) {
         if (!isok(zx, zy))
@@ -1576,8 +1586,7 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
             return;
         } else if (isok(x, y)) {
             oldtrap = t_at(lev, x, y);
-            if (oldtrap && ((oldtrap->ttyp == PIT) ||
-                            (oldtrap->ttyp == SPIKED_PIT))) {
+            if (oldtrap && (is_pit_trap(oldtrap->ttyp))) {
                 growlarger = TRUE;
                 newtyp     = HOLE;
             } else {
@@ -1585,8 +1594,10 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
                 case 1:
                 case 2:
                     newtyp = SPIKED_PIT;
+                    break;
                 case 3:
                     newtyp = HOLE;
+                    break;
                 default:
                     newtyp = PIT;
                 }
@@ -1598,8 +1609,7 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
                 no_pit_message(magr, mdef);
                 return;
             } else if (oldtrap && (newtyp != HOLE) &&
-                       ((oldtrap->ttyp == PIT) ||
-                        (oldtrap->ttyp == SPIKED_PIT) ||
+                       (is_pit_trap(oldtrap->ttyp) ||
                         (oldtrap->ttyp == HOLE))) {
                 mtmp = m_at(lev, x, y);
                 if (cansee(x, y))

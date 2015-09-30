@@ -890,7 +890,7 @@ lowered drawbridge
 raised drawbridge
 raised drawbridge
 air
-cloud;gas cloud
+cloud
 underwater
 arrow trap
 dart trap
@@ -1089,6 +1089,8 @@ deep ettin
 magic chest
 splash of blood
 convex amulet
+blood pudding
+stinking cloud trap
 
 ! NH4 requirements:
 remembered as locked
@@ -1098,3 +1100,6 @@ monster is tame
 monster is peaceful
 monster is detected
 monster is ridden
+gas cloud
+! This one's just an aid for the tiles artist:
+tile size measuring spacer

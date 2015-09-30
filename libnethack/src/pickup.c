@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -30,6 +30,13 @@ static boolean mon_beside(int, int);
 /* define for query_objlist() and autopickup() */
 #define FOLLOW(curr, flags) \
     (((flags) & BY_NEXTHERE) ? (curr)->nexthere : (curr)->nobj)
+
+/*
+ * Used by container code to check if they're dealing with the special magic
+ * chest container, which isn't really so much a container as much as it is a
+ * terrain feature coupled with a backing object chain.
+ */
+#define cobj_is_magic_chest(cobj) ((cobj) == &zeroobj)
 
 /*
  *  How much the weight of the given container will change when the given
@@ -154,8 +161,8 @@ is_worn_by_type(const struct obj * otmp)
 }
 
 /*
- * Have the hero pick things from the ground
- * or a monster's inventory if swallowed.
+ * Have the hero pick up things from the ground or a monster's inventory if
+ * swallowed. Autopickup might be vetoed, based on the interaction mode.
  *
  * Arg what:
  *      >0  autopickup
@@ -184,7 +191,7 @@ pickup(int what, enum u_interaction_mode uim)
 
         /* no auto-pick if no-pick move, nothing there, or in a pool */
         if (autopickup &&
-            (!ITEM_INTERACTIVE(uim) || !OBJ_AT(u.ux, u.uy) ||
+            (uim == uim_nointeraction || !OBJ_AT(u.ux, u.uy) ||
              (is_pool(level, u.ux, u.uy) && !Underwater) ||
              is_lava(level, u.ux, u.uy))) {
             read_engr_at(u.ux, u.uy);
@@ -202,7 +209,7 @@ pickup(int what, enum u_interaction_mode uim)
                because that stuff is teetering on the edge just like you, but
                not pits, because there is an elevation discrepancy with stuff
                in pits. */
-            if ((ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT) &&
+            if (is_pit_trap(ttmp->ttyp) &&
                 (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) &&
                 !Passes_walls) {
                 read_engr_at(u.ux, u.uy);
@@ -225,10 +232,9 @@ pickup(int what, enum u_interaction_mode uim)
             return 0;
         }
 
-        /* If there's anything here, stop running and travel, but not
+        /* If there's anything here, stop running, but not travel or
            autoexplore unless it picks something up, which is handled later. */
-        if (OBJ_AT(u.ux, u.uy) && (flags.occupation == occ_move ||
-                                   flags.occupation == occ_travel))
+        if (OBJ_AT(u.ux, u.uy) && flags.occupation == occ_move)
             action_completed();
     }
 
@@ -355,6 +361,8 @@ autopick(struct obj *olist,     /* the object list */
     /* first count the number of eligible items */
     for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow)) {
         examine_object(curr);
+        if (curr->was_dropped)
+            continue;
         if ((flags.pickup_thrown && curr->was_thrown) ||
             autopickup_match(curr))
             n++;
@@ -362,13 +370,16 @@ autopick(struct obj *olist,     /* the object list */
 
     if (n) {
         *pick_list = pi = malloc(sizeof (struct object_pick) * n);
-        for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow))
+        for (n = 0, curr = olist; curr; curr = FOLLOW(curr, follow)) {
+            if (curr->was_dropped)
+                continue;
             if ((flags.pickup_thrown && curr->was_thrown) ||
                 autopickup_match(curr)) {
                 pi[n].obj = curr;
                 pi[n].count = curr->quan;
                 n++;
             }
+        }
     }
     return n;
 }
@@ -405,6 +416,13 @@ add_objitem(struct nh_objlist *objlist,
     it->role = role;
     strcpy(it->caption, caption);
 
+    if ((role == MI_NORMAL) && cobj_is_magic_chest(obj)) {
+        /* This is a special-case for 'magic chest' for query_objlist() */
+        /* Show it as a blessed chest for lack of a proper object appearance. */
+        it->count = 1;
+        it->otype = CHEST;
+        it->buc = B_BLESSED;
+    } else
     if (role == MI_NORMAL && obj) {
         ocl = &objects[obj->otyp];
 
@@ -524,6 +542,8 @@ obj_compare(const void *o1, const void *o2)
  *      INVORDER_SORT     - Use hero's pack order.
  *      SIGNAL_NOMENU     - Return -1 rather than 0 if nothing passes "allow".
  *	SIGNAL_ESCAPE	  - Return -2 rather than 0 if menu is escaped.
+ *      FEEL_COCKATRICE   - Engage cockatrice checks and react.
+ *      SHOW_MAGIC_CHEST  - Show 'magic chest' as the first entry (&zeroobj).
  */
 int
 query_objlist(const char *qstr, /* query string */
@@ -538,15 +558,21 @@ query_objlist(const char *qstr, /* query string */
     struct nh_objlist objmenu;
 
     *pick_list = NULL;
-    if (!olist)
-        return 0;
 
     /* count the number of items allowed */
-    for (n = 0, last = 0, curr = olist; curr; curr = FOLLOW(curr, qflags))
+    n = 0;
+    last = NULL;
+    if (qflags & SHOW_MAGIC_CHEST) {
+        /* &zeroobj indicates the selection of the 'magic chest' entry */
+        last = &zeroobj;
+        n++;
+    }
+    for (curr = olist; curr; curr = FOLLOW(curr, qflags)) {
         if ((*allow) (curr)) {
             last = curr;
             n++;
         }
+    }
 
     if (n == 0) /* nothing to pick here */
         return (qflags & SIGNAL_NOMENU) ? -1 : 0;
@@ -554,7 +580,8 @@ query_objlist(const char *qstr, /* query string */
     if (n == 1 && (qflags & AUTOSELECT_SINGLE)) {
         *pick_list = malloc(sizeof (struct object_pick));
         (*pick_list)->obj = last;
-        (*pick_list)->count = last->quan;
+        /* For a magic chest, use a valid but arbitrary count. */
+        (*pick_list)->count = cobj_is_magic_chest(last) ? 1 : last->quan;
         return 1;
     }
 
@@ -562,6 +589,8 @@ query_objlist(const char *qstr, /* query string */
     nr_objects = 0;
 
     struct obj *allowed[n];
+    if (qflags & SHOW_MAGIC_CHEST)
+        allowed[nr_objects++] = &zeroobj;
 
     for (curr = olist; curr; curr = FOLLOW(curr, qflags)) {
         if ((qflags & FEEL_COCKATRICE) && curr->otyp == CORPSE &&
@@ -576,16 +605,39 @@ query_objlist(const char *qstr, /* query string */
 
     /* sort the list in place according to (1) inv_order and... */
     if (qflags & INVORDER_SORT) {
-        if (qflags & USE_INVLET)        /* ... (2) only inv_order. */
-            qsort(allowed, nr_objects, sizeof (struct obj *), invo_obj_compare);
-        else    /* ... (2) object name. */
-            qsort(allowed, nr_objects, sizeof (struct obj *), obj_compare);
+        struct obj **tmp_objlist = allowed;
+        int tmp_nr_objects = nr_objects;
+        int (*objcmp_func)(const void *, const void *) =
+            (qflags & USE_INVLET) ?
+            invo_obj_compare :	/* ... (2) only inv_order. */
+            obj_compare;	/* ... (2) object name. */
+        if (qflags & SHOW_MAGIC_CHEST) {
+            /* Don't move 'magic chest' entry away from the top. */
+            tmp_objlist++;
+            tmp_nr_objects--;
+        }
+        if (tmp_nr_objects > 0)
+            qsort(tmp_objlist, tmp_nr_objects, sizeof(struct obj *), objcmp_func);
     }
 
     init_objmenulist(&objmenu);
     prev_oclass = -1;
 
-    for (i = 0; i < nr_objects; i++) {
+    i = 0;
+    /* magic chest comes first if it was requested */
+    if (qflags & SHOW_MAGIC_CHEST) {
+        /* fudge the entries for 'magic chest' */
+        if (qflags & INVORDER_SORT) {
+            add_objitem(&objmenu, MI_HEADING, 0,
+                        "Furniture", NULL, FALSE);
+        }
+        /* &zeroobj is handled specially by add_objitem */
+        add_objitem(&objmenu, MI_NORMAL, i+1,
+                    "a magic chest", &zeroobj, FALSE);
+        i++;
+    }
+    /* now go through the objects proper */
+    for (; i < nr_objects; i++) {
         curr = allowed[i];
         /* if sorting, print type name */
         if ((qflags & INVORDER_SORT) && prev_oclass != curr->oclass)
@@ -792,8 +844,11 @@ carry_count(struct obj *obj,    /* object to pick up */
             struct obj *container,      /* bag it's coming out of */
             long count, boolean telekinesis, int *wt_before, int *wt_after)
 {
-    boolean adjust_wt = container &&
-        carried(container), is_gold = obj->oclass == COIN_CLASS;
+    boolean adjust_wt = container && !cobj_is_magic_chest(container) &&
+                        carried(container),
+        is_gold = obj->oclass == COIN_CLASS,
+        is_boh = container && !cobj_is_magic_chest(container) &&
+                 container->otyp == BAG_OF_HOLDING;
     int wt, iw, ow, oow;
     long qq, savequan;
     long umoney = money_cnt(invent);
@@ -811,7 +866,7 @@ carry_count(struct obj *obj,    /* object to pick up */
     }
     wt = iw + (int)obj->owt;
     if (adjust_wt)
-        wt -= (container->otyp == BAG_OF_HOLDING) ?
+        wt -= is_boh ?
             (int)DELTA_CWT(container, obj) : (int)obj->owt;
     /* This will go with silver+copper & new gold weight */
     if (is_gold)        /* merged gold might affect cumulative weight */
@@ -840,7 +895,7 @@ carry_count(struct obj *obj,    /* object to pick up */
                 obj->quan = qq;
                 obj->owt = (unsigned)GOLD_WT(qq);
                 ow = (int)GOLD_WT(umoney + qq);
-                ow -= (container->otyp == BAG_OF_HOLDING) ?
+                ow -= is_boh ?
                     (int)DELTA_CWT(container, obj) : (int)obj->owt;
                 if (iw + ow >= 0)
                     break;
@@ -866,7 +921,7 @@ carry_count(struct obj *obj,    /* object to pick up */
             obj->quan = qq;
             obj->owt = (unsigned)(ow = weight(obj));
             if (adjust_wt)
-                ow -= (container->otyp == BAG_OF_HOLDING) ?
+                ow -= is_boh ?
                     (int)DELTA_CWT(container, obj) : (int)obj->owt;
             if (iw + ow >= 0)
                 break;
@@ -883,6 +938,10 @@ carry_count(struct obj *obj,    /* object to pick up */
     if (qq < count) {
         /* some message will be given */
         obj_nambuf = doname(obj);
+        if (container && cobj_is_magic_chest(container)) {
+            where = "in the magic chest";
+            verb = "manage";
+        } else
         if (container) {
             where = msgprintf("in %s", the(xname(container)));
             verb = "carry";
@@ -1192,6 +1251,16 @@ container_at(int x, int y, boolean countem)
     struct obj *cobj, *nobj;
     int container_count = 0;
 
+    /* WARNING: Magic chests are terrain features, not objects, so a
+       non-zero return value from this function doesn't necessarily mean
+       there's an object at this location. */
+    if (IS_MAGIC_CHEST(level->locations[x][y].typ)) {
+        if (countem)
+            container_count++;
+        else
+            return 1;
+    }
+
     for (cobj = level->objects[x][y]; cobj; cobj = nobj) {
         nobj = cobj->nexthere;
         if (Is_container(cobj)) {
@@ -1282,14 +1351,16 @@ lootcont:
 
     if ((container_count = container_at(cc.x, cc.y, TRUE))) {
         struct object_pick *lootlist;
-        int i, n;
+        int i, n, qflags;
 
         if (!able_to_loot(cc.x, cc.y))
             return 0;
 
+        qflags = BY_NEXTHERE | SIGNAL_ESCAPE | AUTOSELECT_SINGLE;
+        if (IS_MAGIC_CHEST(level->locations[cc.x][cc.y].typ))
+            qflags |= SHOW_MAGIC_CHEST;
         n = query_objlist("Loot which containers?", level->objects[cc.x][cc.y],
-                          BY_NEXTHERE | SIGNAL_ESCAPE | AUTOSELECT_SINGLE,
-                          &lootlist, PICK_ANY, Is_container_func);
+                          qflags, &lootlist, PICK_ANY, Is_container_func);
 
         if (n < 0) {
             return 0;
@@ -1299,11 +1370,12 @@ lootcont:
             c = 'y';
             for (i = 0; i < n; i++) {
                 cobj = lootlist[i].obj;
-                if (cobj->olocked) {
+                if (!cobj_is_magic_chest(cobj) && cobj->olocked) {
                     pline("Hmmm, it seems to be locked.");
                     continue;
                 }
-                if (cobj->otyp == BAG_OF_TRICKS) {
+                if (!cobj_is_magic_chest(cobj) &&
+                    cobj->otyp == BAG_OF_TRICKS) {
                     int tmp;
 
                     pline("You carefully open the bag...");
@@ -1317,7 +1389,8 @@ lootcont:
                     return 1;
                 }
 
-                pline("You carefully open %s...", the(xname(cobj)));
+                pline("You carefully open %s...", (cobj_is_magic_chest(cobj)) ?
+                      "the magic chest" : the(xname(cobj)));
                 timepassed |= use_container(cobj, 0);
                 if (u_helpless(hm_all)) {        /* e.g. a chest trap */
                     free(lootlist);
@@ -1542,17 +1615,46 @@ mbag_explodes(struct obj *obj, int depthin)
     return FALSE;
 }
 
+/*
+ * Place obj in a magic chest, make sure "obj" is free.
+ * Returns (merged) object.
+ * The input obj may be deleted in the process.
+ * Based on the implementation of add_to_container.
+ */
+struct obj *add_to_magic_chest(struct obj *obj)
+{
+    struct obj *otmp;
+
+    if (obj->where != OBJ_FREE) {
+	panic("add_to_magic_chest: obj not free (%d,%d,%d)",
+	      obj->where, obj->otyp, obj->invlet);
+    }
+    obj_no_longer_held(obj);
+
+    /* merge if possible */
+    for (otmp = magic_chest_objs; otmp; otmp = otmp->nobj)
+	if (merged(&otmp, &obj))
+            return otmp;
+
+    extract_nobj(obj, &turnstate.floating_objects,
+                 &magic_chest_objs, OBJ_MAGIC_CHEST);
+    obj->ocontainer = NULL;
+    return obj;
+}
+
 /* A variable set in use_container(), to be used by the callback routines   */
 /* in_container(), and out_container() from askchain() and use_container(). */
 static struct obj *current_container;
 
-#define Icebox (current_container->otyp == ICE_BOX)
+#define Icebox (!cobj_is_magic_chest(current_container) && \
+                current_container->otyp == ICE_BOX)
 
 /* Returns: -1 to stop, 1 item was inserted, 0 item was not inserted. */
 static int
 in_container(struct obj *obj)
 {
-    boolean floor_container = !carried(current_container);
+    boolean floor_container = !cobj_is_magic_chest(current_container) &&
+                              !carried(current_container);
     boolean was_unpaid = FALSE;
     int mbag_explodes_reason = 0;
 
@@ -1568,7 +1670,7 @@ in_container(struct obj *obj)
         return 0;
     }
     /* must check for obj == current_container before doing this */
-    if (Is_mbag(current_container))
+    if (!cobj_is_magic_chest(current_container) && Is_mbag(current_container))
         mbag_explodes_reason = mbag_explodes(obj, 0);
     if (mbag_explodes_reason == 2)
         return 0;
@@ -1616,11 +1718,32 @@ in_container(struct obj *obj)
             return -1;
     }
 
+    /*
+      Revive corpses timed to revive immediately when trying to put
+      them into a magic chest.
+	     
+      Timers attached to objects on the magic_chest_objs chain are considered
+      global and therefore follow the hero from level to level.  If the timeout
+      happens to be REVIVE_MON (e.g. a troll corpse), the revival code has no
+      sensible place to put the revived monster and the corpse simply vanishes.
+      To prevent magic chests being exploited to get rid of reviving corpses,
+      such corpses are revived immediately upon trying to insert them into a
+      magic chest.
+    */
+    if (report_timer(level, REVIVE_MON, obj)) {
+        if (revive_corpse(obj)) {
+            /* Stop any multi-looting. */
+            helpless(1, hr_afraid, "startled by a reviving monster", NULL);
+            return -1;
+        }
+    }
+
+
     /* boxes, boulders, and big statues can't fit into any container */
     if (obj->otyp == ICE_BOX || Is_box(obj) || obj->otyp == BOULDER ||
         (obj->otyp == STATUE && bigmonst(&mons[obj->corpsenm]))) {
-        pline("You cannot fit %s into %s.",
-              the(xname(obj)),
+        pline("You cannot fit %s into %s.", the(xname(obj)),
+              cobj_is_magic_chest(current_container) ? "the magic chest" :
               the(xname(current_container)));
         return 0;
     }
@@ -1678,13 +1801,18 @@ in_container(struct obj *obj)
 
     if (current_container) {
         pline("You put %s into %s.", doname(obj),
+              cobj_is_magic_chest(current_container) ? "the magic chest" :
               the(xname(current_container)));
 
         /* gold in container always needs to be added to credit */
         if (floor_container && obj->oclass == COIN_CLASS)
             sellobj(obj, current_container->ox, current_container->oy);
-        add_to_container(current_container, obj);
-        current_container->owt = weight(current_container);
+        if (cobj_is_magic_chest(current_container)) {
+            add_to_magic_chest(obj);
+        } else {
+            add_to_container(current_container, obj);
+            current_container->owt = weight(current_container);
+        }
     }
     /* gold needs this, and freeinv() many lines above may cause the
        encumbrance to disappear from the status, so just always update status
@@ -1728,6 +1856,9 @@ out_container(struct obj *obj)
 
     /* Remove the object from the list. */
     obj_extract_self(obj);
+    if (cobj_is_magic_chest(current_container))
+        set_obj_level(level, obj);
+    else
     current_container->owt = weight(current_container);
 
     if (Icebox && !age_is_relative(obj)) {
@@ -1737,7 +1868,8 @@ out_container(struct obj *obj)
     }
     /* simulated point of time */
 
-    if (!obj->unpaid && !carried(current_container) &&
+    if (!obj->unpaid && !cobj_is_magic_chest(current_container) &&
+        !carried(current_container) &&
         costly_spot(current_container->ox, current_container->oy)) {
         obj->ox = current_container->ox;
         obj->oy = current_container->oy;
@@ -1853,6 +1985,9 @@ use_container(struct obj *obj, int held)
         pline("You have no free %s.", body_part(HAND));
         return 0;
     }
+    if (cobj_is_magic_chest(obj))
+        ; /* can't be locked or trapped */
+    else
     if (obj->olocked) {
         pline("%s to be locked.", Tobjnam(obj, "seem"));
         if (held)
@@ -1868,7 +2003,8 @@ use_container(struct obj *obj, int held)
     }
     current_container = obj;    /* for use by in/out_container */
 
-    if (obj->spe == 1) {
+    break_conduct(conduct_containers);
+    if (!cobj_is_magic_chest(obj) && obj->spe == 1) {
         observe_quantum_cat(obj);
         used = 1;
         quantum_cat = TRUE;     /* for adjusting "it's empty" message */
@@ -1877,9 +2013,16 @@ use_container(struct obj *obj, int held)
        magic bag. Don't use a custom RNG: we can't know how many items were
        placed into the bag (and multiple games can't get the same bones file, so
        there's no point in synchronizing that either). */
-    for (curr = obj->cobj; curr; curr = otmp) {
+    if (cobj_is_magic_chest(obj)) {
+        curr = magic_chest_objs;
+        historic_event(FALSE, FALSE, "opened a magic chest.");
+    }
+    else
+        curr = obj->cobj;
+    for (; curr; curr = otmp) {
         otmp = curr->nobj;
-        if (Is_mbag(obj) && obj->cursed && !rn2(13)) {
+        if (!cobj_is_magic_chest(obj) && Is_mbag(obj) &&
+            obj->cursed && !rn2(13)) {
             obj_extract_self(curr);
             loss += mbag_item_gone(held, curr);
             used = 1;
@@ -1890,15 +2033,19 @@ use_container(struct obj *obj, int held)
 
     if (loss)   /* magic bag lost some shop goods */
         pline("You owe %ld %s for lost merchandise.", loss, currency(loss));
-    obj->owt = weight(obj);     /* in case any items were lost */
+    if (!cobj_is_magic_chest(obj))
+        obj->owt = weight(obj);     /* in case any items were lost */
 
     if (!cnt)
-        emptymsg = msgprintf("%s is %sempty.", Yname2(obj),
+        emptymsg = msgprintf("%s is %sempty.",
+                             cobj_is_magic_chest(obj) ?
+                             "The magic chest" : Yname2(obj),
                              quantum_cat ? "now " : "");
 
     if (cnt || flags.menu_style == MENU_FULL) {
         qbuf = "Do you want to take something out of ";
         qbuf = msgprintf("%s%s?", qbuf,
+                         cobj_is_magic_chest(obj) ? "the magic chest" :
                          safe_qbuf(qbuf, 1, yname(obj),
                                    ysimple_name(obj), "it"));
 
@@ -1993,8 +2140,17 @@ menu_loot(int retry, struct obj *container, boolean put_in)
         mflags =
             put_in ? ALL_TYPES | BUC_ALLBKNOWN | BUC_UNKNOWN | UNIDENTIFIED :
             ALL_TYPES | CHOOSE_ALL | BUC_ALLBKNOWN | BUC_UNKNOWN | UNIDENTIFIED;
-        n = query_category(buf, put_in ? invent : container->cobj, mflags,
-                           &pick_list, PICK_ANY);
+        if (put_in) {
+            otmp = invent;
+        } else {
+            if (cobj_is_magic_chest(container))
+                otmp = magic_chest_objs;
+            else
+                otmp = container->cobj;
+        }
+
+        n = query_category(buf, otmp, mflags, &pick_list, PICK_ANY);
+
         if (!n)
             return 0;
         for (i = 0; i < n; i++) {
@@ -2008,7 +2164,9 @@ menu_loot(int retry, struct obj *container, boolean put_in)
     }
 
     if (loot_everything) {
-        for (otmp = container->cobj; otmp; otmp = otmp2) {
+        otmp = cobj_is_magic_chest(container) ? magic_chest_objs :
+            container->cobj;
+        for (; otmp; otmp = otmp2) {
             otmp2 = otmp->nobj;
             res = out_container(otmp);
             if (res < 0)
@@ -2019,8 +2177,9 @@ menu_loot(int retry, struct obj *container, boolean put_in)
         if (put_in)
             mflags |= USE_INVLET;
         buf = msgprintf("%s what?", put_in ? putin : takeout);
-        n = query_objlist(buf, put_in ? invent : container->cobj, mflags,
-                          &obj_pick_list, PICK_ANY,
+        otmp = put_in ? invent : cobj_is_magic_chest(container) ?
+            magic_chest_objs : container->cobj;
+        n = query_objlist(buf, otmp, mflags, &obj_pick_list, PICK_ANY,
                           all_categories ? allow_all : allow_category);
         if (n) {
             n_looted = n;
@@ -2056,12 +2215,14 @@ in_or_out_menu(const char *prompt, struct obj *obj, boolean outokay,
     int n, nr = 0;
 
     if (outokay) {
-        buf = msgprintf("Take something out of %s", the(xname(obj)));
+        buf = msgprintf("Take something out of %s", cobj_is_magic_chest(obj) ?
+                        "the magic chest" : the(xname(obj)));
         set_menuitem(&items[nr++], 1, MI_NORMAL, buf, 'o', FALSE);
     }
 
     if (inokay) {
-        buf = msgprintf("Put something into %s", the(xname(obj)));
+        buf = msgprintf("Put something into %s", cobj_is_magic_chest(obj) ?
+                        "the magic chest" : the(xname(obj)));
         set_menuitem(&items[nr++], 2, MI_NORMAL, buf, 'i', FALSE);
     }
 

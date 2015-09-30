@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Sean Hunt, 2014-10-17 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) 1989 Mike Threepoint                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -134,9 +134,10 @@
 # define is_longworm(ptr)       (((ptr) == &mons[PM_BABY_LONG_WORM]) || \
                                  ((ptr) == &mons[PM_LONG_WORM]) || \
                                  ((ptr) == &mons[PM_LONG_WORM_TAIL]))
-# define is_covetous(ptr)       ((ptr->mflags3 & M3_COVETOUS))
-# define infravision(ptr)       ((ptr->mflags3 & M3_INFRAVISION))
-# define infravisible(ptr)      ((ptr->mflags3 & M3_INFRAVISIBLE))
+# define is_covetous(ptr)       ((ptr->mflags3 & M3_COVETOUS) != 0L)
+# define infravision(ptr)       ((ptr->mflags3 & M3_INFRAVISION) != 0L)
+# define infravisible(ptr)      ((ptr->mflags3 & M3_INFRAVISIBLE) != 0L)
+# define has_scent(ptr)         ((ptr->mflags3 & M3_SCENT) != 0L)
 # define is_mplayer(ptr)        (((ptr) >= &mons[PM_ARCHEOLOGIST]) && \
                                  ((ptr) <= &mons[PM_WIZARD]))
 # define is_rider(ptr)          ((ptr) == &mons[PM_DEATH] || \
@@ -184,8 +185,7 @@
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
 /* Maybe someday this could be in mflags... */
-# define vegan(ptr)             ((ptr)->mlet == S_BLOB || \
-                                 (ptr)->mlet == S_JELLY ||            \
+# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||            \
                                  (ptr)->mlet == S_FUNGUS ||           \
                                  (ptr)->mlet == S_VORTEX ||           \
                                  (ptr)->mlet == S_LIGHT ||            \
@@ -197,7 +197,8 @@
                                  noncorporeal(ptr))
 # define vegetarian(ptr)        (vegan(ptr) || \
                                 ((ptr)->mlet == S_PUDDING &&         \
-                                 (ptr) != &mons[PM_BLACK_PUDDING]))
+                                 (ptr) != &mons[PM_BLACK_PUDDING] && \
+                                 (ptr) != &mons[PM_BLOOD_PUDDING]))
 
 # define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
                                       is_domestic(ptr))

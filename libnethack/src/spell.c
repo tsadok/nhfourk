@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) M. Stephenson 1988                               */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -413,7 +413,8 @@ learn(void)
     if (++u.uoccupation_progress[tos_book] < 0)
         return 1;       /* still busy */
 
-    exercise(A_WIS, TRUE);      /* you're studying. */
+    if (ACURR(A_WIS) < 12)
+        exercise(A_WIS, TRUE); /* you're studying. */
 
     splname = msgprintf(objects[booktype].oc_name_known ?
                         "\"%s\"" : "the \"%s\" spell",
@@ -428,7 +429,8 @@ learn(void)
                 pline("Your knowledge of %s is keener.", splname);
                 incrnknow(i);
                 u.utracked[tos_book]->spestudied++;
-                exercise(A_WIS, TRUE);  /* extra study */
+                if (ACURR(A_WIS) < 12)
+                    exercise(A_WIS, TRUE); /* extra study */
             } else {    /* 1000 < spellknow(i) <= MAX_SPELL_STUDY */
                 pline("You know %s quite well already.", splname);
                 if (yn("Do you want to read the book anyway?") == 'y') {
@@ -1039,7 +1041,6 @@ spelleffects(int spell, boolean atme, const struct nh_cmd_arg *arg)
     }
 
     u.uen -= energy;
-    exercise(A_WIS, TRUE);
     /* pseudo is a temporary "false" object containing the spell stats */
     pseudo = mktemp_sobj(level, spellid(spell));
     pseudo->blessed = pseudo->cursed = 0;
@@ -1069,7 +1070,7 @@ spelleffects(int spell, boolean atme, const struct nh_cmd_arg *arg)
                             u.ulevel / 2 + 1 + spell_damage_bonus(), 0,
                             (pseudo->otyp ==
                              SPE_CONE_OF_COLD) ? EXPL_FROSTY : EXPL_FIERY,
-                            NULL);
+                            NULL, 0);
                 }
                 dx = cc.x + rnd(3) - 2;
                 dy = cc.y + rnd(3) - 2;

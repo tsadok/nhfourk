@@ -1,0 +1,219 @@
+body {
+   background-color:      #333333;
+   color:                 #EEEEEE;
+}
+a, a:link, a:visited {
+   color:                 #CCDDFF;
+}
+a:hover, a:active {
+   color:                 #AACCFF;
+}
+
+table#monsters {
+   font-size:             80%;
+}
+table {
+   font-family:           sans-serif;
+   text-align:            left;
+}
+
+table thead th,
+table tbody td {
+   border-bottom:         1px solid #AAAAAA;
+   border-right:          1px solid #AAAAAA;
+   padding-left:          3pt;
+   padding-right:         3pt;
+   text-align:            left;
+}
+
+table thead th.numeric,
+table thead td.numeric,
+.numeric {
+   text-align:            right;
+}
+
+table thead th,
+table tbody tr:nth-child(3n+0) td {
+   background-image:      url(img/white-12pct.png);
+   color:                 #FFFFFF;
+}
+
+.monstr,
+.material {
+   color:                 #FF9966 !important;
+}
+
+.price {
+   color:                 #FFFF7F !important;
+}
+
+.extrafield,
+.nutrition,
+.damage {
+   color:                 #FF7F7F !important;
+}
+
+.spschool,
+.slot,
+.skill {
+   color:                 #00DDFF !important;
+}
+
+.ac,
+.tohit {
+   color:                 #AAFF33 !important;
+}
+
+.monmr {
+   color:                 #FF66EE !important;
+}
+
+.abon,
+.dbon,
+.artifact {
+   font-family:           serif;
+   font-weight:           bold;
+   font-style:            italic;
+   color:                 #FF00FF !important;
+}
+
+td.flags {
+   font-size:             75%;
+}
+
+.mlet {
+   font-weight:           bold;
+}
+
+.color0 { /* black */
+   background-color:      #000000;
+   color:                 #666666;
+}
+.color1 { /* red */
+   color:                 #CC0000;
+}
+.color2 { /* green */
+   color:                 #00CC00;
+}
+.color3 { /* brown */
+   color:                 #AA8800;
+}
+.color4 { /* blue */
+   color:                 #0066CC;
+}
+.color5 { /* magenta */
+   color:                 #AA00AA;
+}
+.color6 { /* cyan */
+   color:                 #00AAAA;
+}
+.color7 { /* gray */
+   color:                 #AAAAAA;
+}
+.color8 { /* dark gray */
+   background-color:      #000000;
+   color:                 #999999;
+}
+.color9 { /* orange */
+   color:                 #FFAA00;
+}
+.color10 { /* bright green */
+   color:                 #99FF99;
+}
+.color11 { /* yellow */
+   color:                 #FFFF66;
+}
+.color12 { /* bright blue */
+   color:                 #7FAAFF;
+}
+.color13 { /* bright magenta */
+   color:                 #FF66FF;
+}
+.color14 { /* bright cyan */
+   color:                 #66FFFF;
+}
+.color15 { /* white */
+   color:                 #FFFFFF;
+}
+
+.resistances,
+.resgranted {
+   font-weight:           bold;
+}
+.resistances span,
+.resgranted span {
+   margin:                2pt;
+}
+
+.resf {
+   color:                 black;
+   background-color:      #FF3333;
+}
+.resc {
+   color:                 black;
+   background-color:      #00FFFF;
+}
+.resz {
+   color:                 black;
+   background-color:      #FFAA00;
+}
+.ress {
+   color:                 black;
+   background-color:      #0099FF;
+}
+.resp {
+   color:                 black;
+   background-color:      #AAFF66;
+}
+.resa {
+   color:                 black;
+   background-color:      #FFFF00;
+}
+.resd {
+   color:                 black;
+   background-color:      #7F7F7F;
+}
+.resn {
+   color:                 #FFFF00;
+   background-color:      #666600;
+   border:                1px solid;
+}
+
+.tport {
+   color:                 #FF33FF;
+   background-color:      black;
+}
+.tctrl {
+   color:                 black;
+   background-color:      #FF00FF;
+}
+.telepathy {
+   color:                 white;
+   background-color:      black;
+   border:                1px dotted;
+}
+
+.alnlaw {
+   background-color:      #334466;
+   color:                 white;
+   border:                1pt solid;
+}
+.alncha {
+   background-color:      black;
+   color:                 #FF9999;
+   border:                1pt outset #AA0000;
+}
+.alnneu {
+   background-color:      #999999;
+   color:                 black;
+}
+.alnmoloch {
+   background-color:      #FF6666;
+   color:                 black;
+}
+
+.attack {
+   display:               inline-block;
+}
+
+

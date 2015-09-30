@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-29 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) Izchak Miller, Mike Stephenson, Steve Linhart, 1989. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -14,8 +14,7 @@ static struct rm *maploc;
 static const char *gate_str;
 
 static void kickdmg(struct monst *, boolean, schar, schar);
-static enum attack_check_status kick_monster(
-    xchar, xchar, schar, schar, enum u_interaction_mode);
+static enum attack_check_status kick_monster(xchar, xchar, schar, schar);
 static int kick_object(xchar, xchar, schar, schar, struct obj **);
 static const char *kickstr(struct obj *);
 static void otransit_msg(struct obj *, boolean, long);
@@ -144,7 +143,7 @@ kickdmg(struct monst *mon, boolean clumsy, schar dx, schar dy)
 }
 
 static enum attack_check_status
-kick_monster(xchar x, xchar y, schar dx, schar dy, enum u_interaction_mode uim)
+kick_monster(xchar x, xchar y, schar dx, schar dy)
 {
     boolean clumsy = FALSE;
     struct monst *mon = m_at(level, x, y);
@@ -155,9 +154,9 @@ kick_monster(xchar x, xchar y, schar dx, schar dy, enum u_interaction_mode uim)
     bhitpos.x = x;
     bhitpos.y = y;
 
-    attack_status = attack_checks(mon, NULL, dx, dy, uim);
-    if (attack_status)
-        return attack_status;
+    if (resolve_uim(flags.interaction_mode, TRUE, u.ux + turnstate.intended_dx,
+                    u.uy + turnstate.intended_dy) == uia_halt)
+        return ac_cancel;
 
     attack_status = ac_continue;
 
@@ -444,8 +443,7 @@ kick_object(xchar x, xchar y, schar dx, schar dy, struct obj **kickobj_p)
         return 0;
 
     if ((trap = t_at(level, x, y)) != 0 &&
-        (((trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) && !Passes_walls) ||
-         trap->ttyp == WEB)) {
+        ((is_pit_trap(trap->ttyp) && !Passes_walls) || trap->ttyp == WEB)) {
         if (!trap->tseen)
             find_trap(trap);
         pline("You can't kick something that's in a %s!",
@@ -799,7 +797,7 @@ dokick(const struct nh_cmd_arg *arg)
 
         mtmp = m_at(level, x, y);
         mdat = mtmp->data;
-        ret = kick_monster(x, y, dx, dy, apply_interaction_mode());
+        ret = kick_monster(x, y, dx, dy);
         if (ret != ac_continue)
             return ret != ac_cancel;
 
@@ -934,6 +932,12 @@ dokick(const struct nh_cmd_arg *arg)
             }
             goto ouch;
         }
+        if (IS_MAGIC_CHEST(maploc->typ)) {
+            if (Levitation) goto dumb;
+            pline("You kick %s.", (Blind ? "something" : Hallucination ?
+                                   "the Luggage" : "the magic chest"));
+            goto ouch;
+        }
         if (IS_ALTAR(maploc->typ)) {
             if (Levitation)
                 goto dumb;
@@ -991,7 +995,6 @@ dokick(const struct nh_cmd_arg *arg)
                     dealloc_obj(treefruit);
                 }
                 exercise(A_DEX, TRUE);
-                exercise(A_WIS, TRUE);  /* discovered a new food source! */
                 newsym(x, y);
                 maploc->looted |= TREE_LOOTED;
                 return 1;
@@ -1076,7 +1079,6 @@ dokick(const struct nh_cmd_arg *arg)
                     mkobj_at(RING_CLASS, level, x, y, TRUE, rng_sink_ring);
                     newsym(x, y);
                     exercise(A_DEX, TRUE);
-                    exercise(A_WIS, TRUE);      /* a discovery! */
                     maploc->looted |= S_LRING;
                 }
                 return 1;

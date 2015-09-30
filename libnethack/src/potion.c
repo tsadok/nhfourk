@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-21 */
+/* Last modified by FIQ, 2015-08-23 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -520,7 +520,6 @@ peffects(struct obj *otmp)
             healup(1, 0, FALSE, FALSE);
         u.uhunger += 10 * (2 + bcsign(otmp));
         newuhs(FALSE);
-        exercise(A_WIS, FALSE);
         if (otmp->cursed) {
             pline("You pass out.");
             helpless(rnd(15), hr_fainted, "drunk",
@@ -544,7 +543,8 @@ peffects(struct obj *otmp)
             win_pause_output(P_MESSAGE);
             enlightenment(0);
             pline("The feeling subsides.");
-            exercise(A_WIS, TRUE);
+            if (otmp->blessed)
+                exercise(A_WIS, TRUE);
         }
         break;
     case SPE_INVISIBILITY:
@@ -665,13 +665,11 @@ peffects(struct obj *otmp)
         }
         if (monster_detect(otmp, 0))
             return 1;   /* nothing detected */
-        exercise(A_WIS, TRUE);
         break;
     case POT_OBJECT_DETECTION:
     case SPE_DETECT_TREASURE:
         if (object_detect(otmp, 0))
             return 1;   /* nothing detected */
-        exercise(A_WIS, TRUE);
         break;
     case POT_SICKNESS:
         pline("Yecch!  This stuff tastes like poison.");
@@ -819,7 +817,8 @@ peffects(struct obj *otmp)
         if (otmp->blessed && u.ulevel < u.ulevelmax) {
             /* when multiple levels have been lost, drinking multiple potions
                will only get half of them back */
-            u.ulevelmax -= 1;
+            if (challengemode)
+                u.ulevelmax -= 1;
             pluslvl(FALSE);
         }
         make_hallucinated(0L, TRUE);
@@ -847,7 +846,7 @@ peffects(struct obj *otmp)
                     losehp(uarmh ? 1 : rnd(10),
                            killer_msg(DIED, "colliding with the ceiling"));
                 } else
-                    doup(flags.interaction_mode);
+                    doup();
             }
         } else
             nothing++;
@@ -873,7 +872,6 @@ peffects(struct obj *otmp)
                 u.uenmax = 0;
             if (u.uen <= 0)
                 u.uen = 0;
-            exercise(A_WIS, TRUE);
         }
         break;
     case POT_OIL:      /* P. Winner */
@@ -1174,7 +1172,7 @@ potionhit(struct monst *mon, struct obj *obj, boolean your_fault)
             }
             break;
         case POT_POLYMORPH:
-            bhitm(mon, obj);
+            bhitm(&youmonst, mon, obj);
             break;
 /*
         case POT_GAIN_LEVEL:
@@ -1751,7 +1749,6 @@ dodip(const struct nh_cmd_arg *arg)
     }
 
     if (potion->otyp == POT_OIL) {
-        boolean wisx = FALSE;
 
         if (potion->lamplit) {  /* burning */
             int omat = objects[obj->otyp].oc_material;
@@ -1783,6 +1780,11 @@ dodip(const struct nh_cmd_arg *arg)
                     obj->oeroded++;
                 }
             }
+        } else if (Is_candle(obj) && obj->lamplit) {
+            pline("The oil catches the flame.");
+            (void) light_cocktail(potion);
+            potion->in_use = FALSE;
+            return 0;
         } else if (potion->cursed) {
             pline("The potion spills and covers your %s with oil.",
                   makeplural(body_part(FINGER)));
@@ -1807,9 +1809,7 @@ dodip(const struct nh_cmd_arg *arg)
                 obj->oeroded--;
             if (obj->oeroded2 > 0)
                 obj->oeroded2--;
-            wisx = TRUE;
         }
-        exercise(A_WIS, wisx);
         makeknown(potion->otyp);
         useup(potion);
         return 1;
@@ -1822,8 +1822,7 @@ more_dips:
         /* Turn off engine before fueling, turn off fuel too :-) */
         if (obj->lamplit || potion->lamplit) {
             useup(potion);
-            explode(u.ux, u.uy, 11, dice(6, 6), 0, EXPL_FIERY, NULL);
-            exercise(A_WIS, FALSE);
+            explode(u.ux, u.uy, 11, dice(6, 6), 0, EXPL_FIERY, NULL, 0);
             return 1;
         }
         /* Adding oil to an empty magic lamp renders it into an oil lamp */
@@ -1841,7 +1840,6 @@ more_dips:
             if (obj->age > 1500L)
                 obj->age = 1500L;
             useup(potion);
-            exercise(A_WIS, TRUE);
         }
         makeknown(POT_OIL);
         obj->spe = 1;
@@ -1936,7 +1934,7 @@ djinni_from_bottle(struct obj *obj)
     if (wish_available(obj->blessed ? 80 : obj->cursed ? 5 : 20, &dieroll)) {
         msethostility(mtmp, FALSE, TRUE); /* show as peaceful while wishing */
         verbalize("I am in your debt.  I will grant one wish!");
-        makewish();
+        makewish(1);
         mongone(mtmp);
         return;
     }

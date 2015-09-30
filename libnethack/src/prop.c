@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-02-27 */
+/* Last modified by Alex Smith, 2015-07-12 */
 /* Copyright (c) 1989 Mike Threepoint                             */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* Copyright (c) 2014 Alex Smith                                  */
@@ -33,7 +33,7 @@ m_has_property(const struct monst *mon, enum youprop property,
         if (u.uintrinsic[property] & TIMEOUT)
             rv |= W_MASK(os_timeout);
         rv |= u.uintrinsic[property] & (INTRINSIC | I_SPECIAL);
-        
+
         /* Birth options */
         if (property == BLINDED && flags.permablind)
             rv |= W_MASK(os_birthopt);
@@ -105,14 +105,14 @@ m_has_property(const struct monst *mon, enum youprop property,
         /* External circumstances */
         if (property == BLINDED && u_helpless(hm_unconscious))
             rv |= W_MASK(os_circumstance);
-        
+
         /* Riding */
         if (property == FLYING && u.usteed && is_flyer(u.usteed->data))
             rv |= W_MASK(os_saddle);
         if (property == SWIMMING && u.usteed && is_swimmer(u.usteed->data))
             rv |= W_MASK(os_saddle);
     }
-        
+
     /* Overrides */
     if (!even_if_blocked) {
         if (property == BLINDED) {
@@ -290,6 +290,11 @@ msensem(const struct monst *viewer, const struct monst *viewee)
         if (invisible && see_invisible)
             sensemethod |= MSENSEF_KNOWNINVIS;
     }
+
+    /* Ideally scent should work around corners, but not through walls. That's
+       awkward to write, though, because it'd require pathfinding. */
+    if (vertical_loe && loe && distance <= 5 && has_scent(viewer->data))
+        sensemethod |= MSENSE_SCENT;
 
     /* Monster detection. All that is needed (apart from same-level, which was
        checked earlier) is the property itself. */
@@ -541,7 +546,7 @@ enlightenment(int final)
     if (Fumbling)
         enl_msg(&menu, "You fumble", "", "d", "");
     if (Wounded_legs && !u.usteed)
-        you_have(&menu, msgcat("wounded", makeplural(body_part(LEG))));;
+        you_have(&menu, msgcat("wounded ", makeplural(body_part(LEG))));;
     if (Wounded_legs && u.usteed && wizard) {
         const char *buf =
             x_monnam(u.usteed, ARTICLE_YOUR, NULL,
@@ -919,6 +924,19 @@ show_conduct(int final)
         enl_msg(&menu, You_, "", "had ", buf);
     }
 
+    if (!u.uconduct[conduct_clothing] && !u.uconduct[conduct_jewelry])
+        enl_msg(&menu, You_, "have worn", "wore",
+                " only your undergarments");
+    /* Yes, and pants, but they can't be enchanted, so who cares about them? */
+    else if (!u.uconduct[conduct_jewelry])
+        enl_msg(&menu, You_, "have not adorned", "did not adorn",
+                " yourself with jewelry or accessories");
+    /* "accessories" here means lenses, blindfold, or towel;
+       this is different from the wand shop's "accessories" */
+    else if (!u.uconduct[conduct_clothing])
+        enl_msg(&menu, You_, "have not worn", "did not wear",
+                " any clothing or armor");
+
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
     if (u.uconduct_time[conduct_gnostic] > 1800) {
@@ -942,6 +960,20 @@ show_conduct(int final)
         buf = msgprintf("a pacifist until turn %d",
                         u.uconduct_time[conduct_killer]);
         enl_msg(&menu, You_, "were ", "had been ", buf);
+    }
+
+    if (!u.uconduct[conduct_tools])
+        enl_msg(&menu, You_, "have not used", "did not use",
+                msgprintf(" tools%s",
+                          (historysearch("performed the invocation.", TRUE)) ?
+                          ", except for the invocation ritual" : ""));
+    else {
+        if (!u.uconduct[conduct_containers])
+            enl_msg(&menu, You_, "have not used", "did not use",
+                    " containers");
+        if (!u.uconduct[conduct_unihorns])
+            enl_msg(&menu, You_, "have not applied", "did not apply",
+                    " a unicorn horn");
     }
 
     if (!u.uconduct[conduct_illiterate])
