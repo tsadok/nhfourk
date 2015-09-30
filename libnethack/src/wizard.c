@@ -734,8 +734,7 @@ nasty(struct monst *mcast)
                       (mons[makeindex].maligntyp &&
                        sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
                       (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);
-            if (wizard)
-                pline("");
+
             /* do this after picking the monster to place */
             if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
                 !enexto(&bypos, level, mcast->mux, mcast->muy,
