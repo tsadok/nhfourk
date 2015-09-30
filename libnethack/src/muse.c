@@ -1043,7 +1043,7 @@ find_offensive(struct monst *mtmp, struct musable *m)
             m->has_offense = MUSE_WAN_UNDEAD_TURNING;
         }
         nomore(MUSE_WAN_SLOW_MONSTER);
-        if (obj->otyp == MUSE_WAN_SLOW_MONSTER &&
+        if (obj->otyp == WAN_SLOW_MONSTER &&
            ((target == &youmonst && (HFast | (TIMEOUT|INTRINSIC))) ||
             (target != &youmonst && target->mspeed != MSLOW))) {
             m->offensive = obj;
