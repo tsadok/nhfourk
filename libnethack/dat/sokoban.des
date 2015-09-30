@@ -1082,7 +1082,7 @@ OBJECT:'/',random,random
 
 # "Through the Cracks"
 MAZE:"soko2-5",' '
-FLAGS:noteleport,hardfloor
+FLAGS:noteleport
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1159,7 +1159,7 @@ OBJECT:'/',random,random
 
 # Either Way It's All Good
 MAZE: "soko2-6",' '
-FLAGS:noteleport,hardfloor
+FLAGS:noteleport
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
