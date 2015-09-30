@@ -466,10 +466,13 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
     }
     if (wake) {
         if (mtmp->mhp > 0) {
-            wakeup(mtmp, FALSE);
-            m_respond(mtmp);
-            if (mtmp->isshk && !*u.ushops)
-                hot_pursuit(mtmp);
+            if (yours) {
+                wakeup(mtmp, FALSE);
+                m_respond(mtmp);
+                if (mtmp->isshk && !*u.ushops)
+                    hot_pursuit(mtmp);
+            } else
+                mtmp->msleeping = 0;
         } else if (mtmp->m_ap_type)
             seemimic(mtmp);     /* might unblock if mimicing a boulder/door */
     }

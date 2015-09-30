@@ -355,7 +355,7 @@ void
 fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
 {
     int px, py, i, imax, cutoffone, cutofftwo, cutoffthree;
-    int rmno = (sroom - lev->rooms) + ROOMOFFSET;
+    /* int rmno = (sroom - lev->rooms) + ROOMOFFSET; */
     coord pos[ROWNO * COLNO];
     int babypm, adultpm, greatpm,
         gemone, gemtwo, glass,
@@ -428,8 +428,8 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
                 coord p;
                 p.x = px; p.y = py;
                 pos[i] = p;
-                i++;
                 imax = i;
+                i++;
             }
         }
     }
