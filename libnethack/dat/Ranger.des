@@ -38,7 +38,7 @@ TTTTTT..TTTTTTTTTTTTTT......TTTTT...TTTTT...............T}........}}}...TTT.
 TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT...............}............}......
 ENDMAP
 # Dungeon Description
-REGION:(01,01,75,16),lit,"ordinary"
+REGION:(01,01,75,20),lit,"ordinary"
 # Stairs
 STAIR:(10,10),down
 # Portal arrival point; just about anywhere on the right hand side of the map
