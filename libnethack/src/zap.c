@@ -990,6 +990,7 @@ cancel_item(struct obj *obj)
         if (obj_worn_on(obj, os_armg))
             ABON(A_DEX) -= obj->spe;
         break;
+    case CORNUTHAUM:
     case HELM_OF_BRILLIANCE:
         if (obj_worn_on(obj, os_armh))
             ABON(A_INT) -= obj->spe;
@@ -1093,6 +1094,7 @@ drain_item(struct obj * obj)
         if (obj_worn_as_ring)
             u.udaminc--;
         break;
+    case CORNUTHAUM:
     case HELM_OF_BRILLIANCE:
         if (obj_worn_on(obj, os_armh))
             ABON(A_INT)--;

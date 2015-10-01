@@ -54,6 +54,13 @@ Chronological Changelog (most recent at top):
 =============================================
 =============================================
 
+Changes in 4.3.0.4:
+-------------------
+
+ * Cornuthaums now improve your wisdom and intelligence by their
+   enchantment, as a helm of brilliance does.  Their other effects
+   are unchanged.
+
 Changes in 4.3.0.3:
 -------------------
 
