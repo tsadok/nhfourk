@@ -315,6 +315,8 @@ describe_mon(int x, int y, int monnum, char *buf)
             strcat(buf, warnexplain[monnum]);
 
     } else if ((mtmp = m_at(level, x, y))) {
+        const char *mwounds;
+        boolean spotted;
         bhitpos.x = x;
         bhitpos.y = y;
 
@@ -326,7 +328,7 @@ describe_mon(int x, int y, int monnum, char *buf)
                 (mtmp->mpeaceful && accurate) ? "peaceful" : NULL,
                 ARTICLE_A);
 
-        boolean spotted = canspotmon(mtmp);
+        spotted = canspotmon(mtmp);
 
         if (!spotted && (mtmp->mx != x || mtmp->my != y))
             name = "an unseen long worm";
@@ -340,6 +342,11 @@ describe_mon(int x, int y, int monnum, char *buf)
         snprintf(buf, BUFSZ-1, "%s%s",
                 (mtmp->mx != x || mtmp->my != y) ? "tail of " : "", name);
         buf[BUFSZ-1] = '\0';
+        mwounds = mon_wounds(mtmp);
+        if (mwounds) {
+            strcat(buf, ", ");
+            strcat(buf, mwounds);
+        }
         if (u.ustuck == mtmp)
             strcat(buf,
                    (Upolyd &&

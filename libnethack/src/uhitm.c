@@ -1112,6 +1112,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                 pline("%s appears confused.", Monnam(mon));
         }
     }
+    if (!destroyed)
+        wounds_message(mon);
 
     return (boolean) (destroyed ? FALSE : TRUE);
 }
