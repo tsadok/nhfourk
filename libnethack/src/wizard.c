@@ -714,7 +714,7 @@ nasty(struct monst *mcast)
         msummon(NULL, &level->z);       /* summons like WoY */
         count++;
     } else {
-        tmp = 3 + rnd(1 + mcast->m_lev / 5);
+        tmp = 3 + (mcast) ? rnd(1 + mcast->m_lev / 5) : 25;
         for (i = tmp; i > 0; --i) {
             int makeindex;
             j = 0;
@@ -734,8 +734,7 @@ nasty(struct monst *mcast)
                       (mons[makeindex].maligntyp &&
                        sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
                       (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);
-            if (wizard)
-                pline("");
+
             /* do this after picking the monster to place */
             if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
                 !enexto(&bypos, level, mcast->mux, mcast->muy,
