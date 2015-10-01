@@ -683,7 +683,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
 
     /* cancellation factor is the same as when attacking the hero */
     armpro = magic_negation(mdef);
-    cancelled = magr->mcan || !((rn2(3) >= armpro) || !rn2(50));
+    cancelled = magr->mcan || !((rn2(9) >= 2 * armpro) || !rn2(50));
 
     switch (mattk->adtyp) {
     case AD_DGST:
@@ -756,6 +756,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     case AD_HEAL:
     case AD_PHYS:
     physical:
+        /* You Are Here */
         if (mattk->aatyp == AT_KICK && thick_skinned(pd)) {
             tmp = 0;
         } else if (mattk->aatyp == AT_WEAP) {
