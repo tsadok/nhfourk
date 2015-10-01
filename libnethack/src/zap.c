@@ -3786,6 +3786,7 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
                         if (!otmp) {
                             /* normal non-fatal hit */
                             hit(fltxt, mon, exclam(tmp));
+                            wounds_message(mon);
                         } else {
                             int dummy;
                             /* some armor was destroyed; no damage done */
@@ -4686,6 +4687,8 @@ resist(struct monst *mtmp, char oclass, int damage, int domsg)
                 monkilled(mtmp, "", AD_RBRE);
             else
                 killed(mtmp);
+        } else {
+            wounds_message(mtmp);
         }
     }
     return resisted;

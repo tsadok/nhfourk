@@ -2320,6 +2320,56 @@ invocation_message(void)
     }
 }
 
+static const char * const hallu_adverb[] = {
+    "mildly", "mostly", "somewhat", "slightly", "probably", "massively", "extremely",
+    "flagrantly", "flamboyantly", "supremely", "excessively", "truly", "terribly",
+    "incredibly", "unbelievably", "obscenely", "insanely", "amazingly", "absolutely"
+};
+
+void
+wounds_message(struct monst *mon)
+{
+    const char *mwounds = mon_wounds(mon);
+    if (mwounds)
+        pline("%s is %s.", Monnam(mon), mwounds);
+}
+
+const char *
+mon_wounds(struct monst *mon)
+{
+    boolean wounded = ((!nonliving(mon->data) || 
+                        /* Zombies and mummies (but not skeletons) have flesh */
+                        ((mon->data->mlet == S_ZOMBIE && mon->data != &mons[PM_SKELETON])
+                         || mon->data->mlet == S_MUMMY || mon->data->mlet == S_VAMPIRE
+                         || mon->data == &mons[PM_FLESH_GOLEM]))
+                       && !vegetarian(mon->data));   
+
+    /* Able to detect wounds? */
+    if (!(canseemon(mon) || (u.ustuck == mon && u.uswallow && !Blind))
+        || !Role_if(PM_HEALER))
+        return NULL;
+    if (mon->mhp == mon->mhpmax || mon->mhp < 1)
+        return NULL;
+    if (!Hallucination && mon->mhp <= mon->mhpmax / 6) {
+        return msgprintf("almost %s",
+                         nonliving(mon->data) ? "destroyed" : "dead");
+    } else {
+        if (Hallucination) {
+            return msgprintf("%s %s",
+                             hallu_adverb[rn2(SIZE(hallu_adverb))],
+                             (rn2(2) ? "wounded" : "damaged"));
+        }
+        else if (mon->mhp <= mon->mhpmax / 4)
+            return msgprintf("horribly %s",   (wounded ? "wounded" : "damaged"));
+        else if (mon->mhp <= mon->mhpmax / 3)
+            return msgprintf("heavily %s",    (wounded ? "wounded" : "damaged"));
+        else if (mon->mhp <= 3 * mon->mhpmax / 4)
+            return msgprintf("moderately %s", (wounded ? "wounded" : "damaged"));
+        else
+            return msgprintf("lightly %s",    (wounded ? "wounded" : "damaged"));
+    }
+}
+
 
 void
 spoteffects(boolean pick)

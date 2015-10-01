@@ -647,6 +647,8 @@ extern int distmap(struct distmap_state *, int, int);
 extern int domove(const struct nh_cmd_arg *, enum u_interaction_mode,
                   enum occupation);
 extern void invocation_message(void);
+extern void wounds_message(struct monst *);
+extern const char *mon_wounds(struct monst *);
 extern void spoteffects(boolean);
 extern char *in_rooms(struct level *lev, xchar, xchar, int);
 extern boolean in_town(int, int);
