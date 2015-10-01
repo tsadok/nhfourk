@@ -805,6 +805,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->pushweapon = mread8(mf);
     f->rogue_enabled = mread8(mf);
     f->seduce_enabled = mread8(mf);
+    f->servermail = mread8(mf);
     f->showrace = mread8(mf);
     f->show_uncursed = mread8(mf);
     f->sortpack = mread8(mf);

@@ -774,6 +774,8 @@ you_moved(void)
         do {
             /* Players have taken 1 more action than the global, monsters have
                taken 0 more actions than the global. */
+            if (flags.servermail)
+                checkformail();
 
             monscanmove = movemon();
 

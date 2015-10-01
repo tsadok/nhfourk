@@ -261,6 +261,7 @@ struct flag {
     boolean pushweapon; /* When wielding, push old weapon into second slot */
     boolean showrace;   /* show hero glyph by race rather than by role */
     boolean show_uncursed;      /* always show uncursed items as such */
+    boolean servermail; /* check for messages from other players */
     boolean sortpack;   /* sorted inventory */
     boolean sparkle;    /* show "resisting" special FX (Scott Bigham) */
     boolean tombstone;  /* print tombstone */
