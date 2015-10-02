@@ -70,6 +70,7 @@ struct qtlists {
 #  define QT_BADLEVEL     19
 #  define QT_BADALIGN     20
 #  define QT_ASSIGNQUEST  21
+#  define QT_LOWLEVEL     22    /* XL1 or pacifist, "Are you serious?" */
 
 #  define QT_ENCOURAGE    25    /* 1-10 random encouragement messages */
 

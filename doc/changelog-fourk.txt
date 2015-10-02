@@ -64,6 +64,13 @@ Changes in 4.3.0.4:
 Changes in 4.3.0.3:
 -------------------
 
+ * Players who can reach the Quest Leader without gaining any
+   experience levels (and, in challenge mode, without breaking
+   pacifist conduct either) can be admitted to the quest at
+   experience level 1, on the strength of their undeniable 
+   audacity.  (The other requirements still apply, e.g., you
+   still have to be pious.)
+
  * Wizard starting inventory has been rebalanced, since they
    can now cast spells effectively in the early game.
 
