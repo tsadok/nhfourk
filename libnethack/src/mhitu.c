@@ -28,6 +28,67 @@ static void hitmsg(struct monst *, const struct attack *);
 static int dieroll;
 
 
+const char *
+weaphitmsg(struct obj *obj, struct monst *magr)
+{
+    boolean uhitm = (boolean) (magr == &youmonst);
+    if (objects[obj->otyp].oc_dir & WHACK &&
+        (!(objects[obj->otyp].oc_dir & PIERCE) || rn2(2))) {
+        if (objects[obj->otyp].oc_skill == P_CLUB)
+            return uhitm ? "club" : "clubs";
+        else if (objects[obj->otyp].oc_skill == P_MACE ||
+                 objects[obj->otyp].oc_skill == P_MORNING_STAR)
+            return uhitm ? "brain" : "brains";
+        else return uhitm ? "whack" : "whacks";
+    }
+    if (objects[obj->otyp].oc_dir & PIERCE &&
+        (!(objects[obj->otyp].oc_dir & SLASH) || rn2(2))) {
+        if (is_blade(obj))
+            return uhitm ? "stab" : "stabs";
+        else return uhitm ? "jab" : "jabs";
+    }
+    if (objects[obj->otyp].oc_dir & SLASH) {
+        if ((uhitm && Role_if(PM_BARBARIAN)) ||
+            (magr->data == &mons[PM_BARBARIAN]))
+            return uhitm ? "smite" : "smites";
+        else if (rn2(2))
+            return uhitm ? "hack" : "hacks";
+        else if (is_axe(obj))
+            return uhitm ? "chop" : "chops";
+        else return uhitm ? "slash" : "slashes";
+    }
+    if (objects[obj->otyp].oc_skill == P_WHIP)
+        return uhitm ? "whip" : "whips";
+    return uhitm ? "hit" : "hits";
+}
+
+const char *
+barehitmsg(struct monst *mtmp)
+{
+    boolean thirdperson = !(mtmp == &youmonst);
+    if (!strcmp(mbodypart(mtmp, HAND), "claw") ||
+        !strcmp(mbodypart(mtmp, HAND), "paw") ||
+        !strcmp(mbodypart(mtmp, HAND), "foreclaw") ||
+        is_bird(mtmp->data))
+        return thirdperson ? "claws" : "claw";
+    if (!strcmp(mbodypart(mtmp, HAND), "swirl") || /* elementals */
+        !strcmp(mbodypart(mtmp, HAND), "tentacle")) { /* krakens */
+        if (mtmp->data == &mons[PM_EARTH_ELEMENTAL])
+            return thirdperson ? "pummels" : "pummel";
+        return thirdperson ? "lashes" : "lash";
+    } if (is_undead(mtmp->data))
+          return thirdperson ? "scratches" : "scratch";
+    if (mtmp->data == &mons[PM_MONK] || mtmp->data == &mons[PM_SAMURAI] ||
+        (martial_bonus() && (mtmp == &youmonst ||
+                             /* Assumes monk or samurai quest monsters */
+                             mtmp->data->msound == MS_LEADER ||
+                             mtmp->data->msound == MS_GUARDIAN ||
+                             mtmp->data->msound == MS_NEMESIS)))
+        return thirdperson ? "strikes" : "strike";
+    if (mtmp->data == &mons[PM_NURSE])
+        return thirdperson ? "touches" : "touch";
+    return thirdperson ? "punches" : "punch";
+}
 
 static void
 hitmsg(struct monst *mtmp, const struct attack *mattk)
@@ -43,7 +104,8 @@ hitmsg(struct monst *mtmp, const struct attack *mattk)
     } else
         switch (mattk->aatyp) {
         case AT_BITE:
-            pline("%s bites!", Monnam(mtmp));
+            pline("%s %s!", Monnam(mtmp),
+                  has_beak(mtmp->data) ? "pecks" : "bites");
             break;
         case AT_KICK:
             pline("%s kicks%c", Monnam(mtmp),
@@ -64,6 +126,22 @@ hitmsg(struct monst *mtmp, const struct attack *mattk)
         case AT_EXPL:
         case AT_BOOM:
             pline("%s explodes!", Monnam(mtmp));
+            break;
+        case AT_WEAP:
+            if (MON_WEP(mtmp)) {
+                if (is_launcher(MON_WEP(mtmp)) ||
+                    is_missile(MON_WEP(mtmp)) ||
+                    is_ammo(MON_WEP(mtmp)) ||
+                    is_pole(MON_WEP(mtmp))) {
+                    pline("%s hits!", Monnam(mtmp));
+                } else {
+                    pline("%s %s you!", Monnam(mtmp),
+                          weaphitmsg(MON_WEP(mtmp),mtmp));
+                    break;
+                }
+            } /* else fall through */
+        case AT_CLAW:
+            pline("%s %s you!", Monnam(mtmp), barehitmsg(mtmp));
             break;
         default:
             pline("%s hits!", Monnam(mtmp));
@@ -1279,7 +1357,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             !uarmc && !uarmf) {
             boolean goaway = FALSE;
 
-            pline("%s hits!  (I hope you don't mind.)", Monnam(mtmp));
+            pline("%s touches you!  (I hope you don't mind.)", Monnam(mtmp));
             if (Upolyd) {
                 u.mh += rnd(7);
                 if (!rn2(7)) {
