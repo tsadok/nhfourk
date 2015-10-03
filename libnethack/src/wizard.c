@@ -679,6 +679,15 @@ clonewiz(void)
     }
 }
 
+static const char *const nastymessage[] = {
+    "The infidel must be destroyed!",
+    "Kill the invader and bring back my property!",
+    "Havoc!",
+    "Surround the enemy!",
+    "Send that foul tresspasser packing right back up to the surface!",
+    "For the weary there can be no respite until the adversary is vanquished!",
+};
+
 /* also used by newcham() */
 int
 pick_nasty(void)
@@ -752,6 +761,12 @@ nasty(struct monst *mcast)
                 if (canseemon(mtmp))
                     count++;
             }
+        }
+        if (count > 1) {
+            if (mvitals[PM_WIZARD_OF_YENDOR].died && !mcast)
+                pline("\"%s\"", nastymessage[rn2(SIZE(nastymessage))]);
+            else
+                pline("Monsters suddenly arrive from nowhere!");
         }
     }
     return count;
