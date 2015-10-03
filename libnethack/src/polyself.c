@@ -1483,8 +1483,10 @@ mbodypart(struct monst *mon, int part)
         (part == ARM || part == FINGER || part == FINGERTIP || part == HAND ||
          part == HANDED || part == LIMBS))
         return humanoid_parts[part];
-    if (mptr == &mons[PM_RAVEN])
+    if (is_bird(mptr))
         return bird_parts[part];
+    if (has_beak(mptr) && part == NOSE) /* MOUTH is not a part, oddly */
+        return "beak";
     if (mptr->mlet == S_CENTAUR || mptr->mlet == S_UNICORN ||
         (mptr == &mons[PM_ROTHE] && part != HAIR))
         return horse_parts[part];

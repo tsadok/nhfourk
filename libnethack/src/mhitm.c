@@ -476,7 +476,11 @@ hitmm(struct monst *magr, struct monst *mdef, const struct attack *mattk)
 
             switch (mattk->aatyp) {
             case AT_BITE:
-                buf = msgcat(buf, " bites");
+                buf = msgcat(buf, (has_beak(magr->data) ?
+                                   " pecks" : " bites"));
+                break;
+            case AT_KICK:
+                buf = msgcat(buf, " kicks");
                 break;
             case AT_STNG:
                 buf = msgcat(buf, " stings");
@@ -489,6 +493,21 @@ hitmm(struct monst *magr, struct monst *mdef, const struct attack *mattk)
                 break;
             case AT_TENT:
                 buf = msgcat(s_suffix(buf), " tentacles suck");
+                break;
+            case AT_WEAP:
+                if (MON_WEP(magr)) {
+                    if (is_launcher(MON_WEP(magr)) ||
+                        is_missile(MON_WEP(magr)) ||
+                        is_ammo(MON_WEP(magr)) ||
+                        is_pole(MON_WEP(magr)))
+                        buf = msgcat(buf, " hits");
+                    else
+                        buf = msgprintf("%s %s", buf,
+                                        weaphitmsg(MON_WEP(magr), magr));
+                    break;
+                } /* else fall through */
+            case AT_CLAW:
+                buf = msgprintf("%s %s", buf, barehitmsg(magr));
                 break;
             case AT_HUGS:
                 if (magr != u.ustuck) {
