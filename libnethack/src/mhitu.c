@@ -952,7 +952,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         if (uncancelled && !u_helpless(hm_all) && !rn2(5)) {
             if (Sleep_resistance)
                 break;
-            helpless(rnd((challengemode ? 100 : 10) / armpro),
+            helpless(rnd((challengemode ? 100 : 10) / (armpro || 1)),
                      hr_asleep, "sleeping", NULL);
             if (Blind)
                 pline("You are put to sleep!");
