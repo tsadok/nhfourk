@@ -714,7 +714,8 @@ nasty(struct monst *mcast)
         msummon(NULL, &level->z);       /* summons like WoY */
         count++;
     } else {
-        tmp = 3 + (mcast ? rnd(1 + mcast->m_lev / 5) : 25);
+        tmp = 3 + rnd(mcast ? (1 + mcast->m_lev / 5) :
+                      (5 + mvitals[PM_WIZARD_OF_YENDOR].died));
         for (i = tmp; i > 0; --i) {
             int makeindex;
             j = 0;
