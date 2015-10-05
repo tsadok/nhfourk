@@ -57,6 +57,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Price-checking has been made less tedious:  you can no longer
+   get a different price by repeatedly dropping the same item,
+   or by trying to sell different items of the same type.  For
+   any given type of item, either the shopkeeper will always
+   offer you 25% less than expected, or he never will.
+
  * Players who can reach the Quest Leader without gaining any
    experience levels (and, in challenge mode, without breaking
    pacifist conduct either) can be admitted to the quest at

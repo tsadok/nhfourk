@@ -2001,6 +2001,9 @@ set_cost(struct obj *obj, struct monst *shkp)
     /* shopkeeper may notice if the player isn't very knowledgeable -
        especially when gem prices are concerned */
     if (!obj->dknown || !objects[obj->otyp].oc_name_known) {
+        unsigned int pseudorand = (int) ((((unsigned long) u.ubirthday) /
+                                          ((unsigned long) obj->oclass)) %
+                                         (abs(1073741823 - shkp->m_id) || 3));
         if (obj->oclass == GEM_CLASS) {
             /* different shop keepers give different prices */
             if (objects[obj->otyp].oc_material == GEMSTONE ||
@@ -2008,7 +2011,7 @@ set_cost(struct obj *obj, struct monst *shkp)
                 tmp = (obj->otyp % (6 - shkp->m_id % 3));
                 tmp = (tmp + 3) * obj->quan;
             }
-        } else if (tmp > 1L && !rn2(4))
+        } else if (tmp > 1L && !(pseudorand % 4))
             tmp -= tmp / 4L;
     }
     return tmp;
