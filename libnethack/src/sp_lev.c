@@ -1574,6 +1574,35 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
     }
 }
 
+static const char *const advent_text[] = {
+    "This 25-piece short presentation is in the public domain.", /* 0 - unused */
+    "The universe and everything in it was made in six days by the Creator God.",
+    "Our ancestors knew God, but they rejected him, choosing to make their own path.",
+    "We have all followed our own path ever since.  We are in rebellion against God.",
+    "God, who judges all, will not let us go free forever, since we are rebellious.",
+    "In his patient mercy, God promised to send a Redeemer to restore us one day.",
+    "To satisfy God's justice, the Redeemer had to be perfect and not a rebel.",
+    "Also, to lead us back to God, the Redeemer had to be divine.  He had to be God.",
+    "But to lead us at all, and to represent us, the Redeemer had to be one of us.",
+    "To meet these requirements, the Son of God himself was born as a human child.",
+    "As a Son of Man, he lived thirty years, the only perfect man in all history.",
+    "While he was here, he performed many miraculous signs, even raising the dead.",
+    "The Son of Man offered to take away our rebellion and lead us back to God.",
+    "As before, our rebellious ancestors rejected him, preferring their own path.",
+    "They executed the Son as a criminal, although he was innocent of any crime.",
+    "His lifeless body was buried and remained in the grave for three full days.",
+    "Because he was perfect, and because he was God, death had no power over him.",
+    "His grave is empty.  After three days he returned to the world, alive and well.",
+    "For weeks he walked, talked, lived, and ate with those who had seen him dead.",
+    "To prove himself real, he let one man put fingers into his execution wounds.",
+    "He instructed his followers to tell the good news to all peoples everywhere.",
+    "He returned to God by rising up into the sky; his followers watched him go.",
+    "If we will follow him, he will cure our rebellion and teach us to follow God.",
+    "Although we rebelled, God loves us and wants us to be restored and follow him.",
+    "He will return one last time, and he will judge those who are still in revolt.",
+    "After destroying his enemies, he will establish God's perfect kingdom forever."
+};
+
 void
 fill_advent_calendar(struct level *lev, boolean init)
 {
@@ -1593,35 +1622,43 @@ fill_advent_calendar(struct level *lev, boolean init)
                 if (init) {
                     /* place number in front of the door */
                     make_engr_at(lev, out_x, out_y,
-                                 msgprintf("%d", door_nr), 0L, MARK);
+                                 msgprintf("%d", door_nr), 0L, ENGR_LIGHTS);
+                    make_engr_at(lev, in_x, in_y,
+                                 advent_text[door_nr], 0L, ENGRAVE);
 		    if (door_nr == 24) {
 		    	int object = CANDY_BAR;
 		    	/* Christmas present! */
-		    	switch(rn2_on_rng(15, rng)) {
-                        case  0: object = BAG_OF_HOLDING; break;
-                        case  1: object = OILSKIN_SACK; break;
-                        case  2: object = FIRE_HORN; break;
-                        case  3: object = FROST_HORN; break;
-                        case  4: object = MAGIC_FLUTE; break;
-                        case  5: object = MAGIC_HARP; break;
-                        case  6: object = DRUM_OF_EARTHQUAKE; break;
-                        case  7: object = MAGIC_WHISTLE; break;
-                        case  8: object = MAGIC_LAMP; break;
-                        case  9: object = UNICORN_HORN; break;
-                        case 10: object = BAG_OF_TRICKS; break;
-                        case 11: object = EXPENSIVE_CAMERA; break;
-                        case 12: object = HORN_OF_PLENTY; break;
-                        case 13: object = STETHOSCOPE; break;
-                        case 14: object = TINNING_KIT; break;
+		    	switch(rn2_on_rng(12, rng) + (challengemode ? 6 : 0)) {
+                        case  0: object = SCR_WISHING; break;
+                        case  1: object = MAGIC_LAMP; break;
+                        case  2: object = BAG_OF_HOLDING; break;
+                        case  3: object = HORN_OF_PLENTY; break;
+                        case  4: object = MAGIC_HARP; break;
+                        case  5: object = AMULET_OF_FLYING; break;
+                        case  6: object = FIRE_HORN; break;
+                        case  7: object = FROST_HORN; break;
+                        case  8: object = MAGIC_FLUTE; break;
+                        case  9: object = DRUM_OF_EARTHQUAKE; break;
+                        case 10: object = STETHOSCOPE; break;
+                        case 11: object = MAGIC_WHISTLE; break;
+                        case 12: object = TINNING_KIT; break;
+                        case 13: object = LENSES; break;
+                        case 14: object = UNICORN_HORN; break;
+                        case 15: object = OILSKIN_SACK; break;
+                        case 16: object = EXPENSIVE_CAMERA; break;
+                        default: object = BAG_OF_TRICKS; break;
 			}
 		    	mksobj_at(object, lev, in_x, in_y, TRUE, FALSE, rng);
 		    } else if (rn2_on_rng(4, rng)) {
-                        int food = (rn2_on_rng(4, rng)) ? CANDY_BAR :
-                            FORTUNE_COOKIE;
-		    	mksobj_at(food, lev, in_x, in_y, FALSE, FALSE, rng);
+                        int food = (rn2_on_rng(4, rng)) ? SLIME_MOLD : CANDY_BAR;
+                        struct obj *otmp = mksobj(lev, food, TRUE, FALSE, rng);
+		    	if (food == SLIME_MOLD)
+                            otmp->spe = rn2_on_rng(3, rng) ?
+                                fruitadd("candy cane") : fruitadd("sugar plum");
+                        place_object(otmp, lev, in_x, in_y);
 		    } else {
-                        int oclass = (rn2_on_rng(4, rng)) ? RING_CLASS :
-                            TOOL_CLASS;
+                        int oclass = (rn2_on_rng(2, rng)) ?
+                            RING_CLASS : TOOL_CLASS;
                     	mkobj_at(oclass, lev, in_x, in_y, FALSE, rng);
 		    }
 		}
