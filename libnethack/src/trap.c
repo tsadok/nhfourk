@@ -3923,6 +3923,7 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
     char buf[80];
     const char *msg;
     coord cc;
+    int armpro = magic_negation(&youmonst);
 
     if (get_obj_location(obj, &cc.x, &cc.y, 0)) /* might be carried */
         obj->ox = cc.x, obj->oy = cc.y;
@@ -3964,8 +3965,12 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
         }
         if (msg)
             pline("But luckily the %s!", msg);
+    } else if (armpro > rn2(5)) {
+        msg = Hallucination ? "eggs wobble but do not fall down" :
+            "ineptly-constructed mechanism fails";
     } else {
-        switch (rn2(20) ? ((Luck >= 13) ? 0 : rn2(13 - Luck)) : rn2(26)) {
+        switch ((rn2(20) || (armpro >= 3)) ?
+                ((Luck >= 13) ? 0 : rn2(13 - Luck)) : rn2(26)) {
         case 25:
         case 24:
         case 23:
@@ -4062,8 +4067,10 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
                     dmg = 0;
                 } else
                     dmg = dice(4, 4);
-                destroy_item(RING_CLASS, AD_ELEC);
-                destroy_item(WAND_CLASS, AD_ELEC);
+                if (armpro < rn2(4)) {
+                    destroy_item(RING_CLASS, AD_ELEC);
+                    destroy_item(WAND_CLASS, AD_ELEC);
+                }
                 if (dmg)
                     losehp(dmg, killer_msg(DIED, "an electric shock"));
                 break;
@@ -4094,8 +4101,8 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
                     pline("You %s and your vision blurs...",
                           stagger(youmonst.data, "stagger"));
             }
-            make_stunned(HStun + rn1(7, 16), FALSE);
-            make_hallucinated(HHallucination + rn1(5, 16), FALSE);
+            make_stunned(HStun + rn1((7 - armpro), 16), FALSE);
+            make_hallucinated(HHallucination + rn1((6 - armpro), 10), FALSE);
             break;
         default:
             impossible("bad chest trap");
