@@ -21,7 +21,7 @@ BRANCH:		"The Gnomish Mines" @ (2, 3)
 LEVEL:		"oracle" "O" @ (5, 5)
 LEVALIGN:	neutral
 CHAINBRANCH:	"Sokoban" "oracle" + (1, 0) up
-RNDLEVEL:	"bigrm" "B" @ (13, 3) 40 6
+RNDLEVEL:	"bigrm" "B" @ (13, 3) 40 7
 CHAINBRANCH:	"The Quest" "oracle" + (6, 2) portal
 BRANCH:		"Fort Ludios" @ (18, 4) portal
 RNDLEVEL:	"medusa" "none" @ (-7, 2) 2
