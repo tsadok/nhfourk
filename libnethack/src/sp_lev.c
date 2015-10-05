@@ -1574,6 +1574,73 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
     }
 }
 
+void
+fill_advent_calendar(struct level *lev, boolean init)
+{
+    int x, y, in_x, in_y, out_x, out_y;
+    int door_nr=1;
+    enum rng rng = rng_for_level(&lev->z);
+
+    for (x = 1; x < COLNO; x++) {
+        for (y = 1; y < ROWNO; y++) {
+            if (door_nr < 25 && isok(x,y) &&
+                IS_DOOR(lev->locations[x][y].typ)) {
+                if (y < 10) {
+                    out_x = x; out_y = y+1; in_x = x; in_y = y-1;
+                } else {
+                    out_x = x; out_y = y-1; in_x = x; in_y = y+1;
+                }
+                if (init) {
+                    /* place number in front of the door */
+                    make_engr_at(lev, out_x, out_y,
+                                 msgprintf("%d", door_nr), 0L, MARK);
+		    if (door_nr == 24) {
+		    	int object = CANDY_BAR;
+		    	/* Christmas present! */
+		    	switch(rn2_on_rng(15, rng)) {
+                        case  0: object = BAG_OF_HOLDING; break;
+                        case  1: object = OILSKIN_SACK; break;
+                        case  2: object = FIRE_HORN; break;
+                        case  3: object = FROST_HORN; break;
+                        case  4: object = MAGIC_FLUTE; break;
+                        case  5: object = MAGIC_HARP; break;
+                        case  6: object = DRUM_OF_EARTHQUAKE; break;
+                        case  7: object = MAGIC_WHISTLE; break;
+                        case  8: object = MAGIC_LAMP; break;
+                        case  9: object = UNICORN_HORN; break;
+                        case 10: object = BAG_OF_TRICKS; break;
+                        case 11: object = EXPENSIVE_CAMERA; break;
+                        case 12: object = HORN_OF_PLENTY; break;
+                        case 13: object = STETHOSCOPE; break;
+                        case 14: object = TINNING_KIT; break;
+			}
+		    	mksobj_at(object, lev, in_x, in_y, TRUE, FALSE, rng);
+		    } else if (rn2_on_rng(4, rng)) {
+                        int food = (rn2_on_rng(4, rng)) ? CANDY_BAR :
+                            FORTUNE_COOKIE;
+		    	mksobj_at(food, lev, in_x, in_y, FALSE, FALSE, rng);
+		    } else {
+                        int oclass = (rn2_on_rng(4, rng)) ? RING_CLASS :
+                            TOOL_CLASS;
+                    	mkobj_at(oclass, lev, in_x, in_y, FALSE, rng);
+		    }
+		}
+		if ((lev->locations[x][y].doormask & D_LOCKED) &&
+                    (getmonth() == 12)) {
+		    if (getmday() == 24 && door_nr == 24) {
+		        You_hear("a little bell ringing!");
+		        lev->locations[x][y].doormask = D_CLOSED;
+		    } else if (getmday() == door_nr) {
+			You_hear("a door unlocking!");
+		        lev->locations[x][y].doormask = D_CLOSED;
+		    }
+                }
+	    	door_nr++;
+            }
+        }
+    }
+}
+
 static void
 free_rooms(room ** ro, int n)
 {
@@ -2949,6 +3016,8 @@ fixup_special(struct level *lev)
             if (mtmp->isshk)
                 mongone(mtmp);
         }
+    } else if (Is_advent_calendar(&lev->z)) {
+    	fill_advent_calendar(lev, TRUE);
     }
 
     if (lev_message) {

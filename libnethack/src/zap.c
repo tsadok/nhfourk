@@ -4186,6 +4186,9 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
         const char *see_txt = NULL, *sense_txt = NULL, *hear_txt = NULL;
 
         rangemod = -1000;
+        /* ALI - Artifact doors */
+        if (artifact_door(/*level, */x, y))
+            goto def_case;
         switch (abstype) {
         case ZT_FIRE:
             new_doormask = D_NODOOR;
@@ -4214,8 +4217,8 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
         def_case:
             if (cansee(x, y)) {
                 pline("The door absorbs %s %s!", (type < 0) ? "the" : "your",
-                      abs(type) < ZT_SPELL(0) ? "bolt" : abs(type) <
-                      ZT_BREATH(0) ? "spell" : "blast");
+                      (abs(type) < ZT_SPELL(0))  ? "bolt" :
+                      (abs(type) < ZT_BREATH(0)) ? "spell" : "blast");
             } else
                 pline("You feel vibrations.");
             break;

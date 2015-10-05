@@ -780,6 +780,8 @@ extern int wiz_light_sources(const struct nh_cmd_arg *);
 /* ### localtime.c ### */
 
 extern int getyear(void);
+extern int getmonth(void);
+extern int getmday(void);
 extern long yyyymmdd(microseconds);
 extern int phase_of_the_moon(void);
 extern boolean friday_13th(void);
@@ -796,6 +798,7 @@ extern boolean boxlock(struct obj *, struct obj *);
 extern boolean doorlock(struct obj *, int, int);
 extern int doopen(const struct nh_cmd_arg *);
 extern int doclose(const struct nh_cmd_arg *);
+extern int artifact_door(/*struct level *, */int, int);
 
 /* ### log.c ### */
 
@@ -999,6 +1002,7 @@ extern void dodoor(struct level *lev, int, int, struct mkroom *);
 extern void mktrap(struct level *lev, int, int, struct mkroom *, coord *);
 extern void mkstairs(struct level *lev, xchar, xchar, char, struct mkroom *);
 extern void mkinvokearea(void);
+extern boolean mk_advcal_portal(struct level *);
 
 /* ### mkmap.c ### */
 
@@ -1673,6 +1677,7 @@ extern void create_secret_door(struct level *lev, struct mkroom *croom,
 extern boolean dig_corridor(struct level *lev, coord *, coord *, boolean, schar,
                             schar);
 extern void fill_room(struct level *lev, struct mkroom *, boolean);
+extern void fill_advent_calendar(struct level *, boolean);
 extern boolean load_special(struct level *lev, const char *, int *);
 extern void fixup_special(struct level *lev);
 

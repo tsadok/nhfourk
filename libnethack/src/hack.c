@@ -824,6 +824,26 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
         if (closed_door(level, x, y)) {
             if (cache->blind && mode == DO_MOVE)
                 feel_location(x, y);
+            /* ALI - artifact doors */
+	    if (artifact_door(/*level, */x, y)) {
+		if (mode == DO_MOVE) {
+		    if (amorphous(youmonst.data))
+			pline("You try to ooze under the door, "
+                              "but the gap is too small.");
+		    else if (tunnels(youmonst.data) &&
+                             !needspick(youmonst.data))
+			pline("You hurt yourself on the reinforced door.");
+		    else if (x == u.ux || y == u.uy) {
+			if (Blind || Stunned || ACURR(A_DEX) < 10 || Fumbling) {
+                            pline("Ouch!  You bump into a heavy door.");
+			    exercise(A_DEX, FALSE);
+			} else {
+                            pline("That door is closed.");
+                        }
+		    }
+		}
+		return FALSE;
+	    } else
             if (cache->passwall)
                 ; /* do nothing */
             else if (can_ooze(&youmonst)) {
