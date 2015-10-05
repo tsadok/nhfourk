@@ -6,7 +6,7 @@
 #include "hack.h"
 
 static const char *const hu_stat[] = {
-    "Satiated",
+    "Bloated",
     NULL,
     "Hungry",
     "Weak",
