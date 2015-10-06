@@ -473,6 +473,10 @@ mrndcurse(struct monst *mtmp)
 void
 attrcurse(void)
 {
+    if (magic_negation(&youmonst) > rn2(10)) {
+        pline("You feel as if something is protecting you.");
+        return;
+    }
     /* probably too rare to benefit from a custom RNG */
     switch (rnd(11)) {
     case 1:

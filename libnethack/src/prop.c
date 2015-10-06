@@ -486,6 +486,9 @@ enlightenment(int final)
 
         buf = msgprintf(" %d / %ld", u.ualign.record, ALIGNLIM);
         enl_msg(&menu, "Your alignment ", "is", "was", buf);
+
+        buf = msgprintf(" MC level %d", magic_negation(&youmonst));
+        enl_msg(&menu, "You ", "have", "had", buf);
     }
 
         /*** Resistances to troubles ***/

@@ -2385,8 +2385,9 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     encumber_msg();
 }
 
-void deadly_poison (const char *message,    int how,
-                    const char *killer,     boolean showshield)
+void
+deadly_poison (const char *message, int how,
+               const char *killer,  boolean showshield)
 {
     /* Traditionally, this was always an instadeath; but it was one of the most
      * random and frequently unavoidable instadeaths in the game, and the player
@@ -2411,6 +2412,8 @@ void deadly_poison (const char *message,    int how,
             shieldeff(u.ux,u.uy);
         pline("The poison doesn't seem to affect you.");
         return;
+    } else if (rn2(1 + magic_negation(&youmonst))) {
+        pline("You feel as if something is protecting you.");
     } else if (u.ulevel > 2) {
         losexp(killer, TRUE); /* Drain resistance doesn't save you here:
                                * it's not a draining attack, and poison
