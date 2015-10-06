@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Documentation is now available on the differences between normal
+   mode and challenge mode.  See doc/challengemode.txt
+
  * Eating too much no longer runs a risk of choking to death.
    However, it can make you bloated, which slows you down.  (This is
    temporary.  As you digest the food and return to a normal hunger
