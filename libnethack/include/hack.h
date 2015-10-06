@@ -75,7 +75,8 @@
 # define STONING         9
 # define TURNED_SLIME   10
 # define EXPLODED       11
-# define GENOCIDED      12
+# define DISINTEGRATED  12
+# define GENOCIDED      13
 # define LAST_KILLER    (GENOCIDED)
 # define NUM_KILLERS    (LAST_KILLER + 1)
 # define TRICKED        13

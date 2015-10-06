@@ -840,6 +840,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
     int uncancelled, ptmp;
     int dmg, armpro, permdmg;
     const struct permonst *olduasmon = youmonst.data;
+    struct obj *outer_armor;
     int res;
     struct attack noseduce;
     int ac_threshhold = mtmp->m_lev + (u_helpless(hm_all) ? 4 : 0) -
@@ -1036,6 +1037,52 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 pline("You are put to sleep!");
             else
                 pline("You are put to sleep by %s!", mon_nam(mtmp));
+        }
+        break;
+    case AD_MAGM:
+        hitmsg(mtmp, mattk);
+        if (Antimagic || !uncancelled) {
+            shieldeff(u.ux, u.uy);
+            pline("The attack seems to be magical but has no effect.");
+            dmg = 0;
+        } else {
+            if (Hallucination)
+                pline("This is totally heinous!");
+            else
+                pline("It's a magic attack!");
+            dmg = dmg * 2 - armpro;
+            if (dmg < 1)
+                dmg = 1;
+        }
+        break;
+    case AD_DISN:
+        hitmsg(mtmp, mattk);
+        outer_armor = EQUIP(os_armc);/* || EQUIP(os_arm) || EQUIP(os_armu) */
+        if (!outer_armor)
+            outer_armor = EQUIP(os_arm);
+        if (!outer_armor) 
+            outer_armor = EQUIP(os_armu);
+        if (outer_armor) {
+            int dummy;
+            /* The bite hits a piece of your equipment... */
+            if (item_provides_extrinsic(outer_armor, DISINT_RES, &dummy)) {
+                pline("Your %s is not disintegrated.", xname(outer_armor));
+            } else {
+                pline("Your %s disintegrates!", xname(outer_armor));
+                useupall(outer_armor);
+            }
+            dmg = 0;
+        } else {
+            /* The bite hits you directly... */
+            if (Disint_resistance) {
+                shieldeff(u.ux, u.uy);
+                pline("You are not disintegrated");
+                dmg = 0;
+            } else {
+                done(DISINTEGRATED, killer_msg(DISINTEGRATED, a_monnam(mtmp)));
+                /* If we're life-saved, don't do any further damage: */
+                dmg = 0;
+            }
         }
         break;
     case AD_BLND:
