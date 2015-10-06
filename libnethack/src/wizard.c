@@ -767,6 +767,7 @@ nasty(struct monst *mcast)
                 pline("\"%s\"", nastymessage[rn2(SIZE(nastymessage))]);
             else
                 pline("Monsters suddenly arrive from nowhere!");
+            win_pause_output(P_MESSAGE);    /* --More-- */
         }
     }
     return count;

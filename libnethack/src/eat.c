@@ -10,7 +10,7 @@ static int eat_one_turn(void);
 static void costly_tin(const char *);
 static int eat_tin_one_turn(void);
 static const char *food_xname(struct obj *, boolean);
-static void choke(struct obj *);
+/* static void choke(struct obj *); */
 static void nutrition_calculations(struct obj *, unsigned *,
                                    unsigned *, unsigned *);
 static void touchfood(void);
@@ -148,34 +148,37 @@ food_xname(struct obj *food, boolean the_pfx)
     return result;
 }
 
-
+/*
 static void
 choke(struct obj *food)
-{       /* To a full belly all food is bad. (It.) */
-    /* only happens if you were satiated */
+{       // To a full belly all food is bad. (It.)
+    // only happens if you were satiated 
     if (u.uhs != SATIATED) {
         if (!food || food->otyp != AMULET_OF_STRANGULATION)
             return;
     } else if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
-        adjalign(-1);   /* gluttony is unchivalrous */
+        adjalign(-1);   // gluttony is unchivalrous
         pline("You feel like a glutton!");
     }
 
     exercise(A_CON, FALSE);
 
-    /* Whatever you were doing, you're going to get rather distracted... */
+    // Whatever you were doing, you're going to get rather distracted...
     action_interrupted();
 
     if (Breathless || (!Strangled && !rn2(20))) {
-        /* choking by eating AoS doesn't involve stuffing yourself */
+
+        // choking by eating AoS doesn't involve stuffing yourself
         if (food && food->otyp == AMULET_OF_STRANGULATION) {
             pline("You choke, but recover your composure.");
             return;
         }
         pline("You stuff yourself and then vomit voluminously.");
-        morehungry(1000);       /* you just got *very* sick! */
+        morehungry(1000);       // you just got *very* sick!
         vomit();
     } else {
+    // This used to be fatal, but now that being satiated slows down
+    // your movement points, choking outright is no longer a thing.
         const char *killer;
         if (food) {
             pline("You choke over your %s.", foodword(food));
@@ -192,7 +195,7 @@ choke(struct obj *food)
         done(CHOKING, killer);
     }
 }
-
+*/
 
 /* Recalculate information about food. This will set the weight of the
    pointed-to object according to how much has been eaten, and optionally also
@@ -1467,9 +1470,9 @@ eataccessory(struct obj *otmp)
                 rehumanize(DIED, NULL);
             }
             break;
-        case AMULET_OF_STRANGULATION:  /* bad idea! */
-            /* no message--this gives no permanent effect */
-            choke(otmp);
+        case AMULET_OF_STRANGULATION:
+            pline("You have difficulty getting the amulet down.");
+            /* choke(otmp); */
             break;
         case AMULET_OF_RESTFUL_SLEEP:  /* another bad idea! */
             if (!(HSleeping & FROMOUTSIDE))
@@ -1962,10 +1965,12 @@ doeat(const struct nh_cmd_arg *arg)
                 return 0;
         }
 
+        /*
         if (u.uhunger >= 2000) {
             choke(u.utracked[tos_food]);
             return 0;
         }
+        */
 
         u.utracked[tos_food] = otmp;
 

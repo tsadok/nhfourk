@@ -866,7 +866,12 @@ you_moved(void)
             default:
                 break;
             }
-
+            /* Being satiated now slows you down. */
+            if (u.uhunger > 1000) {
+                u.moveamt = u.moveamt - (u.moveamt * u.uhunger / 5000);
+                if (u.moveamt < 1)
+                    u.moveamt = 0; /* but see "corner cases" just below... */
+            }
             /* Avoid an infinite loop on corner cases (e.g. polyinit to blue
                jelly), by limiting how long the player can be stuck without
                movement points. */

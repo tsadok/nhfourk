@@ -64,6 +64,23 @@ Changes in 4.3.0.4:
 Changes in 4.3.0.3:
 -------------------
 
+ * Documentation is now available on the differences between normal
+   mode and challenge mode.  See doc/challengemode.txt
+
+ * Eating too much no longer runs a risk of choking to death.
+   However, it can make you bloated, which slows you down.  (This is
+   temporary.  As you digest the food and return to a normal hunger
+   status, you return to normal speed as well.)  There's no hard
+   maximum on how satiated you can become, but in practice getting
+   close to 5000 nutrition will slow you down so much you won't
+   be able to eat fast enough to become more satiated.   
+
+ * Price-checking has been made less tedious:  you can no longer
+   get a different price by repeatedly dropping the same item,
+   or by trying to sell different items of the same type.  For
+   any given type of item, either the shopkeeper will always
+   offer you 25% less than expected, or he never will.
+
  * Players who can reach the Quest Leader without gaining any
    experience levels (and, in challenge mode, without breaking
    pacifist conduct either) can be admitted to the quest at
