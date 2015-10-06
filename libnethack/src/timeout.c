@@ -122,7 +122,10 @@ is_green(struct monst *mon)
     if (mon->data == &mons[PM_GREMLIN] || mon->data == &mons[PM_LEPRECHAUN] ||
         /* Are wood nymphs green?  Sylphs are, but they might be different? */
         mon->data == &mons[PM_BABY_GREEN_DRAGON] ||
+        mon->data == &mons[PM_YOUNG_GREEN_DRAGON] ||
         mon->data == &mons[PM_GREEN_DRAGON] ||
+        mon->data == &mons[PM_GREEN_ELDER_DRAGON] ||
+        mon->data == &mons[PM_GREAT_GREEN_DRAGON] ||
         /* Are NetHack's lichens green?  Some real lichens are, some not.
          * What about guardian nagas and their hatchlings?  Their default
          * representation is green, but that's also true of hobbits, among
