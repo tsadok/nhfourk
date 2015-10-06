@@ -123,7 +123,9 @@ static boolean
 is_green(struct monst *mon)
 {
     if (mon->data == &mons[PM_GREMLIN] || mon->data == &mons[PM_LEPRECHAUN] ||
-        /* Are wood nymphs green?  Sylphs are, but they might be different? */
+        /* Are wood nymphs green? */
+        mon->data == &mons[PM_SYLPH] ||
+        (mon == &youmonst && Race_if(PM_SYLPH)) ||
         mon->data == &mons[PM_BABY_GREEN_DRAGON] ||
         mon->data == &mons[PM_GREEN_DRAGON] ||
         /* Are NetHack's lichens green?  Some real lichens are, some not.
