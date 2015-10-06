@@ -1144,6 +1144,10 @@ dokick(const struct nh_cmd_arg *arg)
     if (Levitation)
         goto ouch;
 
+    /* Ali - artifact doors */
+    if (artifact_door(/*level, */x, y))
+        goto ouch;
+
     exercise(A_DEX, TRUE);
     /* door is known to be CLOSED or LOCKED */
     if (rnl(35) < avrg_attrib + (!martial()? 0 : ACURR(A_DEX))) {

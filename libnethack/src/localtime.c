@@ -81,6 +81,19 @@ getyear(void)
 {
     return 1900 + getlt()->tm_year;
 }
+/* Returns current month (1-12, 1 = January) */
+int
+getmonth(void)
+{
+    return(1 + getlt()->tm_mon);
+}
+/* Returns current day of month (1-31) */
+int
+getmday(void)
+{
+    return(getlt()->tm_mday);
+}
+
 
 long
 yyyymmdd(microseconds date)

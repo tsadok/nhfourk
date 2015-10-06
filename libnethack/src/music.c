@@ -311,6 +311,9 @@ do_earthquake(int force)
                         newsym(x, y);
                     break;
                 case DOOR:     /* Make the door collapse */
+                     /* ALI - artifact doors */
+		    if (artifact_door(/*level, */x, y))
+                        break;
                     if (level->locations[x][y].doormask == D_NODOOR)
                         goto do_pit;
                     if (cansee(x, y))

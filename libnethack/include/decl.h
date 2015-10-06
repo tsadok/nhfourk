@@ -67,6 +67,7 @@ struct dgn_topology {    /* special dungeon levels for speed */
     xchar d_mines_dnum, d_quest_dnum;
     d_level d_qstart_level, d_qlocate_level, d_nemesis_level;
     d_level d_knox_level;
+    d_level d_advcal_level;
 };
 
 
@@ -307,6 +308,7 @@ struct newgame_options {
 # define qlocate_level          (dungeon_topology.d_qlocate_level)
 # define nemesis_level          (dungeon_topology.d_nemesis_level)
 # define knox_level             (dungeon_topology.d_knox_level)
+# define advcal_level           (dungeon_topology.d_advcal_level)
 
 
 extern int logfile;

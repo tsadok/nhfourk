@@ -583,7 +583,15 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 blessorcurse(otmp, 10, rng);
                 break;
             case SLIME_MOLD:
-                otmp->spe = gamestate.fruits.current;
+                if ((getmonth() == 12) &&
+                    (getmday() >= 24) && (getmday() <= 25))
+                    otmp->spe = (moves % 2) ? fruitadd("candy cane") :
+                        (moves % 3)  ? fruitadd("Christmas cookie") :
+                        (moves % 5)  ? fruitadd("sugar plum") :
+                        (moves % 7)  ? fruitadd("cup of figgy pudding") :
+                        fruitadd("slice of plum cake");
+                else
+                    otmp->spe = gamestate.fruits.current;
                 break;
             case KELP_FROND:
                 otmp->quan = 1 + rn2_on_rng(2, rng);

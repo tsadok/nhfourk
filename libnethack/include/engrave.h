@@ -21,7 +21,9 @@ struct engr {
 # define MARK       4
 # define ENGR_BLOOD 5
 # define HEADSTONE  6
-# define N_ENGRAVE  6
+# define MAX_RND_ENGR 6 /* ones below here don't occur at random or via poly */
+# define ENGR_LIGHTS  7
+# define N_ENGRAVE    7
 };
 
 # define newengr(lth) malloc((unsigned)(lth) + sizeof(struct engr))
