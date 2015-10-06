@@ -127,7 +127,10 @@ is_green(struct monst *mon)
         mon->data == &mons[PM_SYLPH] ||
         (mon == &youmonst && Race_if(PM_SYLPH)) ||
         mon->data == &mons[PM_BABY_GREEN_DRAGON] ||
+        mon->data == &mons[PM_YOUNG_GREEN_DRAGON] ||
         mon->data == &mons[PM_GREEN_DRAGON] ||
+        mon->data == &mons[PM_GREEN_ELDER_DRAGON] ||
+        mon->data == &mons[PM_GREAT_GREEN_DRAGON] ||
         /* Are NetHack's lichens green?  Some real lichens are, some not.
          * What about guardian nagas and their hatchlings?  Their default
          * representation is green, but that's also true of hobbits, among
