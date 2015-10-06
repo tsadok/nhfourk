@@ -34,14 +34,14 @@ struct objclass {
 # define oc_bulky       oc_big  /* for armor */
     unsigned oc_tough:1;        /* hard gems/rings */
 
-    unsigned oc_dir:2;
+    unsigned oc_dir:3;
 # define NODIR          1       /* for wands/spells: non-directional */
 # define IMMEDIATE      2       /* directional */
 # define RAY            3       /* zap beams */
 
 # define PIERCE         1       /* for weapons & tools used as weapons */
 # define SLASH          2       /* (latter includes iron ball & chain) */
-# define WHACK          0
+# define WHACK          4
 
     unsigned oc_material:5;
 # define LIQUID         1       /* currently only for venom and vampire blood */

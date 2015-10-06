@@ -2605,6 +2605,9 @@ zap_updown(struct obj *obj, schar dz)
             if (!(e && e->engr_type == ENGRAVE)) {
                 if (is_pool(level, u.ux, u.uy) || is_ice(level, u.ux, u.uy))
                     pline("Nothing happens.");
+                else if (is_puddle(level, u.ux, u.uy))
+                    pline("The water at your %s turns slightly %s.",
+                          makeplural(body_part(FOOT)), hcolor("red"));
                 else
                     pline("Blood %ss %s your %s.",
                           is_lava(level, u.ux, u.uy) ? "boil" : "pool",
@@ -3787,6 +3790,7 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
                         if (!otmp) {
                             /* normal non-fatal hit */
                             hit(fltxt, mon, exclam(tmp));
+                            wounds_message(mon);
                         } else {
                             int dummy;
                             /* some armor was destroyed; no damage done */
@@ -3935,13 +3939,15 @@ melt_ice(struct level *lev, xchar x, xchar y)
     if (loc->typ == DRAWBRIDGE_UP)
         loc->drawbridgemask &= ~DB_ICE; /* revert to DB_MOAT */
     else {      /* loc->typ == ICE */
-        loc->typ = (loc->icedpool == ICED_POOL ? POOL : MOAT);
+        loc->typ = (loc->icedpool == ICED_POOL ? POOL :
+                    loc->icedpool == ICED_PUDDLE ? PUDDLE : MOAT);
         loc->icedpool = 0;
     }
     remove_iceblock(x, y, "melts and falls away.");
 
     obj_ice_effects(lev, x, y, FALSE);
-    unearth_objs(lev, x, y);
+    if (loc->typ != PUDDLE)
+        unearth_objs(lev, x, y);
 
     if (Underwater)
         vision_recalc(1);
@@ -3949,7 +3955,8 @@ melt_ice(struct level *lev, xchar x, xchar y)
         newsym(x, y);
     if (visible)
         pline_once("The ice crackles and melts.");
-    if ((otmp = sobj_at(BOULDER, lev, x, y)) != 0) {
+    if (loc->typ != PUDDLE &&
+        (otmp = sobj_at(BOULDER, lev, x, y)) != 0) {
         if (visible)
             pline("%s settles...", An(xname(otmp)));
         do {
@@ -4119,9 +4126,16 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
                 pline("Steam billows from the fountain.");
             rangemod -= 1;
             dryup(x, y, type > 0);
+        } else if (IS_PUDDLE(loc->typ)) {
+            rangemod -= 3;
+            loc->typ = ROOM;
+            if (cansee(x,y))
+                pline("The water evaporates.");
+            else
+                You_hear("hissing gas.");
         }
     } else if (abstype == ZT_COLD &&
-               (is_pool(level, x, y) || is_lava(level, x, y))) {
+               (is_damp_terrain(level, x, y) || is_lava(level, x, y))) {
         boolean lava = is_lava(level, x, y);
         boolean moat = is_moat(level, x, y);
 
@@ -4139,10 +4153,13 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
                 loc->drawbridgemask |= (lava ? DB_FLOOR : DB_ICE);
             } else {
                 if (!lava)
-                    loc->icedpool = (loc->typ == POOL ? ICED_POOL : ICED_MOAT);
+                    loc->icedpool = (loc->typ == POOL ? ICED_POOL :
+                                     loc->typ == PUDDLE ? ICED_PUDDLE :
+                                     ICED_MOAT);
                 loc->typ = (lava ? ROOM : ICE);
             }
-            bury_objs(level, x, y);
+            if (loc->icedpool != ICED_PUDDLE)
+                bury_objs(level, x, y);
             if (cansee(x, y)) {
                 if (moat)
                     pline_once("The moat is bridged with ice!");
@@ -4674,6 +4691,8 @@ resist(struct monst *mtmp, char oclass, int damage, int domsg)
                 monkilled(mtmp, "", AD_RBRE);
             else
                 killed(mtmp);
+        } else {
+            wounds_message(mtmp);
         }
     }
     return resisted;

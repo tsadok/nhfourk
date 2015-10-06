@@ -1708,6 +1708,9 @@ back_to_cmap(struct level *lev, xchar x, xchar y)
     case CLOUD:
         idx = S_cloud;
         break;
+    case PUDDLE:
+        idx = S_puddle;
+        break;
     case WATER:
         idx = S_water;
         break;

@@ -42,6 +42,7 @@ rm_waslit(void)
     return FALSE;
 }
 
+
 /* Change level topology.  Messes with vision tables and ignores things like
  * boulders in the name of a nice effect.  Vision will get fixed up again
  * immediately after the effect is complete.
@@ -693,7 +694,8 @@ dighole(boolean pit_only)
                        (loc->wall_info & W_NONDIGGABLE) != 0)) {
         pline("The %s here is too hard to dig in.", surface(u.ux, u.uy));
 
-    } else if (is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy)) {
+    } else if (is_damp_terrain(level, u.ux, u.uy) ||
+               is_lava(level, u.ux, u.uy)) {
         pline("The %s sloshes furiously for a moment, then subsides.",
               is_lava(level, u.ux, u.uy) ? "lava" : "water");
         wake_nearby(FALSE);  /* splashing */
@@ -998,6 +1000,10 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
                 useupall(obj);
             }
         }
+    } else if (is_puddle(level, u.ux, u.uy)) {
+        pline("Your %s against the water's surface.",
+              aobjnam(obj, "splash"));
+        wake_nearby(FALSE);
     } else if (!ispick) {
         pline("Your %s merely scratches the %s.", aobjnam(obj, NULL),
               surface(u.ux, u.uy));
@@ -1135,7 +1141,7 @@ mdig_tunnel(struct monst *mtmp)
     if (IS_WALL(here->typ)) {
         /* KMH -- Okay on arboreal levels (room walls are still stone) */
         if (flags.verbose && !rn2(5))
-            You_hear("crashing rock.");
+            You_hear(Hallucination ? "someone playing Asteroids!" : "crashing rock.");
         if (*in_rooms(level, mtmp->mx, mtmp->my, SHOPBASE))
             add_damage(mtmp->mx, mtmp->my, 0L);
         if (level->flags.is_maze_lev) {

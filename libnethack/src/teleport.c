@@ -64,7 +64,8 @@ goodpos(struct level *lev, int x, int y, struct monst *mtmp, unsigned gpflags)
                           Amphibious);
             else
                 return (is_flyer(mdat) || is_swimmer(mdat) || is_clinger(mdat));
-        } else if (mdat->mlet == S_EEL && !ignorewater) {
+        } else if (mdat->mlet == S_EEL && !ignorewater &&
+                   (!is_puddle(lev, x, y) || bigmonst(mdat))) {
             return FALSE;
         } else if (is_lava(lev, x, y)) {
             if (mtmp == &youmonst)

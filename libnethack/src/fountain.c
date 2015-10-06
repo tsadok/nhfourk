@@ -154,8 +154,8 @@ gush(int x, int y, void *poolcnt)
     if (!((*(int *)poolcnt)++))
         pline("Water gushes forth from the overflowing fountain!");
 
-    /* Put a pool at x, y */
-    level->locations[x][y].typ = POOL;
+    /* Put a pool of shallow water at x, y */
+    level->locations[x][y].typ = PUDDLE;
     /* No kelp! */
     del_engr_at(level, x, y);
     water_damage_chain(level->objects[x][y], TRUE);

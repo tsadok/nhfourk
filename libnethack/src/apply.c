@@ -2119,7 +2119,7 @@ use_trap(struct obj *otmp, const struct nh_cmd_arg *arg)
         what = "underwater";
     else if (Levitation)
         what = "while levitating";
-    else if (is_pool(level, u.ux, u.uy))
+    else if (is_damp_terrain(level, u.ux, u.uy))
         what = "in water";
     else if (is_lava(level, u.ux, u.uy))
         what = "in lava";
