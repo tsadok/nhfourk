@@ -1100,7 +1100,8 @@ MAZEWALK:(62,15),south
 ALTAR:(70,5),noalign,shrine
 DOOR:closed,(62,12)
 DOOR:closed,(70,10)
-TRAP:"rust",(72,18)
+TRAP:"rust",random
+TRAP:"board",random
 OBJECT:'(',"figurine",(70,5),random,"balrog",1
 OBJECT:'*',"luckstone",place[0]
 OBJECT:'*',"flint",place[1]
