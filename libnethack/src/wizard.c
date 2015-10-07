@@ -679,6 +679,15 @@ clonewiz(void)
     }
 }
 
+static const char *const nastymessage[] = {
+    "The infidel must be destroyed!",
+    "Kill the invader and bring back my property!",
+    "Havoc!",
+    "Surround the enemy!",
+    "Send that foul tresspasser packing right back up to the surface!",
+    "For the weary there can be no respite until the adversary is vanquished!",
+};
+
 /* also used by newcham() */
 int
 pick_nasty(void)
@@ -714,7 +723,8 @@ nasty(struct monst *mcast)
         msummon(NULL, &level->z);       /* summons like WoY */
         count++;
     } else {
-        tmp = 3 + rnd(1 + mcast->m_lev / 5);
+        tmp = 3 + rnd(mcast ? (1 + mcast->m_lev / 5) :
+                      (5 + mvitals[PM_WIZARD_OF_YENDOR].died));
         for (i = tmp; i > 0; --i) {
             int makeindex;
             j = 0;
@@ -734,8 +744,7 @@ nasty(struct monst *mcast)
                       (mons[makeindex].maligntyp &&
                        sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
                       (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);
-            if (wizard)
-                pline("");
+
             /* do this after picking the monster to place */
             if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
                 !enexto(&bypos, level, mcast->mux, mcast->muy,
@@ -752,6 +761,13 @@ nasty(struct monst *mcast)
                 if (canseemon(mtmp))
                     count++;
             }
+        }
+        if (count > 1) {
+            if (mvitals[PM_WIZARD_OF_YENDOR].died && !mcast)
+                pline("\"%s\"", nastymessage[rn2(SIZE(nastymessage))]);
+            else
+                pline("Monsters suddenly arrive from nowhere!");
+            win_pause_output(P_MESSAGE);    /* --More-- */
         }
     }
     return count;

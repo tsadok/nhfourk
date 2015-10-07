@@ -21,6 +21,7 @@
 #	QT_BADLEVEL	19
 #	QT_BADALIGN	20
 #	QT_ASSIGNQUEST	21
+#       QT_LOWLEVEL     22      /* XL1 or pacifist, "Are you serious?" */
 #
 #	QT_ENCOURAGE	25	/* 1-10 random encouragement messages */
 #
@@ -144,6 +145,11 @@ to me.
 close this college.
 
 "May the wisdom of %d be your guide."
+%E
+%Cc Arc 00022
+"This is most disturbing.  I cannot allow you to make a mockery of
+the college.  Do you really believe yourself capable of representing
+us, as inexperienced as you are?"
 %E
 %Cp Arc 00025
 "Beware, for %n is powerful and cunning."
@@ -400,6 +406,9 @@ and with %d behind you, you alone can defeat %n.
 %n, defeat him, and return %o to us.  Only
 then will the world be safe."
 %E
+%Cc Bar 00022
+"%p, you seem very inexperienced.  Are you sure that you can face %n?"
+%E
 %Cp Bar 00025
 "%nC is strong in the dark arts, but not immune to cold steel."
 %E
@@ -650,6 +659,10 @@ We can not get it back.  %n will kill us.
 
 "%p, you find %i, take back %o from %n.  Then we can 
 make caves safe."
+%E
+%Cc Cav 00022
+"Me not know, %p, you sure you not need to do more stuff first?
+It be real hard to fight %n.  You sure you can do it?"
 %E
 %Cp Cav 00025
 "%nC not hurt by her own breath.
@@ -913,6 +926,10 @@ For the first time, you sense a smile on %ls face.
     You must travel into the swamps to %i, and from there
     follow the trail to %ns island lair.  Be careful.
 %E
+%Cc Hea 00022
+Alas, %p, I fear that you may be yet too inexperienced to deal with the
+rigors of such a task.  Are you certain you are really ready to undertake it?
+%E
 %Cp Hea 00025
 "Remember, %p, to always wash your hands before operating."
 %E
@@ -1164,6 +1181,10 @@ Merlin will not regain his health.
 beast, and return to Us %o.  Only then can
 We restore Merlin to health."
 %E
+%Cp Kni 00022
+"Art thou serious, %p?  Willt thou undertake this quest already,
+in thine inexperienced state?"
+%E
 %Cp Kni 00025
 "Remember, %p, follow always the path of %d."
 %E
@@ -1406,6 +1427,12 @@ legions of elementals that slay our students.
 
 "Go with %d as your guide, %p."
 %E
+%Cc Mon 00022
+"Oddly, %p, though you seem unready, I find myself wondering 
+whether the experience I have looked for in you is perhaps 
+not the true preparation you require.  Sending you forth
+now is a great risk, however.  Are you sure you are ready?"
+%E
 %Cp Mon 00025
 "You can prevail, if you rely on %d."
 %E
@@ -1644,6 +1671,12 @@ to %ns lair.  If you can manage to defeat %n and return
 undead that befoul the land.
 
 "Go with %d as your guide, %p."
+%E
+%Cc Pri 00022
+"We cannot hold back the undead here forever, %p, and if you
+should fall, we have not the resources to raise you or to
+find another to send in your place.  It is a great risk you
+propose to take.  Are you sure you are ready for this?"
 %E
 %Cp Pri 00025
 "You can prevail, if you rely on %d."
@@ -1893,6 +1926,10 @@ underground cavern of %n.  He has always coveted
 %o, and will surely keep it.
 
 "Recover %o for us, %p!  Only then will %d be safe."
+%E
+%Cc Ran 00022
+"You are so young!  Can you fight the centaurs?  Can you really
+find and infiltrate %i, take on %n, and recover %o for us?"
 %E
 %Cp Ran 00025
 "It is rumored that the Forest and Mountain Centaurs have resolved
@@ -2150,6 +2187,9 @@ has %o.  You are going to get %o
 and bring it back to me.  So simple an assignment even you can understand
 it."
 %E
+%Cc Rog 00022
+"Pffft.  You actually think you're ready to bring down %n?"
+%E
 %Cp Rog 00025
 "You don't seem to understand,
 %o isn't here so neither should you be!"
@@ -2398,6 +2438,10 @@ emperor's property.  Be quick!  The emperor will be here for the
 cha-no-you in 5 sticks.
 
 "Wakarimasu ka?"
+%E
+%Cc Sam 00022
+"Do you think you know the bushido, %p-chan?  Nantekawaii.  
+Do you think that will be enough to save you when you fight %n?"
 %E
 %Cp Sam 00025
 "To defeat %n you must overcome the seven emotions:
@@ -2652,6 +2696,9 @@ and recover %o.
 that all will be lost.  Let us both pray now that %d will guide you
 and keep you safe."
 %E
+%Cc Tou 00022
+"Do you want to go off the beaten path, do something interesting?"
+%E
 %Cp Tou 00025
 "Do not be fooled by the false promises of %n."
 %E
@@ -2904,6 +2951,10 @@ unless %o is returned into my care, %n may start Ragnarok.
 from there and you will find %ns lair.  Defeat him and
 return %o to me."
 %E
+%Cc Val 00022
+"This is outrageous!  You are but a %r!  Will you turn all
+reason on its head and defeat %n in such a state?"
+%E
 %Cp Val 00025
 "Go with the blessings of %d."
 %E
@@ -3154,6 +3205,9 @@ shall soon perish.
 find and overcome %n, and return %o to me.
 
 "Go now, with %d, and complete this quest before it is too late."
+%E
+%Cc Wiz 00022
+"Astonishing!  You show up as a mere %r and expect to take on %n?"
 %E
 %Cp Wiz 00025
 "Beware, for %n is immune to most magical attacks."

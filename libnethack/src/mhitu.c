@@ -832,7 +832,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                     hitmsg(mtmp, mattk);
                 if (!dmg)
                     break;
-                if (u.mh > 1 && u.mh > ((get_player_ac() > ac_threshhold) ?
+                if (u.mh > 1 && u.mh > ((get_player_ac() > 0 - ac_threshhold) ?
                                             dmg : dmg + get_player_ac()) &&
                     objects[otmp->otyp].oc_material == IRON &&
                     (u.umonnum == PM_BLACK_PUDDING ||
@@ -1493,8 +1493,10 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
 
     /* Negative armor class reduces damage done instead of fully protecting
        against hits. */
-    if (dmg && get_player_ac() < ac_threshhold) {
-        dmg -= rnd(ac_threshhold - get_player_ac());
+    if (dmg && get_player_ac() < 0 - ac_threshhold) {
+        int reduce = 0 - ac_threshhold - get_player_ac();
+        if (reduce >= 1)
+            dmg -= rnd(reduce);
         if (dmg < 1)
             dmg = 1;
     }

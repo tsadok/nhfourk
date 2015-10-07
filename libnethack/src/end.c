@@ -518,9 +518,9 @@ calc_score(int how, boolean show, long umoney)
     const double cap_valuables = 2000;
     const double cap_artifacts = 4000;
     /* Dungeon achievement stuff */
-    /* Currently unused
     boolean ach_minetown = FALSE;
     boolean ach_minesend = FALSE;
+    /* Currently unused
     boolean ach_beginner = FALSE; */
     boolean ach_sokoban = FALSE;
     boolean ach_quest = FALSE;
@@ -657,6 +657,10 @@ calc_score(int how, boolean show, long umoney)
        Ascended:          5000p */
     category_raw = 0;
     
+    if (historysearch("entered the Minetown temple", TRUE))
+        ach_minetown = TRUE;
+    if (historysearch("reached the bottom of the Mines", TRUE))
+        ach_minesend = TRUE;
     if (historysearch("entered the Sokoban zoo", TRUE))
         ach_sokoban = TRUE;
     if (historysearch("completed the quest", TRUE))
@@ -674,8 +678,14 @@ calc_score(int how, boolean show, long umoney)
     if (how == ASCENDED)
         ach_ascended = TRUE;
     
+    if (ach_minetown)
+        category_raw = 500;
+    if (ach_minesend)
+        category_raw = 1000;
     if (ach_sokoban)
         category_raw = 1000;
+    if (ach_sokoban && ach_minesend)
+        category_raw = 1500;
     if (ach_quest)
         category_raw = 2000;
     if (ach_vlad)
@@ -704,7 +714,10 @@ calc_score(int how, boolean show, long umoney)
           : ach_wizard ? "killed Wizard of Yendor"
           : ach_vlad ? "killed Vlad the Impaler"
           : ach_quest ? "finished the Quest"
+          : (ach_sokoban && ach_minesend) ? "Sokoban/Mines"
           : ach_sokoban ? "finished Sokoban"
+          : ach_minesend ? "reached Mine's End"
+          : ach_minetown ? "reached Minetown"
           : "(nothing yet)",
             category_points);
         add_menutext(&menu, buf);

@@ -1034,7 +1034,7 @@ augment_magic_chest_contents(int otyp, int oclass, int count)
 {
     int i;
     struct obj *otmp;
-    for (i = 0; i <= count; i++) {
+    for (i = 1; i <= count; i++) {
         otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
                         mkobj(level, oclass, FALSE, rng_main);
         obj_extract_self(otmp);
