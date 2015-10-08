@@ -87,6 +87,11 @@ Changes in 4.3.0.4:
 Changes in 4.3.0.3:
 -------------------
 
+ * Some special levels have been changed, or new versions have
+   been introduced.  Notable examples include Mine's End, the
+   Monk and Rogue quest locate levels, and the last maze level
+   before the Castle.
+
  * Weaponless characters can get items other than weapons as
    sacrifice gifts.
 
