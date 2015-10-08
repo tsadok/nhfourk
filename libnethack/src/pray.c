@@ -21,6 +21,7 @@ static void fry_by_god(aligntyp);
 static void gods_angry(aligntyp);
 static void gods_upset(aligntyp);
 static void consume_offering(struct obj *);
+static struct obj *sacrifice_gift(void);
 static boolean water_prayer(boolean);
 static boolean blocked_boulder(int, int);
 
@@ -1135,6 +1136,135 @@ consume_offering(struct obj *otmp)
         useupf(otmp, 1L);
 }
 
+struct obj *
+sacrifice_gift(void)
+{
+    struct obj *otmp;
+    if (!u.uconduct[conduct_weaphit]) {
+        int oclass = ARMOR_CLASS;
+        int total = 0, totalweight = 0;
+        int i, j, k, q;
+        int spclass[P_LAST_SPELL + 1 - P_FIRST_SPELL];
+        int sweight[P_LAST_SPELL + 1 - P_FIRST_SPELL];
+        int bookcnt[P_LAST_SPELL + 1 - P_FIRST_SPELL];
+        if (Race_if(PM_SYLPH) || (!u.uconduct[conduct_clothing])) {
+            if (u.uconduct[conduct_jewelry])
+                oclass = RING_CLASS;
+            else
+                oclass = WEAPON_CLASS; /* There are no better options. */
+        }
+        if (!u.uconduct[conduct_illiterate]) {
+            for (i = P_FIRST_SPELL; i <= P_LAST_SPELL; i++) {
+                bookcnt[i - P_FIRST_SPELL] = 0;
+                spclass[i - P_FIRST_SPELL] = i;
+                sweight[i - P_FIRST_SPELL] = P_MAX_SKILL(i);
+                if (P_MAX_SKILL(i) > P_UNSKILLED) {
+                    for (j = 1; objects[j].oc_class != ILLOBJ_CLASS; j++) {
+                        if ((objects[j].oc_class == SPBOOK_CLASS) &&
+                            (objects[j].oc_skill == i) &&
+                            (!objects[j].oc_name_known))
+                            bookcnt[i - P_FIRST_SPELL]++;
+                    }
+                    if (bookcnt[i - P_FIRST_SPELL] > 0) {
+                        total += P_MAX_SKILL(i) - P_UNSKILLED;
+                        sweight[i - P_FIRST_SPELL] *=
+                            bookcnt[i - P_FIRST_SPELL];
+                    } else {
+                        sweight[i - P_FIRST_SPELL] = 0;
+                    }
+                }
+                totalweight += sweight[i - P_FIRST_SPELL];
+            }
+            if ((total >= 3) && rn2_on_rng(total, rng_altar_gift)) {
+                oclass = SPBOOK_CLASS;
+                /* Shuffle the schools into a random order... */
+                for (i = P_FIRST_SPELL; i <= P_LAST_SPELL; i++) {
+                    int swclass, swpwght;
+                    j = rn2_on_rng(P_LAST_SPELL + 1 - P_FIRST_SPELL,
+                                   rng_altar_gift) + P_FIRST_SPELL;
+                    swclass = spclass[i - P_FIRST_SPELL];
+                    swpwght = sweight[i - P_FIRST_SPELL];
+                    spclass[i - P_FIRST_SPELL] = spclass[j - P_FIRST_SPELL];
+                    sweight[i - P_FIRST_SPELL] = sweight[j - P_FIRST_SPELL];
+                    spclass[j - P_FIRST_SPELL] = swclass;
+                    sweight[j - P_FIRST_SPELL] = swpwght;
+                }
+                /* Now decide which school to pick from... */
+                if (totalweight > 0)
+                    j = rn2_on_rng(totalweight, rng_altar_gift);
+                else
+                    j = 0;
+                total = 0; k = 0;
+                for (i = P_FIRST_SPELL; ((i <= P_LAST_SPELL) &&
+                                         (total < j)); i++) {
+                    total += sweight[i];
+                    k++;
+                }
+                i = spclass[k]; /* This school */
+                j = rn2_on_rng(1 + bookcnt[i - P_FIRST_SPELL], rng_altar_gift);
+                if (wizard)
+                    pline("Chose %dth unidentified book from %dth school, %d",
+                          j, k, i);
+                /* We want to give the jth unidentified spell from school i. */
+                k = 0;
+                for (q = 1; objects[q].oc_class != ILLOBJ_CLASS; q++) {
+                    if ((objects[q].oc_class == SPBOOK_CLASS) &&
+                        (objects[q].oc_skill == i) &&
+                        (!objects[q].oc_name_known)) {
+                        if (k == j) {
+                            otmp = mksobj(level, q, TRUE, TRUE, rng_altar_gift);
+                            if (otmp) {
+                                bless(otmp);
+                                if (!Hallucination && !Blind) {
+                                    otmp->dknown = 1;
+                                    makeknown(otmp->otyp);
+                                }
+                                return otmp;
+                            }
+                        }
+                        k++;
+                    }
+                }
+            }
+        }
+        if (oclass != WEAPON_CLASS) {
+            otmp = mkobj(level, oclass, TRUE, rng_altar_gift);
+            if (otmp) {
+                if (otmp->oclass == ARMOR_CLASS) {
+                    if (otmp->cursed)
+                        uncurse(otmp);
+                    if (otmp->spe < 1)
+                        otmp->spe = rne(3);
+                    if (objects[otmp->otyp].oc_skill == P_SHIELD)
+                        unrestrict_weapon_skill(P_SHIELD);
+                }
+                if (!Hallucination && !Blind) {
+                    otmp->dknown = 1;
+                    makeknown(otmp->otyp);
+                }
+                return otmp;
+            }
+        }
+    }
+    /* The usual case is to give an artifact, which is typically a weapon: */
+    otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy), rng_altar_gift);
+    if (otmp) {
+        if (otmp->spe < 0)
+            otmp->spe = 0;
+        if (otmp->cursed)
+            uncurse(otmp);
+        otmp->oerodeproof = TRUE;
+
+        /* make sure we can use this weapon */
+        unrestrict_weapon_skill(weapon_type(otmp));
+        if (!Hallucination && !Blind) {
+            otmp->dknown = 1;
+            makeknown(otmp->otyp);
+            discover_artifact(otmp->oartifact);
+        }
+    }
+    return otmp;
+}
 
 int
 dosacrifice(const struct nh_cmd_arg *arg)
@@ -1544,29 +1674,18 @@ dosacrifice(const struct nh_cmd_arg *arg)
             if (u.ulevel > 2 && u.uluck >= 0) {
                 if (!rn2_on_rng(10 + (2 * u.ugifts * nartifacts),
                                 rng_altar_gift)) {
-                    otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy),
-                                       rng_altar_gift);
+                    otmp = sacrifice_gift();
                     if (otmp) {
-                        if (otmp->spe < 0)
-                            otmp->spe = 0;
-                        if (otmp->cursed)
-                            uncurse(otmp);
-                        otmp->oerodeproof = TRUE;
                         dropy(otmp);
                         at_your_feet("An object");
                         godvoice(u.ualign.type, "Use my gift wisely!");
                         historic_event(FALSE, FALSE, "received %s from %s.",
-                                       artiname(otmp->oartifact), u_gname());
+                                       (otmp->oartifact ?
+                                        artiname(otmp->oartifact) : 
+                                        an(xname(otmp))), u_gname());
                         u.ugifts++;
                         u.ublesscnt = rnz(300 + (50 * nartifacts));
                         exercise(A_WIS, TRUE);
-                        /* make sure we can use this weapon */
-                        unrestrict_weapon_skill(weapon_type(otmp));
-                        if (!Hallucination && !Blind) {
-                            otmp->dknown = 1;
-                            makeknown(otmp->otyp);
-                            discover_artifact(otmp->oartifact);
-                        }
                         return 1;
                     }
                 } else {

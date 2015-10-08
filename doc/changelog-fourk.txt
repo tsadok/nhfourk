@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Weaponless characters can get items other than weapons as
+   sacrifice gifts.
+
  * Documentation is now available on the differences between normal
    mode and challenge mode.  See doc/challengemode.txt
 
