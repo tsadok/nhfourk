@@ -57,6 +57,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Some special levels have been changed, or new versions have
+   been introduced.  Notable examples include Mine's End, the
+   Monk and Rogue quest locate levels, and the last maze level
+   before the Castle.
+
  * Documentation is now available on the differences between normal
    mode and challenge mode.  See doc/challengemode.txt
 
