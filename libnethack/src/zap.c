@@ -311,18 +311,52 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
         break;
     case WAN_TELEPORTATION:
     case SPE_TELEPORT_AWAY:
-        if (wandlevel != P_MASTER && tele_restrict(mtmp)) { /* noteleport */
-            known = TRUE;
-            /* monster learns that teleportation isn't useful here */
-            if (level->flags.noteleport)
-                mtmp->mtrapseen |= (1 << (TELEP_TRAP - 1));
-        } else {
-            reveal_invis = !u_teleport_mon(mtmp, TRUE);
-            known = TRUE; /* this might not reveal the wand if teleported outside LOS -- intended */
+        known = TRUE;
+        if ((wandlevel != P_MASTER || selfzap) && tele_restrict(mtmp)) /* noteleport */
+            break;
+        if (level->flags.noteleport) { /* master zap on noteleport */
+            if (mtmp == &youmonst)
+                safe_teleds(FALSE);
+            else
+                rloc(mtmp, TRUE);
+            break;
         }
+        if (mtmp == &youmonst)
+            tele();
+        else
+            reveal_invis = !u_teleport_mon(mtmp, TRUE);
         break;
     case WAN_MAKE_INVISIBLE:
         {
+            if (mtmp == &youmonst) {
+                boolean msg = !Blind && !BInvis;
+                boolean invis = Invis;
+                boolean invis_outside = !!(HInvis & FROMOUTSIDE);
+
+                if (BInvis && uarmc->otyp == MUMMY_WRAPPING) {
+                    /* A mummy wrapping absorbs it and protects you */
+                    pline("You feel rather itchy under your %s.", xname(uarmc));
+                    break;
+                }
+                if (!invis_outside) { /* setting invis */
+                    HInvis |= FROMOUTSIDE;
+                    if (msg && !invis) {
+                        known = TRUE;
+                        newsym(u.ux, u.uy);
+                        self_invis_message();
+                    }
+                } else if (wandlevel >= P_SKILLED) { /* unsetting invis */
+                    HInvis &= ~FROMOUTSIDE;
+                    if (msg && !Invis) { /* !Invis in case anything else gives it */
+                        known = TRUE;
+                        newsym(u.ux, u.uy);
+                        pline("Your body seems to unfade...");
+                    }
+                }
+                /* else, nothing happens, bail out */
+                break;
+            }
+
             int oldinvis = mtmp->minvis;
             /* format monster's name before altering its visibility */
             const char *nambuf = Monnam(mtmp);
@@ -2099,7 +2133,7 @@ int
 zapyourself(struct obj *obj, boolean ordinary)
 {
     int damage = 0;
-    boolean known = FALSE;
+    int wandlevel = getwandlevel(&youmonst, obj);
 
     switch (obj->otyp) {
     case WAN_STRIKING:
@@ -2213,40 +2247,71 @@ zapyourself(struct obj *obj, boolean ordinary)
         break;
 
     case WAN_MAKE_INVISIBLE:{
-            /* have to test before changing HInvis but must change HInvis
-               before doing newsym(). */
-            int msg = !Invis && !Blind && !BInvis;
+        /* have to test before changing HInvis but must change HInvis
+           before doing newsym(). */
+        boolean msg = !Blind && !BInvis;
+        boolean invis = Invis;
+        boolean invis_outside = !!(HInvis & FROMOUTSIDE);
 
-            if (BInvis && uarmc->otyp == MUMMY_WRAPPING) {
-                /* A mummy wrapping absorbs it and protects you */
-                pline("You feel rather itchy under your %s.", xname(uarmc));
-                break;
-            }
-            if (ordinary || !rn2(10)) { /* permanent */
+        if (BInvis && uarmc->otyp == MUMMY_WRAPPING) {
+            /* A mummy wrapping absorbs it and protects you */
+            pline("You feel rather itchy under your %s.", xname(uarmc));
+            break;
+        }
+        if (!ordinary || wandlevel < P_SKILLED ||
+            !invis_outside) { /* setting invis */
+            if (!rn2(10) || ordinary) { /* permanent */
                 HInvis |= FROMOUTSIDE;
-            } else {    /* temporary */
+                if (msg && !invis) {
+                    makeknown(WAN_MAKE_INVISIBLE);
+                    newsym(u.ux, u.uy);
+                    self_invis_message();
+                }
+            } else { /* temporary */
                 incr_itimeout(&HInvis, dice(obj->spe, 250));
             }
-            if (msg) {
+            if (msg && !invis) {
                 makeknown(WAN_MAKE_INVISIBLE);
                 newsym(u.ux, u.uy);
                 self_invis_message();
             }
             break;
         }
+        /* unsetting invis */
+        HInvis &= ~FROMOUTSIDE;
+        if (msg && !Invis) { /* !Invis in case anything else gives it */
+            makeknown(WAN_MAKE_INVISIBLE);
+            newsym(u.ux, u.uy);
+            pline("Your body seems to unfade...");
+        }
+        break;
+    }
 
     case WAN_SPEED_MONSTER:
-        if (!(HFast & INTRINSIC)) {
-            if (!Fast)
-                pline("You speed up.");
-            else
-                pline("Your quickness feels more natural.");
+        if (!Very_fast) {
+            pline("You are suddenly moving %sfaster.", Fast ? "" : "much ");
+            makeknown(WAN_SPEED_MONSTER);
+        } else
+            pline("Your %s get new energy.", makeplural(body_part(LEG)));
+        damage = dice(2, 20);
+        if (wandlevel >= P_BASIC)
+            damage += 20;
+        if (wandlevel >= P_EXPERT)
+            damage += 30;
+        if (wandlevel == P_MASTER) {
+            damage += 50;
+            damage += dice(3, 20);
+        }
+        incr_itimeout(&HFast, damage);
+        damage = 0;
+        if (wandlevel >= P_SKILLED && !(HFast & INTRINSIC)) {
+            pline("Your quickness feels more natural.");
             makeknown(WAN_SPEED_MONSTER);
             exercise(A_DEX, TRUE);
+            HFast |= FROMOUTSIDE;
         }
         HFast |= FROMOUTSIDE;
         break;
-
     case WAN_SLEEP:
         makeknown(WAN_SLEEP);
     case SPE_SLEEP:
@@ -2377,8 +2442,6 @@ zapyourself(struct obj *obj, boolean ordinary)
         impossible("object %d used?", obj->otyp);
         break;
     }
-    if (known)
-        makeknown(obj->otyp);
     return damage;
 }
 

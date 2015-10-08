@@ -521,7 +521,9 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
 
     case GEM_CLASS:
         {
-            const char *rock = (ocl->oc_material == MINERAL) ? "stone" : "gem";
+            const char *rock = ((ocl->oc_material == MINERAL) ||
+                                (ocl->oc_material == SILVER)) ?
+                "stone" : "gem";
 
             if (!dknown) {
                 buf = rock;
