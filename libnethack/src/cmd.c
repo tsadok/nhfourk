@@ -871,7 +871,7 @@ doattributes(const struct nh_cmd_arg *arg)
     add_menutext(&menu, buf);
 
     wc = weight_cap();
-    buf = msgprintf("%-10s: %ld (", "burden", wc + inv_weight());
+    buf = msgprintf("%-10s: %ld (", "burden", wc + (long) inv_weight());
 
     switch (calc_capacity(wc / 4)) {
     case UNENCUMBERED:
