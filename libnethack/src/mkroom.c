@@ -362,6 +362,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone, itemtwo, itemthree;
     int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
     int color = rn2_on_rng(6, rng);
+    imax = 0;
     switch (color) {
     case 1: /* blue */
         babypm    = harder ? PM_YOUNG_BLUE_DRAGON : PM_BABY_BLUE_DRAGON;
