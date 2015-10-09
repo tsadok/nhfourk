@@ -2131,7 +2131,9 @@ int
 zapyourself(struct obj *obj, boolean ordinary)
 {
     int damage = 0;
-    int wandlevel = getwandlevel(&youmonst, obj);
+    int wandlevel = 0;
+    if (obj->oclass == WAND_CLASS)
+        wandlevel = getwandlevel(&youmonst, obj);
 
     switch (obj->otyp) {
     case WAN_STRIKING:
