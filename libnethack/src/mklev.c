@@ -930,8 +930,6 @@ makelevel(struct level *lev)
         if (u_depth > 1 && u_depth < depth(&medusa_level) &&
             lev->nroom >= room_threshold && mrn2(u_depth) < 3)
             mkroom(lev, SHOPBASE);
-        else if (u_depth > 15 && !mrn2(6))
-            mkroom(lev, DRAGONHALL);
         else if (u_depth > 4 && !mrn2(6))
             mkroom(lev, COURT);
         else if (u_depth > 5 && !mrn2(8)) {
