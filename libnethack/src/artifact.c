@@ -1187,10 +1187,10 @@ artifact_hit(struct monst * magr, struct monst * mdef, struct obj * otmp,
             return 1;
         }
         else if ((!youdefend) && !resists_sleep(mdef)) {
-            if (!mdef->msleeping && sleep_monst(mdef, 5, -1)) {
+            if (!mdef->msleeping && sleep_monst(mdef, 5, 0)) {
                 if (youattack)
                     pline("Your sweetly-scented blade puts %s to sleep.",
-                          canseemon(mdef) ? Monnam(mdef) : "something");
+                          canseemon(mdef) ? mon_nam(mdef) : "something");
                 else if (canseemon(mdef))
                     pline("%s is put to sleep.", Monnam(mdef));
                 return 1;
