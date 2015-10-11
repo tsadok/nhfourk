@@ -17,17 +17,18 @@
 #define PN_SHIELD            (-3)
 #define PN_WANDS             (-4)
 #define PN_RIDING            (-5)
-#define PN_POLEARMS          (-6)
-#define PN_SABER             (-7)
-#define PN_HAMMER            (-8)
-#define PN_WHIP              (-9)
-#define PN_ATTACK_SPELL      (-10)
-#define PN_HEALING_SPELL     (-11)
-#define PN_DIVINATION_SPELL  (-12)
-#define PN_ENCHANTMENT_SPELL (-13)
-#define PN_CLERIC_SPELL      (-14)
-#define PN_ESCAPE_SPELL      (-15)
-#define PN_MATTER_SPELL      (-16)
+#define PN_STEALTH           (-6)
+#define PN_POLEARMS          (-8)
+#define PN_SABER             (-8)
+#define PN_HAMMER            (-9)
+#define PN_WHIP              (-10)
+#define PN_ATTACK_SPELL      (-11)
+#define PN_HEALING_SPELL     (-12)
+#define PN_DIVINATION_SPELL  (-13)
+#define PN_ENCHANTMENT_SPELL (-14)
+#define PN_CLERIC_SPELL      (-15)
+#define PN_ESCAPE_SPELL      (-16)
+#define PN_MATTER_SPELL      (-17)
 
 static void give_may_advance_msg(int);
 
@@ -44,8 +45,8 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
     PN_DIVINATION_SPELL, PN_ENCHANTMENT_SPELL,
     PN_CLERIC_SPELL, PN_ESCAPE_SPELL,
     PN_MATTER_SPELL,
-    PN_BARE_HANDED, PN_TWO_WEAPONS, PN_SHIELD,
-    PN_RIDING, PN_WANDS
+    PN_BARE_HANDED, PN_TWO_WEAPONS,
+    PN_SHIELD, PN_WANDS, PN_RIDING, PN_STEALTH
 };
 
 /* note: entry [0] isn't used */
@@ -54,8 +55,9 @@ static const char *const odd_skill_names[] = {
     "bare hands",       /* use barehands_or_martial[] instead */
     "two weapon combat",
     "shield",
-    "riding",
     "wands",
+    "riding",
+    "stealth",
     "polearms",
     "saber",
     "hammer",
