@@ -2032,7 +2032,7 @@ mk_advcal_portal(struct level *lev)
     
     if (wizard)
         pline("Made advent calendar portal.");
-    place_branch(lev, br, 0, 0);
+    place_branch(lev, br, COLNO, ROWNO);
 
     return TRUE;
 }
