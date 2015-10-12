@@ -1576,7 +1576,7 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 
 static const char *const advent_text[] = {
     "This 25-piece short presentation is in the public domain.", /* 0 - unused */
-    "The universe and everything in it was made in six days by the Creator God.",
+    "The universe was made, and everything in it, in six days by the Creator God.",
     "Our ancestors knew God, but they rejected him, choosing to make their own path.",
     "We have all followed our own path ever since.  We are in rebellion against God.",
     "God, who judges all, will not let us go free forever, since we are rebellious.",
@@ -1594,13 +1594,14 @@ static const char *const advent_text[] = {
     "Because he was perfect, and because he was God, death had no power over him.",
     "His grave is empty.  After three days he returned to the world, alive and well.",
     "For weeks he walked, talked, lived, and ate with those who had seen him dead.",
-    "To prove himself real, he let one man put fingers into his execution wounds.",
+    /*"To prove himself real, he let one man put fingers into his execution wounds.",*/
     "He instructed his followers to tell the good news to all peoples everywhere.",
     "He returned to God by rising up into the sky; his followers watched him go.",
     "If we will follow him, he will cure our rebellion and teach us to follow God.",
     "Although we rebelled, God loves us and wants us to be restored and follow him.",
     "He will return one last time, and he will judge those who are still in revolt.",
     "After destroying his enemies, he will establish God's perfect kingdom forever."
+    /* I commented one out because we actually only have 24 doors. */
 };
 
 void
