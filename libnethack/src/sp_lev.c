@@ -1614,7 +1614,7 @@ fill_advent_calendar(struct level *lev, boolean init)
         for (y = 1; y < ROWNO; y++) {
             if (door_nr < 25 && isok(x,y) &&
                 IS_DOOR(lev->locations[x][y].typ)) {
-                if (y < 10) {
+                if (y < (ROWNO / 2)) {
                     out_x = x; out_y = y+1; in_x = x; in_y = y-1;
                 } else {
                     out_x = x; out_y = y-1; in_x = x; in_y = y+1;
