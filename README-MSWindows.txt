@@ -34,11 +34,20 @@ currently the easiest way to do this is as follows:
     (for modern versions of Windows) place, such as C:\GnuWin32\
     or something like that.  You will need to add this directory
     to your PATH (search for "PATH" in the Control Panel).
+    * Note that downloading and installing the GetGnuWin thing is
+      unhelpful.  It does not include or in any way help you get flex
+      or bison.  You need to download the actual flex and bison
+      package installers.
+    * Tell both of them to install in a path with no spaces.
 
  3. If you want graphical tiles support, or if you want to use the
     SDL-based "fake terminal" instead of the regular Windows console,
     you also need the SDL library _and_ development headers.  SDL
-    version 2 is required.
+    version 2 is required.  (The lead NH4 developer claims that the
+    SDL faketerm performs better than the regular Windows console.
+    My experience suggests very much otherwise.  My advice is to
+    forget about SDL unless you really want graphical tiles.)
+    If you decide you want SDL, do the following:
     * Download the MinGW version of the development headers and import
       libraries from www.libsdl.org and _also_ download the library
       itself.
