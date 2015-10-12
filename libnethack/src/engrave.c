@@ -364,6 +364,7 @@ read_engr_at(int x, int y)
                 sensed = 1;
                 pline("Colored lights spell out a message.");
             }
+            break;
         default:
             impossible("Something is written in a very strange way.");
             sensed = 1;
