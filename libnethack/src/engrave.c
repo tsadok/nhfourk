@@ -296,8 +296,8 @@ wipe_engr_at(struct level *lev, xchar x, xchar y, xchar cnt)
 {
     struct engr *ep = engr_at(lev, x, y);
 
-    /* Headstones are indelible */
-    if (ep && ep->engr_type != HEADSTONE) {
+    /* Headstones are indelible and lights don't randomly erode */
+    if (ep && ep->engr_type != HEADSTONE && ep->engr_type != ENGR_LIGHTS) {
         if (ep->engr_type != BURN || is_ice(lev, x, y)) {
             if (ep->engr_type != DUST && ep->engr_type != ENGR_BLOOD) {
                 cnt = rn2(1 + 50 / (cnt + 1)) ? 0 : 1;
@@ -359,6 +359,12 @@ read_engr_at(int x, int y)
                 pline("You see a message scrawled in blood here.");
             }
             break;
+        case ENGR_LIGHTS:
+            if (!Blind) {
+                sensed = 1;
+                pline("Colored lights spell out a message.");
+            }
+            break;
         default:
             impossible("Something is written in a very strange way.");
             sensed = 1;
@@ -410,7 +416,7 @@ make_engr_at(struct level *lev, int x, int y, const char *s, long e_time,
        polymorph; if they do anyway, using the poly_engrave RNG isn't the end of
        the world */
     ep->engr_type = e_type > 0 ? e_type :
-        1 + rn2_on_rng(N_ENGRAVE - 1, rng_poly_engrave);
+        1 + rn2_on_rng(MAX_RND_ENGR - 1, rng_poly_engrave);
     ep->engr_lth = engr_len + 1;
 }
 
@@ -953,6 +959,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             c = 'y';
         } else if ((type == oep->engr_type) &&
                    (!Blind || (oep->engr_type == BURN) ||
+                    (oep->engr_type == ENGR_LIGHTS) ||
                     (oep->engr_type == ENGRAVE))) {
             if (auto_elbereth)
                 c = 'y';
@@ -988,6 +995,15 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                       "engraved in",
                       surface(u.ux, u.uy));
                 return 1;
+            } else if (oep->engr_type == ENGR_LIGHTS) {
+                if (type == BURN) {
+                    pline("The colored lights short out and go dark.");
+                    eow = TRUE;
+                } else {
+                    pline("The colored lights distract you, and nothing "
+                          "really gets written.");
+                    return 1;
+                }
             } else if ((type != oep->engr_type) || (c == 'n')) {
                 if (!Blind || can_reach_floor())
                     pline("You will overwrite the current message.");
@@ -1023,6 +1039,11 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         break;
     case ENGR_BLOOD:
         everb = (oep && !eow ? "add to the scrawl on" : "scrawl on");
+        break;
+    case ENGR_LIGHTS:
+        /* This probably can't actually happen. */
+        everb = (oep && !eow ? "add to the writing in" : "write in");
+        eloc  = (oep && !eow ? "the colored lights"    : "colored lights");
         break;
     }
 
@@ -1170,6 +1191,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         break;
     case ENGR_BLOOD:
         helpless_endmsg = "You finish scrawling.";
+        break;
+    case ENGR_LIGHTS:
+        /* Probably can't actually happen. */
+        helpless_endmsg = "You finish arranging the colored lights.";
         break;
     }
 

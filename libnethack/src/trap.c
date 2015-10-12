@@ -1382,7 +1382,10 @@ blow_up_landmine(struct trap *trap)
     scatter(x, y, 4, MAY_DESTROY | MAY_HIT | MAY_FRACTURE | VIS_EFFECTS, NULL);
     del_engr_at(level, trap->tx, trap->ty);
     wake_nearto(trap->tx, trap->ty, 400);
-    if (IS_DOOR(level->locations[trap->tx][trap->ty].typ))
+    
+    /* ALI - artifact doors */
+    if (IS_DOOR(level->locations[trap->tx][trap->ty].typ) &&
+        !artifact_door(/*level, */trap->tx, trap->ty))
         level->locations[trap->tx][trap->ty].doormask = D_BROKEN;
     if (IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)
         || Is_waterlevel(&u.uz) || Is_airlevel(&u.uz)) {

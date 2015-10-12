@@ -138,6 +138,10 @@ picklock(void)
             return reset_pick();
     } else { /* door */
         door = &(level->locations[x][y]);
+        if (artifact_door(/*level, */x, y)) {
+            pline("You cannot find the locking mechanism on this door.");
+            return reset_pick();
+        }
         switch (door->doormask) {
         case D_NODOOR:
             pline("This doorway has no door.");
@@ -856,6 +860,7 @@ doorlock(struct obj * otmp, int x, int y)
     const char *msg = NULL;
     const char *dustcloud = "A cloud of dust";
     const char *quickly_dissipates = "quickly dissipates";
+    int key = artifact_door(/*level, */x, y);
 
     if (door->typ == SDOOR) {
         switch (otmp->otyp) {
@@ -863,13 +868,19 @@ doorlock(struct obj * otmp, int x, int y)
         case SPE_KNOCK:
         case WAN_STRIKING:
         case SPE_FORCE_BOLT:
-            door->typ = DOOR;
-            door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
+            door->typ = DOOR; /* reveal the secret */
+            if (!key)
+                door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
             newsym(x, y);
             if (cansee(x, y))
                 pline("A door appears in the wall!");
             if (otmp->otyp == WAN_OPENING || otmp->otyp == SPE_KNOCK)
                 return TRUE;
+            if (key) {
+                pline("The door vibrates violently in the seven dimensions "
+                      "of space, but time holds it firmly in place.");
+                return TRUE;
+            }
             break;      /* striking: continue door handling below */
         case WAN_LOCKING:
         case SPE_WIZARD_LOCK:
@@ -912,7 +923,7 @@ doorlock(struct obj * otmp, int x, int y)
                   quickly_dissipates);
             return FALSE;
         }
-        if (wandlevel == P_MASTER) {
+        if ((wandlevel == P_MASTER) && !key) {
             pline("%s springs up in the doorway and conceals it!", dustcloud);
             door->typ = SDOOR;
             newsym(x, y);
@@ -922,12 +933,18 @@ doorlock(struct obj * otmp, int x, int y)
         switch (door->doormask & ~D_TRAPPED) {
         case D_CLOSED:
             msg = "The door locks!";
+            if (key)
+                msg = "The door closes!";
             break;
         case D_ISOPEN:
             msg = "The door swings shut, and locks!";
+            if (key)
+                msg = "The door swings shut!";
             break;
         case D_BROKEN:
             msg = "The broken door reassembles and locks!";
+            if (key) /* Theoretically can't happen */
+                msg = "The broken door reassembles!";
             break;
         case D_NODOOR:
             msg =
@@ -938,12 +955,17 @@ doorlock(struct obj * otmp, int x, int y)
             break;
         }
         block_point(x, y);
-        door->doormask = D_LOCKED | (door->doormask & D_TRAPPED);
+        if (key)
+            door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
+        else
+            door->doormask = D_LOCKED | (door->doormask & D_TRAPPED);
         newsym(x, y);
         break;
     case WAN_OPENING:
     case SPE_KNOCK:
-        if (door->doormask & D_LOCKED) {
+        if (key)
+            msg = "The door seems unaffected.";
+        else if (door->doormask & D_LOCKED) {
             msg = "The door unlocks!";
             door->doormask = D_CLOSED | (door->doormask & D_TRAPPED);
         } else
@@ -951,7 +973,7 @@ doorlock(struct obj * otmp, int x, int y)
         break;
     case WAN_STRIKING:
     case SPE_FORCE_BOLT:
-        if (door->doormask & (D_LOCKED | D_CLOSED)) {
+        if (!key && (door->doormask & (D_LOCKED | D_CLOSED))) {
             if (door->doormask & D_TRAPPED) {
                 if (MON_AT(level, x, y))
                     mb_trapped(m_at(level, x, y));
@@ -1047,6 +1069,36 @@ chest_shatter_msg(struct obj *otmp)
     }
     pline("%s %s!", An(thing), disposition);
 }
+
+/* 
+ * ALI - Kevin Hugo's artifact doors.
+ * Return the artifact which unlocks the door at (x, y), or
+ * zero if it is an ordinary door.
+ * Note: Not all doors are listed in the doors array (eg., doors
+ * dynamically converted from secret doors). Since only trapped
+ * and artifact doors are needed this isn't a problem. If we ever
+ * implement trapped secret doors we will have to extend this.
+ * In any case, we currently only support artifact doors with
+ * no key at all, for the advent calendar level.
+ */
+
+int
+artifact_door(/*struct level *lev */int x, int y)
+{
+    /* int i; */
+
+    /* on the advent calendar level all doors are indestructible */
+    if (Is_advent_calendar(&u.uz)) return A_NONE;
+
+/*
+    for (i = 0; i < doorindex; i++) {
+	if (x == doors[i].x && y == doors[i].y)
+	    return doors[i].arti_key;
+    }
+*/
+    return 0;
+}
+
 
 /*lock.c*/
 

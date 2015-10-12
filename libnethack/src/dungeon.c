@@ -713,6 +713,7 @@ static struct level_map {
     const char *lev_name;
     d_level *lev_spec;
 } const level_map[] = {
+    {"advcal", &advcal_level },
     {"air", &air_level},
     {"asmodeus", &asmodeus_level},
     {"astral", &astral_level},
@@ -946,19 +947,17 @@ init_dungeons(void)
                    quest dungeon occur. */
                 snprintf(x->proto, SIZE(x->proto), "%s%s", urole.filecode,
                         &lev_map->lev_name[1]);
-            } else if (lev_map->lev_spec == &knox_level) {
+            } else if ((lev_map->lev_spec == &knox_level) ||
+                       (lev_map->lev_spec == &advcal_level)) {
                 branch *br;
 
-                /*
-                 * Kludge to allow floating Knox entrance.  We
-                 * specify a floating entrance by the fact that
-                 * its entrance (end1) has a bogus dnum, namely
-                 * n_dgns.
-                 */
+                /* Kludge to allow floating branch entrances.  We specify
+                   a floating entrance by the fact that its entrance (end1)
+                   has a bogus dnum, namely n_dgns. */
                 for (br = branches; br; br = br->next)
-                    if (on_level(&br->end2, &knox_level))
+                    if (on_level(&br->end2, lev_map->lev_spec))
                         break;
-
+                
                 if (br)
                     br->end1.dnum = n_dgns;
                 /* adjust the branch's position on the list */
@@ -1727,7 +1726,7 @@ print_dungeon(boolean bymenu, schar * rlev, xchar * rdgn)
             if (bymenu) {
                 /* If other floating branches are added, this will need to
                    change */
-                if (i != knox_level.dnum) {
+                if ((i != advcal_level.dnum) && (i != knox_level.dnum)) {
                     lchoices.lev[lchoices.idx] = slev->dlevel.dlevel;
                     lchoices.dgn[lchoices.idx] = i;
                 } else {
