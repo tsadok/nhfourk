@@ -157,6 +157,7 @@ extern void adjabil(int, int);
 extern int newhp(void);
 extern schar acurr(int);
 extern schar acurrstr(void);
+extern schar get_stealth(struct monst *);
 extern schar get_player_ac(void);
 extern void adjalign(int);
 extern void calc_attr_bonus(void);
@@ -1204,6 +1205,7 @@ extern short mprof(const struct monst *, int);
 
 extern boolean itsstuck(struct monst *);
 extern boolean mb_trapped(struct monst *);
+extern int disturb(struct monst *);
 extern void mon_regen(struct monst *, boolean);
 extern int dochugw(struct monst *);
 extern boolean onscary(int, int, struct monst *);

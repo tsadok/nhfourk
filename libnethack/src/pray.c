@@ -972,9 +972,6 @@ pleased(aligntyp g_align)
                 } else if (!(HFast & INTRINSIC)) {
                     HFast |= FROMOUTSIDE;
                     pline(msg, "Speed");
-                } else if (!(HStealth & INTRINSIC)) {
-                    HStealth |= FROMOUTSIDE;
-                    pline(msg, "Stealth");
                 } else {
                     if (!(HProtection & INTRINSIC)) {
                         HProtection |= FROMOUTSIDE;

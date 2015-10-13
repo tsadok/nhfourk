@@ -2562,8 +2562,7 @@ wake_nearby(boolean intentional)
 {
     wake_nearto(u.ux, u.uy, Aggravate_monster ? COLNO * COLNO + ROWNO * ROWNO :
                 intentional ? u.ulevel * 20 :
-                600 / (u.ulevel * (Role_if(PM_ROGUE) ? 2 : 1) *
-                       (Stealth ? 2 : 1)));
+                300 / (u.ulevel * (1 + get_stealth(&youmonst))));
 }
 
 /* Produce noise at a particular location. Monsters in the given dist2 radius

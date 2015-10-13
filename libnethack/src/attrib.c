@@ -27,7 +27,6 @@ struct innate {
 };
 
 static const struct innate arc_abil[] = {
-    {1, &(HStealth), "", ""},
     {1, &(HFast), "", ""},
     {10, &(HSearching), "perceptive", ""},
     {0, 0, 0, 0}
@@ -36,7 +35,6 @@ static const struct innate arc_abil[] = {
 static const struct innate bar_abil[] = {
     {1, &(HPoison_resistance), "", ""},
     {7, &(HFast), "quick", "slow"},
-    {15, &(HStealth), "stealthy", ""},
     {0, 0, 0, 0}
 };
 
@@ -62,7 +60,6 @@ static const struct innate mon_abil[] = {
     {1, &(HSleep_resistance), "", ""},
     {1, &(HSee_invisible), "", ""},
     {3, &(HPoison_resistance), "healthy", ""},
-    {5, &(HStealth), "stealthy", ""},
     {7, &(HWarning), "sensitive", ""},
     {9, &(HSearching), "perceptive", "unaware"},
     {11, &(HFire_resistance), "cool", "warmer"},
@@ -80,20 +77,17 @@ static const struct innate pri_abil[] = {
 
 static const struct innate ran_abil[] = {
     {1, &(HSearching), "", ""},
-    {7, &(HStealth), "stealthy", ""},
     {15, &(HSee_invisible), "", ""},
     {0, 0, 0, 0}
 };
 
 static const struct innate rog_abil[] = {
-    {1, &(HStealth), "", ""},
     {10, &(HSearching), "perceptive", ""},
     {0, 0, 0, 0}
 };
 
 static const struct innate sam_abil[] = {
     {1, &(HFast), "", ""},
-    {15, &(HStealth), "stealthy", ""},
     {0, 0, 0, 0}
 };
 
@@ -105,7 +99,6 @@ static const struct innate tou_abil[] = {
 
 static const struct innate val_abil[] = {
     {1, &(HCold_resistance), "", ""},
-    {1, &(HStealth), "", ""},
     {7, &(HFast), "quick", "slow"},
     {0, 0, 0, 0}
 };
@@ -133,7 +126,6 @@ static const struct innate sylph_abil[] = {
     /* They also get a form of slotless regeneration, but only under
        certain conditions, and with hunger implications so that's
        special-cased elsewhere. */
-    {3,  &(HStealth), "stealthy", "obvious"},
     {5,  &(HInfravision), "perceptive", "half blind"},
     {7,  &(HDisplacement), "elusive", "exposed"},
     {16, &(HDetect_monsters), "perceptive", "dull"},
@@ -870,6 +862,41 @@ acurrstr(void)
         return (schar) (19 + str / 50); /* map to 19-21 */
     else
         return (schar) (str - 100);
+}
+
+/* Returns a monster's (or the player's) current level of stealth.  Note that 1
+   is subtracted, because a base value of 1 is the default "no stealth unless
+   wearing stealth-granting item" level.  If a monster is given a base stealth
+   value of 0, wearing a single stealth-granting item is not enough to make it
+   stealthy.  2 or more means stealthy by default, and higher is stealthier. */
+/* Invisibility is NOT added in here, because we don't know who the observer is,
+   and they may be able to see invisible.  So that is handled in the caller. */
+schar
+get_stealth(struct monst *mon)
+{
+    boolean player = (mon == &youmonst) ? TRUE : FALSE;
+    enum objslot i;
+    /* start with intrinsic stealth */
+    int s = player ? (Upolyd ? youmonst.data->stealth :
+                      mons[urace.malenum].stealth) : mon->data->stealth;
+    /* Now check the armor and ring slots for stealth-granting items: */
+    for (i = os_arm; i <= os_last_equip; i++) {
+        if (i != os_quiver && i != os_swapwep) {
+            struct obj *item = which_armor(mon, i);
+            if (item && item_provides_extrinsic(item, STEALTH, 0)) {
+                if (i == os_ringl || i == os_ringr)
+                    s += item->spe;
+                else
+                    s++;
+            }
+        }
+    }
+    /* Finally, add in skill modifier: */
+    if (player)
+        s += P_SKILL(P_STEALTH);
+    if (s > 1)
+        return (schar) s - 1;
+    return (schar) 0;
 }
 
 /* Returns the player's effective AC rating. Use in place of u.uac. */

@@ -684,6 +684,7 @@ u_init_inv_skills(void)
         knows_object(SACK);
         knows_object(TOUCHSTONE);
         skill_init(Skill_A);
+        /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(0, RING_CLASS, 3);
         augment_magic_chest_contents(0, GEM_CLASS, 7);
         break;
@@ -799,6 +800,7 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         knows_object(SACK);
         skill_init(Skill_R);
+        /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(DAGGER, 0, 3);
         augment_magic_chest_contents(WAN_SLEEP, 0, 1);
         augment_magic_chest_contents(BAG_OF_HOLDING, 0, 1);

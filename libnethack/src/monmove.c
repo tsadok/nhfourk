@@ -9,7 +9,6 @@
 #include "epri.h"
 
 
-static int disturb(struct monst *);
 static void distfleeck(struct monst *, int *, int *, int *);
 static int m_arrival(struct monst *);
 static void watch_on_duty(struct monst *);
@@ -128,36 +127,51 @@ mon_regen(struct monst *mon, boolean digest_meal)
     }
 }
 
-/*
- * Possibly awaken the given monster.  Return a 1 if the monster has been
- * jolted awake.
- */
-static int
+/* Possibly awaken the given monster.  Return a 1 if the monster has been jolted
+   awake or has noticed you, 0 if nothing has happened. */
+/* TODO: put player stealth on its own rng. */
+int
 disturb(struct monst *mtmp)
 {
-    /*
-     * + Ettins are hard to surprise.
-     * + Nymphs, jabberwocks, and leprechauns do not easily wake up.
-     *
-     * Wake up if:
-     *      in line of effect                                       AND
-     *      within 10 squares                                       AND
-     *      not stealthy or (mon is an ettin and 9/10)              AND
-     *      (mon is not a nymph, jabberwock, or leprechaun) or 1/50 AND
-     *      Aggravate or mon is (dog or human) or
-     *          (1/7 and mon is not mimicing furniture or object)
-     */
-    if (couldsee(mtmp->mx, mtmp->my) && distu(mtmp->mx, mtmp->my) <= 100 &&
-        (!Stealth || (mtmp->data == &mons[PM_ETTIN] && rn2(10))) &&
-        (!(mtmp->data->mlet == S_NYMPH || mtmp->data == &mons[PM_JABBERWOCK]
-           || mtmp->data == &mons[PM_LEPRECHAUN]) || !rn2(50)) &&
-        (Aggravate_monster ||
-         (mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN)
-         || (!rn2(7) && mtmp->m_ap_type != M_AP_FURNITURE &&
-             mtmp->m_ap_type != M_AP_OBJECT))) {
-        mtmp->msleeping = 0;
-        return 1;
+    int stealth   = get_stealth(&youmonst);
+    int alertness = 1; /* base value */
+    int distance  = distu(mtmp->mx, mtmp->my);
+    if (!(mtmp->data->mlet == S_NYMPH || mtmp->data == &mons[PM_JABBERWOCK]
+           || mtmp->data == &mons[PM_LEPRECHAUN]))
+        /* Most monsters are more alert than these ones. */
+        alertness++;
+    if (mtmp->data == &mons[PM_ETTIN])
+        alertness += 2; /* Ettins are hard to surprise, having two heads */
+    if ((mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN) ||
+        (!rn2(7) && mtmp->m_ap_type != M_AP_FURNITURE &&
+         mtmp->m_ap_type != M_AP_OBJECT))
+        alertness++;
+    if (Aggravate_monster) /* makes things more likely to notice you */
+        alertness++;
+    if (Conflict) /* all monsters are more alert during conflict */
+        alertness++;
+
+    if (mtmp->data->mflags3 & M3_SCENT) {
+        alertness += 9 / distance;
+    } else if (Invisible && !perceives(mtmp->data)) {
+        stealth = (stealth + 1) * 2;
     }
+    /*
+    if (wizard)
+        pline("disturb(%d): d=%d; s=%d; a=%d0",
+              mtmp->m_id, distance, stealth, alertness);
+    */
+    if (couldsee(mtmp->mx, mtmp->my) &&
+        (((1 + stealth) * distance / 5) <= rn2(alertness))) {
+        if (mtmp->msleeping) {
+            mtmp->msleeping = 0;
+            return 1;
+        } else {
+            /* TODO: Monster _notices_ you. */
+            return 1;
+        }
+    }
+    use_skill(P_STEALTH, 1);
     return 0;
 }
 
