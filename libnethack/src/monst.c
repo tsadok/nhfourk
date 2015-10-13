@@ -1144,7 +1144,7 @@ const struct permonst mons[] = {
         A(ATTK(AT_BITE, AD_DRST, 2, 4), ATTK(AT_BITE, AD_PHYS, 1, 3),
           ATTK(AT_HUGS, AD_WRAP, 2, 4), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(900, 400, 0, MS_HISS, MZ_LARGE),
-        MR_POISON | MR_SLEEP | MR_ELEC | MR_MAGM, 0,
+        MR_POISON | MR_SLEEP | MR_ELEC, 0,
         MRACE_NONE, M1_FLY | M1_POIS,
         M2_MINION | M2_STALK | M2_STRONG | M2_NASTY,
         M3_INFRAVISIBLE | M3_INFRAVISION,
