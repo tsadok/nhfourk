@@ -1541,6 +1541,8 @@ pit_under_monster(struct monst *mtmp, int typ, boolean blameplayer)
                     }
                     if (blameplayer)
                         xkilled(mtmp, 0);
+                    else
+                        mondead(mtmp);
                 }
         }
     }

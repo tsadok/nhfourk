@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-21 */
+/* Last modified by Alex Smith, 2015-10-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -381,7 +381,7 @@ mattacku(struct monst *mtmp)
                           youmonst.data->mname);
                 killed(mtmp);
                 newsym(u.ux, u.uy);
-                if (mtmp->mhp > 0)
+                if (!DEADMONSTER(mtmp))
                     return 0;
                 else
                     return 1;
@@ -1771,7 +1771,7 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
             if (Punished)
                 placebc();
             minstapetrify(mtmp, TRUE);
-            if (mtmp->mhp > 0)
+            if (!DEADMONSTER(mtmp))
                 return 0;
             else
                 return 2;
@@ -2010,7 +2010,7 @@ explmu(struct monst *mtmp, const struct attack *mattk)
     place_monster(mtmp, mtmp->mx, mtmp->my);
     mondead(mtmp);
     wake_nearto(mtmp->mx, mtmp->my, 7 * 7);
-    if (mtmp->mhp > 0)
+    if (!DEADMONSTER(mtmp))
         return 0;
     return 2;   /* it dies */
 }
@@ -2053,7 +2053,7 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
             stoned = TRUE;
             killed(mtmp);
 
-            if (mtmp->mhp > 0)
+            if (!DEADMONSTER(mtmp))
                 break;
             return 2;
         }
@@ -2555,7 +2555,7 @@ passiveum(const struct permonst *olduasmon, struct monst *mtmp,
                 pline("%s turns to stone!", Monnam(mtmp));
                 stoned = 1;
                 xkilled(mtmp, 0);
-                if (mtmp->mhp > 0)
+                if (!DEADMONSTER(mtmp))
                     return 1;
                 return 2;
             }
@@ -2712,7 +2712,7 @@ assess_dmg:
     if ((mtmp->mhp -= tmp) <= 0) {
         pline("%s dies!", Monnam(mtmp));
         xkilled(mtmp, 0);
-        if (mtmp->mhp > 0)
+        if (!DEADMONSTER(mtmp))
             return 1;
         return 2;
     }

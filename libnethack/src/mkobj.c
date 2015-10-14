@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-10-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -849,7 +849,7 @@ start_corpse_timeout(struct obj *body)
     when += (long)(rnz(rot_adjust) - rot_adjust);
 
     if (is_rider(&mons[body->corpsenm])) {
-        /* 
+        /*
          * Riders always revive.  They have a 1/3 chance per turn
          * of reviving after 12 turns.  Always revive by 500.
          */
@@ -986,7 +986,7 @@ weight(struct obj *obj)
 
         for (contents = obj->cobj; contents; contents = contents->nobj)
             cwt += weight(contents);
-        /* 
+        /*
          *  The weight of bags of holding is calculated as the weight
          *  of the bag plus the weight of the bag's contents modified
          *  as follows:
@@ -1165,6 +1165,10 @@ save_mtraits(struct obj *obj, struct monst *mtmp)
         mtmp2->nmon = NULL;
         mtmp2->data = NULL;
         mtmp2->minvent = NULL;
+
+        /* clear monster turnstate */
+        mtmp2->deadmonster = 0;
+
         otmp->oattached = OATTACHED_MONST;      /* mark it */
     }
     return otmp;
@@ -1440,7 +1444,7 @@ discard_minvent(struct monst *mtmp)
 
 /*
  * Free obj from whatever list it is on in preperation of deleting it or
- * moving it elsewhere. 
+ * moving it elsewhere.
  *
  * [The documentation here previously said "this will perform all high-level
  * consequences involved with removing the item.  E.g. if the object is in the
@@ -1658,7 +1662,7 @@ dealloc_obj(struct obj *obj)
     if (obj->timed)
         obj_stop_timers(obj);
 
-    /* 
+    /*
      * Free up any light sources attached to the object.
      *
      * We may want to just call del_light_source() without any
@@ -1843,4 +1847,3 @@ save_obj(struct memfile *mf, struct obj *obj)
 }
 
 /*mkobj.c*/
-

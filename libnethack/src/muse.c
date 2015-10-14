@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by FIQ, 2015-08-24 */
+/* Last modified by Alex Smith, 2015-10-11 */
 /* Copyright (C) 1990 by Ken Arromdee                              */
 /* NetHack may be freely redistributed.  See license for details.  */
 
@@ -137,7 +137,7 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
             m_useup(mon, obj);
             m->has_defense = m->has_offense = m->has_misc = MUSE_NONE;
             /* Only one needed to be set to MUSE_NONE but the others are harmless */
-            return (mon->mhp <= 0) ? 1 : 2;
+            return (DEADMONSTER(mon) ? 1 : 2);
         }
     }
     return 0;
@@ -1346,7 +1346,7 @@ use_offensive(struct monst *mtmp, struct musable *m)
                  sgn(tbx), sgn(tby), wandlevel);
     
             m_using = FALSE;
-            return (mtmp->mhp <= 0) ? 1 : 2;
+            return DEADMONSTER(mtmp) ? 1 : 2;
         }
 
     case MUSE_FIRE_HORN:
@@ -1361,7 +1361,7 @@ use_offensive(struct monst *mtmp, struct musable *m)
         buzz(-30 - ((otmp->otyp == FROST_HORN) ? AD_COLD - 1 : AD_FIRE - 1),
              rn1(6, 6), mtmp->mx, mtmp->my, sgn(tbx), sgn(tby), 0);
         m_using = FALSE;
-        return (mtmp->mhp <= 0) ? 1 : 2;
+        return (DEADMONSTER(mtmp)) ? 1 : 2;
     case MUSE_SCR_EARTH:
         {
             /* TODO: handle steeds */
@@ -1495,7 +1495,7 @@ use_offensive(struct monst *mtmp, struct musable *m)
             }
         xxx_noobj:
 
-            return (mtmp->mhp <= 0) ? 1 : 2;
+            return (DEADMONSTER(mtmp)) ? 1 : 2;
         }
     case MUSE_POT_PARALYSIS:
     case MUSE_POT_BLINDNESS:
@@ -1861,6 +1861,8 @@ use_misc(struct monst *mtmp, struct musable *m)
            permanently */
         mon_adjust_speed(mtmp, 1, otmp);
         m_useup(mtmp, otmp);
+        if (oseen)
+            makeknown(otmp->otyp);
         return 2;
     case MUSE_POT_POLYMORPH:
         mquaffmsg(mtmp, otmp);
