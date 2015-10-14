@@ -721,11 +721,19 @@ dokick(const struct nh_cmd_arg *arg)
             break;
         case TT_WEB:
         case TT_BEARTRAP:
+        case TT_LAVA:
             pline("You can't move your %s!", body_part(LEG));
             break;
         default:
             break;
         }
+        no_kick = TRUE;
+    } else if (!rn2(2) && is_puddle(level, u.ux, u.uy) &&
+               !Levitation && !Flying && !Wwalking &&
+               /* mud boots negate water resistance */
+               (!uarmf || strncmp(OBJ_DESCR(objects[uarmf->otyp]), "mud ", 4))) {
+        pline("The water at your %s hinders your ability to kick.",
+              makeplural(body_part(FOOT)));
         no_kick = TRUE;
     }
 
@@ -826,7 +834,7 @@ dokick(const struct nh_cmd_arg *arg)
 
     reveal_monster_at(x, y, TRUE);
 
-    if (is_pool(level, x, y) ^ ! !u.uinwater) {
+    if (is_damp_terrain(level, x, y) ^ ! !u.uinwater) {
         /* objects normally can't be removed from water by kicking */
         pline("You splash some water around.");
         return 1;

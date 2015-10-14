@@ -1294,6 +1294,10 @@ place_object(struct obj *otmp, struct level *lev, int x, int y)
 
     if (otmp->timed)
         obj_timer_checks(otmp, x, y, 0);
+
+    /* for objects initially created in water */
+    if (is_damp_terrain(lev, x, y))
+	water_damage(otmp, FALSE, FALSE);
 }
 
 #define ON_ICE(a) ((a)->recharged)

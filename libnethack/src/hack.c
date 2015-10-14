@@ -2342,6 +2342,56 @@ invocation_message(void)
     }
 }
 
+static const char * const hallu_adverb[] = {
+    "mildly", "mostly", "somewhat", "slightly", "probably", "massively", "extremely",
+    "flagrantly", "flamboyantly", "supremely", "excessively", "truly", "terribly",
+    "incredibly", "unbelievably", "obscenely", "insanely", "amazingly", "absolutely"
+};
+
+void
+wounds_message(struct monst *mon)
+{
+    const char *mwounds = mon_wounds(mon);
+    if (mwounds)
+        pline("%s is %s.", Monnam(mon), mwounds);
+}
+
+const char *
+mon_wounds(struct monst *mon)
+{
+    boolean wounded = ((!nonliving(mon->data) || 
+                        /* Zombies and mummies (but not skeletons) have flesh */
+                        ((mon->data->mlet == S_ZOMBIE && mon->data != &mons[PM_SKELETON])
+                         || mon->data->mlet == S_MUMMY || mon->data->mlet == S_VAMPIRE
+                         || mon->data == &mons[PM_FLESH_GOLEM]))
+                       && !vegetarian(mon->data));   
+
+    /* Able to detect wounds? */
+    if (!(canseemon(mon) || (u.ustuck == mon && u.uswallow && !Blind))
+        || !Role_if(PM_HEALER))
+        return NULL;
+    if (mon->mhp == mon->mhpmax || mon->mhp < 1)
+        return NULL;
+    if (!Hallucination && mon->mhp <= mon->mhpmax / 6) {
+        return msgprintf("almost %s",
+                         nonliving(mon->data) ? "destroyed" : "dead");
+    } else {
+        if (Hallucination) {
+            return msgprintf("%s %s",
+                             hallu_adverb[rn2(SIZE(hallu_adverb))],
+                             (rn2(2) ? "wounded" : "damaged"));
+        }
+        else if (mon->mhp <= mon->mhpmax / 4)
+            return msgprintf("horribly %s",   (wounded ? "wounded" : "damaged"));
+        else if (mon->mhp <= mon->mhpmax / 3)
+            return msgprintf("heavily %s",    (wounded ? "wounded" : "damaged"));
+        else if (mon->mhp <= 3 * mon->mhpmax / 4)
+            return msgprintf("moderately %s", (wounded ? "wounded" : "damaged"));
+        else
+            return msgprintf("lightly %s",    (wounded ? "wounded" : "damaged"));
+    }
+}
+
 
 void
 spoteffects(boolean pick)
@@ -2395,6 +2445,33 @@ stillinwater:
                     return;
             } else if (!Wwalking && drown())
                 return;
+        } else if (is_puddle(level, u.ux, u.uy) && !Wwalking) {
+            /*pline("You %s through the shallow water.",
+                    verysmall(youmonst.data) ? "wade" : "splash");
+              if (!verysmall(youmonst.data) && !rn2(4)) wake_nearby();*/
+            
+            if(Upolyd && youmonst.data  == &mons[PM_GREMLIN])
+                (void) split_mon(&youmonst, NULL);
+            else if (youmonst.data == &mons[PM_IRON_GOLEM] &&
+                     /* mud boots keep the feet dry */
+                     (!uarmf ||
+                      strncmp(OBJ_DESCR(objects[uarmf->otyp]), "mud ", 4))) {
+                int dam = rnd(6);
+                pline("Your %s rust!", makeplural(body_part(FOOT)));
+                if (u.mhmax > dam)
+                    u.mhmax -= dam;
+                losehp(dam, killer_msg(DIED, "rusting away"));
+            } else if (is_longworm(youmonst.data)) {
+                int dam = dice(3, 12);
+                if (u.mhmax > dam)
+                    u.mhmax -= ((dam + 1) / 2);
+                pline("The water burns your flesh!");
+                losehp(dam, killer_msg(DIED, "contact with water"));
+            }
+            if (verysmall(youmonst.data))
+                water_damage_chain(invent, FALSE);
+            if (!u.usteed)
+                (void) water_damage(uarmf, "boots", TRUE);
         }
     }
     check_special_room(FALSE);
@@ -2710,8 +2787,8 @@ check_special_room(boolean newlev)
             level->rooms[roomno].rtype = OROOM;
             if (rt == COURT || rt == SWAMP || rt == MORGUE || rt == ZOO)
                 for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
-                    if (!DEADMONSTER(mtmp) && !Stealth && !rn2(3))
-                        mtmp->msleeping = 0;
+                    if (!DEADMONSTER(mtmp) && !rn2(3))
+                        disturb(mtmp);
         }
     }
 
@@ -3104,7 +3181,7 @@ maybe_wail(void)
 {
     static const short powers[] = { TELEPORT, SEE_INVIS, POISON_RES, COLD_RES,
         SHOCK_RES, FIRE_RES, SLEEP_RES, DISINT_RES,
-        TELEPORT_CONTROL, STEALTH, FAST, INVIS
+        TELEPORT_CONTROL, FAST, INVIS
     };
 
     if (moves <= wailmsg + 50)

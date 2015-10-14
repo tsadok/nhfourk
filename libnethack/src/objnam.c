@@ -2430,6 +2430,15 @@ srch:
             newsym(u.ux, u.uy);
             return &zeroobj;
         }
+        if(!BSTRCMP(bp, p-13, "shallow water") ||
+           !BSTRCMP(bp, p-6, "puddle")) {
+            level->locations[u.ux][u.uy].typ = PUDDLE;
+            del_engr_at(level, u.ux, u.uy);
+            pline("Shallow water.");
+            water_damage_chain(level->objects[u.ux][u.uy], TRUE);
+            newsym(u.ux, u.uy);
+            return &zeroobj;
+        }
         if (!BSTRCMP(bp, p - 4, "lava")) {      /* also matches "molten lava" */
             level->locations[u.ux][u.uy].typ = LAVAPOOL;
             del_engr_at(level, u.ux, u.uy);

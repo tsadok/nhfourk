@@ -116,7 +116,7 @@ dosit(const struct nh_cmd_arg *arg)
             pline("There are no cushions floating nearby.");
         else
             pline("You sit down on the muddy bottom.");
-    } else if (is_pool(level, u.ux, u.uy)) {
+    } else if (is_damp_terrain(level, u.ux, u.uy)) {
     in_water:
         pline("You sit in the water.");
         if (!rn2(10) && uarm)
@@ -473,6 +473,10 @@ mrndcurse(struct monst *mtmp)
 void
 attrcurse(void)
 {
+    if (magic_negation(&youmonst) > rn2(10)) {
+        pline("You feel as if something is protecting you.");
+        return;
+    }
     /* probably too rare to benefit from a custom RNG */
     switch (rnd(11)) {
     case 1:
@@ -529,9 +533,9 @@ attrcurse(void)
             break;
         }
     case 9:
-        if (HStealth & INTRINSIC) {
-            HStealth &= ~INTRINSIC;
-            pline("You feel clumsy.");
+        if (HTeleport_control & INTRINSIC) {
+            HTeleport_control &= ~INTRINSIC;
+            pline("You feel out of control.");
             break;
         }
     case 10:

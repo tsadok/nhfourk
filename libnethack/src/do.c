@@ -188,7 +188,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
         return TRUE;
     } else if (is_lava(lev, x, y)) {
         return fire_damage(obj, FALSE, TRUE, x, y);
-    } else if (is_pool(lev, x, y)) {
+    } else if (is_damp_terrain(lev, x, y)) {
         /* Reasonably bulky objects (arbitrary) splash when dropped. If you're
            floating above the water even small things make noise. Stuff dropped 
            near fountains always misses */
@@ -201,11 +201,12 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
                     pline("Plop!");
                 }
             }
-            map_background(x, y, 0);
+            /* map_background(x, y, 0); *//* Can't tell what kind of water. */
             if (lev == level)
                 newsym(x, y);
         }
-        return water_damage(obj, NULL, FALSE) == 3;
+        /* L: water_damage() moved to place_object() */
+        /* return water_damage(obj, NULL, FALSE) == 3; */
     } else if (u.ux == x && u.uy == y && (!u.utrap || u.utraptype != TT_PIT) &&
                (t = t_at(lev, x, y)) != 0 && t->tseen &&
                is_pit_trap(t->ttyp)) {

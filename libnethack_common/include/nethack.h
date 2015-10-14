@@ -14,7 +14,7 @@
    here, if save/bones compatibility is not broken between versions.) */
 # define VERSION_MAJOR  3
 # define VERSION_MINOR  0
-# define PATCHLEVEL     3
+# define PATCHLEVEL     4
 
 # include "nethack_types.h"
 

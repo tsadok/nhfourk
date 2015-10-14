@@ -1081,7 +1081,8 @@ waterbody_impl(xchar x, xchar y, boolean article)
         return "ice";
     else if (is_moat(level, x, y))
         return msgcat(article ? "a " : "", "moat");
-    else if ((ltyp != POOL) && (ltyp != WATER) && Is_juiblex_level(&u.uz))
+    else if ((ltyp != POOL) && (ltyp != WATER) && (ltyp != PUDDLE) &&
+             Is_juiblex_level(&u.uz))
         return msgcat(article ? "a " : "", "swamp");
     else if (ltyp == POOL)
         return msgcat(article ? "a " : "", "pool of water");

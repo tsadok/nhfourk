@@ -341,9 +341,22 @@ dodrink(const struct nh_cmd_arg *arg)
     }
 
     /* Or are you surrounded by water? */
-    if (Underwater && !Engulfed) {
+    if (((is_puddle(level, u.ux, u.uy) && !verysmall(youmonst.data)) ||
+         (is_pool(level, u.ux, u.uy) && Wwalking)) && !Engulfed) {
+        if (yn(msgprintf("Drink the water at your %s?",
+                         makeplural(body_part(FOOT))))) {
+            if ((youmonst.data->mlet == S_JELLY) ||
+                (youmonst.data->mlet == S_PUDDING))
+                pline("If there's anything you could absorb that would make "
+                      "you any slimier, it's probably living in that water.");
+            else
+                pline("Do you know what lives in that water?");
+        }
+    } else if ((Underwater ||
+                (is_puddle(level, u.ux, u.uy) && verysmall(youmonst.data)))
+               && !Engulfed) {
         if (yn("Drink the water around you?") == 'y') {
-            pline("Do you know what lives in this water?!");
+            pline("Do you know what lives in this water?");
             return 1;
         }
     }
@@ -1507,7 +1520,7 @@ dodip(const struct nh_cmd_arg *arg)
                 dipfountain(obj);
                 return 1;
             }
-        } else if (is_pool(level, u.ux, u.uy)) {
+        } else if (is_damp_terrain(level, u.ux, u.uy)) {
             tmp = waterbody_name(u.ux, u.uy);
             qbuf = msgprintf("Dip %s into the %s?",
                              safe_qbuf("",

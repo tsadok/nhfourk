@@ -251,10 +251,10 @@ update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
             /* properties handled elsewhere */
         case ANTIMAGIC:
         case REFLECTING:
+        case STEALTH: /* get_stealth() handles this now */
             break;
             /* properties which have no effect for monsters */
         case CLAIRVOYANT:
-        case STEALTH:
         case TELEPAT:
             break;
             /* properties which should have an effect but aren't implemented */

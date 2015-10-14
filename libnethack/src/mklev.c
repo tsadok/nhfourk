@@ -13,6 +13,7 @@ static void mkfount(struct level *lev, int, struct mkroom *);
 static void mksink(struct level *lev, struct mkroom *);
 static void mkaltar(struct level *lev, struct mkroom *);
 static void mkgrave(struct level *lev, struct mkroom *);
+static void mkpuddles(struct level *lev, struct mkroom *);
 static void makevtele(struct level *lev);
 static void makelevel(struct level *lev);
 static void mineralize(struct level *lev);
@@ -930,8 +931,6 @@ makelevel(struct level *lev)
         if (u_depth > 1 && u_depth < depth(&medusa_level) &&
             lev->nroom >= room_threshold && mrn2(u_depth) < 3)
             mkroom(lev, SHOPBASE);
-        else if (u_depth > 15 && !mrn2(6))
-            mkroom(lev, DRAGONHALL);
         else if (u_depth > 4 && !mrn2(6))
             mkroom(lev, COURT);
         else if (u_depth > 5 && !mrn2(8)) {
@@ -1011,12 +1010,19 @@ skip0:
         }
         if (Is_rogue_level(&lev->z))
             goto skip_nonrogue;
-        if (!mrn2(10))
-            mkfount(lev, 0, croom);
+        
+        /* greater chance of puddles if a water source is nearby */
+        x = 40;
+        if(!rn2(10)) {
+            mkfount(lev, 0,croom);
+            x = 20;
+        }
         if (!mrn2(60))
             mksink(lev, croom);
         if (!mrn2(60))
             mkaltar(lev, croom);
+        if (!rn2(x))
+            mkpuddles(lev, croom);
         x = 80 - (depth(&lev->z) * 2);
         if (x < 2)
             x = 2;
@@ -1357,6 +1363,52 @@ pos_to_room(struct level *lev, xchar x, xchar y)
         if (inside_room(curr, x, y))
             return curr;
     return NULL;
+}
+
+/* make connected spots of shallow water (or pools) and add sea monsters */
+void
+mkpuddles(struct level *lev, struct mkroom *croom)
+{
+    coord m;
+    int tryct = 0;
+    int puddles = 0; /* how many spaces have we altered? */
+    int fish = 0;
+    int rng = rng_for_level(&lev->z);
+	
+    do {
+        if (tryct++ > 200)
+            return;
+        if (!somexy(lev, croom, &m, rng))
+            return;
+    } while (occupied(lev, m.x, m.y));
+	
+    do {
+        if (!is_damp_terrain(lev, m.x, m.y)) {
+            puddles++;
+            lev->locations[m.x][m.y].typ =
+                (depth(&lev->z) > 3 + rn2_on_rng(35, rng)) ? POOL : PUDDLE;
+        }
+        if ((puddles > 4 + 2 * fish) && (rn2_on_rng(depth(&lev->z), rng) > 4)) {
+            (void)makemon(is_pool(lev, m.x, m.y) ?
+                          mkclass(&lev->z, S_EEL, 0, rng) : &mons[PM_PIRANHA],
+                          lev, m.x, m.y, NO_MM_FLAGS);
+            fish++;
+        }
+        tryct = 0;
+        do {
+            /* Always changing both coords by 1 (either increment or decrement)
+               ensures that we never place water orthogonally adjacent to
+               water, i.e., we confine the water to a checkerboard pattern;
+               thus the player is never required to cross water to traverse a
+               level as a result of this function.  (Special levels, such as
+               Medusa's Island, are another matter.) */
+            m.x += sgn(rn2(3)-1);
+            m.y += sgn(rn2(3)-1);
+        } while ((occupied(lev, m.x, m.y) ||
+                  m.x < croom->lx || m.x > croom->hx ||
+                  m.y < croom->ly || m.y > croom->hy)
+                 && (++tryct <= 27));
+    } while (tryct <= 27);
 }
 
 

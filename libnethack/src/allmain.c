@@ -922,7 +922,8 @@ you_moved(void)
                 /* for the moment at least, you're in tiptop shape */
                 wtcap = UNENCUMBERED;
             } else if (Upolyd && youmonst.data->mlet == S_EEL &&
-                       !is_pool(level, u.ux, u.uy) && !Is_waterlevel(&u.uz)) {
+                       !is_damp_terrain(level, u.ux, u.uy) &&
+                       !Is_waterlevel(&u.uz)) {
                 if (u.mh > 1) {
                     u.mh--;
                 } else if (u.mh < 1)

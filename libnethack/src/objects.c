@@ -213,7 +213,7 @@ const struct objclass const_objects[] = {
     WEAPON("club", NULL,
            1, 0, 0, 12, 30, 3, 6, 3, 0, B, P_CLUB, WOOD, HI_WOOD),
     WEAPON("rubber hose", NULL,
-           1, 0, 0, 0, 20, 3, 4, 3, 0, B, P_WHIP, PLASTIC, CLR_BROWN),
+           1, 0, 0, 0, 20, 3, 4, 3, 0, 0, P_WHIP, PLASTIC, CLR_BROWN),
     WEAPON("quarterstaff", "staff",
            0, 0, 1, 11, 40, 5, 6, 6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */
@@ -474,7 +474,7 @@ const struct objclass const_objects[] = {
          200, 1, 0, 6, MINERAL, HI_MINERAL),
     RING("searching", SEARCHING, "tiger eye", 200, 1, 0, 6, GEMSTONE,
          CLR_BROWN),
-    RING("stealth", STEALTH, "jade", 100, 1, 0, 6, GEMSTONE, CLR_GREEN),
+    RING("stealth", STEALTH, "jade", 100, 1, 1, 6, GEMSTONE, CLR_GREEN),
     RING("sustain ability", FIXED_ABIL, "bronze",
          100, 1, 0, 4, COPPER, HI_COPPER),
     RING("levitation", LEVITATION, "agate", 200, 1, 0, 7, GEMSTONE, CLR_RED),

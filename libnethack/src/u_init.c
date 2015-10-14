@@ -342,7 +342,7 @@ static const struct def_skill Skill_A[] = {
     {P_UNICORN_HORN, P_SKILLED},
     {P_ATTACK_SPELL, P_BASIC}, {P_HEALING_SPELL, P_BASIC},
     {P_DIVINATION_SPELL, P_EXPERT}, {P_MATTER_SPELL, P_BASIC},
-    {P_RIDING, P_BASIC},
+    {P_RIDING, P_BASIC}, {P_STEALTH, P_EXPERT},
     {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
     {P_WANDS, P_SKILLED},
@@ -376,7 +376,7 @@ static const struct def_skill Skill_C[] = {
     {P_BOW, P_BASIC}, {P_SLING, P_EXPERT},
     {P_BOOMERANG, P_EXPERT}, {P_UNICORN_HORN, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_MASTER},
-    {P_SHIELD, P_BASIC}, {P_WANDS, P_BASIC},
+    {P_STEALTH, P_SKILLED}, {P_SHIELD, P_BASIC}, {P_WANDS, P_BASIC},
     {P_NONE, 0}
 };
 
@@ -391,7 +391,7 @@ static const struct def_skill Skill_H[] = {
     {P_SHURIKEN, P_SKILLED}, {P_UNICORN_HORN, P_EXPERT},
     {P_HEALING_SPELL, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_BASIC},
-    {P_SHIELD, P_BASIC}, {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_BASIC}, {P_SHIELD, P_BASIC}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -423,7 +423,7 @@ static const struct def_skill Skill_Mon[] = {
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_MATTER_SPELL, P_BASIC},
     {P_MARTIAL_ARTS, P_GRAND_MASTER}, {P_SHIELD, P_SKILLED},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_SKILLED}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -439,7 +439,7 @@ static const struct def_skill Skill_P[] = {
     {P_HEALING_SPELL, P_EXPERT}, {P_DIVINATION_SPELL, P_EXPERT},
     {P_CLERIC_SPELL, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_EXPERT},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_EXPERT}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -458,7 +458,7 @@ static const struct def_skill Skill_R[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_BASIC},
-    {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_MASTER}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -478,7 +478,7 @@ static const struct def_skill Skill_Ran[] = {
     {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_BASIC},
-    {P_SHIELD, P_SKILLED}, {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_EXPERT}, {P_SHIELD, P_SKILLED}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -494,7 +494,7 @@ static const struct def_skill Skill_S[] = {
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},
     {P_MARTIAL_ARTS, P_MASTER},  {P_SHIELD, P_SKILLED},
-    {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_BASIC}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -517,7 +517,7 @@ static const struct def_skill Skill_T[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_SKILLED},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_SKILLED}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -534,7 +534,7 @@ static const struct def_skill Skill_V[] = {
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_MASTER},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
-    {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_BASIC}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -552,7 +552,7 @@ static const struct def_skill Skill_W[] = {
     {P_MATTER_SPELL, P_EXPERT},
     {P_RIDING, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_SKILLED}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -684,6 +684,7 @@ u_init_inv_skills(void)
         knows_object(SACK);
         knows_object(TOUCHSTONE);
         skill_init(Skill_A);
+        /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(0, RING_CLASS, 3);
         augment_magic_chest_contents(0, GEM_CLASS, 7);
         break;
@@ -799,6 +800,7 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         knows_object(SACK);
         skill_init(Skill_R);
+        /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(DAGGER, 0, 3);
         augment_magic_chest_contents(WAN_SLEEP, 0, 1);
         augment_magic_chest_contents(BAG_OF_HOLDING, 0, 1);
@@ -908,9 +910,11 @@ u_init_inv_skills(void)
         static const int trotyp[] = {
             WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP, LEATHER_DRUM
         };
-        augment_magic_chest_contents(LEMBAS_WAFER, 0, 5);
+        augment_magic_chest_contents(LEMBAS_WAFER, 0, 3);
         augment_magic_chest_contents(ELVEN_SHIELD, 0, 1);
         augment_magic_chest_contents(ELVEN_BOOTS, 0, 5);
+        augment_skill_cap(P_STEALTH, 1, P_SKILLED, P_EXPERT);
+
         if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
             trobj_list = copy_trobj_list(Instrument);
             trobj_list[0].trotyp = trotyp[rn2(SIZE(trotyp))];
@@ -953,6 +957,7 @@ u_init_inv_skills(void)
         ini_inv(GnomeStuff, nclist, rng_main);
         augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
+        augment_skill_cap(P_STEALTH, 1, P_BASIC, P_EXPERT);
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
         augment_magic_chest_contents(TALLOW_CANDLE, 0, 5);
         augment_magic_chest_contents(WAX_CANDLE, 0, 5);
@@ -976,6 +981,7 @@ u_init_inv_skills(void)
         knows_object(ORCISH_CLOAK);
         augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
         augment_skill_cap(P_SHIELD, 1, P_BASIC, P_MASTER);
+        augment_skill_cap(P_STEALTH, 1, P_BASIC, P_SKILLED);
         augment_magic_chest_contents(0, ARMOR_CLASS, 12);
         break;
 
@@ -984,7 +990,8 @@ u_init_inv_skills(void)
         if (Role_if(PM_HEALER)) {
             trobj_list[SYL_HEALINGPOT].trotyp = MAGIC_HARP;
         }
-        augment_skill_cap(P_HEALING_SPELL, 1, P_BASIC, P_SKILLED);
+        augment_skill_cap(P_STEALTH, 1, P_BASIC, P_MASTER);
+        augment_skill_cap(P_HEALING_SPELL, 1, P_SKILLED, P_SKILLED);
         augment_magic_chest_contents(0, FOOD_CLASS, 3);
         ini_inv(trobj_list, nclist, rng_main);
         break;

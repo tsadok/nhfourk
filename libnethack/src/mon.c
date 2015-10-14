@@ -213,6 +213,13 @@ make_corpse(struct monst *mtmp)
         }
         goto default_1;
 
+    case PM_WATER_ELEMENTAL:
+        if (level->locations[mtmp->mx][mtmp->my].typ == ROOM) {
+            level->locations[mtmp->mx][mtmp->my].typ = PUDDLE;
+            water_damage_chain(level->objects[mtmp->mx][mtmp->my], TRUE);
+        }
+        goto default_1;
+
     case PM_WHITE_UNICORN:
     case PM_GRAY_UNICORN:
     case PM_BLACK_UNICORN:
@@ -344,13 +351,15 @@ make_corpse(struct monst *mtmp)
 int
 minliquid(struct monst *mtmp)
 {
-    boolean inpool, inlava, infountain;
+    boolean inpool, inlava, infountain, inshallow;
 
     inpool = is_pool(level, mtmp->mx, mtmp->my) && !is_flyer(mtmp->data) &&
         !is_floater(mtmp->data);
     inlava = is_lava(level, mtmp->mx, mtmp->my) && !is_flyer(mtmp->data) &&
         !is_floater(mtmp->data);
     infountain = IS_FOUNTAIN(level->locations[mtmp->mx][mtmp->my].typ);
+    inshallow  = is_puddle(level, mtmp->mx, mtmp->my) &&
+        !is_flyer(mtmp->data) && !is_floater(mtmp->data);
 
     /* Flying and levitation keeps our steed out of the liquid */
     /* (but not water-walking or swimming) */
@@ -359,13 +368,16 @@ minliquid(struct monst *mtmp)
 
     /* Gremlin multiplying won't go on forever since the hit points keep going
        down, and when it gets to 1 hit point the clone function will fail. */
-    if (mtmp->data == &mons[PM_GREMLIN] && (inpool || infountain) && rn2(3)) {
+    if (mtmp->data == &mons[PM_GREMLIN] &&
+        (inpool || infountain || inshallow) && rn2(3)) {
         if (split_mon(mtmp, NULL))
             dryup(mtmp->mx, mtmp->my, FALSE);
         if (inpool)
             water_damage_chain(mtmp->minvent, FALSE);
         return 0;
-    } else if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
+    } else if (mtmp->data == &mons[PM_IRON_GOLEM] &&
+               ((inpool && !rn2(5)) || inshallow)) {
+        /* rusting requires oxygen and water, so it's faster for shallow water */
         int dam = dice(2, 6);
 
         if (cansee(mtmp->mx, mtmp->my))
@@ -374,12 +386,33 @@ minliquid(struct monst *mtmp)
         if (mtmp->mhpmax > dam)
             mtmp->mhpmax -= dam;
         if (mtmp->mhp < 1) {
+            if (canseemon(mtmp))
+                pline("%s falls to pieces.", Monnam(mtmp));
             mondead(mtmp);
-            if (mtmp->mhp < 1)
+            if (mtmp->mhp < 1) {
+                if (mtmp->mtame && !canseemon(mtmp))
+		    pline("May %s rust in peace.", mon_nam(mtmp));
                 return 1;
+            }
         }
-        water_damage_chain(mtmp->minvent, FALSE);
+        if (inshallow)
+            water_damage(which_armor(mtmp, os_armf), FALSE, FALSE);
+        else
+            water_damage_chain(mtmp->minvent, FALSE);
         return 0;
+    } else if  (is_longworm(mtmp->data) && inshallow) {
+	int dam = dice(3,12);
+	if (cansee(mtmp->mx,mtmp->my))
+	    pline("The water burns %s flesh!", s_suffix(mon_nam(mtmp)));
+	mtmp->mhp -= dam;
+	if (mtmp->mhpmax > dam)
+            mtmp->mhpmax -= (dam+1) / 2;
+	if (mtmp->mhp < 1) {
+	    if (canseemon(mtmp))
+		pline("%s dies.", Monnam(mtmp));
+	    mondead(mtmp);
+	    if (mtmp->mhp < 1) return (1);
+	}
     }
 
     if (inlava) {
@@ -446,7 +479,8 @@ minliquid(struct monst *mtmp)
         }
     } else {
         /* but eels have a difficult time outside */
-        if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz)) {
+        if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz) &&
+            !is_puddle(level, mtmp->mx, mtmp->my)) {
             if (mtmp->mhp > 1)
                 mtmp->mhp--;
             monflee(mtmp, 2, FALSE, FALSE);
@@ -1131,8 +1165,13 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                    ((mlevel->locations[nx][ny].doormask & ~D_BROKEN) ||
                     Is_rogue_level(&u.uz))))))
                 continue;
-            if ((is_pool(mlevel, nx, ny) == wantpool || poolok) &&
-                (lavaok || !is_lava(mlevel, nx, ny))) {
+            if ((poolok || (wantpool == (is_pool(mlevel, nx,ny) ||
+                                         (is_puddle(mlevel, nx, ny) &&
+                                          !bigmonst(mon->data))))) &&
+                (lavaok || !is_lava(mlevel, nx,ny)) &&
+		/* iron golems and longworms avoid shallow water */
+		((mon->data != &mons[PM_IRON_GOLEM] && !is_longworm(mon->data))
+                 || !is_puddle(level, nx, ny))) {
                 int dispx, dispy;
                 boolean checkobj = OBJ_AT(nx, ny);
                 boolean elbereth_activation = checkobj;
@@ -2346,8 +2385,9 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     encumber_msg();
 }
 
-void deadly_poison (const char *message,    int how,
-                    const char *killer,     boolean showshield)
+void
+deadly_poison (const char *message, int how,
+               const char *killer,  boolean showshield)
 {
     /* Traditionally, this was always an instadeath; but it was one of the most
      * random and frequently unavoidable instadeaths in the game, and the player
@@ -2372,6 +2412,8 @@ void deadly_poison (const char *message,    int how,
             shieldeff(u.ux,u.uy);
         pline("The poison doesn't seem to affect you.");
         return;
+    } else if (rn2(1 + magic_negation(&youmonst))) {
+        pline("You feel as if something is protecting you.");
     } else if (u.ulevel > 2) {
         losexp(killer, TRUE); /* Drain resistance doesn't save you here:
                                * it's not a draining attack, and poison
@@ -2520,8 +2562,7 @@ wake_nearby(boolean intentional)
 {
     wake_nearto(u.ux, u.uy, Aggravate_monster ? COLNO * COLNO + ROWNO * ROWNO :
                 intentional ? u.ulevel * 20 :
-                600 / (u.ulevel * (Role_if(PM_ROGUE) ? 2 : 1) *
-                       (Stealth ? 2 : 1)));
+                300 / (u.ulevel * (1 + get_stealth(&youmonst))));
 }
 
 /* Produce noise at a particular location. Monsters in the given dist2 radius

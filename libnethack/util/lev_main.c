@@ -371,6 +371,8 @@ what_map_char(char c)
         return ICE;
     case 'W':
         return WATER;
+    case 'w':
+        return PUDDLE;
     case 'T':
         return TREE;
     case 'F':

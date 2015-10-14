@@ -2011,6 +2011,29 @@ mintrap(struct monst *mtmp)
             }
         case FIRE_TRAP:
         mfiretrap:
+            if (is_puddle(lev, mtmp->mx, mtmp->my)) {
+                if (in_sight)
+                    pline("A cascade of steamy bubbles erupts from the %s under %s!",
+                          surface(mtmp->mx,mtmp->my), mon_nam(mtmp));
+                else if (see_it)
+                    pline("A cascade of steamy bubbles erupts from the %s!",
+                          surface(mtmp->mx,mtmp->my));
+                if(rn2(2)) {
+                    if (in_sight)
+                        pline("The water evaporates!");
+                    lev->locations[mtmp->mx][mtmp->my].typ = ROOM;
+                }
+                if (resists_fire(mtmp)) {
+                    if (in_sight) {
+                        shieldeff(mtmp->mx,mtmp->my);
+                        pline("%s is uninjured.", Monnam(mtmp));
+                    }
+                } else if (thitm(0, mtmp, (struct obj *)0, rnd(3), FALSE))
+                    trapkilled = TRUE;
+                if (see_it)
+                    seetrap(trap);
+                break;
+            }
             if (in_sight)
                 pline("A %s erupts from the %s under %s!", tower_of_flame,
                       surface(mtmp->mx, mtmp->my), mon_nam(mtmp));
@@ -2623,14 +2646,18 @@ dofiretrap(struct obj *box)
  * to be done upon its contents.
  */
 
-    if ((box && !carried(box)) ? is_pool(level, box->ox, box->oy)
-                               : Underwater) {
+    if ((box && !carried(box)) ? is_pool(level, box->ox, box->oy) :
+                                 (Underwater || is_puddle(lev, u.ux, u.uy))) {
         pline("A cascade of steamy bubbles erupts from %s!",
               the(box ? xname(box) : surface(u.ux, u.uy)));
         if (Fire_resistance)
             pline("You are uninjured.");
         else
             losehp(rnd(3), killer_msg(DIED, "boiling water"));
+        if (is_puddle(level, u.ux, u.uy) && rn2(2)) {
+            pline("The water evaporates!");
+            lev->locations[u.ux][u.uy].typ = ROOM;
+        }
         return;
     }
     pline("A %s %s from %s!", tower_of_flame, box ? "bursts" : "erupts",
@@ -3930,6 +3957,7 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
     char buf[80];
     const char *msg;
     coord cc;
+    int armpro = magic_negation(&youmonst);
 
     if (get_obj_location(obj, &cc.x, &cc.y, 0)) /* might be carried */
         obj->ox = cc.x, obj->oy = cc.y;
@@ -3971,8 +3999,12 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
         }
         if (msg)
             pline("But luckily the %s!", msg);
+    } else if (armpro > rn2(5)) {
+        msg = Hallucination ? "eggs wobble but do not fall down" :
+            "ineptly-constructed mechanism fails";
     } else {
-        switch (rn2(20) ? ((Luck >= 13) ? 0 : rn2(13 - Luck)) : rn2(26)) {
+        switch ((rn2(20) || (armpro >= 3)) ?
+                ((Luck >= 13) ? 0 : rn2(13 - Luck)) : rn2(26)) {
         case 25:
         case 24:
         case 23:
@@ -4069,8 +4101,10 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
                     dmg = 0;
                 } else
                     dmg = dice(4, 4);
-                destroy_item(RING_CLASS, AD_ELEC);
-                destroy_item(WAND_CLASS, AD_ELEC);
+                if (armpro < rn2(4)) {
+                    destroy_item(RING_CLASS, AD_ELEC);
+                    destroy_item(WAND_CLASS, AD_ELEC);
+                }
                 if (dmg)
                     losehp(dmg, killer_msg(DIED, "an electric shock"));
                 break;
@@ -4101,8 +4135,8 @@ chest_trap(struct obj * obj, int bodypart, boolean disarm)
                     pline("You %s and your vision blurs...",
                           stagger(youmonst.data, "stagger"));
             }
-            make_stunned(HStun + rn1(7, 16), FALSE);
-            make_hallucinated(HHallucination + rn1(5, 16), FALSE);
+            make_stunned(HStun + rn1((7 - armpro), 16), FALSE);
+            make_hallucinated(HHallucination + rn1((6 - armpro), 10), FALSE);
             break;
         default:
             impossible("bad chest trap");
