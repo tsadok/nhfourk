@@ -2370,7 +2370,7 @@ mon_wounds(struct monst *mon)
     if (!(canseemon(mon) || (u.ustuck == mon && u.uswallow && !Blind))
         || !Role_if(PM_HEALER))
         return NULL;
-    if (mon->mhp == mon->mhpmax || mon->mhp < 1)
+    if (mon->mhp == mon->mhpmax || DEADMONSTER(mon))
         return NULL;
     if (!Hallucination && mon->mhp <= mon->mhpmax / 6) {
         return msgprintf("almost %s",

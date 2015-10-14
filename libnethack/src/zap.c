@@ -499,7 +499,7 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
         break;
     }
     if (wake) {
-        if (!DEADMONSTER(mtmp->mhp > 0)) {
+        if (!DEADMONSTER(mtmp)) {
             if (yours) {
                 wakeup(mtmp, FALSE);
                 m_respond(mtmp);

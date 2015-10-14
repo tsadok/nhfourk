@@ -2450,7 +2450,8 @@ mselftouch(struct monst *mon, const char *arg, boolean byplayer)
         }
         minstapetrify(mon, byplayer);
         /* if life-saved, might not be able to continue wielding */
-        if (mon->mhp > 0 && !which_armor(mon, os_armg) && !resists_ston(mon))
+        if (!DEADMONSTER(mon) &&
+            !which_armor(mon, os_armg) && !resists_ston(mon))
             mwepgone(mon);
     }
 }

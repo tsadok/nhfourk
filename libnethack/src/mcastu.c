@@ -1448,7 +1448,7 @@ ucast_wizard_spell(struct monst *mattk, struct monst *mtmp, int dmg,
         break;
     }
 
-    if (dmg > 0 && mtmp->mhp > 0) {
+    if (dmg > 0 && !DEADMONSTER(mtmp)) {
         mtmp->mhp -= dmg;
         if (mtmp->mhp < 1) {
             if (yours)
@@ -1697,7 +1697,7 @@ ucast_cleric_spell(struct monst *mattk, struct monst *mtmp, int dmg,
         break;
     }
 
-    if (dmg > 0 && mtmp->mhp > 0) {
+    if (dmg > 0 && !DEADMONSTER(mtmp)) {
         mtmp->mhp -= dmg;
         if (mtmp->mhp < 1) {
             if (yours)
