@@ -33,7 +33,7 @@ enum youprop {
     POLYMORPH                = 16,
     POLYMORPH_CONTROL        = 17,
     LEVITATION               = 18,
-    STEALTH                  = 19,
+    STEALTH                  = 19, /* objects, artifacts use this constant */
     AGGRAVATE_MONSTER        = 20,
     CONFLICT                 = 21,
     PROTECTION               = 22,

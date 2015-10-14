@@ -123,8 +123,11 @@
 # define BInvis                 worn_blocked(INVIS)
 # define Invisible              (Invis && !See_invisible)
 # define Displaced              worn_extrinsic(DISPLACED)
+/* u_any_property(STEALTH) should no longer be checked directly.
+   Use get_stealth() instead.
 # define HStealth               u.uintrinsic[STEALTH]
 # define Stealth                u_any_property(STEALTH)
+*/
 # define HAggravate_monster     u.uintrinsic[AGGRAVATE_MONSTER]
 # define Aggravate_monster      u_any_property(AGGRAVATE_MONSTER)
 # define HConflict              u.uintrinsic[CONFLICT]

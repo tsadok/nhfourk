@@ -71,10 +71,14 @@
 # define P_MARTIAL_ARTS         P_BARE_HANDED_COMBAT    /* Role distinguishes */
 # define P_TWO_WEAPON_COMBAT    38      /* Finally implemented */
 # define P_SHIELD               39      /* How well you use a shield */
-# define P_WANDS                40
+# define P_WANDS                40      /* Zap, Zap, Zap, Zap! */
 # define P_RIDING               41      /* How well you control your steed */
-# define P_LAST_H_TO_H          P_RIDING
+# define P_STEALTH              42      /* Are you good at sneaking around? */
+# define P_LAST_H_TO_H          P_STEALTH
 # define P_FIRST_H_TO_H         P_BARE_HANDED_COMBAT
+/* "H_TO_H" here is misleading; this is basically all the skills that don't fit
+   in any of the other categories.  The UI traditionally callled them "fighting
+   skills", which I've changed to "Miscellaneous skills". */
 
 # define P_NUM_SKILLS           (P_LAST_H_TO_H+1)
 

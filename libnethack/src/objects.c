@@ -474,7 +474,7 @@ const struct objclass const_objects[] = {
          200, 1, 0, 6, MINERAL, HI_MINERAL),
     RING("searching", SEARCHING, "tiger eye", 200, 1, 0, 6, GEMSTONE,
          CLR_BROWN),
-    RING("stealth", STEALTH, "jade", 100, 1, 0, 6, GEMSTONE, CLR_GREEN),
+    RING("stealth", STEALTH, "jade", 100, 1, 1, 6, GEMSTONE, CLR_GREEN),
     RING("sustain ability", FIXED_ABIL, "bronze",
          100, 1, 0, 4, COPPER, HI_COPPER),
     RING("levitation", LEVITATION, "agate", 200, 1, 0, 7, GEMSTONE, CLR_RED),

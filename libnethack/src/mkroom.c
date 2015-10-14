@@ -362,6 +362,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone, itemtwo, itemthree;
     int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
     int color = rn2_on_rng(6, rng);
+    struct monst *mon;
     imax = 0;
     switch (color) {
     case 1: /* blue */
@@ -480,12 +481,14 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         }
         /* here be dragons */
         if (i <= cutoffone) {
-            makemon(&mons[greatpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+            mon = makemon(&mons[greatpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutofftwo) {
-            makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+            mon = makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutoffthree) {
-            makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
+            mon = makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
         }
+        if (mon)
+            mon->msleeping = 1;
     }
 }
 

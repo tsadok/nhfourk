@@ -1525,7 +1525,7 @@ pit_under_monster(struct monst *mtmp, int typ, boolean blameplayer)
                              FALSE, cansee(mtmp->mx, mtmp->my));
         else {
             mselftouch(mtmp, "Falling, ", TRUE);
-            if (mtmp->mhp > 0)
+            if (!DEADMONSTER(mtmp))
                 if ((mtmp->mhp -= rnd(6)) <= 0) {
                     if (!cansee(mtmp->mx, mtmp->my))
                         pline("It is destroyed!");
@@ -1541,6 +1541,8 @@ pit_under_monster(struct monst *mtmp, int typ, boolean blameplayer)
                     }
                     if (blameplayer)
                         xkilled(mtmp, 0);
+                    else
+                        mondead(mtmp);
                 }
         }
     }

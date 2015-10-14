@@ -533,9 +533,9 @@ attrcurse(void)
             break;
         }
     case 9:
-        if (HStealth & INTRINSIC) {
-            HStealth &= ~INTRINSIC;
-            pline("You feel clumsy.");
+        if (HTeleport_control & INTRINSIC) {
+            HTeleport_control &= ~INTRINSIC;
+            pline("You feel out of control.");
             break;
         }
     case 10:

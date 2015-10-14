@@ -663,7 +663,7 @@ thrwmq(struct monst *mtmp, int xdef, int ydef)
            triggers explosion, perhaps), inventory will be dropped
            and otmp might go away via merging into another stack;
            if we then use it, we could cause undefined behavior */
-        if (mtmp->mhp <= 0 && m_shot.i < m_shot.n) {
+        if (DEADMONSTER(mtmp) && m_shot.i < m_shot.n) {
             /* cancel pending shots (ought to give a message here since
                we gave one above about throwing/shooting N missiles) */
             break;  /* endmultishot(FALSE); */

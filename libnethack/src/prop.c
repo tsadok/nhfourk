@@ -232,7 +232,7 @@ msensem(const struct monst *viewer, const struct monst *viewee)
     boolean vertical_loe =
         !(m_mburied(viewer) || m_mburied(viewee) ||
           ((!!m_underwater(viewee)) ^ (!!m_underwater(viewer))) ||
-          m_mhiding(viewee));
+          m_mundetected(viewee));
 
     boolean invisible = !!m_has_property(viewee, INVIS, ANY_PROPERTY, 0);
 
@@ -614,8 +614,19 @@ enlightenment(int final)
         you_are(&menu, "visible");
     if (Displaced)
         you_are(&menu, "displaced");
-    if (Stealth)
+    switch(get_stealth(&youmonst)) {
+    case 0:
+        break; /* no message if you aren't stealthy at all */
+    case 1:
+    case 2:
+        you_are(&menu, "somewhat stealthy");
+    case 3:
+    case 4:
         you_are(&menu, "stealthy");
+    case 5:
+    default: /* more than 5 is possible */
+        you_are(&menu, "very stealthy");
+    }
     if (Aggravate_monster)
         enl_msg(&menu, "You aggravate", "", "d", " monsters");
     if (Conflict)
@@ -861,8 +872,6 @@ unspoilered_intrinsics(void)
         add_menutext(&menu, "You are invisible.");
     if (HInvis && !Invisible)
         add_menutext(&menu, "You are invisible to others.");
-    if (HStealth)
-        add_menutext(&menu, "You are stealthy.");
     if (HAggravate_monster)
         add_menutext(&menu, "You aggravte monsters.");
     if (HConflict)

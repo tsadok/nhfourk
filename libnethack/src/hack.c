@@ -2370,7 +2370,7 @@ mon_wounds(struct monst *mon)
     if (!(canseemon(mon) || (u.ustuck == mon && u.uswallow && !Blind))
         || !Role_if(PM_HEALER))
         return NULL;
-    if (mon->mhp == mon->mhpmax || mon->mhp < 1)
+    if (mon->mhp == mon->mhpmax || DEADMONSTER(mon))
         return NULL;
     if (!Hallucination && mon->mhp <= mon->mhpmax / 6) {
         return msgprintf("almost %s",
@@ -2787,8 +2787,8 @@ check_special_room(boolean newlev)
             level->rooms[roomno].rtype = OROOM;
             if (rt == COURT || rt == SWAMP || rt == MORGUE || rt == ZOO)
                 for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
-                    if (!DEADMONSTER(mtmp) && !Stealth && !rn2(3))
-                        mtmp->msleeping = 0;
+                    if (!DEADMONSTER(mtmp) && !rn2(3))
+                        disturb(mtmp);
         }
     }
 
@@ -3181,7 +3181,7 @@ maybe_wail(void)
 {
     static const short powers[] = { TELEPORT, SEE_INVIS, POISON_RES, COLD_RES,
         SHOCK_RES, FIRE_RES, SLEEP_RES, DISINT_RES,
-        TELEPORT_CONTROL, STEALTH, FAST, INVIS
+        TELEPORT_CONTROL, FAST, INVIS
     };
 
     if (moves <= wailmsg + 50)
