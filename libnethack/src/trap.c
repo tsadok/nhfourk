@@ -2739,6 +2739,7 @@ static void
 domagictrap(void)
 {
     int fate = rnd(20);
+    struct monst *mtmp;
 
     /* What happened to the poor sucker? */
 
@@ -2759,8 +2760,12 @@ domagictrap(void)
            other option is the "random monster generation on this level" RNG,
            but I don't like that one as much; it's rather about what we want to
            keep consistency with */
-        while (cnt--)
-            makemon(NULL, level, u.ux, u.uy, MM_CREATEMONSTER | MM_CMONSTER_M);
+        while (cnt--) {
+            mtmp = makemon(NULL, level, u.ux, u.uy,
+                           MM_CREATEMONSTER | MM_CMONSTER_M);
+            if (mtmp && (cnt > 1) && !resists_sleep(mtmp))
+                mtmp->msleeping = 1;
+        }
     } else
         switch (fate) {
 

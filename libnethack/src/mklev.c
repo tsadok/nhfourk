@@ -979,6 +979,8 @@ skip0:
 
         if (!mrn2(3)) {
             int tries = 20;
+            int ldiff = ilog2(level_difficulty(&lev->z) || 1) / 1600;
+            /* ldiff is thus 0 on DL1-2, 1 on DL3-8, 2 on DL9-25, then 3. */
             x = somex(croom, mrng());
             y = somey(croom, mrng());
             /* Try to put it on the floor. */
@@ -990,6 +992,8 @@ skip0:
             if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
                 !occupied(lev, x, y))
                 maketrap(lev, x, y, WEB, mrng());
+            if (tmonst && !mrn2(ldiff || 1) && !resists_sleep(tmonst))
+                tmonst->msleeping = 1;
         }
         /* put traps and mimics inside */
         x = 8 - (level_difficulty(&lev->z) / 6);
@@ -1696,8 +1700,12 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
     }
 
     maketrap(lev, m.x, m.y, kind, mrng());
-    if (kind == WEB)
-        makemon(&mons[PM_GIANT_SPIDER], lev, m.x, m.y, MM_ALLLEVRNG);
+    if (kind == WEB) {
+        struct monst *spider = makemon(&mons[PM_GIANT_SPIDER],
+                                       lev, m.x, m.y, MM_ALLLEVRNG);
+        if (spider && !resists_sleep(spider))
+            spider->msleeping = 1;
+    }
 }
 
 

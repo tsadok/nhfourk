@@ -579,12 +579,18 @@ makemaz(struct level *lev, const char *s, int *smeq)
                   TRUE, FALSE, rng_for_level(&lev->z));
     }
     for (x = mklev_rn2(3, lev); x; x--) {
+        struct monst *minotaur;
         mazexy(lev, &mm);
-        makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, MM_ALLLEVRNG);
+        minotaur = makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, MM_ALLLEVRNG);
+        if (minotaur && !resists_sleep(minotaur))
+            minotaur->msleeping = 1;
     }
     for (x = 7 + mklev_rn2(5, lev); x; x--) {
+        struct monst *mtmp;
         mazexy(lev, &mm);
-        makemon(NULL, lev, mm.x, mm.y, MM_ALLLEVRNG);
+        mtmp = makemon(NULL, lev, mm.x, mm.y, MM_ALLLEVRNG);
+        if (mtmp && !mklev_rn2(((x / 2)) || 1, lev) && !resists_sleep(mtmp))
+            mtmp->msleeping = 1;
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--) {
         mazexy(lev, &mm);

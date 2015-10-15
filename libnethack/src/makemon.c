@@ -123,9 +123,11 @@ m_initgrp(struct monst *mtmp, struct level *lev, int x, int y, int n,
           int mm_flags)
 {
     coord mm;
-    int cnt = 1 + rn2_on_rng(n, (mm_flags & MM_ALLLEVRNG) ?
-                             rng_for_level(&lev->z) : rng_main);
+    enum rng lrng = (mm_flags & MM_ALLLEVRNG) ?
+        rng_for_level(&lev->z) : rng_main;
+    int cnt = 1 + rn2_on_rng(n, lrng);
     int dl = level_difficulty(&lev->z);
+    struct monst *mtmp2;
 
     /* Tuning: cut down on swarming at low depths */
     if (dl > 0) {
@@ -139,11 +141,19 @@ m_initgrp(struct monst *mtmp, struct level *lev, int x, int y, int n,
        the player's stats, meaning that the layout of a level would no longer be
        the same for the same seed. Nowadays, we just let it happen, and hope
        that it won't get too spammy. */
+    /* TODO: groups of peacefuls do cause problems in Fourk due to the alignment
+       record changes that make you not want to just slaughter them all.  This
+       is particularly a problem with hiders (e.g., garter snakes) and in
+       Sokoban. */
     mm.x = x;
     mm.y = y;
     while (cnt--)
-        if (enexto(&mm, lev, mm.x, mm.y, mtmp->data))
-            makemon(mtmp->data, lev, mm.x, mm.y, mm_flags);
+        if (enexto(&mm, lev, mm.x, mm.y, mtmp->data)) {
+            mtmp2 = makemon(mtmp->data, lev, mm.x, mm.y, mm_flags);
+            if (mtmp2 && !rn2_on_rng((mtmp->msleeping ? 2 : 4), lrng) &&
+                !resists_sleep(mtmp2))
+                mtmp2->msleeping = 1;
+        }
 }
 
 static void
@@ -1258,7 +1268,8 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     if (in_mklev) {
         if (((is_ndemon(ptr)) || (mndx == PM_WUMPUS) || (mndx == PM_LONG_WORM)
              || (mndx == PM_GIANT_EEL)) && rn2_on_rng(5, stats_rng))
-            mtmp->msleeping = TRUE;
+            if (mtmp && !resists_sleep(mtmp))
+                mtmp->msleeping = 1;
     } else {
         if (byyou && lev == level) {
             newsym(mtmp->mx, mtmp->my);

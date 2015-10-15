@@ -281,7 +281,7 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
                           (type == ANTHOLE) ? antholemon(&lev->z) :
                           NULL, lev, sx, sy,
                           rng == rng_main ? NO_MM_FLAGS : MM_ALLLEVRNG);
-            if (mon) {
+            if (mon && !resists_sleep(mon)) {
                 mon->msleeping = 1;
                 if (type == COURT && mon->mpeaceful)
                     msethostility(mon, TRUE, TRUE);
@@ -487,7 +487,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         } else if (i <= cutoffthree) {
             mon = makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
         }
-        if (mon)
+        if (mon && !resists_sleep(mon))
             mon->msleeping = 1;
     }
 }

@@ -2181,7 +2181,7 @@ create_particular(const struct nh_cmd_arg *arg)
                     mtmp->mcansee = 0;
                 if (paralyzed)
                     mtmp->mcanmove = 0;
-                if (sleeping)
+                if (sleeping && !resists_sleep(mtmp))
                     mtmp->msleeping = 1;
                 if (stunned)
                     mtmp->mstun = 1;

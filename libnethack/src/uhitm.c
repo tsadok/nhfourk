@@ -60,8 +60,8 @@ find_roll_to_hit(struct monst *mtmp)
      *     together, limiting how much impact they can have.  It makes sense
      *     intuitively that these things would have some impact, but the formula
      *     in 3.4.3 was disruptively overpowered.  A late game character can
-     *     easily have 20 luck and 30 XL, and a +50 to-hit bonus is just way too
-     *     powerful.
+     *     easily have 13 luck and 30 XL, and a +43 to-hit bonus is just way
+     *     too powerful.
      * It is anticipated that further tweaks will be required here.
      */
     luckpluslevel = Luck + maybe_polyd(youmonst.data->mlevel, u.ulevel);
@@ -1043,6 +1043,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     else
                         pline("Something rather strange happens as %s divides.",
                               mon_nam(mon));
+                    if ((bpud->m_id % 2) && !resists_sleep(bpud))
+                        bpud->msleeping = 1;
                 }
             }
         } else {
