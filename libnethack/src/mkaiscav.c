@@ -788,8 +788,11 @@ mkaiscav(struct level *lev)
     /* Place random monsters: */
     for (i = (5 + ( RNGSAFEDEPTH / 25) +
               mrn2(1 + ( RNGSAFEDEPTH / 30))); i > 0; i--) {
+        struct monst *mtmp;
         spot = aisplace();
-        makemon(NULL, lev, spot.x, spot.y, 0);
+        mtmp = makemon(NULL, lev, spot.x, spot.y, 0);
+        if (mtmp && (aisdepth < mrn2(150)) && !resists_sleep(mtmp))
+            mtmp->msleeping = 1;
     }
     
     /* Place random objects: */

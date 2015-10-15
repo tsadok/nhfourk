@@ -317,7 +317,8 @@ makerogueghost(struct level *lev)
 
     if (!(ghost = makemon(&mons[PM_GHOST], lev, x, y, MM_ALLLEVRNG)))
         return;
-    ghost->msleeping = 1;
+    if (!resists_sleep(ghost))
+        ghost->msleeping = 1;
     christen_monst(ghost, roguename());
 
     if (mklev_rn2(4, lev)) {

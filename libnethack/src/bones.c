@@ -336,7 +336,8 @@ make_bones:
         mtmp->m_lev = (u.ulevel ? u.ulevel : 1);
         mtmp->mhp = mtmp->mhpmax = u.uhpmax;
         mtmp->female = u.ufemale;
-        mtmp->msleeping = 1;
+        if (!resists_sleep(mtmp))
+            mtmp->msleeping = 1;
 #ifdef LIVELOG_BONES_KILLER
         mtmp->former_player = 1 + /* Guarantee former_player > 0 */
             (2 * u.initgend    /*   2 * (0-2) = 0-4 */) +

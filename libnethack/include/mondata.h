@@ -13,7 +13,10 @@
 
 # define resists_fire(mon)      (((mon)->mintrinsics & MR_FIRE) != 0)
 # define resists_cold(mon)      (((mon)->mintrinsics & MR_COLD) != 0)
-# define resists_sleep(mon)     (((mon)->mintrinsics & MR_SLEEP) != 0)
+# define resists_sleep(mon)     ((((mon)->mintrinsics & MR_SLEEP) != 0) || \
+                                 mindless(mon->data) || \
+                                 (is_demon(mon->data) && \
+                                  !is_foocubus(mon->data)))
 # define resists_disint(mon)    (((mon)->mintrinsics & MR_DISINT) != 0)
 # define resists_elec(mon)      (((mon)->mintrinsics & MR_ELEC) != 0)
 # define resists_poison(mon)    (((mon)->mintrinsics & MR_POISON) != 0)
@@ -126,6 +129,8 @@
                                  (((ptr)->mflags2 & (M2_LORD|M2_PRINCE)) == 0L))
 # define is_dlord(ptr)          (is_demon(ptr) && is_lord(ptr))
 # define is_dprince(ptr)        (is_demon(ptr) && is_prince(ptr))
+# define is_foocubus(ptr)       (!(ptr == &mons[PM_SUCCUBUS] || \
+                                   ptr == &mons[PM_INCUBUS]))
 # define is_minion(ptr)         (((ptr)->mflags2 & M2_MINION) != 0L)
 # define likes_gold(ptr)        (((ptr)->mflags2 & M2_GREEDY) != 0L)
 # define likes_gems(ptr)        (((ptr)->mflags2 & M2_JEWELS) != 0L)

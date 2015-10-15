@@ -217,13 +217,17 @@ dosit(const struct nh_cmd_arg *arg)
             case 7:
             {
                 int cnt = rn2_on_rng(10, rng_throne_result);
+                struct monst *mtmp;
                 
                 pline("A voice echoes:");
                 verbalize("Thy audience hath been summoned, %s!",
                           u.ufemale ? "Dame" : "Sire");
-                while (cnt--)
-                    makemon(courtmon(&u.uz, rng_main), level, u.ux, u.uy,
-                            NO_MM_FLAGS);
+                while (cnt--) {
+                    mtmp = makemon(courtmon(&u.uz, rng_main),
+                                   level, u.ux, u.uy, NO_MM_FLAGS);
+                    if (mtmp && !rn2(3) && !resists_sleep(mtmp))
+                        mtmp->msleeping = 1;
+                }
                 break;
             }
             case 8:
