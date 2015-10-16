@@ -136,6 +136,11 @@ disturb(struct monst *mtmp)
     int stealth   = get_stealth(&youmonst);
     int alertness = 1; /* base value */
     int distance  = distu(mtmp->mx, mtmp->my);
+    if (resists_sleep(mtmp)) {
+        /* Theoretically this shouldn't be necessary; but just in case. */
+        mtmp->msleeping = 0;
+        return 1;
+    }
     if (!(mtmp->data->mlet == S_NYMPH || mtmp->data == &mons[PM_JABBERWOCK]
            || mtmp->data == &mons[PM_LEPRECHAUN]))
         /* Most monsters are more alert than these ones. */
