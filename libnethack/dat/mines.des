@@ -968,6 +968,16 @@ MONSTER:'o',"Mordor orc",random
 MONSTER:'o',"Mordor orc",random
 MONSTER:'o',"Mordor orc",random
 MONSTER:'o',"Mordor orc",random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
 
 #SECRET CAVE
 MAZEWALK:(62,15),south
