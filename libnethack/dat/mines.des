@@ -844,132 +844,6 @@ MONSTER:'h',"bugbear",random
 MONSTER:'h',"dwarf",random
 MONSTER:'@',"watchman",(1,10),peaceful
 
-# Mine end level variant 1
-# "Mimic of the Mines"
-#
-MAZE: "minend-1", ' '
-GEOMETRY:center,center
-#1234567890123456789012345678901234567890123456789012345678901234567890
-MAP
-------------------------------------------------------------------   ------
-|                        |.......|     |.......-...|       |.....|.       |
-|    ---------        ----.......-------...........|       ---...-S-      |
-|    |.......|        |..........................-S-      --.......|      |
-|    |......-------   ---........................|.       |.......--      |
-|    |..--........-----..........................|.       -.-..----       |
-|    --..--.-----........-.....................---        --..--          |
-|     --..--..| -----------..................---.----------..--           |
-|      |...--.|    |..S...S..............---................--            |
-|     ----..-----  ------------........--- ------------...---             |
-|     |.........--            ----------              ---...-- -----      |
-|    --.....---..--                           --------  --...---...--     |
-| ----..-..-- --..---------------------      --......--  ---........|     |
-|--....-----   --..-..................---    |...(....|    |.......--     |
-|.......|       --......................S..  --......--    ---..----      |
-|--.--.--        ----.................---     ------..------...--         |
-| |....S..          |...............-..|         ..S...........|          |
---------            --------------------           ------------------------
-ENDMAP
-
-# Dungeon Description
-RANDOM_PLACES:(08,16),(13,07),(21,08),(41,14),(50,04),(50,16),(66,01)
-REGION:(26,01,32,01),unlit,"ordinary",filled,true
-REGION:(20,08,21,08),unlit,"ordinary"
-REGION:(23,08,25,08),unlit,"ordinary"
-# Secret doors
-DOOR:locked,(07,16)
-DOOR:locked,(22,08)
-DOOR:locked,(26,08)
-DOOR:locked,(40,14)
-DOOR:locked,(50,03)
-DOOR:locked,(51,16)
-DOOR:locked,(66,02)
-# Stairs
-STAIR:(36,04),up
-# Non diggable walls
-NON_DIGGABLE:(00,00,74,17)
-# Niches
-# Note: place[6] empty
-OBJECT:'*',"diamond",place[0]
-OBJECT:'*',"emerald",place[0]
-OBJECT:'*',"worthless piece of violet glass",place[0]
-MONSTER:'m',random,place[0], m_object "luckstone"
-OBJECT:'*',"worthless piece of white glass",place[1]
-OBJECT:'*',"emerald",place[1]
-OBJECT:'*',"amethyst",place[1]
-MONSTER:'m',random,place[1], m_object "loadstone"
-OBJECT:'*',"diamond",place[2]
-OBJECT:'*',"worthless piece of green glass",place[2]
-OBJECT:'*',"amethyst",place[2]
-OBJECT:'*',"flint",place[2]
-MONSTER:'m',random,place[2], m_object "flint"
-OBJECT:'*',"worthless piece of white glass",place[3]
-OBJECT:'*',"emerald",place[3]
-OBJECT:'*',"worthless piece of violet glass",place[3]
-MONSTER:'m',random,place[3], m_object "touchstone"
-OBJECT:'*',"worthless piece of red glass",place[4]
-OBJECT:'*',"ruby",place[4]
-OBJECT:'*',"loadstone",place[4]
-OBJECT:'*',"ruby",place[5]
-OBJECT:'*',"worthless piece of red glass",place[5]
-OBJECT:'*',"luckstone",place[5]
-OBJECT:'*',"touchstone",place[6]
-# Random objects
-OBJECT:'*',random,random
-OBJECT:'*',random,random
-OBJECT:'*',random,random
-OBJECT:'*',random,random
-OBJECT:'*',random,random
-OBJECT:'*',random,random
-OBJECT:'*',random,random
-OBJECT:'(',random,random
-OBJECT:'(',random,random
-OBJECT:'(',"tinning kit",random
-OBJECT[50%]:'(',"horn of plenty",random
-OBJECT:'(',random,random
-OBJECT:'(',random,random
-OBJECT:'(',random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-OBJECT:random,random,random
-# Random traps
-TRAP[50%]:"polymorph",random
-TRAP[50%]:"polymorph",random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-TRAP:random,random
-# Random monsters
-MONSTER:'G',"gnome king",random
-MONSTER:'G',"gnome lord",random
-MONSTER:'G',"gnome lord",random
-MONSTER:'G',"gnome lord",random
-MONSTER:'G',"gnomish wizard",random
-MONSTER:'G',"gnomish wizard",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'G',"gnome",random
-MONSTER:'h',"hobbit",random
-MONSTER:'h',"hobbit",random
-MONSTER:'h',"dwarf",random
-MONSTER:'h',"dwarf",random
-MONSTER:'h',"dwarf",random
-MONSTER:'h',random,random
-
-
 # Mine end level variant 2
 # "Gnome King's Wine Cellar"
 #
@@ -1193,7 +1067,7 @@ MONSTER:'e',random,random
 # "Orc Temple" by Khor
 # In this variant of the mines end a group of orcs have found a randomly generated figurine of a demon and worship it
 #
-MAZE:"minend-4",' '
+MAZE:"minend-1",' '
 FLAGS:nommap
 GEOMETRY:center,center
 #0         1         2         3         4         5         6         7
@@ -1247,6 +1121,16 @@ MONSTER:'o',"Mordor orc",random
 MONSTER:'o',"Mordor orc",random
 MONSTER:'o',"Mordor orc",random
 MONSTER:'o',"Mordor orc",random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
+MONSTER:'o',random,random
 
 #SECRET CAVE
 MAZEWALK:(62,15),south
