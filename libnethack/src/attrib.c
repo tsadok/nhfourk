@@ -879,16 +879,54 @@ get_stealth(struct monst *mon)
     /* start with intrinsic stealth */
     int s = player ? (Upolyd ? youmonst.data->stealth :
                       mons[urace.malenum].stealth) : mon->data->stealth;
+    int equipweight = 0;
     /* Now check the armor and ring slots for stealth-granting items: */
     for (i = os_arm; i <= os_last_equip; i++) {
         if (i != os_quiver && i != os_swapwep) {
+            /* TODO: should the off-hand weapon count toward equipweight?
+               Perhaps only if #twoweapon combat is engaged?  How would that
+               work for non-player monsters? */
             struct obj *item = which_armor(mon, i);
+            if (item)
+                equipweight += item->owt;
             if (item && item_provides_extrinsic(item, STEALTH, 0)) {
+                equipweight -= item->owt; /* Stealth-granting items don't
+                                             count extra against stealth. */
                 if (i == os_ringl || i == os_ringr)
                     s += item->spe;
                 else
                     s++;
             }
+        }
+    }
+    if (player) {
+        int iwt = inv_weight();
+        switch (calc_capacity(equipweight)) {
+            /* Calling calc_capacity in this way, with equipweight, basically
+               causes equipped items such as armor and weapons to count double,
+               for stealth purposes.  What we're saying is, "What would the
+               player's encumbrance level be if he picked up additional weight
+               equal to all his worn gear?"  Thus, wearing lightweight armor,
+               or none, is good for stealth.  Cf OOTS #25 and following. */
+        case UNENCUMBERED:
+            s++;
+            if (iwt <= (weight_cap() / 10))
+                iwt = 1 + (weight_cap() / 10);
+            while (calc_capacity(iwt) <= UNENCUMBERED) {
+                s++;
+                iwt = iwt * 5 / 3;
+            }
+            break;
+        case OVERLOADED:
+            s--; /* Fall Through */
+        case EXT_ENCUMBER: /* Overtaxed */
+            s--; /* Fall Through */
+        case HVY_ENCUMBER: /* Strained */
+            s--; /* Fall Through */
+        case MOD_ENCUMBER: /* Stressed */
+            s--; /* Fall Through */
+        case SLT_ENCUMBER: /* Burdened */
+            s -= calc_capacity(0);  
         }
     }
     /* Finally, add in skill modifier: */
