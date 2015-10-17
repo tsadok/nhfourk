@@ -26,6 +26,10 @@ sub figurine *: gray ')'
 staircase *; ladder *; long staircase *: bgred basefg base_underline basechar
 magic portal; vibrating square: bgred basefg base_underline basechar
 
+! Let's see if we can give stinking clouds a background:
+! gas cloud: bgcyan gray regular '#'
+gas cloud: bgcyan
+
 ! The invisible monster symbol isn't defined in core.
 invisible monster: bright_blue 'I'
 
