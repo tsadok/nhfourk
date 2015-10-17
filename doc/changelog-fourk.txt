@@ -84,6 +84,9 @@ Changes in 4.3.0.4:
    enchantment, as a helm of brilliance does.  Their other effects
    are unchanged.
 
+ * For public-server installations, dgamelaunch simple mail is
+   now supported.
+
 Changes in 4.3.0.3:
 -------------------
 

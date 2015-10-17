@@ -187,6 +187,7 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.pushweapon);
     mwrite8(mf, flags.rogue_enabled);
     mwrite8(mf, flags.seduce_enabled);
+    mwrite8(mf, flags.servermail);
     mwrite8(mf, flags.showrace);
     mwrite8(mf, flags.show_uncursed);
     mwrite8(mf, flags.sortpack);
