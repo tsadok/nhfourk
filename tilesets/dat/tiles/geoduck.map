@@ -1090,7 +1090,9 @@ magic chest
 splash of blood
 convex amulet
 blood pudding
+gryphon
 stinking cloud trap
+shallow water
 
 ! NH4 requirements:
 remembered as locked
@@ -1101,5 +1103,6 @@ monster is peaceful
 monster is detected
 monster is ridden
 gas cloud
+
 ! This one's just an aid for the tiles artist:
 tile size measuring spacer
