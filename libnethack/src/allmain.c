@@ -867,8 +867,8 @@ you_moved(void)
                 break;
             }
             /* Being satiated now slows you down. */
-            if (u.uhunger > 1000) {
-                u.moveamt = u.moveamt - (u.moveamt * u.uhunger / 5000);
+            if (u.uhunger >= 1200) {
+                u.moveamt -= (u.moveamt * (u.uhunger - 1000) / 4000);
                 if (u.moveamt < 1)
                     u.moveamt = 0; /* but see "corner cases" just below... */
             }
