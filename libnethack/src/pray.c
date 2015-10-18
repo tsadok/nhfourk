@@ -1144,13 +1144,14 @@ sacrifice_gift(void)
         int spclass[P_LAST_SPELL + 1 - P_FIRST_SPELL];
         int sweight[P_LAST_SPELL + 1 - P_FIRST_SPELL];
         int bookcnt[P_LAST_SPELL + 1 - P_FIRST_SPELL];
-        if (Race_if(PM_SYLPH) || (!u.uconduct[conduct_clothing])) {
+        if ((Race_if(PM_SYLPH) && rn2_on_rng(3, rng_altar_gift)) ||
+            (!u.uconduct[conduct_clothing])) {
             if (u.uconduct[conduct_jewelry])
                 oclass = RING_CLASS;
             else
                 oclass = WEAPON_CLASS; /* There are no better options. */
         }
-        if (!u.uconduct[conduct_illiterate]) {
+        if (rn2_on_rng(3, rng_altar_gift) && u.uconduct[conduct_illiterate]) {
             for (i = P_FIRST_SPELL; i <= P_LAST_SPELL; i++) {
                 bookcnt[i - P_FIRST_SPELL] = 0;
                 spclass[i - P_FIRST_SPELL] = i;
@@ -1197,7 +1198,7 @@ sacrifice_gift(void)
                     total += sweight[i];
                     k++;
                 }
-                i = spclass[k]; /* This school */
+                i = spclass[k - 1]; /* This school */
                 j = rn2_on_rng(1 + bookcnt[i - P_FIRST_SPELL], rng_altar_gift);
                 if (wizard)
                     pline("Chose %dth unidentified book from %dth school, %d",
@@ -1222,6 +1223,131 @@ sacrifice_gift(void)
                         k++;
                     }
                 }
+            }
+        }
+        if (oclass == RING_CLASS) {
+            for (i = 0; i <= 3; i++) {
+                /* Up to 3 tries to find a useful ring. */
+                j = rn2_on_rng(10, rng_altar_gift);
+                k = 0;
+                switch (j) {
+                case 1:
+                    if (ACURR(A_CON) + 3 < AMAX(A_CON))
+                        k = RIN_GAIN_CONSTITUTION;
+                    else if (ACURRSTR < 12)
+                        k = RIN_GAIN_STRENGTH;
+                    break;
+                case 2:
+                    if (u.uconduct[conduct_killer])
+                        k = RIN_INCREASE_ACCURACY;
+                    break;
+                case 3:
+                    if (magic_negation(&youmonst) < 4)
+                        k = RIN_PROTECTION;
+                    break;
+                case 4:
+                    if (!Regeneration)
+                        k = RIN_REGENERATION;
+                    break;
+                case 5:
+                    if (!Searching)
+                        k = RIN_SEARCHING;
+                    break;
+                case 6:
+                    if (!Levitation && !Flying && !Wwalking)
+                        k = RIN_LEVITATION;
+                    break;
+                case 7:
+                    if (!Warning && !Detect_monsters && !Unblind_telepat)
+                        k = RIN_WARNING;
+                    break;
+                case 8:
+                    if (!Shock_resistance)
+                        k = RIN_SHOCK_RESISTANCE;
+                    else if (!Poison_resistance)
+                        k = RIN_POISON_RESISTANCE;
+                    else if (!Cold_resistance)
+                        k = RIN_COLD_RESISTANCE;
+                    else if (!Fire_resistance)
+                        k = RIN_FIRE_RESISTANCE;
+                    break;
+                case 9:
+                    if (!Free_action)
+                        k = RIN_FREE_ACTION;
+                    break;
+                default:
+                    if ((u.uhs >= HUNGRY) && !Slow_digestion)
+                    k = RIN_SLOW_DIGESTION;
+                    break;
+                }
+                if (k && carrying(k)) /* already have that ring */
+                    k = 0;            /* try for a different one */
+                if (k) {
+                    otmp = mksobj(level, k, TRUE, TRUE, rng_altar_gift);
+                    if (otmp) {
+                        bless(otmp);
+                        otmp->oerodeproof = TRUE;
+                        if ((objects[otmp->otyp].oc_charged) &&
+                            (otmp->spe < 1))
+                            otmp->spe = rne_on_rng(2, rng_altar_gift);
+                        return otmp;
+                    }
+                }
+            }
+        }
+        if (oclass == ARMOR_CLASS) {
+            int tryforslot = os_tool; /* sentinel value means any slot */
+            int choice = T_SHIRT;     /* default, try to do better */
+            int i;
+            if (Race_if(PM_SYLPH)) {
+                if (!uarms)
+                    tryforslot = os_arms;
+                else if (!uarmc)
+                    tryforslot = os_armc;
+                else if (!uarmh)
+                    tryforslot = os_armh;
+            } else if (!uarmc || magic_negation(&youmonst) < 3)
+                tryforslot = os_armc;
+            else if (!Role_if(PM_MONK) &&
+                     (!uarm ||
+                      ((uarm->spe <= 2) && (!uarm->oartifact) &&
+                       !(objects[uarm->otyp].oc_material == DRAGON_HIDE) &&
+                       !(objects[uarm->otyp].oc_material == MITHRIL))))
+                tryforslot = os_arm;
+            else if (!uarmh)
+                tryforslot = os_armh;
+            else if (!uarmg)
+                tryforslot = os_armg;
+            else if (!uarmf)
+                tryforslot = os_armf;
+            for (i = 1; objects[i].oc_class != ILLOBJ_CLASS; i++) {
+                if ((!objects[i].oc_unique && !objects[i].oc_nowish) &&
+                    (objects[i].oc_prob > 0) &&
+                    (objects[i].oc_class == ARMOR_CLASS) &&
+                    ((tryforslot == os_tool) || (objects[i].oc_armcat)) &&
+                    ((!Race_if(PM_SYLPH)) ||
+                     (objects[i].oc_material == WOOD) ||
+                     (objects[i].oc_material == CLOTH)) &&
+                    (objects[i].oc_magic >= objects[choice].oc_magic) &&
+                    (((objects[i].oc_armcat == os_armc) &&
+                      (objects[i].a_can >= objects[choice].a_can)) ||
+                     ((objects[i].oc_armcat != os_armc) &&
+                      (objects[i].a_ac  >= objects[choice].a_ac))) &&
+                    !rn2_on_rng(3, rng_altar_gift))
+                    choice = i;
+            }
+            otmp = mksobj(level, choice, TRUE, TRUE, rng_altar_gift);
+            if (otmp) {
+                if (otmp->cursed)
+                    bless(otmp);
+                if (otmp->spe < 1)
+                    otmp->spe = rne_on_rng(3, rng_altar_gift);
+                if (objects[otmp->otyp].oc_skill == P_SHIELD)
+                    unrestrict_weapon_skill(P_SHIELD);
+                otmp->oerodeproof = TRUE;
+                if (!Hallucination && !Blind)
+                    makeknown(otmp->otyp);
+                return otmp;
             }
         }
         if (oclass != WEAPON_CLASS) {

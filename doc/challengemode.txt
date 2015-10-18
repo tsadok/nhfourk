@@ -2,24 +2,26 @@ A player asked for a list of differences in challenge mode.  I hadn't
 been maintaining one until now, but here we go:
  * Effective minimum monster difficulty is 1 higher than in normal mode,
    and maximium is 1.25 times as high.
+ * Death drops are six times less common than in normal mode.
  * Elemental resistances reduce damage to 1/3, rather than to 0.
  * HP regeneration is slower (for the player).
  * Sleep attacks put you to sleep for longer.
  * The chances of AD_DRST, AD_DRDX, and AD_DRCO attacks 
    draining the corresponding attribute are higher.
  * The chance of a c attack starting the stoning process is higher.
- * The chance of an eel wrapping itself around you (to 
-   drown you) is higher.
+ * The chance of an eel wrapping itself around you (to drown you) is higher.
  * Amulet stealing attacks are four times as likely to succeed.
  * Nurse dancing is less effective.
  * Gremlins are more likely to steal properties.
  * Stunning and slowing attacks are twice as likely to affect you.
  * Confusion and drain-energy attacks always succeed against you
    (if MC doesn't block them).
- * Death's touch works slightly differently.  (NOTE TO SELF:  maybe not as intended.)
+ * Death's touch works slightly differently.
+   (NOTE TO SELF:  maybe not as intended.)
  * Regaining lost levels (via potion of full healing or via prayer)
    works as in vanilla:  you can only ever regain half of them
    (rounded up).  In normal mode, you can regain all of them.
+ * The conduct list says you face/faced a greater challenge.
  * There's a score multiplier.
  * Killing anything disqualifies you from entering the quest at
    experience level 1, even if you don't gain a level from it.
@@ -27,3 +29,10 @@ been maintaining one until now, but here we go:
  * A blessed scroll of charging will sometimes work as uncursed.
  * The minimum luck needed to be guaranteed a wish is higher.
  * Charged rings in starting inventory are more likely to be +1
+ * The gift that the Advent Calendar level unlocks on December 24th
+   cannot be a scroll of wishing, a magic lamp, a bag of holding, a
+   horn of plenty, a magic harp, or an amulet of flying; instead it
+   can be a tinning kit, a pair of lenses, a unicorn horn, an oilskin
+   sack, an expensive camera, or a bag of tricks.  (The following are
+   possible in both normal and challenge modes: fire horn, frost horn,
+   magic flute, drum of earthquake, stethoscope, or magic whistle.)

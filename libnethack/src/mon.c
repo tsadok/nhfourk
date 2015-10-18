@@ -2117,7 +2117,7 @@ xkilled(struct monst *mtmp, int dest)
         goto cleanup;
 
     /* might be here after swallowed */
-    if (((x != u.ux) || (y != u.uy)) && !rn2(6) &&
+    if (((x != u.ux) || (y != u.uy)) && !rn2(challengemode ? 36 : 6) &&
         !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
         int typ;
 

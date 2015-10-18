@@ -1458,7 +1458,7 @@ rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
 
     if (challengemode) {
         minmlev++;
-        maxmlev *= 1.25;
+        maxmlev = maxmlev * 5 / 4;
         while (maxmlev <= minmlev)
             maxmlev++;
     }
