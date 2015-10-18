@@ -57,6 +57,37 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The life cycle for D has been extended.  They now start life as
+   a [color] dragon egg, hatch into a baby [color] dragon, then grow
+   progressively into a young [color] dragon, a [color] dragon, a
+   [color] elder dragon, and finally into a great [color] dragon.
+   The more they advance, the more dangerous they become.  The
+   top two levels, elder and great, are not generated randomly.
+
+ * Support has been added for receiving dgamelaunch SimpleMail
+   messages, when playing on a dgamelaunch-based public server,
+   provided the server admin has set an environment variable to
+   tell the game where to find the player's inbox.
+
+ * The shallow water portion of the L terrain patch has been merged.
+   This changes a number of existing special levels and also adds
+   a new version of Minetown.
+
+ * Stealth is no longer binary (all or nothing); there are degrees
+   now:  you can be more or less stealthy.  Examples of things that
+   are good for your stealth include:  being a elf (this is especially
+   good), a sylph, or a gnome; wearing an elven cloak; wearing elven
+   boots; wearing a +1 or better ring of steath; having basic or
+   better skill in stealth; using sufficiently light equipment that
+   you would still be unburdened even if its weight were doubled.
+   Going the other way, being burdened or worse hurts your stealth.
+   Being more stealthy decreases the odds that sleaping monsters will
+   wake up when you are around (via normal actions, such as walking;
+   things like exploding a gas spore still wake stuff up anyway).
+
+ * Monsters are now generated asleep in a wider variety of situations,
+   especially at level generation time.
+
  * Protection from rings of protection, the spell of protection, and
    cloak of protection now add into your magic cancellation level, in
    addition to the base MC from your worn armor.  From armor alone you
