@@ -349,7 +349,6 @@ OBJECT:random,random,(47,08)
 OBJECT:random,random,(47,09)
 OBJECT:random,random,(47,10)
 OBJECT:random,random,(47,11)
-OBJECT:'+',"sleep",random
 MONSTER:'@',"watchman",random,peaceful
 MONSTER:'@',"watchman",random,peaceful
 REGION:(01,08,07,12),lit,"ordinary"

@@ -57,6 +57,36 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.3:
 -------------------
 
+ * Merged several patches from L, http://l.j-factor.com/nethack/
+   The "whack" patch causes more differentiated weapon hit messages.
+   The "wounds" patch gives Healers information about how wounded
+   monsters are, as a role special ability.
+
+ * Patric Mueller's Advent Calendar patch has been merged.
+
+ * Several bug fixes have been cherry-picked or merged from FIQ,
+   for Fourk bugs, NH4 bugs, and even a couple of vanilla bugs.
+
+ * Cherry-picked FIQ's rework of the Summon Nasties code.  The
+   number of monsters summoned should be more consistent now,
+   although it's still random.
+
+ * Couatls have more resistances than before.
+
+ * The following monsters have gained sleep resistance that did
+   not have it previously:  werewolves, all mindless monsters,
+   most major demons (notably excepting foocubi), and the fabled
+   Wizard of Yendor.
+
+ * Monsters under the influence of conflict will attack in melee,
+   despite scary things written on the ground beneath your feet.
+
+ * Stinking clouds now display differently than before, in the
+   text-based tilesets.  They now use the same cyan background color
+   as traps (on the theory that both traps and stinking clouds are
+   typically places you don't want to step into) and do not change the
+   foreground color.
+
  * Weaponless characters can get items other than weapons as
    sacrifice gifts.
 
@@ -64,9 +94,6 @@ Changes in 4.3.0.3:
    been introduced.  Notable examples include Mine's End, the
    Monk and Rogue quest locate levels, and the last maze level
    before the Castle.
-
- * Healers now get information about how wounded monsters are,
-   as a role special ability.  (You have a stethoscope _anyway_...)
 
  * Documentation is now available on the differences between normal
    mode and challenge mode.  See doc/challengemode.txt
@@ -76,7 +103,7 @@ Changes in 4.3.0.3:
    temporary.  As you digest the food and return to a normal hunger
    status, you return to normal speed as well.)  There's no hard
    maximum on how satiated you can become, but in practice getting
-   close to 5000 nutrition will slow you down so much you won't
+   close to 4000 nutrition will slow you down so much you won't
    be able to eat fast enough to become more satiated.   
 
  * Price-checking has been made less tedious:  you can no longer
@@ -85,6 +112,8 @@ Changes in 4.3.0.3:
    any given type of item, either the shopkeeper will always
    offer you 25% less than expected, or he never will.
 
+ * The inventory sidebar now shows total item count and weight.
+
  * Players who can reach the Quest Leader without gaining any
    experience levels (and, in challenge mode, without breaking
    pacifist conduct either) can be admitted to the quest at
@@ -92,14 +121,34 @@ Changes in 4.3.0.3:
    audacity.  (The other requirements still apply, e.g., you
    still have to be pious.)
 
+ * Restoring lost levels now only reduces your max level (so that you
+   can only regain half of your lost levels) if you are playing in
+   challenge mode.  In normal mode, you can regain them all.
+
+ * Levels containing a cockatrice may also have statues.
+
  * Wizard starting inventory has been rebalanced, since they
    can now cast spells effectively in the early game.
+
+ * Added Valerian, an artifact dagger with a special sort of poison
+   that puts things to sleep -- if they do not resist.  This dagger
+   is the first sacrifice gifts for Rogues.  It is chaotic and is
+   intelligent and will blast all non-Rogues.
 
  * Added Quickpick, an artifact pick-axe that is mainly useful for
    improved digging speed; it also gets a bonus against all deep
    rock dwellers (X).
 
  * Added a new special room type, dragon halls.
+
+ * Mass key rebindings have been added for Dvorak Simplified Keyboard
+   layout (uyxd/pfkb movement) and also for axwd/qezc movement (mainly
+   intended for players who are new to roguelikes but don't want to
+   use the numpad for whatever reason).  As before, individual keys
+   can still be rebound on a key-by-key basis; the mass rebindings are
+   just a convenient way to do a whole set at once.  An SVG file is
+   provided showing the three major layouts (traditional hjkl/yubn,
+   axwd/qezc, and Dvorak), see doc/keyboard-layouts-nethack.svg
 
  * Several new Sokoban levels have been added, based on some of the
    Slash'em Sokoban puzzles (modified to be less dangerous).  One of
