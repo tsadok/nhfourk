@@ -1039,6 +1039,13 @@ you_moved(void)
                 }
             }
 
+            if (Conflict)
+                break_conduct(conduct_conflict);
+            if (Displaced)
+                break_conduct(conduct_displacement);
+            if (Invisible)
+                break_conduct(conduct_invisible);
+
             if (Searching && !u_helpless(hm_all))
                 dosearch0(1);
             dosounds();

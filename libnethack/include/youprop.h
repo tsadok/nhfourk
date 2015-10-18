@@ -267,6 +267,9 @@ enum player_conduct {
     conduct_unihorns,                    /* applied a unicorn horn */
     conduct_containers,                  /* applied or looted containers */
     conduct_tools,                       /* applied or looted any tools */
+    conduct_conflict,                    /* generated conflict */
+    conduct_invisible,                   /* were invisible */
+    conduct_displacement,                /* were displaced */
     num_conducts,
 };
 

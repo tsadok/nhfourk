@@ -949,6 +949,19 @@ show_conduct(int final)
         enl_msg(&menu, You_, "have not worn", "did not wear",
                 " any clothing or armor");
 
+    /* Conflict message only at game end for now, because otherwise #conduct
+       would provide trivial identification for the ring of conflict.  We may
+       ultimately decide to just auto-ID it when worn, but that would be a
+       separate decision.  (If so, then we could remove final && here.) */
+    if (final && !u.uconduct[conduct_conflict])
+        enl_msg(&menu, You_, "have not caused", "did not cause", " conflict");
+    /* Similarly, it's possible to be invisible and not know (if blind). */
+    if (final && !u.uconduct[conduct_invisible])
+        enl_msg(&menu, You_, "have not been", "were not", " invisible");
+    /* But displacement auto-identifies. */
+    if (!u.uconduct[conduct_displacement])
+        enl_msg(&menu, You_, "have not been", "were not", " displaced");
+
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
     if (u.uconduct_time[conduct_gnostic] > 1800) {
