@@ -1258,6 +1258,12 @@ dotrap(struct trap *trap, unsigned trflags)
             break;
         }
     case STINKING_TRAP:
+        if (Poison_resistance || Blind)
+            pline("You smell %s.", Hallucination ? "breakfast" : "rotten eggs");
+        else
+            pline("A %s cloud billows up from the %s!",
+                  (Hallucination ? "colorful" : "noxious"),
+                  surface(u.ux, u.uy));
         create_gas_cloud(level, u.ux, u.uy, 2 + rn2(3), 3 + rne(3));
         break;
 
@@ -1355,6 +1361,13 @@ steedintrap(struct trap *trap, struct obj *otmp)
             steedhit = TRUE;
             break;
         case STINKING_TRAP:
+            if (Poison_resistance || Blind)
+                pline("You smell %s.",
+                      Hallucination ? "breakfast" : "rotten eggs");
+            else
+                pline("A %s cloud billows up from the %s!",
+                      (Hallucination ? "colorful" : "noxious"),
+                      surface(u.ux, u.uy));
             create_gas_cloud(level, u.ux, u.uy, 2 + rn2(3), 3 + rne(3));
             break;
 
