@@ -236,24 +236,12 @@ NON_DIGGABLE:(56,02,72,16)
 # Objects
 OBJECT:'?',"teleportation",random,cursed,0
 OBJECT:'/',"cold",place[0]
-OBJECT:'/',"striking",place[0]
 OBJECT:'/',"fire",place[1]
-OBJECT:'/',"magic missile",place[1]
-OBJECT:')',"bow",place[2]
-OBJECT:')',"arrow",place[2]
-OBJECT:')',"arrow",place[2]
-OBJECT:')',"crossbow",place[3]
-OBJECT:')',"crossbow bolt",place[3]
-OBJECT:')',"crossbow bolt",place[3]
-OBJECT:')',"bow",place[4]
-OBJECT:')',"arrow",place[4]
-OBJECT:')',"arrow",place[4]
-OBJECT:')',"bow",place[5]
-OBJECT:')',"arrow",place[5]
-OBJECT:')',"arrow",place[5]
-OBJECT:')',"bow",place[6]
-OBJECT:')',"arrow",place[6]
-OBJECT:')',"arrow",place[6]
+OBJECT:'/',"lightning",place[2]
+OBJECT:'/',"sleep",place[3]
+OBJECT:'/',"magic missile",place[4]
+OBJECT:'/',"striking",place[5]
+OBJECT:'/',"slow monster",place[6]
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -280,12 +268,12 @@ TRAP:random,random
 TRAP:random,random
 TRAP:random,random
 # Random monsters.
-MONSTER:'@',random,place[0],hostile
+MONSTER:'@',"soldier",place[0],hostile
 MONSTER:'@',random,place[1],hostile
 MONSTER:'@',random,place[2],hostile
-MONSTER:'G',random,place[3],hostile
-MONSTER:'@',random,place[4],hostile
-MONSTER:'@',random,place[5],hostile
+MONSTER:'@',"Woodland-elf",place[3],hostile
+MONSTER:'@',"soldier",place[4],hostile
+MONSTER:'@',"soldier",place[5],hostile
 MONSTER:'@',random,place[6],hostile
 MONSTER:'i',"leprechaun",random,hostile
 MONSTER:'i',"leprechaun",random,hostile
