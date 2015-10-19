@@ -959,6 +959,12 @@ show_map_spot(int x, int y)
         unblock_point(x, y);
     }
 
+    /* Don't make it impossible to distinguished mapped area from area that's
+       actually been seen (because in the former case, there might still be
+       items generated on the floor that the player might care about). */
+    if (loc->typ == ROOM)
+        return;
+
     /* Now we're using the Slash'EM display engine, we can map unconditionally
        (with the 3.4.3 display engine, it's necessary to not overwrite
        remembered objects or traps) */
