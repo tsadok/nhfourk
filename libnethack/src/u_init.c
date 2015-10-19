@@ -50,7 +50,6 @@ static const struct trobj Archeologist[] = {
     {FOOD_RATION, 0, FOOD_CLASS, 3, 0},
     {PICK_AXE, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {WAN_LIGHT, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
-    {TINNING_KIT, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {TOUCHSTONE, 0, GEM_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
     {TIN_OPENER, 0, TOOL_CLASS, 1, 0},
@@ -329,6 +328,13 @@ static const struct inv_sub {
     /* { PM_DWARF, PICK_AXE, DWARVISH_MATTOCK }, */
     {PM_GNOME, BOW, CROSSBOW},
     {PM_GNOME, ARROW, CROSSBOW_BOLT},
+    /* for weight reasons, don't give scurriers heavy items */
+    {PM_SCURRIER, FOOD_RATION, SLIME_MOLD},
+    {PM_SCURRIER, CRAM_RATION, SLIME_MOLD},
+    {PM_SCURRIER, PICK_AXE, LENSES},
+    {PM_SCURRIER, DAGGER, DART},
+    {PM_SCURRIER, BOW, DART},
+    {PM_SCURRIER, ARROW, DART},
     {NON_PM, STRANGE_OBJECT, STRANGE_OBJECT}
 };
 
@@ -685,6 +691,7 @@ u_init_inv_skills(void)
         knows_object(TOUCHSTONE);
         skill_init(Skill_A);
         /* TODO:  confer basic skill in P_STEALTH */
+        augment_magic_chest_contents(TINNING_KIT, 0, 1);
         augment_magic_chest_contents(0, RING_CLASS, 3);
         augment_magic_chest_contents(0, GEM_CLASS, 7);
         break;
@@ -784,8 +791,14 @@ u_init_inv_skills(void)
         break;
     case PM_RANGER:
         trobj_list = copy_trobj_list(Ranger);
-        trobj_list[RAN_TWO_ARROWS].trquan = 50 + rolern2(10);
-        trobj_list[RAN_ZERO_ARROWS].trquan = 30 + rolern2(10);
+        if (Race_if(PM_SCURRIER)) {
+            /* darts */
+            trobj_list[RAN_TWO_ARROWS].trquan = 25 + rolern2(10);
+            trobj_list[RAN_ZERO_ARROWS].trquan = 15 + rolern2(5);
+        } else {
+            trobj_list[RAN_TWO_ARROWS].trquan = 50 + rolern2(10);
+            trobj_list[RAN_ZERO_ARROWS].trquan = 30 + rolern2(10);
+        }
         role_ini_inv(trobj_list, nclist);
         augment_magic_chest_contents(SADDLE, 0, 1);
         augment_magic_chest_contents(DAGGER, 0, 3);
@@ -994,6 +1007,14 @@ u_init_inv_skills(void)
         augment_skill_cap(P_HEALING_SPELL, 1, P_SKILLED, P_SKILLED);
         augment_magic_chest_contents(0, FOOD_CLASS, 3);
         ini_inv(trobj_list, nclist, rng_main);
+        break;
+
+    case PM_SCURRIER:
+        augment_skill_cap(P_STEALTH, 2, P_EXPERT, P_MASTER);
+        augment_skill_cap(P_DART, 2, P_EXPERT, P_MASTER);
+        augment_magic_chest_contents(0, FOOD_CLASS, 5);
+        augment_magic_chest_contents(DART, 0, 5);
+        augment_magic_chest_contents(POT_SICKNESS, 0, 1);
         break;
 
     default:   /* impossible */
@@ -1233,7 +1254,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                        obj->otyp != FLINT) {
                 obj->quan = 1L;
             }
-            if (trop->trspe != UNDEF_SPE)
+            if ((trop->trspe != UNDEF_SPE) && (obj->otyp != SLIME_MOLD))
                 obj->spe = trop->trspe;
             if (trop->trbless != UNDEF_BLESS)
                 obj->blessed = trop->trbless;

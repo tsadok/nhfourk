@@ -590,6 +590,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                         (moves % 5)  ? fruitadd("sugar plum") :
                         (moves % 7)  ? fruitadd("cup of figgy pudding") :
                         fruitadd("slice of plum cake");
+                else if (Race_if(PM_SCURRIER))
+                    otmp->spe = fruitadd("chestnut");
                 else
                     otmp->spe = gamestate.fruits.current;
                 break;

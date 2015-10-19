@@ -836,18 +836,17 @@ you_moved(void)
                 /* your speed doesn't augment steed's speed */
                 u.moveamt = mcalcmove(u.usteed);
             } else {
-                u.moveamt = youmonst.data->mmove;
-
-                if (Very_fast) {        /* speed boots or potion */
-                    /* average movement is 1.67 times normal */
-                    u.moveamt += NORMAL_SPEED / 2;
-                    if (rn2(3) == 0)
-                        u.moveamt += NORMAL_SPEED / 2;
-                } else if (Fast) {
-                    /* average movement is 1.33 times normal */
-                    if (rn2(3) != 0)
-                        u.moveamt += NORMAL_SPEED / 2;
-                }
+                u.moveamt = Upolyd ? youmonst.data->mmove : urace.basespeed;
+                /* Different sources of speed now stack: */
+                /* TODO: if (temporarily_slowed)
+                   u.moveamt = u.moveamt * 2 / 3; */
+                if ((u.uintrinsic[FAST] & INTRINSIC) && (rn2(3) != 0))
+                    u.moveamt += NORMAL_SPEED / 2; /* intrinsic speed */
+                if (u.uintrinsic[FAST] & ~INTRINSIC)
+                    u.moveamt = u.moveamt * 4 / 3; /* temporary haste/potion */
+                if (mworn_extrinsic(&youmonst, FAST))
+                    u.moveamt += rn2(3) ? (NORMAL_SPEED * 3 / 5) :
+                        (NORMAL_SPEED / 3); /* extrinsic speed (e.g., boots) */
             }
 
             switch (wtcap) {
