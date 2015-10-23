@@ -57,6 +57,15 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Wielding Stormbringer now causes peaceful and tame monsters to
+   attack you.  It also stops conflict from working in your favor.
+   However, the interface problems it creates in 3.4.3 (wherein you
+   attack things you don't intend to attack) are not present:  you
+   have the normal amount of control over your actions, can displace
+   your pets as usual, chat with shopkeepers, etc.  (If you actually
+   want to attack peaceful and tame monsters, you can of course do so
+   using the Fight command as usual, with the usual caveats.)
+
  * The life cycle for D has been extended.  They now start life as
    a [color] dragon egg, hatch into a baby [color] dragon, then grow
    progressively into a young [color] dragon, a [color] dragon, a
