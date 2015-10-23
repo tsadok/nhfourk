@@ -778,7 +778,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
     boolean believed_loe = mdef ? clear_path(magr->mx, magr->my,
                                              believed_mdef_mx, believed_mdef_my,
                                              appropriate_vizarray) : FALSE;
-    boolean magr_peaceful = magr == &youmonst || magr->mpeaceful;
+    boolean magr_peaceful = ((magr == &youmonst) ||
+                             (magr->mpeaceful && !Stormprone));
     boolean magr_tame = magr == &youmonst || magr->mtame;
 
     if (adtyp == AD_SPEL) {
@@ -823,7 +824,7 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
             && spellnum == MGC_CLONE_WIZ)
             return TRUE;
         /* spells that harm master while tame and not conflicted */
-        if (magr_tame && !Conflict &&
+        if (magr_tame && !Conflict && !Stormprone &&
             (spellnum == MGC_CURSE_ITEMS || spellnum == MGC_DISAPPEAR ||
              spellnum == MGC_DESTRY_ARMR))
             return TRUE;
@@ -844,7 +845,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
             spellnum == CLC_BLIND_YOU)
             return TRUE;
         /* spells that harm master while tame and not conflicted */
-        if (magr_tame && !Conflict && spellnum == CLC_CURSE_ITEMS)
+        if (magr_tame && !Conflict && !Stormprone &&
+            spellnum == CLC_CURSE_ITEMS)
             return TRUE;
     }
     return FALSE;

@@ -1301,10 +1301,11 @@ final_level(void)
     int angel_xlvl  = rn2_on_rng(8, astral_rng) + 15;
 
     /* create a guardian angel next to player, if worthy */
-    if (Conflict) {
+    if (Conflict || Stormprone) {
         /* unworthy: generate one angel on astral_rng (for consistency), others
            on the main RNG */
-        pline("A voice booms: \"Thy desire for conflict shall be fulfilled!\"");
+        pline("A voice booms: \"Thy desire for %s shall be fulfilled!\"",
+              Conflict ? "conflict" : "stormy relationships");
         for (i = angel_count; i > 0; --i) {
             mm.x = u.ux;
             mm.y = u.uy;

@@ -108,7 +108,7 @@ onscary(int x, int y, struct monst * mtmp)
 
     return (boolean) (sobj_at(SCR_SCARE_MONSTER, level, x, y)
                       || (sengr_at("Elbereth", x, y) &&
-                          flags.elbereth_enabled && !Conflict)
+                          flags.elbereth_enabled && !Conflict && !Stormprone)
                       || (mtmp->data->mlet == S_VAMPIRE &&
                           IS_ALTAR(level->locations[x][y].typ)));
 }
@@ -358,7 +358,8 @@ dochug(struct monst *mtmp)
         mtmp->mflee = 0;
 
     /* cease conflict-induced swallow/grab if conflict has ended */
-    if (mtmp == u.ustuck && mtmp->mpeaceful && !mtmp->mconf && !Conflict) {
+    if (mtmp == u.ustuck && mtmp->mpeaceful && !mtmp->mconf &&
+        !Conflict && !Stormprone) {
         release_hero(mtmp);
         return 0;   /* uses up monster's turn */
     }
@@ -428,7 +429,8 @@ dochug(struct monst *mtmp)
             goto toofar;
         }
         pline("A wave of psychic energy pours over you!");
-        if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
+        if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)) &&
+            !Stormprone)
             pline("It feels quite soothing.");
         else {
             boolean m_sen = sensemon(mtmp);
@@ -474,7 +476,7 @@ toofar:
 
     /* If monster is nearby you, and has to wield a weapon, do so.  This costs
        the monster a move, of course. */
-    if ((!mtmp->mpeaceful || Conflict) && inrange &&
+    if ((!mtmp->mpeaceful || Conflict || Stormprone) && inrange &&
         (engulfing_u(mtmp) ||
          dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <= 8) &&
         attacktype(mdat, AT_WEAP)) {
@@ -530,7 +532,7 @@ toofar:
         (mtmp->data == &mons[PM_LEPRECHAUN] && !ygold &&
          (lepgold || rn2(2))) || (is_wanderer(mdat) && !rn2(4)) ||
         (Conflict && !mtmp->iswiz) || (!mtmp->mcansee && !rn2(4)) ||
-        mtmp->mpeaceful) {
+        (mtmp->mpeaceful && !Stormprone)) {
         /* Possibly cast an undirected spell if not attacking you */
         /* note that most of the time castmu() will pick a directed spell and
            do nothing, so the monster moves normally */
@@ -602,7 +604,8 @@ toofar:
        make sure that the monster's physically capable of attacking the square,
        and that the monster hasn't used its turn already (tmp == 3). */
 
-    if (!mtmp->mpeaceful || (Conflict && !resist(mtmp, RING_CLASS, 0, 0))) {
+    if (!mtmp->mpeaceful || (Conflict && !resist(mtmp, RING_CLASS, 0, 0)) ||
+        Stormprone) {
         if (nearby && !noattacks(mdat) && u.uhp > 0 && !scared && tmp != 3 &&
             aware_of_u(mtmp))
             if (engulfing_u(mtmp) ? mattackq(mtmp, u.ux, u.uy) :
@@ -861,7 +864,7 @@ not_special:
 
     /* don't tunnel if hostile and close enough to prefer a weapon */
     if (can_tunnel && needspick(ptr) &&
-        ((!mtmp->mpeaceful || Conflict) &&
+        ((!mtmp->mpeaceful || Conflict || Stormprone) &&
          dist2(mtmp->mx, mtmp->my, gx, gy) <= 8))
         can_tunnel = FALSE;
 

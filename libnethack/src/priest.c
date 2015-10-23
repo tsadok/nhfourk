@@ -163,7 +163,8 @@ pri_move(struct monst *priest)
     gx += rn1(3, -1);   /* mill around the altar */
     gy += rn1(3, -1);
 
-    if (!priest->mpeaceful || (Conflict && !resist(priest, RING_CLASS, 0, 0))) {
+    if (!priest->mpeaceful || (Conflict && !resist(priest, RING_CLASS, 0, 0))
+        || Stormprone) {
         if (monnear(priest, u.ux, u.uy)) {
             if (Displaced)
                 pline("Your displaced image doesn't fool %s!", mon_nam(priest));

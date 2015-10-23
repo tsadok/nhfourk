@@ -284,6 +284,8 @@ void
 strategy(struct monst *mtmp, boolean magical_target)
 {
     boolean chases_player = !mtmp->mpeaceful || mtmp->isshk || mtmp->mtame;
+    if (Stormprone)
+        chases_player = TRUE;
 
     set_apparxy(mtmp);
 

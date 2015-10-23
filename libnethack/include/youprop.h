@@ -130,8 +130,10 @@
 */
 # define HAggravate_monster     u.uintrinsic[AGGRAVATE_MONSTER]
 # define Aggravate_monster      u_any_property(AGGRAVATE_MONSTER)
+# define HStormprone            u.uintrinsic[STORMPRONE]
+# define Stormprone             u_any_property(STORMPRONE)
 # define HConflict              u.uintrinsic[CONFLICT]
-# define Conflict               u_any_property(CONFLICT)
+# define Conflict               (u_any_property(CONFLICT) && !Stormprone)
 
 /*** Transportation ***/
 # define Lev_at_will                                                    \

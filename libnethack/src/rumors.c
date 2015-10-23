@@ -323,7 +323,7 @@ doconsult(struct monst *oracl)
     if (!oracl) {
         pline("There is no one here to consult.");
         return 0;
-    } else if (!oracl->mpeaceful) {
+    } else if (Stormprone || !oracl->mpeaceful) {
         pline("%s is in no mood for consultations.", Monnam(oracl));
         return 0;
     } else if (!umoney) {

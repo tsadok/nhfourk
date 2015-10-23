@@ -700,7 +700,7 @@ dog_move(struct monst *mtmp, int after)
     udist = distu(omx, omy);
     /* Let steeds eat and maybe throw rider during Conflict */
     if (mtmp == u.usteed) {
-        if (Conflict && !resist(mtmp, RING_CLASS, 0, 0)) {
+        if ((Conflict || Stormprone) && !resist(mtmp, RING_CLASS, 0, 0)) {
             dismount_steed(DISMOUNT_THROWN);
             return 1;
         }

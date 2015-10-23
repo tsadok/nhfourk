@@ -731,7 +731,7 @@ m_beam_ok(struct monst *magr, int dx, int dy, struct monst **mdef, boolean helpf
                 }
 
                 if (!Conflict) {
-                    if ((!helpful && magr->mpeaceful) ||
+                    if ((!helpful && magr->mpeaceful && !Stormprone) ||
                         (helpful && !magr->mpeaceful))
                     return FALSE;
                 }
@@ -765,6 +765,15 @@ m_beam_ok(struct monst *magr, int dx, int dy, struct monst **mdef, boolean helpf
                     tbx = x - magr->mx;
                     tby = y - magr->my;
                 }
+            } else if (mat && m_has_property(mat, STORMPRONE,
+                                             ANY_PROPERTY, 0) &&
+                       m_cansee(magr, x, y)) {
+                /* Anything wielding Stormbringer is a good target. */
+                if (mdef) {
+                    *mdef = mat;
+                    tbx = x - magr->mx;
+                    tby = y - magr->my;
+                }
             } else if (mm_aggression(magr, mat) & ALLOW_M && !helpful) {
                 /* we want to target this monster */
                 if (mdef) {
@@ -772,7 +781,8 @@ m_beam_ok(struct monst *magr, int dx, int dy, struct monst **mdef, boolean helpf
                     tbx = x - magr->mx;
                     tby = y - magr->my;
                 }
-            } else if (!helpful && (magr->mpeaceful || mat->mpeaceful)) {
+            } else if (!helpful && (magr->mpeaceful || mat->mpeaceful) &&
+                       !m_has_property(mat, STORMPRONE, ANY_PROPERTY, 0)) {
                 /* we don't want to attack this monster; peacefuls (including
                    pets) should avoid collateral damage; also handles the
                    pet_attacks_up_to_difficulty checks; symmetrised so that
@@ -809,7 +819,7 @@ mfind_target(struct monst *mtmp, boolean helpful)
 
     struct monst *mret;
 
-    if (!helpful && !mtmp->mpeaceful && lined_up(mtmp))
+    if (!helpful && (!mtmp->mpeaceful || Stormprone) && lined_up(mtmp))
         return &youmonst;     /* kludge - attack the player first if possible */
 
     for (dir = rn2(8); dir != origdir; dir = ((dir + 1) % 8)) {
