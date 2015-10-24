@@ -648,12 +648,17 @@ little_to_big(int montype)
 int
 big_to_little(int montype)
 {
-    int i;
-
-    for (i = 0; grownups[i][0] >= LOW_PM; i++)
-        if (montype == grownups[i][1])
-            return grownups[i][0];
-    return montype;
+    int i, k = montype;
+    boolean done = FALSE;
+    while (!done) {
+        done = TRUE;
+        for (i = 0; grownups[i][0] >= LOW_PM; i++)
+            if (k == grownups[i][1]) {
+                k = grownups[i][0];
+                done = FALSE;
+            }
+    }
+    return k;
 }
 
 /*

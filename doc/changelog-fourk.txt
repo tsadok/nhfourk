@@ -72,6 +72,8 @@ Changes in 4.3.0.4:
    [color] elder dragon, and finally into a great [color] dragon.
    The more they advance, the more dangerous they become.  The
    top two levels, elder and great, are not generated randomly.
+   Any age of dragon that lays eggs lays the same type of dragon
+   egg, in its respective color, which will hatch into a baby.
 
  * Support has been added for receiving dgamelaunch SimpleMail
    messages, when playing on a dgamelaunch-based public server,
