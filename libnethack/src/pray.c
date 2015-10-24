@@ -1137,19 +1137,22 @@ struct obj *
 sacrifice_gift(void)
 {
     struct obj *otmp;
-    if (!u.uconduct[conduct_weaphit]) {
+    if (!u.uconduct[conduct_weaphit] ||
+        ((uwep && uwep->oartifact && !rn2_on_rng(7, rng_altar_gift)))) {
         int oclass = ARMOR_CLASS;
         int total = 0, totalweight = 0;
         int i, j, k, q;
         int spclass[P_LAST_SPELL + 1 - P_FIRST_SPELL];
         int sweight[P_LAST_SPELL + 1 - P_FIRST_SPELL];
         int bookcnt[P_LAST_SPELL + 1 - P_FIRST_SPELL];
-        if ((Race_if(PM_SYLPH) && rn2_on_rng(3, rng_altar_gift)) ||
-            (!u.uconduct[conduct_clothing])) {
+        if ((Race_if(PM_SYLPH) && rn2_on_rng(2, rng_altar_gift)) ||
+            (!u.uconduct[conduct_clothing]) ||
+            !rn2_on_rng(3, rng_altar_gift)) {
             if (u.uconduct[conduct_jewelry])
                 oclass = RING_CLASS;
             else
-                oclass = WEAPON_CLASS; /* There are no better options. */
+                oclass = u.uconduct[conduct_clothing] ? ARMOR_CLASS :
+                    WEAPON_CLASS; /* There are no better options. */
         }
         if (rn2_on_rng(3, rng_altar_gift) && u.uconduct[conduct_illiterate]) {
             for (i = P_FIRST_SPELL; i <= P_LAST_SPELL; i++) {
@@ -1227,7 +1230,7 @@ sacrifice_gift(void)
         }
         if (oclass == RING_CLASS) {
             for (i = 0; i <= 3; i++) {
-                /* Up to 3 tries to find a useful ring. */
+                /* Up to 4 tries to find a useful ring. */
                 j = rn2_on_rng(10, rng_altar_gift);
                 k = 0;
                 switch (j) {
@@ -1321,22 +1324,49 @@ sacrifice_gift(void)
             else if (!uarmf)
                 tryforslot = os_armf;
             for (i = 1; objects[i].oc_class != ILLOBJ_CLASS; i++) {
-                if ((!objects[i].oc_unique && !objects[i].oc_nowish) &&
+                if (/* Only give wishable armor with nonzero proability. */
+                    (!objects[i].oc_unique && !objects[i].oc_nowish) &&
                     (objects[i].oc_prob > 0) &&
                     (objects[i].oc_class == ARMOR_CLASS) &&
-                    ((tryforslot == os_tool) || (objects[i].oc_armcat)) &&
+                    /* Don't give opposite alignment as a divine gift. */
+                    (i != HELM_OF_OPPOSITE_ALIGNMENT) &&
+                    /* Don't give highly-undesirable items. */
+                    (i != GAUNTLETS_OF_FUMBLING) && (i != FUMBLE_BOOTS) &&
+                    /* Match the slot we're aiming for, if we have
+                       chosen a slot to aim for. */
+                    ((tryforslot == os_tool) ||
+                     (tryforslot == objects[i].oc_armcat)) &&
+                    /* Don't give regen-blocking armor to a Sylph. */
                     ((!Race_if(PM_SYLPH)) ||
                      (objects[i].oc_material == WOOD) ||
                      (objects[i].oc_material == CLOTH)) &&
+                    /* Prefer magic over non-magic armor. */
                     (objects[i].oc_magic >= objects[choice].oc_magic) &&
+                    /* For cloaks, prefer higher MC */
                     (((objects[i].oc_armcat == os_armc) &&
                       (objects[i].a_can >= objects[choice].a_can)) ||
+                     /* For non-cloaks, prefer better AC */
                      ((objects[i].oc_armcat != os_armc) &&
                       (objects[i].a_ac  >= objects[choice].a_ac))) &&
-                    !rn2_on_rng(3, rng_altar_gift))
+                    /* Don't prefer an overwhelmingly heavy object over a very
+                       much lighter one from the same armor slot category, e.g.,
+                       crystal plate mail vs mithril. */
+                    ((objects[i].oc_weight <= 200) ||
+                     (objects[i].oc_weight < 3 * objects[choice].oc_weight) ||
+                     (objects[i].oc_armcat != objects[choice].oc_armcat)) &&
+                    /* Finally, don't always pick the very best option; let the
+                       RNG have a bit of say in this.  If no particular slot is
+                       aimed for, the overall probability of picking something
+                       should be somewhere around 98% (otherwise it defaults to
+                       a shirt).  If we are aiming for a specific slot, then the
+                       odds depend on the slot, as not all slots have the same
+                       number of choices.  Odds are worst for gloves, 80%. */
+                    !rn2_on_rng(((tryforslot == os_tool) ? 15 : 3),
+                                rng_altar_gift))
                     choice = i;
             }
-            otmp = mksobj(level, choice, TRUE, TRUE, rng_altar_gift);
+            if (!carrying(choice))
+                otmp = mksobj(level, choice, TRUE, TRUE, rng_altar_gift);
             if (otmp) {
                 if (otmp->cursed)
                     bless(otmp);

@@ -163,7 +163,8 @@ Changes in 4.3.0.3:
    foreground color.
 
  * Weaponless characters can get items other than weapons as
-   sacrifice gifts.
+   sacrifice gifts.  Notably, weaponless spellcasters can get
+   spellbooks.  Armor and rings are also possible.
 
  * Some special levels have been changed, or new versions have
    been introduced.  Notable examples include Mine's End, the
