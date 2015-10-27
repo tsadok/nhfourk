@@ -506,8 +506,8 @@ hurtle_step(void *arg, int x, int y)
                    killer_msg(DIED, "touching the edge of the universe"));
             return FALSE;
         }
-        if ((u.ux - x) && (u.uy - y) && bad_rock(youmonst.data, u.ux, y) &&
-            bad_rock(youmonst.data, x, u.uy)) {
+        if ((u.ux - x) && (u.uy - y) && bad_rock(URACEDATA, u.ux, y) &&
+            bad_rock(URACEDATA, x, u.uy)) {
             boolean too_much = (invent && (inv_weight() + weight_cap() > 600));
 
             /* Move at a diagonal. */
@@ -526,8 +526,8 @@ hurtle_step(void *arg, int x, int y)
         wakeup(mon, TRUE);
         return FALSE;
     }
-    if ((u.ux - x) && (u.uy - y) && bad_rock(youmonst.data, u.ux, y) &&
-        bad_rock(youmonst.data, x, u.uy)) {
+    if ((u.ux - x) && (u.uy - y) && bad_rock(URACEDATA, u.ux, y) &&
+        bad_rock(URACEDATA, x, u.uy)) {
         /* Move at a diagonal. */
         if (In_sokoban(&u.uz)) {
             pline("You come to an abrupt halt!");
