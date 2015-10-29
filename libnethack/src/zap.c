@@ -2876,7 +2876,8 @@ hit(const char *str, struct monst *mtmp, const char *force)
 void
 miss(const char *str, struct monst *mtmp)
 {
-    pline("%s %s %s.", The(str), vtense(str, "miss"),
+    pline("%s %s %s.", The(str),
+          vtense(str, Hallucination ? halluhitverb(TRUE) : "miss"),
           ((cansee(bhitpos.x, bhitpos.y) || canspotmon(mtmp))
            && flags.verbose) ? mon_nam(mtmp) : "it");
 }

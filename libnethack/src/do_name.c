@@ -950,6 +950,13 @@ static struct {
     {"jester", FALSE},
     {"attorney", FALSE},
     {"sleazoid", FALSE},
+    {"sphinx", FALSE},
+    {"winged monkey", FALSE},
+    {"butterfly", FALSE},
+    {"monster", FALSE},
+    {"radioactive spider", FALSE},
+    {"angel of death", FALSE},
+    {"nanobot", FALSE},
     {"killer tomato", FALSE},
     {"amazon", FALSE},
     {"robot", FALSE},
@@ -966,6 +973,21 @@ static struct {
     {"paskald", FALSE},
     {"brogmoid", FALSE},
     {"dornbeast", FALSE},
+        /* assorted NetHack variants */
+    {"wax golem", FALSE},               /* Slash'em */
+    {"monoton", FALSE},                 /* dnethack */
+    {"disintegrator", FALSE},           /* Biodiversity patch */
+    {"dissolved undead potato", FALSE}, /* Slash'em Extended.  Really. */
+        /* Brogue */
+    {"dar battlemage", FALSE},
+    {"tentacle horror", FALSE},
+    {"Warden of Yendor", FALSE},
+        /* ADOM */
+    {"ratling", FALSE},
+        /* DCSS */
+    {"yaktaur", FALSE},
+        /* DoomRL */
+    {"agony elemental", FALSE},
         /* Moria */
     {"Ancient Multi-Hued Dragon", FALSE},
     {"Evil Iggy", FALSE},
@@ -974,11 +996,25 @@ static struct {
     {"kestrel", FALSE},
     {"xeroc", FALSE},
     {"venus flytrap", FALSE},
+        /* Wesnoth */
+    {"chocobone", FALSE},
+        /* Minecraft */
+    {"creeper", FALSE},
+    {"enderman", FALSE},
+        /* Notable console games */
+    {"octorok", FALSE}, /* Zelda series */
+    {"goomba", FALSE},  /* Mario series */
         /* Wizardry */
     {"creeping coins", FALSE},
         /* Greek legend */
+    {"pegasus", FALSE},
     {"hydra", FALSE},
     {"siren", FALSE},
+        /* Japanese folklore */
+    {"kappa", FALSE},
+    {"tanuki", FALSE},
+        /* Beowulf */
+    {"Grendel", TRUE},
         /* Monty Python */
     {"killer bunny", FALSE},
         /* The Princess Bride */
@@ -993,7 +1029,15 @@ static struct {
     {"tangle tree", FALSE},
     {"nickelpede", FALSE},
     {"wiggle", FALSE},
+        /* Dragonbone Chair series */
+    {"bukka", FALSE},
+        /* Prydain series */
+    {"gwythaint", FALSE},
+        /* Shannara series */
+    {"skull bearer", FALSE},
         /* Lewis Carroll */
+    {"frumious bandersnatch", FALSE}, /* also from Known Space */
+    {"jubjub bird", FALSE},
     {"white rabbit", FALSE},
     {"snark", FALSE},
         /* Dr. Dolittle */
@@ -1003,9 +1047,12 @@ static struct {
         /* Star Trek */
     {"tribble", FALSE},
     {"Klingon", FALSE},
+    {"Cardassian", FALSE},
     {"Borg", FALSE},
         /* Star Wars */
-    {"Ewok", FALSE},
+    {"wookiee", FALSE},
+    {"protocol droid", FALSE},
+    {"ewok", FALSE},
         /* Tonari no Totoro */
     {"Totoro", FALSE},
         /* Nausicaa */
@@ -1044,15 +1091,18 @@ static struct {
         /* saccharine kiddy TV */
     {"Barney the dinosaur", TRUE},
         /* Angband */
-    {"Morgoth", TRUE},
+    {"Morgoth", TRUE}, /* Originally from LOTR */
         /* Babylon 5 */
     {"Vorlon", FALSE},
         /* King Arthur */
     {"questing beast", FALSE},
         /* Movie */
     {"Predator", FALSE},
-        /* common pest */
+        /* common pests */
     {"mother-in-law", FALSE},
+    {"hyperactive child", FALSE},
+    {"grumpy old man", FALSE},
+    {"teenager", FALSE},
         /* Battlestar Galactica */
     {"cylon", FALSE},
 };

@@ -961,6 +961,7 @@ extern int mattackq(struct monst *, int, int);
 
 /* ### mhitu.c ### */
 
+extern const char *halluhitverb(boolean);
 extern const char *weaphitmsg(struct obj *, struct monst *);
 extern const char *barehitmsg(struct monst *);
 extern const char *mpoisons_subj(struct monst *, const struct attack *);

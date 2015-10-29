@@ -467,6 +467,11 @@ hitmm(struct monst *magr, struct monst *mdef, const struct attack *mattk)
             seemimic(mdef);
         if (magr->m_ap_type)
             seemimic(magr);
+        if (Hallucination) {
+            pline("%s %s %s.", Monnam(magr),
+                  halluhitverb(FALSE), mon_nam(mdef));
+            return mdamagem(magr, mdef, mattk);
+        }
         if ((compat = could_seduce(magr, mdef, mattk)) && !magr->mcan) {
             pline("%s %s %s %s.", Monnam(magr),
                   mdef->mcansee ? "smiles at" : "talks to", mon_nam(mdef),

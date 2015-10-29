@@ -27,11 +27,78 @@ static void hitmsg(struct monst *, const struct attack *);
 /* changed to a parameter to mhitu. */
 static int dieroll;
 
+const char *
+halluhitverb(boolean uhit)
+{
+    switch ((moves + rn2(6)) % 60) {
+    case  1:  return uhit ? "masticate" : "masticates";
+    case  2:  return uhit ? "imagine" : "imagines";
+    case  3:  return uhit ? "impersonate" : "impersonates";
+    case  4:  return uhit ? "serenade" : "serenades";
+    case  5:  return uhit ? "discourage" : "discourages";
+    case  6:  return uhit ? "edify" : "edifies";
+    case  7:  return uhit ? "enlighten" : "enlightens";
+    case  8:  return uhit ? "lecture" : "lectures";
+    case  9:  return uhit ? "ridicule" : "ridicules";
+    case 10:  return uhit ? "frustrate" : "frustrates";
+    case 11:  return uhit ? "thwart" : "thwarts";
+    case 12:  return uhit ? "incarcerate" : "incarcerates";
+    case 13:  return uhit ? "arrest" : "arrests";
+    case 14:  return uhit ? "deck" : "decks";
+    case 15:  return uhit ? "clock" : "clocks";
+    case 16:  return uhit ? "fortify" : "fortifies";
+    case 17:  return uhit ? "implicate" : "implicates";
+    case 18:  return uhit ? "distract" : "distracts";
+    case 19:  return uhit ? "dance with" : "dances with";
+    case 20:  return uhit ? "exterminate" : "exterminates";
+    case 21:  return uhit ? "sniff" : "sniffs";
+    case 22:  return uhit ? "occupy" : "occupies";
+    case 23:  return uhit ? "vaccinate" : "vaccinates";
+    case 24:  return uhit ? "kiss" : "kisses";
+    case 25:  return uhit ? "hug" : "hugs";
+    case 26:  return uhit ? "befriend" : "befriends";
+    case 27:  return uhit ? "hate" : "hates";
+    case 28:  return uhit ? "love" : "loves";
+    case 29:  return uhit ? "assist" : "assists";
+    case 30:  return uhit ? "pursue" : "pursues";
+    case 31:  return uhit ? "fantasize about" : "fantasizes about";
+    case 32:  return uhit ? "punish" : "punishes";
+    case 33:  return uhit ? "smack" : "smacks";
+    case 34:  return uhit ? "clobber" : "clobbers";
+    case 35:  return uhit ? "bruise" : "bruises";
+    case 36:  return uhit ? "thump" : "thumps";
+    case 37:  return uhit ? "beat up" : "beats up";
+    case 38:  return uhit ? "brutalize" : "brutalizes";
+    case 39:  return uhit ? "argue with" : "argues with";
+    case 40:  return uhit ? "rebuke" : "rebukes";
+    case 41:  return uhit ? "thrash" : "thrashes";
+    case 42:  return uhit ? "oppress" : "oppresses";
+    case 43:  return uhit ? "pinch" : "pinches";
+    case 44:  return uhit ? "poke" : "pokes";
+    case 45:  return uhit ? "prod" : "prods";
+    case 46:  return uhit ? "enlist" : "enlists";
+    case 47:  return uhit ? "endanger" : "endangers";
+    case 48:  return uhit ? "frighten" : "frightens";
+    case 49:  return uhit ? "embarrass" : "embarrasses";
+    case 50:  return uhit ? "pester" : "pesters";
+    case 51:  return uhit ? "humiliate" : "humiliates";
+    case 52:  return uhit ? "eviscerate" : "eviscerates";
+    case 53:  return uhit ? "vaporize" : "vaporizes";
+    case 54:  return uhit ? "pardon" : "pardons";
+    case 55:  return uhit ? "bully" : "bullies";
+    case 56:  return uhit ? "devour" : "devours";
+    case 57:  return uhit ? "glare at" : "glares at";
+    case 58:  return uhit ? "manhandle" : "manhandles";
+    default:  return uhit ? "abuse" : "abuses";
+    }
+}
 
 const char *
 weaphitmsg(struct obj *obj, struct monst *magr)
 {
     boolean uhitm = (boolean) (magr == &youmonst);
+    if (Hallucination)
+        return halluhitverb(uhitm);
     if (objects[obj->otyp].oc_dir & WHACK &&
         (!(objects[obj->otyp].oc_dir & PIERCE) || rn2(2))) {
         if (objects[obj->otyp].oc_skill == P_CLUB)
@@ -66,6 +133,8 @@ const char *
 barehitmsg(struct monst *mtmp)
 {
     boolean thirdperson = !(mtmp == &youmonst);
+    if (Hallucination)
+        return halluhitverb(!thirdperson);
     if (!strcmp(mbodypart(mtmp, HAND), "claw") ||
         !strcmp(mbodypart(mtmp, HAND), "paw") ||
         !strcmp(mbodypart(mtmp, HAND), "foreclaw") ||
@@ -156,6 +225,9 @@ missmu(struct monst *mtmp, boolean nearmiss, const struct attack *mattk)
     if (!canspotmon(mtmp))
         map_invisible(mtmp->mx, mtmp->my);
 
+    if (Hallucination) {
+        pline("%s %s you.", Monnam(mtmp), halluhitverb(FALSE));
+    } else
     if (could_seduce(mtmp, &youmonst, mattk) && !mtmp->mcan)
         pline("%s pretends to be friendly.", Monnam(mtmp));
     else {
