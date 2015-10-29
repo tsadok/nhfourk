@@ -786,7 +786,7 @@ magic_negation(struct monst *mon)
         int wtype;
         armor = which_armor(mon, i);
         if (armor && item_provides_extrinsic(armor, PROTECTION, &wtype))
-            ringpro += armor->spe;
+            ringpro += ((objects[armor->otyp].oc_charged) ? armor->spe : 1);
     }
 
     /* You can also get temporary protection from the spell. */

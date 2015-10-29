@@ -1341,11 +1341,16 @@ damageum(struct monst *mdef, const struct attack *mattk)
     const struct permonst *pd = mdef->data;
     int tmp = dice((int)mattk->damn, (int)mattk->damd);
     int armpro;
-    boolean negated;
+    boolean negated, protectminvent;
 
     armpro = magic_negation(mdef);
     /* since hero can't be cancelled, only defender's armor applies */
-    negated = !((rn2(3) >= armpro) || !rn2(50));
+    negated = !((rn2(9) >= (2 * armpro)) || !rn2(50));
+    protectminvent = !((armpro < 5) && (armpro < 1 || !rn2(armpro * 2)));
+    /* protectminvent is a variable because otherwise some of the cases would
+       roll twice (e.g., fire attacks), which could result in some kinds of
+       items being protected and others not, which would be inconsistent with
+       how it works for players. */
 
     if (is_demon(youmonst.data) && !rn2(13) && !uwep && u.umonnum != PM_SUCCUBUS
         && u.umonnum != PM_INCUBUS && u.umonnum != PM_BALROG) {
@@ -1364,6 +1369,10 @@ damageum(struct monst *mdef, const struct attack *mattk)
         /* tmp = 0; */
         /* break; */
         /* } */
+        if (armpro >= 4) {
+            tmp = 0;
+            break;
+        }
         goto physical;
     case AD_WERE:      /* no special effect on monsters */
     case AD_HEAL:      /* likewise */
@@ -1409,8 +1418,10 @@ damageum(struct monst *mdef, const struct attack *mattk)
             break;
             /* Don't return yet; keep hp<1 and tmp=0 for pet msg */
         }
-        tmp += destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
-        tmp += destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
+        if (!protectminvent) {
+            tmp += destroy_mitem(mdef, SCROLL_CLASS, AD_FIRE);
+            tmp += destroy_mitem(mdef, SPBOOK_CLASS, AD_FIRE);
+        }
         if (resists_fire(mdef)) {
             if (!Blind)
                 pline("The fire doesn't heat %s!", mon_nam(mdef));
@@ -1418,8 +1429,9 @@ damageum(struct monst *mdef, const struct attack *mattk)
             shieldeff(mdef->mx, mdef->my);
             tmp = 0;
         }
-        /* only potions damage resistant players in destroy_item */
-        tmp += destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
+        if (!protectminvent)
+            /* only potions damage resistant players in destroy_item */
+            tmp += destroy_mitem(mdef, POTION_CLASS, AD_FIRE);
         break;
     case AD_COLD:
         if (negated) {
@@ -1435,7 +1447,8 @@ damageum(struct monst *mdef, const struct attack *mattk)
             golemeffects(mdef, AD_COLD, tmp);
             tmp = 0;
         }
-        tmp += destroy_mitem(mdef, POTION_CLASS, AD_COLD);
+        if (!protectminvent)
+            tmp += destroy_mitem(mdef, POTION_CLASS, AD_COLD);
         break;
     case AD_ELEC:
         if (negated) {
@@ -1444,7 +1457,8 @@ damageum(struct monst *mdef, const struct attack *mattk)
         }
         if (!Blind)
             pline("%s is zapped!", Monnam(mdef));
-        tmp += destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
+        if (!protectminvent)
+            tmp += destroy_mitem(mdef, WAND_CLASS, AD_ELEC);
         if (resists_elec(mdef)) {
             if (!Blind)
                 pline("The zap doesn't shock %s!", mon_nam(mdef));
@@ -1453,11 +1467,16 @@ damageum(struct monst *mdef, const struct attack *mattk)
             tmp = 0;
         }
         /* only rings damage resistant players in destroy_item */
-        tmp += destroy_mitem(mdef, RING_CLASS, AD_ELEC);
+        if (!protectminvent)
+            tmp += destroy_mitem(mdef, RING_CLASS, AD_ELEC);
         break;
     case AD_ACID:
         if (resists_acid(mdef))
             tmp = 0;
+        if (!rn2(30) && !protectminvent)
+            hurtarmor(mdef, ERODE_CORRODE);
+        if (!rn2(6) && !protectminvent)
+            acid_damage(MON_WEP(mdef));
         break;
     case AD_STON:
         if (!munstone(mdef, TRUE))
@@ -1513,6 +1532,7 @@ damageum(struct monst *mdef, const struct attack *mattk)
             if (!Blind && mdef->mcansee)
                 pline("%s is blinded.", Monnam(mdef));
             mdef->mcansee = 0;
+            tmp = (tmp / (armpro || 1)) || 1;
             tmp += mdef->mblinded;
             if (tmp > 127)
                 tmp = 127;
@@ -1538,6 +1558,8 @@ damageum(struct monst *mdef, const struct attack *mattk)
     case AD_DRLI:
         if (!negated && !rn2(3) && !resists_drli(mdef)) {
             int xtmp = dice(2, 6);
+            while ((armpro-- >= 3) && (tmp >= mdef->mhpmax / 2))
+                tmp = tmp / 2;
 
             pline("%s suddenly seems weaker!", Monnam(mdef));
             mdef->mhpmax -= xtmp;
@@ -1554,11 +1576,13 @@ damageum(struct monst *mdef, const struct attack *mattk)
             pline("%s falls to pieces!", Monnam(mdef));
             xkilled(mdef, 0);
         }
-        hurtarmor(mdef, ERODE_RUST);
+        if (!protectminvent)
+            hurtarmor(mdef, ERODE_RUST);
         tmp = 0;
         break;
     case AD_CORR:
-        hurtarmor(mdef, ERODE_CORRODE);
+        if (!protectminvent)
+            hurtarmor(mdef, ERODE_CORRODE);
         tmp = 0;
         break;
     case AD_DCAY:
@@ -1566,7 +1590,8 @@ damageum(struct monst *mdef, const struct attack *mattk)
             pline("%s falls to pieces!", Monnam(mdef));
             xkilled(mdef, 0);
         }
-        hurtarmor(mdef, ERODE_ROT);
+        if (!protectminvent)
+            hurtarmor(mdef, ERODE_ROT);
         tmp = 0;
         break;
     case AD_DRST:
@@ -1608,29 +1633,31 @@ damageum(struct monst *mdef, const struct attack *mattk)
             break;
         }
 
-        pline("You eat %s brain!", s_suffix(mon_nam(mdef)));
-        break_conduct(conduct_food);
-        if (touch_petrifies(mdef->data) && !Stone_resistance && !Stoned) {
-            Stoned = 5;
-            set_delayed_killer(STONING,
-                               killer_msg(STONING,
-                                          msgcat("eating the brain of ",
-                                                 k_monnam(mdef))));
-        }
-        if (!vegan(mdef->data))
-            break_conduct(conduct_vegan);
-        if (!vegetarian(mdef->data))
-            break_conduct(conduct_vegetarian);
-        if (mindless(mdef->data)) {
-            pline("%s doesn't notice.", Monnam(mdef));
-            break;
-        }
-        tmp += rnd(10);
-        morehungry(-rnd(30));   /* cannot choke */
-        if (ABASE(A_INT) < AMAX(A_INT)) {
-            ABASE(A_INT) += rnd(4);
-            if (ABASE(A_INT) > AMAX(A_INT))
-                ABASE(A_INT) = AMAX(A_INT);
+        if (armpro * armpro < rn2(27)) {
+            pline("You eat %s brain!", s_suffix(mon_nam(mdef)));
+            break_conduct(conduct_food);
+            if (touch_petrifies(mdef->data) && !Stone_resistance && !Stoned) {
+                Stoned = 5;
+                set_delayed_killer(STONING,
+                                   killer_msg(STONING,
+                                              msgcat("eating the brain of ",
+                                                     k_monnam(mdef))));
+            }
+            if (!vegan(mdef->data))
+                break_conduct(conduct_vegan);
+            if (!vegetarian(mdef->data))
+                break_conduct(conduct_vegetarian);
+            if (mindless(mdef->data)) {
+                pline("%s doesn't notice.", Monnam(mdef));
+                break;
+            }
+            tmp += rnd(10);
+            morehungry(-rnd(30));   /* cannot choke */
+            if (ABASE(A_INT) < AMAX(A_INT)) {
+                ABASE(A_INT) += rnd(4);
+                if (ABASE(A_INT) > AMAX(A_INT))
+                    ABASE(A_INT) = AMAX(A_INT);
+            }
         }
         break;
     case AD_STCK:
@@ -1667,19 +1694,21 @@ damageum(struct monst *mdef, const struct attack *mattk)
         if (!negated && mdef->mcanmove && !rn2(3) && tmp < mdef->mhp) {
             if (!Blind)
                 pline("%s is frozen by you!", Monnam(mdef));
-            mdef->mcanmove = 0;
-            mdef->mfrozen = rnd(10);
+            mdef->mfrozen = rnd(11 / (armpro + 1));
+            if (mdef->mfrozen > 1)
+                mdef->mcanmove = 0;
         }
         break;
     case AD_SLEE:
-        if (!negated && !mdef->msleeping && sleep_monst(mdef, rnd(10), -1)) {
+        if (!negated && !mdef->msleeping &&
+            sleep_monst(mdef, rnd(20 / (armpro || 1)), -1)) {
             if (!Blind)
                 pline("%s is put to sleep by you!", Monnam(mdef));
             slept_monst(mdef);
         }
         break;
     case AD_SLIM:
-        if (negated)
+        if (negated || armpro >= 5)
             break;      /* physical damage only */
         if (!rn2(4) && !flaming(mdef->data) && !unsolid(mdef->data) &&
             mdef->data != &mons[PM_GREEN_SLIME]) {
@@ -1693,7 +1722,7 @@ damageum(struct monst *mdef, const struct attack *mattk)
         /* if (negated) break; */
         break;
     case AD_SLOW:
-        if (!negated && mdef->mspeed != MSLOW) {
+        if (!negated && mdef->mspeed != MSLOW && !rn2(15 - 2 * armpro)) {
             unsigned int oldspeed = mdef->mspeed;
 
             mon_adjust_speed(mdef, -1, NULL);

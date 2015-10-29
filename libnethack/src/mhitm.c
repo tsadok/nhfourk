@@ -905,9 +905,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
             pline("%s is covered in acid!", Monnam(mdef));
             pline("It burns %s!", mon_nam(mdef));
         }
-        if (!rn2(30))
+        if (!rn2(30) && !protectminvent)
             hurtarmor(mdef, ERODE_CORRODE);
-        if (!rn2(6))
+        if (!rn2(6) && !protectminvent)
             acid_damage(MON_WEP(mdef));
         break;
     case AD_RUST:
@@ -923,14 +923,16 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
                 pline("May %s rust in peace.", mon_nam(mdef));
             return (MM_DEF_DIED | (grow_up(magr, mdef) ? 0 : MM_AGR_DIED));
         }
-        hurtarmor(mdef, ERODE_RUST);
+        if (!protectminvent)
+            hurtarmor(mdef, ERODE_RUST);
         mdef->mstrategy &= ~STRAT_WAITFORU;
         tmp = 0;
         break;
     case AD_CORR:
         if (magr->mcan)
             break;
-        hurtarmor(mdef, ERODE_CORRODE);
+        if (!protectminvent)
+            hurtarmor(mdef, ERODE_CORRODE);
         mdef->mstrategy &= ~STRAT_WAITFORU;
         tmp = 0;
         break;
@@ -947,7 +949,8 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
                 pline("May %s rot in peace.", mon_nam(mdef));
             return (MM_DEF_DIED | (grow_up(magr, mdef) ? 0 : MM_AGR_DIED));
         }
-        hurtarmor(mdef, ERODE_ROT);
+        if (!protectminvent)
+            hurtarmor(mdef, ERODE_ROT);
         mdef->mstrategy &= ~STRAT_WAITFORU;
         tmp = 0;
         break;
@@ -1006,14 +1009,15 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
             if (vis)
                 pline("%s is frozen by %s.", Monnam(mdef), mon_nam(magr));
 
-            mdef->mcanmove = 0;
             mdef->mfrozen = rnd(11 / (armpro + 1));
+            if (mdef->mfrozen > 1)
+                mdef->mcanmove = 0;
             mdef->mstrategy &= ~STRAT_WAITFORU;
         }
         break;
     case AD_SLOW:
         if (!cancelled && (mdef->mspeed != MSLOW) &&
-            !rn2(1 + 2 * armpro)) {
+            !rn2(15 - 2 * armpro)) {
             unsigned int oldspeed = mdef->mspeed;
 
             mon_adjust_speed(mdef, -1, NULL);
@@ -1116,7 +1120,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     } case AD_DRLI:
         if (!cancelled && !rn2(3) && !resists_drli(mdef)) {
             tmp = dice(2, 6);
-            while ((armpro-- >= 3) && (tmp >= mdef->mhpmax))
+            while ((armpro-- >= 3) && (tmp >= mdef->mhpmax / 2))
                 tmp = tmp / 2;
             if (vis)
                 pline("%s suddenly seems weaker!", Monnam(mdef));
