@@ -393,7 +393,8 @@ spoilobjclass(FILE *file, const char * hrname, const char * aname,
         "<th class=\"numeric extrafield nutrition\">Nutr</th>" :
         (classone == SPBOOK_CLASS) ?
         msgprintf("<th class=\"spschool\">school</th>"
-                  "<th class=\"numeric extrafield splev\">splev</th>") : "";
+                  "<th class=\"numeric extrafield splev\">%s</th>",
+                  "splev") : "";
     fprintf(file, "\n<h1><a name=\"%s\">%s</a></h1>\n"
             "<table id=\"%s\"><thead>\n  "
             "<tr><th id=\"object\">object</th>"
