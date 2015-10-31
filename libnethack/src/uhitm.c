@@ -1527,6 +1527,65 @@ damageum(struct monst *mdef, const struct attack *mattk)
             }
         }
         break;
+    case AD_MAGM:
+        if (negated || (mdef->data->mr > rn2(100))) {
+            shieldeff(m_mx(mdef), m_my(mdef));
+            pline("Your %s attack seems to have no effect on %s.",
+                  (Hallucination ? "minty" : "magical"), mon_nam(mdef));
+            tmp = 0;
+        } else {
+            tmp = tmp * 2 - armpro;
+            if (tmp < 1)
+                tmp = 1;
+        }
+        break;
+    case AD_DISN:
+        if (negated || resists_disint(mdef)) {
+            if (Hallucination)
+                pline("You transform %s into %s.",
+                      mon_nam(mdef), a_monnam(mdef));
+            else
+                pline("%s %s%s.", Monnam(mdef),
+                      /* Surprising how many things shouldn't "stand". */
+                      (is_flyer(mdef->data) || is_floater(mdef->data) ||
+                       slithy(mdef->data) || amorphous(mdef->data) ||
+                       noncorporeal(mdef->data) || unsolid(mdef->data) ||
+                       nolimbs(mdef->data) || is_whirly(mdef->data) ||
+                       ((is_swimmer(mdef->data) || is_clinger(mdef->data) ||
+                         amphibious(mdef->data)) &&
+                        (is_damp_terrain(level, m_mx(mdef), m_my(mdef)) ||
+                         is_lava(level, m_mx(mdef), m_my(mdef))))) ?
+                      "remains" : "stands",
+                      (noncorporeal(mdef->data) || unsolid(mdef->data) ||
+                       is_whirly(mdef->data)) ? "" : " firm");
+        } else {
+            struct obj *armor = which_armor(mdef, os_armc);
+            if (!armor) /* Can't just use || because C */
+                armor = which_armor(mdef, os_arm);
+            if (!armor) /* ditto */
+                armor = which_armor(mdef, os_armu);
+            if (armor) {
+                int dummy;
+                if (item_provides_extrinsic(armor, DISINT_RES, &dummy)) {
+                    if (canseemon(mdef))
+                        pline("%s %s is not disintegrated.",
+                              s_suffix(Monnam(mdef)), xname(armor));
+                } else {
+                    if (canseemon(mdef))
+                        pline("%s %s disintegrates!",
+                              s_suffix(Monnam(mdef)), xname(armor));
+                    m_useup(mdef, armor);
+                }
+            } else {
+                if (canseemon(mdef))
+                    pline("%s %s.", Monnam(mdef), Hallucination ?
+                          "waives goodbye" /* sic (pun) */ : "disintegrates");
+                mongone(mdef);
+                return MM_DEF_DIED;
+            }
+        }
+        tmp = 0;
+        break;
     case AD_BLND:
         if (can_blnd(&youmonst, mdef, mattk->aatyp, NULL)) {
             if (!Blind && mdef->mcansee)

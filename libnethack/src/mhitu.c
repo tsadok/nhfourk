@@ -1089,11 +1089,13 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hitmsg(mtmp, mattk);
         if (Antimagic || !uncancelled) {
             shieldeff(u.ux, u.uy);
-            pline("The attack seems to be magical but has no effect.");
+            pline("The %s but has no effect.",
+                  Hallucination ? "cosmic aura tastes like mint" :
+                  "attack seems to be magical");
             dmg = 0;
         } else {
             if (Hallucination)
-                pline("This is totally heinous!");
+                pline("This is totally heinous!  You hate mint!");
             else
                 pline("It's a magic attack!");
             dmg = dmg * 2 - armpro;
@@ -1106,7 +1108,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         outer_armor = EQUIP(os_armc);/* || EQUIP(os_arm) || EQUIP(os_armu) */
         if (!outer_armor)
             outer_armor = EQUIP(os_arm);
-        if (!outer_armor) 
+        if (!outer_armor)
             outer_armor = EQUIP(os_armu);
         if (outer_armor) {
             int dummy;
