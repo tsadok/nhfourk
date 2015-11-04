@@ -1860,6 +1860,8 @@ use_misc(struct monst *mtmp, struct musable *m)
            "very fast" temporarily; monster becomes "one stage faster"
            permanently */
         mon_adjust_speed(mtmp, 1, otmp);
+        if (oseen)
+            makeknown(otmp->otyp);
         m_useup(mtmp, otmp);
         if (oseen)
             makeknown(otmp->otyp);
