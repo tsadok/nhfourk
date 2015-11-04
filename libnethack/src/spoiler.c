@@ -46,6 +46,8 @@ static const char * spoilarteffects(struct artifact *art,
                                     unsigned long spfx, struct attack attk);
 static const char * spoilartinvoke(struct artifact *art);
 static const char * spoilartotherinfo(struct artifact *art);
+static void makehtmlspoilers(void);
+static void makepinobotyaml(void);
 
 const char *at[17] =
         {"passive", "claw", "bite", "kick", "butt", "touch",
@@ -583,7 +585,7 @@ spoilartotherinfo(struct artifact *art)
 }
 
 void
-makespoilers(void)
+makehtmlspoilers(void)
 {
     FILE *outfile;
     int fd = open_datafile("weapon-spoiler.html",
@@ -912,5 +914,343 @@ makespoilers(void)
         fclose(outfile);             
     }
     
-    pline("Spoiler files generated.");
+    pline("Spoiler HTML files generated.");
+}
+
+void
+makepinobotyaml(void)
+{
+    FILE *f;
+    int i, j;
+    const char *variant  = "NetHack4";
+    const char *prefix   = "4";
+    const char *filename = msgprintf("%s_%s_%s.yaml",
+                                     "Pinobot", prefix, variant);
+    int fd = open_datafile(filename, O_CREAT | O_WRONLY, SPOILPREFIX);
+    
+    if (fd < 0) {
+        pline("Failed to write monster .yaml for Pinobot.  Is it writeable?");
+        return;
+    }
+
+    if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        f = fdopen(fd, "w");
+
+        fprintf(f, "variant: \"%s\"\n", variant);
+        fprintf(f, "prefix: \"%s\"\n\n", prefix);
+        fprintf(f, "monsters:\n");
+
+        for (i = 0; mons[i].mlet; i++) {
+            const boolean ul = mons[i].mcolor & HI_ULINE ? TRUE : FALSE;
+            const uchar  clr = ul ? (mons[i].mcolor - HI_ULINE) :
+                mons[i].mcolor;
+            const struct permonst *pm = &mons[i];
+            struct monst dummymonst;
+            memset(&dummymonst, 0, sizeof(dummymonst));
+            dummymonst.data = pm;
+
+            if (i > 0)
+                fprintf(f, "\n");
+            fprintf(f, " - name: \"%s\"\n", pm->mname);
+            fprintf(f, "   symbol: \"%c\"\n", def_monsyms[(int)pm->mlet]);
+            fprintf(f, "   base-level: %d\n", pm->mlevel);
+            fprintf(f, "   speed: %d\n", pm->mmove);
+            fprintf(f, "   ac: %d\n", pm->ac);
+            fprintf(f, "   mr: %d\n", pm->mr);
+            fprintf(f, "   alignment: %d\n", pm->maligntyp);
+            fprintf(f, "   generates:\n");
+            if (pm->geno & G_UNIQ)
+                fprintf(f, "    - unique\n");
+            else if (pm->geno & G_NOGEN)
+                fprintf(f, "%s", "");
+            else {
+                if ( (pm->geno & G_HELL || !(pm->geno & G_NOHELL)) )
+                    fprintf(f, "    - gehennom\n");
+                if ( !(pm->geno & G_HELL) )
+                    fprintf(f, "    - dungeons\n");
+            }
+            fprintf(f, "   leaves-corpse: %s\n",
+                    (pm->geno & G_NOCORPSE) ? "No" : "Yes");
+            fprintf(f, "   not-generated-normally: %s\n",
+                    (pm->geno & G_NOGEN) ? "Yes" : "No");
+            fprintf(f, "   appears-in-small-groups: %s\n",
+                    (pm->geno & G_SGROUP) ? "Yes" : "No");
+            fprintf(f, "   appears-in-largeGroups: %s\n",
+                    (pm->geno & G_LGROUP) ? "Yes" : "No");
+            fprintf(f, "   genocidable: %s\n",
+                    (pm->geno & G_GENO) ? "Yes" : "No");
+            fprintf(f, "   attacks: [");
+            for (j = 0; j < NATTK && (pm->mattk[j].aatyp ||
+                                      pm->mattk[j].adtyp ||
+                                      pm->mattk[j].damn ||
+                                      pm->mattk[j].damd); ++j) {
+                if (j > 0)
+                    fprintf(f, ", ");
+                fprintf(f, "[");
+                switch (pm->mattk[j].aatyp) {
+                case AT_NONE: fprintf(f, "%s", "AtNone"); break;
+                case AT_CLAW: fprintf(f, "%s", "AtClaw"); break;
+                case AT_BITE: fprintf(f, "%s", "AtBite"); break;
+                case AT_KICK: fprintf(f, "%s", "AtKick"); break;
+                case AT_BUTT: fprintf(f, "%s", "AtButt"); break;
+                case AT_TUCH: fprintf(f, "%s", "AtTouch"); break;
+                case AT_STNG: fprintf(f, "%s", "AtSting"); break;
+                case AT_HUGS: fprintf(f, "%s", "AtHug"); break;
+                case AT_SPIT: fprintf(f, "%s", "AtSpit"); break;
+                case AT_ENGL: fprintf(f, "%s", "AtEngulf"); break;
+                case AT_BREA: fprintf(f, "%s", "AtBreath"); break;
+                case AT_EXPL: fprintf(f, "%s", "AtExplode"); break;
+                case AT_BOOM: fprintf(f, "%s", "AtSuicideExplode"); break;
+                case AT_GAZE: fprintf(f, "%s", "AtGaze"); break;
+                case AT_TENT: fprintf(f, "%s", "AtTentacle"); break;
+                case AT_WEAP: fprintf(f, "%s", "AtWeapon"); break;
+                case AT_MAGC: fprintf(f, "%s", "AtCast"); break;
+                default:      fprintf(f, "%s", "AtUnknown");
+                    pline("Error: Unknown attack type: %d",
+                          pm->mattk[j].aatyp);
+                    break;
+                }
+                switch (pm->mattk[j].adtyp) {
+                case AD_PHYS: fprintf(f, ", %s", "AdPhys"); break;
+                case AD_MAGM: fprintf(f, ", %s", "AdMagicMissile"); break;
+                case AD_FIRE: fprintf(f, ", %s", "AdFire"); break;
+                case AD_COLD: fprintf(f, ", %s", "AdCold"); break;
+                case AD_SLEE: fprintf(f, ", %s", "AdSleep"); break;
+                case AD_DISN: fprintf(f, ", %s", "AdDisintegrate"); break;
+                case AD_ELEC: fprintf(f, ", %s", "AdElectricity"); break;
+                case AD_DRST: fprintf(f, ", %s", "AdStrDrain"); break;
+                case AD_ACID: fprintf(f, ", %s", "AdAcid"); break;
+                case AD_SPC1: fprintf(f, ", %s", "AdSpc1");
+                    pline("Warning: AD_SPC1 used directly"); break;
+                case AD_SPC2: fprintf(f, ", %s", "AdSpc2");
+                    pline("Warning: AD_SPC2 used directly"); break;
+                case AD_BLND: fprintf(f, ", %s", "AdBlind"); break;
+                case AD_STUN: fprintf(f, ", %s", "AdStun"); break;
+                case AD_SLOW: fprintf(f, ", %s", "AdSlow"); break;
+                case AD_PLYS: fprintf(f, ", %s", "AdParalyse"); break;
+                case AD_DRLI: fprintf(f, ", %s", "AdLevelDrain"); break;
+                case AD_DREN: fprintf(f, ", %s", "AdMagicDrain"); break;
+                case AD_LEGS: fprintf(f, ", %s", "AdLegs"); break;
+                case AD_STON: fprintf(f, ", %s", "AdStone"); break;
+                case AD_STCK: fprintf(f, ", %s", "AdSticking"); break;
+                case AD_SGLD: fprintf(f, ", %s", "AdGoldSteal"); break;
+                case AD_SITM: fprintf(f, ", %s", "AdItemSteal"); break;
+                case AD_SEDU: fprintf(f, ", %s", "AdSeduce"); break;
+                case AD_TLPT: fprintf(f, ", %s", "AdTeleport"); break;
+                case AD_RUST: fprintf(f, ", %s", "AdRust"); break;
+                case AD_CONF: fprintf(f, ", %s", "AdConfuse"); break;
+                case AD_DGST: fprintf(f, ", %s", "AdDigest"); break;
+                case AD_HEAL: fprintf(f, ", %s", "AdHeal"); break;
+                case AD_WRAP: fprintf(f, ", %s", "AdWrap"); break;
+                case AD_WERE: fprintf(f, ", %s", "AdWere"); break;
+                case AD_DRDX: fprintf(f, ", %s", "AdDexDrain"); break;
+                case AD_DRCO: fprintf(f, ", %s", "AdConDrain"); break;
+                case AD_DRIN: fprintf(f, ", %s", "AdIntDrain"); break;
+                case AD_DISE: fprintf(f, ", %s", "AdDisease"); break;
+                case AD_DCAY: fprintf(f, ", %s", "AdRot"); break;
+                case AD_SSEX: fprintf(f, ", %s", "AdSex"); break;
+                case AD_HALU: fprintf(f, ", %s", "AdHallucination"); break;
+                case AD_DETH: fprintf(f, ", %s", "AdDeath"); break;
+                case AD_PEST: fprintf(f, ", %s", "AdPestilence"); break;
+                case AD_FAMN: fprintf(f, ", %s", "AdFamine"); break;
+                case AD_SLIM: fprintf(f, ", %s", "AdSlime"); break;
+                case AD_ENCH: fprintf(f, ", %s", "AdDisenchant"); break;
+                case AD_CORR: fprintf(f, ", %s", "AdCorrode"); break;
+                case AD_CLRC: fprintf(f, ", %s", "AdClerical"); break;
+                case AD_SPEL: fprintf(f, ", %s", "AdSpell"); break;
+                case AD_RBRE: fprintf(f, ", %s", "AdRandomBreath"); break;
+                case AD_SAMU: fprintf(f, ", %s", "AdAmuletSteal"); break;
+                case AD_CURS: fprintf(f, ", %s", "AdCurse"); break;
+                default:      fprintf(f, ", %s", "AdUnknown");
+                    pline("Error: Unknown damage type: %d",
+                          pm->mattk[j].adtyp);
+                    break;
+                }
+                fprintf(f, ", %d, %d]", pm->mattk[j].damn, pm->mattk[j].damd);
+            }
+            fprintf(f, "]\n");
+            fprintf(f, "   weight: %d\n", pm->cwt);
+            fprintf(f, "   nutrition: %d\n", pm->cnutrit);
+            fprintf(f, "   size: ");
+            if (pm->msize == MZ_TINY) fprintf(f, "tiny\n");
+            else if (pm->msize == MZ_SMALL) fprintf(f, "small\n");
+            else if (pm->msize == MZ_MEDIUM) fprintf(f, "medium\n");
+            else if (pm->msize == MZ_LARGE) fprintf(f, "large\n");
+            else if (pm->msize == MZ_HUGE) fprintf(f, "huge\n");
+            else if (pm->msize == MZ_GIGANTIC) fprintf(f, "gigantic\n");
+            else {
+                fprintf(f, "unknownsize\n");
+                pline("Error: Unknown size: %d", pm->msize);
+            }
+
+            fprintf(f, "   resistances:\n");
+            if (pm->mresists & MR_FIRE) fprintf(f, "    - ReFire\n");
+            if (pm->mresists & MR_COLD) fprintf(f, "    - ReCold\n");
+            if (pm->mresists & MR_SLEEP) fprintf(f, "    - ReSleep\n");
+            if (pm->mresists & MR_DISINT) fprintf(f, "    - ReDisintegrate\n");
+            if (pm->mresists & MR_ELEC) fprintf(f, "    - ReElectricity\n");
+            if (pm->mresists & MR_POISON) fprintf(f, "    - RePoison\n");
+            if (pm->mresists & MR_ACID) fprintf(f, "    - ReAcid\n");
+            if (pm->mresists & MR_STONE) fprintf(f, "    - RePetrification\n");
+            if (resists_magm(&dummymonst)) fprintf(f, "    - ReMagic\n");
+            if (resists_drli(&dummymonst)) fprintf(f, "    - ReDrain\n");
+            
+            fprintf(f, "   conferred:\n");
+            if (pm->mconveys & MR_FIRE) fprintf(f, "    - ReFire\n");
+            if (pm->mconveys & MR_COLD) fprintf(f, "    - ReCold\n");
+            if (pm->mconveys & MR_SLEEP) fprintf(f, "    - ReSleep\n");
+            if (pm->mconveys & MR_DISINT) fprintf(f, "    - ReDisintegrate\n");
+            if (pm->mconveys & MR_ELEC) fprintf(f, "    - ReElectricity\n");
+            if (pm->mconveys & MR_POISON) fprintf(f, "    - RePoison\n");
+            if (pm->mconveys & MR_ACID) fprintf(f, "    - ReAcid\n");
+            /* You can't actually get petrification resistance this way. */
+            // if (pm->mconveys & MR_STONE) fprintf(f, "    - RePetrification\n");
+        
+            fprintf(f, "   flags: [");
+            {
+                int comma_set = 0;
+#define AT(a, b) if (pm->mflags1 & a) {                 \
+                    if ( comma_set ) fprintf(f, ", ");  \
+                    comma_set = 1;                      \
+                    fprintf(f, "%s", b); }
+                AT(M1_FLY, "FlFly");
+                AT(M1_SWIM, "FlSwim");
+                AT(M1_AMORPHOUS, "FlAmorphous");
+                AT(M1_WALLWALK, "FlWallwalk");
+                AT(M1_CLING, "FlCling");
+                AT(M1_TUNNEL, "FlTunnel");
+                AT(M1_NEEDPICK, "FlNeedPick");
+                AT(M1_CONCEAL, "FlConceal");
+                AT(M1_HIDE, "FlHide");
+                AT(M1_AMPHIBIOUS, "FlAmphibious");
+                AT(M1_BREATHLESS, "FlBreathless");
+                AT(M1_NOTAKE, "FlNoTake");
+                AT(M1_NOEYES, "FlNoEyes");
+                AT(M1_NOHANDS, "FlNoHands");
+                AT(M1_NOLIMBS, "FlNoLimbs");
+                AT(M1_NOHEAD, "FlNoHead");
+                AT(M1_MINDLESS, "FlMindless");
+                AT(M1_HUMANOID, "FlHumanoid");
+                AT(M1_ANIMAL, "FlAnimal");
+                AT(M1_SLITHY, "FlSlithy");
+                AT(M1_UNSOLID, "FlUnSolid");
+                AT(M1_THICK_HIDE, "FlThickHide");
+                AT(M1_OVIPAROUS, "FlOviparous");
+                AT(M1_REGEN, "FlRegen");
+                AT(M1_SEE_INVIS, "FlSeeInvis");
+                AT(M1_TPORT, "FlTeleport");
+                AT(M1_TPORT_CNTRL, "FlTeleportControl");
+                AT(M1_ACID, "FlAcid");
+                AT(M1_POIS, "FlPoisonous");
+                AT(M1_CARNIVORE, "FlCarnivore");
+                AT(M1_HERBIVORE, "FlHerbivore");
+                AT(M1_METALLIVORE, "FlMetallivore");
+#undef AT
+#define AT(a, b) if (pm->mflags2 & a) {                 \
+                    if ( comma_set ) fprintf(f, ", ");  \
+                    comma_set = 1;                      \
+                    fprintf(f, "%s", b); }
+                AT(M2_NOPOLY, "FlNoPoly");
+                AT(M2_UNDEAD, "FlUndead");
+                AT(M2_WERE, "FlWere");
+                AT(M2_HUMAN, "FlHuman");
+                AT(M2_ELF, "FlElf");
+                AT(M2_DWARF, "FlDwarf");
+                AT(M2_GNOME, "FlGnome");
+                AT(M2_ORC, "FlOrc");
+                AT(M2_DEMON, "FlDemon");
+                AT(M2_MERC, "FlMerc");
+                AT(M2_LORD, "FlLord");
+                AT(M2_PRINCE, "FlPrince");
+                AT(M2_MINION, "FlMinion");
+                AT(M2_GIANT, "FlGiant");
+                AT(M2_MALE, "FlMale");
+                AT(M2_FEMALE, "FlFemale");
+                AT(M2_NEUTER, "FlNeuter");
+                AT(M2_PNAME, "FlProperName");
+                AT(M2_HOSTILE, "FlHostile");
+                AT(M2_PEACEFUL, "FlPeaceful");
+                AT(M2_DOMESTIC, "FlDomestic");
+                AT(M2_WANDER, "FlWander");
+                AT(M2_STALK, "FlStalk");
+                AT(M2_NASTY, "FlNasty");
+                AT(M2_STRONG, "FlStrong");
+                AT(M2_ROCKTHROW, "FlRockThrow");
+                AT(M2_GREEDY, "FlGreedy");
+                AT(M2_JEWELS, "FlJewels");
+                AT(M2_COLLECT, "FlCollect");
+                AT(M2_MAGIC, "FlMagicCollect");
+#undef AT
+                if (passes_walls(pm)) {
+                    fprintf(f, ", FlPhasing");
+                }
+#define AT(a, b) if (pm->mflags3 & a) {                 \
+                    if ( comma_set ) fprintf(f, ", ");  \
+                    comma_set = 1;                      \
+                    fprintf(f, "%s", b); }
+                AT(M3_WANTSAMUL, "FlWantsAmulet");
+                AT(M3_WANTSBELL, "FlWantsBell");
+                AT(M3_WANTSBOOK, "FlWantsBook");
+                AT(M3_WANTSCAND, "FlWantsCand");
+                AT(M3_WANTSARTI, "FlWantsArti");
+                AT(M3_WANTSALL, "FlWantsAll");
+                AT(M3_WAITFORU, "FlWaitsForYou");
+                AT(M3_CLOSE, "FlClose");
+                AT(M3_COVETOUS, "FlCovetous");
+                AT(M3_INFRAVISIBLE, "FlInfravisible");
+                AT(M3_INFRAVISION, "FlInfravision");
+                AT(M3_SCENT, "FlScentTracker");
+#undef AT
+                if (hates_silver(pm)) fprintf(f, ", FlHatesSilver");
+                if (passes_bars(pm)) fprintf(f, ", FlPassesBars");
+                if (vegan(pm)) fprintf(f, ", FlVegan");
+                else if (vegetarian(pm)) fprintf(f, ", FlVegetarian");
+            }
+            fprintf(f, "]\n");
+            fprintf(f, "   color: ");
+            
+            if (ul)
+                fprintf(f, "Underlined ");
+            switch(clr) {
+            case CLR_BLACK: fprintf(f, "Black"); break;
+            case CLR_RED: fprintf(f, "Red"); break;
+            case CLR_GREEN: fprintf(f, "Green"); break;
+            case CLR_BROWN: fprintf(f, "Brown"); break;
+            case CLR_BLUE: fprintf(f, "Blue"); break;
+            case CLR_MAGENTA: fprintf(f, "Magenta"); break;
+            case CLR_CYAN: fprintf(f, "Cyan"); break;
+            case CLR_GRAY: fprintf(f, "Gray"); break;
+            case CLR_ORANGE: fprintf(f, "Orange"); break;
+            case CLR_BRIGHT_GREEN: fprintf(f, "BrightGreen"); break;
+            case CLR_BRIGHT_BLUE: fprintf(f, "BrightBlue"); break;
+            case CLR_BRIGHT_CYAN: fprintf(f, "BrightCyan"); break;
+            case CLR_BRIGHT_MAGENTA: fprintf(f, "BrightMagenta"); break;
+            case CLR_YELLOW: fprintf(f, "Yellow"); break;
+            case CLR_WHITE: fprintf(f, "White"); break;
+            default: pline("Error: I don't know what color %d is.\n", clr);
+                fprintf(f, "UnknownColor"); break;
+            }
+            fprintf(f, "\n");
+            
+        }
+
+        fprintf(f, "all-monster-names: [");
+        for (i = 0; mons[i].mname[0]; ++i)
+        {
+            if (i > 0)
+                fprintf(f, ", ");
+            fprintf(f, "\"%s\"", mons[i].mname);
+        }
+        fprintf(f, "]\n\n");
+
+        change_fd_lock(fd, FALSE, LT_NONE, 0);
+        fclose(f);
+    }
+}
+
+void
+makespoilers(void)
+{
+    makehtmlspoilers();
+    makepinobotyaml();
 }
