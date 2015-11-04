@@ -922,8 +922,8 @@ makepinobotyaml(void)
 {
     FILE *f;
     int i, j;
-    const char *variant  = "NetHack4";
-    const char *prefix   = "4";
+    const char *variant  = "Fourk";
+    const char *prefix   = "4k";
     const char *filename = msgprintf("%s_%s_%s.yaml",
                                      "Pinobot", prefix, variant);
     int fd = open_datafile(filename, O_CREAT | O_WRONLY, SPOILPREFIX);
@@ -1056,6 +1056,10 @@ makepinobotyaml(void)
                 case AD_SLIM: fprintf(f, ", %s", "AdSlime"); break;
                 case AD_ENCH: fprintf(f, ", %s", "AdDisenchant"); break;
                 case AD_CORR: fprintf(f, ", %s", "AdCorrode"); break;
+                case AD_FLPN: fprintf(f, ", %s", "AdFeelPain"); break;
+                case AD_SCLD: fprintf(f, ", %s", "AdStinkingCloud"); break;
+                case AD_PITS: fprintf(f, ", %s", "AdPits"); break;
+                case AD_ICEB: fprintf(f, ", %s", "AdIceBlock"); break;
                 case AD_CLRC: fprintf(f, ", %s", "AdClerical"); break;
                 case AD_SPEL: fprintf(f, ", %s", "AdSpell"); break;
                 case AD_RBRE: fprintf(f, ", %s", "AdRandomBreath"); break;
@@ -1069,6 +1073,20 @@ makepinobotyaml(void)
                 fprintf(f, ", %d, %d]", pm->mattk[j].damn, pm->mattk[j].damd);
             }
             fprintf(f, "]\n");
+            {
+                boolean comma_set = FALSE;
+                fprintf(f, "   skills: [");
+#define SKILL(a, b) j = ((pm->mskill / a) % 4);                         \
+                if ( comma_set ) fprintf(f, ", ");                      \
+                if (j >= 1) {                                           \
+                    comma_set = TRUE;                                   \
+                    fprintf(f, "[%s, %s]", (b),                         \
+                            ((j >= 3) ? "Expert" :                      \
+                             (j >= 2) ? "Skilled" : "Basic")); }
+                SKILL(MP_WANDS, "SkWand")
+#undef SKILL
+                    fprintf(f, "]\n");
+            }
             fprintf(f, "   weight: %d\n", pm->cwt);
             fprintf(f, "   nutrition: %d\n", pm->cnutrit);
             fprintf(f, "   size: ");
@@ -1146,6 +1164,17 @@ makepinobotyaml(void)
                 AT(M1_HERBIVORE, "FlHerbivore");
                 AT(M1_METALLIVORE, "FlMetallivore");
 #undef AT
+#define AT(a, b) if (pm->mflagsr & a) {                 \
+                    if ( comma_set ) fprintf(f, ", ");  \
+                    comma_set = 1;                      \
+                    fprintf(f, "%s", b); }
+                AT(MRACE_HUMAN, "FlHuman");
+                AT(MRACE_ELF, "FlElf");
+                AT(MRACE_DWARF, "FlDwarf");
+                AT(MRACE_GNOME, "FlGnome");
+                AT(MRACE_ORC, "FlOrc");
+                AT(MRACE_FAIRY, "FlFairy");
+#undef AT
 #define AT(a, b) if (pm->mflags2 & a) {                 \
                     if ( comma_set ) fprintf(f, ", ");  \
                     comma_set = 1;                      \
@@ -1153,11 +1182,6 @@ makepinobotyaml(void)
                 AT(M2_NOPOLY, "FlNoPoly");
                 AT(M2_UNDEAD, "FlUndead");
                 AT(M2_WERE, "FlWere");
-                AT(M2_HUMAN, "FlHuman");
-                AT(M2_ELF, "FlElf");
-                AT(M2_DWARF, "FlDwarf");
-                AT(M2_GNOME, "FlGnome");
-                AT(M2_ORC, "FlOrc");
                 AT(M2_DEMON, "FlDemon");
                 AT(M2_MERC, "FlMerc");
                 AT(M2_LORD, "FlLord");
@@ -1200,6 +1224,9 @@ makepinobotyaml(void)
                 AT(M3_INFRAVISIBLE, "FlInfravisible");
                 AT(M3_INFRAVISION, "FlInfravision");
                 AT(M3_SCENT, "FlScentTracker");
+                AT(M3_DISPLACES, "FlDisplaces");
+                AT(M3_BLINKAWAY, "FlBlinkAway");
+                AT(M3_VANDMGRDUC, "FlVanDmgRduc");
 #undef AT
                 if (hates_silver(pm)) fprintf(f, ", FlHatesSilver");
                 if (passes_bars(pm)) fprintf(f, ", FlPassesBars");
@@ -1245,6 +1272,7 @@ makepinobotyaml(void)
 
         change_fd_lock(fd, FALSE, LT_NONE, 0);
         fclose(f);
+        pline("YAML for Pinobot generated: %s", filename);
     }
 }
 
