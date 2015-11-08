@@ -804,7 +804,7 @@ tamedog(struct monst *mtmp, struct obj *obj)
     if (mtmp == u.ustuck) {
         if (Engulfed)
             expels(mtmp, mtmp->data, TRUE);
-        else if (!(Upolyd && sticks(youmonst.data)))
+        else if (!sticks(URACEDATA))
             unstuck(mtmp);
     }
 

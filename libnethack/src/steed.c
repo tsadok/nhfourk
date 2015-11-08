@@ -221,9 +221,8 @@ mount_steed(struct monst * mtmp,        /* The animal */
             return FALSE;
     }
 
-    if (Upolyd &&
-        (!humanoid(youmonst.data) || verysmall(youmonst.data) ||
-         bigmonst(youmonst.data) || slithy(youmonst.data))) {
+    if (!humanoid(URACEDATA) || verysmall(URACEDATA) ||
+        bigmonst(URACEDATA) || slithy(URACEDATA)) {
         pline("You won't fit on a saddle.");
         return FALSE;
     }

@@ -775,9 +775,7 @@ dodown(boolean autodig_ok)
             if (u.utrap && (u.utraptype == TT_PIT)) {
                 if (flags.autodig && autodig_ok && flags.autodigdown &&
                     flags.occupation == occ_none &&
-                    ((Race_if(PM_SCURRIER) && !Upolyd) ||
-                     (Upolyd && tunnels(youmonst.data) &&
-                      !needspick(youmonst.data)) ||
+                    ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
                      (uwep && is_pick(uwep)))) {
                     struct nh_cmd_arg arg;
                     arg_from_delta(0, 0, 1, &arg);

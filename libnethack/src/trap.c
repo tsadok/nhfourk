@@ -605,8 +605,7 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
         action_interrupted();
     }
     /* avoid hiding under nothing */
-    if (x == u.ux && y == u.uy && Upolyd && hides_under(youmonst.data) &&
-        !OBJ_AT(x, y))
+    if (x == u.ux && y == u.uy && hides_under(URACEDATA) && !OBJ_AT(x, y))
         u.uundetected = 0;
 
     if (fail_reason)

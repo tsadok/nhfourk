@@ -247,7 +247,7 @@ polyself(boolean forcecontrol)
             return;
         }
     }
-    old_light = Upolyd ? emits_light(youmonst.data) : 0;
+    old_light = emits_light(URACEDATA);
 
     if (Polymorph_control || forcecontrol) {
         do {
@@ -333,7 +333,7 @@ polyself(boolean forcecontrol)
 made_change:
     /* If you change this algorithm, change the matching algorithm in
        nh_create_game(). */
-    new_light = Upolyd ? emits_light(youmonst.data) : 0;
+    new_light = emits_light(URACEDATA);
     if (old_light != new_light) {
         if (old_light)
             del_light_source(level, LS_MONSTER, &youmonst);
@@ -480,7 +480,7 @@ int
 domonability(const struct nh_cmd_arg *arg)
 {
     struct polyform_ability pa;
-    if (has_polyform_ability(youmonst.data, &pa)) {
+    if (has_polyform_ability(URACEDATA, &pa)) {
         if (pa.directed)
             return pa.handler_directed(arg);
         else
