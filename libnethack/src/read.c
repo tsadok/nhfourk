@@ -121,8 +121,9 @@ doread(const struct nh_cmd_arg *arg)
             "Down with the living!",
             "Pudding farmer",
             "Vegetarian",
+            "Hello, I'm War",
             "Sredni Vashtar went forth.  " /* Saki short story */
-                "His thoughts were red and his teeth were white.",
+            "His thoughts were red and his teeth were white.",
             "Keep calm and explore the dungeon.",
             "One does not simply kill the Wizard of Yendor.",
         };
