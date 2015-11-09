@@ -147,15 +147,17 @@ mkcavearea(boolean rockit)
 static int
 dig_typ(struct obj *otmp, xchar x, xchar y)
 {
-    boolean ispick = is_pick(otmp);
+    boolean ispick = otmp && is_pick(otmp);
+    boolean can_dig_without_pick = tunnels(URACEDATA) && !needspick(URACEDATA);
 
     return (ispick && sobj_at(STATUE, level, x, y) ? DIGTYP_STATUE :
             ispick && sobj_at(BOULDER, level, x, y) ? DIGTYP_BOULDER :
             closed_door(level, x, y) ? DIGTYP_DOOR :
             IS_TREE(level->locations[x][y].typ) ? (ispick ? DIGTYP_UNDIGGABLE :
-                                                   DIGTYP_TREE) : ispick &&
-            IS_ROCK(level->locations[x][y].typ) &&
-            (!level->flags.arboreal || IS_WALL(level->locations[x][y].typ)) ?
+                                                   DIGTYP_TREE) :
+            ((ispick || can_dig_without_pick) &&
+             IS_ROCK(level->locations[x][y].typ) &&
+             (!level->flags.arboreal || IS_WALL(level->locations[x][y].typ))) ?
             DIGTYP_ROCK : DIGTYP_UNDIGGABLE);
 }
 
@@ -237,14 +239,17 @@ dig(void)
     xchar dpx = u.utracked_location[tl_dig].x,
           dpy = u.utracked_location[tl_dig].y;
     boolean ispick = uwep && is_pick(uwep);
-    const char *verb = (!uwep || is_pick(uwep)) ? "dig into" : "chop through";
+    boolean can_dig_without_pick = tunnels(URACEDATA) && !needspick(URACEDATA);
+    const char *verb = (!uwep || is_pick(uwep) || can_dig_without_pick) ?
+        "dig into" : "chop through";
     loc = &level->locations[dpx][dpy];
     boolean down = u.ux == dpx && u.uy == dpy;
     boolean new_dig = u.uoccupation_progress[tos_dig] == 0;
 
     /* perhaps a nymph stole your pick-axe while you were busy digging */
     /* or perhaps you teleported away */
-    if (Engulfed || !uwep || (!ispick && !is_axe(uwep)) || distu(dpx, dpy) > 2)
+    if (Engulfed || ((!uwep || (!ispick && !is_axe(uwep))) &&
+                     !can_dig_without_pick) || distu(dpx, dpy) > 2)
         return 0;
 
     if (down) {
@@ -264,7 +269,7 @@ dig(void)
             return 0;
         }
     }
-    if (Fumbling && !rn2(3)) {
+    if (Fumbling && !can_dig_without_pick && !rn2(3)) {
         switch (rn2(3)) {
         case 0:
             if (!welded(uwep)) {
@@ -295,10 +300,15 @@ dig(void)
     }
 
     u.uoccupation_progress[tos_dig] +=
-        10 + rn2(5) + abon() + uwep->spe - greatest_erosion(uwep) + u.udaminc;
+        10 + rn2(5) + abon() +
+        (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0) + u.udaminc;
     /* TODO: This formula looks /very/ suspicious, becuse the exponential
        factor is going to override almost anyting else. */
-    if (Race_if(PM_DWARF))
+    if (can_dig_without_pick && !ispick)
+        u.uoccupation_progress[tos_dig] = Race_if(PM_SCURRIER) ?
+            u.uoccupation_progress[tos_dig] * 5 / 2 :
+            u.uoccupation_progress[tos_dig] * 3 / 2;
+    else if (Race_if(PM_DWARF))
         u.uoccupation_progress[tos_dig] *= 2;
     if (u_have_property(FAST_DIGGING, ANY_PROPERTY, FALSE)) {
         if (u.uoccupation_progress[tos_dig] < 20)
@@ -863,18 +873,19 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
     boolean ispick;
     const char *qbuf;
     const char *verb;
-    int wtstatus;
+    int wtstatus = 1;
     schar dx, dy, dz;
     int rx, ry;
     struct rm *loc;
     int dig_target;
     const char *verbing;
 
-    ispick = is_pick(obj);
+    ispick = obj && is_pick(obj);
     verb = ispick ? "dig" : "chop";
-    verbing = ispick ? "digging" : "chopping";
+    verbing = (ispick || !obj) ? "digging" : "chopping";
 
-    wtstatus = wield_tool(obj, "preparing to dig", occ_dig);
+    if (obj)
+        wtstatus = wield_tool(obj, "preparing to dig", occ_dig);
     if (wtstatus & 2)
         return 1;
     else if (!(wtstatus & 1))
@@ -904,6 +915,12 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
             pline("You don't have enough leverage.");
         else
             pline("You can't reach the %s.", ceiling(u.ux, u.uy));
+    } else if (!dx && !dy && !dz && !obj) {
+        /* This _probably_ can't actually happen.  I think.  Because I _think_
+           obj  can only be NULL due to autodig or autodigdown.  I think. */
+        pline("You attempt to %s your own %s for a moment, but you desist.",
+              (Hallucination ? "amortize" : "delve into"), body_part(BODY));
+        return 1;
     } else if (!dx && !dy && !dz) {
         const char *buf;
         int dam;
@@ -941,7 +958,10 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
                     seetrap(trap);
                     pline("There is a spider web there!");
                 }
-                pline("Your %s entangled in the web.", aobjnam(obj, "become"));
+                pline("Your %s entangled in the web.",
+                      (obj ? aobjnam(obj, "become") :
+                       msgprintf("%s become",
+                                 makeplural(body_part(HAND)))));
                 /* you ought to be able to let go; tough luck */
                 /* (maybe `move_into_trap()' would be better) */
                 helpless(dice(2, 2), hr_busy, "stuck in a spider web",
@@ -965,7 +985,8 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
                     losehp(2, killer_msg(DIED, "axing a hard object"));
             } else
                 pline("You swing your %s through thin air.",
-                      aobjnam(obj, NULL));
+                      (obj ? aobjnam(obj, NULL) :
+                       makeplural(body_part(HAND))));
         } else {
             static const char *const d_action[6] = {
                 "swinging",
@@ -990,14 +1011,16 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
         }
     } else if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz)) {
         /* it must be air -- water checked above */
-        pline("You swing your %s through thin air.", aobjnam(obj, NULL));
+        pline("You swing your %s through thin air.",
+              (obj ? aobjnam(obj, NULL) : makeplural(body_part(HAND))));
     } else if (!can_reach_floor()) {
         pline("You can't reach the %s.", surface(u.ux, u.uy));
     } else if (is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy)) {
-        pline("You swing your %s through the %s below.", aobjnam(obj, NULL),
-                is_pool(level, u.ux, u.uy) ? "water" : "lava");
+        pline("You swing your %s through the %s below.",
+              (obj ? aobjnam(obj, NULL) : makeplural(body_part(HAND))),
+              (is_pool(level, u.ux, u.uy) ? "water" : "lava"));
 
-        if (is_lava(level, u.ux, u.uy) && is_organic(obj) &&
+        if (is_lava(level, u.ux, u.uy) && obj && is_organic(obj) &&
             !obj->oerodeproof) {
             if (obj->otyp == SPE_BOOK_OF_THE_DEAD) {
                 if (!Blind)
@@ -1011,11 +1034,11 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
                 useupall(obj);
             }
         }
-    } else if (is_puddle(level, u.ux, u.uy)) {
+    } else if (is_puddle(level, u.ux, u.uy) && obj) {
         pline("Your %s against the water's surface.",
               aobjnam(obj, "splash"));
         wake_nearby(FALSE);
-    } else if (!ispick) {
+    } else if (obj && !ispick) {
         pline("Your %s merely scratches the %s.", aobjnam(obj, NULL),
               surface(u.ux, u.uy));
         u_wipe_engr(3);
@@ -1449,8 +1472,8 @@ rot_corpse(void *arg, long timeout)
         if ((mtmp = m_at(level, x, y)) && mtmp->mundetected &&
             hides_under(mtmp->data)) {
             mtmp->mundetected = 0;
-        } else if (Upolyd && x == u.ux && y == u.uy && u.uundetected &&
-                   hides_under(youmonst.data)) {
+        } else if (hides_under(URACEDATA) && x == u.ux && y == u.uy &&
+                   u.uundetected) {
             u.uundetected = 0;
         }
     } else if (in_invent) {

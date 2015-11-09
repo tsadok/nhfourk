@@ -663,7 +663,7 @@ enlightenment(int final)
         you_are(&menu, msgcat("swallowed by ", a_monnam(u.ustuck)));
     else if (u.ustuck) {
         const char *buf = msgprintf(
-            "%s %s", (Upolyd && sticks(youmonst.data)) ? "holding" : "held by",
+            "%s %s", (sticks(URACEDATA)) ? "holding" : "held by",
             a_monnam(u.ustuck));
         you_are(&menu, buf);
     }

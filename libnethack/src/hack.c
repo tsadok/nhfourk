@@ -189,7 +189,7 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
         }
 
         if (l->mem_bg >= S_stone && l->mem_bg <= S_trwall &&
-            bad_rock(youmonst.data, x, y) && (!uwep || !is_pick(uwep))) {
+            bad_rock(URACEDATA, x, y) && (!uwep || !is_pick(uwep))) {
             if (!cansee(x, y))
                 pline("Use the 'moveonly' command to move into a "
                       "remembered wall.");
@@ -892,8 +892,8 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
                 return TRUE;
         }
     }
-    if (dx && dy && bad_rock(youmonst.data, ux, y) &&
-        bad_rock(youmonst.data, x, uy)) {
+    if (dx && dy && bad_rock(URACEDATA, ux, y) &&
+        bad_rock(URACEDATA, x, uy)) {
         /* Move at a diagonal. */
         if (In_sokoban(&u.uz)) {
             if (mode == DO_MOVE)
@@ -1659,7 +1659,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         x = u.ux + turnstate.move.dx;
         y = u.uy + turnstate.move.dy;
         int tries = 0;
-        while ((!isok(x, y) || bad_rock(youmonst.data, x, y)) &&
+        while ((!isok(x, y) || bad_rock(URACEDATA, x, y)) &&
                (uia != uia_attack) && (!uwep || !is_pick(uwep))) {
             if (tries++ > 50 || (!Stunned && !Confusion)) {
                 action_completed();
@@ -2082,7 +2082,9 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                    DO_MOVE, &cache)) {
         /* We can't move there... but maybe we can dig. */
         if (flags.autodig && uim != uim_nointeraction &&
-            thismove != occ_move && uwep && is_pick(uwep)) {
+            thismove != occ_move && ((uwep && is_pick(uwep)) ||
+                                     (tunnels(URACEDATA) &&
+                                      !needspick(URACEDATA)))) {
             /* MRKR: Automatic digging when wielding the appropriate tool */
             return use_pick_axe(uwep, &newarg);
         }

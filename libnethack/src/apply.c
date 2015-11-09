@@ -307,7 +307,7 @@ static const char whistle_str[] = "You produce a %s whistling sound.";
 static int
 use_whistle(struct obj *obj)
 {
-    if (Upolyd && !can_blow_instrument(youmonst.data)) {
+    if (!can_blow_instrument(URACEDATA)) {
         pline("You are incapable of blowing the whistle!");
         return 0;
     }
@@ -328,7 +328,7 @@ use_magic_whistle(struct obj *obj)
 {
     struct monst *mtmp, *nextmon;
 
-    if (Upolyd && !can_blow_instrument(youmonst.data)) {
+    if (!can_blow_instrument(URACEDATA)) {
         pline("You are incapable of blowing the whistle!");
         return 0;
     }

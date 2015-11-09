@@ -81,6 +81,8 @@
 # define MRACE_ORC      0x00000080L     /* is an orc */
 # define MRACE_FAIRY    0x00000100L     /* is a fairy creature */
 # define MRACE_SYLPH    MRACE_FAIRY     /* for clarity in role.c */
+# define MRACE_RODENT   0x00000200L     /* is a rodent */
+# define MRACE_SCURRIER MRACE_RODENT    /* for clarity in role.c */
 
 # define MP_WANDS        0x00000001L
 # define MP_WAND_BASIC   0x00000001L

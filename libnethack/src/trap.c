@@ -605,8 +605,7 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
         action_interrupted();
     }
     /* avoid hiding under nothing */
-    if (x == u.ux && y == u.uy && Upolyd && hides_under(youmonst.data) &&
-        !OBJ_AT(x, y))
+    if (x == u.ux && y == u.uy && hides_under(URACEDATA) && !OBJ_AT(x, y))
         u.uundetected = 0;
 
     if (fail_reason)
@@ -3420,8 +3419,8 @@ try_disarm(struct trap *ttmp, boolean force_failure, schar dx, schar dy)
         return 0;
     }
     /* duplicate tight-space checks from test_move */
-    if (dx && dy && bad_rock(youmonst.data, u.ux, ttmp->ty) &&
-        bad_rock(youmonst.data, ttmp->tx, u.uy)) {
+    if (dx && dy && bad_rock(URACEDATA, u.ux, ttmp->ty) &&
+        bad_rock(URACEDATA, ttmp->tx, u.uy)) {
         if ((invent && (inv_weight() + weight_cap() > 600)) ||
             bigmonst(youmonst.data)) {
             /* don't allow untrap if they can't get thru to it */

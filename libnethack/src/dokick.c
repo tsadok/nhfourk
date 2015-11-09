@@ -167,7 +167,7 @@ kick_monster(xchar x, xchar y, schar dx, schar dy)
        all your kicks, or else take one turn and attack the monster normally,
        getting all your attacks _including_ all your kicks. If you have >1 kick
        attack, you get all of them. */
-    if (Upolyd && attacktype(youmonst.data, AT_KICK)) {
+    if (attacktype(URACEDATA, AT_KICK)) {
         const struct attack *uattk;
         int sum;
         schar tmp = find_roll_to_hit(mon);

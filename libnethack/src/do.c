@@ -732,10 +732,13 @@ dodown(boolean autodig_ok)
             || (!can_fall_thru(level) && can_fall) || !trap->tseen) {
 
             if (flags.autodig && autodig_ok && flags.autodigdown &&
-                flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                flags.occupation == occ_none &&
+                ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
+                 (uwep && is_pick(uwep)))) {
                 struct nh_cmd_arg arg;
                 arg_from_delta(0, 0, 1, &arg);
-                return use_pick_axe(uwep, &arg);
+                return use_pick_axe(((uwep && is_pick(uwep)) ?
+                                     uwep : NULL), &arg);
             } else {
                 pline("You can't go down here.");
                 return 0;
@@ -771,7 +774,9 @@ dodown(boolean autodig_ok)
         if (is_pit_trap(trap->ttyp)) {
             if (u.utrap && (u.utraptype == TT_PIT)) {
                 if (flags.autodig && autodig_ok && flags.autodigdown &&
-                    flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                    flags.occupation == occ_none &&
+                    ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
+                     (uwep && is_pick(uwep)))) {
                     struct nh_cmd_arg arg;
                     arg_from_delta(0, 0, 1, &arg);
                     return use_pick_axe(uwep, &arg);

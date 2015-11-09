@@ -1359,11 +1359,12 @@ known_welded(boolean spoil)
 static int
 slot_count(struct monst *mon, enum objslot slot, boolean noisy)
 {
+    const struct permonst *racedat = (mon == &youmonst) ? URACEDATA : mon->data;
     if ((slot == os_arm || slot == os_armc || slot == os_armu) &&
-        (breakarm(mon->data) || sliparm(mon->data)) &&
+        (breakarm(racedat) || sliparm(racedat)) &&
         /* TODO: get m_dowear() to look at this function rather than
            repeating the check */
-        (slot != os_armc || mon->data->msize != MZ_SMALL) &&
+        (slot != os_armc || racedat->msize != MZ_SMALL) &&
         /* Hobbits have an os_arm slot that can be used for elven armor only */
         (raceptr(mon) != &mons[PM_HOBBIT] || slot != os_arm)) {
         if (noisy)
@@ -1378,15 +1379,15 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
        helmet or boots. This has been preserved, but I'm not sure it's what we
        want; at least, the function is misleadingly named in that case. */
     if ((slot == os_armg || slot == os_arms || slot == os_armh) &&
-        (nohands(mon->data) || verysmall(mon->data))) {
+        (nohands(racedat) || verysmall(racedat))) {
         if (noisy)
             pline("You can't balance the %s on your %s.", c_slotnames[slot],
                   body_part(BODY));
         return 0;
     }
     if (slot == os_armf &&
-        ((nohands(mon->data) || verysmall(mon->data) ||
-          slithy(mon->data) || mon->data->mlet == S_CENTAUR))) {
+        ((nohands(racedat) || verysmall(racedat) ||
+          slithy(racedat) || racedat->mlet == S_CENTAUR))) {
         if (noisy)
             pline("You can't fit boots on your %s.",
                   makeplural(mbodypart(mon, FOOT)));
@@ -1394,7 +1395,7 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
     }
 
     /* for doequip() */
-    if (slot == os_wep && cantwield(mon->data)) {
+    if (slot == os_wep && cantwield(racedat)) {
         if (noisy)
             pline("You are physically incapable of holding items.");
         return 0;
@@ -1543,7 +1544,7 @@ canwearobj(struct obj *otmp, long *mask,
     /* Checks for specific slots */
     switch (slot) {
     case os_armh:
-        if (Upolyd && has_horns(youmonst.data) && !is_flimsy(otmp)) {
+        if (has_horns(URACEDATA) && !is_flimsy(otmp)) {
             /* (flimsy exception matches polyself handling) */
             if (noisy)
                 pline("The %s won't fit over your horn%s.", helmet_name(otmp),

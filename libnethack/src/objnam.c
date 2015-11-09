@@ -387,7 +387,7 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
     case FOOD_CLASS:
         if (typ == SLIME_MOLD) {
             struct fruit *f;
-
+                
             for (f = gamestate.fruits.chain; f; f = f->nextf) {
                 if (f->fid == obj->spe) {
                     buf = msg_from_string(f->fname);
