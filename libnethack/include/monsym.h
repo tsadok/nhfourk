@@ -12,7 +12,7 @@
  * NULL character.
  */
 # define S_ANT          1
-# define S_BLOB         2 /* Currently unused */
+# define S_B_UNUSED     2 /* Currently unused */
 # define S_COCKATRICE   3
 # define S_DOG          4
 # define S_EYE          5
@@ -26,7 +26,7 @@
 # define S_MIMIC        13
 # define S_NYMPH        14
 # define S_ORC          15
-# define S_PIERCER      16 /* Currently unused */
+# define S_PLANT        16 /* Currently unused */
 # define S_QUADRUPED    17
 # define S_RODENT       18
 # define S_SPIDER       19
