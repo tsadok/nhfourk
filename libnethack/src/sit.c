@@ -252,7 +252,7 @@ dosit(const struct nh_cmd_arg *arg)
                         make_confused(HConfusion + rnd(30), FALSE);
                     } else {
                         pline("An image forms in your mind.");
-                        do_mapping();
+                        do_mapping(FALSE);
                     }
                 } else {
                     pline("Your vision becomes clear.");

@@ -377,17 +377,12 @@ wiz_identify(const struct nh_cmd_arg *arg)
 static int
 wiz_map(const struct nh_cmd_arg *arg)
 {
-    struct trap *t;
     long save_Hconf = HConfusion, save_Hhallu = HHallucination;
 
     (void) arg;
 
     HConfusion = HHallucination = 0L;
-    for (t = level->lev_traps; t != 0; t = t->ntrap) {
-        t->tseen = 1;
-        map_trap(t, TRUE, FALSE);
-    }
-    do_mapping();
+    do_mapping(TRUE);
     HConfusion = save_Hconf;
     HHallucination = save_Hhallu;
 

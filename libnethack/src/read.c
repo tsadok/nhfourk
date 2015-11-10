@@ -1237,7 +1237,11 @@ seffects(struct obj *sobj, boolean *known)
         cval = (sobj->cursed && !confused);
         if (cval)
             HConfusion = 1;     /* to screw up map */
-        do_mapping();
+
+        do_mapping((sobj->oclass == SPBOOK_CLASS) ?
+                   (P_SKILL(objects[sobj->otyp].oc_skill) >= P_SKILLED) :
+                   sobj->blessed);
+
         if (cval) {
             HConfusion = 0;     /* restore */
             pline("Unfortunately, you can't grasp the details.");

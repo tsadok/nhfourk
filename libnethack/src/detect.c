@@ -17,7 +17,7 @@ static void do_dknown_of(struct obj *);
 static boolean check_map_spot(int, int, char, unsigned);
 static boolean clear_stale_map(char, unsigned);
 static void sense_trap(struct trap *, xchar, xchar, int);
-static void show_map_spot(int, int);
+static void show_map_spot(int, int, boolean);
 static void findone(int, int, void *);
 static void openone(int, int, void *);
 static const char *level_distance(d_level *);
@@ -943,13 +943,23 @@ use_crystal_ball(struct obj *obj)
 }
 
 static void
-show_map_spot(int x, int y)
+show_map_spot(int x, int y, boolean showtraps)
 {
     struct rm *loc;
+    struct trap *ttmp = t_at(level, x, y);
 
     if (Confusion && rn2(7))
         return;
     loc = &level->locations[x][y];
+
+    if (showtraps && ttmp)
+        sense_trap(ttmp, 0, 0, 0);
+
+    /* Don't make it impossible to distinguished mapped area from area that's
+       actually been seen (because in the former case, there might still be
+       items generated on the floor that the player might care about). */
+    if (loc->typ == ROOM)
+        return;
 
     loc->seenv = SVALL;
 
@@ -958,12 +968,6 @@ show_map_spot(int x, int y)
         loc->typ = CORR;
         unblock_point(x, y);
     }
-
-    /* Don't make it impossible to distinguished mapped area from area that's
-       actually been seen (because in the former case, there might still be
-       items generated on the floor that the player might care about). */
-    if (loc->typ == ROOM)
-        return;
 
     /* Now we're using the Slash'EM display engine, we can map unconditionally
        (with the 3.4.3 display engine, it's necessary to not overwrite
@@ -978,7 +982,7 @@ show_map_spot(int x, int y)
 
 
 void
-do_mapping(void)
+do_mapping(boolean showtraps)
 {
     int zx, zy;
     int uw = u.uinwater;
@@ -986,7 +990,7 @@ do_mapping(void)
     u.uinwater = 0;
     for (zx = 0; zx < COLNO; zx++)
         for (zy = 0; zy < ROWNO; zy++)
-            show_map_spot(zx, zy);
+            show_map_spot(zx, zy, showtraps);
     u.uinwater = uw;
     if (!level->flags.hero_memory || Underwater) {
         flush_screen(); /* flush temp screen */
@@ -1007,7 +1011,7 @@ do_vicinity_map(void)
 
     for (zx = lo_x; zx < hi_x; zx++)
         for (zy = lo_y; zy < hi_y; zy++)
-            show_map_spot(zx, zy);
+            show_map_spot(zx, zy, FALSE);
 
     if (!level->flags.hero_memory || Underwater) {
         flush_screen(); /* flush temp screen */

@@ -244,7 +244,7 @@ extern int object_detect(struct obj *, int);
 extern int monster_detect(struct obj *, int);
 extern int trap_detect(struct obj *);
 extern void use_crystal_ball(struct obj *);
-extern void do_mapping(void);
+extern void do_mapping(boolean);
 extern void do_vicinity_map(void);
 extern void cvt_sdoor_to_door(struct rm *loc, const d_level * dlev);
 extern int findit(int);
