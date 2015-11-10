@@ -52,11 +52,11 @@
 # define S_NAGA         39
 # define S_OGRE         40
 # define S_PUDDING      41
-# define S_QUANTMECH    42
+# define S_ELF          42
 # define S_RUSTMONST    43
 # define S_SNAKE        44
 # define S_TROLL        45
-# define S_UMBER        46 /* currently unused */
+# define S_BEAR         46 /* currently unused */
 # define S_VAMPIRE      47
 # define S_WRAITH       48
 # define S_XORN         49

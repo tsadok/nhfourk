@@ -449,6 +449,14 @@ const struct permonst mons[] = {
         MRACE_DWARF, M1_TUNNEL | M1_NEEDPICK | M1_HUMANOID | M1_OMNIVORE,
         M2_STRONG | M2_PRINCE | M2_MALE | M2_GREEDY | M2_JEWELS | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION, MP_WAND_BASIC, HI_LORD),
+    MON("quantum mechanic", S_HUMANOID,
+        LVL(7, 12, 3, 10, 0), (G_GENO | 3),
+        A(ATTK(AT_CLAW, AD_TLPT, 1, 4),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(WT_HUMAN, 20, 0, MS_HUMANOID, MZ_HUMAN), MR_POISON, 0,
+        MRACE_NONE, M1_HUMANOID | M1_OMNIVORE | M1_POIS | M1_TPORT, M2_HOSTILE,
+        M3_INFRAVISIBLE,
+        MP_WAND_BASIC, CLR_CYAN),
     MON("mind flayer", S_HUMANOID,
         LVL(9, 12, 5, 90, -8), (G_GENO | 1),
         A(ATTK(AT_WEAP, AD_PHYS, 1, 4), ATTK(AT_TENT, AD_DRIN, 2, 1),
@@ -783,7 +791,7 @@ const struct permonst mons[] = {
         M2_ORC | M2_STRONG | M2_GREEDY | M2_JEWELS | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION, MP_WAND_BASIC, HI_LORD),
 /*
- * p, formerly piercers, now available
+ * p, plants (formerly piercers)
  */
 
 /*
@@ -2208,16 +2216,9 @@ const struct permonst mons[] = {
         M1_NOHEAD | M1_MINDLESS | M1_OMNIVORE | M1_ACID | M1_POIS,
         M2_HOSTILE | M2_NEUTER, 0, 0, CLR_GREEN),
 /*
- * Quantum mechanics
+ * Quendi - Elves
  */
-    MON("quantum mechanic", S_QUANTMECH,
-        LVL(7, 12, 3, 10, 0), (G_GENO | 3),
-        A(ATTK(AT_CLAW, AD_TLPT, 1, 4),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(WT_HUMAN, 20, 0, MS_HUMANOID, MZ_HUMAN), MR_POISON, 0,
-        MRACE_NONE, M1_HUMANOID | M1_OMNIVORE | M1_POIS | M1_TPORT, M2_HOSTILE,
-        M3_INFRAVISIBLE,
-        MP_WAND_BASIC, CLR_CYAN),
+
 /*
  * Rust monster or disenchanter
  */

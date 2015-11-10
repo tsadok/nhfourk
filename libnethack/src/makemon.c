@@ -773,8 +773,8 @@ m_initinv(struct monst *mtmp, enum rng rng)
         if (rn2_on_rng(7, rng))
             mongets(mtmp, MUMMY_WRAPPING, rng);
         break;
-    case S_QUANTMECH:
-        if (!rn2_on_rng(20, rng)) {
+    case S_HUMANOID:
+        if ((ptr == &mons[PM_QUANTUM_MECHANIC]) && !rn2_on_rng(20, rng)) {
             otmp = mksobj(lev, LARGE_BOX, FALSE, FALSE, rng);
             otmp->spe = 1;      /* flag for special box */
             otmp->owt = weight(otmp);

@@ -771,8 +771,8 @@ MONSTER:'G',"gnome lord",random
 MONSTER:'G',"gnome lord",random
 MONSTER:'G',"gnome lord",random
 MONSTER:'h',"dwarf lord",random
-MONSTER:'Q',"quantum mechanic",random
-MONSTER:'Q',"quantum mechanic",random
+MONSTER:'h',"quantum mechanic",random
+MONSTER:'h',"quantum mechanic",random
 # The creek
 GEOMETRY:center,center
 #123456789012345

@@ -57,6 +57,26 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Quantum mechanics are now considered humanoid (h).
+
+ * Gnomes, due to their small size, cannot wear body armor.
+   (Neither can scurriers.)
+
+ * Added a new playable race, scurriers.  Scurriers are bipedal
+   humanoid rodents -- something like a cross between a rabbit, a
+   squirrel, and a human.  They are small, fast, and stealthy and have
+   a natural digging ability, all of which makes them very well suited
+   to avoiding combat rather than engaging in it.  They can be
+   archeologists or tourists, and I intend to add the ability for them
+   to be rangers as well, but that doesn't actually work yet.
+
+ * The formula for how many moves you get per turn has changed.  Four
+   factors contribute more or less independently:  your "base speed",
+   which is based on your race; whether you are intrinsically "fast"
+   or not; whether you have extrinsic speed (e.g., from speed boots);
+   and whether you are temporarily hasted (as from a spell of haste
+   self or a potion of speed).
+
  * Wielding Stormbringer now causes peaceful and tame monsters to
    attack you.  It also stops conflict from working in your favor.
    However, the interface problems it creates in 3.4.3 (wherein you
