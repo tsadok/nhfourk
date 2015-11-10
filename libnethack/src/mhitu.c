@@ -386,7 +386,9 @@ mattacku(struct monst *mtmp)
                 else
                     return 1;
             }
-            if (youmonst.data->mlet != S_PIERCER)
+            if (youmonst.data != &mons[PM_ROCK_PIERCER] &&
+                youmonst.data != &mons[PM_IRON_PIERCER] &&
+                youmonst.data != &mons[PM_GLASS_PIERCER])
                 return 0;       /* trappers don't attack */
 
             obj = which_armor(mtmp, os_armh);
