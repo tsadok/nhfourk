@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by FIQ, 2015-08-23 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -765,8 +765,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
                          unsigned int adtyp, int spellnum)
 {
     /* Can the aggressor see the square it thinks the defender is on? */
-    int believed_mdef_mx = mdef ? m_mx(mdef) : 0;
-    int believed_mdef_my = mdef ? m_my(mdef) : 0;
+    int believed_mdef_mx = mdef ? m_mx(mdef) : -1;
+    int believed_mdef_my = mdef ? m_my(mdef) : -1;
     if (mdef == &youmonst) {
         believed_mdef_mx = magr->mux;
         believed_mdef_my = magr->muy;
