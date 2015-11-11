@@ -776,6 +776,11 @@ m_initinv(struct monst *mtmp, enum rng rng)
            level_difficulty */
         if (mtmp->data == &mons[PM_LEPRECHAUN])
             mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
+        if ((mtmp->data == &mons[PM_QUASIT]) &&
+            (challengemode ? rn2_on_rng(4, rng) : !rn2_on_rng(4, rng))) {
+            mtmp->perminvis = TRUE;
+            mtmp->minvis = TRUE;
+        }
         /* Nothing special for the other i for now. */
         break;
     case S_DEMON:
