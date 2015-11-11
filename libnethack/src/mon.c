@@ -1449,6 +1449,15 @@ mm_aggression(const struct monst *magr, /* monster that might attack */
             return ALLOW_M | ALLOW_TM;
     }
 
+    /* spiders and centipedes attack insects */
+    if (ma->mlet == S_SPIDER && (md->mlet == S_ANT || md->mlet == S_XAN))
+        return ALLOW_M | ALLOW_TM;
+
+    /* Bats attack flying insects */
+    if (is_bat(ma) && (md->mlet == S_ANT || md->mlet == S_XAN) &&
+        (md->mflags1 & M1_FLY))
+        return ALLOW_M | ALLOW_TM;
+
     /* woodchucks vs. The Oracle */
     if (ma == &mons[PM_WOODCHUCK] && md == &mons[PM_ORACLE])
         return ALLOW_M | ALLOW_TM;
