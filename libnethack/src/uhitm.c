@@ -750,8 +750,11 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                                  obj->known) ? the(mons[obj->corpsenm].mname) :
                                 (cnt > 1L) ? "some" : "an";
 
-                            pline("You hit %s with %s egg%s.", mon_nam(mon),
-                                  eggp, plur(cnt));
+                            if (is_demon(mon->data))
+                                pline("Deviled egg%s!", (cnt > 1L) ? "s" : "");
+                            else
+                                pline("You hit %s with %s egg%s.", mon_nam(mon),
+                                      eggp, plur(cnt));
                             if (touch_petrifies(mdat) && !stale_egg(obj)) {
                                 pline("The egg%s %s alive any more...",
                                       plur(cnt),
