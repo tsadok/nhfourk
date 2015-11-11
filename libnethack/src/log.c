@@ -110,14 +110,18 @@ log_recover_core_reasons(struct nh_menulist *menu, const char *message,
     }
 
     add_menutext(menu, "");
+    /*
     if (flags.debug) {
         add_menutext(menu,
                      "Here is additional information about this save rewind:");
     } else {
+    */
         add_menutext(menu,
             "You can report this error at <http://trac.nethack4.org>.");
         add_menutext(menu, "Please include the following information:");
+        /*
     }
+        */
     add_menutext(menu, "");
     add_menutext(menu, msgprintf("Error: %s", message));
     add_menutext(menu, msgprintf("Location: %s:%d", file, line));
