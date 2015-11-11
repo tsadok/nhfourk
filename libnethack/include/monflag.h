@@ -87,13 +87,6 @@
 # define MP_WAND_SKILLED 0x00000002L
 # define MP_WAND_EXPERT  0x00000003L
 
-
-# define MP_WANDS        0x00000001L
-# define MP_WAND_BASIC   0x00000001L
-# define MP_WAND_SKILLED 0x00000002L
-# define MP_WAND_EXPERT  0x00000003L
-
-
 # define M1_FLY          0x00000001L    /* can fly or float */
 # define M1_SWIM         0x00000002L    /* can traverse water */
 # define M1_AMORPHOUS    0x00000004L    /* can flow under doors */
