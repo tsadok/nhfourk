@@ -19,7 +19,6 @@ static void use_bell(struct obj **);
 static int use_candelabrum(struct obj *);
 static int use_candle(struct obj **);
 static int use_lamp(struct obj *);
-static int light_cocktail(struct obj *);
 static int use_tinning_kit(struct obj *);
 static int use_figurine(struct obj **obj, const struct nh_cmd_arg *);
 static int use_grease(struct obj *);
@@ -81,15 +80,22 @@ use_camera(struct obj *obj, const struct nh_cmd_arg *arg)
 static int
 use_towel(struct obj *obj)
 {
+    long old;
+
     if (!freehand()) {
         pline(msgc_cancelled, "You have no free %s!", body_part(HAND));
         return 0;
     } else if (obj->owornmask & W_WORN) {
         pline(msgc_cancelled, "You cannot use it while you're wearing it!");
         return 0;
+    } else if (obj->greased) {
+        old = Glib;
+        Glib += rn1(10, 3);
+        pline(msgc_statusbad, "Your %s %s!",
+              makeplural(body_part(HAND)),
+              (old ? "are filthier than ever" : "get slimy"));
+        return 1;
     } else if (obj->cursed) {
-        long old;
-
         switch (rn2(3)) {
         case 2:
             old = Glib;
@@ -1220,7 +1226,7 @@ use_lamp(struct obj *obj)
     return 1;
 }
 
-static int
+int
 light_cocktail(struct obj *obj)
 {       /* obj is a potion of oil */
     if (Engulfed) {
@@ -1242,6 +1248,9 @@ light_cocktail(struct obj *obj)
         pline(msgc_cancelled, "There is not enough oxygen to sustain a fire.");
         return 0;
     }
+
+    if (obj->quan > 1L)
+        obj = splitobj(obj, 1L);
 
     pline(msgc_actionok, "You light %s potion.%s", shk_your(obj),
           Blind ? "" : "  It gives off a dim light.");
@@ -1665,10 +1674,17 @@ use_unicorn_horn(struct obj *obj)
 
     /* collect attribute troubles */
     for (idx = 0; idx < A_MAX; idx++) {
+        if (ABASE(idx) >= AMAX(idx)) continue;
         val_limit = AMAX(idx);
         /* don't recover strength lost from hunger */
         if (idx == A_STR && u.uhs >= WEAK)
             val_limit--;
+        if (Fixed_abil) {
+            /* potion/spell of restore ability override sustain ability
+               intrinsic but unicorn horn usage doesn't */
+            unfixable_trbl += val_limit - ABASE(idx);
+            continue;
+        }
         /* don't recover more than 3 points worth of any attribute */
         if (val_limit > ABASE(idx) + 3)
             val_limit = ABASE(idx) + 3;
@@ -2167,6 +2183,10 @@ use_trap(struct obj *otmp, const struct nh_cmd_arg *arg)
              IS_ROCK(level->locations[u.ux][u.uy].typ) ||
              closed_door(level, u.ux, u.uy) || t_at(level, u.ux, u.uy))
         what = "here", mispasting = 1;
+    else if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz))
+        what = (level->locations[u.ux][u.uy].typ == AIR) ? "in midair" :
+            (level->locations[u.ux][u.uy].typ == CLOUD) ? "in a cloud" :
+            "in this place";         /* Air/Water Plane catch-all */
     if (what) {
         pline(mispasting ? msgc_mispaste : msgc_cancelled,
               "You can't set a trap %s!", what);
@@ -2257,9 +2277,8 @@ set_trap(void)
     ttyp = (otmp->otyp == LAND_MINE) ? LANDMINE : BEAR_TRAP;
     ttmp = maketrap(level, u.ux, u.uy, ttyp, rng_main);
     if (ttmp) {
-        ttmp->tseen = 1;
         ttmp->madeby_u = 1;
-        newsym(u.ux, u.uy);     /* if our hero happens to be invisible */
+        feeltrap(ttmp);
         if (*in_rooms(level, u.ux, u.uy, SHOPBASE)) {
             add_damage(u.ux, u.uy, 0L); /* schedule removal */
         }
@@ -2458,7 +2477,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
 
             pline(msgc_occstart, "You wrap your bullwhip around %s %s.",
                   s_suffix(mon_nam(mtmp)), onambuf);
-            if (gotit && otmp->cursed) {
+            if (gotit && mwelded(mtmp, otmp)) {
                 /* assume the player isn't tracking which monsters are wielding
                    cursed objects for message channel purposes */
                 pline(msgc_failcurse, "%s welded to %s %s%c",
@@ -3019,7 +3038,7 @@ doapply(const struct nh_cmd_arg *arg)
         return doloot(arg);
     }
 
-    if (obj->oartifact && !touch_artifact(obj, &youmonst))
+    if (!retouch_object(&obj, FALSE))
         return 1;       /* evading your grasp costs a turn; just be grateful
                            that you don't drop it as well */
 
@@ -3088,12 +3107,14 @@ doapply(const struct nh_cmd_arg *arg)
             use_magic_whistle(obj);
             /* sometimes the blessing will be worn off */
             if (!rn2_on_rng(49, rng_eucalyptus)) {
+                if (obj->quan > 1L)
+                    obj = splitobj(obj, 1L);
+                unbless(obj);
                 if (!Blind) {
                     pline(msgc_itemloss, "%s %s %s.", Shk_Your(obj),
                           aobjnam(obj, "glow"), hcolor("brown"));
                     obj->bknown = 1;
                 }
-                unbless(obj);
             }
         } else {
             use_whistle(obj);
@@ -3192,6 +3213,13 @@ doapply(const struct nh_cmd_arg *arg)
             otmp->blessed = obj->blessed;
             otmp->cursed = obj->cursed;
             otmp->owt = weight(otmp);
+            /* using a shop's horn of plenty entails a usage fee and also
+               confers ownership of the created item to the shopkeeper */
+            if (carried(obj) ? obj->unpaid :
+                (costly_spot(u.ux, u.uy) && !obj->no_charge))
+                addtobill(obj, FALSE, FALSE, FALSE);
+            /* if it ended up on bill, we don't want "(unpaid, N zorkids)"
+               being included in its formatted name during next message */
             hold_another_object(
                 otmp, Engulfed ? "Oops!  %s out of your reach!"
                 : (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) ||

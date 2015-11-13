@@ -323,6 +323,7 @@ game_ended(int status, fnchar *filename, nh_bool net)
 
     /* don't care about errors: rename is nice to have, not essential */
     rename(filename, logname);
+    chmod(logname, 0644);
 #else
     bp = wcsrchr(filename, L'\\');
     get_gamedir(SAVE_DIR, savedir);

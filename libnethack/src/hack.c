@@ -875,7 +875,8 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
         }
         if (bigmonst(youmonst.data) && !can_ooze(&youmonst)) {
             if (mode == DO_MOVE)
-                pline(msgc_cancelled, "Your body is too large to fit through.");
+                pline(msgc_cancelled, "Your %s is too large to fit through.",
+                      body_part(BODY));
             return FALSE;
         }
         if (invent && (inv_weight() + weight_cap() > 600)) {
@@ -1953,10 +1954,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     }
 
     /* Not attacking a monster, for whatever reason; we try to move. */
-    if (u.usteed && !u.usteed->mcanmove &&
-        (turnstate.move.dx || turnstate.move.dy)) {
-        pline(msgc_failcurse, "%s won't move!",
-              msgupcasefirst(y_monnam(u.usteed)));
+    if ((turnstate.move.dx || turnstate.move.dy) && stucksteed(FALSE)) {
         action_completed();
         return 1;
     } else if (!youmonst.data->mmove) {
@@ -2176,18 +2174,38 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 adjalign(-3);
                 break;
             case 2:
-                /* it may have drowned or died.  that's no way to treat a pet!
-                   your god gets angry. */
+                    /* drowned or died...
+                     * you killed your pet by direct action, so get experience
+                     * and possibly penalties;
+                     * we want the level gain message, if it happens, to occur
+                     * before the guilt message below
+                     */ {
+                /* minliquid() and mintrap() call mondead() rather than
+                   killed() so we duplicate some of the latter here */
+                int tmp, mndx;
+                
+                break_conduct(conduct_killer);
+                mndx = monsndx(mtmp->data);
+                tmp = experience(mtmp, (int)mvitals[mndx].died + 1);
+                more_experienced(tmp, 0);
+                newexplevel();      /* will decide if you go up */
+            }
                 if (rn2(4)) {
+                    /* That's no way to treat a pet!  Your god gets angry.
+                     *
+                     * [This has always been pretty iffy.  Why does your
+                     * patron deity care at all, let alone enough to get mad?]
+                     *
+                     * [Yeah, IMO, this should hit your alignment record, rather than
+                     * anger, and probably only for non-chaotics; but that can wait
+                     * for the next alignment/luck/anger rebalance/overhaul -- NAE]
+                     */
                     pline(msgc_alignbad,
                           "You feel guilty about losing your pet like this.");
                     u.ugangr++;
                     adjalign(-15);
                 }
 
-                /* you killed your pet by direct action. minliquid and mintrap
-                   don't know to do this */
-                break_conduct(conduct_killer);
                 break;
             default:
                 impossible("that's strange, unknown mintrap result!");
@@ -2384,6 +2402,25 @@ stillinwater:
         struct trap *trap = t_at(level, u.ux, u.uy);
         boolean pit;
 
+        /* If levitation is due to time out at the end of this turn, allowing
+           it to do so at this exact moment could give the perception that the
+           trap is triggering twice, so adjust the timeout to prevent that: */
+        if (trap && (HLevitation & TIMEOUT) == 1L) {
+            if (rn2(2)) {       /* defer timeout */
+                HLevitation += 1L;
+            } else {            /* timeout early */
+                if (float_down(I_SPECIAL|TIMEOUT)) {
+                    /* levitation has ended; we've already triggered
+                       any trap and [usually] performed autopickup */
+                    trap = 0;
+                    pick = FALSE;
+                }
+            }
+        }
+        /*
+         * If not a pit, pickup before triggering trap.
+         * If pit, trigger trap before pickup.
+         */
         pit = (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT));
         if (trap && pit)
             dotrap(trap, 0);    /* fall into pit */

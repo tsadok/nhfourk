@@ -165,6 +165,10 @@ canwieldobj(struct obj *wep, boolean noisy, boolean spoil, boolean cblock)
             }
         }
         return 0;
+        /* The following line was responsible for the artifact multi-blast bug: 
+    } else if (!retouch_object(&wep, FALSE)) {
+        return 0;
+        */
     }
     /* If we can't ready something, we can't wield it either, unless it's our
        currently wielded weapon. */
@@ -680,6 +684,15 @@ unwield_silently(struct obj *obj)
         setuswapwep(NULL);
     if (obj == uquiver)
         setuqwep(NULL);
+}
+
+/* test whether monster's wielded weapon is stuck to hand/paw/whatever */
+boolean
+mwelded(const struct monst *mon, struct obj *obj)
+{
+    if (obj && mon && (obj==MON_WEP(mon)) && will_weld(obj))
+        return TRUE;
+    return FALSE;
 }
 
 /*wield.c*/

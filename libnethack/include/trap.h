@@ -78,5 +78,7 @@ struct trap {
 # define POLY_TRAP            23
 # define TRAPNUM 24
 
+#define WAX_EROSION_AMOUNT 50 /* Used when candles are lit by fire damage. */
+
 #endif /* TRAP_H */
 

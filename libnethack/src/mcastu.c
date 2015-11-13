@@ -476,7 +476,8 @@ cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
             pline(combat_msgc(mtmp, &youmonst, cr_immune),
                   "A field of force surrounds you!");
         } else if (!destroy_arm(some_armor(&youmonst))) {
-            pline(combat_msgc(mtmp, &youmonst, cr_miss), "Your skin itches.");
+            pline(combat_msgc(mtmp, &youmonst, cr_miss),
+                  "Your %s itches.", body_part(SKIN));
         }
         dmg = 0;
         break;
@@ -599,6 +600,7 @@ cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
+        set_candles_afire();
         burn_floor_paper(level, u.ux, u.uy, TRUE, FALSE);
         break;
     case CLC_LIGHTNING:
@@ -769,16 +771,16 @@ cast_cleric_spell(struct monst *mtmp, int dmg, int spellnum)
         }
         if (dmg <= 5)
             pline(combat_msgc(mtmp, &youmonst, cr_hit),
-                  "Your skin itches badly for a moment.");
+                  "Your %s itches badly for a moment.", body_part(SKIN));
         else if (dmg <= 10)
             pline(combat_msgc(mtmp, &youmonst, cr_hit),
-                  "Wounds appear on your body!");
+                  "Wounds appear on your %s!", body_part(BODY));
         else if (dmg <= 20)
             pline(combat_msgc(mtmp, &youmonst, cr_hit),
-                  "Severe wounds appear on your body!");
+                  "Severe wounds appear on your %s!", body_part(BODY));
         else
             pline(combat_msgc(mtmp, &youmonst, cr_hit),
-                  "Your body is covered with painful wounds!");
+                  "Your %s is covered with painful wounds!", body_part(BODY));
         break;
     default:
         impossible("mcastu: invalid clerical spell (%d)", spellnum);

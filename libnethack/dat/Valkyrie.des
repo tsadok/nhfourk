@@ -10,6 +10,7 @@
 #
 MAZE: "Val-strt",' '
 FLAGS: noteleport,hardfloor
+INIT_MAP: '.', 'I', true, true, lit, false, true
 GEOMETRY:center,center
 MAP
 IIIIIIPPPIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
@@ -89,7 +90,7 @@ MONSTER: 'H',"fire giant",(10,16),hostile
 
 MAZE: "Val-loca",' '
 FLAGS: hardfloor
-INIT_MAP: '.' , 'I' , true , true , lit , false
+INIT_MAP: '.', 'I', true, true, lit, false, true
 GEOMETRY:center,center
 MAP
 PPPP....                      ....PPPPP.
@@ -174,7 +175,7 @@ MONSTER:'H',random,random,hostile
 #
 
 MAZE: "Val-goal", 'L'
-INIT_MAP: '.' , 'L' , true , true , lit , false
+INIT_MAP: '.', 'L', true, true, lit, false, true
 GEOMETRY:center,center
 MAP
 .L............................LLLLL
@@ -264,7 +265,7 @@ MONSTER:'H',random,random,hostile
 #
 
 MAZE: "Val-fila" , 'I'
-INIT_MAP: '.' , 'I' , true , true , lit, false
+INIT_MAP: '.', 'I', true, true, lit, false, true
 NOMAP
 #
 STAIR: random, up
@@ -297,7 +298,7 @@ TRAP: random, random
 TRAP: random, random
 
 MAZE: "Val-filb" , 'L'
-INIT_MAP: '.' , 'L' , true , true , lit, false
+INIT_MAP: '.', 'L', true, true, lit, false, true
 NOMAP
 #
 STAIR: random, up

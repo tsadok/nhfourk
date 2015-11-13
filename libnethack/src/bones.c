@@ -318,8 +318,8 @@ make_bones:
         }
         mtmp = christen_monst(mtmp, u.uplname);
         newsym(u.ux, u.uy);
-        pline(msgc_outrobad, "Your body rises from the dead as %s...",
-              an(mons[u.ugrave_arise].mname));
+        pline(msgc_outrobad, "Your %s rises from the dead as %s...",
+              body_part(BODY), an(mons[u.ugrave_arise].mname));
         win_pause_output(P_MESSAGE);
         drop_upon_death(mtmp, NULL);
         m_dowear(mtmp, TRUE);
@@ -329,6 +329,13 @@ make_bones:
         mtmp->mhp = mtmp->mhpmax = u.uhpmax;
         mtmp->female = u.ufemale;
         mtmp->msleeping = 1;
+#ifdef LIVELOG_BONES_KILLER
+        mtmp->former_player = 1 + /* Guarantee former_player > 0 */
+            (2 * u.initgend    /*   2 * (0-2) = 0-4 */) +
+            (8   * u.initalign /*   8 * (0-3) = 0-24 */) +
+            (32  * u.initrace  /*  32 * (0-4) = 0-128, but leave room */) +
+            (256 * u.initrole);
+#endif
     }
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         resetobjs(mtmp->minvent, FALSE);

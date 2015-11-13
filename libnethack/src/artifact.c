@@ -306,6 +306,24 @@ arti_reflects(struct obj * obj)
     return FALSE;
 }
 
+/* decide whether this obj is effective when attacking against shades;
+   does not consider the bonus for blessed objects versus undead */
+boolean
+shade_glare(struct obj *obj)
+{
+    const struct artifact *arti;
+
+    /* any silver object is effective */
+    if (objects[obj->otyp].oc_material == SILVER) return TRUE;
+    /* non-silver artifacts with bonus against undead also are effective */
+    arti = get_artifact(obj);
+    if (arti && (arti->spfx & SPFX_DFLAG2) && arti->mtype == M2_UNDEAD)
+        return TRUE;
+    /* [if there was anything with special bonus against noncorporeals,
+       it should be effective too] */
+    /* otherwise, harmless to shades */
+    return FALSE;
+}
 
 boolean
 restrict_name(struct obj * otmp, const char *name)
@@ -555,8 +573,13 @@ touch_artifact(struct obj *obj, const struct monst *mon)
     if (badclass && badalign && self_willed) {
         /* not msgc_cancelled1, because you might not know your own numerical
            alignment record */
-        if (yours)
-            pline(msgc_failcurse, "%s your grasp!", Tobjnam(obj, "evade"));
+        if (yours) {
+            if (obj->where != OBJ_INVENT)
+                pline(msgc_failcurse, "%s your grasp!", Tobjnam(obj, "evade"));
+            else
+                pline(msgc_failcurse,
+                      "%s beyond your control!", Tobjnam(obj, "are"));
+        }
         return 0;
     }
 
@@ -913,19 +936,19 @@ magicbane_hit(struct monst *magr,   /* attacker */
         }
 
         const char *buf = NULL;
-
+        
         if (do_stun && do_confuse)
             buf = "stunned and confused";
         else if (do_stun)
             buf = "stunned";
         else if (do_confuse)
             buf = "confused";
-
+        
         if (buf)
             pline(youdefend ? msgc_statusbad :
                   mdef->mtame ? msgc_petwarning : msgc_combatgood,
-                  "%s %s %s%c", hittee, vtense(hittee, "are"), buf,
-                  (do_stun && do_confuse) ? '!' : '.');
+                  "%s %s %s%c", hittee, youdefend ? "are" : "is",
+                  buf, (do_stun && do_confuse) ? '!' : '.');
     }
 
     return result;
@@ -1225,7 +1248,7 @@ doinvoke(const struct nh_cmd_arg *arg)
     if (!obj)
         return 0;
 
-    if (obj->oartifact && !touch_artifact(obj, &youmonst))
+    if (!retouch_object(&obj, FALSE))
         return 1;
 
     const struct artifact *oart = get_artifact(obj);
@@ -1493,11 +1516,11 @@ arti_invoke(struct obj *obj)
                 goto nothing_special;
             newsym(u.ux, u.uy);
             if (on)
-                pline(msgc_statusgood,
-                      "Your body takes on a %s transparency...",
-                      Hallucination ? "normal" : "strange");
+                pline(msgc_statusgood, "Your %s takes on a %s transparency...",
+                      body_part(BODY), Hallucination ? "normal" : "strange");
             else
-                pline(msgc_statusend, "Your body seems to unfade...");
+                pline(msgc_statusend, "Your %s seems to unfade...",
+                      body_part(BODY));
             break;
         }
     }
@@ -1553,6 +1576,55 @@ arti_cost(const struct obj *otmp)
         return artilist[(int)otmp->oartifact].cost;
     else
         return 100L * (long)objects[otmp->otyp].oc_cost;
+}
+
+/* called when hero is wielding/applying/invoking a carried item, or
+   after undergoing a transformation (alignment change, lycanthropy)
+   which might affect item access */
+int
+retouch_object(struct obj **objp, boolean loseit)
+/* The object might be destroyed or unintentionally dropped. */
+/* loseit is whether to drop it if hero can longer touch it. */
+{
+    struct obj *obj = *objp;
+    
+    if (touch_artifact(obj, &youmonst)) {
+        /* nothing to do if hero can successfully handle this object */
+        if (!(objects[obj->otyp].oc_material == SILVER &&
+              (u.ulycn >= LOW_PM || hates_silver(youmonst.data))))
+            return 1;
+        /* we didn't get "<obj> evades your grasp" message; give alt message */
+        pline(msgc_consequence, "You can't handle %s anymore!",
+              the(xname(obj)));
+    }
+    
+    /* removing a worn item might result in loss of levitation,
+       dropping the hero onto a polymorph trap or into water or
+       lava and potentially dropping or destroying the item */
+    if (obj->owornmask) {
+        struct obj *otmp;
+        
+        remove_worn_item(obj, FALSE);
+        for (otmp = invent; otmp; otmp = otmp->nobj)
+            if (otmp == obj) break;
+        if (!otmp) *objp = obj = 0;
+    }
+    
+    /* if we still have it and caller wants us to drop it, do so now */
+    if (loseit && obj) {
+        if (Levitation) {
+            freeinv(obj);
+            hitfloor(obj);
+        } else {
+            /* dropx gives a message iff item lands on an altar */
+            if (!IS_ALTAR(level->locations[u.ux][u.uy].typ))
+                pline(msgc_consequence, "%s to the %s.",
+                      Tobjnam(obj, "drop"), surface(u.ux, u.uy));
+            dropx(obj);
+        }
+        *objp = obj = 0;        /* no longer in inventory */
+    }
+    return 0;
 }
 
 /*artifact.c*/

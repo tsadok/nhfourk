@@ -652,7 +652,7 @@ use_defensive(struct monst *mtmp, struct musable *m)
                 makeknown(WAN_DIGGING);
             if (IS_FURNITURE(level->locations[mtmp->mx][mtmp->my].typ) ||
                 IS_DRAWBRIDGE(level->locations[mtmp->mx][mtmp->my].typ) ||
-                (is_drawbridge_wall(mtmp->mx, mtmp->my) >= 0) ||
+                (drawbridge_wall_direction(mtmp->mx, mtmp->my) >= 0) ||
                 (level->sstairs.sx == mtmp->mx &&
                  level->sstairs.sy == mtmp->my)) {
                 pline(msgc_monneutral, "The digging ray is ineffective.");
@@ -1792,11 +1792,17 @@ use_misc(struct monst *mtmp, struct musable *m)
         mon_set_minvis(mtmp);
         if (vismon && mtmp->minvis) {   /* was seen, now invisible */
             if (See_invisible)
-                pline(msgc, "%s body takes on a %s transparency.",
-                      s_suffix(nambuf), Hallucination ? "normal" : "strange");
+                pline(msgc, "%s %s takes on a %s transparency.",
+                      s_suffix(nambuf), mbodypart(mtmp, BODY),
+                      Hallucination ? "normal" : "strange");
             else if (tp_sensemon(mtmp))
                 pline(msgc, "%s disappears, but you can still %s.", nambuf,
                       Hallucination ? "see its aura" : "sense its thoughts");
+            else if (canspotmon(mtmp)) /* e.g. the orc/Sting case */
+                pline(msgc, "%s %s %s.", s_suffix(nambuf),
+                      mbodypart(mtmp, BODY),
+                      Hallucination ? "is totally psychedelic" :
+                      "seems to lose its definition");
             else
                 pline(msgc, "Suddenly you cannot see %s.", nambuf);
             if (oseen)
@@ -1865,6 +1871,7 @@ use_misc(struct monst *mtmp, struct musable *m)
     case MUSE_BULLWHIP:
         /* attempt to disarm hero */
         if (uwep && !rn2(5)) {
+            const char *The_whip = vismon ? "The bullwhip" : "A whip";
             int where_to = rn2(4);
             struct obj *obj = uwep;
             const char *hand;
@@ -1885,14 +1892,34 @@ use_misc(struct monst *mtmp, struct musable *m)
                           "A whip fails to wrap around your iron ball.");
                 return 1;
             }
-            if (welded(obj) || !where_to) {
-                /* welded() marks the weapon as cursed, if it is; the player
-                   will be able to tell from the amount of resistance they feel
-                   on the weapon as the whip entangles it */
-                pline(combat_msgc(mtmp, &youmonst,
-                                  welded(obj) ? cr_immune : cr_miss),
-                      "%s wraps a whip around your weapon, but it slips free.",
-                      Monnam(mtmp));
+            pline(combat_msgc(mtmp, &youmonst, cr_hit),
+                  "%s wraps around %s you're wielding!",
+                  The_whip, the_weapon);
+            if (welded(obj)) {
+                pline(combat_msgc(mtmp, &youmonst, cr_immune),
+                      "%s welded to your %s%c",
+                      !is_plural(obj) ? "It is" : "They are", hand,
+                      !obj->bknown ? '!' : '.');
+                /* obj->bknown = 1; *//* welded() takes care of this */
+                where_to = 0;
+            }
+            if ((obj->otyp == LEASH) && (obj->leashmon != 0)) {
+                struct monst *pet = find_mid(level, obj->leashmon, FM_FMON);
+                pline(msgc_combatgood, "%s becomes entangled in %s leash.",
+                      The_whip, (pet ? mhis(pet) : "your"));
+                yelp(pet);
+                setmnotwielded(mtmp, otmp);
+                obj_extract_self(otmp);
+                MON_NOWEP(mtmp);
+                otmp->owornmask = 0L;
+                pline(msgc_combatgood, "%s tugs away from %s.", The_whip,
+                      (vismon ? mon_nam(mtmp) : "something"));
+                otmp = hold_another_object(otmp, "%s untangles and falls away.",
+                                           doname(otmp), "You now have ");
+                return 1;
+            } else if (!where_to) {
+                pline(msgc_statusheal,
+                      "The whip slips free.");  /* not `The_whip' */
                 return 1;
             }
             if (vismon)

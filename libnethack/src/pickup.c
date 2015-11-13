@@ -940,8 +940,23 @@ lift_object(struct obj *obj, struct obj *container, long *cnt_p,
               body_part(HAND), xname(obj));
         return -1;
     }
-    if (obj->otyp == LOADSTONE)
-        return 1;       /* lift regardless of current situation */
+    /* override weight consideration for loadstone picked up by anybody
+       and for boulder picked up by hero poly'd into a giant; override
+       availability of open inventory slot if and only if the player is
+       not already carrying one, so you can always get at least one */
+    if (obj->otyp == LOADSTONE ||
+        (obj->otyp == BOULDER && throws_rocks(youmonst.data))) {
+        if (inv_cnt(TRUE) < 52 || !carrying(obj->otyp) || merge_choice(invent, obj))
+            return 1;       /* lift regardless of current situation */
+        /* If we reach here, we're out of slots and already have at least
+         * one of these, so treat this one more like a normal item.
+         * (Picking up a boulder as a fifty-third item is fine,
+         * but picking up a thousand boulders can cause problems.) */
+        pline(msgc_yafm,
+              "You are carrying too much stuff to pick up %s of those.",
+              (obj->quan == 1L) ? "another" : "more");
+        return -1;
+    }
 
     *cnt_p = carry_count(obj, container, *cnt_p, telekinesis, &old_wt, &new_wt);
     if (obj->otyp == BOULDER && throws_rocks(youmonst.data))
@@ -1766,10 +1781,7 @@ out_container(struct obj *obj)
         obj->oy = current_container->oy;
         addtobill(obj, FALSE, FALSE, FALSE);
     }
-    if (is_pick(obj) && !obj->unpaid && *u.ushops &&
-        shop_keeper(level, *u.ushops))
-        verbalize(msgc_npcvoice,
-                  "You sneaky cad! Get out of here with that pick!");
+    if (is_pick(obj)) pick_pick_from_container(obj); /* shop feedback */
 
     otmp = addinv(obj);
     loadlev = near_capacity();

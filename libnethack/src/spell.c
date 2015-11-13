@@ -298,7 +298,7 @@ deadbook(struct obj *book2, boolean invoked)
             /* successful invocation */
             mkinvokearea();
             u.uevent.invoked = 1;
-            historic_event(FALSE, "performed the invocation.");
+            historic_event(FALSE, TRUE, "performed the invocation.");
             /* in case you haven't killed the Wizard yet, behave as if you just
                did */
             u.uevent.udemigod = 1;      /* wizdead() */
@@ -839,7 +839,7 @@ cast_protection(void)
         if (!u.usptime)
             u.usptime = u.uspmtime;
     } else {
-        pline(msgc_yafm, "Your skin feels warm for a moment.");
+        pline(msgc_yafm, "Your %s feels warm for a moment.", body_part(SKIN));
     }
 }
 

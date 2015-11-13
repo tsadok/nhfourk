@@ -465,7 +465,8 @@ exerchk(void)
                 case A_STR:
                     pline_implied(msgc_hint, (mod_val > 0) ?
                                   "You must have been exercising." :
-                                  "You must have been abusing your body.");
+                                  msgprintf("You must have been abusing "
+                                            "your %s.", body_part(BODY)));
                     break;
                 case A_WIS:
                     pline_implied(msgc_hint, (mod_val > 0) ?

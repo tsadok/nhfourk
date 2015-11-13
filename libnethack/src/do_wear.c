@@ -509,7 +509,7 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
             if (equipping)
                 self_invis_message();
             else
-                pline(good_msgc, "Your body seems to unfade%s.",
+                pline(good_msgc, "Your %s seems to unfade%s.", body_part(BODY),
                       See_invisible ? " completely" : "..");
         }
         break;
@@ -1378,8 +1378,8 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
         /* Hobbits have an os_arm slot that can be used for elven armor only */
         (raceptr(mon) != &mons[PM_HOBBIT] || slot != os_arm)) {
         if (noisy)
-            pline(msgc_cancelled, "The %s will not fit on your body.",
-                  c_slotnames[slot]);
+            pline(msgc_cancelled, "The %s will not fit on your %s.",
+                  c_slotnames[slot], body_part(BODY));
         return 0;
     }
     /* Horned monsters /do/ have a head slot; they can wear elven leather helms
@@ -1391,8 +1391,8 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
     if ((slot == os_armg || slot == os_arms || slot == os_armh) &&
         (nohands(mon->data) || verysmall(mon->data))) {
         if (noisy)
-            pline(msgc_cancelled, "You can't balance the %s on your body.",
-                  c_slotnames[slot]);
+            pline(msgc_cancelled, "You can't balance the %s on your %s.",
+                  c_slotnames[slot], body_part(BODY));
         return 0;
     }
     if (slot == os_armf &&
@@ -1633,7 +1633,9 @@ canwearobj(struct obj *otmp, long *mask,
     case os_ringl:
     case os_ringr:
         if (nolimbs(youmonst.data)) {
-            pline(msgc, "You cannot make the ring stick to your body.");
+            if (noisy)
+                pline(msgc, "You cannot make the ring stick to your %s.",
+                      body_part(BODY));
             return FALSE;
         }
         /* It's possible to have cursed gloves and not know it. In such a case,
@@ -1700,7 +1702,8 @@ canwearobjon(struct obj *otmp, enum objslot slot,
               "%s will only fit on your other hand.", Yname2(otmp));
     else
         pline(spoil ? msgc_failcurse : msgc_cancelled,
-              "%s won't fit on that part of your body.", Yname2(otmp));
+              "%s won't fit on that part of your %s.", Yname2(otmp),
+              body_part(BODY));
 
     return FALSE;
 }
@@ -1818,9 +1821,10 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
             return FALSE;
         }
         if (otmp == uskin()) {
-            pline(msgc, "The %s is merged with your skin!",
-                  otmp->otyp >= GRAY_DRAGON_SCALES ?
-                  "dragon scales are" : "dragon scale mail is");
+            if (noisy)
+                pline(msgc, "The %s merged with your skin!",
+                      otmp->otyp >= GRAY_DRAGON_SCALES ?
+                      "dragon scales are" : "dragon scale mail is");
         }
     }
     /* basic curse checks: anything welds in equip slots, only specific items
@@ -1849,8 +1853,8 @@ glibr(void)
 {
     struct obj *otmp;
     int xfl = 0;
-    boolean leftfall, rightfall;
-    const char *otherwep = 0;
+    boolean leftfall, rightfall, wastwoweap = FALSE;
+    const char *otherwep = 0, *thiswep, *which, *hand;
 
     leftfall = (uleft && !uleft->cursed &&
                 (!uwep || !welded(uwep) || !bimanual(uwep)));
@@ -1876,31 +1880,57 @@ glibr(void)
 
     otmp = uswapwep;
     if (u.twoweap && otmp) {
-        otherwep = is_sword(otmp) ? "sword" :
-            makesingular(oclass_names[(int)otmp->oclass]);
-        pline(msgc_statusbad, "Your %s %sslips from your %s.", otherwep,
-              xfl ? "also " : "", makeplural(body_part(HAND)));
+        /* secondary weapon doesn't need nearly as much handling as
+           primary; when in two-weapon mode, we know it's one-handed
+           with something else in the other hand and also that it's
+           a weapon or weptool rather than something unusual, plus
+           we don't need to compare its type with the primary */
+        otherwep = is_sword(otmp) ? "sword" : weapon_descr(otmp);
+        if (otmp->quan > 1L) otherwep = makeplural(otherwep);
+        hand = body_part(HAND);
+        which = "left ";
+        pline(msgc_statusbad, "Your %s %s%s from your %s%s.",
+              otherwep, xfl ? "also " : "",
+              otense(otmp, "slip"), which, hand);
+        wastwoweap = TRUE;
         setuswapwep(NULL);
         xfl++;
-        if (otmp->otyp != LOADSTONE || !otmp->cursed)
+        if (canletgo(otmp, "slippery fingers"))
             dropx(otmp);
     }
     otmp = uwep;
     if (otmp && !welded(otmp)) {
-        const char *thiswep;
+        long savequan = otmp->quan;
 
         /* nice wording if both weapons are the same type */
-        thiswep = is_sword(otmp) ? "sword" :
-            makesingular(oclass_names[(int)otmp->oclass]);
-        if (otherwep && strcmp(thiswep, otherwep))
+        thiswep = is_sword(otmp) ? "sword" : weapon_descr(otmp);
+        if (otherwep && strcmp(thiswep, makesingular(otherwep)))
             otherwep = 0;
+        if (otmp->quan > 1L) {
+            /* most class names for unconventional wielded items
+               are ok, but if wielding multiple apples or rations
+               we don't want "your foods slip", so force non-corpse
+               food to be singular; skipping makeplural() isn't
+               enough--we need to fool otense() too */
+            if (!strcmp(thiswep, "food"))
+                otmp->quan = 1L;
+            else thiswep = makeplural(thiswep);
+        }
+        hand = body_part(HAND);
+        which = "";
+        if (bimanual(otmp))
+            hand = makeplural(hand);
+        else if (wastwoweap)
+            which = "right ";   /* preceding msg was about left */
+        pline(msgc_statusbad, "%s %s%s %s%s from your %s%s.",
+              !strncmp(thiswep, "corpse", 6) ? "The" : "Your",
+              otherwep ? "other " : "", thiswep, xfl ? "also " : "",
+              otense(otmp, "slip"), which, hand);
+        /* xfl++; */
+        otmp->quan = savequan;
 
-        /* changed so cursed weapons don't fall, GAN 10/30/86 */
-        pline(msgc_statusbad, "Your %s%s %sslips from your %s.",
-              otherwep ? "other " : "",
-              thiswep, xfl ? "also " : "", makeplural(body_part(HAND)));
         setuwep(NULL);
-        if (otmp->otyp != LOADSTONE || !otmp->cursed)
+        if (canletgo(otmp, "slippery fingers"))
             dropx(otmp);
     }
 }

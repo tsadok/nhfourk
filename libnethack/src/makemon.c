@@ -977,7 +977,11 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
                 return NULL;    /* no more monsters! */
             }
             fakemon.data = ptr; /* set up for goodpos */
-        } while (!goodpos(lev, x, y, &fakemon, gpflags) && tryct++ < 50);
+        } while (++tryct <= 50 &&
+                 /* in Sokoban, don't accept a giant on first try;
+                    after that, boulder carriers are fair game */
+                 ((tryct == 1 && throws_rocks(ptr) && In_sokoban(&u.uz)) ||
+                  !goodpos(lev, x, y, &fakemon, gpflags)));
         mndx = monsndx(ptr);
     }
 
@@ -2115,6 +2119,10 @@ restore_mon(struct memfile *mf, struct level *l)
     if (mon->mnamelth)
         mread(mf, NAME_MUTABLE(mon), mon->mnamelth);
 
+#ifdef LIVELOG_BONES_KILLER
+    mon->former_player = mread16(mf);
+#endif
+
     switch (mon->mxtyp) {
     case MX_EPRI:
         EPRI(mon)->shralign = mread8(mf);
@@ -2362,6 +2370,12 @@ save_mon(struct memfile *mf, const struct monst *mon, const struct level *l)
 
     if (mon->mnamelth)
         mwrite(mf, NAME(mon), mon->mnamelth);
+
+#ifdef LIVELOG_BONES_KILLER
+    /* It would be possible to optimize this to one byte, theoretically
+       (but the logic in bones.c and livelog.c would be more complicated.) */
+    mwrite16(mf, mon->former_player);
+#endif
 
     switch (mon->mxtyp) {
     case MX_EPRI:

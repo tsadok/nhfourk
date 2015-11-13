@@ -9,9 +9,13 @@
 
 /* random engravings */
 static const char *const random_mesg[] = {
-    "Elbereth",
+    "Elbereth", "ElberethElbereth", "ElberethElberethElbereth",
+    "ElberetnElherethLlberethElbcrethElbere?hElbercthFlbereth",
     /* trap engravings */
     "Vlad was here", "ad aerarium",
+    /* other NetHack-specific references */
+    "I never hit with a wielded weapon, but I changed form six times.",
+    "Always name your kitten after a famous wizard.",
     /* take-offs and other famous engravings */
     "Owlbreath", "Galadriel",
     "Kilroy was here",
@@ -19,6 +23,7 @@ static const char *const random_mesg[] = {
     "You won't get it up the steps",    /* Adventure */
     "Lasciate ogni speranza o voi ch'entrate.", /* Inferno */
     "Well Come",        /* Prisoner */
+    "We juggle priceless eggs in variable gravity.", /* Gateway */
     "We apologize for the inconvenience.",      /* So Long... */
     "See you next Wednesday",   /* Thriller */
     "notary sojak",     /* Smokey Stover */
@@ -28,6 +33,10 @@ static const char *const random_mesg[] = {
     "Two thumbs up!",   /* Siskel & Ebert */
     "Hello, World!",    /* The First C Program */
     "As if!",   /* Clueless */
+    "Klaatu barada nikto!", /* The Day the Earth Stood Still */
+    "When the goat turns red strikes true.", /* Order of the Stick */
+    "It is a far, far better thing I do than I have ever done.", /* A Tale of Two Cities */
+    "In the dungeon, all adventurers are equal; but some are more equal than others.", /* Animal Farm (sort of) */
 };
 
 const char *
@@ -533,6 +542,15 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) /* in bubble */ ) {
         pline(msgc_cancelled, "You can't write in thin air!");
         return 0;
+    } else if (u.utrap && u.utraptype == TT_INFLOOR) {
+        pline (msgc_cancelled,
+               "You can't write on the %s while embedded therein.",
+               surface(u.ux, u.uy));
+        return 0;
+    } else if (!accessible(level, u.ux, u.uy)) {
+        /* stone, tree, wall, secret corridor, pool, lava, bars */
+        pline(msgc_cancelled, "You can't write here.");
+        return 0;
     }
     if (cantwield(youmonst.data)) {
         pline(msgc_cancelled, "You can't even hold anything!");
@@ -763,13 +781,16 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                                   xname(otmp));
                     doknown = TRUE;
                 }
-                if (!Blind)
+                if (!Blind) {
                     post_engr_text =
                         IS_GRAVE(level->locations[u.ux][u.uy].typ) ?
                         "Chips fly out from the headstone." :
                         is_ice(level, u.ux, u.uy) ?
                         "Ice chips fly up from the ice surface!" :
+                        (level->locations[u.ux][u.uy].typ == DRAWBRIDGE_DOWN) ?
+                        "Splinters fly up from the bridge." :
                         "Gravel flies up from the floor.";
+                }
                 else
                     post_engr_text = "You hear drilling!";
                 break;
@@ -1108,9 +1129,11 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             /*
              * -2 = 3, -1 = 5, 0 = 7, +1 = 9, +2 = 11
              * Note: this does not allow a +0 anything (except an athame) to
-             * engrave "Elbereth" all at once.  However, you could now engrave
+             * engrave "Elbereth" all at once.  However, you could engrave
              * "Elb", then "ere", then "th".
              */
+            if (otmp->quan > 1L)
+                otmp = splitobj(otmp, 1L);
             pline(msgc_badidea, "Your %s dull.", aobjnam(otmp, "get"));
             if (otmp->unpaid) {
                 struct monst *shkp = shop_keeper(level, *u.ushops);
@@ -1388,7 +1411,9 @@ void
 make_grave(struct level *lev, int x, int y, const char *str)
 {
     /* Can we put a grave here? */
-    if ((lev->locations[x][y].typ != ROOM && lev->locations[x][y].typ != GRAVE)
+    if ((lev->locations[x][y].typ != ROOM &&
+         lev->locations[x][y].typ != GRAVE &&
+         lev->locations[x][y].typ != CORR)
         || t_at(lev, x, y))
         return;
 

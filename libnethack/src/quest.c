@@ -44,10 +44,19 @@ on_start(const d_level * orig_lev)
 static void
 on_locate(const d_level * orig_lev)
 {
-    if (!Qstat(first_locate)) {
-        qt_pager(QT_FIRSTLOCATE);
+    /* the locate messages are phrased in a manner such that they only
+       make sense when arriving on the level from above */
+    boolean from_above = (orig_lev->dlevel < u.uz.dlevel);
+
+    if (Qstat(killed_nemesis)) {
+        return;
+    } else if (!Qstat(first_locate)) {
+        if (from_above) qt_pager(QT_FIRSTLOCATE);
+        /* if we've arrived from below this will be a lie, but there won't
+           be any point in delivering the message upon a return visit from
+           above later since the level has now been seen */
         Qstat(first_locate) = TRUE;
-    } else if (orig_lev->dlevel < u.uz.dlevel && !Qstat(killed_nemesis))
+    } else if (from_above)
         qt_pager(QT_NEXTLOCATE);
 }
 
@@ -76,7 +85,7 @@ onquest(const d_level * orig_lev)
 
     if (Is_qstart(&u.uz))
         on_start(orig_lev);
-    else if (Is_qlocate(&u.uz) && u.uz.dlevel > orig_lev->dlevel)
+    else if (Is_qlocate(&u.uz))
         on_locate(orig_lev);
     else if (Is_nemesis(&u.uz))
         on_goal();
@@ -194,7 +203,7 @@ expulsion(boolean seal)
         int reexpelled = u.uevent.qexpelled;
 
         u.uevent.qexpelled = 1;
-        historic_event(FALSE, "were expelled from the quest.");
+        historic_event(FALSE, FALSE, "were expelled from the quest.");
         /* Delete the near portal now; the far (main dungeon side) portal will
            be deleted as part of arrival on that level. If monster movement is
            in progress, any who haven't moved yet will now miss out on a chance
@@ -236,9 +245,8 @@ finish_quest(struct obj *obj)
 
     if (obj) {
         u.uevent.qcompleted = 1;        /* you did it! */
-        historic_event(FALSE, "completed the quest!");
-        /* behave as if leader imparts sufficient info about the quest artifact
-         */
+        historic_event(FALSE, FALSE, "completed the quest!");
+        /* behave as if leader imparts sufficient info about quest artifact */
         fully_identify_obj(obj);
         update_inventory();
     }
@@ -312,7 +320,7 @@ chat_with_leader(void)
             qt_pager(QT_ASSIGNQUEST);
             exercise(A_WIS, TRUE);
             Qstat(got_quest) = TRUE;
-            historic_event(FALSE, "embarked upon an epic quest.");
+            historic_event(FALSE, FALSE, "embarked upon an epic quest.");
         }
     }
 }

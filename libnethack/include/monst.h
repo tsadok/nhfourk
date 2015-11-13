@@ -154,6 +154,11 @@ struct monst {
     xchar weapon_check;
     int misc_worn_check;
 
+#ifdef LIVELOG_BONES_KILLER
+    short former_player; /* info about this being the ghost or whatnot
+                            of a former player, from a bones file*/
+#endif
+
     uchar mnamelth;     /* length of name (following mxlth) */
     uchar mxtyp;        /* type of the following data (MX_* flags in
                            permonst.h) */

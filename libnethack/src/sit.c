@@ -176,8 +176,9 @@ dosit(const struct nh_cmd_arg *arg)
                 break;
             case 3:
                 pline(Shock_resistance ? msgc_notresisted : msgc_nonmonbad,
-                      "A%s electric shock shoots through your body!",
-                      (Shock_resistance) ? "n" : " massive");
+                      "A%s electric shock shoots through your %s!",
+                      ((Shock_resistance) ? "n" : " massive"),
+                      body_part(BODY));
                 losehp(Shock_resistance ? rnd(6) : rnd(30),
                        killer_msg(DIED, "an electric chair"));
                 exercise(A_CON, FALSE);

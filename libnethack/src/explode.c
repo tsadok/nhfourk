@@ -377,8 +377,10 @@ explode(int x, int y, int type, /* the same as in zap.c */
             pline(msgc_playerimmune, "You are unharmed!");
         } else if (Half_physical_damage && adtyp == AD_PHYS)
             damu = (damu + 1) / 2;
-        if (adtyp == AD_FIRE)
+        if (adtyp == AD_FIRE) {
             burnarmor(&youmonst);
+            set_candles_afire();
+        }
         destroy_item(SCROLL_CLASS, (int)adtyp);
         destroy_item(SPBOOK_CLASS, (int)adtyp);
         destroy_item(POTION_CLASS, (int)adtyp);

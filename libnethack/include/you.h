@@ -203,6 +203,8 @@ struct you {
 
     int lastinvnr;
 
+    long pickmovetime; /* used by pick_pick_from_container; needs to persist */
+
     /* SAVEBREAK: for avoiding desyncs with old saves */
     unsigned char save_compat_bytes[3];
 

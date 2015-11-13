@@ -783,7 +783,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     int armpro, num, tmp = dice((int)mattk->damn, (int)mattk->damd);
     boolean cancelled;
 
-    if (touch_petrifies(pd) && !resists_ston(magr)) {
+    if ((touch_petrifies(pd)
+         || (mattk->adtyp == AD_DGST && pd == &mons[PM_MEDUSA]))
+        && !resists_ston(magr)) {
         long protector = attk_protection((int)mattk->aatyp);
         long wornitems = magr->misc_worn_check;
 
@@ -1259,7 +1261,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
             if (otmp->owornmask) {
                 mdef->misc_worn_check &= ~otmp->owornmask;
                 if (otmp->owornmask & W_MASK(os_wep))
-                    setmnotwielded(mdef, otmp);
+                    mwepgone(mdef);
                 otmp->owornmask = 0L;
                 update_mon_intrinsics(mdef, otmp, FALSE, FALSE);
             }
@@ -1413,8 +1415,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     case AD_FAMN:
         if (vis)
             pline(combat_msgc(magr, mdef, cr_hit),
-                  "%s reaches out, and %s body shrivels.",
-                  Monnam(magr), s_suffix(mon_nam(mdef)));
+                  "%s reaches out, and %s %s shrivels.",
+                  Monnam(magr), s_suffix(mon_nam(mdef)),
+                  mbodypart(mdef, BODY));
         if (mdef->mtame && !mdef->isminion)
             EDOG(mdef)->hungrytime -= rn1(120, 120);
         else {
@@ -1561,10 +1564,10 @@ mswingsm(struct monst *magr, struct monst *mdef, struct obj *otemp)
        message can get pretty spammy. Also note that the format strings have
        different numbers of arguments; printf is specified to ignore spare
        arguments at the end of the format string (C11 7.21.6.1p2) */
-    pline_implied(msgc_monneutral, mdef == &youmonst ?
-                  "%s %s %s %s." : "%s %s %s %s at %s.", Monnam(magr),
-                  (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-                  mhis(magr), singular(otemp, xname), mon_nam(mdef));
+    pline_implied(msgc_monneutral, "%s %s %s%s %s at %s.", Monnam(magr),
+          (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
+          ((otemp->quan > 1L) ? "one of " : ""),
+          mhis(magr), xname(otemp), mon_nam(mdef));
 }
 
 /*

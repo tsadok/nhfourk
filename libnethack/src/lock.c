@@ -337,7 +337,8 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
                 what = "card";
             pline(msgc_interrupted, no_longer, "hold the", what);
             return reset_pick();
-        } else if (u.utracked[tos_lock] != &zeroobj && !can_reach_floor()) {
+        } else if (Engulfed ||
+                   (u.utracked[tos_lock] != &zeroobj && !can_reach_floor())) {
             pline(msgc_interrupted, no_longer, "reach the", "lock");
             return reset_pick();
         } else {
@@ -355,6 +356,10 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
         pline(msgc_cancelled, "You can't hold %s -- you have no hands!",
               doname(pick));
         return 0;
+    } else if (Engulfed) {
+        pline(msgc_cancelled, "You can't %sunlock %s.",
+              ((picktyp == CREDIT_CARD) ? "" : "lock or "),
+              mon_nam(u.ustuck));
     }
 
     if ((picktyp != LOCK_PICK && picktyp != CREDIT_CARD &&
@@ -463,7 +468,7 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
             return 1;
         }
         if (!IS_DOOR(door->typ)) {
-            if (is_drawbridge_wall(cc.x, cc.y) >= 0)
+            if (drawbridge_wall_direction(cc.x, cc.y) >= 0)
                 pline(msgc_cancelled, "You %s no lock on the drawbridge.",
                       Blind ? "feel" : "see");
             else
@@ -514,8 +519,18 @@ doforce(const struct nh_cmd_arg *arg)
     int c;
     const char *qbuf;
 
+    if (Engulfed) {
+        pline(msgc_cancelled, "You can't force anything from inside here.");
+        return 0;
+    }
+
     if (!uwep_can_force())
         return 0;
+
+    if (!can_reach_floor()) {
+        pline(msgc_cancelled, "You can't reach the %s.", surface(u.ux, u.uy));
+        return 0;
+    }
 
     if (u.utracked[tos_lock] && u.uoccupation_progress[tos_lock]) {
         if (turnstate.continue_message)

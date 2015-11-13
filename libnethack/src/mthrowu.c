@@ -539,6 +539,9 @@ thrwmq(struct monst *mtmp, int xdef, int ydef)
     if (is_pole(otmp)) {
         int dam, hitv;
 
+        if (otmp != MON_WEP(mtmp))
+            return;  /* polearm must be wielded */
+
         /* TODO: LOE function between two arbitrary points. */
         if (dist2(mtmp->mx, mtmp->my, xdef, ydef) > POLE_LIM ||
             (xdef == u.ux && ydef == u.uy && !couldsee(mtmp->mx, mtmp->my)))
@@ -643,9 +646,20 @@ thrwmq(struct monst *mtmp, int xdef, int ydef)
     }
 
     m_shot.n = multishot;
-    for (m_shot.i = 1; m_shot.i <= m_shot.n; m_shot.i++)
+    for (m_shot.i = 1; m_shot.i <= m_shot.n; m_shot.i++) {
         m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),
                 distmin(mtmp->mx, mtmp->my, xdef, ydef), otmp, TRUE);
+        /* conceptually all N missiles are in flight at once, but
+           if mtmp gets killed (shot kills adjacent gas spore and
+           triggers explosion, perhaps), inventory will be dropped
+           and otmp might go away via merging into another stack;
+           if we then use it, we could cause undefined behavior */
+        if (mtmp->mhp <= 0 && m_shot.i < m_shot.n) {
+            /* cancel pending shots (ought to give a message here since
+               we gave one above about throwing/shooting N missiles) */
+            break;  /* endmultishot(FALSE); */
+        }
+    }
     m_shot.n = m_shot.i = 0;
     m_shot.o = STRANGE_OBJECT;
     m_shot.s = FALSE;

@@ -36,7 +36,6 @@ static const char *const A_gush_of_water_hits = "A gush of water hits";
 static const char *const blindgas[6] =
     { "humid", "odorless", "pungent", "chilling", "acrid", "biting" };
 
-
 /* called when you're hit by fire (dofiretrap,buzz,zapyourself,explode) */
 /* returns TRUE if hit on torso */
 boolean
@@ -103,8 +102,14 @@ burnarmor(struct monst *victim)
 #undef burn_dmg
 }
 
-/*
- * Generic erode-item function.  Returns TRUE if any change in state occurred,
+int
+candle_erosion_level(int fuelremaining)
+{
+    return ((WAX_EROSION_AMOUNT * MAX_ERODE + 1)
+            - fuelremaining) / WAX_EROSION_AMOUNT;
+}
+
+/* Generic erode-item function.  Returns TRUE if any change in state occurred,
  * or if grease protected item.
  * "check_grease", if FALSE, means that grease is not checked for.
  * "print", if set, means to print a message even if no change occurs.
@@ -135,8 +140,14 @@ erode_obj(struct obj *otmp, const char *ostr, enum erode_type type,
 
     switch (type) {
     case ERODE_BURN:
-        vulnerable = is_flammable(otmp);
+        vulnerable = is_flammable(otmp) || Is_candle(otmp);
         check_grease = FALSE;
+        if (Is_candle(otmp)) {
+            /* Recalculate the current erosion level
+               based on remaining fuel (otmp->age): */
+            int eroded = candle_erosion_level(otmp->age);
+            otmp->oeroded = (eroded >= 0) ? eroded : 0;
+        }
         break;
     case ERODE_RUST:
         vulnerable = is_rustprone(otmp);
@@ -218,6 +229,25 @@ erode_obj(struct obj *otmp, const char *ostr, enum erode_type type,
 
         if (otmp->unpaid)
             costly_damage_obj(otmp);
+
+        if (Is_candle(otmp) && (type == ERODE_BURN)) {
+            if (!otmp->lamplit) {
+                int fuelleft = otmp->age;
+                fuelleft -= WAX_EROSION_AMOUNT;
+                otmp->age = (fuelleft > 1) ? fuelleft : 1;
+                begin_burn(otmp, FALSE);    
+            } /* else {
+                 I thought about using up some of the candle's remaining wax
+                 in this already-lit case as well, but that would require
+                 messing with an existing timer.  Out of laziness, I haven't
+                 implemented that part yet.  Ergo, correct strategy when fire
+                 damage is destroying your candles is to leave them lit until
+                 the source of damage can be neutralized, _then_ snuff them.
+                 This is counterintuitive.  Bad programmer, no cookie :-(
+                 See also the similar case in set_candles_afire() in zap.c
+            } */
+        }
+
         update_inventory();
         return TRUE;
     } else {
@@ -313,12 +343,20 @@ maketrap(struct level *lev, int x, int y, int typ, enum rng rng)
         {
             struct monst *mtmp;
             struct obj *otmp, *statue;
+            const struct permonst *mptr;
+            int trycount = 50;
 
-            /* use the provided RNG for species but nothing else */
-            statue = mkcorpstat(STATUE, NULL, &mons[rndmonnum(&lev->z, rng)],
-                                lev, x, y, FALSE, rng_main);
-            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO,
-                           NO_MM_FLAGS);
+            do {    /* Avoid ultimately hostile co-aligned unicorn. */
+                    /* Also avoid cross-aligned ones, because the
+                       trap could end up in a bones file. */
+                    /* Use the provided RNG once only for species. */
+                mptr = &mons[rndmonnum(&lev->z,
+                                       ((trycount == 50) ? rng : rng_main))];
+            } while (--trycount > 0 && is_unicorn(mptr));
+
+            statue = mkcorpstat(STATUE, NULL, mptr, lev, x, y, FALSE, rng_main);
+            mtmp = makemon(&mons[statue->corpsenm], lev, COLNO, ROWNO, MM_NOCOUNTBIRTH);
+
             if (!mtmp)
                 break;  /* should never happen */
             while (mtmp->minvent) {
@@ -383,22 +421,32 @@ fall_through(boolean td)
 {       /* td == TRUE : trap door or hole */
     d_level dtmp;
     const char *dont_fall = NULL;
-    int newlevel = dunlev(&u.uz);
+    int newlevel, bottom;
     const char *msgbuf;
 
     /* KMH -- You can't escape the Sokoban level traps */
     if (Blind && Levitation && !In_sokoban(&u.uz))
         return;
 
+    bottom = dunlevs_in_dungeon(&u.uz);
+    /* when in the upper half of the quest, don't fall past the
+       middle "quest locate" level if hero hasn't been there yet */
+    if (In_quest(&u.uz)) {
+        int qlocate_depth = qlocate_level.dlevel;
+        /* deepest reached < qlocate implies current < qlocate */
+        if (dunlev_reached(&u.uz) < qlocate_depth)
+            bottom = qlocate_depth; /* early cut-off */
+    }
+    newlevel = dunlev(&u.uz);       /* current level */
+
     do
         newlevel++;
-    while (!rn2_on_rng(4, rng_trapdoor_result) &&
-           newlevel < dunlevs_in_dungeon(&u.uz));
+    while (!rn2_on_rng(4, rng_trapdoor_result) && newlevel < bottom);
 
     if (td) {
         struct trap *t = t_at(level, u.ux, u.uy);
+        feeltrap(t);
 
-        seetrap(t);
         if (!In_sokoban(&u.uz)) {
             if (t->ttyp == TRAPDOOR)
                 pline(msgc_statusbad, "A trap door opens up under you!");
@@ -414,7 +462,7 @@ fall_through(boolean td)
     else if (Levitation || u.ustuck || !can_fall_thru(level)
              || Flying || is_clinger(youmonst.data)
              || (Inhell && !u.uevent.invoked &&
-                 newlevel == dunlevs_in_dungeon(&u.uz))) {
+                 newlevel == bottom)) {
         dont_fall = "You don't fall in.";
     } else if (youmonst.data->msize >= MZ_HUGE) {
         dont_fall = "You don't fit through.";
@@ -548,6 +596,13 @@ animate_statue(struct obj *statue, xchar x, xchar y, int cause,
     else
         mon->mundetected = FALSE;
 
+    mon->msleeping = 0; /* trap releases an awake monster */
+    if (cause == ANIMATE_NORMAL || cause == ANIMATE_SHATTER) {
+        /* trap always releases hostile monster */
+        msethostility(mon, TRUE, TRUE);
+    }
+
+
     const char *comes_to_life =
         nonliving(mon->data) ? "moves" : "comes to life";
 
@@ -657,7 +712,7 @@ dotrap(struct trap *trap, unsigned trflags)
     boolean already_seen = trap->tseen;
     boolean webmsgok = (!(trflags & NOWEBMSG));
     boolean forcebungle = (trflags & FORCEBUNGLE);
-
+    int steed_article = ARTICLE_THE;
     action_interrupted();
 
     /* KMH -- You can't escape the Sokoban level traps */
@@ -692,8 +747,13 @@ dotrap(struct trap *trap, unsigned trflags)
         }
     }
 
-    if (u.usteed)
+    if (u.usteed) {
         u.usteed->mtrapseen |= (1 << (ttype - 1));
+        /* suppress article in various steed messages when using its
+           name (which won't occur when hallucinating) */
+        if (u.usteed->mnamelth && !Hallucination)
+            steed_article = ARTICLE_NONE;
+    }
 
     switch (ttype) {
     case ARROW_TRAP:
@@ -704,7 +764,7 @@ dotrap(struct trap *trap, unsigned trflags)
             break;
         }
         trap->once = 1;
-        seetrap(trap);
+        feeltrap(trap);
         pline(msgc_nonmonbad, "An arrow shoots out at you!");
         otmp = mksobj(level, ARROW, TRUE, FALSE, rng_main);
         otmp->quan = 1L;
@@ -815,7 +875,7 @@ dotrap(struct trap *trap, unsigned trflags)
     case BEAR_TRAP:
         if (Levitation || Flying)
             break;
-        seetrap(trap);
+        feeltrap(trap);
         if (amorphous(youmonst.data) || is_whirly(youmonst.data) ||
             unsolid(youmonst.data)) {
             pline(msgc_playerimmune,
@@ -921,7 +981,7 @@ dotrap(struct trap *trap, unsigned trflags)
         /* KMH -- You can't escape the Sokoban level traps */
         if (!In_sokoban(&u.uz) && (Levitation || Flying))
             break;
-        seetrap(trap);
+        feeltrap(trap);
         if (!In_sokoban(&u.uz) && is_clinger(youmonst.data)) {
             if (trap->tseen) {
                 pline(msgc_playerimmune, "You see %s %spit below you.",
@@ -942,17 +1002,13 @@ dotrap(struct trap *trap, unsigned trflags)
                 if ((trflags & RECURSIVETRAP) != 0)
                     verbbuf = msgprintf(
                         "and %s fall",
-                        x_monnam(u.usteed,
-                                 u.usteed->mnamelth ? ARTICLE_NONE :
-                                 ARTICLE_THE, NULL, SUPPRESS_SADDLE,
-                                 FALSE));
+                        x_monnam(u.usteed, steed_article,
+                                 NULL, SUPPRESS_SADDLE, FALSE));
                 else
                     verbbuf = msgcat(
                         "lead ",
-                        x_monnam(u.usteed,
-                                 u.usteed->mnamelth ? ARTICLE_NONE :
-                                 ARTICLE_THE, "poor", SUPPRESS_SADDLE,
-                                 FALSE));
+                        x_monnam(u.usteed, steed_article, "poor",
+                                 SUPPRESS_SADDLE, FALSE));
             } else
                 verbbuf = "fall";
             pline(msgc_petwarning, "You %s into %s pit!", verbbuf,
@@ -974,7 +1030,7 @@ dotrap(struct trap *trap, unsigned trflags)
                       msgupcasefirst(
                           x_monnam(
                               u.usteed,
-                              u.usteed->mnamelth ? ARTICLE_NONE : ARTICLE_THE,
+                              steed_article,
                               "poor", SUPPRESS_SADDLE, FALSE)), predicament);
             } else
                 pline(msgc_nonmonbad, "You land %s!", predicament);
@@ -1025,7 +1081,7 @@ dotrap(struct trap *trap, unsigned trflags)
         break;
 
     case WEB:  /* Our luckless player has stumbled into a web. */
-        seetrap(trap);
+        feeltrap(trap);
         if (amorphous(youmonst.data) || is_whirly(youmonst.data) ||
             unsolid(youmonst.data)) {
             if (acidic(youmonst.data) || u.umonnum == PM_GELATINOUS_CUBE ||
@@ -1056,9 +1112,7 @@ dotrap(struct trap *trap, unsigned trflags)
             if (u.usteed)
                 verbbuf = msgcat(
                     "lead ",
-                    x_monnam(u.usteed,
-                             u.usteed->
-                             mnamelth ? ARTICLE_NONE : ARTICLE_THE, "poor",
+                    x_monnam(u.usteed, steed_article, "poor",
                              SUPPRESS_SADDLE, FALSE));
             else
                 verbbuf = Levitation ? (const char *)"float" :
@@ -1133,7 +1187,8 @@ dotrap(struct trap *trap, unsigned trflags)
             pline(msgc_nonmonbad, "You are caught in a magical explosion!");
             losehp(rnd(10), killer_msg(DIED, "a magical explosion"));
             pline_implied(msgc_intrgain,
-                          "Your body absorbs some of the magical energy!");
+                          "Your %s absorbs some of the magical energy!",
+                          body_part(BODY));
             u.uen = (u.uenmax += 2);
         } else
             domagictrap();
@@ -1155,20 +1210,16 @@ dotrap(struct trap *trap, unsigned trflags)
 
         seetrap(trap);
         if (u.usteed)
-            verbbuf = msgcat(
-                "lead ",
-                x_monnam(u.usteed,
-                         u.usteed->
-                         mnamelth ? ARTICLE_NONE : ARTICLE_THE, NULL,
-                         SUPPRESS_SADDLE, FALSE));
+            verbbuf = msgcat("lead ",
+                             x_monnam(u.usteed, steed_article, NULL,
+                                      SUPPRESS_SADDLE, FALSE));
         else
-            verbbuf =
-                Levitation ? (const char *)"float" :
-                locomotion(youmonst.data, "step");
+            verbbuf = Levitation ? (const char *)"float" :
+                                   locomotion(youmonst.data, "step");
         if (Antimagic || Unchanging) {
             shieldeff(u.ux, u.uy);
             pline(msgc_playerimmune,
-                  "You %s onto a polymorph trap, but nothing changes.",
+                  "You %s onto a polymorph trap, but you are unchanged.",
                   verbbuf);
             /* Trap did nothing; don't remove it --KAA */
         } else {
@@ -1185,11 +1236,11 @@ dotrap(struct trap *trap, unsigned trflags)
     {
         unsigned steed_mid = 0;
         struct obj *saddle = 0;
-
+        
         if (Levitation || Flying) {
             if (!already_seen && rn2(3))
                 break;
-            seetrap(trap);
+            feeltrap(trap);
             pline(msgc_youdiscover, "%s %s in a pile of soil below you.",
                   already_seen ? "There is" : "You discover",
                   trap->madeby_u ? "the trigger of your mine" :
@@ -1206,11 +1257,11 @@ dotrap(struct trap *trap, unsigned trflags)
                ground, and you being affected again by the same mine
                because it hasn't been deleted yet */
             static boolean recursive_mine = FALSE;
-
+            
             if (recursive_mine)
                 break;
-
-            seetrap(trap);
+            
+            feeltrap(trap);
             pline(msgc_nonmonbad, "KAABLAMM!!!  You triggered %s land mine!",
                   a_your[trap->madeby_u]);
             if (u.usteed)
@@ -1240,7 +1291,7 @@ dotrap(struct trap *trap, unsigned trflags)
     {
         int style = ROLL | (trap->tseen ? LAUNCH_KNOWN : 0);
 
-        seetrap(trap);
+        feeltrap(trap);
         pline(msgc_nonmonbad, "Click! You trigger a rolling boulder trap!");
         if (!launch_obj
             (BOULDER, trap->launch.x, trap->launch.y, trap->launch2.x,
@@ -1253,7 +1304,7 @@ dotrap(struct trap *trap, unsigned trflags)
         break;
     }
     case MAGIC_PORTAL:
-        seetrap(trap);
+        feeltrap(trap);
         domagicportal(trap);
         break;
 
@@ -1264,7 +1315,7 @@ dotrap(struct trap *trap, unsigned trflags)
         break;
 
     default:
-        seetrap(trap);
+        feeltrap(trap);
         impossible("You hit a trap of type %u", trap->ttyp);
     }
 }
@@ -1345,8 +1396,7 @@ steedintrap(struct trap *trap, struct obj *otmp)
                 } else {
                     pline(msgc_consequence,
                           "You have to adjust yourself in the saddle on %s.",
-                          x_monnam(mtmp,
-                                   mtmp->mnamelth ? ARTICLE_NONE : ARTICLE_A,
+                          x_monnam(mtmp, ARTICLE_A,
                                    NULL, SUPPRESS_SADDLE, FALSE));
                 }
 
@@ -1379,12 +1429,15 @@ blow_up_landmine(struct trap *trap)
     wake_nearto(trap->tx, trap->ty, 400);
     if (IS_DOOR(level->locations[trap->tx][trap->ty].typ))
         level->locations[trap->tx][trap->ty].doormask = D_BROKEN;
-    if (!IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)) {
+    if (IS_DRAWBRIDGE(level->locations[trap->tx][trap->ty].typ)
+        || Is_waterlevel(&u.uz) || Is_airlevel(&u.uz)) {
+        /* No pits on the Planes of Air or Water; and if it's a
+         * bridge, destroy_drawbridge (called below) does enough. */
+        deltrap(level, trap);
+    } else {
         trap->ttyp = PIT;       /* explosion creates a pit */
         trap->madeby_u = FALSE; /* resulting pit isn't yours */
-        seetrap(trap);  /* and it isn't concealed */
-    } else {
-        deltrap(level, trap);
+        seetrap(trap);          /* and it isn't concealed */
     }
     if (find_drawbridge(&x, &y)) {
         destroy_drawbridge(x, y);
@@ -1651,6 +1704,16 @@ seetrap(struct trap *trap)
         map_trap(trap, 1, TRUE);
         newsym(trap->tx, trap->ty);
     }
+}
+
+/* feeltrap is like seetrap but overrides vision */
+void
+feeltrap(struct trap *trap)
+{
+    trap->tseen = 1;
+    map_trap(trap, 1, FALSE);
+    /* in case it's beneath something, redisplay the something */
+    newsym(trap->tx, trap->ty);
 }
 
 
@@ -2380,7 +2443,8 @@ selftouch(const char *arg, const char *deathtype)
         instapetrify(killer_msg(STONING,
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uwep->corpsenm].mname))));
-        if (!Stone_resistance)
+        /* life-saved; unwield the corpse if we can't handle it */
+        if (!Stone_resistance && !uarmg)
             uwepgone();
     }
     /* Or your secondary weapon, if wielded */
@@ -2391,7 +2455,8 @@ selftouch(const char *arg, const char *deathtype)
         instapetrify(killer_msg(STONING,
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uswapwep->corpsenm].mname))));
-        if (!Stone_resistance)
+        /* life-saved; unwield the corpse */
+        if (!Stone_resistance && !uarmg)
             uswapwepgone();
     }
 }
@@ -2403,6 +2468,7 @@ mselftouch(struct monst *mon, const char *arg, struct monst *culprit)
     struct obj *mwep = MON_WEP(mon);
 
     if (mwep && mwep->otyp == CORPSE &&
+        !resists_ston(mon) &&
         touch_petrifies(&mons[mwep->corpsenm])) {
         if (cansee(mon->mx, mon->my)) {
             pline(combat_msgc(culprit, mon,
@@ -2411,6 +2477,9 @@ mselftouch(struct monst *mon, const char *arg, struct monst *culprit)
                   arg ? mon_nam(mon) : Monnam(mon), mons[mwep->corpsenm].mname);
         }
         minstapetrify(mon, culprit);
+        /* if life-saved, might not be able to continue wielding */
+        if (mon->mhp > 0 && !which_armor(mon, os_armg) && !resists_ston(mon))
+            mwepgone(mon);
     }
 }
 
@@ -2425,8 +2494,8 @@ float_up(void)
             fill_pit(level, u.ux, u.uy);
         } else if (u.utraptype == TT_INFLOOR) {
             pline(msgc_yafm,
-                  "Your body pulls upward, but your %s are still stuck.",
-                  makeplural(body_part(LEG)));
+                  "Your %s pulls upward, but your %s are still stuck.",
+                  body_part(BODY), makeplural(body_part(LEG)));
         } else {
             pline(msgc_yafm,
                   "You float up, only your %s is still stuck.", body_part(LEG));
@@ -2672,6 +2741,7 @@ dofiretrap(struct obj *box)
         destroy_item(SCROLL_CLASS, AD_FIRE);
         destroy_item(SPBOOK_CLASS, AD_FIRE);
         destroy_item(POTION_CLASS, AD_FIRE);
+        set_candles_afire();
     }
     if (!box && burn_floor_paper(level, u.ux, u.uy, see_it, TRUE) && !see_it)
         pline(msgc_itemloss, "You smell paper burning.");
@@ -3336,7 +3406,13 @@ move_into_trap(struct trap *ttmp)
         check_leash(u.ux0, u.uy0);
         if (Punished)
             move_bc(0, bc, bx, by, cx, cy);
-        spoteffects(FALSE);     /* dotrap() */
+        /* Marking the trap unseen forces dotrap() to treat it like a new
+           discovery and prevents pickup() -> look_here() -> check_here()
+           from giving a redudant "There is a <trap> here" message when
+           there are objects covering this trap: */
+        ttmp->tseen = 0;    /* hack for check_here() */
+        /* trigger the trap: */
+        spoteffects(TRUE);  /* pickup() + dotrap() */
         exercise(A_WIS, FALSE);
     }
 }
@@ -3400,18 +3476,31 @@ try_disarm(struct trap *ttmp, boolean force_failure, schar dx, schar dy)
                         killed(mtmp);
                 } else if (ttype == WEB) {
                     if (!webmaker(youmonst.data)) {
-                        struct trap *ttmp2 =
-                            maketrap(level, u.ux, u.uy, WEB, rng_main);
+                        if (!On_stairs(u.ux, u.uy) &&
+                            !t_at(level, u.ux, u.uy)) {
+                            struct trap *ttmp2 =
+                                maketrap(level, u.ux, u.uy, WEB, rng_main);
 
-                        if (ttmp2) {
-                            pline(msgc_substitute, "The webbing sticks to "
-                                  "you.  You're caught too!");
-                            dotrap(ttmp2, NOWEBMSG);
-                            if (u.usteed && u.utrap) {
-                                /* you, not steed, are trapped */
-                                dismount_steed(DISMOUNT_FELL);
+                            if (ttmp2) {
+                                pline(msgc_substitute,
+                                      "The webbing sticks to you. "
+                                      "You're caught too!");
+                                dotrap(ttmp2, NOWEBMSG);
+                                if (u.usteed && u.utrap) {
+                                    /* you, not steed, are trapped */
+                                    dismount_steed(DISMOUNT_FELL);
+                                }
                             }
-                        }
+                        } /* Else, don't make a web on an existing trap (because
+                             we can only have one trap at a time per tile, the
+                             way the data structure currently is set up), and
+                             don't make web on the stairs; besides being
+                             inconsistent with other traps (which cannot occur
+                             on furniture, including stairs) and a glyph
+                             conflict (which confuses travel), putting web on
+                             stairs causes additional strange bugs, such as
+                             inconsistency as to whether you are stuck depending
+                             on which direction you're moving.  Ticket #477.  */
                     } else
                         pline(msgc_failrandom, "%s remains entangled.",
                               Monnam(mtmp));
@@ -4308,6 +4397,7 @@ burn_stuff:
     destroy_item(SCROLL_CLASS, AD_FIRE);
     destroy_item(SPBOOK_CLASS, AD_FIRE);
     destroy_item(POTION_CLASS, AD_FIRE);
+    set_candles_afire();
     return FALSE;
 }
 

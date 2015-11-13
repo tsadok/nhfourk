@@ -317,7 +317,7 @@ static void
 addinv_stats(struct obj *obj)
 {
     if (obj->otyp == AMULET_OF_YENDOR) {
-        historic_event(!obj->known, "gained the Amulet of Yendor!");
+        historic_event(!obj->known, FALSE, "gained the Amulet of Yendor!");
     } else if (obj->oartifact) {
         if (is_quest_artifact(obj)) {
             artitouch();
@@ -344,8 +344,12 @@ addinv(struct obj *obj)
 
     obj_was_thrown = obj->was_thrown;
 
-    obj->no_charge = 0; /* not meaningful for invent */
-    obj->was_thrown = 0;
+    /* normally addtobill() clears no_charge when items in a shop are
+       picked up, but won't do so if the shop has become untended */
+    obj->no_charge = 0;  /* should not be set in player inventory */
+    if (Has_contents(obj))
+        picked_container(obj); /* clear no_charge for contents, recursively */
+    obj->was_thrown = 0; /* not meaningful in player inventory */
     obj->was_dropped = 0;
 
     examine_object(obj);
@@ -531,7 +535,7 @@ freeinv_stats(struct obj *obj)
         /* Minor information leak about the Amulet of Yendor (vs fakes). You
            don't get any more info than you do by turning on show_uncursed
            though. */
-        historic_event(!obj->known, "lost the Amulet of Yendor.");
+        historic_event(!obj->known, FALSE, "lost the Amulet of Yendor.");
     } else if (obj->oartifact) {
         uninvoke_artifact(obj);
     }
@@ -605,6 +609,13 @@ delobj(struct obj *obj)
            exploding chests, and golem creation, and ... */
         return;
     }
+
+    if (obj->where == OBJ_INVENT && obj->owornmask & W_MASK(os_wep)) {
+        impossible("Deleting wielded object.");
+        uwepgone();  /* Pre-emptively unwield before deleting; fix C343-295. */
+    }
+    setnotworn(obj); /* Just in case there are other, similar bugs lurking. */
+
     update_map = (obj->where == OBJ_FLOOR);
     obj_extract_self(obj);
     if (!OBJ_AT_LEV(obj->olev, obj->ox, obj->oy) &&
@@ -757,6 +768,15 @@ compactify(const char *buf_orig)
                 ilet = buf[i1];
                 continue;
             }
+        } else if (ilet == NOINVSYM) {
+            /* compact three or more consecutive '#'
+               characters into "#-#" */
+            if (i2 >= 2 && buf[i2 - 2] == NOINVSYM &&
+                buf[i2 - 1] == NOINVSYM)
+                buf[i2 - 1] = '-';
+            else if (i2 >= 3 && buf[i2 - 3] == NOINVSYM &&
+                     buf[i2 - 2] == '-' && buf[i2 - 1] == NOINVSYM)
+                --i2;
         }
         ilet2 = ilet1;
         ilet1 = ilet;
@@ -1745,7 +1765,7 @@ dfeature_at(int x, int y)
             break;      /* "closed door" */
         }
         /* override door description for open drawbridge */
-        if (is_drawbridge_wall(x, y) >= 0)
+        if (drawbridge_wall_direction(x, y) >= 0)
             dfeature = "open drawbridge portcullis", cmap = -1;
     } else if (IS_FOUNTAIN(ltyp))
         cmap = S_fountain;      /* "fountain" */

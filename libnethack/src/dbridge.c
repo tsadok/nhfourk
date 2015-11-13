@@ -9,6 +9,13 @@
  *
  * Added comprehensive monster-handling, and the "entity" structure to
  * deal with players as well. - 11/89
+ *
+ * Any traps and/or engravings at either the portcullis or span location
+ * are destroyed whenever the bridge is lowered, raised, or destroyed.
+ * (Engraving handling could be extended to flag whether an engraving on
+ * the DB_UNDER surface is hidden by the lowered bridge, or one on the
+ * bridge itself is hidden because the bridge has been raised, but that
+ * seems like an awful lot of effort for very little gain.)
  */
 
 #include "hack.h"
@@ -90,16 +97,22 @@ is_moat(struct level * lev, int x, int y)
 
 /*
  * We want to know whether a wall (or a door) is the portcullis (passageway)
- * of an eventual drawbridge.
+ * of an eventual drawbridge, and in which direction.
  *
- * Return value:  the direction of the drawbridge.
+ * Return value:  the direction of the drawbridge (or -1 for none).
+ *
+ * If you want to know UP vs DOWN, use is_db_wall().
  */
 
 int
-is_drawbridge_wall(int x, int y)
+drawbridge_wall_direction(int x, int y)
 {
     struct rm *loc;
 
+    if (!isok(x,y)) {
+        impossible("drawbridge_wall_direction(%d,%d) not ok.", x, y);
+        return -1;
+    }
     loc = &level->locations[x][y];
     if (loc->typ != DOOR && loc->typ != DBWALL)
         return -1;
@@ -121,13 +134,20 @@ is_drawbridge_wall(int x, int y)
 }
 
 /*
- * Use is_db_wall where you want to verify that a
- * drawbridge "wall" is UP in the location x, y
- * (instead of UP or DOWN, as with is_drawbridge_wall).
+ * Use is_db_wall where you want to verify that a drawbridge "wall" (i.e.,
+ * portcullis) is in the UP position in the location x, y.
+ *
+ * (If you want to find find out the direction or to verify the existence of a
+ * portcullis without regard to whether it's UP or DOWN, then in that case use
+ * drawbridge_wall_direction instead.)
  */
 boolean
 is_db_wall(int x, int y)
 {
+    if (!isok(x,y)) {
+        impossible("is_db_wall(%d,%d) not ok.", x, y);
+        return FALSE; /* arbitrary choice */
+    }
     return (boolean) (level->locations[x][y].typ == DBWALL);
 }
 
@@ -143,7 +163,7 @@ find_drawbridge(int *x, int *y)
 
     if (IS_DRAWBRIDGE(level->locations[*x][*y].typ))
         return TRUE;
-    dir = is_drawbridge_wall(*x, *y);
+    dir = drawbridge_wall_direction(*x, *y);
     if (dir >= 0) {
         switch (dir) {
         case DB_NORTH:
@@ -667,6 +687,9 @@ close_drawbridge(int x, int y)
         pline(msgc_actionok, "You see a drawbridge %s up!",
               (((u.ux == x || u.uy == y) && !Underwater) ||
                distu(x2, y2) < distu(x, y)) ? "coming" : "going");
+    else if (canhear())
+        pline(msgc_actionok,
+              "You hear chains rattling and gears turning.");
     loc1->typ = DRAWBRIDGE_UP;
     loc2 = &level->locations[x2][y2];
     loc2->typ = DBWALL;
@@ -696,6 +719,8 @@ close_drawbridge(int x, int y)
         deltrap(level, t);
     if ((t = t_at(level, x2, y2)) != 0)
         deltrap(level, t);
+    del_engr_at(level, x, y);
+    del_engr_at(level, x2, y2);
     newsym(x, y);
     newsym(x2, y2);
     block_point(x2, y2);        /* vision */
@@ -720,6 +745,8 @@ open_drawbridge(int x, int y)
     if (cansee(x, y) || cansee(x2, y2))
         pline(msgc_actionok, "You see a drawbridge %s down!",
               (distu(x2, y2) < distu(x, y)) ? "going" : "coming");
+    else if (canhear())
+        pline(msgc_actionok, "You hear chains rattling and gears turning.");
     loc1->typ = DRAWBRIDGE_DOWN;
     loc2 = &level->locations[x2][y2];
     loc2->typ = DOOR;
@@ -735,6 +762,8 @@ open_drawbridge(int x, int y)
         deltrap(level, t);
     if ((t = t_at(level, x2, y2)) != 0)
         deltrap(level, t);
+    del_engr_at(level, x, y);
+    del_engr_at(level, x2, y2);
     newsym(x, y);
     newsym(x2, y2);
     unblock_point(x2, y2);      /* vision */
@@ -750,7 +779,8 @@ destroy_drawbridge(int x, int y)
 {
     struct rm *loc1, *loc2;
     struct trap *t;
-    int x2, y2;
+    struct obj *chain;
+    int x2, y2, i;
     boolean e_inview;
     struct entity *etmp1 = &(occupants[0]), *etmp2 = &(occupants[1]);
 
@@ -802,6 +832,19 @@ destroy_drawbridge(int x, int y)
         deltrap(level, t);
     if ((t = t_at(level, x2, y2)) != 0)
         deltrap(level, t);
+    del_engr_at(level, x, y);
+    del_engr_at(level, x2, y2);
+    for (i = rn2(6); i > 0; --i) {  /* scatter some debris */
+        /* doesn't matter if we happen to pick <x,y2> or <x2,y>;
+           since drawbridges are never placed diagonally, those
+           pairings will always match one of <x,y> or <x2,y2> */
+        chain = mksobj_at(IRON_CHAIN, level,
+                          rn2(2) ? x : x2, rn2(2) ? y : y2,
+                          TRUE, FALSE, rng_main);
+        /* a force of 5 here would yield a radius of 2 for
+           iron chain; anything less produces a radius of 1 */
+        (void) scatter(chain->ox, chain->oy, 1, MAY_HIT, chain);
+    }
     newsym(x, y);
     newsym(x2, y2);
     if (!does_block(level, x2, y2))

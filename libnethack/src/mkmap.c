@@ -17,7 +17,7 @@ static void pass_two(struct level *lev, schar, schar);
 static void pass_three(struct level *lev, schar, schar);
 static void wallify_map(struct level *lev);
 static void join_map(struct level *lev, schar, schar);
-static void finish_map(struct level *lev, schar, schar, xchar, xchar);
+static void finish_map(struct level *lev, schar, schar, boolean, boolean, boolean);
 static void remove_room(struct level *lev, unsigned roomno);
 
 static char *new_locations;
@@ -344,7 +344,7 @@ joinm:
 
 static void
 finish_map(struct level *lev, schar fg_typ, schar bg_typ, boolean lit,
-           boolean walled)
+           boolean walled, boolean icedpools)
 {
     int i, j;
 
@@ -364,9 +364,12 @@ finish_map(struct level *lev, schar fg_typ, schar bg_typ, boolean lit,
     }
     /* light lava even if everything's otherwise unlit */
     for (i = 0; i < COLNO; i++)
-        for (j = 0; j < ROWNO; j++)
+        for (j = 0; j < ROWNO; j++) {
             if (lev->locations[i][j].typ == LAVAPOOL)
                 lev->locations[i][j].lit = TRUE;
+            else if (lev->locations[i][j].typ == ICE)
+                lev->locations[i][j].icedpool = icedpools ? ICED_POOL : ICED_MOAT;
+        }
 }
 
 /*
@@ -470,7 +473,8 @@ mkmap(struct level *lev, lev_init *init_lev)
     if (join)
         join_map(lev, bg_typ, fg_typ);
 
-    finish_map(lev, fg_typ, bg_typ, (boolean) lit, (boolean) walled);
+    finish_map(lev, fg_typ, bg_typ, (boolean) lit, (boolean) walled,
+               init_lev->icedpools);
     /* a walled, joined level is cavernous, not mazelike -dlc */
     if (walled && join) {
         lev->flags.is_maze_lev = FALSE;

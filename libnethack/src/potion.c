@@ -229,7 +229,13 @@ make_blinded(long xtime, boolean talk)
     set_itimeout(&Blinded, xtime);
 
     if (u_could_see ^ can_see_now) {    /* one or the other but not both */
-        turnstate.vision_full_recalc = TRUE; /* blindness just got toggled */
+        turnstate.vision_full_recalc = TRUE;
+        /* This vision recalculation used to be deferred until moveloop(), but
+           that made it possible for vision irregularities to occur (cited case
+           was force bolt hitting adjacent potion of blindness and then a secret
+           door; hero was blinded by vapors but then got the message "a door
+           appears in the wall", C343-99) */
+        vision_recalc(0);
         if (Blind_telepat || Infravision)
             see_monsters(FALSE);
     }
@@ -434,6 +440,7 @@ peffects(struct obj *otmp)
             pline(msgc_statusbad, "Ulch!  This makes you feel mediocre!");
             break;
         } else {
+            /* unlike unicorn horn, overrides Fixed_abil */
             pline(msgc_statusheal, "Wow!  This makes you feel %s!",
                   (otmp->blessed) ? (unfixable_trouble_count(FALSE) ? "better" :
                                      "great")
@@ -1019,7 +1026,7 @@ potionhit(struct monst *mon, struct obj *obj, struct monst *magr)
 
             if (has_head(mon->data))
                 buf = msgprintf("%s %s", s_suffix(mnam),
-                                (notonhead ? "body" : "head"));
+                                (notonhead ? mbodypart(mon, BODY) : "head"));
             else
                 buf = mnam;
 
@@ -1815,6 +1822,11 @@ dodip(const struct nh_cmd_arg *arg)
                     obj->oeroded++;
                 }
             }
+        } else if (Is_candle(obj) && obj->lamplit) {
+            pline(msgc_consequence, "The oil catches the flame.");
+            (void) light_cocktail(potion);
+            potion->in_use = FALSE;
+            return 0;
         } else if (potion->cursed) {
             pline(msgc_failcurse,
                   "The potion spills and covers your %s with oil.",

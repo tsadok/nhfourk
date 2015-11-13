@@ -654,7 +654,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             install_feature => "playfield_utils",
         },
         _install_docs => {
-            object => qr=^path:doc/(?:changelog|faq|philosophy)\.txt=,
+            object => qr=^path:doc/(?:changelog|faq|philosophy|keyboard-layouts-nethack)\.(?:txt|png)=,
             install_dir => "docdir",
         },
         _install_copyright => {
@@ -680,6 +680,13 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             object => "sys:ensure_exists",
             install_dir => "gamesstatedir",
             install_name => "xlogfile",
+            install_permission => "games",
+            install_readable => 1,
+        },
+        _install_livelog => {
+            object => "sys:ensure_exists",
+            install_dir => "gamesstatedir",
+            install_name => "livelog",
             install_permission => "games",
             install_readable => 1,
         },

@@ -56,6 +56,7 @@ static struct nh_listitem palette_list[] = {
     {PALETTE_TTERMINAL, "typical X11 terminal"},
     {PALETTE_LCONSOLE,  "Linux console"},
     {PALETTE_REDMOND,   "Windows console"},
+    {PALETTE_VGA,       "VGA text mode"},
     {PALETTE_ALT1,      "alternative 1"},
     {PALETTE_ALT2,      "alternative 2"},
     {PALETTE_ALT3,      "alternative 3"}

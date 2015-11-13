@@ -871,6 +871,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 destroy_item(POTION_CLASS, AD_FIRE);
             if ((int)mtmp->m_lev > rn2(25))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if ((int)mtmp->m_lev > rn2(20))
+                set_candles_afire();
             burn_away_slime();
         } else
             dmg = 0;
@@ -1156,9 +1158,18 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hitmsg(mtmp, mattk);
         if (uncancelled && !rn2(4) && u.ulycn == NON_PM &&
             !Protection_from_shape_changers && !defends(AD_WERE, uwep)) {
+            struct obj *wep; /* Need a variable so we can pass a pointer. */
             pline(msgc_statusbad, "You feel feverish.");
             exercise(A_CON, FALSE);
             u.ulycn = monsndx(mdat);
+            if (u.twoweap) {
+                wep = uswapwep;
+                (void)retouch_object(&wep, TRUE);
+            }
+            if (uwep) {
+                wep = uwep;
+                (void)retouch_object(&wep, TRUE);
+            }
         }
         break;
     case AD_SGLD:
@@ -1277,8 +1288,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hurtarmor(&youmonst, ERODE_ROT);
         break;
     case AD_HEAL:
-        /* a cancelled nurse is just an ordinary monster */
-        if (mtmp->mcan) {
+        /* a cancelled nurse is just an ordinary monster,
+         * and nurses don't heal those that cause petrification */
+        if (mtmp->mcan || (Upolyd && touch_petrifies(youmonst.data))) {
             hitmsg(mtmp, mattk);
             break;
         }
@@ -1473,7 +1485,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
            channels, going through the files in alphabetical order). We reduce
            the spam by checking to see if the player is Hungry or worse. */
         pline(u.uhs >= HUNGRY ? msgc_fatal : msgc_statusbad,
-              "%s reaches out, and your body shrivels.", Monnam(mtmp));
+              "%s reaches out, and your %s shrivels.", Monnam(mtmp),
+              body_part(BODY));
         exercise(A_CON, FALSE);
         if (u.uhs != FAINTED)
             morehungry(rn1(40, 40));
@@ -2060,6 +2073,8 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
                 destroy_item(POTION_CLASS, AD_FIRE);
             if ((int)mtmp->m_lev > rn2(25))
                 destroy_item(SPBOOK_CLASS, AD_FIRE);
+            if ((int)mtmp->m_lev > rn2(20))
+                set_candles_afire();
             if (dmg)
                 mdamageu(mtmp, dmg);
         }

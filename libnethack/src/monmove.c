@@ -13,7 +13,7 @@ static int disturb(struct monst *);
 static void distfleeck(struct monst *, int *, int *, int *);
 static int m_arrival(struct monst *);
 static void watch_on_duty(struct monst *);
-
+static void release_hero(struct monst *);
 
 /* TRUE : mtmp died */
 boolean
@@ -159,6 +159,20 @@ disturb(struct monst *mtmp)
     return 0;
 }
 
+/* ungrab/expel held/swallowed hero */
+void
+release_hero(struct monst *mon)
+{
+    if (mon == u.ustuck) {
+        if (Engulfed)
+            expels(mon, mon->data, TRUE);
+        else if (!sticks(youmonst.data)) {
+            unstuck(mon); /* Let go. */
+            pline(msgc_statusheal, "You get released!");
+        }
+    }
+}
+
 /*
  * monster begins fleeing for the specified time, 0 means untimed flee
  * if first, only adds fleetime if monster isn't already fleeing
@@ -167,17 +181,10 @@ disturb(struct monst *mtmp)
 void
 monflee(struct monst *mtmp, int fleetime, boolean first, boolean fleemsg)
 {
-    if (DEADMONSTER(mtmp))
+    if (DEADMONSTER(mtmp)) /* shouldn't happen; but does; fixes C343-299 */
         return;
 
-    if (u.ustuck == mtmp) {
-        if (Engulfed)
-            expels(mtmp, mtmp->data, TRUE);
-        else if (!sticks(youmonst.data)) {
-            unstuck(mtmp);      /* monster lets go when fleeing */
-            pline(msgc_statusheal, "You get released!");
-        }
-    }
+    if (mtmp == u.ustuck) release_hero(mtmp); /* expel/unstick */
 
     if (!first || !mtmp->mflee) {
         /* don't lose untimed scare */
@@ -328,6 +335,12 @@ dochug(struct monst *mtmp)
     /* fleeing monsters might regain courage */
     if (mtmp->mflee && !mtmp->mfleetim && mtmp->mhp == mtmp->mhpmax && !rn2(25))
         mtmp->mflee = 0;
+
+    /* cease conflict-induced swallow/grab if conflict has ended */
+    if (mtmp == u.ustuck && mtmp->mpeaceful && !mtmp->mconf && !Conflict) {
+        release_hero(mtmp);
+        return 0;   /* uses up monster's turn */
+    }
 
     strategy(mtmp, FALSE); /* calls set_apparxy */
     /* Must be done after you move and before the monster does.  The
@@ -519,7 +532,8 @@ toofar:
         }
 
         tmp = m_move(mtmp, 0);
-        distfleeck(mtmp, &inrange, &nearby, &scared);   /* recalc */
+        if (tmp != 2)
+            distfleeck(mtmp, &inrange, &nearby, &scared);   /* recalc */
 
         switch (tmp) {
         case 0:        /* no movement, but it can still attack you */
@@ -1212,10 +1226,19 @@ closed_door(struct level * lev, int x, int y)
 }
 
 boolean
-accessible(int x, int y)
+accessible(struct level *lev, int x, int y)
 {
-    return (boolean) (ACCESSIBLE(level->locations[x][y].typ) &&
-                      !closed_door(level, x, y));
+    schar levtyp = lev->locations[x][y].typ;
+    if (levtyp == DRAWBRIDGE_UP) {
+        /* use underlying terrain in front of closed drawbridge */
+        switch (lev->locations[x][y].drawbridgemask & DB_UNDER) {
+        case DB_MOAT:  levtyp = MOAT; break;
+        case DB_LAVA:  levtyp = LAVAPOOL; break;
+        case DB_ICE:   levtyp = ICE; break;
+        case DB_FLOOR: levtyp = ROOM; break;
+        }
+    }
+    return (boolean) (ACCESSIBLE(levtyp) && !closed_door(lev, x, y));
 }
 
 
@@ -1337,8 +1360,8 @@ set_apparxy(struct monst *mtmp)
     } while (!isok(mx, my)
              || (mx == mtmp->mx && my == mtmp->my)
              || ((mx != u.ux || my != u.uy) && !passes_walls(mtmp->data) &&
-                 (!ACCESSIBLE(level->locations[mx][my].typ) ||
-                  (closed_door(level, mx, my) && !can_ooze(mtmp))))
+                 !(accessible(level, mx,my) ||
+                   (closed_door(level, mx, my) && can_ooze(mtmp))))
              || !couldsee(mx, my));
 
     mtmp->mux = mx;
