@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Alex Smith, 2015-11-13 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1195,7 +1195,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                   "brags about the goods some dungeon explorer provided" :
                   "makes some remarks about how difficult theft is lately");
             if (!tele_restrict(mtmp))
-                rloc(mtmp, TRUE);
+                rloc(mtmp, TRUE, level);
             return 3;
         } else if (mtmp->mcan) {
             if (!Blind) {
@@ -1207,7 +1207,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             }
             if (rn2(3)) {
                 if (!tele_restrict(mtmp))
-                    rloc(mtmp, TRUE);
+                    rloc(mtmp, TRUE, level);
                 return 3;
             }
             break;
@@ -1223,7 +1223,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 break;
             default:
                 if (!is_animal(mtmp->data) && !tele_restrict(mtmp))
-                    rloc(mtmp, TRUE);
+                    rloc(mtmp, TRUE, level);
                 if (is_animal(mtmp->data) && *buf) {
                     if (canseemon(mtmp))
                         pline(msgc_itemloss,
@@ -1351,7 +1351,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 return 2;
             } else if (!rn2(33)) {
                 if (!tele_restrict(mtmp))
-                    rloc(mtmp, TRUE);
+                    rloc(mtmp, TRUE, level);
                 monflee(mtmp, dice(3, 6), TRUE, FALSE);
                 return 3;
             }
@@ -1700,7 +1700,7 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
             tmp = 0;
         } else if (u.uswldtim == 0) {
             pline(msgc_fatal_predone, "%s totally digests you!", Monnam(mtmp));
-            tmp = u.uhp;
+            tmp = Upolyd ? u.mh : u.uhp;
             if (Half_physical_damage)
                 tmp *= 2;       /* sorry */
         } else {
@@ -2299,7 +2299,7 @@ doseduce(struct monst *mon)
         verbalize(msgc_npcvoice, "You're such a %s; I wish...",
                   u.ufemale ? "sweet lady" : "nice guy");
         if (!tele_restrict(mon))
-            rloc(mon, TRUE);
+            rloc(mon, TRUE, level);
         return 1;
     }
     if (u.ualign.type == A_CHAOTIC)
@@ -2437,7 +2437,7 @@ doseduce(struct monst *mon)
     if (!rn2_on_rng(25, rng_foocubus_results))
         mon->mcan = 1;  /* monster is worn out */
     if (!tele_restrict(mon))
-        rloc(mon, TRUE);
+        rloc(mon, TRUE, level);
     return 1;
 }
 
