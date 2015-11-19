@@ -6,6 +6,90 @@
 #include "hack.h"
 #include "epri.h"
 
+static void namemonsterfromlist(struct monst *mon, const char *const *nlist,
+                                struct level *lev, boolean unique);
+
+static const char *const watchname[] = {
+    "Andrews", "Ashton", "Aynesworth", "Babington", "Bartleby", "Beckingham",
+    "Billingham", "Boddenham", "Bramfield", "Bridgeman", "Brocksby",
+    "Browning", "Callthorpe", "Carlyle", "Caxton", "Chamberlain", "Chester",
+    "Chickenheart", "Clopton", "Compton", "Cooke", "Cosworth", "Craven",
+    "Crocker", "Cunningham", "Danvers", "Derington", "Digby", "Donnett",
+    "Duncombe", "Edgerton", "Eggerley", "Emerson", "Englefitch", "Epworth",
+    "Esmund", "Fackler", "Fenton", "Finch", "Fleetwilliam", "Fleming",
+    "Fraidycat", "Froggenhall", "Frye", "Gainsforth", "Gibbs", "Glendale",
+    "Glover", "Goldsmith", "Goseborne", "Grimsby", "Haddock", "Hancock",
+    "Harricott", "Harwood", "Hawkins", "Higgledy", "Hightower", "Hooks",
+    "Hornblower", "Hornebolt", "Jay", "Jameson", "Jenner", "Jones", "Kay",
+    "Killingbeck", "Kirkeby", "Kirkland", "Knivetton", "Lambert", "Lancelot",
+    "Lassard", "Leventhorpe", "Lillyliver", "Limsley", "Litchfield", "Litton",
+    "Loddington", "Malingerer", "Mahoney", "Marcheford", "Massingbird",
+    "Michelgrove", "Milsent", "Moore", "Morley", "Mouse", "Nebbish",
+    "Norwood", "Nottingham", "Olingsworth", "Oxenbrigg", "Parsons", "Peckham",
+    "Pemberton", "Poltroon", "Pratt", "Rampston", "Rawlins", "Robertson",
+    "Rochforth", "Russell", "Salter", "Sapsucker", "Saunderson", "Schtulman",
+    "Scroggs", "Seymour", "Shawe", "Shingleton", "Skulker", "Snelling",
+    "Staverton", "Styles", "Sweetchuck", "Tackleberry", "Thornton", "Thursby",
+    "Tweedy", "Vernon", "Waldegrove", "Waltham", "Welkins", "Wexcombe",
+    "Whippleton", "Whiteknuckle", "Wickwillingham", "Williams", "Withinghall",
+    "Worsley", "Yellowbelly", "Zed",
+    0
+};
+
+void
+namewatchman(struct monst *mon, struct level *lev)
+{
+    namemonsterfromlist(mon, watchname, lev, TRUE);
+}
+
+/* Assign a name to a monster, taken from a list of possible names.
+   Note that shopkeepers are special and use nameshk instead, partly
+   because it contains additional logic peculiar to them and also
+   because their name is stored in ESHK because of reasons. */
+static void
+namemonsterfromlist(struct monst *mon, const char *const *nlist,
+                    struct level *lev, boolean unique)
+{
+    int names_avail, tryct;
+    const char *ourname;
+    struct monst *mtmp;
+    if (!mon) {
+        if (wizard)
+            impossible("Cannot name a non-existent monster.");
+        return;
+    }
+    if (!nlist[0]) {
+        if (wizard)
+            impossible("No names available for the %s.", mon_nam(mon));
+        return;
+    }
+    for (names_avail = 0; nlist[names_avail]; names_avail++)
+        ;
+    for (tryct = 0; tryct < 500; tryct++) {
+        ourname = nlist[rn2(names_avail)];
+        if (!unique) {
+            christen_monst(mon, ourname);
+            return;
+        }
+        for (mtmp = lev->monlist; mtmp; mtmp = mtmp->nmon) {
+            if (DEADMONSTER(mtmp) || (mtmp == mon) ||
+                !(mtmp->data->mlet == mon->data->mlet))
+                continue;
+            if (strcmp(NAME_MUTABLE(mtmp), ourname) != 0)
+                continue;
+            break;
+        }
+        if (!mtmp) {
+            christen_monst(mon, ourname);
+            return;
+        } 
+    }
+    /* We're not going to name this monster. */
+    if (wizard)
+        pline(msgc_debug, "Failed to find %s name for the %s.",
+              (unique ? "an unused" : "a"), mon_nam(mon));
+}
+
 struct monst *
 christen_monst(struct monst *mtmp, const char *name)
 {
@@ -359,12 +443,12 @@ do_naming(const struct nh_cmd_arg *arg)
        there's no good reason to use them other than muscle memory */
     add_menuitem(&menu, 1, "Name a monster", 'C', FALSE);
     menu.items[menu.icount-1].group_accel = 'a';
-    add_menuitem(&menu, 2, "Name the current level", 'f', FALSE);
-    add_menuitem(&menu, 3, "Name an individual item", 'y', FALSE);
+    add_menuitem(&menu, 2, "Name an individual item", 'y', FALSE);
     menu.items[menu.icount-1].group_accel = 'b';
-    add_menuitem(&menu, 4, "Name all items of a certain type", 'n', FALSE);
+    add_menuitem(&menu, 3, "Name all items of a certain type", 'n', FALSE);
     menu.items[menu.icount-1].group_accel = 'c';
-    add_menuitem(&menu, 5, "Name an item type by appearance", 'A', FALSE);
+    add_menuitem(&menu, 4, "Name an item type by appearance", 'A', FALSE);
+    add_menuitem(&menu, 5, "Name the current level", 'f', FALSE);
     if (flags.recently_broken_otyp != STRANGE_OBJECT) {
         const char *buf;
 
@@ -388,18 +472,14 @@ do_naming(const struct nh_cmd_arg *arg)
         break;
 
     case 1:
-        donamelevel(&(struct nh_cmd_arg){.argtype = 0});
-        break;
-
-    case 2:
         do_oname(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
-    case 3:
+    case 2:
         do_tname(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
-    case 4:
+    case 3:
         strcpy(classes, flags.inv_order);
         init_menulist(&menu);
 
@@ -449,6 +529,10 @@ do_naming(const struct nh_cmd_arg *arg)
         if (n == 1)
             docall_inner(&(struct nh_cmd_arg){.argtype = 0},
                          selected[0]);
+        break;
+
+    case 4:
+        donamelevel(&(struct nh_cmd_arg){.argtype = 0});
         break;
 
     case 5:
@@ -525,7 +609,7 @@ x_monnam(const struct monst *mtmp,
          int article, /* ARTICLE_NONE, ARTICLE_THE, ARTICLE_A: obvious
                          ARTICLE_YOUR: "your" on pets, "the" on
                          everything else
-                         If the monster would be referred to as "it"
+                         If the monster would be referred to as "something"
                          or if the monster has a name _and_ there is
                          no adjective, "invisible", "saddled", etc.,
                          override this and always use no article. */
@@ -555,9 +639,9 @@ x_monnam(const struct monst *mtmp,
         !(suppress & SUPPRESS_IT);
     do_saddle = !(suppress & SUPPRESS_SADDLE);
 
-    /* unseen monsters, etc.  Use "it" */
+    /* unseen monsters, etc.  Use "something" */
     if (do_it) {
-        return "it";
+        return "something";
     }
 
     /* priests and minions: don't even use this function */
@@ -886,6 +970,13 @@ static struct {
     {"jester", FALSE},
     {"attorney", FALSE},
     {"sleazoid", FALSE},
+    {"sphinx", FALSE},
+    {"winged monkey", FALSE},
+    {"butterfly", FALSE},
+    {"monster", FALSE},
+    {"radioactive spider", FALSE},
+    {"angel of death", FALSE},
+    {"nanobot", FALSE},
     {"killer tomato", FALSE},
     {"amazon", FALSE},
     {"robot", FALSE},
@@ -902,6 +993,21 @@ static struct {
     {"paskald", FALSE},
     {"brogmoid", FALSE},
     {"dornbeast", FALSE},
+        /* assorted NetHack variants */
+    {"wax golem", FALSE},               /* Slash'em */
+    {"monoton", FALSE},                 /* dnethack */
+    {"disintegrator", FALSE},           /* Biodiversity patch */
+    {"dissolved undead potato", FALSE}, /* Slash'em Extended.  Really. */
+        /* Brogue */
+    {"dar battlemage", FALSE},
+    {"tentacle horror", FALSE},
+    {"Warden of Yendor", FALSE},
+        /* ADOM */
+    {"ratling", FALSE},
+        /* DCSS */
+    {"yaktaur", FALSE},
+        /* DoomRL */
+    {"agony elemental", FALSE},
         /* Moria */
     {"Ancient Multi-Hued Dragon", FALSE},
     {"Evil Iggy", FALSE},
@@ -910,11 +1016,25 @@ static struct {
     {"kestrel", FALSE},
     {"xeroc", FALSE},
     {"venus flytrap", FALSE},
+        /* Wesnoth */
+    {"chocobone", FALSE},
+        /* Minecraft */
+    {"creeper", FALSE},
+    {"enderman", FALSE},
+        /* Notable console games */
+    {"octorok", FALSE}, /* Zelda series */
+    {"goomba", FALSE},  /* Mario series */
         /* Wizardry */
     {"creeping coins", FALSE},
         /* Greek legend */
+    {"pegasus", FALSE},
     {"hydra", FALSE},
     {"siren", FALSE},
+        /* Japanese folklore */
+    {"kappa", FALSE},
+    {"tanuki", FALSE},
+        /* Beowulf */
+    {"Grendel", TRUE},
         /* Monty Python */
     {"killer bunny", FALSE},
         /* The Princess Bride */
@@ -929,7 +1049,15 @@ static struct {
     {"tangle tree", FALSE},
     {"nickelpede", FALSE},
     {"wiggle", FALSE},
+        /* Dragonbone Chair series */
+    {"bukka", FALSE},
+        /* Prydain series */
+    {"gwythaint", FALSE},
+        /* Shannara series */
+    {"skull bearer", FALSE},
         /* Lewis Carroll */
+    {"frumious bandersnatch", FALSE}, /* also from Known Space */
+    {"jubjub bird", FALSE},
     {"white rabbit", FALSE},
     {"snark", FALSE},
         /* Dr. Dolittle */
@@ -939,9 +1067,12 @@ static struct {
         /* Star Trek */
     {"tribble", FALSE},
     {"Klingon", FALSE},
+    {"Cardassian", FALSE},
     {"Borg", FALSE},
         /* Star Wars */
-    {"Ewok", FALSE},
+    {"wookiee", FALSE},
+    {"protocol droid", FALSE},
+    {"ewok", FALSE},
         /* Tonari no Totoro */
     {"Totoro", FALSE},
         /* Nausicaa */
@@ -980,15 +1111,18 @@ static struct {
         /* saccharine kiddy TV */
     {"Barney the dinosaur", TRUE},
         /* Angband */
-    {"Morgoth", TRUE},
+    {"Morgoth", TRUE}, /* Originally from LOTR */
         /* Babylon 5 */
     {"Vorlon", FALSE},
         /* King Arthur */
     {"questing beast", FALSE},
         /* Movie */
     {"Predator", FALSE},
-        /* common pest */
+        /* common pests */
     {"mother-in-law", FALSE},
+    {"hyperactive child", FALSE},
+    {"grumpy old man", FALSE},
+    {"teenager", FALSE},
         /* Battlestar Galactica */
     {"cylon", FALSE},
 };

@@ -74,6 +74,7 @@ static struct {
     "magic", MAGIC_TRAP}, {
     "anti magic", ANTI_MAGIC}, {
     "polymorph", POLY_TRAP}, {
+    "stinking cloud", STINKING_TRAP}, {
     0, 0}
 };
 
@@ -97,6 +98,8 @@ static struct {
     "anthole", ANTHOLE}, {
     "cocknest", COCKNEST}, {
     "leprehall", LEPREHALL}, {
+    "dragonhall", DRAGONHALL}, {
+    "chestroom", CHESTROOM}, {
     "shop", SHOPBASE}, {
     "armor shop", ARMORSHOP}, {
     "scroll shop", SCROLLSHOP}, {
@@ -354,6 +357,8 @@ what_map_char(char c)
         return FOUNTAIN;
     case '\\':
         return THRONE;
+    case '(':
+        return MAGIC_CHEST;
     case 'K':
         return SINK;
     case '}':
@@ -366,6 +371,8 @@ what_map_char(char c)
         return ICE;
     case 'W':
         return WATER;
+    case 'w':
+        return PUDDLE;
     case 'T':
         return TREE;
     case 'F':

@@ -407,6 +407,20 @@ seed_rng_from_base64(const char encoded[static RNG_SEED_SIZE_BASE64])
     return TRUE;
 }
 
+extern long gameseed_long(void)
+{
+    unsigned long seed = 0UL;
+    unsigned long max = (unsigned long) LONG_MAX;
+    unsigned long i;
+    char seedbuf[RNG_SEED_SIZE_BASE64];
+    get_initial_rng_seed(seedbuf);
+    for (i = 0UL; i < RNG_SEED_SIZE_BASE64; i++) {
+        seed = (unsigned long)
+            (seed + (unsigned long) seedbuf[i] * i) % max;
+    }
+    return (long) seed;
+}
+
 void
 get_initial_rng_seed(char out[static RNG_SEED_SIZE_BASE64])
 {

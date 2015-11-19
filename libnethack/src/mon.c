@@ -213,6 +213,13 @@ make_corpse(struct monst *mtmp)
         }
         goto default_1;
 
+    case PM_WATER_ELEMENTAL:
+        if (level->locations[mtmp->mx][mtmp->my].typ == ROOM) {
+            level->locations[mtmp->mx][mtmp->my].typ = PUDDLE;
+            water_damage_chain(level->objects[mtmp->mx][mtmp->my], TRUE);
+        }
+        goto default_1;
+
     case PM_WHITE_UNICORN:
     case PM_GRAY_UNICORN:
     case PM_BLACK_UNICORN:
@@ -345,13 +352,15 @@ make_corpse(struct monst *mtmp)
 int
 minliquid(struct monst *mtmp)
 {
-    boolean inpool, inlava, infountain;
+    boolean inpool, inlava, infountain, inshallow;
 
     inpool = is_pool(level, mtmp->mx, mtmp->my) && !is_flyer(mtmp->data) &&
         !is_floater(mtmp->data);
     inlava = is_lava(level, mtmp->mx, mtmp->my) && !is_flyer(mtmp->data) &&
         !is_floater(mtmp->data);
     infountain = IS_FOUNTAIN(level->locations[mtmp->mx][mtmp->my].typ);
+    inshallow  = is_puddle(level, mtmp->mx, mtmp->my) &&
+        !is_flyer(mtmp->data) && !is_floater(mtmp->data);
 
     /* Flying and levitation keeps our steed out of the liquid */
     /* (but not water-walking or swimming) */
@@ -360,13 +369,16 @@ minliquid(struct monst *mtmp)
 
     /* Gremlin multiplying won't go on forever since the hit points keep going
        down, and when it gets to 1 hit point the clone function will fail. */
-    if (mtmp->data == &mons[PM_GREMLIN] && (inpool || infountain) && rn2(3)) {
+    if (mtmp->data == &mons[PM_GREMLIN] &&
+        (inpool || infountain || inshallow) && rn2(3)) {
         if (split_mon(mtmp, NULL))
             dryup(mtmp->mx, mtmp->my, FALSE);
         if (inpool)
             water_damage_chain(mtmp->minvent, FALSE);
         return 0;
-    } else if (mtmp->data == &mons[PM_IRON_GOLEM] && inpool && !rn2(5)) {
+    } else if (mtmp->data == &mons[PM_IRON_GOLEM] &&
+               ((inpool && !rn2(5)) || inshallow)) {
+        /* rusting requires oxygen and water, so it's faster for shallow water */
         int dam = dice(2, 6);
 
         if (cansee(mtmp->mx, mtmp->my))
@@ -376,12 +388,37 @@ minliquid(struct monst *mtmp)
         if (mtmp->mhpmax > dam)
             mtmp->mhpmax -= dam;
         if (mtmp->mhp < 1) {
+            if (canseemon(mtmp))
+                pline(mtmp->mtame ? msgc_petfatal : msgc_monneutral,
+                      "%s falls to pieces.", Monnam(mtmp));
             mondead(mtmp);
-            if (DEADMONSTER(mtmp))
+            if (DEADMONSTER(mtmp)) {
+                if (mtmp->mtame && !canseemon(mtmp))
+		    pline(msgc_petfatal, "May %s rust in peace.",
+                          mon_nam(mtmp));
                 return 1;
+            }
         }
-        water_damage_chain(mtmp->minvent, FALSE);
+        if (inshallow)
+            water_damage(which_armor(mtmp, os_armf), FALSE, FALSE);
+        else
+            water_damage_chain(mtmp->minvent, FALSE);
         return 0;
+    } else if  (is_longworm(mtmp->data) && inshallow) {
+	int dam = dice(3,12);
+	if (cansee(mtmp->mx,mtmp->my))
+	    pline(mtmp->mtame ? msgc_petcombatbad : msgc_monneutral,
+                  "The water burns %s flesh!", s_suffix(mon_nam(mtmp)));
+	mtmp->mhp -= dam;
+	if (mtmp->mhpmax > dam)
+            mtmp->mhpmax -= (dam+1) / 2;
+	if (mtmp->mhp < 1) {
+	    if (canseemon(mtmp))
+		pline(mtmp->mtame ? msgc_petfatal : msgc_monneutral,
+                      "%s dies.", Monnam(mtmp));
+	    mondead(mtmp);
+	    if (mtmp->mhp < 1) return (1);
+	}
     }
 
     if (inlava) {
@@ -452,7 +489,8 @@ minliquid(struct monst *mtmp)
         }
     } else {
         /* but eels have a difficult time outside */
-        if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz)) {
+        if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz) &&
+            !is_puddle(level, mtmp->mx, mtmp->my)) {
             if (mtmp->mhp >= 2)
                 mtmp->mhp--;
             monflee(mtmp, 2, FALSE, FALSE);
@@ -542,6 +580,11 @@ mcalcmove(struct monst *mon)
         mmove = (2 * mmove + 1) / 3;
     else if (mon->mspeed == MFAST)
         mmove = (4 * mmove + 2) / 3;
+
+    if (mon->mnitro) {
+        mmove += (mon->mspeed == MSLOW) ? 12 : 24; /* Too much? */
+        mon->mnitro = 0;
+    }
 
     if (mon == u.usteed) {
         /* This used to have a flags.mv check, but that has been conclusively
@@ -1141,8 +1184,13 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                    ((mlevel->locations[nx][ny].doormask & ~D_BROKEN) ||
                     Is_rogue_level(&u.uz))))))
                 continue;
-            if ((is_pool(mlevel, nx, ny) == wantpool || poolok) &&
-                (lavaok || !is_lava(mlevel, nx, ny))) {
+            if ((poolok || (wantpool == (is_pool(mlevel, nx,ny) ||
+                                         (is_puddle(mlevel, nx, ny) &&
+                                          !bigmonst(mon->data))))) &&
+                (lavaok || !is_lava(mlevel, nx,ny)) &&
+		/* iron golems and longworms avoid shallow water */
+		((mon->data != &mons[PM_IRON_GOLEM] && !is_longworm(mon->data))
+                 || !is_puddle(level, nx, ny))) {
                 int dispx, dispy;
                 boolean checkobj = OBJ_AT(nx, ny);
                 boolean elbereth_activation = checkobj;
@@ -1254,7 +1302,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                         if ((ttmp->ttyp != RUST_TRAP ||
                              mdat == &mons[PM_IRON_GOLEM])
                             && ttmp->ttyp != STATUE_TRAP &&
-                            ((ttmp->ttyp != PIT && ttmp->ttyp != SPIKED_PIT &&
+                            ((!is_pit_trap(ttmp->ttyp) &&
                               ttmp->ttyp != TRAPDOOR && ttmp->ttyp != HOLE)
                              || (!is_flyer(mdat)
                                  && !is_floater(mdat)
@@ -1269,6 +1317,7 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                             && (ttmp->ttyp != SQKY_BOARD || !is_flyer(mdat))
                             && (ttmp->ttyp != WEB ||
                                 (!amorphous(mdat) && !webmaker(mdat)))
+                            && (ttmp->ttyp != STINKING_TRAP)
                             ) {
                             if (!(flag & ALLOW_TRAPS)) {
                                 if ((mon->mtrapseen & (1L << (ttmp->ttyp - 1))) ||
@@ -1811,7 +1860,7 @@ corpse_chance(struct monst *mon,
             }
 
             explode(mon->mx, mon->my, -1, tmp, MON_EXPLODE, EXPL_NOXIOUS,
-                    msgcat(s_suffix(mdat->mname), " explosion"));
+                    msgcat(s_suffix(mdat->mname), " explosion"), 0);
             return FALSE;
         }
     }
@@ -1821,13 +1870,15 @@ corpse_chance(struct monst *mon,
     if (LEVEL_SPECIFIC_NOCORPSE(mdat))
         return FALSE;
 
-    if (bigmonst(mdat) || mdat == &mons[PM_LIZARD]
+    if (bigmonst(mdat)
+        || mdat == &mons[PM_LIZARD]
         || is_golem(mdat)
         || is_mplayer(mdat)
         || is_rider(mdat))
         return TRUE;
-    return (boolean) (!rn2((int) (2 + ((int)(mdat->geno & G_FREQ) < 2) +
-                                  verysmall(mdat))));
+
+    return (boolean) (!rn2((int) (2 + ((int)(mdat->geno & G_FREQ) < 2)
+                                    + verysmall(mdat))));
 }
 
 /* drop (perhaps) a cadaver and remove monster */
@@ -2062,8 +2113,7 @@ xkilled(struct monst *mtmp, int dest)
     }
 
     if (mtmp->mtrapped && (t = t_at(level, x, y)) != 0 &&
-        (t->ttyp == PIT || t->ttyp == SPIKED_PIT) &&
-        sobj_at(BOULDER, level, x, y))
+        is_pit_trap(t->ttyp) && sobj_at(BOULDER, level, x, y))
         dest |= 2;      /*
                          * Prevent corpses/treasure being created "on top"
                          * of the boulder that is about to fall in. This is
@@ -2110,11 +2160,11 @@ xkilled(struct monst *mtmp, int dest)
         goto cleanup;
 
     /* might be here after swallowed */
-    if (((x != u.ux) || (y != u.uy)) && !rn2(6) &&
+    if (((x != u.ux) || (y != u.uy)) && !rn2(challengemode ? 36 : 6) &&
         !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
         int typ;
 
-        otmp = mkobj(level, RANDOM_CLASS, TRUE, mdat->msize < MZ_HUMAN
+        otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
                         ? rng_death_drop_s : rng_death_drop_l);
         /* Don't create large objects from small monsters */
         typ = otmp->otyp;
@@ -2123,13 +2173,15 @@ xkilled(struct monst *mtmp, int dest)
             (otmp->owt > 30 || objects[typ].oc_big ||
              is_spear (otmp) || is_pole (otmp) || typ == MORNING_STAR)) {
             delobj(otmp);
-        } else if (!flooreffects(otmp, x, y,
-                                 (dest & 1) ? "fall" : "")) {
-            place_object(otmp, level, x, y);
-            stackobj(otmp);
+        } else {
+            obj_extract_self(otmp);
+            if (!flooreffects(otmp, x, y,
+                              (dest & 1) ? "fall" : "")) {
+                place_object(otmp, level, x, y);
+                stackobj(otmp);
+            }
             redisp = TRUE;
-        } else
-            redisp = TRUE;
+        }
     }
     /* Whether or not it always makes a corpse is, in theory, different from
        whether or not the corpse is "special"; if we want both, we have to
@@ -2170,38 +2222,60 @@ cleanup:
 
     /* adjust alignment points */
     if (mtmp->m_id == u.quest_status.leader_m_id) {       /* REAL BAD! */
-        adjalign(-(u.ualign.record + (int)ALIGNLIM / 2));
+        adjalign(-30);
         /* Technically just a msgc_alignbad, but bad enough that we want to use
            a higher-priority channel */
         pline(msgc_intrloss, "That was %sa bad idea...",
               u.uevent.qcompleted ? "probably " : "");
     } else if (mdat->msound == MS_NEMESIS)      /* Real good! */
-        adjalign((int)(ALIGNLIM / 4));
+        adjalign(20);
     else if (mdat->msound == MS_GUARDIAN) {     /* Bad */
-        adjalign(-(int)(ALIGNLIM / 8));
+        adjalign(-10);
         if (!Hallucination)
             pline(msgc_alignbad, "That was probably a bad idea...");
         else
             pline(msgc_alignbad, "Whoopsie-daisy!");
     } else if (mtmp->ispriest) {
-        adjalign((p_coaligned(mtmp)) ? -2 : 2);
+        if (mdat->maligntyp == A_NONE)
+            adjalign(10);
+        else
+            adjalign((p_coaligned(mtmp)) ? -3 : 3);
         /* cancel divine protection for killing your priest */
         if (p_coaligned(mtmp))
             u.ublessed = 0;
-        if (mdat->maligntyp == A_NONE)
-            adjalign((int)(ALIGNLIM / 4));      /* BIG bonus */
     } else if (mtmp->mtame) {
-        adjalign(-15);  /* bad!! */
+        adjalign(-5);  /* bad!! */
         /* your god is mighty displeased... */
         if (!Hallucination)
             You_hear(msgc_petfatal, "the rumble of distant thunder...");
         else
             You_hear(msgc_petfatal, "the studio audience applaud!");
     } else if (mtmp->mpeaceful)
-        adjalign(-5);
+        adjalign(-1);
 
     /* malign was already adjusted for u.ualign.type and randomization */
-    adjalign(mtmp->malign);
+    /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
+       monster killing.  That completely defeats the purpose of even bothering
+       to keep track of player alignment record.  So no.  We still have an
+       alignment penalty for killing always-peacefuls, however, and lawfuls
+       have a penalty for killing generated-peacefuls as well. */
+    if (mtmp->malign < 0) {
+        if (always_peaceful(mtmp->data))
+            adjalign(-3);
+        else if (u.ualign.type == A_LAWFUL)
+            adjalign(-1);
+    }
+    /* Chaotics now get a point for killing hostiles of their own race. */
+    else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
+        int oldalign = u.ualign.record;
+        adjalign(1);
+        if (u.ualign.record > oldalign)
+            pline(msgc_aligngood, "You feel more chaotic.");
+    }
+    /* Lawful characters gain alignment for killing hostile chaotic demons. */
+    else if (u.ualign.type == A_LAWFUL && is_demon(mtmp->data) &&
+             mtmp->data->maligntyp < 0)
+        adjalign(1);
 }
 
 /* changes the monster into a stone monster of the same type */
@@ -2317,12 +2391,12 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     int i, plural;
     boolean thrown_weapon = (fatal < 0);
     boolean resist_message_printed = FALSE;
+    enum rng rng;
 
     if (thrown_weapon)
         fatal = -fatal;
 
     fatal += 20 * thrown_weapon;
-    enum rng rng;
     switch (fatal) {
     case  8: rng = rng_deadlypoison_8;  break;
     case 10: rng = rng_deadlypoison_10; break;
@@ -2333,7 +2407,6 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
         rng = rng_main;
         break;
     }
-
     i = Poison_resistance ? 0 : rn2_on_rng(fatal, rng);
 
     if (strcmp(string, "blast") && !thrown_weapon) {
@@ -2343,9 +2416,10 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
         /* avoid "The" Orcus's sting was poisoned... */
         pline(Poison_resistance ? msgc_playerimmune :
               i == 0 ? msgc_fatal_predone : msgc_fatalavoid,
-              "%s%s %s poisoned%s", isupper(*string) ? "" : "The ",
-              string, plural ? "were" : "was", Poison_resistance ?
-              ", but doesn't affect you." : "!");
+              "%s%s %s poisoned%s",
+              isupper(*string) ? "" : "The ", string,
+              plural ? "were" : "was",
+              (Poison_resistance ? ", but it doesn't affect you." : "!"));
         resist_message_printed = TRUE;
     }
 
@@ -2358,8 +2432,9 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     }
 
     if (i == 0 && typ != A_CHA) {
-        pline(msgc_fatal_predone, "The poison was deadly...");
-        done(POISONING, killer);
+        deadly_poison("The poison was deadly...", POISONING,
+                      killer, !strcmp(string, "blast"));
+        /* deadly_poison checks Poison_resistance itself. */
     } else if (i <= 5) {
         /* Check that a stat change was made */
         if (adjattrib(typ, thrown_weapon ? -1 : -rn1(3, 3), 1))
@@ -2377,6 +2452,54 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
     }
     encumber_msg();
 }
+
+void
+deadly_poison (const char *message, int how,
+               const char *killer,  boolean showshield)
+{
+    /* Traditionally, this was always an instadeath; but it was one of the most
+     * random and frequently unavoidable instadeaths in the game, and the player
+     * community almost universally perceived this as unfair and unbalanced.
+     *
+     * My new plan is to make it drain a level if you are XL3 or higher,
+     * otherwise spare you if the turncount is very low, otherwise kill you.
+     * Thus, by gaining a couple of experience levels pretty early, the player
+     * can obtain a bit of insurance against the instadeath effect of poison,
+     * but such poison is still harmful and best avoided whenever possible.
+     *
+     * Note that the caller is responsible for any percentage chances, since
+     * they are different in various cases.
+     *
+     * At the time of this writing, deadly_poison() is only being used as a
+     * helper function for poisoned(), though it is designed to be usable
+     * independently of that in principle.
+     */
+
+    if (Poison_resistance) {
+        if (showshield)
+            shieldeff(u.ux,u.uy);
+        pline(msgc_playerimmune,
+              "The poison doesn't seem to affect you.");
+        return;
+    } else if (rn2(1 + magic_negation(&youmonst))) {
+        pline(msgc_playerimmune, /* TODO: create a separate msgc_channel for
+                                    when magic cancellation protect you. */
+              "You feel as if something is protecting you.");
+    } else if (u.ulevel > 2) {
+        losexp(killer, TRUE); /* Drain resistance doesn't save you here:
+                               * it's not a draining attack, and poison
+                               * resistance already had a chance above. */
+    } else if (moves <= 500) {
+        /* TODO: think up better flavor for this case. */
+        pline(msgc_fatalavoid,
+              "You feel drained for a moment, but the feeling passes.");
+    } else {
+        /* Traditional instadeath: */
+        pline(msgc_fatal_predone, "%s", message);
+        done(how, killer);
+    }
+}
+
 
 /* monster responds to player action; not the same as a passive attack */
 /* assumes reason for response has been tested, and response _must_ be made */
@@ -2513,8 +2636,7 @@ wake_nearby(boolean intentional)
 {
     wake_nearto(u.ux, u.uy, Aggravate_monster ? COLNO * COLNO + ROWNO * ROWNO :
                 intentional ? u.ulevel * 20 :
-                600 / (u.ulevel * (Role_if(PM_ROGUE) ? 2 : 1) *
-                       (Stealth ? 2 : 1)));
+                300 / (u.ulevel * (1 + get_stealth(&youmonst))));
 }
 
 /* Produce noise at a particular location. Monsters in the given dist2 radius
@@ -2971,6 +3093,62 @@ can_be_hatched(int mnum)
 int egg_type_from_parent(int mnum,      /* parent monster; caller must handle
                                            lays_eggs() check */
                          boolean force_ordinary) {
+    switch (mnum) {
+    default:
+        /* For most monsters, there's nothing to special-case, because the egg
+           will simply hatch (assuming it hatches at all) into the same kind of
+           monster as the parent.  (Two exotic cases are handled below.) */
+        break;
+    /* All egg-laying dragons of a given color lay the same kind of egg,
+       regardless of the parent dragon's age: */
+    case PM_YOUNG_GRAY_DRAGON:
+    case PM_GRAY_ELDER_DRAGON:
+    case PM_GREAT_GRAY_DRAGON:
+        mnum = PM_GRAY_DRAGON;
+        break;
+    case PM_YOUNG_SILVER_DRAGON:
+    case PM_SILVER_ELDER_DRAGON:
+    case PM_GREAT_SILVER_DRAGON:
+        mnum = PM_SILVER_DRAGON;
+        break;
+    case PM_YOUNG_RED_DRAGON:
+    case PM_RED_ELDER_DRAGON:
+    case PM_GREAT_RED_DRAGON:
+        mnum = PM_RED_DRAGON;
+        break;
+    case PM_YOUNG_WHITE_DRAGON:
+    case PM_WHITE_ELDER_DRAGON:
+    case PM_GREAT_WHITE_DRAGON:
+        mnum = PM_WHITE_DRAGON;
+        break;
+    case PM_YOUNG_ORANGE_DRAGON:
+    case PM_ORANGE_ELDER_DRAGON:
+    case PM_GREAT_ORANGE_DRAGON:
+        mnum = PM_ORANGE_DRAGON;
+        break;
+    case PM_YOUNG_BLACK_DRAGON:
+    case PM_BLACK_ELDER_DRAGON:
+    case PM_GREAT_BLACK_DRAGON:
+        mnum = PM_BLACK_DRAGON;
+        break;
+    case PM_YOUNG_BLUE_DRAGON:
+    case PM_BLUE_ELDER_DRAGON:
+    case PM_GREAT_BLUE_DRAGON:
+        mnum = PM_BLUE_DRAGON;
+        break;
+    case PM_YOUNG_GREEN_DRAGON:
+    case PM_GREEN_ELDER_DRAGON:
+    case PM_GREAT_GREEN_DRAGON:
+        mnum = PM_GREEN_DRAGON;
+        break;
+    case PM_YOUNG_YELLOW_DRAGON:
+    case PM_YELLOW_ELDER_DRAGON:
+    case PM_GREAT_YELLOW_DRAGON:
+        mnum = PM_YELLOW_DRAGON;
+        break;
+    }
+    /* Finally, there are two monsters whose eggs normally hatch into a
+       lesser monster but occasionally not: */
     if (force_ordinary || !BREEDER_EGG) {
         if (mnum == PM_QUEEN_BEE)
             mnum = PM_KILLER_BEE;

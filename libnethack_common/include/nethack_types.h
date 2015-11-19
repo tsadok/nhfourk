@@ -31,8 +31,23 @@
 # endif
 
 /* size of terminal screen is (at least) (ROWNO+3) by (COLNO+1) */
+/* These can now be specified at compile time, by setting 
+ * the CFLAGS variable to include -DCOLNO=79 -CROWNO=21
+ * (or whatever numbers you prefer), with several caveats...
+ *  1. Note that changing either of these values will break
+ *     save compatibility
+ *  2. Larger values for ROWNO cause minor bugs, such as
+ *     some special levels being possible to traverse in
+ *     other than the intended fashion.
+ *  3. Smaller values than the default, for either number,
+ *     are likely to cause all manner of bizarre problems.
+ *     I want to fix this eventually, but I haven't yet. */
+#ifndef COLNO
 # define COLNO          79
+#endif
+#ifndef ROWNO
 # define ROWNO          21
+#endif
 
 # define BUFSZ          256     /* for getlin buffers */
 # define QBUFSZ         128     /* for building question text */
@@ -227,6 +242,7 @@ enum nh_path_prefix {
 
 enum nh_game_modes {
     MODE_NORMAL,
+    MODE_CHALLENGE,
     MODE_EXPLORE,
     MODE_WIZARD,
     MODE_SETSEED

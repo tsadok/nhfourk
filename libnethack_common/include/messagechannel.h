@@ -116,6 +116,7 @@ enum msg_channel {
                         (but may have accomplished useful things before that) */
     msgc_actionok,                   /* single-turn action completed normally */
     msgc_actionboring,                 /* like actionok, but less interesting */
+    msgc_wounds,       /* Healers get spammy info about monsters' woundedness */
 
     /* Informational about the dungeon ("voice of the DM") */
     msgc_discoverportal,             /* you find a portal or vibrating square */
@@ -143,6 +144,9 @@ enum msg_channel {
     /* Messages that are hidden inside pline() */
     msgc_offlevel,        /* something happened much too far away to perceive */
     msgc_mute,              /* always hidden, used to reduce code duplication */
+
+    /* Messages that don't directly pertain to the game at all. */
+    msgc_mail,         /* another player on the public server sends a message */
 };
 
 /*

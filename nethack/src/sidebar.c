@@ -105,8 +105,17 @@ draw_sidebar(void)
         invheight = viewheight;
 
     if (invheight) {
+        int weight = 0, count = 0;
+        int i;
+        for (i = 0; i < inventory.icount; i++) {
+            struct nh_objitem *const item = inventory.items + i;
+            if (item->weight != -1) {
+                weight += item->weight;
+                count++;
+            }
+        }
         wattron(sidebar, A_UNDERLINE);
-        mvwaddstr(sidebar, 0, 0, "Inventory:");
+        mvwprintw(sidebar, 0, 0, "Inventory (%d, %d):", count, weight);
         wattroff(sidebar, A_UNDERLINE);
 
         invwh = invheight - 1;

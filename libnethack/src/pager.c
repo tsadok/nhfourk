@@ -28,27 +28,27 @@ static int do_look(boolean, const struct nh_cmd_arg *);
  */
 const char *const monexplain[MAXMCLASSES] = {
     0,
-    "ant or other insect", "blob", "cockatrice",
-    "dog or other canine", "eye or sphere", "cat or other feline",
-    "gremlin", "humanoid", "imp or minor demon",
-    "jelly", "kobold", "leprechaun",
-    "mimic", "nymph", "orc",
-    "piercer", "quadruped", "rodent",
-    "arachnid or centipede", "trapper or lurker above", "unicorn or horse",
-    "vortex", "worm", "xan or other mythical/fantastic insect",
-    "light", "zruty",
+    "ant or other insect", "[unused]", "cockatrice",
+    "dog or other canine", "eye or sphere", "feline",
+    "gremlin", "humanoid", "impish spirit",
+    "jelly or blob", "kobold", "lizard, reptile, or amphibian",
+    "mimic", "nymph", "orc", "plant", "quadruped", "rodent",
+    "arachnid or centipede", "trapper, piercer, or lurker above",
+    "unicorn or horse", "vortex", "worm",
+    "xan or other fantastic insect", "light",
 
     "angelic being", "bat or bird", "centaur",
     "dragon", "elemental", "fungus or mold",
     "gnome", "giant humanoid", 0,
     "jabberwock", "Keystone Kop", "lich",
     "mummy", "naga", "ogre",
-    "pudding or ooze", "quantum mechanic", "rust monster or disenchanter",
-    "snake", "troll", "umber hulk",
-    "vampire", "wraith or ghost", "xorn",
+    "pudding or ooze", "elf", "rust monster or disenchanter",
+    "snake", "troll", "bear",
+    "vampire", "wraith or ghost",
+    "xorn, umber hulk, or other large deep-rock dweller",
     "apelike creature", "zombie",
 
-    "human or elf", "golem", "major demon", "sea monster", "lizard",
+    "human or elf", "golem", "major demon", "sea monster",
     "long worm tail", "mimic"
 };
 
@@ -226,6 +226,9 @@ describe_object(int x, int y, int votyp, char *buf, int known_embed,
     } else if (closed_door(level, x, y)) {
         strcat(buf, " embedded in a door");
         *feature_described = TRUE;
+    } else if (is_puddle(level, x, y)) {
+        strcat(buf, " in shallow water");
+        *feature_described = TRUE;
     } else if (is_pool(level, x, y)) {
         strcat(buf, " in water");
         *feature_described = TRUE;
@@ -315,6 +318,8 @@ describe_mon(int x, int y, int monnum, char *buf)
             strcat(buf, warnexplain[monnum]);
 
     } else if ((mtmp = m_at(level, x, y))) {
+        const char *mwounds;
+        boolean spotted;
         bhitpos.x = x;
         bhitpos.y = y;
 
@@ -326,7 +331,7 @@ describe_mon(int x, int y, int monnum, char *buf)
                 (mtmp->mpeaceful && accurate) ? "peaceful" : NULL,
                 ARTICLE_A);
 
-        boolean spotted = canspotmon(mtmp);
+        spotted = canspotmon(mtmp);
 
         if (!spotted && (mtmp->mx != x || mtmp->my != y))
             name = "an unseen long worm";
@@ -340,6 +345,11 @@ describe_mon(int x, int y, int monnum, char *buf)
         snprintf(buf, BUFSZ-1, "%s%s",
                 (mtmp->mx != x || mtmp->my != y) ? "tail of " : "", name);
         buf[BUFSZ-1] = '\0';
+        mwounds = mon_wounds(mtmp);
+        if (mwounds) {
+            strcat(buf, ", ");
+            strcat(buf, mwounds);
+        }
         if (u.ustuck == mtmp)
             strcat(buf,
                    (Upolyd &&
@@ -352,9 +362,12 @@ describe_mon(int x, int y, int monnum, char *buf)
             int tt = t ? t->ttyp : NO_TRAP;
 
             /* newsym lets you know of the trap, so mention it here */
-            if (tt == BEAR_TRAP || tt == PIT || tt == SPIKED_PIT || tt == WEB)
+            if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB)
                 sprintf(buf + strlen(buf),
                         ", trapped in %s", an(trapexplain[tt - 1]));
+            if (!t)
+                /* If a monster is trapped without a trap, it's in ice. */
+                sprintf(buf + strlen(buf), ", frozen in ice");
         }
 
 #ifdef DEBUG_STRATEGY

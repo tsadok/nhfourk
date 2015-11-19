@@ -53,6 +53,7 @@ struct you {
 # define TT_WEB         2
 # define TT_LAVA        3
 # define TT_INFLOOR     4
+# define TT_ICEBLOCK    5
     char urooms[5];     /* rooms (roomno + 3) occupied now */
     char urooms0[5];    /* ditto, for previous position */
     char uentered[5];   /* rooms (roomno + 3) entered this turn */
@@ -68,6 +69,7 @@ struct you {
 
     unsigned uintrinsic[LAST_PROP + 1];     /* uses defines from prop.h */
 
+    struct obj *magicchestobjs;                   /* objects in magic chests */
     struct obj *utracked[tos_last_slot + 1];      /* occupation objects */
     int uoccupation_progress[tos_last_slot + 1];  /* time spent on occupation */
     coord utracked_location[tl_last_slot + 1];    /* occupation locations */

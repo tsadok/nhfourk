@@ -129,8 +129,8 @@ obj_worn_on(struct obj *obj, enum objslot slot)
 void
 mon_set_minvis(struct monst *mon)
 {
-    mon->perminvis = 1;
     if (!mon->invis_blkd) {
+        mon->perminvis = 1;
         mon->minvis = 1;
         if (mon->dlevel == level)
             newsym(mon->mx, mon->my);       /* make it disappear */
@@ -163,6 +163,7 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
     case 0:    /* just check for worn speed boots */
         break;
     case -1:
+        mon->mnitro = 0;
         if (mon->permspeed == MFAST)
             mon->permspeed = 0;
         else
@@ -170,10 +171,12 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
         break;
     case -2:
         mon->permspeed = MSLOW;
+        mon->mnitro = 0;
         give_msg = FALSE;       /* (not currently used) */
         break;
     case -3:   /* petrification */
         /* take away intrinsic speed but don't reduce normal speed */
+        mon->mnitro = 0;
         if (mon->permspeed == MFAST)
             mon->permspeed = 0;
         petrify = TRUE;
@@ -251,10 +254,10 @@ update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
             /* properties handled elsewhere */
         case ANTIMAGIC:
         case REFLECTING:
+        case STEALTH: /* get_stealth() handles this now */
             break;
             /* properties which have no effect for monsters */
         case CLAIRVOYANT:
-        case STEALTH:
         case TELEPAT:
             break;
             /* properties which should have an effect but aren't implemented */
@@ -341,6 +344,9 @@ maybe_blocks:
 int
 find_mac(struct monst *mon)
 {
+    if (mon == &youmonst)
+        return get_player_ac();
+
     struct obj *obj;
     int base = mon->data->ac;
     long mwflags = mon->misc_worn_check;
@@ -560,8 +566,8 @@ outer_break:
         if (mon->minvis && !See_invisible) {
             pline(msgc_consequence, "Suddenly you cannot see %s.", nambuf);
             makeknown(best->otyp);
-        }       /* else if (!mon->minvis) pline("%s suddenly appears!",
-                   Amonnam(mon)); */
+        }       /* else if (!mon->minvis) pline(msgc_youdiscover,
+                             "%s suddenly appears!", Amonnam(mon)); */
     }
 }
 
@@ -617,6 +623,8 @@ clear_bypasses(void)
         }
     }
     /* invent and migrating_pets chains shouldn't matter here */
+    for (otmp = magic_chest_objs; otmp; otmp = otmp->nobj)
+        otmp->bypass = 0;
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         if (DEADMONSTER(mtmp))
             continue;

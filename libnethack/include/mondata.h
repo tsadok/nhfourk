@@ -13,7 +13,10 @@
 
 # define resists_fire(mon)      (((mon)->mintrinsics & MR_FIRE) != 0)
 # define resists_cold(mon)      (((mon)->mintrinsics & MR_COLD) != 0)
-# define resists_sleep(mon)     (((mon)->mintrinsics & MR_SLEEP) != 0)
+# define resists_sleep(mon)     ((((mon)->mintrinsics & MR_SLEEP) != 0) || \
+                                 mindless(mon->data) || \
+                                 (is_demon(mon->data) && \
+                                  !is_foocubus(mon->data)))
 # define resists_disint(mon)    (((mon)->mintrinsics & MR_DISINT) != 0)
 # define resists_elec(mon)      (((mon)->mintrinsics & MR_ELEC) != 0)
 # define resists_poison(mon)    (((mon)->mintrinsics & MR_POISON) != 0)
@@ -84,16 +87,21 @@
 # define polyok(ptr)            (((ptr)->mflags2 & M2_NOPOLY) == 0L)
 # define is_undead(ptr)         (((ptr)->mflags2 & M2_UNDEAD) != 0L)
 # define is_were(ptr)           (((ptr)->mflags2 & M2_WERE) != 0L)
-# define is_elf(ptr)            (((ptr)->mflags2 & M2_ELF) != 0L)
-# define is_dwarf(ptr)          (((ptr)->mflags2 & M2_DWARF) != 0L)
-# define is_gnome(ptr)          (((ptr)->mflags2 & M2_GNOME) != 0L)
-# define is_orc(ptr)            (((ptr)->mflags2 & M2_ORC) != 0L)
-# define is_human(ptr)          (((ptr)->mflags2 & M2_HUMAN) != 0L)
-# define your_race(ptr)         (((ptr)->mflags2 & urace.selfmask) != 0L)
+# define is_elf(ptr)            (((ptr)->mflagsr & MRACE_ELF) != 0L)
+# define is_dwarf(ptr)          (((ptr)->mflagsr & MRACE_DWARF) != 0L)
+# define is_gnome(ptr)          (((ptr)->mflagsr & MRACE_GNOME) != 0L)
+# define is_orc(ptr)            (((ptr)->mflagsr & MRACE_ORC) != 0L)
+# define is_human(ptr)          (((ptr)->mflagsr & MRACE_HUMAN) != 0L)
+# define is_fairy(ptr)          (((ptr)->mflagsr & MRACE_FAIRY) != 0L)
+# define your_race(ptr)         (((ptr)->mflagsr & urace.selfmask) != 0L)
 # define is_bat(ptr)            ((ptr) == &mons[PM_BAT] || \
                                  (ptr) == &mons[PM_GIANT_BAT] || \
                                  (ptr) == &mons[PM_VAMPIRE_BAT])
 # define is_bird(ptr)           ((ptr)->mlet == S_BAT && !is_bat(ptr))
+/* TODO: consider whether Jabberwocks and/or Gryphons are birds. */
+# define has_beak(ptr)          (is_bird(ptr) ||            \
+                                (ptr) == &mons[PM_TENGU] || \
+                                (ptr) == &mons[PM_VROCK])
 # define is_giant(ptr)          (((ptr)->mflags2 & M2_GIANT) != 0L)
 # define is_golem(ptr)          ((ptr)->mlet == S_GOLEM)
 # define is_domestic(ptr)       (((ptr)->mflags2 & M2_DOMESTIC) != 0L)
@@ -105,8 +113,8 @@
 # define is_wanderer(ptr)       (((ptr)->mflags2 & M2_WANDER) != 0L)
 # define always_hostile(ptr)    (((ptr)->mflags2 & M2_HOSTILE) != 0L)
 # define always_peaceful(ptr)   (((ptr)->mflags2 & M2_PEACEFUL) != 0L)
-# define race_hostile(ptr)      (((ptr)->mflags2 & urace.hatemask) != 0L)
-# define race_peaceful(ptr)     (((ptr)->mflags2 & urace.lovemask) != 0L)
+# define race_hostile(ptr)      (((ptr)->mflagsr & urace.hatemask) != 0L)
+# define race_peaceful(ptr)     (((ptr)->mflagsr & urace.lovemask) != 0L)
 # define extra_nasty(ptr)       (((ptr)->mflags2 & M2_NASTY) != 0L)
 # define strongmonst(ptr)       (((ptr)->mflags2 & M2_STRONG) != 0L)
 # define can_breathe(ptr)       attacktype(ptr, AT_BREA)
@@ -121,6 +129,8 @@
                                  (((ptr)->mflags2 & (M2_LORD|M2_PRINCE)) == 0L))
 # define is_dlord(ptr)          (is_demon(ptr) && is_lord(ptr))
 # define is_dprince(ptr)        (is_demon(ptr) && is_prince(ptr))
+# define is_foocubus(ptr)       (!(ptr == &mons[PM_SUCCUBUS] || \
+                                   ptr == &mons[PM_INCUBUS]))
 # define is_minion(ptr)         (((ptr)->mflags2 & M2_MINION) != 0L)
 # define likes_gold(ptr)        (((ptr)->mflags2 & M2_GREEDY) != 0L)
 # define likes_gems(ptr)        (((ptr)->mflags2 & M2_JEWELS) != 0L)
@@ -184,8 +194,7 @@
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
 /* Maybe someday this could be in mflags... */
-# define vegan(ptr)             ((ptr)->mlet == S_BLOB || \
-                                 (ptr)->mlet == S_JELLY ||            \
+# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||            \
                                  (ptr)->mlet == S_FUNGUS ||           \
                                  (ptr)->mlet == S_VORTEX ||           \
                                  (ptr)->mlet == S_LIGHT ||            \
@@ -197,7 +206,8 @@
                                  noncorporeal(ptr))
 # define vegetarian(ptr)        (vegan(ptr) || \
                                 ((ptr)->mlet == S_PUDDING &&         \
-                                 (ptr) != &mons[PM_BLACK_PUDDING]))
+                                 (ptr) != &mons[PM_BLACK_PUDDING] && \
+                                 (ptr) != &mons[PM_BLOOD_PUDDING]))
 
 # define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
                                       is_domestic(ptr))

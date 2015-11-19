@@ -39,7 +39,7 @@
 # define SPFX_DBONUS 0x1F00000L /* attack bonus mask */
 # define SPFX_XRAY   0x2000000L /* gives X-RAY vision to player */
 # define SPFX_REFLECT 0x4000000L/* Reflection */
-
+# define SPFX_STRM   0x8000000L /*  non-hostile things attack you anyway */
 
 struct artifact {
     const char *name;
@@ -65,6 +65,11 @@ struct artifact {
 # define CREATE_PORTAL  (LAST_PROP+7)
 # define ENLIGHTENING   (LAST_PROP+8)
 # define CREATE_AMMO    (LAST_PROP+9)
+# define UNCURSE_INVK   (LAST_PROP+10)
+
+/* extrinsic properties supplied when equipped */
+# define ART_EXTR_SPEED (AD_OTHER + 0) /* Tsurugi of Muramasa */
+# define ART_FAST_DIG   (AD_OTHER + 1) /* Quickpick */
 
 #endif /* ARTIFACT_H */
 

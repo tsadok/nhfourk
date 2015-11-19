@@ -28,6 +28,10 @@ static void command_input(int cmdidx, struct nh_cmd_arg *arg);
 
 static void decrement_helplessness(void);
 
+static void constitution_based_healing(int minlevel);
+
+static void deluxe_sylph_healing(void);
+
 const char *const *
 nh_get_copyright_banner(void)
 {
@@ -695,6 +699,62 @@ normal_exit:
 }
 
 static void
+constitution_based_healing(int minlevel)
+{
+    int heal, Con = (int)ACURR(A_CON);
+
+    if ((Con <= 12) || (u.ulevel <= minlevel)) {
+        heal = 1;
+    } else {
+        heal = rnd(Con);
+        if (heal > u.ulevel - minlevel)
+            heal = u.ulevel - minlevel;
+    }
+    u.uhp += heal;
+    if (u.uhp > u.uhpmax)
+        u.uhp = u.uhpmax;
+}
+
+/* This is the deluxe, maybe-more-than-one-point healing that sylphs get on
+   turns when a non-sylph character without regeneration would also heal.
+   It can also cure some of the nastier status effects. */
+static void
+deluxe_sylph_healing(void)
+{
+    if (!Race_if(PM_SYLPH)) {
+        impossible("Trying to do sylph healing while not a sylph.");
+        return;
+    } else if (!can_draw_from_environment(&youmonst, TRUE)) {
+        impossible("Trying to do sylph healing without the environment.");
+        return;
+    } else if (Sick || Vomiting || HHallucination || HStun || HConfusion ||
+               (Blinded > (unsigned long)u.ucreamed)) {
+        if (Sick)
+            make_sick(0L, NULL, TRUE, SICK_ALL);
+        if (Vomiting)
+            make_vomiting(0L, TRUE);
+        if (HHallucination)
+            make_hallucinated(0L, TRUE);
+        if (HStun)
+            make_stunned(0L, TRUE);
+        if (HConfusion && !rn2(3))
+            make_confused(0L, TRUE);
+        if (Blinded > (unsigned long)u.ucreamed)
+            make_blinded((long)u.ucreamed, TRUE);
+        morehungry(15);
+        return;
+    } else {
+        int oldhp = u.uhp;
+        constitution_based_healing(Inhell ? u.ulevel :
+                                   u.ulevel > 11 ? 9 :
+                                   u.ulevel - 2);
+        if (u.uhp > oldhp)
+            morehungry((u.uhp - oldhp) * 3);
+        return;
+    }
+}
+
+static void
 you_moved(void)
 {
     int wtcap = 0, change = 0;
@@ -718,6 +778,8 @@ you_moved(void)
         do {
             /* Players have taken 1 more action than the global, monsters have
                taken 0 more actions than the global. */
+            if (flags.servermail)
+                checkformail();
 
             monscanmove = movemon();
 
@@ -749,6 +811,13 @@ you_moved(void)
             /* turn boundary handling starts here */
             /**************************************/
 
+            int pwregentime =
+                abs(25 / ((ACURR(A_WIS) > 10) ? ACURR(A_WIS) - 10 : 1))
+                / (Energy_regeneration ? 2 : 1);
+
+            if (pwregentime < 1)
+                pwregentime = 1;
+
             mcalcdistress();    /* adjust monsters' trap, blind, etc */
 
             /* No actions have happened yet this turn. (Combined with the change
@@ -771,18 +840,17 @@ you_moved(void)
                 /* your speed doesn't augment steed's speed */
                 u.moveamt = mcalcmove(u.usteed);
             } else {
-                u.moveamt = youmonst.data->mmove;
-
-                if (Very_fast) {        /* speed boots or potion */
-                    /* average movement is 1.67 times normal */
-                    u.moveamt += NORMAL_SPEED / 2;
-                    if (rn2(3) == 0)
-                        u.moveamt += NORMAL_SPEED / 2;
-                } else if (Fast) {
-                    /* average movement is 1.33 times normal */
-                    if (rn2(3) != 0)
-                        u.moveamt += NORMAL_SPEED / 2;
-                }
+                u.moveamt = Upolyd ? youmonst.data->mmove : urace.basespeed;
+                /* Different sources of speed now stack: */
+                /* TODO: if (temporarily_slowed)
+                   u.moveamt = u.moveamt * 2 / 3; */
+                if ((u.uintrinsic[FAST] & INTRINSIC) && (rn2(3) != 0))
+                    u.moveamt += NORMAL_SPEED / 2; /* intrinsic speed */
+                if (u.uintrinsic[FAST] & ~INTRINSIC)
+                    u.moveamt = u.moveamt * 4 / 3; /* temporary haste/potion */
+                if (mworn_extrinsic(&youmonst, FAST))
+                    u.moveamt += rn2(3) ? (NORMAL_SPEED * 3 / 5) :
+                        (NORMAL_SPEED / 3); /* extrinsic speed (e.g., boots) */
             }
 
             switch (wtcap) {
@@ -803,11 +871,16 @@ you_moved(void)
             default:
                 break;
             }
-
+            /* Being satiated now slows you down. */
+            if (u.uhunger >= 1200) {
+                u.moveamt -= (u.moveamt * (u.uhunger - 1000) / 4000);
+                if (u.moveamt < 1)
+                    u.moveamt = 0; /* but see "corner cases" just below... */
+            }
             /* Avoid an infinite loop on corner cases (e.g. polyinit to blue
                jelly), by limiting how long the player can be stuck without
                movement points. */
-            if (u.moveamt < 1)
+            if ((u.moveamt < 1) && !(moves % 12))
                 u.moveamt = 1;
 
             /* Adjust the move offset for the change in speed. */
@@ -854,7 +927,8 @@ you_moved(void)
                 /* for the moment at least, you're in tiptop shape */
                 wtcap = UNENCUMBERED;
             } else if (Upolyd && youmonst.data->mlet == S_EEL &&
-                       !is_pool(level, u.ux, u.uy) && !Is_waterlevel(&u.uz)) {
+                       !is_damp_terrain(level, u.ux, u.uy) &&
+                       !Is_waterlevel(&u.uz)) {
                 if (u.mh > 1) {
                     u.mh--;
                 } else if (u.mh < 1)
@@ -862,30 +936,45 @@ you_moved(void)
             } else if (Upolyd && u.mh < u.mhmax) {
                 if (u.mh < 1)
                     rehumanize(DIED, NULL);
-                else if (Regeneration ||
-                         (wtcap < MOD_ENCUMBER && !(moves % 20))) {
-                    u.mh++;
+                else if ((Regeneration ||
+                          (wtcap < MOD_ENCUMBER && !(moves % 20)))
+                         && !Race_if(PM_SYLPH)) {
+                    if (!challengemode || !(moves % 3))
+                        u.mh++;
                 }
-            } else if (u.uhp < u.uhpmax &&
-                       (wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)) {
-                if (u.ulevel > 9 && !(moves % 3)) {
-                    int heal, Con = (int)ACURR(A_CON);
-
-                    if (Con <= 12) {
-                        heal = 1;
-                    } else {
-                        heal = rnd(Con);
-                        if (heal > u.ulevel - 9)
-                            heal = u.ulevel - 9;
-                    }
-                    u.uhp += heal;
-                    if (u.uhp > u.uhpmax)
-                        u.uhp = u.uhpmax;
-                } else if (Regeneration ||
-                           (u.ulevel <= 9 &&
-                            !(moves % ((MAXULEV + 12) / (u.ulevel + 2) + 1)))) {
+            } else if (can_draw_from_environment(&youmonst, TRUE) ||
+                        (((wtcap < MOD_ENCUMBER || !u.umoved || Regeneration)
+                          && !Race_if(PM_SYLPH)))) {
+                if (Race_if(PM_SYLPH) && !(moves % (challengemode ? 6 : 3))) {
+                    deluxe_sylph_healing();
+                } else if (u.ulevel > 9 && !(moves % (challengemode ? 9 : 3))) {
+                    constitution_based_healing(9);
+                } else if (u.uhp < u.uhpmax &&
+                           (Regeneration ||
+                            can_draw_from_environment(&youmonst, TRUE) ||
+                            (u.ulevel <= 9 &&
+                             !(moves % ((MAXULEV + challengemode ? 48 : 12)
+                                        / (u.ulevel + 2) + 1))))) {
                     u.uhp++;
                 }
+            } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2)) &&
+                       !(moves % 4) && !challengemode) {
+                if (!Inhell)
+                    if (!can_feel_ground(&youmonst))
+                        pline(msgc_hint,
+                              "You try to draw healing from your surroundings, "
+                              "but your toes cannot even feel the %s.",
+                              surface(u.ux, u.uy));
+                    else if (u.uhs >= WEAK)
+                        pline(msgc_hint, "You try to draw healing from your "
+                              "surroundings, but you are too weak.");
+                    else
+                        pline(msgc_hint,
+                              "You try to draw healing from your surroundings, "
+                              "but they are blocked off from your skin.");
+                else
+                    pline(msgc_hint,
+                          "You cannot draw healing from these surroundings.");
             }
 
             /* moving around while encumbered is hard work */
@@ -905,14 +994,22 @@ you_moved(void)
             }
 
             if ((u.uen < u.uenmax) &&
-                ((wtcap < MOD_ENCUMBER &&
-                  (!(moves %
-                     ((MAXULEV + 8 -
-                       u.ulevel) * (Role_if(PM_WIZARD) ? 3 : 4) / 6))))
-                 || Energy_regeneration)) {
-                u.uen += rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1);
+                ((wtcap < MOD_ENCUMBER && !Race_if(PM_SYLPH) &&
+                  !(moves % pwregentime))
+                 || (can_draw_from_environment(&youmonst, FALSE) &&
+                     !(u.uhs >= WEAK)))) {
+                int olduen = u.uen;
+                u.uen += Race_if(PM_SYLPH) ? 
+                    /* Sylphs keep the old formula */
+                    rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1) :
+                    /* everyone else gets the new formula */
+                    1 + ((u.ulevel / 3) / rne(2 + (u.ulevel / 5))) *
+                    (Energy_regeneration ? 2 : 1);
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
+                if (Race_if(PM_SYLPH) && (u.uen > olduen) &&
+                    !Energy_regeneration)
+                    morehungry(u.uen - olduen);
             }
 
             if (!u.uinvulnerable) {
@@ -947,6 +1044,13 @@ you_moved(void)
                 }
             }
 
+            if (Conflict)
+                break_conduct(conduct_conflict);
+            if (Displaced)
+                break_conduct(conduct_displacement);
+            if (Invisible)
+                break_conduct(conduct_invisible);
+
             if (Searching && !u_helpless(hm_all))
                 dosearch0(1);
             dosounds();
@@ -957,7 +1061,7 @@ you_moved(void)
             invault();
             if (Uhave_amulet)
                 amulet();
-            if (!rn2(40 + (int)(ACURR(A_DEX) * 3)))
+            if (!rn2(500 + (int)(ACURR(A_DEX) * 50)))
                 u_wipe_engr(rnd(3));
             if (u.uevent.udemigod && !u.uinvulnerable) {
                 if (u.udg_cnt)
@@ -1377,7 +1481,8 @@ break_conduct(enum player_conduct conduct)
         u.uconduct_time[conduct] = moves;
 
     /* Monks avoid breaking vegetarian conduct. */
-    if(conduct == conduct_vegetarian && Role_if(PM_MONK)) {
+    if(conduct == conduct_vegetarian &&
+       (Role_if(PM_MONK) || Race_if(PM_SYLPH))) {
         pline(msgc_alignbad, "You feel guilty.");
         adjalign(-1);
     }

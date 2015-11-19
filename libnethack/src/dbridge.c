@@ -34,6 +34,29 @@ static boolean e_missed(struct entity *, boolean);
 static boolean e_jumps(struct entity *);
 static void do_entity(struct entity *);
 
+/* This one is just syntax sugar, but I wanted it to match the others
+   for code clarity/simplicity reasons elsewhere. */
+boolean
+is_damp_terrain(struct level *lev, int x, int y)
+{
+    return is_puddle(lev, x, y) || is_pool(lev, x, y);
+}
+
+/* This one is just syntax sugar, but I wanted it to match the others
+   for code clarity/simplicity reasons elsewhere. */
+boolean
+is_puddle(struct level *lev, int x, int y)
+{
+    schar ltyp;
+
+    if (!isok(x, y))
+        return FALSE;
+    ltyp = lev->locations[x][y].typ;
+    if (ltyp == PUDDLE)
+        return TRUE;
+    return FALSE;
+}
+
 boolean
 is_pool(struct level *lev, int x, int y)
 {

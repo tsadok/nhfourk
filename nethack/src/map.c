@@ -451,16 +451,22 @@ curses_getpos(int xorig, int yorig, nh_bool force, const char *goal)
                 cy = monpos[monidx].y;
             }
         } else {
-            int k = 0, tx, ty;
+            int k = 0, t = 0, tx, ty;
             int pass, lo_x, lo_y, hi_x, hi_y;
 
-            char matching[default_drawing->num_bgelements];
-            memset(matching, 0, default_drawing->num_bgelements);
+            char matching_feats[default_drawing->num_bgelements];
+            memset(matching_feats, 0, default_drawing->num_bgelements);
+            char matching_traps[default_drawing->num_traps];
+            memset(matching_traps, 0, default_drawing->num_traps);
 
             for (sidx = default_drawing->bg_feature_offset;
                  sidx < default_drawing->num_bgelements; sidx++)
                 if (key == default_drawing->bgelements[sidx].ch)
-                    matching[sidx] = (char)++k;
+                    matching_feats[sidx] = (char)++k;
+
+            for (sidx = 0; sidx < default_drawing->num_traps; sidx++)
+                if (key == default_drawing->traps[sidx].ch)
+                    matching_traps[sidx] = (char)++k;
 
             if (k) {
                 for (pass = 0; pass <= 1; pass++) {
@@ -473,7 +479,9 @@ curses_getpos(int xorig, int yorig, nh_bool force, const char *goal)
                         hi_x = (pass == 1 && ty == hi_y) ? cx : COLNO - 1;
                         for (tx = lo_x; tx <= hi_x; tx++) {
                             k = display_buffer[ty][tx].bg;
-                            if (k && matching[k]) {
+                            t = display_buffer[ty][tx].trap;
+                            if ((k && matching_feats[k])
+                                || (t && matching_feats[t])) {
                                 cx = tx;
                                 cy = ty;
                                 goto nxtc;
@@ -483,7 +491,7 @@ curses_getpos(int xorig, int yorig, nh_bool force, const char *goal)
                 }   /* pass */
 
                 snprintf(printbuf, ARRAY_SIZE(printbuf),
-                         "Can't find dungeon feature '%c'.", (char)key);
+                         "Can't find dungeon feature or trap '%c'.", (char)key);
                 curses_msgwin(printbuf, krc_notification);
             } else {
                 snprintf(printbuf, ARRAY_SIZE(printbuf),

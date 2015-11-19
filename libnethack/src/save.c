@@ -157,6 +157,7 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.autodig);
     mwrite8(mf, flags.autodigdown);
     mwrite8(mf, flags.autoquiver);
+    mwrite8(mf, flags.autowear_starting_armor);
     mwrite8(mf, flags.beginner);
     mwrite8(mf, flags.bones_enabled);
     mwrite8(mf, flags.cblock);
@@ -164,6 +165,7 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.debug);
     mwrite8(mf, flags.desync);
     mwrite8(mf, flags.explore);
+    mwrite8(mf, flags.challenge);
     mwrite8(mf, flags.elbereth_enabled);
     mwrite8(mf, flags.end_disclose);
     mwrite8(mf, flags.friday13);
@@ -185,6 +187,7 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.pushweapon);
     mwrite8(mf, flags.rogue_enabled);
     mwrite8(mf, flags.seduce_enabled);
+    mwrite8(mf, flags.servermail);
     mwrite8(mf, flags.showrace);
     mwrite8(mf, flags.show_uncursed);
     mwrite8(mf, flags.sortpack);
@@ -300,10 +303,12 @@ savegamestate(struct memfile *mf)
     mtag(mf, 0, MTAG_GAMESTATE);
 
     /* must come before migrating_objs and migrating_mons are freed */
+    /* must come before freeing magic_chest_objs as well */
     save_timers(mf, level, RANGE_GLOBAL);
     save_light_sources(mf, level, RANGE_GLOBAL);
 
     saveobjchn(mf, invent);
+    saveobjchn(mf, magic_chest_objs);
     savemonchn(mf, migrating_mons, NULL);
     save_mvitals(mf);
 
@@ -993,6 +998,7 @@ freedynamicdata(void)
 
     /* game-state data */
     free_objchn(invent);
+    free_objchn(magic_chest_objs);
     free_monchn(migrating_mons);
     /* this should normally be NULL between turns, but might not be due to
        the game ending where pets can follow (e.g. ascension or dungeon escape)

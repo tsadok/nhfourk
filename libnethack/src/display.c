@@ -727,8 +727,7 @@ newsym_core(int x, int y, boolean reroll_hallucinated_appearances)
                     int tt = trap ? trap->ttyp : NO_TRAP;
 
                     /* if monster is in a physical trap, you see the trap too */
-                    if (tt == BEAR_TRAP || tt == PIT || tt == SPIKED_PIT ||
-                        tt == WEB) {
+                    if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB) {
                         trap->tseen = TRUE;
                     }
                 }
@@ -1694,6 +1693,9 @@ back_to_cmap(struct level *lev, xchar x, xchar y)
     case THRONE:
         idx = S_throne;
         break;
+    case MAGIC_CHEST:
+        idx = S_magic_chest;
+        break;
     case LAVAPOOL:
         idx = S_lava;
         break;
@@ -1705,6 +1707,9 @@ back_to_cmap(struct level *lev, xchar x, xchar y)
         break;
     case CLOUD:
         idx = S_cloud;
+        break;
+    case PUDDLE:
+        idx = S_puddle;
         break;
     case WATER:
         idx = S_water;

@@ -13,24 +13,24 @@ FLAGS: noteleport,hardfloor
 GEOMETRY:center,center
 MAP
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
-PPPP........PPPP.....PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP.P..PPPPP......PPPPPPPP
-PPP..........PPPP...PPPPP.........................PPPP..PPPPP........PPPPPPP
-PP............PPPPPPPP..............................PPP...PPPP......PPPPPPPP
-P.....PPPPPPPPPPPPPPP................................PPPPPPPPPPPPPPPPPPPPPPP
-PPPP....PPPPPPPPPPPP...................................PPPPP.PPPPPPPPPPPPPPP
-PPPP........PPPPP.........-----------------------........PP...PPPPPPP.....PP
-PPP............PPPPP....--|.|......S..........S.|--.....PPPP.PPPPPPP.......P
-PPPP..........PPPPP.....|.S.|......-----------|S|.|......PPPPPP.PPP.......PP
-PPPPPP......PPPPPP......|.|.|......|...|......|.|.|.....PPPPPP...PP.......PP
-PPPPPPPPPPPPPPPPPPP.....+.|.|......S.\.S......|.|.+......PPPPPP.PPPP.......P
-PPP...PPPPP...PPPP......|.|.|......|...|......|.|.|.......PPPPPPPPPPP.....PP
-PP.....PPP.....PPP......|.|S|-----------......|.S.|......PPPPPPPPPPPPPPPPPPP
-PPP..PPPPP...PPPP.......--|.S..........S......|.|--.....PPPPPPPPP....PPPPPPP
-PPPPPPPPPPPPPPPP..........-----------------------..........PPPPP..........PP
-PPPPPPPPPPPPPPPPP........................................PPPPPP............P
-PPP.............PPPP...................................PPP..PPPP..........PP
-PP...............PPPPP................................PPPP...PPPP........PPP
-PPP.............PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP....PPPPPP
+PPPPw......wwPPww...wwPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP.w.wwPPPww....wwPPPPPPP
+PPPw........wwPPww.wwPPwww.......................wwPPw.wwPPPww......wwPPPPPP
+PPw..........wwPPPwPPww............................wwPw..wwPPww....wwPPPPPPP
+Pw....wwwPPPPPPPPPPPww..............................wwPwwPPPPPPPwwwPPPPPPPPP
+PPww....wwPPPPPPPPww..................................wwPPPP.PPPPPPPPPwwPPPP
+PPPw.......wwPPPww........-----------------------.......wwP...PPPPPPww..wwPP
+PPw...........wwPPww....--|.|......S..........S.|--.....wPPP.PPPPPPww.....wP
+PPPww........wwPPPw.....|.S.|......-----------|S|.|......wPPPPP.PPww.....wwP
+PPPPPww....wwPPPPw......|.|.|..(...|...|......|.|.|.....wwPPPP...Pww.....wwP
+PPPwwPPPPPPPwPPPPPw.....+.|.|......S.\.S......|.|.+......wwPPPP.PPPww.....wP
+PPw..wwPPPPw.wwPPw......|.|.|......|...|......|.|.|.......wwPPPPPPPPww...wwP
+Pw....wwPww...wPPw......|.|S|-----------......|.S.|......wwPPPPPPPwwPPPwwPPP
+PPw.wwPPPw..wwPPw.......--|.S..........S......|.|--.....wwPPPPPPww..wwPPPPPP
+PPPwPPPPPPwwPPPw..........-----------------------.........wwPPPww........wwP
+PPPPPPPPPPPPPPPPww......................................wwwwPPww..........wP
+PPP.............PPPww.................................wwPw..wPPww........wwP
+PP...............PPPPww..............................wwPPw...wPPww......wwPP
+PPP.............PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPwwPPPPPww..wwPPPPP
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 ENDMAP
 # Dungeon Description
@@ -56,8 +56,8 @@ DOOR:closed,(48,12)
 DOOR:locked,(50,10)
 # Hippocrates
 MONSTER:'@',"Hippocrates",(37,10)
-# The treasure of Hippocrates
-OBJECT:'(',"chest",(37,10)
+# The treasure of Hippocrates is a magic chest now.
+#OBJECT:'(',"chest",(37,10)
 # intern guards for the audience chamber
 MONSTER:'@',"attendant",(29,08)
 MONSTER:'@',"attendant",(29,09)
@@ -110,19 +110,19 @@ MONSTER: 'S',random,random,hostile
 MAZE: "Hea-loca",' '
 FLAGS: hardfloor
 #
-INIT_MAP: '.' , 'P', true , true , lit , false
+INIT_MAP: 'w' , 'P', true , true , lit , false
 GEOMETRY:center,center
 MAP
-PPPPPPPPPPPPP.......PPPPPPPPPPP
-PPPPPPPP...............PPPPPPPP
-PPPP.....-------------...PPPPPP
-PPPPP....|.S.........|....PPPPP
-PPP......+.|.........|...PPPPPP
-PPP......+.|.........|..PPPPPPP
-PPPP.....|.S.........|..PPPPPPP
-PPPPP....-------------....PPPPP
-PPPPPPPP...............PPPPPPPP
-PPPPPPPPPPP........PPPPPPPPPPPP
+PPPPPPPPPPPPPww...wwPPPPPPPPPPP
+PPPPPPPPw.............wPPPPPPPP
+PPPPwww..-------------..wPPPPPP
+PPPPPw...|.S.........|...wPPPPP
+PPPw.....+.|.........|..wPPPPPP
+PPPw.....+.|.........|..PPPPPPP
+PPPPw....|.S.........|..PPPPPPP
+PPPPPw...-------------..wwPPPPP
+PPPPPPPPw.............wPPPPPPPP
+PPPPPPPPPPPww....wwPPPPPPPPPPPP
 ENDMAP
 # Dungeon Description
 REGION:(00,00,30,09),lit,"ordinary"
@@ -209,21 +209,21 @@ MONSTER: 'S',random,random,hostile
 
 MAZE: "Hea-goal", 'P'
 #
-INIT_MAP: '.' , 'P' , false , true , lit , false
+INIT_MAP: 'w' , 'P' , false , true , lit , false
 GEOMETRY:center,center
 MAP
-.P....................................PP.
-PP.......PPPPPPP....PPPPPPP....PPPP...PP.
-...PPPPPPP....PPPPPPP.....PPPPPP..PPP...P
-...PP..............................PPP...
-..PP..............................PP.....
-..PP..............................PPP....
-..PPP..............................PP....
-.PPP..............................PPPP...
-...PP............................PPP...PP
-..PPPP...PPPPP..PPPP...PPPPP.....PP...PP.
-P....PPPPP...PPPP..PPPPP...PPPPPPP...PP..
-PPP..................................PPP.
+wPw......wwwwwww....wwwwwww....wwww..wPPw
+PPwwwwwwwPPPPPPPwwwwPPPPPPPwwwwPPPPwwwPPw
+wwwPPPPPPPwwwwPPPPPPPwwwwwPPPPPPwwPPPwwwP
+..wPPwwwww....wwwwwww.....wwwwww..wPPPw.w
+.wPPw............................wPPww...
+.wPPw............................wPPPw...
+.wPPPw............................wPPw...
+wPPPw.............................PPPPwww
+.wwPP............................PPPw.wPP
+wwPPPPwwwPPPPPwwPPPPwwwPPPPPwwwwwPPw..PPw
+PwwwwPPPPPwwwPPPPwwPPPPPwwwPPPPPPPw..PPww
+PPPw................................wPPPw
 ENDMAP
 # Dungeon Description
 REGION:(00,00,40,11),lit,"ordinary"

@@ -11,15 +11,15 @@ static boolean iswall(struct level *lev, int x, int y);
 static boolean iswall_or_stone(struct level *lev, int x, int y);
 static boolean is_solid(struct level *lev, int x, int y);
 static int extend_spine(int[3][3], int, int, int);
-static boolean okay(struct level *lev, int x, int y, int dir);
-static void maze0xy(coord *, enum rng);
+static boolean okay(struct level *lev, int x, int y, int dir, int maxx, int maxy);
+static void maze0xy(coord *, int maxx, int maxy, enum rng);
 static boolean put_lregion_here(struct level *lev, xchar, xchar, xchar, xchar,
                                 xchar, xchar, xchar, boolean, d_level *);
 static void move(int *, int *, int);
 static boolean bad_location(struct level *lev, xchar x, xchar y, xchar lx,
                             xchar ly, xchar hx, xchar hy);
 static const char * waterbody_impl(xchar x, xchar y, boolean article);
-
+static void expandmaze(struct level *lev, int xcw, int ycw, int xww, int yww);
 
 static boolean bubble_up;
 
@@ -189,22 +189,22 @@ wallification(struct level *lev, int x1, int y1, int x2, int y2)
 }
 
 static boolean
-okay(struct level *lev, int x, int y, int dir)
+okay(struct level *lev, int x, int y, int dir, int maxx, int maxy)
 {
     move(&x, &y, dir);
     move(&x, &y, dir);
-    if (x < 3 || y < 3 || x > x_maze_max || y > y_maze_max ||
-        lev->locations[x][y].typ != 0)
+    if (x < 3 || y < 3 || x > maxx || y > maxy ||
+        lev->locations[x][y].typ != STONE)
         return FALSE;
     return TRUE;
 }
 
 /* find random starting point for maze generation */
 static void
-maze0xy(coord *cc, enum rng rng)
+maze0xy(coord *cc, int maxx, int maxy, enum rng rng)
 {
-    cc->x = 3 + 2 * rn2_on_rng((x_maze_max >> 1) - 1, rng);
-    cc->y = 3 + 2 * rn2_on_rng((y_maze_max >> 1) - 1, rng);
+    cc->x = 3 + 2 * rn2_on_rng((maxx >> 1) - 1, rng);
+    cc->y = 3 + 2 * rn2_on_rng((maxy >> 1) - 1, rng);
     return;
 }
 
@@ -321,13 +321,70 @@ put_lregion_here(struct level *lev, xchar x, xchar y, xchar nlx, xchar nly,
     return TRUE;
 }
 
+/* Take a maze that has been created at a fraction of the level size
+   and expand it so that it fills the level. */
+void
+expandmaze(struct level *lev, int xcw, int ycw, int xww, int yww)
+/* cw = corridor width; ww = wall width */
+{
+    int x, y, i;
+    int scale = xcw + xww;
+    if (scale > 2) {
+        /* Expand horizontally: */
+        for (x = x_maze_max * 2 / scale; x >= 2; x = x - 2) {
+            for (y = 0; y <= y_maze_max; y++) {
+                /* Expand the wall first... */
+                for (i = 0; i < xww; i++) {
+                    lev->locations[x * scale / 2 - i][y].typ
+                        = lev->locations[x][y].typ;
+                    lev->locations[x * scale / 2 - i][y].flags
+                        = lev->locations[x][y].flags;
+                }
+                /* Then the corridor... */
+                for (i = 0; i < xcw; i++) {
+                    lev->locations[x * scale / 2 - xww - i][y].typ
+                        = lev->locations[x-1][y].typ;
+                    lev->locations[x * scale / 2 - xww - i][y].flags
+                        = lev->locations[x-1][y].flags;
+                }
+            }
+        }
+    }
+    scale = ycw + yww;
+    if (scale > 2) {
+        /* Expand vertically: */
+        for (y = y_maze_max * 2 / scale; y >= 2; y = y - 2) {
+            for (x = 0; x <= x_maze_max; x++) {
+                /* First the wall... */    
+                for (i = 0; i < yww; i++) {
+                    lev->locations[x][y * scale / 2 - i].typ
+                        = lev->locations[x][y].typ;
+                    lev->locations[x][y * scale / 2 - i].flags
+                        = lev->locations[x][y].flags;
+                }
+                /* Then the corridor... */
+                for (i = 0; i < ycw; i++) {
+                    lev->locations[x][y * scale / 2 - yww - i].typ
+                        = lev->locations[x][y - 1].typ;
+                    lev->locations[x][y * scale / 2 - yww - i].flags
+                        = lev->locations[x][y - 1].flags;
+                }
+            }
+        }
+    }
+}
+
 void
 makemaz(struct level *lev, const char *s, int *smeq)
 {
-    int x, y;
+    int x, y, maxx, maxy;
     char protofile[20];
     s_level *sp = Is_special(&lev->z);
     coord mm;
+    int rng = rng_for_level(&lev->z);
+    int xcorrwidth, xwallwidth, xtotlwidth, ycorrwidth, ywallwidth, ytotlwidth;
+    int walltype = HWALL; 
+    int triesleft = 50;
 
     if (*s) {
         if (sp && sp->rndlevs)
@@ -368,17 +425,98 @@ makemaz(struct level *lev, const char *s, int *smeq)
 
     lev->flags.is_maze_lev = TRUE;
 
-    for (x = 2; x <= x_maze_max; x++)
-        for (y = 2; y <= y_maze_max; y++)
-            lev->locations[x][y].typ = ((x % 2) && (y % 2)) ? STONE : HWALL;
+    if (/* In_hell(&lev->z) && */ rn2_on_rng(5, rng)) {
+        xcorrwidth = 1 + rn2_on_rng(1+rn2_on_rng(6, rng), rng);
+        xwallwidth = 1 + rn2_on_rng(1+rn2_on_rng(4, rng), rng);
+        xtotlwidth = xcorrwidth + xwallwidth;
+        ycorrwidth = 1 + rn2_on_rng(4, rng);
+        ywallwidth = 1 + rn2_on_rng(3, rng);
+        ytotlwidth = ycorrwidth + ywallwidth;
+    
+        while (((y_maze_max - 1) / ytotlwidth) < 4) {
+            /* We can't allow a total width this large, because it makes maxy
+               too small, causing maze0xy to try to call rn2(0). */
+            /* Because rn2(1) always returns 0, the algorithm below never brings
+               ytotlwidth below 2.  Which is correct:  we can't have a wall
+               width or a corridor width of less than 1. */
+            if (ytotlwidth <= 2)
+                panic("ROWNO too low for maze generation (need at least 10).");
+            else if (!rn2_on_rng(3, rng))
+                ycorrwidth -= rn2_on_rng(ycorrwidth, rng);
+            else
+                ywallwidth -= rn2_on_rng(ywallwidth, rng);
+            ytotlwidth = ycorrwidth + ywallwidth;
+        }
+        while (((x_maze_max - 1) / xtotlwidth) < 4) {
+            /* This is somewhat less likely than the y case above, but the
+             * reasoning is the same. */
+            if (xtotlwidth <= 2)
+                panic("COLNO too low for maze generation (need at least 10).");
+            else if (!rn2_on_rng(3, rng))
+                xcorrwidth -= rn2_on_rng(xcorrwidth, rng);
+            else
+                xwallwidth -= rn2_on_rng(xwallwidth, rng);
+            xtotlwidth = xcorrwidth + xwallwidth;
+        }
+    } else {
+        xcorrwidth = 1;
+        xwallwidth = 1;
+        xtotlwidth = xcorrwidth + xwallwidth;
+        ycorrwidth = 1;
+        ywallwidth = 1;
+        ytotlwidth = ycorrwidth + ywallwidth;
+    }
+    maxx = (x_maze_max - 0) / xtotlwidth;
+    maxy = (y_maze_max - 0) / ytotlwidth;
+    /* 
+    pline(msgc_debug,
+          "Generating maze with cw (%d,%d), ww (%d,%d), tw (%d,%d).",
+          xcorrwidth, ycorrwidth, xwallwidth, ywallwidth, xtotlwidth,
+          ytotlwidth);
+    */
 
-    maze0xy(&mm, rng_for_level(&lev->z));
-    walkfrom(lev, mm.x, mm.y);
-    /* put a boulder at the maze center */
-    mksobj_at(BOULDER, lev, (int)mm.x, (int)mm.y, TRUE, FALSE,
-              rng_for_level(&lev->z));
+    if (In_hell(&lev->z)) {
+        switch (mklev_rn2(60 - depth(&lev->z), lev)) {
+        case 1:
+        case 2:
+        case 3:
+            walltype = LAVAPOOL;
+            break;
+        case 4:
+            walltype = IRONBARS;
+            break;
+        case 5:
+            walltype = GRAVE;
+            break;
+        case 20:
+        case 30:
+            walltype = POOL;
+            break;
+        default:
+            walltype = HWALL;
+            break;
+        }
+    } else
+        walltype = HWALL;
 
-    wallification(lev, 2, 2, x_maze_max, y_maze_max);
+    /* First we generate a logical equivalent maze with one-tile-wide walls and
+       corridors, limited in size so that it will still fit when expanded... */
+    for (x = 0; x <= maxx * 2; x++)
+        for (y = 0; y <= maxy * 2; y++)
+            lev->locations[x][y].typ = ((x % 2) && (y % 2)) ? STONE : walltype;
+
+    /* At some sizes more than others, the algorithm has a tendency to leave
+       disconnected areas around the edges.  Attempt to clean them up: */
+    while (triesleft--) {
+        maze0xy(&mm, maxx * 2, maxy * 2, rng_for_level(&lev->z));
+        if (lev->locations[mm.x][mm.y].typ == STONE)
+            walkfrom(lev, mm.x, mm.y, maxx * 2, maxy * 2);
+    }
+
+    /* And once the maze is designed, we expand it into place: */
+    expandmaze(lev, xcorrwidth, ycorrwidth, xwallwidth, ywallwidth);
+
+    wallification(lev, 0, 0, x_maze_max, y_maze_max);
     mazexy(lev, &mm);
     mkstairs(lev, mm.x, mm.y, 1, NULL); /* up */
     if (!Invocation_lev(&lev->z)) {
@@ -442,12 +580,18 @@ makemaz(struct level *lev, const char *s, int *smeq)
                   TRUE, FALSE, rng_for_level(&lev->z));
     }
     for (x = mklev_rn2(3, lev); x; x--) {
+        struct monst *minotaur;
         mazexy(lev, &mm);
-        makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, MM_ALLLEVRNG);
+        minotaur = makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, MM_ALLLEVRNG);
+        if (minotaur && !resists_sleep(minotaur))
+            minotaur->msleeping = 1;
     }
     for (x = 7 + mklev_rn2(5, lev); x; x--) {
+        struct monst *mtmp;
         mazexy(lev, &mm);
-        makemon(NULL, lev, mm.x, mm.y, MM_ALLLEVRNG);
+        mtmp = makemon(NULL, lev, mm.x, mm.y, MM_ALLLEVRNG);
+        if (mtmp && !mklev_rn2(((x / 2)) || 1, lev) && !resists_sleep(mtmp))
+            mtmp->msleeping = 1;
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--) {
         mazexy(lev, &mm);
@@ -459,7 +603,7 @@ makemaz(struct level *lev, const char *s, int *smeq)
 
 
 void
-walkfrom(struct level *lev, int x, int y)
+walkfrom(struct level *lev, int x, int y, int maxx, int maxy)
 {
     int q, a, dir;
     int dirs[4];
@@ -473,7 +617,7 @@ walkfrom(struct level *lev, int x, int y)
     while (1) {
         q = 0;
         for (a = 0; a < 4; a++)
-            if (okay(lev, x, y, a))
+            if (okay(lev, x, y, a, maxx, maxy))
                 dirs[q++] = a;
         if (!q)
             return;
@@ -481,7 +625,7 @@ walkfrom(struct level *lev, int x, int y)
         move(&x, &y, dir);
         lev->locations[x][y].typ = ROOM;
         move(&x, &y, dir);
-        walkfrom(lev, x, y);
+        walkfrom(lev, x, y, maxx, maxy);
     }
 }
 
@@ -944,7 +1088,8 @@ waterbody_impl(xchar x, xchar y, boolean article)
         return "ice";
     else if (is_moat(level, x, y))
         return msgcat(article ? "a " : "", "moat");
-    else if ((ltyp != POOL) && (ltyp != WATER) && Is_juiblex_level(&u.uz))
+    else if ((ltyp != POOL) && (ltyp != WATER) && (ltyp != PUDDLE) &&
+             Is_juiblex_level(&u.uz))
         return msgcat(article ? "a " : "", "swamp");
     else if (ltyp == POOL)
         return msgcat(article ? "a " : "", "pool of water");

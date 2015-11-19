@@ -56,6 +56,7 @@ struct permonst {
     schar mlevel,       /* base monster level */
           mmove,        /* move speed */
           ac,   /* (base) armor class */
+          stealth, /* (base) stealthiness */
           mr;   /* (base) magic resistance */
     aligntyp maligntyp; /* basic monster alignment */
     unsigned short geno;        /* creation/geno mask value */
@@ -65,9 +66,10 @@ struct permonst {
     short pxtyp;        /* type of extension */
     uchar msound;       /* noise it makes (6 bits) */
     uchar msize;        /* physical size (3 bits) */
-    unsigned int mflags1,       /* boolean bitflags */
-        mflags2;        /* more boolean bitflags */
-    unsigned short mflags3;     /* yet more boolean bitflags */
+    unsigned int mflagsr; /* race flags (formerly in mflags2) */
+    unsigned int mflags1, /* boolean bitflags */
+        mflags2, mflags3; /* more boolean bitflags */
+    unsigned int mskill;        /* proficiency bitflags */
     uchar mresists;     /* resistances */
     uchar mconveys;     /* conveyed by eating */
     uchar mcolor;       /* color to use */

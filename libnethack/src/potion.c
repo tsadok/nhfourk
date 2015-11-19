@@ -350,9 +350,23 @@ dodrink(const struct nh_cmd_arg *arg)
     }
 
     /* Or are you surrounded by water? */
-    if (Underwater && !Engulfed) {
+    if (((is_puddle(level, u.ux, u.uy) && !verysmall(youmonst.data)) ||
+         (is_pool(level, u.ux, u.uy) && Wwalking)) && !Engulfed) {
+        if (yn(msgprintf("Drink the water at your %s?",
+                         makeplural(body_part(FOOT))))) {
+            if ((youmonst.data->mlet == S_JELLY) ||
+                (youmonst.data->mlet == S_PUDDING))
+                pline(msgc_cancelled1,
+                      "If there's anything you could absorb that would make "
+                      "you any slimier, it's probably living in that water.");
+            else
+                pline(msgc_cancelled1, "Do you know what lives in that water?");
+        }
+    } else if ((Underwater ||
+                (is_puddle(level, u.ux, u.uy) && verysmall(youmonst.data)))
+               && !Engulfed) {
         if (yn("Drink the water around you?") == 'y') {
-            pline(msgc_cancelled1, "Do you know what lives in this water?!");
+            pline(msgc_cancelled1, "Do you know what lives in this water?");
             return 1;
         }
     }
@@ -530,7 +544,6 @@ peffects(struct obj *otmp)
             healup(1, 0, FALSE, FALSE);
         u.uhunger += 10 * (2 + bcsign(otmp));
         newuhs(FALSE);
-        exercise(A_WIS, FALSE);
         if (otmp->cursed) {
             pline(msgc_statusbad, "You pass out.");
             helpless(rnd(15), hr_fainted, "drunk",
@@ -554,7 +567,8 @@ peffects(struct obj *otmp)
             win_pause_output(P_MESSAGE);
             enlightenment(0);
             pline_implied(msgc_info, "The feeling subsides.");
-            exercise(A_WIS, TRUE);
+            if (otmp->blessed)
+                exercise(A_WIS, TRUE);
         }
         break;
     case SPE_INVISIBILITY:
@@ -678,13 +692,11 @@ peffects(struct obj *otmp)
         }
         if (monster_detect(otmp, 0))
             return 1;   /* nothing detected */
-        exercise(A_WIS, TRUE);
         break;
     case POT_OBJECT_DETECTION:
     case SPE_DETECT_TREASURE:
         if (object_detect(otmp, 0))
             return 1;   /* nothing detected */
-        exercise(A_WIS, TRUE);
         break;
     case POT_SICKNESS:
         pline(msgc_badidea, "Yecch!  This stuff tastes like poison.");
@@ -838,7 +850,8 @@ peffects(struct obj *otmp)
         if (otmp->blessed && u.ulevel < u.ulevelmax) {
             /* when multiple levels have been lost, drinking multiple potions
                will only get half of them back */
-            u.ulevelmax -= 1;
+            if (challengemode)
+                u.ulevelmax -= 1;
             pluslvl(FALSE);
         }
         make_hallucinated(0L, TRUE);
@@ -893,7 +906,6 @@ peffects(struct obj *otmp)
                 u.uenmax = 0;
             if (u.uen <= 0)
                 u.uen = 0;
-            exercise(A_WIS, TRUE);
         }
         break;
     case POT_OIL:      /* P. Winner */
@@ -1205,7 +1217,7 @@ potionhit(struct monst *mon, struct obj *obj, struct monst *magr)
             }
             break;
         case POT_POLYMORPH:
-            bhitm(mon, obj);
+            bhitm(&youmonst, mon, obj);
             break;
 /*
         case POT_GAIN_LEVEL:
@@ -1541,7 +1553,7 @@ dodip(const struct nh_cmd_arg *arg)
                 dipfountain(obj);
                 return 1;
             }
-        } else if (is_pool(level, u.ux, u.uy)) {
+        } else if (is_damp_terrain(level, u.ux, u.uy)) {
             tmp = waterbody_name(u.ux, u.uy);
             qbuf = msgprintf("Dip %s into the %s?",
                              safe_qbuf("",
@@ -1790,7 +1802,6 @@ dodip(const struct nh_cmd_arg *arg)
     }
 
     if (potion->otyp == POT_OIL) {
-        boolean wisx = FALSE;
 
         if (potion->lamplit) {  /* burning */
             int omat = objects[obj->otyp].oc_material;
@@ -1851,9 +1862,7 @@ dodip(const struct nh_cmd_arg *arg)
                 obj->oeroded--;
             if (obj->oeroded2 > 0)
                 obj->oeroded2--;
-            wisx = TRUE;
         }
-        exercise(A_WIS, wisx);
         makeknown(potion->otyp);
         useup(potion);
         return 1;
@@ -1866,8 +1875,7 @@ more_dips:
         /* Turn off engine before fueling, turn off fuel too :-) */
         if (obj->lamplit || potion->lamplit) {
             useup(potion);
-            explode(u.ux, u.uy, 11, dice(6, 6), 0, EXPL_FIERY, NULL);
-            exercise(A_WIS, FALSE);
+            explode(u.ux, u.uy, 11, dice(6, 6), 0, EXPL_FIERY, NULL, 0);
             return 1;
         }
         /* Adding oil to an empty magic lamp renders it into an oil lamp */
@@ -1885,7 +1893,6 @@ more_dips:
             if (obj->age > 1500L)
                 obj->age = 1500L;
             useup(potion);
-            exercise(A_WIS, TRUE);
         }
         makeknown(POT_OIL);
         obj->spe = 1;
@@ -1981,7 +1988,7 @@ djinni_from_bottle(struct obj *obj)
     if (wish_available(obj->blessed ? 80 : obj->cursed ? 5 : 20, &dieroll)) {
         msethostility(mtmp, FALSE, TRUE); /* show as peaceful while wishing */
         verbalize(msgc_intrgain, "I am in your debt.  I will grant one wish!");
-        makewish();
+        makewish(1);
         mongone(mtmp);
         return;
     }

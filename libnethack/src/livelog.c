@@ -65,7 +65,8 @@ livelog_write_event(const char *buffer) {
     if (!uname)
         uname = "";
     munge_llstring(buf, uname, ENTRYSIZE + 1);
-    livelog_write_string(msgprintf("version=%d.%d.%d:player=%s:charname=%s:"
+    livelog_write_string(msgprintf("version=%d.%d.%d:variant=Fourk:"
+                                   "player=%s:charname=%s:"
                                    "turns=%1d:depth=%1d:%s:eventdate=%ld:"
                                    "uid=%d:role=%s:race=%s:gender=%s:"
                                    "align=%s:birthdate=%ld:"
@@ -85,7 +86,9 @@ livelog_write_event(const char *buffer) {
                                               flags.explore ? "explore" :
                                               flags.setseed ? "setseed" :
                                               (flags.polyinit_mnum != -1) ?
-                                              "polyinit" : "normal")));
+                                              "polyinit" :
+                                              flags.challenge ? "challenge"
+                                              : "normal")));
 }
 
 void

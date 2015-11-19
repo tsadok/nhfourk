@@ -6,6 +6,7 @@
 #include "hack.h"
 #include "epri.h"
 #include "hungerstatus.h"
+#include "alignrec.h"
 
 static struct obj *worst_cursed_item(void);
 static enum pray_trouble in_trouble(void);
@@ -20,6 +21,7 @@ static void fry_by_god(aligntyp);
 static void gods_angry(aligntyp);
 static void gods_upset(aligntyp);
 static void consume_offering(struct obj *);
+static struct obj *sacrifice_gift(void);
 static boolean water_prayer(boolean);
 static boolean blocked_boulder(int, int);
 
@@ -51,11 +53,6 @@ static const char *const godvoices[] = {
     "rings out",
     "booms",
 };
-
-#define PIOUS 20
-#define DEVOUT 14
-#define FERVENT 9
-#define STRIDENT 4
 
 /* We could force rehumanize of polyselfed people, but we can't tell
    unintentional shape changes from the other kind. Oh well.
@@ -425,7 +422,7 @@ fix_worst_trouble(int trouble)
         }
         break;
     default:
-        impossible("Invalid trouble in fix_worst_trouble");
+        impossible("Invalid trouble in fix_worst_trouble: %d", trouble);
         break;
     }
 }
@@ -797,6 +794,12 @@ pleased(aligntyp g_align)
         return;
     } else if (u.ualign.record < 2 && trouble <= 0)
         adjalign(1);
+    else if (trouble <= 0 && u.ualign.type == A_NEUTRAL) {
+        int oldalign = u.ualign.record;
+        adjalign(1);
+        if (u.ualign.record > oldalign)
+            pline(msgc_aligngood, "You feel more balanced.");
+    }
 
     /* depending on your luck & align level, the god you prayed to will: - fix
        your worst problem if it's major. - fix all your major problems. - fix
@@ -825,13 +828,18 @@ pleased(aligntyp g_align)
         case 5:
             pat_on_head = 1;
         case 4:
-            do
-                fix_worst_trouble(trouble);
-            while ((trouble = in_trouble()) != 0);
+            if (trouble != 0)
+                do
+                    fix_worst_trouble(trouble);
+                while ((trouble = in_trouble()) != 0);
             break;
 
         case 3:
-            fix_worst_trouble(trouble);
+            if (trouble != 0)
+                fix_worst_trouble(trouble);
+            else
+                godvoice(msgc_npcvoice, u.ualign.type,
+                         "You seem to be doing fine so far!");
         case 2:
             while ((trouble = in_trouble()) > 0)
                 fix_worst_trouble(trouble);
@@ -931,7 +939,8 @@ pleased(aligntyp g_align)
             /* if any levels have been lost (and not yet regained), treat this
                effect like blessed full healing */
             if (u.ulevel < u.ulevelmax) {
-                u.ulevelmax -= 1;       /* see potion.c */
+                if (challengemode)
+                    u.ulevelmax -= 1;       /* see potion.c */
                 pluslvl(FALSE);
             } else {
                 u.uhpmax += 5;
@@ -987,9 +996,6 @@ pleased(aligntyp g_align)
                 } else if (!(HFast & INTRINSIC)) {
                     HFast |= FROMOUTSIDE;
                     pline(msgc_intrgain, msg, "Speed");
-                } else if (!(HStealth & INTRINSIC)) {
-                    HStealth |= FROMOUTSIDE;
-                    pline(msgc_intrgain, msg, "Stealth");
                 } else {
                     if (!(HProtection & INTRINSIC)) {
                         HProtection |= FROMOUTSIDE;
@@ -1148,9 +1154,296 @@ consume_offering(struct obj *otmp)
         useup(otmp);
     else
         useupf(otmp, 1L);
-    exercise(A_WIS, TRUE);
 }
 
+struct obj *
+sacrifice_gift(void)
+{
+    struct obj *otmp;
+    if (!u.uconduct[conduct_weaphit] ||
+        ((uwep && uwep->oartifact && !rn2_on_rng(7, rng_altar_gift)))) {
+        int oclass = ARMOR_CLASS;
+        int total = 0, totalweight = 0;
+        int i, j, k, q;
+        int spclass[P_LAST_SPELL + 1 - P_FIRST_SPELL];
+        int sweight[P_LAST_SPELL + 1 - P_FIRST_SPELL];
+        int bookcnt[P_LAST_SPELL + 1 - P_FIRST_SPELL];
+        if ((Race_if(PM_SYLPH) && rn2_on_rng(2, rng_altar_gift)) ||
+            (!u.uconduct[conduct_clothing]) ||
+            !rn2_on_rng(3, rng_altar_gift)) {
+            if (u.uconduct[conduct_jewelry])
+                oclass = RING_CLASS;
+            else
+                oclass = u.uconduct[conduct_clothing] ? ARMOR_CLASS :
+                    WEAPON_CLASS; /* There are no better options. */
+        }
+        if (rn2_on_rng(3, rng_altar_gift) && u.uconduct[conduct_illiterate]) {
+            for (i = P_FIRST_SPELL; i <= P_LAST_SPELL; i++) {
+                bookcnt[i - P_FIRST_SPELL] = 0;
+                spclass[i - P_FIRST_SPELL] = i;
+                sweight[i - P_FIRST_SPELL] = P_MAX_SKILL(i);
+                if (P_MAX_SKILL(i) > P_UNSKILLED) {
+                    for (j = 1; objects[j].oc_class != ILLOBJ_CLASS; j++) {
+                        if ((objects[j].oc_class == SPBOOK_CLASS) &&
+                            (objects[j].oc_skill == i) &&
+                            (!objects[j].oc_name_known))
+                            bookcnt[i - P_FIRST_SPELL]++;
+                    }
+                    if (bookcnt[i - P_FIRST_SPELL] > 0) {
+                        total += P_MAX_SKILL(i) - P_UNSKILLED;
+                        sweight[i - P_FIRST_SPELL] *=
+                            bookcnt[i - P_FIRST_SPELL];
+                    } else {
+                        sweight[i - P_FIRST_SPELL] = 0;
+                    }
+                }
+                totalweight += sweight[i - P_FIRST_SPELL];
+            }
+            if ((total >= 3) && rn2_on_rng(total, rng_altar_gift)) {
+                oclass = SPBOOK_CLASS;
+                /* Shuffle the schools into a random order... */
+                for (i = P_FIRST_SPELL; i <= P_LAST_SPELL; i++) {
+                    int swclass, swpwght;
+                    j = rn2_on_rng(P_LAST_SPELL + 1 - P_FIRST_SPELL,
+                                   rng_altar_gift) + P_FIRST_SPELL;
+                    swclass = spclass[i - P_FIRST_SPELL];
+                    swpwght = sweight[i - P_FIRST_SPELL];
+                    spclass[i - P_FIRST_SPELL] = spclass[j - P_FIRST_SPELL];
+                    sweight[i - P_FIRST_SPELL] = sweight[j - P_FIRST_SPELL];
+                    spclass[j - P_FIRST_SPELL] = swclass;
+                    sweight[j - P_FIRST_SPELL] = swpwght;
+                }
+                /* Now decide which school to pick from... */
+                if (totalweight > 0)
+                    j = rn2_on_rng(totalweight, rng_altar_gift);
+                else
+                    j = 0;
+                total = 0; k = 0;
+                for (i = P_FIRST_SPELL; ((i <= P_LAST_SPELL) &&
+                                         (total < j)); i++) {
+                    total += sweight[i];
+                    k++;
+                }
+                i = spclass[k - 1]; /* This school */
+                j = rn2_on_rng(1 + bookcnt[i - P_FIRST_SPELL], rng_altar_gift);
+                /*
+                if (wizard)
+                    pline(msgc_debug,
+                          "Chose %dth unidentified book from %dth school, %d",
+                          j, k, i);
+                */
+                /* We want to give the jth unidentified spell from school i. */
+                k = 0;
+                for (q = 1; objects[q].oc_class != ILLOBJ_CLASS; q++) {
+                    if ((objects[q].oc_class == SPBOOK_CLASS) &&
+                        (objects[q].oc_skill == i) &&
+                        (!objects[q].oc_name_known)) {
+                        if (k == j) {
+                            otmp = mksobj(level, q, TRUE, TRUE, rng_altar_gift);
+                            if (otmp) {
+                                bless(otmp);
+                                if (!Hallucination && !Blind) {
+                                    otmp->dknown = 1;
+                                    makeknown(otmp->otyp);
+                                }
+                                return otmp;
+                            }
+                        }
+                        k++;
+                    }
+                }
+            }
+        }
+        if (oclass == RING_CLASS) {
+            for (i = 0; i <= 3; i++) {
+                /* Up to 4 tries to find a useful ring. */
+                j = rn2_on_rng(10, rng_altar_gift);
+                k = 0;
+                switch (j) {
+                case 1:
+                    if (ACURR(A_CON) + 3 < AMAX(A_CON))
+                        k = RIN_GAIN_CONSTITUTION;
+                    else if (ACURRSTR < 12)
+                        k = RIN_GAIN_STRENGTH;
+                    break;
+                case 2:
+                    if (u.uconduct[conduct_killer])
+                        k = RIN_INCREASE_ACCURACY;
+                    break;
+                case 3:
+                    if (magic_negation(&youmonst) < 4)
+                        k = RIN_PROTECTION;
+                    break;
+                case 4:
+                    if (!Regeneration)
+                        k = RIN_REGENERATION;
+                    break;
+                case 5:
+                    if (!Searching)
+                        k = RIN_SEARCHING;
+                    break;
+                case 6:
+                    if (!Levitation && !Flying && !Wwalking)
+                        k = RIN_LEVITATION;
+                    break;
+                case 7:
+                    if (!Warning && !Detect_monsters && !Unblind_telepat)
+                        k = RIN_WARNING;
+                    break;
+                case 8:
+                    if (!Shock_resistance)
+                        k = RIN_SHOCK_RESISTANCE;
+                    else if (!Poison_resistance)
+                        k = RIN_POISON_RESISTANCE;
+                    else if (!Cold_resistance)
+                        k = RIN_COLD_RESISTANCE;
+                    else if (!Fire_resistance)
+                        k = RIN_FIRE_RESISTANCE;
+                    break;
+                case 9:
+                    if (!Free_action)
+                        k = RIN_FREE_ACTION;
+                    break;
+                default:
+                    if ((u.uhs >= HUNGRY) && !Slow_digestion)
+                    k = RIN_SLOW_DIGESTION;
+                    break;
+                }
+                if (k && carrying(k)) /* already have that ring */
+                    k = 0;            /* try for a different one */
+                if (k) {
+                    otmp = mksobj(level, k, TRUE, TRUE, rng_altar_gift);
+                    if (otmp) {
+                        bless(otmp);
+                        otmp->oerodeproof = TRUE;
+                        if ((objects[otmp->otyp].oc_charged) &&
+                            (otmp->spe < 1))
+                            otmp->spe = rne_on_rng(2, rng_altar_gift);
+                        return otmp;
+                    }
+                }
+            }
+        }
+        if (oclass == ARMOR_CLASS) {
+            int tryforslot = os_tool; /* sentinel value means any slot */
+            int choice = T_SHIRT;     /* default, try to do better */
+            int i;
+            if (Race_if(PM_SYLPH)) {
+                if (!uarms)
+                    tryforslot = os_arms;
+                else if (!uarmc)
+                    tryforslot = os_armc;
+                else if (!uarmh)
+                    tryforslot = os_armh;
+            } else if (!uarmc || magic_negation(&youmonst) < 3)
+                tryforslot = os_armc;
+            else if (!Role_if(PM_MONK) &&
+                     (!uarm ||
+                      ((uarm->spe <= 2) && (!uarm->oartifact) &&
+                       !(objects[uarm->otyp].oc_material == DRAGON_HIDE) &&
+                       !(objects[uarm->otyp].oc_material == MITHRIL))))
+                tryforslot = os_arm;
+            else if (!uarmh)
+                tryforslot = os_armh;
+            else if (!uarmg)
+                tryforslot = os_armg;
+            else if (!uarmf)
+                tryforslot = os_armf;
+            for (i = 1; objects[i].oc_class != ILLOBJ_CLASS; i++) {
+                if (/* Only give wishable armor with nonzero proability. */
+                    (!objects[i].oc_unique && !objects[i].oc_nowish) &&
+                    (objects[i].oc_prob > 0) &&
+                    (objects[i].oc_class == ARMOR_CLASS) &&
+                    /* Don't give opposite alignment as a divine gift. */
+                    (i != HELM_OF_OPPOSITE_ALIGNMENT) &&
+                    /* Don't give highly-undesirable items. */
+                    (i != GAUNTLETS_OF_FUMBLING) && (i != FUMBLE_BOOTS) &&
+                    /* Match the slot we're aiming for, if we have
+                       chosen a slot to aim for. */
+                    ((tryforslot == os_tool) ||
+                     (tryforslot == objects[i].oc_armcat)) &&
+                    /* Don't give regen-blocking armor to a Sylph. */
+                    ((!Race_if(PM_SYLPH)) ||
+                     (objects[i].oc_material == WOOD) ||
+                     (objects[i].oc_material == CLOTH)) &&
+                    /* Prefer magic over non-magic armor. */
+                    (objects[i].oc_magic >= objects[choice].oc_magic) &&
+                    /* For cloaks, prefer higher MC */
+                    (((objects[i].oc_armcat == os_armc) &&
+                      (objects[i].a_can >= objects[choice].a_can)) ||
+                     /* For non-cloaks, prefer better AC */
+                     ((objects[i].oc_armcat != os_armc) &&
+                      (objects[i].a_ac  >= objects[choice].a_ac))) &&
+                    /* Don't prefer an overwhelmingly heavy object over a very
+                       much lighter one from the same armor slot category, e.g.,
+                       crystal plate mail vs mithril. */
+                    ((objects[i].oc_weight <= 200) ||
+                     (objects[i].oc_weight < 3 * objects[choice].oc_weight) ||
+                     (objects[i].oc_armcat != objects[choice].oc_armcat)) &&
+                    /* Finally, don't always pick the very best option; let the
+                       RNG have a bit of say in this.  If no particular slot is
+                       aimed for, the overall probability of picking something
+                       should be somewhere around 98% (otherwise it defaults to
+                       a shirt).  If we are aiming for a specific slot, then the
+                       odds depend on the slot, as not all slots have the same
+                       number of choices.  Odds are worst for gloves, 80%. */
+                    !rn2_on_rng(((tryforslot == os_tool) ? 15 : 3),
+                                rng_altar_gift))
+                    choice = i;
+            }
+            if (!carrying(choice))
+                otmp = mksobj(level, choice, TRUE, TRUE, rng_altar_gift);
+            if (otmp) {
+                if (otmp->cursed)
+                    bless(otmp);
+                if (otmp->spe < 1)
+                    otmp->spe = rne_on_rng(3, rng_altar_gift);
+                if (objects[otmp->otyp].oc_skill == P_SHIELD)
+                    unrestrict_weapon_skill(P_SHIELD);
+                otmp->oerodeproof = TRUE;
+                if (!Hallucination && !Blind)
+                    makeknown(otmp->otyp);
+                return otmp;
+            }
+        }
+        if (oclass != WEAPON_CLASS) {
+            otmp = mkobj(level, oclass, TRUE, rng_altar_gift);
+            if (otmp) {
+                if (otmp->oclass == ARMOR_CLASS) {
+                    if (otmp->cursed)
+                        uncurse(otmp);
+                    if (otmp->spe < 1)
+                        otmp->spe = rne(3);
+                    if (objects[otmp->otyp].oc_skill == P_SHIELD)
+                        unrestrict_weapon_skill(P_SHIELD);
+                }
+                if (!Hallucination && !Blind) {
+                    otmp->dknown = 1;
+                    makeknown(otmp->otyp);
+                }
+                return otmp;
+            }
+        }
+    }
+    /* The usual case is to give an artifact, which is typically a weapon: */
+    otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy), rng_altar_gift);
+    if (otmp) {
+        if (otmp->spe < 0)
+            otmp->spe = 0;
+        if (otmp->cursed)
+            uncurse(otmp);
+        otmp->oerodeproof = TRUE;
+
+        /* make sure we can use this weapon */
+        unrestrict_weapon_skill(weapon_type(otmp));
+        if (!Hallucination && !Blind) {
+            otmp->dknown = 1;
+            makeknown(otmp->otyp);
+            discover_artifact(otmp->oartifact);
+        }
+    }
+    return otmp;
+}
 
 int
 dosacrifice(const struct nh_cmd_arg *arg)
@@ -1215,10 +1508,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
         if (your_race(ptr)) {
             if (is_demon(youmonst.data)) {
                 pline(msgc_aligngood, "You find the idea very satisfying.");
-                exercise(A_WIS, TRUE);
             } else if (u.ualign.type != A_CHAOTIC) {
                 pline(msgc_alignbad, "You'll regret this infamous offense!");
-                exercise(A_WIS, FALSE);
             }
 
             if (altaralign != A_CHAOTIC && altaralign != A_NONE) {
@@ -1586,30 +1877,19 @@ dosacrifice(const struct nh_cmd_arg *arg)
             if (u.ulevel > 2 && u.uluck >= 0) {
                 if (!rn2_on_rng(10 + (2 * u.ugifts * nartifacts),
                                 rng_altar_gift)) {
-                    otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy),
-                                       rng_altar_gift);
+                    otmp = sacrifice_gift();
                     if (otmp) {
-                        if (otmp->spe < 0)
-                            otmp->spe = 0;
-                        if (otmp->cursed)
-                            uncurse(otmp);
-                        otmp->oerodeproof = TRUE;
                         dropy(otmp);
                         at_your_feet("An object");
                         godvoice(msgc_aligngood, u.ualign.type,
                                  "Use my gift wisely!");
                         historic_event(FALSE, FALSE, "received %s from %s.",
-                                       artiname(otmp->oartifact), u_gname());
+                                       (otmp->oartifact ?
+                                        artiname(otmp->oartifact) : 
+                                        an(xname(otmp))), u_gname());
                         u.ugifts++;
                         u.ublesscnt = rnz(300 + (50 * nartifacts));
                         exercise(A_WIS, TRUE);
-                        /* make sure we can use this weapon */
-                        unrestrict_weapon_skill(weapon_type(otmp));
-                        if (!Hallucination && !Blind) {
-                            otmp->dknown = 1;
-                            makeknown(otmp->otyp);
-                            discover_artifact(otmp->oartifact);
-                        }
                         return 1;
                     }
                 } else {
@@ -1827,7 +2107,6 @@ doturn(const struct nh_cmd_arg *arg)
         pline(msgc_failcurse, "For some reason, %s seems to ignore you.",
               u_gname());
         aggravate();
-        exercise(A_WIS, FALSE);
         return 0;
     }
 
@@ -1839,7 +2118,6 @@ doturn(const struct nh_cmd_arg *arg)
     }
     pline(msgc_occstart, "Calling upon %s, you chant an arcane formula.",
           u_gname());
-    exercise(A_WIS, TRUE);
 
     /* note: does not perform unturn_dead() on victims' inventories */
     range = BOLT_LIM + (u.ulevel / 5);  /* 5 to 11 */
@@ -1894,7 +2172,8 @@ doturn(const struct nh_cmd_arg *arg)
             }
         }
     }
-    helpless(5, hr_busy, "trying to turn the monsters", NULL);
+    if ((5 - (u.ulevel / 6)) > 0)
+        helpless((5 - (u.ulevel / 6)), hr_busy, "trying to turn the monsters", NULL);
     return 1;
 }
 

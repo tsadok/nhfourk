@@ -24,9 +24,7 @@ static void do_class_genocide(void);
 static void stripspe(struct obj *);
 static void p_glow1(enum msg_channel, struct obj *);
 static void p_glow2(enum msg_channel, struct obj *, const char *);
-static void randomize(int *, int);
-static void forget_single_object(int);
-static void forget(int);
+static void do_scroll_water(int, int, int, schar);
 static void maybe_tame(struct monst *, struct obj *);
 
 static void set_lit(int, int, void *);
@@ -260,8 +258,12 @@ recharge(struct obj *obj, int curse_bless)
          * separately, or a mixture, and this woud throw off the RNG.
          */
         n = (int)obj->recharged;
-        if (n > 0 && (obj->otyp == WAN_WISHING ||
-                      (n * n * n > rn2(7 * 7 * 7)))) {      /* recharge_limit */
+        if (obj->otyp == WAN_WISHING) { /* never recharge these */
+            verbalize(msgc_itemloss,
+                      "Ixnay on the wishing for more wishes.");
+            return;
+        } else if ((n > 0) && (n * n * n > rn2(7 * 7 * 7))) {
+            /* recharge_limit */
             wand_explode(obj);
             return;
         }
@@ -469,33 +471,8 @@ recharge(struct obj *obj, int curse_bless)
 }
 
 
-/* Forget known information about this object class. */
-static void
-forget_single_object(int obj_id)
-{
-    const char *knownname;
-    char *new_uname;
-
-    if (!objects[obj_id].oc_name_known)
-        return; /* nothing to do */
-    knownname = simple_typename(obj_id);
-    objects[obj_id].oc_name_known = 0;
-    if (objects[obj_id].oc_uname) {
-        free(objects[obj_id].oc_uname);
-        objects[obj_id].oc_uname = 0;
-    }
-    undiscover_object(obj_id);  /* after clearing oc_name_known */
-
-    /* Record what the object was before we forgot it. Doing anything else is
-       an interface screw. (In other words, we're formally-unIDing objects, but
-       not forcing the player to write down what they were. */
-    new_uname = strcpy(malloc((unsigned)strlen(knownname) + 1), knownname);
-    objects[obj_id].oc_uname = new_uname;
-    discover_object(obj_id, FALSE, TRUE, FALSE);
-}
-
-
 /* randomize the given list of numbers  0 <= i < count */
+/* This was used by the amnesia code.
 static void
 randomize(int *indices, int count)
 {
@@ -509,75 +486,7 @@ randomize(int *indices, int count)
         indices[iswap] = temp;
     }
 }
-
-
-/* Forget % of known objects. */
-void
-forget_objects(int percent)
-{
-    int i, count;
-    int indices[NUM_OBJECTS];
-
-    if (percent == 0)
-        return;
-    if (percent <= 0 || percent > 100) {
-        impossible("forget_objects: bad percent %d", percent);
-        return;
-    }
-
-    for (count = 0, i = 1; i < NUM_OBJECTS; i++)
-        if (OBJ_DESCR(objects[i]) && (objects[i].oc_name_known))
-            indices[count++] = i;
-
-    randomize(indices, count);
-
-    /* forget first % of randomized indices */
-    count = ((count * percent) + 50) / 100;
-    for (i = 0; i < count; i++)
-        forget_single_object(indices[i]);
-}
-
-/*
- * Forget some things (e.g. after reading a scroll of amnesia).  When called,
- * the following are always forgotten:
- *
- *      - felt ball & chain
- *      - skill training
- *
- * Other things are subject to flags:
- *
- *      howmuch & ALL_SPELLS    = forget all spells
- *      howmuch & ALL_MAP       = forget all objects (no more map amnesia)
- */
-static void
-forget(int howmuch)
-{
-
-    if (Punished)
-        u.bc_felt = 0;  /* forget felt ball&chain */
-
-    /* People complain that this is silly and it doesn't work anyway, so it's
-       disabled for now */
-    /* forget_objects(howmuch & ALL_MAP ? 100 : rn2(25)+25); */
-
-    if (howmuch & ALL_SPELLS)
-        losespells();
-
-    /* Forget some skills. */
-    drain_weapon_skill(rnd(howmuch ? 5 : 3));
-
-    /*
-     * Make sure that what was seen is restored correctly.  To do this,
-     * we need to go blind for an instant --- turn off the display,
-     * then restart it.  All this work is needed to correctly handle
-     * walls which are stone on one side and wall on the other.  Turning
-     * off the seen bits above will make the wall revert to stone,  but
-     * there are cases where we don't want this to happen.  The easiest
-     * thing to do is to run it through the vision system again, which
-     * is always correct.
-     */
-    doredraw(); /* this correctly will reset vision */
-}
+*/
 
 /* monster is hit by scroll of taming's effect */
 static void
@@ -593,6 +502,300 @@ maybe_tame(struct monst *mtmp, struct obj *sobj)
     }
 }
 
+void
+do_uncurse_effect(boolean blessedeffect, boolean confusable)
+{
+    struct obj *obj;
+
+    for (obj = invent; obj; obj = obj->nobj) {
+        long wornmask;
+
+        /* gold isn't subject to cursing and blessing */
+        if (obj->oclass == COIN_CLASS)
+            continue;
+
+        wornmask = obj->owornmask & W_MASKABLE;
+        if (wornmask && !blessedeffect) {
+            /* handle a couple of special cases; we don't allow
+               auxiliary weapon slots to be used to artificially
+               increase number of worn items */
+            if (obj == uswapwep) {
+                if (!u.twoweap)
+                    wornmask = 0L;
+            } else if (obj == uquiver) {
+                if (obj->oclass == WEAPON_CLASS) {
+                    /* mergeable weapon test covers ammo, missiles, 
+                       spears, daggers & knives */
+                    if (!objects[obj->otyp].oc_merge)
+                        wornmask = 0L;
+                } else if (obj->oclass == GEM_CLASS) {
+                    /* possibly ought to check whether alternate
+                       weapon is a sling... */
+                    if (!uslinging())
+                        wornmask = 0L;
+                } else {
+                    /* weptools don't merge and aren't reasonable
+                       quivered weapons */
+                    wornmask = 0L;
+                }
+            }
+        }
+
+        if (blessedeffect || wornmask || obj->otyp == LOADSTONE ||
+            (obj->otyp == LEASH && obj->leashmon)) {
+            if (confusable && Confusion)
+                blessorcurse(obj, 2, rng_main);
+            else
+                uncurse(obj);
+        }
+    }
+    update_inventory();
+}
+
+void
+do_scroll_water(int cx, int cy, int radius, schar newterrain)
+{
+    int x = cx, y = cy, tries = 100, i;
+    boolean killengulfer = FALSE;
+    struct monst *mtmp;
+    struct trap  *ttmp;
+    const char *liqname = (newterrain == LAVAPOOL) ? "lava" : "water";
+    /* Currently no traps require an(), or we'd need an_your() */
+
+    while ((radius > 0) && (tries-- > 0) &&
+           ((x == cx && y == cy) ||
+            !isok(x,y) ||
+            abs(x - cx) + abs(y - cy) > radius)) {
+        x = cx - radius + rn2(radius * 2);
+        y = cy - radius + rn2(radius * 2);
+    }
+    if (Engulfed) {
+        if (noncorporeal(u.ustuck->data)) {
+            if (Hallucination)
+                pline(msgc_combatimmune, /* sort of */
+                      "Oh, the leaks of Egypt!");
+            else if (!Blind)
+                pline(msgc_combatimmune, /* sort of */
+                      "The %s gushes right out through %s.",
+                      liqname, mon_nam(u.ustuck));
+            else
+                pline(msgc_combatimmune, /* sort of */
+                      "It doesn't seem as %s in here as you expected.",
+                      ((newterrain == LAVAPOOL) ? "hot" : "wet"));
+            killengulfer = FALSE;
+        } else if (flaming(u.ustuck->data)) {
+            if (newterrain == LAVAPOOL) {
+                u.ustuck->mhpmax += 2;
+                u.ustuck->mhp = u.ustuck->mhpmax;
+                pline(msgc_consequence, "%s heats up!", Monnam(u.ustuck));
+                killengulfer = FALSE;
+            } else {
+                if (Hallucination)
+                    pline(msgc_kill,
+                          "Billy Joel lyrics run through your mind.");
+                else 
+                    pline(msgc_kill, "The water extinguishes %s!",
+                          mon_nam(u.ustuck));
+                killengulfer = TRUE;
+            }
+        } else if (monsndx(u.ustuck->data) == PM_FOG_CLOUD ||
+                   monsndx(u.ustuck->data) == PM_STEAM_VORTEX) {
+            /* Why do fog clouds count as whirly?
+               Nevermind, they're a special case here anyway. */
+            if (newterrain == LAVAPOOL) {
+                pline(msgc_consequence, "%s heats up!", Monnam(u.ustuck));
+                newcham(u.ustuck, &mons[PM_FIRE_VORTEX], FALSE, FALSE);
+            } else {
+                if (Hallucination)
+                    pline(msgc_consequence, "You feel a rainstorm coming on!");
+                else
+                    pline(msgc_consequence,
+                          "%s feels denser as it absorbs the %s.",
+                          Monnam(u.ustuck), liqname);
+            }
+            u.ustuck->mhpmax += 2;
+            u.ustuck->mhp = u.ustuck->mhpmax;
+            killengulfer = FALSE;
+        } else if (is_whirly(u.ustuck->data)) {
+            /* TODO: should ice vortices be special-cased immune? */
+            pline(msgc_kill, "%s slows as it takes up the %s, stops whirling,"
+                  " and lets you go.", Monnam(u.ustuck), liqname);
+            killengulfer = TRUE;
+        } else if ((is_swimmer(u.ustuck->data) || amphibious(u.ustuck->data) ||
+                    breathless(u.ustuck->data)) && !(newterrain == LAVAPOOL)) {
+            /* The engulfer survives, but what happens to YOU in there? */
+            pline(msgc_badidea, "The %s fills with water!",
+                  mbodypart(u.ustuck, STOMACH));
+            (void) drown();
+            return;
+        } else {
+            /* Engulfer drowns (or dies in the lava), you get released. */
+            if (Hallucination) {
+                pline(msgc_combatgood, "It's not the heat, really.  "
+                      "It's the humidity that gets ya.");
+            } else {
+                pline(msgc_combatgood, "The %s fills the %s.", liqname,
+                      mbodypart(u.ustuck, STOMACH));
+                pline(msgc_combatgood, "%s %s.", Monnam(u.ustuck),
+                      ((newterrain == LAVAPOOL) ?
+                       "perishes in the lava" : "drowns"));
+            }
+            x = u.ux; y = u.uy;
+            killengulfer = TRUE;
+        }
+    }
+    ttmp = t_at(level, x, y);
+    if (ttmp) {
+        ttmp->tseen = 1;
+        switch(ttmp->ttyp) {
+        case HOLE:
+        case TRAPDOOR:
+        case TELEP_TRAP:
+        case LEVEL_TELEP:
+        case MAGIC_PORTAL:
+            if (!Blind && Hallucination)
+                pline(msgc_yafm, "Pee pee go down the hooole!");
+            else if (!Blind)
+                pline(msgc_yafm, "The %s disappears into %s.", liqname,
+                      (ttmp->madeby_u ?
+                       msgprintf("your %s", trapexplain[ttmp->ttyp - 1]) :
+                       an(trapexplain[ttmp->ttyp - 1])));
+            break;
+        case PIT:
+        case SPIKED_PIT:
+            if (!Blind && Hallucination)
+                pline(msgc_yafm,
+                      "That's just about the nicest outhouse you've seen!");
+            else if (!Blind)
+                pline(msgc_yafm, "The %s fills the pit.", liqname);
+            deltrap(level, ttmp);
+            level->locations[x][y].typ = newterrain;
+            break;
+        case VIBRATING_SQUARE:
+            if (Hallucination && !Blind)
+                pline(msgc_yafm, "Woah, dude, look at the %s shake!", liqname);
+            else if (!Blind)
+                pline(msgc_yafm, "A mysterious force whisks the %s away.",
+                      liqname);
+            break;
+        case POLY_TRAP:
+            if (Hallucination && !Blind)
+                pline(msgc_consequence,
+                      "If you ever drop your keys into molten lava, "
+                      "let 'em go, because man, they're gone.");
+            else if (!Blind)
+                pline(msgc_consequence, "The %s changes into %s!",
+                      liqname,
+                      ((newterrain == LAVAPOOL) ? "water" : "lava"));
+            deltrap(level, ttmp);
+            level->locations[x][y].typ =
+                (newterrain == LAVAPOOL) ? POOL : LAVAPOOL;
+            break;
+        default:
+            if (!Blind)
+                pline(msgc_consequence, "The %s %s away %s.", liqname,
+                      ((newterrain == LAVAPOOL) ? "burns" : "washes"),
+                      (ttmp->madeby_u ?
+                       msgprintf("your %s", trapexplain[ttmp->ttyp - 1]) :
+                       an(trapexplain[ttmp->ttyp - 1])));
+            deltrap(level, ttmp);
+            break;
+        }
+    } else {
+        switch(level->locations[x][y].typ) {
+        case SDOOR:
+        case SCORR:
+            pline(msgc_consequence,
+                  "%s flows into a space you didn't see before.",
+                  msgupcasefirst(liqname));
+            level->locations[x][y].typ = newterrain;
+            break;
+        case POOL:
+        case MOAT:
+            if (newterrain == LAVAPOOL) {
+                pline(msgc_consequence,
+                      "The water boils away, revealing a pool of lava!");
+                level->locations[x][y].typ = LAVAPOOL;
+            } else
+                pline(msgc_yafm, "The water level increases slightly.");
+            break;
+        case DRAWBRIDGE_UP:
+            level->locations[x][y].drawbridgemask &= ~DB_UNDER;
+            /* fall through */
+        case DBWALL:
+            pline(msgc_yafm, "That's %s under the bridge, now.", liqname);
+            break;
+        case LAVAPOOL:
+            if (newterrain == LAVAPOOL)
+                pline(msgc_yafm,
+                      "The lava gives off noxious fumes and a cloud of ash.");
+            else
+                pline(msgc_consequence, "Great clouds of steam swirl up "
+                      "as the water hits the lava.");
+            for (i = 0; i <= rn2(3); i++) {
+                makemon(&mons[PM_STEAM_VORTEX], level, u.ux, u.uy, rng_main);
+                makemon(&mons[PM_FOG_CLOUD], level, u.ux, u.uy, rng_main);
+            }
+            if (newterrain != LAVAPOOL) {
+                pline(msgc_consequence, "The lava cools and solidifies.");
+                level->locations[x][y].typ = ROOM;
+            }
+            break;
+        case IRONBARS:
+            pline(msgc_consequence, "The iron bars %s away.",
+                  ((newterrain == LAVAPOOL) ? "melt" : "rust"));
+            level->locations[x][y].typ = newterrain;
+            break;
+        case ICE:
+            if (newterrain == LAVAPOOL) {
+                pline(msgc_consequence, "The ice melts.");
+                level->locations[x][y].typ = POOL;
+                break;
+            }
+            pline(msgc_yafm, "The water freezes.");
+            break;
+        case FOUNTAIN:
+            if (newterrain == FOUNTAIN)
+                break;
+        case DOOR:
+        case SINK:
+        case THRONE:
+        case GRAVE:
+            pline(msgc_consequence, "The %s is %s away by the %s.",
+                  surface(x,y),
+                  ((newterrain == LAVAPOOL) ? "burned" : "washed"),
+                  ((newterrain == LAVAPOOL) ? "lava" : "torrent"));
+            /* fall through */
+        case ROOM:
+        case CORR:
+            level->locations[x][y].typ = newterrain;
+            break;
+        case ALTAR:
+        case MAGIC_CHEST:
+        case LADDER:
+        case STAIRS:
+            pline(msgc_yafm, "A mysterious force whisks the %s away.",
+                  liqname);
+            break;
+        default:
+            ; /* do nothing -- don't mess with walls, etc. */
+        }
+    }
+    newsym(x,y);
+    if (killengulfer) {
+        mtmp = u.ustuck;
+        expels(mtmp, mtmp->data, FALSE);
+        xkilled(mtmp, 0);
+        return;
+    }
+    mtmp = m_at(level, x, y);
+    if (mtmp == &youmonst) {
+        spoteffects(FALSE);
+    } else if (mtmp) {
+        minliquid(mtmp);
+    }
+}
+
 int
 seffects(struct obj *sobj, boolean *known)
 {
@@ -600,8 +803,6 @@ seffects(struct obj *sobj, boolean *known)
     boolean confused = (Confusion != 0);
     struct obj *otmp;
 
-    if (objects[sobj->otyp].oc_magic)
-        exercise(A_WIS, TRUE);  /* just for trying */
     switch (sobj->otyp) {
     case SCR_ENCHANT_ARMOR:
         {
@@ -768,7 +969,8 @@ seffects(struct obj *sobj, boolean *known)
                       otense(otmp, "vibrate"));
                 if (otmp->spe >= -6) {
                     otmp->spe--;
-                    if (otmp->otyp == HELM_OF_BRILLIANCE) {
+                    if ((otmp->otyp == HELM_OF_BRILLIANCE) ||
+                        (otmp->otyp == CORNUTHAUM)) {
                         ABON(A_INT)--;
                         ABON(A_WIS)--;
                         makeknown(otmp->otyp);
@@ -865,8 +1067,6 @@ seffects(struct obj *sobj, boolean *known)
     case SCR_REMOVE_CURSE:
     case SPE_REMOVE_CURSE:
         {
-            struct obj *obj;
-
             if (confused)
                 if (Hallucination)
                     pline(msgc_itemloss,
@@ -882,51 +1082,12 @@ seffects(struct obj *sobj, boolean *known)
             if (sobj->cursed) {
                 pline(msgc_failcurse, "The scroll disintegrates.");
             } else {
-                for (obj = invent; obj; obj = obj->nobj) {
-                    long wornmask;
-
-                    /* gold isn't subject to cursing and blessing */
-                    if (obj->oclass == COIN_CLASS)
-                        continue;
-
-                    wornmask = obj->owornmask & W_MASKABLE;
-                    if (wornmask && !sobj->blessed) {
-                        /* handle a couple of special cases; we don't allow
-                           auxiliary weapon slots to be used to artificially
-                           increase number of worn items */
-                        if (obj == uswapwep) {
-                            if (!u.twoweap)
-                                wornmask = 0L;
-                        } else if (obj == uquiver) {
-                            if (obj->oclass == WEAPON_CLASS) {
-                                /* mergeable weapon test covers ammo, missiles,
-                                   spears, daggers & knives */
-                                if (!objects[obj->otyp].oc_merge)
-                                    wornmask = 0L;
-                            } else if (obj->oclass == GEM_CLASS) {
-                                /* possibly ought to check whether alternate
-                                   weapon is a sling... */
-                                if (!uslinging())
-                                    wornmask = 0L;
-                            } else {
-                                /* weptools don't merge and aren't reasonable
-                                   quivered weapons */
-                                wornmask = 0L;
-                            }
-                        }
-                    }
-                    if (sobj->blessed || wornmask || obj->otyp == LOADSTONE ||
-                        (obj->otyp == LEASH && obj->leashmon)) {
-                        if (confused)
-                            blessorcurse(obj, 2, rng_main);
-                        else
-                            uncurse(obj);
-                    }
-                }
+                do_uncurse_effect(sobj->blessed, TRUE);
             }
-            if (Punished && !confused)
+            if (Punished && !confused) {
                 unpunish();
-            update_inventory();
+                update_inventory();
+            }
             break;
         }
     case SCR_CREATE_MONSTER:
@@ -1050,6 +1211,8 @@ seffects(struct obj *sobj, boolean *known)
         useup(sobj);
         makeknown(SCR_IDENTIFY);
     id:
+        if (cval > 1 && challengemode)
+            cval--;
         if (invent && !confused) {
             identify_pack(cval);
         }
@@ -1067,6 +1230,8 @@ seffects(struct obj *sobj, boolean *known)
         pline(msgc_uiprompt, "This is a charging scroll.");
 
         cval = sobj->cursed ? -1 : (sobj->blessed ? 1 : 0);
+        if (challengemode && cval > 0 && rn2(3))
+            cval--;
         if (!objects[sobj->otyp].oc_name_known)
             more_experienced(0, 10);
         useup(sobj);
@@ -1099,6 +1264,7 @@ seffects(struct obj *sobj, boolean *known)
             /* do_mapping() already reveals secret passages */
         }
         *known = TRUE;
+        /* Fall Through */
     case SPE_MAGIC_MAPPING:
         if (level->flags.nommap) {
             pline(msgc_statusbad,
@@ -1111,29 +1277,48 @@ seffects(struct obj *sobj, boolean *known)
         cval = (sobj->cursed && !confused);
         if (cval)
             HConfusion = 1;     /* to screw up map */
-        do_mapping();
+
+        do_mapping((sobj->oclass == SPBOOK_CLASS) ?
+                   (P_SKILL(objects[sobj->otyp].oc_skill) >= P_SKILLED) :
+                   sobj->blessed);
+
         if (cval) {
             HConfusion = 0;     /* restore */
             pline(msgc_substitute,
                   "Unfortunately, you can't grasp the details.");
         }
         break;
-    case SCR_AMNESIA:
+    case SCR_WATER:
         *known = TRUE;
-        forget((!sobj->blessed ? ALL_SPELLS : 0) |
-               (!confused || sobj->cursed ? ALL_MAP : 0));
-        if (Hallucination)      /* Ommmmmm! */
-            pline(msgc_intrloss,
-                  "Your mind releases itself from mundane concerns.");
-        else if (!strncmpi(u.uplname, "Maud", 4))
-            pline(msgc_intrloss, "As your mind turns inward on itself, you "
-                  "forget everything else.");
-        else if (rn2(2))
-            pline(msgc_intrloss, "Who was that Maud person anyway?");
+        if (Is_airlevel(&u.uz) || Is_earthlevel(&u.uz) || Is_firelevel(&u.uz) ||
+            (Is_waterlevel(&u.uz) && confused)) {
+            pline(msgc_yafm, "Nothing happens.");
+            break;
+        }
+        if (Hallucination)
+            pline(msgc_actionok, "Your %s start peeing all over the place!",
+                  makeplural(body_part(HAND)));
         else
-            pline(msgc_intrloss,
-                  "Thinking of Maud you forget everything else.");
-        exercise(A_WIS, FALSE);
+            pline(msgc_actionok, "%s gushes out of the scroll!",
+                  (confused ? "Lava" : "Water"));
+        if (Is_waterlevel(&u.uz)) {
+            pline(msgc_yafm, "The water level cannot increase any further.");
+            break;
+        }
+        if (sobj->blessed && ! rn2(6)) {
+            do_scroll_water(u.ux, u.uy, 0, FOUNTAIN);
+        } else {
+            int i, max = rnd(6) + rnd(6);
+            int liquid = confused ? LAVAPOOL : POOL;
+            for (i = 1; i <= max; i++) {
+                do_scroll_water(u.ux, u.uy, 4, liquid);
+            }
+            if (sobj->cursed) {
+                do_scroll_water(u.ux, u.uy, 0, liquid);
+            }
+        }
+        if (!Blind)
+            vision_recalc(0);
         break;
     case SCR_FIRE:
         /* Note: Modifications have been made as of 3.0 to allow for
@@ -1169,7 +1354,7 @@ seffects(struct obj *sobj, boolean *known)
             burn_away_slime();
         }
         explode(u.ux, u.uy, 11, (2 * (rn1(3, 3) + 2 * cval) + 1) / 3,
-                SCROLL_CLASS, EXPL_FIERY, NULL);
+                SCROLL_CLASS, EXPL_FIERY, NULL, 0);
         return 1;
     case SCR_EARTH:
         /* TODO: handle steeds */
@@ -1181,8 +1366,7 @@ seffects(struct obj *sobj, boolean *known)
             pline(msgc_actionok, "The %s rumbles %s you!",
                   ceiling(u.ux, u.uy), sobj->blessed ? "around" : "above");
             *known = TRUE;
-            if (In_sokoban(&u.uz))
-                change_luck(-1);        /* Sokoban guilt */
+            sokoban_guilt();
 
             /* Loop through the surrounding squares */
             if (!sobj->cursed)
@@ -1325,13 +1509,27 @@ seffects(struct obj *sobj, boolean *known)
                 return 0;
             }
             if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32) {
-                pline(msgc_yafm, "You smell rotten eggs.");
+                pline(msgc_yafm, "You smell %s.", Hallucination ? "breakfast" :
+                      "rotten eggs");
                 return 0;
             }
             create_gas_cloud(level, cc.x, cc.y, 3 + bcsign(sobj),
                              8 + 4 * bcsign(sobj));
             break;
         }
+    case SCR_WISHING:
+        *known = TRUE;
+        if (Luck + (challengemode ? 0 : rn2(5)) < 0) {
+            pline(msgc_itemloss, "Unfortunately, nothing happens.");
+            break;
+        } else if (sobj->cursed) {
+            pline(msgc_itemloss,
+                  "You finish reading the %s, but nothing happens.",
+                  (Hallucination ? "horse" : "scroll"));
+            break;
+        }
+        makewish((sobj->blessed) ? 3 : 2);
+        break;
     default:
         impossible("What weird effect is this? (%u)", sobj->otyp);
     }
@@ -1368,6 +1566,23 @@ litroom(boolean on, struct obj *obj)
 {
     char is_lit;        /* value is irrelevant; we use its address as a `not
                            null' flag for set_lit() */
+    int wandlevel = 0;
+    if (obj && obj->oclass == WAND_CLASS)
+        wandlevel = getwandlevel(&youmonst, obj);
+    /* In case monsters ever uses a light creation spell, wandlevel
+       check must be fixed -- perform a deliberate crash */
+    if (flags.mon_moving)
+        impossible("monster tries to create light?");
+    int lightradius = 5;
+    if (obj && obj->oclass == SCROLL_CLASS && obj->blessed)
+        lightradius = 9;
+    else if (wandlevel)
+        lightradius = (wandlevel == P_UNSKILLED ? 3  :
+                       wandlevel == P_BASIC     ? 5  :
+                       wandlevel == P_SKILLED   ? 9  :
+                       wandlevel == P_EXPERT    ? 15 :
+                       wandlevel == P_MASTER    ? -1 :
+                       1);
 
     /* first produce the text (provided you're not blind) */
     if (!on) {
@@ -1435,10 +1650,16 @@ do_it:
             level->rooms[rnum].rlit = on;
         }
         /* hallways remain dark on the rogue level */
-    } else
-        do_clear_area(u.ux, u.uy,
-                      (obj && obj->oclass == SCROLL_CLASS &&
-                       obj->blessed) ? 9 : 5, set_lit, (on ? &is_lit : NULL));
+    } else {
+        if (lightradius == -1) { /* entire floor */
+            int x, y;
+
+            for (x = 0; x < COLNO; x++)
+                for (y = 0; y < ROWNO; y++)
+                    set_lit(x, y, (on ? &is_lit : NULL));
+        } else
+            do_clear_area(u.ux, u.uy, lightradius, set_lit, (on ? &is_lit : NULL));
+    }
 
     /*
      *  If we are not blind, then force a redraw on all positions in sight
@@ -1693,10 +1914,6 @@ do_genocide(int how)
                 killplayer++;
                 break;
             }
-            if (is_human(ptr))
-                adjalign(-sgn(u.ualign.type));
-            if (is_demon(ptr))
-                adjalign(sgn(u.ualign.type));
 
             if (!(ptr->geno & G_GENO)) {
                 if (canhear()) {
@@ -1709,6 +1926,11 @@ do_genocide(int how)
                 }
                 continue;
             }
+            if (is_human(ptr))
+                adjalign(-sgn(u.ualign.type));
+            if (is_demon(ptr))
+                adjalign(sgn(u.ualign.type));
+
             /* KMH -- Unchanging prevents rehumanization */
             if (Unchanging && ptr == youmonst.data)
                 killplayer++;
@@ -2027,7 +2249,7 @@ create_particular(const struct nh_cmd_arg *arg)
                     mtmp->mcansee = 0;
                 if (paralyzed)
                     mtmp->mcanmove = 0;
-                if (sleeping)
+                if (sleeping && !resists_sleep(mtmp))
                     mtmp->msleeping = 1;
                 if (stunned)
                     mtmp->mstun = 1;

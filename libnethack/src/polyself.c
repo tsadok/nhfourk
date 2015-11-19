@@ -250,7 +250,7 @@ polyself(boolean forcecontrol)
             return;
         }
     }
-    old_light = Upolyd ? emits_light(youmonst.data) : 0;
+    old_light = emits_light(URACEDATA);
 
     if (Polymorph_control || forcecontrol) {
         do {
@@ -336,7 +336,7 @@ polyself(boolean forcecontrol)
 made_change:
     /* If you change this algorithm, change the matching algorithm in
        nh_create_game(). */
-    new_light = Upolyd ? emits_light(youmonst.data) : 0;
+    new_light = emits_light(URACEDATA);
     if (old_light != new_light) {
         if (old_light)
             del_light_source(level, LS_MONSTER, &youmonst);
@@ -484,7 +484,7 @@ int
 domonability(const struct nh_cmd_arg *arg)
 {
     struct polyform_ability pa;
-    if (has_polyform_ability(youmonst.data, &pa)) {
+    if (has_polyform_ability(URACEDATA, &pa)) {
         if (pa.directed)
             return pa.handler_directed(arg);
         else
@@ -514,7 +514,6 @@ polymon(int mntmp, boolean noisy)
         if (noisy)
             pline(msgc_noconsequence, "You feel rather %s-ish.",
                   mons[mntmp].mname);
-        exercise(A_WIS, TRUE);
         return 0;
     }
 
@@ -525,7 +524,6 @@ polymon(int mntmp, boolean noisy)
      * there since the polymorph was always in effect by then, and
      * exercising other attributes has no effect when polyselfed. */
     exercise(A_CON, FALSE);
-    exercise(A_WIS, TRUE);
 
     if (!Upolyd) {
         /* Human to monster; save human stats */
@@ -704,10 +702,12 @@ polymon(int mntmp, boolean noisy)
          (is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy))) ||
         (Underwater && !Swimming))
         spoteffects(TRUE);
-    if (Passes_walls && u.utrap && u.utraptype == TT_INFLOOR) {
+    if (Passes_walls && u.utrap && (u.utraptype == TT_INFLOOR ||
+                                    u.utraptype == TT_ICEBLOCK)) {
         u.utrap = 0;
         if (noisy)
-            pline(msgc_statusheal, "The rock seems to no longer trap you.");
+            pline(msgc_statusheal, "The %s seems to no longer trap you.",
+                  u.utraptype == TT_ICEBLOCK ? "ice" : "rock");
     } else if (likes_lava(youmonst.data) && u.utrap && u.utraptype == TT_LAVA) {
         u.utrap = 0;
         if (noisy)
@@ -999,7 +999,7 @@ dobreathe(const struct nh_cmd_arg *arg)
         impossible("bad breath attack?");       /* mouthwash needed... */
     else
         buzz((int)(20 + mattk->adtyp - 1), (int)mattk->damn, u.ux, u.uy, dx,
-             dy);
+             dy, 0);
     return 1;
 }
 
@@ -1023,6 +1023,9 @@ dospit(const struct nh_cmd_arg *arg)
     case AD_BLND:
     case AD_DRST:
         otmp = mktemp_sobj(level, BLINDING_VENOM);
+        break;
+    case AD_DRLI:
+        otmp = mktemp_sobj(level, VAMPIRE_BLOOD);
         break;
     default:
         impossible("dospit: bad damage type");
@@ -1147,6 +1150,7 @@ dospinweb(void)
         case MAGIC_TRAP:
         case ANTI_MAGIC:
         case POLY_TRAP:
+        case STINKING_TRAP:
             pline(msgc_actionok, "You have triggered a trap!");
             dotrap(ttmp, 0);
             return 1;
@@ -1186,7 +1190,6 @@ dosummon(void)
        rearrangement to channelize correctly in the (rare) fail case while
        keeping message order correct */
     pline(msgc_actionok, "You call upon your brethren for help!");
-    exercise(A_WIS, TRUE);
     if (!were_summon(&youmonst, &placeholder, NULL))
         pline(msgc_failcurse, "But none arrive.");
     return 1;
@@ -1473,7 +1476,7 @@ mbodypart(struct monst *mon, int part)
        should still reference hands rather than claws */
     static const char not_claws[] = {
         S_HUMAN, S_MUMMY, S_ZOMBIE, S_ANGEL,
-        S_NYMPH, S_LEPRECHAUN, S_QUANTMECH, S_VAMPIRE,
+        S_NYMPH, S_HUMANOID, S_VAMPIRE,
         S_ORC, S_GIANT, /* quest nemeses */
         '\0'    /* string terminator; assert( S_xxx != 0 ); */
     };
@@ -1485,10 +1488,11 @@ mbodypart(struct monst *mon, int part)
             return part == HAND ? "paw" : "pawed";
         if (humanoid(mptr) && attacktype(mptr, AT_CLAW) &&
             !strchr(not_claws, mptr->mlet) && mptr != &mons[PM_STONE_GOLEM] &&
+            mptr != &mons[PM_LEPRECHAUN] &&
             mptr != &mons[PM_INCUBUS] && mptr != &mons[PM_SUCCUBUS])
             return part == HAND ? "claw" : "clawed";
     }
-    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MASTODON]) && part == NOSE)
+    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MAMMOTH]) && part == NOSE)
         return "trunk";
     if (mptr == &mons[PM_SHARK]) {
         /* sharks don't have scales */
@@ -1512,8 +1516,10 @@ mbodypart(struct monst *mon, int part)
         (part == ARM || part == FINGER || part == FINGERTIP || part == HAND ||
          part == HANDED || part == LIMBS))
         return humanoid_parts[part];
-    if (mptr == &mons[PM_RAVEN])
+    if (is_bird(mptr))
         return bird_parts[part];
+    if (has_beak(mptr) && part == NOSE) /* MOUTH is not a part, oddly */
+        return "beak";
     if (mptr->mlet == S_CENTAUR || mptr->mlet == S_UNICORN ||
         (mptr == &mons[PM_ROTHE] && part != HAIR))
         return horse_parts[part];
@@ -1541,7 +1547,7 @@ mbodypart(struct monst *mon, int part)
         return snake_parts[part];
     if (mptr->mlet == S_EYE)
         return sphere_parts[part];
-    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING || mptr->mlet == S_BLOB
+    if (mptr->mlet == S_JELLY || mptr->mlet == S_PUDDING
         || mptr == &mons[PM_JELLYFISH])
         return jelly_parts[part];
     if (mptr->mlet == S_VORTEX ||

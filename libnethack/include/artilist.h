@@ -34,6 +34,8 @@ static const char *artifact_names[] = {
 # define     FIRE(a,b)  {0,AD_FIRE,a,b}
 # define     ELEC(a,b)  {0,AD_ELEC,a,b} /* electrical shock */
 # define     STUN(a,b)  {0,AD_STUN,a,b} /* magical attack */
+# define     POIS(a,b)  {0,AD_DRST,a,b} /* poison */
+# define     SLEE(a,b)  {0,AD_SLEE,a,b} /* sleep */
 
 static const struct artifact const_artilist[] = {
 #endif /* ARTINAMES_C */
@@ -87,7 +89,8 @@ static const struct artifact const_artilist[] = {
  *      providing 8 more.
  */
     A("Stormbringer", RUNESWORD,
-      (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN | SPFX_INTEL | SPFX_DRLI), 0, 0,
+      (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN | SPFX_INTEL | SPFX_DRLI |
+       SPFX_STRM), 0, 0,
       DRLI(5, 2), DRLI(0, 0), NO_CARY, 0, A_CHAOTIC, NON_PM, NON_PM, 8000L),
 /*
  *      Mjollnir will return to the hand of the wielder when thrown
@@ -102,8 +105,8 @@ static const struct artifact const_artilist[] = {
       PHYS(3, 6), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_BARBARIAN, NON_PM, 1500L),
 
     A("Grimtooth", ORCISH_DAGGER,
-      SPFX_RESTR, 0, 0,
-      PHYS(2, 6), NO_DFNS, NO_CARY, 0, A_CHAOTIC, NON_PM, PM_ORC, 300L),
+      SPFX_RESTR | SPFX_ATTK | SPFX_DEFN | SPFX_WARN | SPFX_DFLAG2, 0, M2_ELF,
+      POIS(2, 6), POIS(0,0), NO_CARY, 0, A_CHAOTIC, NON_PM, PM_ORC, 300L),
 /*
  *      Orcrist and Sting have same alignment as elves.
  */
@@ -129,6 +132,10 @@ static const struct artifact const_artilist[] = {
       STUN(3, 4), DFNS(AD_MAGM), NO_CARY, 0, A_NEUTRAL, PM_WIZARD, NON_PM,
       3500L),
 
+    A("Valerian", DAGGER,
+      (SPFX_RESTR | SPFX_INTEL | SPFX_DEFN | SPFX_ATTK ), 0, 0,
+      SLEE(1,1), DFNS(AD_SLEE), NO_CARY, 0, A_CHAOTIC, PM_ROGUE, NON_PM, 700L),
+
     A("Frost Brand", LONG_SWORD,
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       COLD(5, 0), COLD(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
@@ -153,13 +160,14 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_HALRES), 0, 0,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 8000L),
 
+    A("Quickpick", PICK_AXE,
+      (SPFX_RESTR | SPFX_DCLAS), 0, S_XORN,
+      PHYS(5, 0), DFNS(ART_FAST_DIG), NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM,
+      300L),
+
     A("Giantslayer", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_GIANT,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NEUTRAL, NON_PM, NON_PM, 200L),
-
-    A("Ogresmasher", WAR_HAMMER,
-      (SPFX_RESTR | SPFX_DCLAS), 0, S_OGRE,
-      PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 200L),
 
     A("Trollsbane", MORNING_STAR,
       (SPFX_RESTR | SPFX_DCLAS), 0, S_TROLL,
@@ -201,7 +209,12 @@ static const struct artifact const_artilist[] = {
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL), SPFX_STLTH, 0,
       /* this stone does double damage if used as a projectile weapon */
       PHYS(5, 0), NO_DFNS, NO_CARY,
-      LEVITATION, A_NEUTRAL, PM_BARBARIAN, NON_PM, 2500L),
+      UNCURSE_INVK, A_NEUTRAL, PM_BARBARIAN, NON_PM, 2500L),
+
+    A("Big Stick", CLUB,
+      (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DEFN), SPFX_STLTH, 0,
+      PHYS(5, 12), DFNS(AD_MAGM), NO_CARY, 0, A_CHAOTIC, PM_CAVEMAN, NON_PM,
+      2500L),
 
     A("The Sceptre of Might", MACE,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DALIGN), 0, 0,
@@ -242,7 +255,7 @@ static const struct artifact const_artilist[] = {
 
     A("The Tsurugi of Muramasa", TSURUGI,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_BEHEAD | SPFX_LUCK), 0, 0,
-      PHYS(0, 8), NO_DFNS, NO_CARY,
+      PHYS(0, 8), DFNS(ART_EXTR_SPEED), NO_CARY,
       0, A_LAWFUL, PM_SAMURAI, NON_PM, 4500L),
 
     A("The Platinum Yendorian Express Card", CREDIT_CARD,

@@ -21,6 +21,8 @@ static void get_free_room_loc(struct level *lev, schar * x, schar * y,
                               struct mkroom *croom);
 static void create_trap(struct level *lev, trap * t, struct mkroom *croom);
 static int noncoalignment(aligntyp, struct level *);
+static struct obj * make_sokoprize(int, struct level *, int, int, boolean,
+                                   boolean, enum rng);
 static void create_monster(struct level *lev, monster *, struct mkroom *);
 static void create_object(struct level *lev, object *, struct mkroom *);
 static void create_engraving(struct level *lev, engraving *, struct mkroom *);
@@ -226,11 +228,11 @@ is_ok_location(struct level *lev, schar x, schar y, int humidity)
     if (humidity & DRY) {
         typ = lev->locations[x][y].typ;
         if (typ == ROOM || typ == AIR || typ == CLOUD || typ == ICE ||
-            typ == CORR)
+            typ == CORR || typ == PUDDLE)
             return TRUE;
     }
     if (humidity & WET) {
-        if (is_pool(lev, x, y) || is_lava(lev, x, y))
+        if (is_damp_terrain(lev, x, y) || is_lava(lev, x, y))
             return TRUE;
     }
     return FALSE;
@@ -367,8 +369,19 @@ chk:
  */
 boolean
 create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
-            xchar yal, xchar rtype, xchar rlit, int *smeq)
+            xchar yal, xchar rtype, xchar rlit, int *smeq, boolean canbeshaped)
 {
+    /*
+     * numeric args that are -1 mean random
+     * x and y are position within the rectangle grid for the level
+     *        I *think* these values range from 1 to 5.
+     * w and h are size (width and height)
+     * xal and yal are alignment (LEFT/TOP, CENTER, RIGHT/BOTTOM).
+     * footmp is the current working value of foo; this is typically
+     *        equal to foo, unless foo is -1 (random).
+     * xabs and yabs are the actual x and y coordinates where the
+     *        room will be placed on the level map.
+     * */
     xchar xabs = 0, yabs = 0;
     int wtmp, htmp, xaltmp, yaltmp, xtmp, ytmp;
     struct nhrect *r1 = NULL, r2;
@@ -381,6 +394,7 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
 
     if (rtype == VAULT) {
         vault = TRUE;
+        canbeshaped = FALSE;
         xlim++;
         ylim++;
     }
@@ -525,8 +539,8 @@ create_room(struct level * lev, xchar x, xchar y, xchar w, xchar h, xchar xal,
 
     if (!vault) {
         smeq[lev->nroom] = lev->nroom;
-        add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1, rlit, rtype,
-                 FALSE);
+        add_room(lev, xabs, yabs, xabs + wtmp - 1, yabs + htmp - 1,
+                 rlit, rtype, FALSE, canbeshaped);
     } else {
         lev->rooms[lev->nroom].lx = xabs;
         lev->rooms[lev->nroom].ly = yabs;
@@ -908,6 +922,35 @@ m_done:
     Free(m->appear_as.str);
 }
 
+struct obj *
+make_sokoprize(int origotyp, struct level *lev, int x, int y,
+               boolean init, boolean artif, enum rng rng)
+{
+    int otyp = origotyp;
+    if (otyp == BAG_OF_HOLDING && carrying(BAG_OF_HOLDING) &&
+        !u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
+        otyp = AMULET_OF_REFLECTION;
+    if (otyp == AMULET_OF_REFLECTION &&
+        u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
+        if (!carrying(BAG_OF_HOLDING) && !carrying(OILSKIN_SACK))
+            otyp = rn2_on_rng(3, rng) ? OILSKIN_SACK : BAG_OF_HOLDING;
+    /* TODO: else, maybe another useful amulet? */
+    if (otyp == RIN_POLYMORPH_CONTROL &&
+        (carrying(RIN_POLYMORPH_CONTROL) ||
+         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE) ||
+         u_have_property(UNCHANGING, ANY_PROPERTY, FALSE)) &&
+        !carrying(AMULET_OF_FLYING) &&
+        !u_have_property(FLYING, ANY_PROPERTY, FALSE))
+        otyp = AMULET_OF_FLYING;
+    if (otyp == RIN_TELEPORT_CONTROL &&
+        (carrying(RIN_TELEPORT_CONTROL) ||
+         u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE)) &&
+        !carrying(RIN_TELEPORTATION) &&
+        !u_have_property(TELEPORT, ANY_PROPERTY, FALSE))
+        otyp = RIN_TELEPORTATION;
+    return mksobj_at(otyp, lev, x, y, init, artif, rng);
+}
+
 /*
  * Create an object in a room.
  */
@@ -936,7 +979,13 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
         else
             c = 0;
 
-        if (!c)
+        /* Is this the Sokoban prize?  Can we make sure it's something
+           the player can use? */
+        if (In_sokoban(&lev->z) && c && o->id != -1 &&
+            (o->id == BAG_OF_HOLDING || o->id == AMULET_OF_REFLECTION ||
+             o->id == RIN_POLYMORPH_CONTROL || o->id == RIN_TELEPORT_CONTROL))
+            otmp = make_sokoprize(o->id, lev, x, y, TRUE, !named, mrng());
+        else if (!c)
             otmp = mkobj_at(RANDOM_CLASS, lev, x, y, !named, mrng());
         else if (o->id != -1)
             otmp = mksobj_at(o->id, lev, x, y, TRUE, !named, mrng());
@@ -1489,6 +1538,7 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
 
     if (!prefilled) {
         int x, y;
+        coord c;
 
         /* Shop ? */
         if (croom->rtype >= SHOPBASE) {
@@ -1503,6 +1553,9 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
                     mkgold(51 + mrn2(abs(depth(&lev->z)) * 100),
                            lev, x, y, mrng());
             break;
+        case DRAGONHALL:
+            fill_dragonhall(lev, croom, mrng());
+            break;
         case COURT:
         case ZOO:
         case BEEHIVE:
@@ -1510,6 +1563,118 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
         case BARRACKS:
             fill_zoo(lev, croom, mrng());
             break;
+        case CHESTROOM:
+            if (!somexy(lev, croom, &c, mrng())) {
+                c.x = croom->lx;
+                c.y = croom->ly;
+            }
+            lev->locations[c.x][c.y].typ = MAGIC_CHEST;
+            break;
+        }
+    }
+}
+
+static const char *const advent_text[] = {
+    "This 25-piece short presentation is in the public domain.", /* 0 - unused */
+    "The universe was made, and everything in it, in six days by the Creator God.",
+    "Our ancestors knew God, but they rejected him, choosing to make their own path.",
+    "We have all followed our own path ever since.  We are in rebellion against God.",
+    "God, who judges all, will not let us go free forever, since we are rebellious.",
+    "In his patient mercy, God promised to send a Redeemer to restore us one day.",
+    "To satisfy God's justice, the Redeemer had to be perfect and not a rebel.",
+    "Also, to lead us back to God, the Redeemer had to be divine.  He had to be God.",
+    "But to lead us at all, and to represent us, the Redeemer had to be one of us.",
+    "To meet these requirements, the Son of God himself was born as a human child.",
+    "As a Son of Man, he lived thirty years, the only perfect man in all history.",
+    "While he was here, he performed many miraculous signs, even raising the dead.",
+    "The Son of Man offered to take away our rebellion and lead us back to God.",
+    "As before, our rebellious ancestors rejected him, preferring their own path.",
+    "They executed the Son as a criminal, although he was innocent of any crime.",
+    "His lifeless body was buried and remained in the grave for three full days.",
+    "Because he was perfect, and because he was God, death had no power over him.",
+    "His grave is empty.  After three days he returned to the world, alive and well.",
+    "For weeks he walked, talked, lived, and ate with those who had seen him dead.",
+    /*"To prove himself real, he let one man put fingers into his execution wounds.",*/
+    "He instructed his followers to tell the good news to all peoples everywhere.",
+    "He returned to God by rising up into the sky; his followers watched him go.",
+    "If we will follow him, he will cure our rebellion and teach us to follow God.",
+    "Although we rebelled, God loves us and wants us to be restored and follow him.",
+    "He will return one last time, and he will judge those who are still in revolt.",
+    "After destroying his enemies, he will establish God's perfect kingdom forever."
+    /* I commented one out because we actually only have 24 doors. */
+};
+
+void
+fill_advent_calendar(struct level *lev, boolean init)
+{
+    int x, y, in_x, in_y, out_x, out_y;
+    int door_nr=1;
+    enum rng rng = rng_for_level(&lev->z);
+
+    for (x = 1; x < COLNO; x++) {
+        for (y = 1; y < ROWNO; y++) {
+            if (door_nr < 25 && isok(x,y) &&
+                IS_DOOR(lev->locations[x][y].typ)) {
+                if (y < (ROWNO / 2)) {
+                    out_x = x; out_y = y+1; in_x = x; in_y = y-1;
+                } else {
+                    out_x = x; out_y = y-1; in_x = x; in_y = y+1;
+                }
+                if (init) {
+                    /* place number in front of the door */
+                    make_engr_at(lev, out_x, out_y,
+                                 msgprintf("%d", door_nr), 0L, ENGR_LIGHTS);
+                    make_engr_at(lev, in_x, in_y,
+                                 advent_text[door_nr], 0L, ENGRAVE);
+		    if (door_nr == 24) {
+		    	int object = CANDY_BAR;
+		    	/* Christmas present! */
+		    	switch(rn2_on_rng(12, rng) + (challengemode ? 6 : 0)) {
+                        case  0: object = SCR_WISHING; break;
+                        case  1: object = MAGIC_LAMP; break;
+                        case  2: object = BAG_OF_HOLDING; break;
+                        case  3: object = HORN_OF_PLENTY; break;
+                        case  4: object = MAGIC_HARP; break;
+                        case  5: object = AMULET_OF_FLYING; break;
+                        case  6: object = FIRE_HORN; break;
+                        case  7: object = FROST_HORN; break;
+                        case  8: object = MAGIC_FLUTE; break;
+                        case  9: object = DRUM_OF_EARTHQUAKE; break;
+                        case 10: object = STETHOSCOPE; break;
+                        case 11: object = MAGIC_WHISTLE; break;
+                        case 12: object = TINNING_KIT; break;
+                        case 13: object = LENSES; break;
+                        case 14: object = UNICORN_HORN; break;
+                        case 15: object = OILSKIN_SACK; break;
+                        case 16: object = EXPENSIVE_CAMERA; break;
+                        default: object = BAG_OF_TRICKS; break;
+			}
+		    	mksobj_at(object, lev, in_x, in_y, TRUE, FALSE, rng);
+		    } else if (rn2_on_rng(4, rng)) {
+                        int food = (rn2_on_rng(4, rng)) ? SLIME_MOLD : CANDY_BAR;
+                        struct obj *otmp = mksobj(lev, food, TRUE, FALSE, rng);
+		    	if (food == SLIME_MOLD)
+                            otmp->spe = rn2_on_rng(3, rng) ?
+                                fruitadd("candy cane") : fruitadd("sugar plum");
+                        place_object(otmp, lev, in_x, in_y);
+		    } else {
+                        int oclass = (rn2_on_rng(2, rng)) ?
+                            RING_CLASS : TOOL_CLASS;
+                    	mkobj_at(oclass, lev, in_x, in_y, FALSE, rng);
+		    }
+		}
+		if ((lev->locations[x][y].doormask & D_LOCKED) &&
+                    (getmonth() == 12)) {
+		    if (getmday() == 24 && door_nr == 24) {
+		        You_hear(msgc_levelsound, "a little bell ringing!");
+		        lev->locations[x][y].doormask = D_CLOSED;
+		    } else if (getmday() == door_nr) {
+			You_hear(msgc_levelsound, "a door unlocking!");
+		        lev->locations[x][y].doormask = D_CLOSED;
+		    }
+                }
+	    	door_nr++;
+            }
         }
     }
 }
@@ -1601,7 +1766,7 @@ build_room(struct level *lev, room *r, room *pr, int *smeq)
         aroom = &lev->rooms[lev->nroom];
         okroom =
             create_room(lev, r->x, r->y, r->w, r->h, r->xalign, r->yalign,
-                        rtype, r->rlit, smeq);
+                        rtype, r->rlit, smeq, FALSE);
         r->mkr = aroom;
     }
 
@@ -2357,12 +2522,13 @@ load_maze(struct level *lev, dlb * fd)
                 flood_fill_rm(lev, tmpregion.x1, tmpregion.y1,
                               lev->nroom + ROOMOFFSET, tmpregion.rlit, TRUE);
                 add_room(lev, min_rx, min_ry, max_rx, max_ry, FALSE,
-                         tmpregion.rtype, TRUE);
+                         tmpregion.rtype, TRUE, FALSE);
                 troom->rlit = tmpregion.rlit;
                 troom->irregular = TRUE;
             } else {
                 add_room(lev, tmpregion.x1, tmpregion.y1, tmpregion.x2,
-                         tmpregion.y2, tmpregion.rlit, tmpregion.rtype, TRUE);
+                         tmpregion.y2, tmpregion.rlit, tmpregion.rtype,
+                         TRUE, FALSE);
                 topologize(lev, troom); /* set roomno */
             }
         }
@@ -2610,7 +2776,7 @@ load_maze(struct level *lev, dlb * fd)
                 y--;
         }
 
-        walkfrom(lev, x, y);
+        walkfrom(lev, x, y, x_maze_max, y_maze_max);
     }
     wallification(lev, 0, 0, COLNO - 1, ROWNO - 1);
 
@@ -2657,7 +2823,7 @@ load_maze(struct level *lev, dlb * fd)
             maze1xy(lev, &mm, DRY);
             trytrap = rndtrap(lev);
             if (sobj_at(BOULDER, lev, mm.x, mm.y))
-                while (trytrap == PIT || trytrap == SPIKED_PIT ||
+                while (is_pit_trap(trytrap) ||
                        trytrap == TRAPDOOR || trytrap == HOLE)
                     trytrap = rndtrap(lev);
             maketrap(lev, mm.x, mm.y, trytrap, mrng());
@@ -2853,9 +3019,10 @@ fixup_special(struct level *lev)
         for (x = croom->lx; x <= croom->hx; x++)
             for (y = croom->ly; y <= croom->hy; y++) {
                 mkgold(600 + mrn2(300), lev, x, y, mrng());
-                if (!mrn2(3) && !is_pool(lev, x, y))
-                    maketrap(lev, x, y, mrn2(3) ? LANDMINE : SPIKED_PIT,
+                if (!mrn2(3) && !is_pool(lev, x, y)) {
+                    maketrap(lev, x, y, (mrn2(3) ? LANDMINE : SPIKED_PIT),
                              mrng());
+                }
             }
     } else if (Role_if(PM_PRIEST) && In_quest(&lev->z)) {
         /* less chance for undead corpses (lured from lower morgues) */
@@ -2887,6 +3054,8 @@ fixup_special(struct level *lev)
             if (mtmp->isshk)
                 mongone(mtmp);
         }
+    } else if (Is_advent_calendar(&lev->z)) {
+    	fill_advent_calendar(lev, TRUE);
     }
 
     if (lev_message) {

@@ -618,10 +618,10 @@ netgame_mainmenu(struct server_info *server)
         {DISCONNECT, MI_NORMAL, 0, "disconnect", 'q', 'x', 0}
     };
 
-    snprintf(verstr, ARRAY_SIZE(verstr), "Client version: %d.%d.%d",
+    snprintf(verstr, ARRAY_SIZE(verstr), "Client version: 4.%d.%d.%d",
              VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
     snprintf(server_verstr, ARRAY_SIZE(server_verstr),
-             "Server version: %d.%d.%d", nhnet_server_ver.major,
+             "Server version: 4.%d.%d.%d", nhnet_server_ver.major,
              nhnet_server_ver.minor, nhnet_server_ver.patchlevel);
 
     /* In connection-only mode, we can't read the config file until we're
@@ -632,7 +632,7 @@ netgame_mainmenu(struct server_info *server)
     }
 
     while (1) {
-        if (COLS >= 100) {
+        if (LINES >= 30) {
             nhlogo = nhlogo_large;
             logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
         } else {

@@ -23,7 +23,7 @@
 
 # define TELL           1
 # define NOTELL         0
-# define BOLT_LIM       8       /* from this distance ranged attacks will be
+# define BOLT_LIM       12      /* from this distance ranged attacks will be
                                    made */
 # define MAX_CARR_CAP   1000    /* so that boulders can be heavier */
 
@@ -75,7 +75,8 @@
 # define STONING         9
 # define TURNED_SLIME   10
 # define EXPLODED       11
-# define GENOCIDED      12
+# define DISINTEGRATED  12
+# define GENOCIDED      13
 # define LAST_KILLER    (GENOCIDED)
 # define NUM_KILLERS    (LAST_KILLER + 1)
 # define TRICKED        13
@@ -178,7 +179,8 @@ struct distmap_state {
 # define INVORDER_SORT    0x8   /* sort objects by packorder */
 # define SIGNAL_NOMENU    0x10  /* return -1 rather than 0 if none allowed */
 # define SIGNAL_ESCAPE	  0x20  /* return -2 rather than 0 if menu escaped */
-# define FEEL_COCKATRICE 0x40  /* engage cockatrice checks and react */
+# define FEEL_COCKATRICE  0x40  /* engage cockatrice checks and react */
+# define SHOW_MAGIC_CHEST 0x80  /* show magic chest as the first entry */
 
 /* Flags to control query_category() */
 /* BY_NEXTHERE used by query_category() too, so skip 0x01 */

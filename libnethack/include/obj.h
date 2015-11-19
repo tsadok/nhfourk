@@ -17,6 +17,7 @@ enum obj_where {
     OBJ_BURIED, /* object buried */
     OBJ_ONBILL, /* object on shk bill */
     OBJ_MIGRATING, /* object in limbo between levels */
+    OBJ_MAGIC_CHEST, /* object in shared contents of magic chests */
     NOBJ_STATES
 };
 
@@ -83,6 +84,7 @@ struct obj {
 # define norevive oeroded2
     unsigned oerodeproof:1;     /* erodeproof weapon/armor */
     unsigned olocked:1;         /* object is locked */
+# define axeinuse olocked       /* axe collateral damage does not chain */
     unsigned obroken:1;         /* lock has been broken */
     unsigned otrapped:1;        /* container is trapped */
     /* or accidental tripped rolling boulder trap */
@@ -153,8 +155,7 @@ struct obj {
                               objects[otmp->otyp].oc_skill <= P_SABER)
 # define is_pole(otmp)       ((otmp->oclass == WEAPON_CLASS || \
                              otmp->oclass == TOOL_CLASS) && \
-                              (objects[otmp->otyp].oc_skill == P_POLEARMS || \
-                              objects[otmp->otyp].oc_skill == P_LANCE))
+                              objects[otmp->otyp].oc_skill == P_POLEARMS)
 # define is_spear(otmp)      (otmp->oclass == WEAPON_CLASS && \
                               objects[otmp->otyp].oc_skill >= P_SPEAR && \
                               objects[otmp->otyp].oc_skill <= P_JAVELIN)

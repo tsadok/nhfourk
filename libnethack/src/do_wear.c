@@ -203,6 +203,10 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     /* Change the item in the slot. */
     if (equipping) {
         setworn(o, W_MASK(slot));
+        if (slot <= os_last_armor)
+            break_conduct(conduct_clothing);
+        else if (slot <= os_last_worn)
+            break_conduct(conduct_jewelry);
         if (msgtype != em_silent)
             on_msg(o);
         if (o->cursed && !o->bknown) {
@@ -349,15 +353,15 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case ORCISH_HELM:
     case HELM_OF_TELEPATHY:
         break;
-    case HELM_OF_BRILLIANCE:
-        adj_abon(o, equipsgn * o->spe);
-        break;
     case CORNUTHAUM:
         /* people think marked wizards know what they're talking about, but it
            takes trained arrogance to pull it off, and the actual enchantment
-           of the hat is irrelevant. */
+           of the hat is irrelevant (except for the brilliance effect now). */
         ABON(A_CHA) += equipsgn * (Role_if(PM_WIZARD) ? 1 : -1);
         makeknown(otyp);
+        /* fall through */
+    case HELM_OF_BRILLIANCE:
+        adj_abon(o, equipsgn * o->spe);
         break;
     case HELM_OF_OPPOSITE_ALIGNMENT:
         if (!equipping)
@@ -416,6 +420,7 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case AMULET_OF_LIFE_SAVING:
     case AMULET_VERSUS_POISON:
     case AMULET_OF_REFLECTION:
+    case AMULET_OF_FLYING:
     case AMULET_OF_MAGICAL_BREATHING:
     case FAKE_AMULET_OF_YENDOR:
         break;
@@ -1370,11 +1375,12 @@ known_welded(boolean spoil)
 static int
 slot_count(struct monst *mon, enum objslot slot, boolean noisy)
 {
+    const struct permonst *racedat = (mon == &youmonst) ? URACEDATA : mon->data;
     if ((slot == os_arm || slot == os_armc || slot == os_armu) &&
-        (breakarm(mon->data) || sliparm(mon->data)) &&
+        (breakarm(racedat) || sliparm(racedat)) &&
         /* TODO: get m_dowear() to look at this function rather than
            repeating the check */
-        (slot != os_armc || mon->data->msize != MZ_SMALL) &&
+        (slot != os_armc || racedat->msize != MZ_SMALL) &&
         /* Hobbits have an os_arm slot that can be used for elven armor only */
         (raceptr(mon) != &mons[PM_HOBBIT] || slot != os_arm)) {
         if (noisy)
@@ -1389,15 +1395,15 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
        helmet or boots. This has been preserved, but I'm not sure it's what we
        want; at least, the function is misleadingly named in that case. */
     if ((slot == os_armg || slot == os_arms || slot == os_armh) &&
-        (nohands(mon->data) || verysmall(mon->data))) {
+        (nohands(racedat) || verysmall(racedat))) {
         if (noisy)
             pline(msgc_cancelled, "You can't balance the %s on your %s.",
                   c_slotnames[slot], body_part(BODY));
         return 0;
     }
     if (slot == os_armf &&
-        ((nohands(mon->data) || verysmall(mon->data) ||
-          slithy(mon->data) || mon->data->mlet == S_CENTAUR))) {
+        ((nohands(racedat) || verysmall(racedat) ||
+          slithy(racedat) || racedat->mlet == S_CENTAUR))) {
         if (noisy)
             pline(msgc_cancelled, "You can't fit boots on your %s.",
                   makeplural(mbodypart(mon, FOOT)));
@@ -1405,7 +1411,7 @@ slot_count(struct monst *mon, enum objslot slot, boolean noisy)
     }
 
     /* for doequip() */
-    if (slot == os_wep && cantwield(mon->data)) {
+    if (slot == os_wep && cantwield(racedat)) {
         if (noisy)
             pline(msgc_cancelled,
                   "You are physically incapable of holding items.");
@@ -1522,9 +1528,12 @@ canwearobj(struct obj *otmp, long *mask,
         return FALSE;
     } else if (slot == os_arm || slot == os_armu || slot == os_ringl) {
         if (uwep && bimanual(uwep) && known_welded(spoil)) {
-            pline(msgc, "You cannot do that while your hands "
-                  "are welded to your %s.",
-                  is_sword(uwep) ? "sword" : c_slotnames[os_wep]);
+            if (noisy)
+                pline(msgc, "You cannot do that while your hands "
+                      "%s your %s.",
+                      (objects[uwep->otyp].oc_material == WOOD) ?
+                      "are ingrown with" : "are welded to",
+                      is_sword(uwep) ? "sword" : c_slotnames[os_wep]);
             return FALSE;
         }
     }
@@ -1554,7 +1563,7 @@ canwearobj(struct obj *otmp, long *mask,
     /* Checks for specific slots */
     switch (slot) {
     case os_armh:
-        if (Upolyd && has_horns(youmonst.data) && !is_flimsy(otmp)) {
+        if (has_horns(URACEDATA) && !is_flimsy(otmp)) {
             /* (flimsy exception matches polyself handling) */
             pline(msgc, "The %s won't fit over your horn%s.", helmet_name(otmp),
                   plur(num_horns(youmonst.data)));
@@ -1586,12 +1595,15 @@ canwearobj(struct obj *otmp, long *mask,
 
     case os_armf:
         if (u.utrap &&
-                   (u.utraptype == TT_BEARTRAP || u.utraptype == TT_INFLOOR)) {
+                   (u.utraptype == TT_BEARTRAP || u.utraptype == TT_INFLOOR ||
+                    u.utraptype == TT_ICEBLOCK)) {
             if (u.utraptype == TT_BEARTRAP) {
                 pline(msgc, "Your %s is trapped!", body_part(FOOT));
             } else {
-                pline(msgc, "Your %s are stuck in the %s!",
-                      makeplural(body_part(FOOT)), surface(u.ux, u.uy));
+                if (noisy)
+                    pline(msgc, "Your %s are stuck in the %s!",
+                          u.utraptype == TT_ICEBLOCK ? "ice" :
+                          makeplural(body_part(FOOT)), surface(u.ux, u.uy));
             }
             return FALSE;
         }
@@ -1784,9 +1796,14 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
             pline(msgc, "The bear trap prevents you from pulling your %s out.",
                   body_part(FOOT));
             return FALSE;
-        } else if (u.utrap && u.utraptype == TT_INFLOOR) {
-            pline(msgc, "You are stuck in the %s, and cannot pull your %s out.",
-                  surface(u.ux, u.uy), makeplural(body_part(FOOT)));
+        } else if (u.utrap && (u.utraptype == TT_INFLOOR ||
+                               u.utraptype == TT_LAVA ||
+                               u.utraptype == TT_ICEBLOCK)) {
+            if (noisy)
+                pline(msgc,
+                      "You are stuck in the %s, and cannot pull your %s out.",
+                      u.utraptype == TT_ICEBLOCK ? "ice" : surface(u.ux, u.uy),
+                      makeplural(body_part(FOOT)));
             return FALSE;
         }
     }
@@ -2206,7 +2223,8 @@ adj_abon(struct obj *otmp, schar delta)
         makeknown(uarmg->otyp);
         ABON(A_DEX) += (delta);
     }
-    if (uarmh && uarmh == otmp && otmp->otyp == HELM_OF_BRILLIANCE && delta) {
+    if (uarmh && uarmh == otmp && delta &&
+        (otmp->otyp == HELM_OF_BRILLIANCE || otmp->otyp == CORNUTHAUM)) {
         makeknown(uarmh->otyp);
         ABON(A_INT) += (delta);
         ABON(A_WIS) += (delta);

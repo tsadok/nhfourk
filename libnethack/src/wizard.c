@@ -24,12 +24,12 @@ static const int nasties[] = {
     PM_COCKATRICE, PM_ETTIN, PM_STALKER, PM_MINOTAUR, PM_RED_DRAGON,
     PM_BLACK_DRAGON, PM_GREEN_DRAGON, PM_OWLBEAR, PM_PURPLE_WORM,
     PM_ROCK_TROLL, PM_XAN, PM_GREMLIN, PM_UMBER_HULK, PM_VAMPIRE_LORD,
-    PM_XORN, PM_ZRUTY, PM_ELF_LORD, PM_ELVENKING, PM_YELLOW_DRAGON,
-    PM_LEOCROTTA, PM_BALUCHITHERIUM, PM_CARNIVOROUS_APE, PM_FIRE_GIANT,
-    PM_COUATL, PM_CAPTAIN, PM_WINGED_GARGOYLE, PM_MASTER_MIND_FLAYER,
-    PM_FIRE_ELEMENTAL, PM_JABBERWOCK, PM_ARCH_LICH, PM_OGRE_KING,
-    PM_OLOG_HAI, PM_IRON_GOLEM, PM_OCHRE_JELLY, PM_GREEN_SLIME,
-    PM_DISENCHANTER
+    PM_XORN, PM_ELF_LORD, PM_ELVENKING, PM_YELLOW_DRAGON, PM_LEOCROTTA,
+    PM_BALUCHITHERIUM, PM_FIRE_GIANT, PM_COUATL, PM_CAPTAIN, 
+    PM_WINGED_GARGOYLE, PM_MASTER_MIND_FLAYER, PM_FIRE_ELEMENTAL, 
+    PM_JABBERWOCK, PM_ARCH_LICH, PM_OGRE_KING, PM_OLOG_HAI,
+    PM_IRON_GOLEM, PM_OCHRE_JELLY, PM_GREEN_SLIME, PM_DISENCHANTER,
+    PM_ISLAND_NYMPH
 };
 
 static const unsigned wizapp[] = {
@@ -284,6 +284,8 @@ void
 strategy(struct monst *mtmp, boolean magical_target)
 {
     boolean chases_player = !mtmp->mpeaceful || mtmp->isshk || mtmp->mtame;
+    if (Stormprone)
+        chases_player = TRUE;
 
     set_apparxy(mtmp);
 
@@ -680,6 +682,15 @@ clonewiz(void)
     }
 }
 
+static const char *const nastymessage[] = {
+    "The infidel must be destroyed!",
+    "Kill the invader and bring back my property!",
+    "Havoc!",
+    "Surround the enemy!",
+    "Send that foul tresspasser packing right back up to the surface!",
+    "For the weary there can be no respite until the adversary is vanquished!",
+};
+
 /* also used by newcham() */
 int
 pick_nasty(void)
@@ -715,35 +726,54 @@ nasty(struct monst *mcast)
         msummon(NULL, &level->z);       /* summons like WoY */
         count++;
     } else {
-        tmp = (u.ulevel > 3) ? u.ulevel / 3 : 1;       /* just in case -- rph */
-        for (i = rnd(tmp); i > 0; --i)
-            for (j = 0; j < 20; j++) {
-                int makeindex;
+        tmp = 3 + rnd(mcast ? (1 + mcast->m_lev / 5) :
+                      (5 + mvitals[PM_WIZARD_OF_YENDOR].died));
+        for (i = tmp; i > 0; --i) {
+            int makeindex;
+            j = 0;
+            /* Summon selection choice:
+             * - Don't generate higher-level spellcasters to avoid
+             *   chain summoning
+             * - Don't generate lawful if chaotic or vice versa
+             * - Also re-roll if the target is genocided
+             * Only re-roll like this 20 times. If our target still
+             * fails creation (only possible when genocided), generate
+             * a random monster instead */
+            do {
+                makeindex = pick_nasty();
+                j++;
+            } while (((mcast && attacktype(&mons[makeindex], AT_MAGC) &&
+                       monstr[makeindex] >= monstr[monsndx(mcast->data)]) ||
+                      (mons[makeindex].maligntyp &&
+                       sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
+                      (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);
 
-                /* Don't create more spellcasters of the monsters' level or
-                   higher--avoids chain summoners filling up the level. */
-                do {
-                    makeindex = pick_nasty();
-                } while (mcast && attacktype(&mons[makeindex], AT_MAGC) &&
-                         monstr[makeindex] >= monstr[monsndx(mcast->data)]);
-                /* do this after picking the monster to place */
-                if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
-                    !enexto(&bypos, level, mcast->mux, mcast->muy,
-                            &mons[makeindex]))
-                    continue;
-                if (((mtmp = makemon(&mons[makeindex], level, bypos.x, bypos.y,
-                                     NO_MM_FLAGS))) != 0) {
-                    mtmp->msleeping = 0;
-                    msethostility(mtmp, TRUE, TRUE);
-                } else  /* GENOD? */
-                    mtmp = makemon(NULL, level, bypos.x, bypos.y, NO_MM_FLAGS);
-                if (mtmp &&
-                    (mtmp->data->maligntyp == 0 ||
-                     sgn(mtmp->data->maligntyp) == sgn(castalign))) {
+            /* do this after picking the monster to place */
+            if (mcast && aware_of_u(mcast) && !engulfing_u(mcast) &&
+                !enexto(&bypos, level, mcast->mux, mcast->muy,
+                        &mons[makeindex]))
+                continue;
+            mtmp = makemon(&mons[makeindex], level, bypos.x, bypos.y,
+                           NO_MM_FLAGS);
+            if (!mtmp) /* probably genocided; try for a random monster */
+                mtmp = makemon(NULL, level, bypos.x, bypos.y, NO_MM_FLAGS);
+            if (mtmp != 0) {
+                mtmp->msleeping = 0;
+                msethostility(mtmp, TRUE, TRUE);
+                /* increase counter for seen monsters */
+                if (canseemon(mtmp))
                     count++;
-                    break;
-                }
             }
+        }
+        if (count > 1) {
+            if (mvitals[PM_WIZARD_OF_YENDOR].died && !mcast)
+                pline(msgc_npcvoice, "\"%s\"",
+                      nastymessage[rn2(SIZE(nastymessage))]);
+            else
+                pline(msgc_youdiscover,
+                      "Monsters suddenly arrive from nowhere!");
+            win_pause_output(P_MESSAGE);    /* --More-- */
+        }
     }
     return count;
 }

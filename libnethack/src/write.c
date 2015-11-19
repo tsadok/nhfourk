@@ -19,7 +19,7 @@ cost(struct obj *otmp)
     case SCR_GOLD_DETECTION:
     case SCR_FOOD_DETECTION:
     case SCR_MAGIC_MAPPING:
-    case SCR_AMNESIA:
+    case SCR_WATER:
     case SCR_FIRE:
     case SCR_EARTH:
         return 8;
@@ -50,6 +50,9 @@ cost(struct obj *otmp)
     case SCR_GENOCIDE:
         return 30;
 /*      break; */
+    case SCR_WISHING:
+        /* Yeah, sure, wish for a marker, write a scroll of wishing, recharge... */
+        return 999;
     case SCR_BLANK_PAPER:
     default:
         impossible("You can't write such a weird scroll!");
@@ -179,7 +182,6 @@ found:
        no custom RNG used: too much influence from player actions */
     actualcost = rn1(basecost / 2, basecost / 2);
     curseval = bcsign(pen) + bcsign(paper);
-    exercise(A_WIS, TRUE);
     /* dry out marker */
     if (pen->spe < actualcost) {
         pen->spe = 0;

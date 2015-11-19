@@ -12,6 +12,7 @@ static void dosinkring(struct obj *);
 static int drop(struct obj *);
 
 static int menu_drop(int);
+static void on_mines_level(const struct level *);
 static void final_level(void);
 
 /* static boolean badspot(XCHAR_P,XCHAR_P); */
@@ -144,7 +145,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
     if (obj->otyp == BOULDER && boulder_hits_pool(obj, x, y, FALSE))
         return TRUE;
     else if (obj->otyp == BOULDER && (t = t_at(lev, x, y)) != 0 &&
-             (t->ttyp == PIT || t->ttyp == SPIKED_PIT || t->ttyp == TRAPDOOR ||
+             (is_pit_trap(t->ttyp) || t->ttyp == TRAPDOOR ||
               t->ttyp == HOLE)) {
         if (((mtmp = m_at(lev, x, y)) && mtmp->mtrapped) ||
             (u.utrap && u.ux == x && u.uy == y)) {
@@ -190,7 +191,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
         return TRUE;
     } else if (is_lava(lev, x, y)) {
         return fire_damage(obj, FALSE, TRUE, x, y);
-    } else if (is_pool(lev, x, y)) {
+    } else if (is_damp_terrain(lev, x, y)) {
         /* Reasonably bulky objects (arbitrary) splash when dropped. If you're
            floating above the water even small things make noise. Stuff dropped 
            near fountains always misses. */
@@ -203,14 +204,15 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
                     pline(msgc_consequence, "Plop!");
                 }
             }
-            map_background(x, y, 0);
+            /* map_background(x, y, 0); *//* Can't tell what kind of water. */
             if (lev == level)
                 newsym(x, y);
         }
-        return water_damage(obj, NULL, FALSE) == 3;
+        /* L: water_damage() moved to place_object() */
+        /* return water_damage(obj, NULL, FALSE) == 3; */
     } else if (u.ux == x && u.uy == y && (!u.utrap || u.utraptype != TT_PIT) &&
                (t = t_at(lev, x, y)) != 0 && t->tseen &&
-               (t->ttyp == PIT || t->ttyp == SPIKED_PIT)) {
+               is_pit_trap(t->ttyp)) {
         /* you escaped a pit and are standing on the precipice */
         if (Blind)
             You_hear(msgc_consequence, "%s tumble downwards.", the(xname(obj)));
@@ -413,8 +415,15 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
         obj->in_use = FALSE;
         /* the caller has checked this is safe */
         dropx(obj);
-    } else
-        useup(obj);
+    } else {
+        /* Rather than destroy the ring, we bury it in the ground under the
+         * sink.  In order to get it back, the player must destroy the sink. */
+        obj->in_use = FALSE;
+        freeinv(obj);
+        obj->ox = u.ux;
+        obj->oy = u.uy;
+        add_to_buried(obj);
+    }
 }
 
 
@@ -734,15 +743,18 @@ dodown(boolean autodig_ok)
         trap = t_at(level, u.ux, u.uy);
         can_fall = trap && (trap->ttyp == TRAPDOOR || trap->ttyp == HOLE);
         if (!trap ||
-            (trap->ttyp != TRAPDOOR && trap->ttyp != HOLE && trap->ttyp != PIT
-             && trap->ttyp != SPIKED_PIT)
+            (trap->ttyp != TRAPDOOR && trap->ttyp != HOLE && 
+             !is_pit_trap(trap->ttyp))
             || (!can_fall_thru(level) && can_fall) || !trap->tseen) {
 
             if (flags.autodig && autodig_ok && flags.autodigdown &&
-                flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                flags.occupation == occ_none &&
+                ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
+                 (uwep && is_pick(uwep)))) {
                 struct nh_cmd_arg arg;
                 arg_from_delta(0, 0, 1, &arg);
-                return use_pick_axe(uwep, &arg);
+                return use_pick_axe(((uwep && is_pick(uwep)) ?
+                                     uwep : NULL), &arg);
             } else {
                 pline(msgc_mispaste, "You can't go down here.");
                 return 0;
@@ -780,16 +792,18 @@ dodown(boolean autodig_ok)
     }
 
     if (trap) {
-        if (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) {
+        if (is_pit_trap(trap->ttyp)) {
             if (u.utrap && (u.utraptype == TT_PIT)) {
                 if (flags.autodig && autodig_ok && flags.autodigdown &&
-                    flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                    flags.occupation == occ_none &&
+                    ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
+                     (uwep && is_pick(uwep)))) {
                     struct nh_cmd_arg arg;
                     arg_from_delta(0, 0, 1, &arg);
                     return use_pick_axe(uwep, &arg);
                 } else {
-                    /* TODO: could do with a better YAFM here */
-                    pline(msgc_mispaste, "You are already in the pit.");
+                    pline(msgc_mispaste,
+                          "You have already capitulated to gravity.");
                 }
             } else {
                 u.utrap = 1;
@@ -924,61 +938,6 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
         /* The caller should be doing this themselves. */
         impossible("Escaping via goto_level?");
         done(ESCAPED, NULL);
-    }
-
-    /*
-     * If you have the amulet and are trying to get out of Gehennom, going up a
-     * set of stairs sometimes does some very strange things! Biased against
-     * law and towards chaos, but not nearly as strongly as it used to be
-     * (prior to 3.2.0). Additionally, the documentation as of 3.2.0 didn't
-     * match the actual distribution:
-     *
-     *  pre-3.20 (documented)      3.2.0 (documented)         3.2.0 (actual)
-     * "up"   L     N     C     "up"   L     N     C     "up"   L     N     C
-     *  +1  75.00 75.00 75.00    +1  75.00 75.00 75.00    +1  75.00 75.00 75.00
-     *   0   0.00 12.50 25.00     0   6.25  8.33 12.50     0   6.25  8.33 12.50
-     *  -1   8.33  4.17  0.00    -1   6.25  8.33 12.50    -1  11.45 12.50 12.50
-     *  -2   8.33  4.17  0.00    -2   6.25  8.33  0.00    -2   5.21  4.17  0.00
-     *  -3   8.33  4.17  0.00    -3   6.25  0.00  0.00    -3   2.08  0.00  0.00
-     *
-     * 4.3.0 reproduces the actual distribution from 3.2.0 and later (i.e. the
-     * rightmost table above).
-     */
-    if (Inhell && up && Uhave_amulet && !newdungeon && !portal &&
-        (dunlev(&u.uz) < dunlevs_in_dungeon(&u.uz) - 3)) {
-        if (!rn2_on_rng(4, rng_mysterious_force)) {
-            /* Note: to keep the RNG behaviour the same between different
-               games on the same seed (with potentially different alignments),
-               we generate a distance to send back in the range 0 to 11, then
-               scale down to 0..1, 0..2, or 0..3 as appropriate;
-               assign_rnd_level uses one RNG, so burn an RNG to match if we're
-               not calling it */
-            int odds = 3 + (int)u.ualign.type,  /* 2..4 */
-                diff = odds <= 1 ? 0 /* paranoia */
-                : rn2_on_rng(12, rng_mysterious_force) / (12 / odds);
-
-            if (diff != 0) {
-                assign_rnd_level(newlevel, &u.uz, diff);
-                /* if inside the tower, stay inside */
-                if (was_in_W_tower && !On_W_tower_level(newlevel))
-                    diff = 0;
-            } else
-                rn2_on_rng(12, rng_mysterious_force); /* burn a random number */
-
-            if (diff == 0)
-                assign_level(newlevel, &u.uz);
-
-            new_ledger = ledger_no(newlevel);
-
-            pline(msgc_substitute,
-                  "A mysterious force momentarily surrounds you...");
-            if (on_level(newlevel, &u.uz)) {
-                safe_teleds(FALSE);
-                next_to_u();
-                return;
-            } else
-                at_stairs = at_ladder = FALSE;
-        }
     }
 
     /* Prevent the player from going past the first quest level unless (s)he
@@ -1305,6 +1264,14 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
         }
     }
 
+    if ((getmonth()==12) && (getmday() < 25)) {
+        if (mk_advcal_portal(level))
+            pline(msgc_levelsound, "You smell chocolate!");
+    }
+    if (Is_advent_calendar(&u.uz)) {
+        fill_advent_calendar(level, FALSE);
+    }
+
     /* once Croesus is dead, his alarm doesn't work any more */
     if (Is_knox(&u.uz) && (new || !mvitals[PM_CROESUS].died)) {
         pline(msgc_branchchange, "You penetrated a high security area!");
@@ -1316,6 +1283,8 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
 
     if (on_level(&u.uz, &astral_level))
         final_level();
+    else if (In_mines(&u.uz))
+        on_mines_level(level);
     else
         onquest(&orig_d);
 
@@ -1328,6 +1297,18 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     pickup(1, flags.interaction_mode);
 }
 
+/* This runs when the player enters a Mines level.  Its job is to record when
+   the player first reaches the bottom, mainly for livelog and xlog purposes. */
+static void
+on_mines_level(const struct level *lev)
+{
+    if (!In_mines(&lev->z))
+        return;
+    if (!can_dig_down(lev)) {
+        if (!historysearch("reached the bottom of the Mines", TRUE))
+            historic_event(FALSE, TRUE, "reached the bottom of the Mines.");
+    }
+}
 
 /* This runs as the player arrives on Astral. At this point, the Astral level
    RNG is in a consistent state between all games. We use it as far as it keeps
@@ -1354,11 +1335,12 @@ final_level(void)
     int angel_xlvl  = rn2_on_rng(8, astral_rng) + 15;
 
     /* create a guardian angel next to player, if worthy */
-    if (Conflict) {
+    if (Conflict || Stormprone) {
         /* unworthy: generate one angel on astral_rng (for consistency), others
            on the main RNG */
         pline(msgc_levelwarning,
-              "A voice booms: \"Thy desire for conflict shall be fulfilled!\"");
+              "A voice booms: \"Thy desire for %s shall be fulfilled!\"",
+              Conflict ? "conflict" : "stormy relationships");
         for (i = angel_count; i > 0; --i) {
             mm.x = u.ux;
             mm.y = u.uy;

@@ -10,10 +10,10 @@
 #define EDITLEVEL 0
 
 #define COPYRIGHT_BANNER_A \
-"NetHack 4, Copyright (C) 2009-2015; based on NetHack, Copyright (C) 1985-2006"
+"NetHack Fourk, Copyright 2015; based on NetHack, Copyright 1985-2003"
 
 #define COPYRIGHT_BANNER_B \
-"  NetHack 4 by Alex Smith, Daniel Thaler and many other contributors."
+"  NetHack Fourk is based on NetHack 4 by Alex Smith and many others."
 
 #define COPYRIGHT_BANNER_C \
 "  NetHack by Stichting Mathematisch Centrum and M. Stephenson. See " \
@@ -29,8 +29,8 @@
  * with all four numbers specified as two hexadecimal digits.
  * Keep this consistent with nethack.h.
  */
-#define VERSION_COMPATIBILITY 0x04030000L       /* 4.3.0-0 */
-
+#define VERSION_COMPATIBILITY 0x03000400L       /* [4.]3.0.4-0 */
+/* (Yes, we are a fork of NetHack 4.  The 4. is implicit.) */
 
 /*patchlevel.h*/
 

@@ -93,7 +93,7 @@ dowaterdemon(void)
                 pline(msgc_intrgain,
                       "Grateful for %s release, %s grants you a wish!",
                       mhis(mtmp), mhe(mtmp));
-                makewish();
+                makewish(1);
                 mongone(mtmp);
             } else if (t_at(level, mtmp->mx, mtmp->my))
                 mintrap(mtmp);
@@ -159,8 +159,8 @@ gush(int x, int y, void *poolcnt)
         pline(msgc_consequence,
               "Water gushes forth from the overflowing fountain!");
 
-    /* Put a pool at x, y */
-    level->locations[x][y].typ = POOL;
+    /* Put a pool of shallow water at x, y */
+    level->locations[x][y].typ = PUDDLE;
     /* No kelp! */
     del_engr_at(level, x, y);
     water_damage_chain(level->objects[x][y], TRUE);
@@ -182,7 +182,6 @@ dofindgem(void)
               level, u.ux, u.uy, FALSE, FALSE, rng_main);
     SET_FOUNTAIN_LOOTED(u.ux, u.uy);
     newsym(u.ux, u.uy);
-    exercise(A_WIS, TRUE);      /* a discovery! */
 }
 
 void
@@ -264,7 +263,6 @@ drinkfountain(void)
         }
         win_pause_output(P_MESSAGE);
         pline(msgc_consequence, "A wisp of vapor escapes the fountain...");
-        exercise(A_WIS, TRUE);
         level->locations[u.ux][u.uy].blessedftn = 0;
         return;
     }
@@ -308,17 +306,14 @@ drinkfountain(void)
             }
             HSee_invisible |= FROMOUTSIDE;
             newsym(u.ux, u.uy);
-            exercise(A_WIS, TRUE);
             break;
         case 18:       /* See monsters */
             monster_detect(NULL, 0);
-            exercise(A_WIS, TRUE);
             break;
         case 19:       /* Self-knowledge */
             pline(msgc_youdiscover, "You feel self-knowledgeable...");
             win_pause_output(P_MESSAGE);
             enlightenment(0);
-            exercise(A_WIS, TRUE);
             pline_implied(msgc_info, "The feeling subsides.");
             break;
         case 20:       /* Scare monsters */ 
@@ -384,6 +379,12 @@ drinkfountain(void)
 void
 dipfountain(struct obj *obj)
 {
+    int excaldifficulty = Role_if(PM_KNIGHT) ?
+        ((u.ulevel >= 5) ? 1 : 6 - u.ulevel) :
+        Role_if(PM_BARBARIAN) ?
+        ((u.ulevel >= 10) ? 1 : 10 - u.ulevel) :
+        ((u.ulevel >= 15) ? 1 : 15 - u.ulevel);
+
     if (Levitation) {
         floating_above("fountain");
         return;
@@ -391,8 +392,8 @@ dipfountain(struct obj *obj)
 
     /* Don't grant Excalibur when there's more than one object.  */
     /* (quantity could be > 1 if merged daggers got polymorphed) */
-    if (obj->otyp == LONG_SWORD && obj->quan == 1L && u.ulevel >= 5 &&
-        !obj->oartifact && !rn2_on_rng(6, rng_excalibur) &&
+    if (obj->otyp == LONG_SWORD && obj->quan == 1L &&
+        !obj->oartifact && !rn2_on_rng(excaldifficulty, rng_excalibur) &&
         !exist_artifact(LONG_SWORD, artiname(ART_EXCALIBUR))) {
 
         if (u.ualign.type != A_LAWFUL) {
@@ -499,7 +500,6 @@ dipfountain(struct obj *obj)
                 pline(msgc_itemloss,
                       "You lost some of your money in the fountain!");
                 CLEAR_FOUNTAIN_LOOTED(u.ux, u.uy);
-                exercise(A_WIS, FALSE);
             }
         }
         break;
@@ -517,7 +517,6 @@ dipfountain(struct obj *obj)
         if (!Blind)
             pline(msgc_youdiscover,
                   "Far below you, you see coins glistening in the water.");
-        exercise(A_WIS, TRUE);
         newsym(u.ux, u.uy);
         break;
     }
@@ -594,7 +593,6 @@ drinksink(void)
             pline(msgc_youdiscover, "You find a ring in the sink!");
             mkobj_at(RING_CLASS, level, u.ux, u.uy, TRUE, rng_sink_ring);
             level->locations[u.ux][u.uy].looted |= S_LRING;
-            exercise(A_WIS, TRUE);
             newsym(u.ux, u.uy);
         } else
             pline(msgc_noconsequence,

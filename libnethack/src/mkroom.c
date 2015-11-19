@@ -21,11 +21,10 @@ static boolean isbig(struct mkroom *);
 static struct mkroom *pick_room(struct level *lev, boolean strict, enum rng);
 static void mkshop(struct level *lev);
 static void mkzoo(struct level *lev, int type, enum rng rng);
+static void mkdragonhall(struct level *lev, int type, enum rng rng);
 static void mkswamp(struct level *lev);
 static void mktemple(struct level *lev);
 static coord *shrine_pos(struct level *lev, int roomno);
-static const struct permonst *morguemon(const d_level *dlev, enum rng rng);
-static const struct permonst *squadmon(const d_level *dlev);
 static void save_room(struct memfile *mf, struct mkroom *);
 static void rest_room(struct memfile *mf, struct level *lev, struct mkroom *r);
 static boolean has_dnstairs(struct level *lev, struct mkroom *);
@@ -80,17 +79,22 @@ mkroom(struct level *lev, int roomtype)
         case LEPREHALL:
             mkzoo(lev, LEPREHALL, rng_main);
             break;
+        case DRAGONHALL:
+            mkdragonhall(lev, DRAGONHALL, rng_main);
+            break;
         case COCKNEST:
             mkzoo(lev, COCKNEST, rng_main);
             break;
         case ANTHOLE:
             mkzoo(lev, ANTHOLE, rng_main);
             break;
+        case CHESTROOM:
+            impossible("Tried to make a magic chest room in mkroom().");
+            break;
         default:
             impossible("Tried to make a room of type %d.", roomtype);
         }
 }
-
 
 static void
 mkshop(struct level *lev)
@@ -112,6 +116,8 @@ mkshop(struct level *lev)
             continue;
         if (has_dnstairs(lev, sroom) || has_upstairs(lev, sroom))
             continue;
+        if (sroom->irregular)
+            continue;
         if ((wizard && ep && sroom->doorct != 0) || sroom->doorct == 1)
             break;
     }
@@ -123,6 +129,9 @@ mkshop(struct level *lev)
                 lev->locations[x][y].lit = 1;
         sroom->rlit = 1;
     }
+
+    /* shops should always be rectangular */
+    //rectangularize(lev, sroom);
 
     if (styp < 0) {
         /* pick a shop type at random */
@@ -182,6 +191,17 @@ mkzoo(struct level *lev, int type, enum rng rng)
     if ((sroom = pick_room(lev, FALSE, rng)) != 0) {
         sroom->rtype = type;
         fill_zoo(lev, sroom, rng);
+    }
+}
+
+static void
+mkdragonhall(struct level *lev, int type, enum rng rng)
+{
+    struct mkroom *sroom;
+
+    if ((sroom = pick_room(lev, FALSE, rng)) != 0) {
+        sroom->rtype = type;
+        fill_dragonhall(lev, sroom, rng);
     }
 }
 
@@ -261,7 +281,7 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
                           (type == ANTHOLE) ? antholemon(&lev->z) :
                           NULL, lev, sx, sy,
                           rng == rng_main ? NO_MM_FLAGS : MM_ALLLEVRNG);
-            if (mon) {
+            if (mon && !resists_sleep(mon)) {
                 mon->msleeping = 1;
                 if (type == COURT && mon->mpeaceful)
                     msethostility(mon, TRUE, TRUE);
@@ -331,6 +351,147 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
     }
 }
 
+void
+fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
+{
+    int px, py, i, imax, cutoffone, cutofftwo, cutoffthree;
+    /* int rmno = (sroom - lev->rooms) + ROOMOFFSET; */
+    coord pos[ROWNO * COLNO];
+    int babypm, adultpm, greatpm,
+        gemone, gemtwo, glass,
+        itemone, itemtwo, itemthree;
+    int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
+    int color = rn2_on_rng(6, rng);
+    struct monst *mon;
+    imax = 0;
+    switch (color) {
+    case 1: /* blue */
+        babypm    = harder ? PM_YOUNG_BLUE_DRAGON : PM_BABY_BLUE_DRAGON;
+        adultpm   = PM_BLUE_DRAGON;
+        greatpm   = harder ? PM_GREAT_BLUE_DRAGON : PM_BLUE_ELDER_DRAGON;
+        gemone    = SAPPHIRE;
+        gemtwo    = AQUAMARINE;
+        glass     = WORTHLESS_PIECE_OF_BLUE_GLASS;
+        itemone   = RIN_SHOCK_RESISTANCE;
+        itemtwo   = CORNUTHAUM;
+        itemthree = WAN_LIGHTNING;
+        break;
+    case 2: /* green */
+        babypm    = harder ? PM_YOUNG_GREEN_DRAGON : PM_BABY_GREEN_DRAGON;
+        adultpm   = PM_GREEN_DRAGON;
+        greatpm   = harder ? PM_GREAT_GREEN_DRAGON : PM_GREEN_ELDER_DRAGON;
+        gemone    = EMERALD;
+        gemtwo    = JADE;
+        glass     = WORTHLESS_PIECE_OF_GREEN_GLASS;
+        itemone   = RIN_POISON_RESISTANCE;
+        itemtwo   = POT_SICKNESS;
+        itemthree = AMULET_VERSUS_POISON;
+        break;
+    case 3: /* white */
+        babypm    = harder ? PM_YOUNG_WHITE_DRAGON : PM_BABY_WHITE_DRAGON;
+        adultpm   = PM_WHITE_DRAGON;
+        greatpm   = harder ? PM_GREAT_WHITE_DRAGON : PM_WHITE_ELDER_DRAGON;
+        gemone    = DIAMOND;
+        gemtwo    = OPAL;
+        glass     = WORTHLESS_PIECE_OF_WHITE_GLASS;
+        itemone   = RIN_COLD_RESISTANCE;
+        itemtwo   = ICE_BOX;
+        itemthree = WAN_COLD;
+        break;
+    case 4: /* orange */
+        babypm    = harder ? PM_YOUNG_ORANGE_DRAGON : PM_BABY_ORANGE_DRAGON;
+        adultpm   = PM_ORANGE_DRAGON;
+        greatpm   = harder ? PM_GREAT_ORANGE_DRAGON : PM_ORANGE_ELDER_DRAGON;
+        gemone    = JACINTH;
+        gemtwo    = AGATE;
+        glass     = WORTHLESS_PIECE_OF_ORANGE_GLASS;
+        itemone   = AMULET_OF_RESTFUL_SLEEP;
+        itemtwo   = ORANGE;
+        itemthree = WAN_SLEEP;
+        break;
+    default: /* red */
+        babypm    = harder ? PM_YOUNG_RED_DRAGON : PM_BABY_RED_DRAGON;
+        adultpm   = PM_RED_DRAGON;
+        greatpm   = harder ? PM_GREAT_RED_DRAGON : PM_RED_ELDER_DRAGON;
+        gemone    = RUBY;
+        gemtwo    = GARNET;
+        glass     = WORTHLESS_PIECE_OF_RED_GLASS;
+        itemone   = RIN_FIRE_RESISTANCE;
+        itemtwo   = SCR_FIRE;
+        itemthree = WAN_FIRE;
+        break;
+    }
+    i = 0;
+    /* Add all the viable floor positions in the room to a list: */
+    for (px = sroom->lx; px <= sroom->hx; px++) {
+        for (py = sroom->ly; py <= sroom->hy; py++) {
+            if (lev->locations[px][py].typ == ROOM ||
+                lev->locations[px][py].typ == CORR ||
+                lev->locations[px][py].typ == FOUNTAIN) {
+                coord p;
+                p.x = px; p.y = py;
+                pos[i] = p;
+                imax = i;
+                i++;
+            }
+        }
+    }
+    /* Shuffle the list of floor positions: */
+    for (i = 0; i <= imax; i++) {
+        int o = rn2_on_rng(imax, rng);
+        coord swap = pos[i];
+        pos[i] = pos[o];
+        pos[o] = swap;
+    }
+    cutoffone = 1 + rn2_on_rng(1 + imax / 15, rng);
+    cutofftwo = cutoffone + (imax / 10) + rn2_on_rng(1 + imax / 40, rng);
+    cutoffthree = imax - rn2_on_rng(1 + imax / 10, rng);
+    for (i = 0; i <= imax; i++) {
+        /* dragons hoard gold */
+        mkgold(10 + rn2_on_rng(7 + 5 * level_difficulty(&lev->z), rng),
+               lev, pos[i].x, pos[i].y, rng);
+        /* dragons hoard gems */
+        switch(rn2_on_rng(4,rng)) {
+        case 1:
+            mksobj_at(gemone, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 2:
+            mksobj_at(gemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        default:
+            mksobj_at(glass, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        }
+        /* dragons hoard things they like */
+        switch(rn2_on_rng(10, rng)) {
+        case 1:
+            mksobj_at(itemthree, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 2:
+            mksobj_at(CHEST, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 3:
+        case 4:
+        case 5:
+            mksobj_at(itemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        default:
+            mksobj_at(itemone, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        }
+        /* here be dragons */
+        if (i <= cutoffone) {
+            mon = makemon(&mons[greatpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+        } else if (i <= cutofftwo) {
+            mon = makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+        } else if (i <= cutoffthree) {
+            mon = makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
+        }
+        if (mon && !resists_sleep(mon))
+            mon->msleeping = 1;
+    }
+}
+
 /* make a swarm of undead around mm; uses the main RNG */
 void
 mkundead(struct level *lev, coord *mm, boolean revive_corpses, int mm_flags)
@@ -350,7 +511,7 @@ mkundead(struct level *lev, coord *mm, boolean revive_corpses, int mm_flags)
     lev->flags.graveyard = TRUE;        /* reduced chance for undead corpse */
 }
 
-static const struct permonst *
+const struct permonst *
 morguemon(const d_level *dlev, enum rng rng)
 {
     int i = rn2_on_rng(100, rng);
@@ -422,9 +583,12 @@ mkswamp(struct level *lev)
                                     MM_ALLLEVRNG);
                             eelct++;
                         }
-                    } else if (!rn2_on_rng(4, rng)) /* swamps tend to be moldy */
-                        makemon(mkclass(&lev->z, S_FUNGUS, 0, rng),
-                                lev, sx, sy, MM_ALLLEVRNG);
+                    } else {
+                        lev->locations[sx][sy].typ = PUDDLE;
+                        if (!rn2_on_rng(4, rng)) /* swamps tend to be moldy */
+                            makemon(mkclass(&lev->z, S_FUNGUS, 0, rng),
+                                    lev, sx, sy, MM_ALLLEVRNG);
+                    }
                 }
     }
 }
@@ -434,9 +598,65 @@ shrine_pos(struct level *lev, int roomno)
 {
     static coord buf;
     struct mkroom *troom = &lev->rooms[roomno - ROOMOFFSET];
+    short afcount[ROWNO + 1][COLNO + 1]; /* count of adjacent floor tiles */
+    short value[ROWNO + 1][COLNO + 1]; /* how central we think each tile is */
+    int candx[(ROWNO + 1) * (COLNO + 1)], candy[(ROWNO + 1) * (COLNO + 1)];
+    int afmax = 0, valmax = 0, candidates = 0;
+    int x, y, dx, dy;
 
     buf.x = troom->lx + ((troom->hx - troom->lx) / 2);
     buf.y = troom->ly + ((troom->hy - troom->ly) / 2);
+    if (lev->locations[buf.x][buf.y].typ == ROOM)
+        return &buf;
+    /* Count adjacent floor tiles (including the position itself) */
+    for (x = troom->lx; x <= troom->hx; x++)
+        for (y = troom->ly; y <= troom->hy; y++) {
+            afcount[x][y] = 0;
+            for (dx = -1; dx <= 1; dx++)
+                for (dy = -1; dy <= 1; dy++) {
+                    if (isok(x + dx, y + dy) &&
+                        lev->locations[x + dx][y + dy].typ == ROOM) {
+                        afcount[x][y]++;
+                    }
+                }
+            if (afcount[x][y] > afmax)
+                afmax = afcount[x][y];
+        }
+    /* Now count how many adjacent tiles have afmax adjacent tiles;
+       this is the tile's "value" as a shrine position, and any tile
+       with a maximum value here is an acceptable position. */
+    for (x = troom->lx; x <= troom->hx; x++)
+        for (y = troom->ly; y <= troom->hy; y++) {
+            value[x][y] = 0;
+            /* Only floor tiles can be considered: */
+            if (lev->locations[x][y].typ == ROOM) {
+                for (dx = -1; dx <= 1; dx++)
+                    for (dy = -1; dy <= 1; dy++) {
+                        if (isok(x + dx, y + dy) &&
+                            afcount[x + dx][y + dy] == afmax) {
+                            value[x][y]++;
+                        }
+                    }
+            }
+            if (value[x][y] > valmax)
+                valmax = value[x][y];
+        }
+    while (candidates == 0 && valmax > 0) {
+        for (x = troom->lx; x <= troom->hx; x++)
+            for (y = troom->ly; y <= troom->hy; y++) {
+                if (value[x][y] == valmax) {
+                    candx[candidates] = x;
+                    candy[candidates] = y;
+                    candidates++;
+                }
+            }
+        valmax--;
+    }
+    if (candidates > 0) {
+        int i = mklev_rn2(candidates, lev);
+        buf.x = candx[i];
+        buf.y = candy[i];
+    }
     return &buf;
 }
 
@@ -531,7 +751,7 @@ somexy(struct level *lev, struct mkroom *croom, coord *c, enum rng rng)
     if (croom->irregular) {
         i = (croom - lev->rooms) + ROOMOFFSET;
 
-        while (try_cnt++ < 100) {
+        while (try_cnt++ < 300) {
             c->x = somex(croom, rng);
             c->y = somey(croom, rng);
             if (!lev->locations[c->x][c->y].edge &&
@@ -548,8 +768,12 @@ somexy(struct level *lev, struct mkroom *croom, coord *c, enum rng rng)
     }
 
     if (!croom->nsubrooms) {
-        c->x = somex(croom, rng);
-        c->y = somey(croom, rng);
+        try_cnt = 0;
+        do {
+            c->x = somex(croom, rng);
+            c->y = somey(croom, rng);
+        } while (lev->locations[c->x][c->y].typ != ROOM &&
+                 (try_cnt++ < 30));
         return TRUE;
     }
 
@@ -558,7 +782,8 @@ somexy(struct level *lev, struct mkroom *croom, coord *c, enum rng rng)
     while (try_cnt++ < 100) {
         c->x = somex(croom, rng);
         c->y = somey(croom, rng);
-        if (IS_WALL(lev->locations[c->x][c->y].typ))
+        if (IS_WALL(lev->locations[c->x][c->y].typ) ||
+            lev->locations[c->x][c->y].typ == STONE)
             continue;
         for (i = 0; i < croom->nsubrooms; i++)
             if (inside_room(croom->sbrooms[i], c->x, c->y))
@@ -635,7 +860,7 @@ static const struct {
     PM_CAPTAIN, 1}
 };
 
-static const struct permonst *
+const struct permonst *
 squadmon(const d_level *dlev)
 {       /* return soldier types. */
     int sel_prob, i, cpro, mndx;

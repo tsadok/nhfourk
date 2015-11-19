@@ -167,8 +167,6 @@ outrumor(int truth,     /* 1=true, -1=false, 0=either */
         }
     }
     line = getrumor(truth, reading ? FALSE : TRUE, &truth_out, rng_main);
-    if (truth_out)
-        exercise(A_WIS, truth_out == 1);
     if (!*line)
         line = "NetHack rumors file closed for renovation.";
     switch (mechanism) {
@@ -313,7 +311,8 @@ int
 doconsult(struct monst *oracl)
 {
     int umoney = money_cnt(invent);
-    int u_pay, minor_cost = 50, major_cost = 500 + 50 * u.ulevel;
+    int u_pay, minor_cost = 50, major_cost = 200 + 10 * u.ulevel * log(u.ulevel);
+    int enlcost = 20 * u.ulevel;
     int add_xpts;
     const char *qbuf;
 
@@ -324,13 +323,34 @@ doconsult(struct monst *oracl)
     if (!oracl) {
         pline(msgc_cancelled, "There is no one here to consult.");
         return 0;
-    } else if (!oracl->mpeaceful) {
+    } else if (Stormprone || !oracl->mpeaceful) {
         pline(msgc_cancelled, "%s is in no mood for consultations.",
               Monnam(oracl));
         return 0;
     } else if (!umoney) {
         pline(msgc_cancelled, "You have no money.");
         return 0;
+    }
+
+    qbuf = msgprintf("\"Inquirest thou after enlightenment?\" (%d %s)",
+                     enlcost, currency(enlcost));
+    switch (ynq(qbuf)) {
+    case 'q':
+        return 0;
+    case 'y':
+        if (umoney < enlcost) {
+            pline(msgc_npcvoice, "\"Thou canst not afford it.\"");
+            break;
+        }
+        money2mon(oracl, enlcost);
+        pline(msgc_actionok, "You feel self-knowledgeable...");
+        win_pause_output(P_MESSAGE);
+        enlightenment(FALSE);
+        pline_implied(msgc_actionboring, "The feeling subsides.");
+        return 1;
+    case 'n':
+    default:
+        break;
     }
 
     qbuf = msgprintf("\"Wilt thou settle for a minor consultation?\" (%d %s)",
@@ -341,7 +361,8 @@ doconsult(struct monst *oracl)
         return 0;
     case 'y':
         if (umoney < minor_cost) {
-            pline(msgc_cancelled, "You don't even have enough money for that!");
+            pline(msgc_cancelled,
+                  "\"Thou hast not even enough money for that!\"");
             return 0;
         }
         u_pay = minor_cost;
@@ -382,11 +403,11 @@ doconsult(struct monst *oracl)
         /* ~100 pts if very 1st, ~40 pts if minor already done */
         u.uevent.major_oracle = TRUE;
         historic_event(FALSE, firsttime, "received advice from The Oracle.");
-        exercise(A_WIS, !cheapskate);
+        if (firsttime)
+            exercise(A_WIS, !cheapskate);
     }
     if (add_xpts) {
-        more_experienced(add_xpts, u_pay / 50);
-        newexplevel();
+        pluslvl(FALSE);
     }
     return 1;
 }

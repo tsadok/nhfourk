@@ -59,6 +59,7 @@ static const struct nh_enum_option movecommand_spec =
 
 static const struct nh_listitem mode_list[] = {
     {MODE_NORMAL, "normal"},
+    {MODE_CHALLENGE, "challenge"},
     {MODE_EXPLORE, "explore"},
     {MODE_WIZARD, "debug"}
 };
@@ -189,7 +190,10 @@ static const struct nh_option_desc const_options[] = {
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"show_uncursed", "Messages and Menus",
      "always show uncursed status",
-     nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
+     nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
+    {"server_messages", "Messages and Menus",
+     "deliver messages from other players",
+     nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"showrace", "Map Display",
      "show yourself by your race rather than by role",
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
@@ -239,6 +243,9 @@ static const struct nh_option_desc const_options[] = {
     {"permahallu", "Challenge Modes",
      "spend the whole game hallucinating",
      nh_birth_lasting, OPTTYPE_BOOL, {.b = FALSE}},
+    {"autowear", "Challenge Modes",
+     "automatically equip starting armor",
+     nh_birth_creation, OPTTYPE_BOOL, {.b = TRUE}},
     {"polyinit", "Fun/Easier Game Modes",
      "play in monster form (non-scoring)",
      nh_birth_lasting, OPTTYPE_ENUM, {.e = -1}},
@@ -288,6 +295,7 @@ static const struct nhlib_boolopt_map boolopt_map[] = {
     {"pickup_thrown", &flags.pickup_thrown},
     {"prayconfirm", &flags.prayconfirm},
     {"pushweapon", &flags.pushweapon},
+    {"server_messages", &flags.servermail},
     {"show_uncursed", &flags.show_uncursed},
     {"showrace", &flags.showrace},
     {"sortpack", &flags.sortpack},
@@ -297,6 +305,7 @@ static const struct nhlib_boolopt_map boolopt_map[] = {
     {"verbose", &flags.verbose},
 
     /* birth options */
+    {"autowear", &flags.autowear_starting_armor},
     {"elbereth", &flags.elbereth_enabled},
     {"reincarnation", &flags.rogue_enabled},
     {"seduction", &flags.seduce_enabled},
@@ -416,7 +425,7 @@ new_opt_struct(void)
     nhlib_find_option(options, "horsename")->s.maxlen = PL_PSIZ;
 
     struct nh_option_desc *fruit = nhlib_find_option(options, "fruit");
-    const char *def_fruit = "slime mold";
+    const char *def_fruit = "melon";
     fruit->s.maxlen = PL_FSIZ;
     fruit->value.s = malloc(strlen(def_fruit)+1);
     strcpy(fruit->value.s, def_fruit);
@@ -508,6 +517,7 @@ set_option(const char *name, union nh_optvalue value,
     else if (!strcmp("mode", option->name)) {
         flags.debug = (option->value.e == MODE_WIZARD);
         flags.explore = (option->value.e == MODE_EXPLORE);
+        flags.challenge = (option->value.e == MODE_CHALLENGE);
     } else if (!strcmp("align", option->name)) {
         u.initalign = option->value.e;
     } else if (!strcmp("gender", option->name)) {
@@ -646,7 +656,8 @@ nh_get_options(void)
         } else if (!strcmp("mode", option->name)) {
             option->value.e =
                 flags.debug ? MODE_WIZARD :
-                flags.explore ? MODE_EXPLORE : MODE_NORMAL;
+                flags.explore ? MODE_EXPLORE :
+                flags.challenge ? MODE_CHALLENGE : MODE_NORMAL;
         } else if (!strcmp("timezone", option->name)) {
             option->value.e = flags.timezone;
         } else if (!strcmp("polyinit", option->name)) {

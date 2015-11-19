@@ -53,8 +53,8 @@ dosit(const struct nh_cmd_arg *arg)
     }
 
     if ((trap = t_at(level, u.ux, u.uy)) != 0 && !u.utrap &&
-        (trap->ttyp == HOLE || trap->ttyp == TRAPDOOR || trap->ttyp == PIT ||
-         trap->ttyp == SPIKED_PIT) && trap->tseen) {
+        (trap->ttyp == HOLE || trap->ttyp == TRAPDOOR ||
+         is_pit_trap(trap->ttyp)) && trap->tseen) {
         pline(msgc_yafm, "You sit on the edge of the %s.",
               trap->ttyp == HOLE ? "hole" : trap->ttyp ==
               TRAPDOOR ? "trapdoor" : "pit");
@@ -73,17 +73,26 @@ dosit(const struct nh_cmd_arg *arg)
                (u.utrap && (u.utraptype >= TT_LAVA))) {
 
         if (u.utrap) {
-            exercise(A_WIS, FALSE);     /* you're getting stuck longer */
             if (u.utraptype == TT_BEARTRAP) {
                 pline(msgc_badidea,
                       "You can't sit down with your %s in the bear trap.",
                       body_part(FOOT));
                 u.utrap++;
             } else if (u.utraptype == TT_PIT) {
-                if (trap->ttyp == SPIKED_PIT) {
+                if ((trap->ttyp == SPIKED_PIT) &&
+                    (!spikes_are_poisoned(level, trap) || Poison_resistance)) {
                     pline(msgc_badidea, "You sit down on a spike.  Ouch!");
                     losehp(1, killer_msg(DIED, "sitting on an iron spike"));
                     exercise(A_STR, FALSE);
+                } else if (trap->ttyp == SPIKED_PIT &&
+                           spikes_are_poisoned(level, trap)) {
+                    pline(msgc_badidea,
+                          "You sit down on a spike.  It is poisoned!");
+                    poisoned("poisoned spike", A_STR,
+                             killer_msg(DIED, "sitting on a poisoned spike"),
+                             8);
+                    exercise(A_STR, FALSE);
+                    exercise(A_CON, FALSE);
                 } else
                     pline(msgc_badidea, "You sit down in the pit.");
                 u.utrap += rn2(5);
@@ -99,6 +108,8 @@ dosit(const struct nh_cmd_arg *arg)
             } else if (u.utraptype == TT_INFLOOR) {
                 pline(msgc_badidea, "You can't maneuver to sit!");
                 u.utrap++;
+            } else if (u.utraptype == TT_ICEBLOCK) {
+                pline(msgc_yafm, "The block of ice holds you in position.");
             }
         } else {
             pline(msgc_actionok, "You sit down.");
@@ -109,7 +120,7 @@ dosit(const struct nh_cmd_arg *arg)
             pline(msgc_cancelled1, "There are no cushions floating nearby.");
         else
             pline(msgc_yafm, "You sit down on the muddy bottom.");
-    } else if (is_pool(level, u.ux, u.uy)) {
+    } else if (is_damp_terrain(level, u.ux, u.uy)) {
     in_water:
         pline(msgc_badidea, "You sit in the water.");
         if (!rn2(10) && uarm)
@@ -212,19 +223,23 @@ dosit(const struct nh_cmd_arg *arg)
                     pline(msgc_statusheal, "You feel your luck is changing.");
                     change_luck(1);
                 } else
-                    makewish();
+                    makewish(1);
                 break;
             case 7:
             {
                 int cnt = rn2_on_rng(10, rng_throne_result);
+                struct monst *mtmp;
                 
                 pline(msgc_npcvoice, "A voice echoes:");
                 verbalize(msgc_levelwarning,
                           "Thy audience hath been summoned, %s!",
                           u.ufemale ? "Dame" : "Sire");
-                while (cnt--)
-                    makemon(courtmon(&u.uz, rng_main), level, u.ux, u.uy,
-                            NO_MM_FLAGS);
+                while (cnt--) {
+                    mtmp = makemon(courtmon(&u.uz, rng_main),
+                                   level, u.ux, u.uy, NO_MM_FLAGS);
+                    if (mtmp && !rn2(3) && !resists_sleep(mtmp))
+                        mtmp->msleeping = 1;
+                }
                 break;
             }
             case 8:
@@ -251,7 +266,7 @@ dosit(const struct nh_cmd_arg *arg)
                         make_confused(HConfusion + rnd(30), FALSE);
                     } else {
                         pline(msgc_youdiscover, "An image forms in your mind.");
-                        do_mapping();
+                        do_mapping(FALSE);
                     }
                 } else {
                     pline(msgc_intrgain, "Your vision becomes clear.");
@@ -480,6 +495,11 @@ mrndcurse(struct monst *mtmp, struct monst *magr)
 void
 attrcurse(void)
 {
+    if (magic_negation(&youmonst) > rn2(10)) {
+        pline(msgc_playerimmune,
+              "You feel as if something is protecting you.");
+        return;
+    }
     /* probably too rare to benefit from a custom RNG */
     switch (rnd(11)) {
     case 1:
@@ -536,9 +556,9 @@ attrcurse(void)
             break;
         }
     case 9:
-        if (HStealth & INTRINSIC) {
-            HStealth &= ~INTRINSIC;
-            pline(msgc_intrloss, "You feel clumsy.");
+        if (HTeleport_control & INTRINSIC) {
+            HTeleport_control &= ~INTRINSIC;
+            pline(msgc_intrloss, "You feel out of control.");
             break;
         }
     case 10:

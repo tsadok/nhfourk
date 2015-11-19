@@ -11211,7 +11211,7 @@ C$ = (255, 255, 255)
   _______________A_A_A_A_A_I_H_H_H_H_HCVCVCPCPCP_ACPCPCP_A_A_A_A__
   _____________________A_A_A_A_A_A_A_A_A_A_A_A_A_A_A_A_A_A________
 }
-# tile 367 (Chromatic Dragon)
+# tile 367 (Great Fierce Beast)
 {
   BNBNBN____Cm__________________________________BNBNBNBNBNBNBNBNBN
   __BsBsBNCmBNBN________________________CfBNBNBNBNBsBsBsBsBsBs____

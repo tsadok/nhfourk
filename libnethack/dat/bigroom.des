@@ -6,6 +6,7 @@
 # These are the bigroom levels:
 #
 
+# Big Room: Just What it Says on the Tin
 MAZE:"bigrm-1",' '
 GEOMETRY:center,center
 MAP
@@ -88,45 +89,126 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-#	Here, just play with the lighting...
 
+# Dark Checkers
 MAZE:"bigrm-2",' '
 GEOMETRY:center,center
 MAP
----------------------------------------------------------------------------
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
-|.........................................................................|
----------------------------------------------------------------------------
+--------------------------------------------------------------------------
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+|........................................................................|
+--------------------------------------------------------------------------
 ENDMAP
 # Dungeon Description
-REGION:(01,01,23,06),lit,"ordinary"
-REGION:(01,07,23,10),unlit,"ordinary"
-REGION:(01,11,23,16),lit,"ordinary"
-REGION:(24,01,50,06),unlit,"ordinary"
-REGION:(24,07,50,10),lit,"ordinary"
-REGION:(24,11,50,16),unlit,"ordinary"
-REGION:(51,01,73,06),lit,"ordinary"
-REGION:(51,07,73,10),unlit,"ordinary"
-REGION:(51,11,73,16),lit,"ordinary"
+REGION:(01,01,04,03),unlit,"ordinary"
+REGION:(01,04,04,06),lit,"ordinary"
+REGION:(01,07,04,09),unlit,"ordinary"
+REGION:(01,10,04,12),lit,"ordinary"
+REGION:(01,13,04,15),unlit,"ordinary"
+REGION:(05,01,08,03),lit,"ordinary"
+REGION:(05,04,08,06),unlit,"ordinary"
+REGION:(05,07,08,09),lit,"ordinary"
+REGION:(05,10,08,12),unlit,"ordinary"
+REGION:(05,13,08,15),lit,"ordinary"
+REGION:(09,01,12,03),unlit,"ordinary"
+REGION:(09,04,12,06),lit,"ordinary"
+REGION:(09,07,12,09),unlit,"ordinary"
+REGION:(09,10,12,12),lit,"ordinary"
+REGION:(09,13,12,15),unlit,"ordinary"
+REGION:(13,01,16,03),lit,"ordinary"
+REGION:(13,04,16,06),unlit,"ordinary"
+REGION:(13,07,16,09),lit,"ordinary"
+REGION:(13,10,16,12),unlit,"ordinary"
+REGION:(13,13,16,15),lit,"ordinary"
+REGION:(17,01,20,03),unlit,"ordinary"
+REGION:(17,04,20,06),lit,"ordinary"
+REGION:(17,07,20,09),unlit,"ordinary"
+REGION:(17,10,20,12),lit,"ordinary"
+REGION:(17,13,20,15),unlit,"ordinary"
+REGION:(21,01,24,03),lit,"ordinary"
+REGION:(21,04,24,06),unlit,"ordinary"
+REGION:(21,07,24,09),lit,"ordinary"
+REGION:(21,10,24,12),unlit,"ordinary"
+REGION:(21,13,24,15),lit,"ordinary"
+REGION:(25,01,28,03),unlit,"ordinary"
+REGION:(25,04,28,06),lit,"ordinary"
+REGION:(25,07,28,09),unlit,"ordinary"
+REGION:(25,10,28,12),lit,"ordinary"
+REGION:(25,13,28,15),unlit,"ordinary"
+REGION:(29,01,32,03),lit,"ordinary"
+REGION:(29,04,32,06),unlit,"ordinary"
+REGION:(29,07,32,09),lit,"ordinary"
+REGION:(29,10,32,12),unlit,"ordinary"
+REGION:(29,13,32,15),lit,"ordinary"
+REGION:(33,01,36,03),unlit,"ordinary"
+REGION:(33,04,36,06),lit,"ordinary"
+REGION:(33,07,36,09),unlit,"ordinary"
+REGION:(33,10,36,12),lit,"ordinary"
+REGION:(33,13,36,15),unlit,"ordinary"
+REGION:(37,01,40,03),lit,"ordinary"
+REGION:(37,04,40,06),unlit,"ordinary"
+REGION:(37,07,40,09),lit,"ordinary"
+REGION:(37,10,40,12),unlit,"ordinary"
+REGION:(37,13,40,15),lit,"ordinary"
+REGION:(41,01,44,03),unlit,"ordinary"
+REGION:(41,04,44,06),lit,"ordinary"
+REGION:(41,07,44,09),unlit,"ordinary"
+REGION:(41,10,44,12),lit,"ordinary"
+REGION:(41,13,44,15),unlit,"ordinary"
+REGION:(45,01,48,03),lit,"ordinary"
+REGION:(45,04,48,06),unlit,"ordinary"
+REGION:(45,07,48,09),lit,"ordinary"
+REGION:(45,10,48,12),unlit,"ordinary"
+REGION:(45,13,48,15),lit,"ordinary"
+REGION:(49,01,52,03),unlit,"ordinary"
+REGION:(49,04,52,06),lit,"ordinary"
+REGION:(49,07,52,09),unlit,"ordinary"
+REGION:(49,10,52,12),lit,"ordinary"
+REGION:(49,13,52,15),unlit,"ordinary"
+REGION:(53,01,56,03),lit,"ordinary"
+REGION:(53,04,56,06),unlit,"ordinary"
+REGION:(53,07,56,09),lit,"ordinary"
+REGION:(53,10,56,12),unlit,"ordinary"
+REGION:(53,13,56,15),lit,"ordinary"
+REGION:(57,01,60,03),unlit,"ordinary"
+REGION:(57,04,60,06),lit,"ordinary"
+REGION:(57,07,60,09),unlit,"ordinary"
+REGION:(57,10,60,12),lit,"ordinary"
+REGION:(57,13,60,15),unlit,"ordinary"
+REGION:(61,01,64,03),lit,"ordinary"
+REGION:(61,04,64,06),unlit,"ordinary"
+REGION:(61,07,64,09),lit,"ordinary"
+REGION:(61,10,64,12),unlit,"ordinary"
+REGION:(61,13,64,15),lit,"ordinary"
+REGION:(65,01,68,03),unlit,"ordinary"
+REGION:(65,04,68,06),lit,"ordinary"
+REGION:(65,07,68,09),unlit,"ordinary"
+REGION:(65,10,68,12),lit,"ordinary"
+REGION:(65,13,68,15),unlit,"ordinary"
+REGION:(69,01,72,03),lit,"ordinary"
+REGION:(69,04,72,06),unlit,"ordinary"
+REGION:(69,07,72,09),lit,"ordinary"
+REGION:(69,10,72,12),unlit,"ordinary"
+REGION:(69,13,72,15),lit,"ordinary"
+
 # Stairs
 STAIR:random,up
 STAIR:random,down
 # Non diggable walls
-NON_DIGGABLE:(00,00,74,17)
+NON_DIGGABLE:(00,00,73,16)
 # Objects
 OBJECT:random,random,random
 OBJECT:random,random,random
@@ -180,8 +262,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-#	Now, let's get fancy...
 
+# Let's Get Fancy
 MAZE:"bigrm-3",' '
 GEOMETRY:center,center
 MAP
@@ -263,6 +345,9 @@ MONSTER:random,random,(37,16)
 MONSTER:random,random,(49,16)
 MONSTER:random,random,(61,16)
 MONSTER:random,random,(73,16)
+
+
+# Pinched Big Room
 MAZE:"bigrm-4",' '
 GEOMETRY:center,center
 MAP
@@ -350,8 +435,8 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
-#	Try an oval room...
 
+# Oval Big Room
 MAZE:"bigrm-5",' '
 GEOMETRY:center,center
 MAP
@@ -434,3 +519,193 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
+
+
+# Peanut Island, by Khor
+MAZE:"bigrm-6",' '
+GEOMETRY:center,center
+###########1#########2#########3#########4#########5#########6#########7#####
+#0123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+0}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+1}}}}}}}}}||}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+2}}}}}}}}----}}}}}}}}}}ww......ww}}}}}}}}}}}}}}ww......ww}}}}}}}}}}..}}}}}}}}
+3}}}}}}--....--}}}}}}}w..........ww}}}}}}}}}}ww..........w}}}}}}}}....}}}}}}}
+4}}}}}|........|}}}}}w..............ww}}}}ww..............w}}}}}}}....}}}}}}}
+5}}}}}|........|}}}}w......................................w}}}}}}}}..}}}}}}}
+6}}}}|..........|}}}w......................................w}}}}}}}}}}}}}}}}}
+7}}}}|.....|....|}}w........................................w}}}}}}}}}}}}}}}}
+8}}}}|------....|}}w........................................w}}}}}}}}}}}}}}}}
+9}}}}|..........|}}w........................................w}}}}}}}}}}}}}}}}
+0}}}}|.--------.|}}w........................................w}}}}}}}}}}}}.}}}
+1}}}}|....--....+www........................................w}}}}}}}}}}}}..}}
+2}}}}|..........|}}w........................................w}}}}}}}}}}}}}}}}
+3}}}}|....------|}}ww......................................www}}}}}}}}}}}}}}}
+4}}}}|....|.....|}}}w......................................w}ww}w}}}}}}}}}}}}
+5}}}}|..........|}}}}w..............ww}}}}ww..............w}}}w..w}}}}}}}}}}}
+6}}}}|....--....|}}}}}w..........ww}}}}}}}}}}ww..........w}}}}}....www}}}}}}}
+7}}}}|..........|}}}}}}}w......w}}}}}}}}}}}}}}}ww......w}}}}}}}w......}}}}}}}
+8}}}}}----------}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}w...}}}}}}}}
+9}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+ENDMAP
+# Dungeon Description
+REGION:(01,01,73,16),lit,"ordinary"
+# Stairs
+STAIR:(19,02,58,07), (19,10,20,12), up
+STAIR:(19,02,58,07), (19,10,20,12), down
+DOOR:closed,(15,11)
+# Non diggable walls
+NON_DIGGABLE:(00,00,75,19)
+# Objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Random traps
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+# Random monsters.
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
+
+
+# Tea Party
+MAZE:"bigrm-7",' '
+GEOMETRY:center,center
+MAP
+------------------------------------ ------------------------------------
+|..................................| |..................................|
+|--..............................-------..............................--|
+|.........--..--....................|....................--..--.........|
+|-....---..|S-|..---..............-----..............---..|-S|..---....-|
+|.......|--|..|--|........--..--.........--..--........|--|..|--|.......|
+----..---..|--|..---...--..|--|..--...--..|--|..--...---..|--|..---..----
+ |........--..--........|--|  |--|.....|--|  |--|........--..--........| 
+ --....................--..|--|..--...--..|--|..--....................-- 
+  |.......................--..--.........--..--.......................|  
+  |...................................................................|  
+  |.......................--..--.........--..--.......................|  
+ --....................--..|--|..--...--..|--|..--....................-- 
+ |........--..--........|--|  |--|.....|--|  |--|........--..--........| 
+----..---..|--|..---...--..|--|..--...--..|--|..--...---..|--|..---..----
+|.......|--|..|--|........--..--.........--..--........|--|..|--|.......|
+|-....---..|S-|..---..............-----..............---..|-S|..---....-|
+|.........--..--....................|....................--..--.........|
+|--..............................-------..............................--|
+|..................................| |..................................|
+------------------------------------ ------------------------------------
+ENDMAP
+# Dungeon Description
+REGION:(01,01,72,20),lit,"ordinary"
+# Stairs
+STAIR:random,up
+STAIR:random,down
+DOOR:locked,(12,04)
+DOOR:locked,(12,16)
+DOOR:locked,(60,04)
+DOOR:locked,(60,16)
+# Non diggable walls
+NON_DIGGABLE:(00,00,72,20)
+# Objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:'`',"statue",(03,10),"pony",5,"Blinkie Pinkie"
+OBJECT:'`',"statue",(36,10),"frost giant",3,"Mister Frosty"
+OBJECT:'`',"statue",(69,10),"human",5,"Miss Betsy"
+# Random traps
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+# Random monsters.
+MONSTER:random,random,(01,01)
+MONSTER:random,random,(01,03)
+MONSTER:random,random,(02,07)
+MONSTER:random,random,(02,13)
+MONSTER:random,random,(01,17)
+MONSTER:random,random,(01,19)
+MONSTER:random,random,(34,01)
+MONSTER:random,random,(35,03)
+MONSTER:random,random,(37,03)
+MONSTER:random,random,(38,01)
+MONSTER:random,random,(34,19)
+MONSTER:random,random,(35,17)
+MONSTER:random,random,(37,17)
+MONSTER:random,random,(38,19)
+MONSTER:random,random,(71,01)
+MONSTER:random,random,(71,03)
+MONSTER:random,random,(70,07)
+MONSTER:random,random,(70,13)
+MONSTER:random,random,(71,17)
+MONSTER:random,random,(71,19)
+MONSTER:random,random,(23,07)
+MONSTER:random,random,(23,13)
+MONSTER:random,random,(34,07)
+MONSTER:random,random,(34,13)
+MONSTER:random,random,(38,07)
+MONSTER:random,random,(38,13)
+MONSTER:random,random,(49,07)
+MONSTER:random,random,(49,13)
+MONSTER:random,random,(15,04)
+MONSTER:random,random,(57,04)
+MONSTER:random,random,(15,16)
+MONSTER:random,random,(57,16)
+
+

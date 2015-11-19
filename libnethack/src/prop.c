@@ -7,6 +7,7 @@
 
 #include "hack.h"
 #include "mfndpos.h"
+#include "alignrec.h"
 
 /* This file is responsible for determining whether the character has intrinsics
    and extrinsics, because it was previously done with a bunch of macros, which
@@ -459,23 +460,23 @@ enlightenment(int final)
     }
 
     /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
-    if (u.ualign.record >= 20)
+    if (u.ualign.record >= PIOUS)
         you_are(&menu, "piously aligned");
-    else if (u.ualign.record > 13)
+    else if (u.ualign.record >= DEVOUT)
         you_are(&menu, "devoutly aligned");
-    else if (u.ualign.record > 8)
+    else if (u.ualign.record >= FERVENT)
         you_are(&menu, "fervently aligned");
-    else if (u.ualign.record > 3)
+    else if (u.ualign.record >= STRIDENT)
         you_are(&menu, "stridently aligned");
-    else if (u.ualign.record == 3)
+    else if (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE)
         you_are(&menu, "aligned");
-    else if (u.ualign.record > 0)
+    else if (u.ualign.record >= HALTINGLY)
         you_are(&menu, "haltingly aligned");
-    else if (u.ualign.record == 0)
+    else if (u.ualign.record >= NOMINALLY)
         you_are(&menu, "nominally aligned");
-    else if (u.ualign.record >= -3)
+    else if (u.ualign.record >= STRAYED)
         you_have(&menu, "strayed");
-    else if (u.ualign.record >= -8)
+    else if (u.ualign.record >= SINNED)
         you_have(&menu, "sinned");
     else
         you_have(&menu, "transgressed");
@@ -485,6 +486,9 @@ enlightenment(int final)
 
         buf = msgprintf(" %d / %ld", u.ualign.record, ALIGNLIM);
         enl_msg(&menu, "Your alignment ", "is", "was", buf);
+
+        buf = msgprintf(" MC level %d", magic_negation(&youmonst));
+        enl_msg(&menu, "You ", "have", "had", buf);
     }
 
         /*** Resistances to troubles ***/
@@ -570,6 +574,7 @@ enlightenment(int final)
         const char *buf = msgcat(
             "aware of the presence of ",
             (warntype & M2_ORC) ? "orcs" :
+            (warntype & M2_ELF) ? "elves" :
             (warntype & M2_DEMON) ? "demons" : "something");
         you_are(&menu, buf);
     }
@@ -609,8 +614,19 @@ enlightenment(int final)
         you_are(&menu, "visible");
     if (Displaced)
         you_are(&menu, "displaced");
-    if (Stealth)
+    switch(get_stealth(&youmonst)) {
+    case 0:
+        break; /* no message if you aren't stealthy at all */
+    case 1:
+    case 2:
+        you_are(&menu, "somewhat stealthy");
+    case 3:
+    case 4:
         you_are(&menu, "stealthy");
+    case 5:
+    default: /* more than 5 is possible */
+        you_are(&menu, "very stealthy");
+    }
     if (Aggravate_monster)
         enl_msg(&menu, "You aggravate", "", "d", " monsters");
     if (Conflict)
@@ -647,7 +663,7 @@ enlightenment(int final)
         you_are(&menu, msgcat("swallowed by ", a_monnam(u.ustuck)));
     else if (u.ustuck) {
         const char *buf = msgprintf(
-            "%s %s", (Upolyd && sticks(youmonst.data)) ? "holding" : "held by",
+            "%s %s", (sticks(URACEDATA)) ? "holding" : "held by",
             a_monnam(u.ustuck));
         you_are(&menu, buf);
     }
@@ -801,6 +817,9 @@ enlightenment(int final)
             enl_msg(&menu, You_, "have been killed ", p, buf);
     }
 
+    if (challengemode)
+        enl_msg(&menu, You_, "face", "faced", " a greater challenge");
+
     display_menu(&menu, title, PICK_NONE, PLHINT_ANYWHERE,
                  NULL);
     return;
@@ -853,8 +872,6 @@ unspoilered_intrinsics(void)
         add_menutext(&menu, "You are invisible.");
     if (HInvis && !Invisible)
         add_menutext(&menu, "You are invisible to others.");
-    if (HStealth)
-        add_menutext(&menu, "You are stealthy.");
     if (HAggravate_monster)
         add_menutext(&menu, "You aggravte monsters.");
     if (HConflict)
@@ -889,7 +906,7 @@ unspoilered_intrinsics(void)
 void
 show_conduct(int final)
 {
-    int ngenocided;
+    int ngenocided, guilt, sokodone;
     struct nh_menulist menu;
     const char *buf;
 
@@ -919,6 +936,32 @@ show_conduct(int final)
         enl_msg(&menu, You_, "", "had ", buf);
     }
 
+    if (!u.uconduct[conduct_clothing] && !u.uconduct[conduct_jewelry])
+        enl_msg(&menu, You_, "have worn", "wore",
+                " only your undergarments");
+    /* Yes, and pants, but they can't be enchanted, so who cares about them? */
+    else if (!u.uconduct[conduct_jewelry])
+        enl_msg(&menu, You_, "have not adorned", "did not adorn",
+                " yourself with jewelry or accessories");
+    /* "accessories" here means lenses, blindfold, or towel;
+       this is different from the wand shop's "accessories" */
+    else if (!u.uconduct[conduct_clothing])
+        enl_msg(&menu, You_, "have not worn", "did not wear",
+                " any clothing or armor");
+
+    /* Conflict message only at game end for now, because otherwise #conduct
+       would provide trivial identification for the ring of conflict.  We may
+       ultimately decide to just auto-ID it when worn, but that would be a
+       separate decision.  (If so, then we could remove final && here.) */
+    if (final && !u.uconduct[conduct_conflict])
+        enl_msg(&menu, You_, "have not caused", "did not cause", " conflict");
+    /* Similarly, it's possible to be invisible and not know (if blind). */
+    if (final && !u.uconduct[conduct_invisible])
+        enl_msg(&menu, You_, "have not been", "were not", " invisible");
+    /* But displacement auto-identifies. */
+    if (!u.uconduct[conduct_displacement])
+        enl_msg(&menu, You_, "have not been", "were not", " displaced");
+
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
     if (u.uconduct_time[conduct_gnostic] > 1800) {
@@ -942,6 +985,20 @@ show_conduct(int final)
         buf = msgprintf("a pacifist until turn %d",
                         u.uconduct_time[conduct_killer]);
         enl_msg(&menu, You_, "were ", "had been ", buf);
+    }
+
+    if (!u.uconduct[conduct_tools])
+        enl_msg(&menu, You_, "have not used", "did not use",
+                msgprintf(" tools%s",
+                          (historysearch("performed the invocation.", TRUE)) ?
+                          ", except for the invocation ritual" : ""));
+    else {
+        if (!u.uconduct[conduct_containers])
+            enl_msg(&menu, You_, "have not used", "did not use",
+                    " containers");
+        if (!u.uconduct[conduct_unihorns])
+            enl_msg(&menu, You_, "have not applied", "did not apply",
+                    " a unicorn horn");
     }
 
     if (!u.uconduct[conduct_illiterate])
@@ -983,6 +1040,23 @@ show_conduct(int final)
                         u.uconduct_time[conduct_polyself]);
         you_have_X(&menu, buf);
     }
+
+    guilt = u.uconduct[conduct_sokoban_guilt];
+    sokodone = historysearch("entered the Sokoban zoo.", TRUE);
+    if (sokodone) {
+        if (guilt)
+            enl_msg(&menu, You_, "have cheated", "cheated",
+                    msgprintf(" %d time%s but completed Sokoban on turn %d",
+                              guilt, ((guilt > 1) ? "s" : ""), sokodone));
+        else
+            enl_msg(&menu, You_, "have completed", "completed",
+                    msgprintf(" Sokoban on turn %d, according to the rules",
+                              sokodone));
+    } else if (guilt) {
+        enl_msg(&menu, You_, "have cheated", "cheated",
+                msgprintf(" in Sokoban %d time%s, without finishing",
+                          guilt, (guilt > 1) ? "s" : ""));
+    } /* No message if you neither cheated nor completed. */
 
     if (!u.uconduct[conduct_wish])
         you_have_X(&menu, "used no wishes");

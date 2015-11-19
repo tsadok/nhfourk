@@ -1,0 +1,7 @@
+12 20
+Geoduck
+geoduck-nethack-fourk1.png
+geoduck.map
+los-transformations.txt
+
+

@@ -9,7 +9,6 @@
 #include "epri.h"
 
 
-static int disturb(struct monst *);
 static void distfleeck(struct monst *, int *, int *, int *);
 static int m_arrival(struct monst *);
 static void watch_on_duty(struct monst *);
@@ -106,7 +105,8 @@ onscary(int x, int y, struct monst * mtmp)
         return FALSE;
 
     return (boolean) (sobj_at(SCR_SCARE_MONSTER, level, x, y)
-                      || (sengr_at("Elbereth", x, y) && flags.elbereth_enabled)
+                      || (sengr_at("Elbereth", x, y) &&
+                          flags.elbereth_enabled && !Conflict && !Stormprone)
                       || (mtmp->data->mlet == S_VAMPIRE &&
                           IS_ALTAR(level->locations[x][y].typ)));
 }
@@ -126,36 +126,56 @@ mon_regen(struct monst *mon, boolean digest_meal)
     }
 }
 
-/*
- * Possibly awaken the given monster.  Return a 1 if the monster has been
- * jolted awake.
- */
-static int
+/* Possibly awaken the given monster.  Return a 1 if the monster has been jolted
+   awake or has noticed you, 0 if nothing has happened. */
+/* TODO: put player stealth on its own rng. */
+int
 disturb(struct monst *mtmp)
 {
-    /*
-     * + Ettins are hard to surprise.
-     * + Nymphs, jabberwocks, and leprechauns do not easily wake up.
-     *
-     * Wake up if:
-     *      in line of effect                                       AND
-     *      within 10 squares                                       AND
-     *      not stealthy or (mon is an ettin and 9/10)              AND
-     *      (mon is not a nymph, jabberwock, or leprechaun) or 1/50 AND
-     *      Aggravate or mon is (dog or human) or
-     *          (1/7 and mon is not mimicing furniture or object)
-     */
-    if (couldsee(mtmp->mx, mtmp->my) && distu(mtmp->mx, mtmp->my) <= 100 &&
-        (!Stealth || (mtmp->data == &mons[PM_ETTIN] && rn2(10))) &&
-        (!(mtmp->data->mlet == S_NYMPH || mtmp->data == &mons[PM_JABBERWOCK]
-           || mtmp->data->mlet == S_LEPRECHAUN) || !rn2(50)) &&
-        (Aggravate_monster ||
-         (mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN)
-         || (!rn2(7) && mtmp->m_ap_type != M_AP_FURNITURE &&
-             mtmp->m_ap_type != M_AP_OBJECT))) {
+    int stealth   = get_stealth(&youmonst);
+    int alertness = 1; /* base value */
+    int distance  = distu(mtmp->mx, mtmp->my);
+    if (resists_sleep(mtmp)) {
+        /* Theoretically this shouldn't be necessary; but just in case. */
         mtmp->msleeping = 0;
         return 1;
     }
+    if (!(mtmp->data->mlet == S_NYMPH || mtmp->data == &mons[PM_JABBERWOCK]
+           || mtmp->data == &mons[PM_LEPRECHAUN]))
+        /* Most monsters are more alert than these ones. */
+        alertness++;
+    if (mtmp->data == &mons[PM_ETTIN])
+        alertness += 2; /* Ettins are hard to surprise, having two heads */
+    if ((mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN) ||
+        (!rn2(7) && mtmp->m_ap_type != M_AP_FURNITURE &&
+         mtmp->m_ap_type != M_AP_OBJECT))
+        alertness++;
+    if (Aggravate_monster) /* makes things more likely to notice you */
+        alertness++;
+    if (Conflict) /* all monsters are more alert during conflict */
+        alertness++;
+
+    if (mtmp->data->mflags3 & M3_SCENT) {
+        alertness += 9 / distance;
+    } else if (Invisible && !perceives(mtmp->data)) {
+        stealth = (stealth + 1) * 2;
+    }
+    /*
+    if (wizard)
+        pline(msgc_debug, "disturb(%d): d=%d; s=%d; a=%d0",
+              mtmp->m_id, distance, stealth, alertness);
+    */
+    if (couldsee(mtmp->mx, mtmp->my) &&
+        (((1 + stealth) * distance / 5) <= rn2(alertness))) {
+        if (mtmp->msleeping) {
+            mtmp->msleeping = 0;
+            return 1;
+        } else {
+            /* TODO: Monster _notices_ you. */
+            return 1;
+        }
+    }
+    use_skill(P_STEALTH, 1);
     return 0;
 }
 
@@ -337,7 +357,8 @@ dochug(struct monst *mtmp)
         mtmp->mflee = 0;
 
     /* cease conflict-induced swallow/grab if conflict has ended */
-    if (mtmp == u.ustuck && mtmp->mpeaceful && !mtmp->mconf && !Conflict) {
+    if (mtmp == u.ustuck && mtmp->mpeaceful && !mtmp->mconf &&
+        !Conflict && !Stormprone) {
         release_hero(mtmp);
         return 0;   /* uses up monster's turn */
     }
@@ -408,7 +429,8 @@ dochug(struct monst *mtmp)
                   "You sense a faint wave of psychic energy.");
             goto toofar;
         }
-        if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)))
+        if (mtmp->mpeaceful && (!Conflict || resist(mtmp, RING_CLASS, 0, 0)) &&
+            !Stormprone)
             pline(msgc_petneutral, "Soothing psychic energy surrounds you.");
         else {
             boolean m_sen = sensemon(mtmp);
@@ -423,7 +445,10 @@ dochug(struct monst *mtmp)
                 dmg = rnd(15);
                 if (Half_spell_damage)
                     dmg = (dmg + 1) / 2;
-                losehp(dmg, killer_msg(DIED, "a psychic blast"));
+                if (u.uinvulnerable)
+                    pline(msgc_playerimmune, "The blast doesn't harm you.");
+                else
+                    losehp(dmg, killer_msg(DIED, "a psychic blast"));
             } else
                 pline(combat_msgc(mtmp, &youmonst, cr_miss),
                       "A wave of psychic energy washes around you.");
@@ -455,7 +480,7 @@ toofar:
 
     /* If monster is nearby you, and has to wield a weapon, do so.  This costs
        the monster a move, of course. */
-    if ((!mtmp->mpeaceful || Conflict) && inrange &&
+    if ((!mtmp->mpeaceful || Conflict || Stormprone) && inrange &&
         (engulfing_u(mtmp) ||
          dist2(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <= 8) &&
         attacktype(mdat, AT_WEAP)) {
@@ -482,7 +507,7 @@ toofar:
          attacktype(mtmp->data, AT_SPIT) ||
          (attacktype(mtmp->data, AT_WEAP) && select_rwep(mtmp) != 0)) &&
         mtmp->mlstmv != moves) {
-        struct monst *mtmp2 = mfind_target(mtmp);
+        struct monst *mtmp2 = mfind_target(mtmp, FALSE);
 
         if (mtmp2 && mtmp2 != &youmonst) {
             if (mattackm(mtmp, mtmp2) & MM_AGR_DIED)
@@ -494,7 +519,7 @@ toofar:
 
     /* Now the actual movement phase */
 
-    if (mdat->mlet == S_LEPRECHAUN) {
+    if (mtmp->data == &mons[PM_LEPRECHAUN]) {
         ygold = findgold(invent);
         lepgold = findgold(mtmp->minvent);
     }
@@ -508,10 +533,10 @@ toofar:
 
     if (!nearby || mtmp->mflee || scared || mtmp->mconf || mtmp->mstun ||
         (mtmp->minvis && !rn2(3)) ||
-        (mdat->mlet == S_LEPRECHAUN && !ygold &&
+        (mtmp->data == &mons[PM_LEPRECHAUN] && !ygold &&
          (lepgold || rn2(2))) || (is_wanderer(mdat) && !rn2(4)) ||
         (Conflict && !mtmp->iswiz) || (!mtmp->mcansee && !rn2(4)) ||
-        mtmp->mpeaceful) {
+        (mtmp->mpeaceful && !Stormprone)) {
         /* Possibly cast an undirected spell if not attacking you */
         /* note that most of the time castmu() will pick a directed spell and
            do nothing, so the monster moves normally */
@@ -583,7 +608,8 @@ toofar:
        make sure that the monster's physically capable of attacking the square,
        and that the monster hasn't used its turn already (tmp == 3). */
 
-    if (!mtmp->mpeaceful || (Conflict && !resist(mtmp, RING_CLASS, 0, 0))) {
+    if (!mtmp->mpeaceful || (Conflict && !resist(mtmp, RING_CLASS, 0, 0)) ||
+        Stormprone) {
         if (nearby && !noattacks(mdat) && u.uhp > 0 && !scared && tmp != 3 &&
             aware_of_u(mtmp))
             if (engulfing_u(mtmp) ? mattackq(mtmp, u.ux, u.uy) :
@@ -843,7 +869,7 @@ not_special:
 
     /* don't tunnel if hostile and close enough to prefer a weapon */
     if (can_tunnel && needspick(ptr) &&
-        ((!mtmp->mpeaceful || Conflict) &&
+        ((!mtmp->mpeaceful || Conflict || Stormprone) &&
          dist2(mtmp->mx, mtmp->my, gx, gy) <= 8))
         can_tunnel = FALSE;
 

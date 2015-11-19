@@ -1,0 +1,993 @@
+About this document:
+Written 2014-2015 by Nathan Eady.
+
+This document (i.e., this specific file, changelog-fourk.txt) is in
+the public domain.  The author has specifically released it to the
+public, choosing to waive any exclusivity rights that he might
+otherwise have under copyright law, reserving none of them.  You may
+read, modify, distribute, or otherwise use this document in any manner
+that you deem appropriate.  Attribution is not required (except
+insofar as it may be required for reasons entirely unrelated to
+copyright, e.g., if you use the document in an academic context where
+failure to cite sources is frowned upon, the author of this document
+does not have the authority to suspend those rules).
+
+At your option, you may choose instead to treat this document as being
+under the NetHack General Public License.  In that case, see further
+details about that license in libnethack/dat/license.
+
+NetHack Fourk Changelog Overview:
+=================================
+
+This document describes the changes that have been made in NetHack
+Fourk specifically, which are different from the upstream NetHack 4
+codebase.  For changes made in NetHack 4, see instead changelog.txt
+
+Thematically, the major changes fall into the following overall
+categories:
+
+ * Balance adjustments.  Various formulae have been revised, to
+   improve the overall balance and difficulty curve of the game.
+   Things like death-drop probability, engraving success rate,
+   alignment record, etc. have had the shape of their curve adjusted,
+   and some game features have been buffed or gently nerfed so that
+   they fit better into the overall scheme of the game's balance.
+   
+ * Monster/class reorganization.  Some classes with very few monsters
+   have been combined and thus freed up, so that in a subsequent
+   version some heavily overloaded monster classes can be split,
+   without running out of letters.  I tried to be conservative about
+   this, and for now I tried to avoid having any monster look exactly
+   the same as another monster used to look, when it can be avoided.
+   
+ * Differentiation (aka improved variety).  Some monsters, items, or
+   special levels that were practically identical have been tweaked
+   slightly so that they are no longer quite so closely the same.
+   Some special levels may get new versions, as well.
+
+ * Consolidation.  Some meaningless things that didn't really add to
+   the game have been removed or combined with others.  Monsters,
+   objects, skills, etc.
+
+
+Chronological Changelog (most recent at top):
+=============================================
+=============================================
+
+Changes in 4.3.0.4:
+-------------------
+
+ * Quantum mechanics are now considered humanoid (h).
+
+ * Gnomes, due to their small size, cannot wear body armor.
+   (Neither can scurriers.)
+
+ * Added a new playable race, scurriers.  Scurriers are bipedal
+   humanoid rodents -- something like a cross between a rabbit, a
+   squirrel, and a human.  They are small, fast, and stealthy and have
+   a natural digging ability, all of which makes them very well suited
+   to avoiding combat rather than engaging in it.  They can be
+   archeologists or tourists, and I intend to add the ability for them
+   to be rangers as well, but that doesn't actually work yet.
+
+ * The formula for how many moves you get per turn has changed.  Four
+   factors contribute more or less independently:  your "base speed",
+   which is based on your race; whether you are intrinsically "fast"
+   or not; whether you have extrinsic speed (e.g., from speed boots);
+   and whether you are temporarily hasted (as from a spell of haste
+   self or a potion of speed).
+
+ * Wielding Stormbringer now causes peaceful and tame monsters to
+   attack you.  It also stops conflict from working in your favor.
+   However, the interface problems it creates in 3.4.3 (wherein you
+   attack things you don't intend to attack) are not present:  you
+   have the normal amount of control over your actions, can displace
+   your pets as usual, chat with shopkeepers, etc.  (If you actually
+   want to attack peaceful and tame monsters, you can of course do so
+   using the Fight command as usual, with the usual caveats.)
+
+ * The life cycle for D has been extended.  They now start life as
+   a [color] dragon egg, hatch into a baby [color] dragon, then grow
+   progressively into a young [color] dragon, a [color] dragon, a
+   [color] elder dragon, and finally into a great [color] dragon.
+   The more they advance, the more dangerous they become.  The
+   top two levels, elder and great, are not generated randomly.
+   Any age of dragon that lays eggs lays the same type of dragon
+   egg, in its respective color, which will hatch into a baby.
+
+ * Support has been added for receiving dgamelaunch SimpleMail
+   messages, when playing on a dgamelaunch-based public server,
+   provided the server admin has set an environment variable to
+   tell the game where to find the player's inbox.
+
+ * The shallow water portion of the L terrain patch has been merged.
+   This changes a number of existing special levels and also adds
+   a new version of Minetown.
+
+ * Stealth is no longer binary (all or nothing); there are degrees
+   now:  you can be more or less stealthy.  Examples of things that
+   are good for your stealth include:  being a elf (this is especially
+   good), a sylph, or a gnome; wearing an elven cloak; wearing elven
+   boots; wearing a +1 or better ring of steath; having basic or
+   better skill in stealth; using sufficiently light equipment that
+   you would still be unburdened even if its weight were doubled.
+   Going the other way, being burdened or worse hurts your stealth.
+   Being more stealthy decreases the odds that sleaping monsters will
+   wake up when you are around (via normal actions, such as walking;
+   things like exploding a gas spore still wake stuff up anyway).
+
+ * Monsters are now generated asleep in a wider variety of situations,
+   especially at level generation time.
+
+ * Protection from rings of protection, the spell of protection, and
+   cloak of protection now add into your magic cancellation level, in
+   addition to the base MC from your worn armor.  From armor alone you
+   can reach MC3 and with protection up to MC5.  The odds of magic
+   cancellation completely canceling an attack (of a type that MC can
+   cancel) are now 22%, 44%, 65%, 87%, or 98% for levels 1-5.  Even if
+   the attack is not completely canceled, the "worst effects" may
+   still be blocked.  For example, in the case of a fire, cold, or
+   lightning attack, the odds of your inventory being protected from
+   destruction are 61% at MC1, 86% at MC2, 94% at MC3, 98% at MC4,
+   100% at MC5.  A sleep or paralysis attack that isn't blocked
+   completely does have its duration shortened -- higher MC shortens
+   it more.  Brain eating attacks, which could not be blocked by MC at
+   all in vanilla, can now have their worst effects nerfed, though
+   this is not totally guaranteed even at MC5.  At MC4 or better,
+   drain attacks cannot take your last three experience levels and
+   xans cannot wound your legs.  Higher MC may give you extra turns
+   when subject to delayed instadeath (illness, some sources of
+   stoning) or protect you from attribute loss or deadly poison
+   (sometimes) or your armor from rusting or corrosion.  MC3 or higher
+   may delay drowning attacks (no guarantees) and protect you from
+   attribute loss due to seduction.  This list is not exhaustive.
+
+ * Cornuthaums now improve your wisdom and intelligence by their
+   enchantment, as a helm of brilliance does.  Their other effects
+   are unchanged.
+
+ * For public-server installations, dgamelaunch simple mail is
+   now supported.
+
+Changes in 4.3.0.3:
+-------------------
+
+ * Merged several patches from L, http://l.j-factor.com/nethack/
+   The "whack" patch causes more differentiated weapon hit messages.
+   The "wounds" patch gives Healers information about how wounded
+   monsters are, as a role special ability.
+
+ * Patric Mueller's Advent Calendar patch has been merged.
+
+ * Several bug fixes have been cherry-picked or merged from FIQ,
+   for Fourk bugs, NH4 bugs, and even a couple of vanilla bugs.
+
+ * Cherry-picked FIQ's rework of the Summon Nasties code.  The
+   number of monsters summoned should be more consistent now,
+   although it's still random.
+
+ * Couatls have more resistances than before.
+
+ * The following monsters have gained sleep resistance that did
+   not have it previously:  werewolves, all mindless monsters,
+   most major demons (notably excepting foocubi), and the fabled
+   Wizard of Yendor.
+
+ * Monsters under the influence of conflict will attack in melee,
+   despite scary things written on the ground beneath your feet.
+
+ * Stinking clouds now display differently than before, in the
+   text-based tilesets.  They now use the same cyan background color
+   as traps (on the theory that both traps and stinking clouds are
+   typically places you don't want to step into) and do not change the
+   foreground color.
+
+ * Weaponless characters can get items other than weapons as
+   sacrifice gifts.  Notably, weaponless spellcasters can get
+   spellbooks.  Armor and rings are also possible.
+
+ * Some special levels have been changed, or new versions have
+   been introduced.  Notable examples include Mine's End, the
+   Monk and Rogue quest locate levels, and the last maze level
+   before the Castle.
+
+ * Documentation is now available on the differences between normal
+   mode and challenge mode.  See doc/challengemode.txt
+
+ * Eating too much no longer runs a risk of choking to death.
+   However, it can make you bloated, which slows you down.  (This is
+   temporary.  As you digest the food and return to a normal hunger
+   status, you return to normal speed as well.)  There's no hard
+   maximum on how satiated you can become, but in practice getting
+   close to 4000 nutrition will slow you down so much you won't
+   be able to eat fast enough to become more satiated.   
+
+ * Price-checking has been made less tedious:  you can no longer
+   get a different price by repeatedly dropping the same item,
+   or by trying to sell different items of the same type.  For
+   any given type of item, either the shopkeeper will always
+   offer you 25% less than expected, or he never will.
+
+ * The inventory sidebar now shows total item count and weight.
+
+ * Players who can reach the Quest Leader without gaining any
+   experience levels (and, in challenge mode, without breaking
+   pacifist conduct either) can be admitted to the quest at
+   experience level 1, on the strength of their undeniable 
+   audacity.  (The other requirements still apply, e.g., you
+   still have to be pious.)
+
+ * Restoring lost levels now only reduces your max level (so that you
+   can only regain half of your lost levels) if you are playing in
+   challenge mode.  In normal mode, you can regain them all.
+
+ * Levels containing a cockatrice may also have statues.
+
+ * Wizard starting inventory has been rebalanced, since they
+   can now cast spells effectively in the early game.
+
+ * Added Valerian, an artifact dagger with a special sort of poison
+   that puts things to sleep -- if they do not resist.  This dagger
+   is the first sacrifice gifts for Rogues.  It is chaotic and is
+   intelligent and will blast all non-Rogues.
+
+ * Added Quickpick, an artifact pick-axe that is mainly useful for
+   improved digging speed; it also gets a bonus against all deep
+   rock dwellers (X).
+
+ * Added a new special room type, dragon halls.
+
+ * Mass key rebindings have been added for Dvorak Simplified Keyboard
+   layout (uyxd/pfkb movement) and also for axwd/qezc movement (mainly
+   intended for players who are new to roguelikes but don't want to
+   use the numpad for whatever reason).  As before, individual keys
+   can still be rebound on a key-by-key basis; the mass rebindings are
+   just a convenient way to do a whole set at once.  An SVG file is
+   provided showing the three major layouts (traditional hjkl/yubn,
+   axwd/qezc, and Dvorak), see doc/keyboard-layouts-nethack.svg
+
+ * Several new Sokoban levels have been added, based on some of the
+   Slash'em Sokoban puzzles (modified to be less dangerous).  One of
+   these replaces both of the ring-prize levels.  If you draw this
+   level, your sokoban prize is a sack containing a ring of polymorph
+   control, a ring of teleport control, and an extra random ring.
+
+ * Wresting the last charge out of a wand is somewhat less
+   tedious now than before.  It can still take several tries,
+   but it's now ridiculously unlikely to take dozens of tries.
+
+ * Trollsbane now lights up and instantly petrifies trolls.
+
+ * Flint generates in larger stacks than previously.
+
+ * Added historic events, xlogfile event bits, and livelog lines for
+   entering the Minetown temple (the first time) and for reaching the
+   bottom of the Mines.  Also added historic events and xlogfile event
+   bits for opening a magic chest and entering the Sokoban zoo and
+   an xlogfile event for entering the Astral Plane.
+
+ * In the early game when you really need it, eating a newt corpse
+   is now significantly likely to boost your max Pw.
+
+ * The following behaviors (or lack thereof) are now tracked as
+   conducts:  putting on clothing or armor (starting gear counts;
+   there is a birth option to control whether it gets autoequipped);
+   putting on jewelry or eyewear; using unicorn horns; using
+   containers; and applying tools (other than for the invocation).
+   To avoid making the end-game messages any spammier than they
+   already are, these conducts are only announced if you kept them.
+
+ * Role starting attribute numbers have been adjusted, as follows:
+   priests now usually start with more Int than Wis, the opposite to
+   their vanilla situation, so they can read and cast a wider variety
+   of spells as early as possible -- at the expense of being able to
+   cast them frequently; and Wizards have had their starting Wis
+   buffed at the expense of several other attributes, so they can get
+   decent Pw regen early and cast often.
+
+ * Higher wisdom now improves your Pw regeneration rate, for everyone
+   except Sylphs (who have their own formula).  Players who have been
+   playing Wizards as non-casting fighters for the first half of the
+   game may wish to revisit their approach.
+
+ * Wisdom is much more difficult to exercise than before.
+   To keep things balanced, it's also harder to abuse.
+
+ * All roles now use Int as their "casting" stat to determine
+   spell failure rates.
+
+ * The damage bonus for martial arts now depends on skill.
+
+ * Puddings now split slightly unevenly:  one of the two puddings will
+   be a little weaker than the original, and the other will be a
+   little stronger (in terms of max hitpoints).
+
+ * Thrown weapons now receive their inherent to-hit bonus, if
+   applicable.  (Previously they got a to-hit bonus based on
+   enchantment but missed out on their base to-hit bonus for being the
+   kind of weapon that they are.  This is relevant for daggers,
+   although it was implemented mostly for Vlad's blood spitting,
+   which needed the bonus to be able to hit late-game players.)
+
+ * In addition to your defense score, damage reduction also depends
+   on the attacking monster's chance to hit you.  If the monster
+   had a higher chance to hit you, the amount of defense you need
+   in order to get damage reduction is higher.
+
+ * Imported magic chests from DynaHack.  Any item put into a magic
+   chest can be looted out of any other magic chest in the dungeon,
+   placed at set locations.  This greatly reduces tedious stash
+   consolidation and transporting of items to and from stashes and
+   fixed dungeon resources like altars, shops and water.
+
+ * Completing Sokoban according to the rules now gets you experience.
+   This may be of interest to pacifists.
+
+ * Merged FIQ's wand balance implementation: so now the effectiveness
+   of wands depends on the skill level of the player or monster
+   that is zapping the wand.  Players can exercise and enhance wand
+   skill as with other skills.  Monsters just have whatever skill
+   level they have, depending on what kind of monster it is.  If
+   the wand is blessed or cursed, the effectiveness is adjusted by
+   one level, and if an unskilled user zaps a cursed one, it explodes.
+   I also introduced wands in starting inventory for more roles.
+
+ * Added a "new" type of amulet, the amulet of flying.  (Slash'em
+   has had this for a long time, of course.)
+
+ * Corpse and death drop rates are restored to their vanilla levels
+   (with a bug fix from the 2014 leak via 4.3-maint).  My changes to
+   this were not accomplishing what they intended to accomplish and,
+   as near as I can tell, did not significantly improve game balance.
+   So they are reverted.
+
+ * Upstream (NH4) changes merged during the 4.3.0.3 cycle include the
+   user interaction mode rewrite (including the attackhostile setting
+   for the movecommand option, which stops the game from asking if you
+   want to attack peaceful monsters, assuming that if you wanted to do
+   that you would have used the Fight prefix) and the M3_SCENT monster
+   flag (which allows certain monsters, e.g., canines, to pinpoint
+   your location by scent when they are close to you, even if they
+   can't see you).  There were also code quality improvements for
+   maintainability, notably, more globals purge.
+
+ * The degree to which a worn shield adds to your AC to prevent you
+   from being hit is now a function of your skill with the shield,
+   which is exercised as you use the shield in combat.
+
+ * Large deep-rock dwellers (X) now include xorns, umber hulks,
+   ettins, and deep ettins.
+
+ * Gelatinous cubes, acid blobs, and quivering blobs now appear
+   as lowercase j, along with jellies.
+
+ * Lizards (everything that formerly looked like a colon, :) are
+   now represented by a lowercase l, which stands for lizard.
+
+ * Piercers are now in mlet t, things that pretend to be part of
+   the ceiling/wall/floor until you wander into them, then attack.
+
+ * Vlad has been buffed.  His level and AC have been improved, and he
+   has received cold resistance, shock resistance, infravision, see
+   invisible, and a vampire-blood spitting attack that drains levels.
+
+ * There is now unholy water on the top level of Vlad's Tower.
+
+Changes in 4.3.0.2:
+-------------------
+
+ * It is possible to specify COLNO and ROWNO at compile time (put
+   something like -ROWNO=30 in the CFLAGS environment variable
+   when running aimake).  Note that changing these values breaks
+   save compatibility and is known to be buggy at this time.
+
+ * Added the Geoduck tileset, by Robert M. Cook.  This tileset is
+   based on the idea of prominently incorporating the traditional
+   ASCII symbols for each monster (and in many cases item) into
+   the graphical tile, but with enough added detail that you can
+   more easily see and remember what it is.  It may be of interest
+   to beginners who wish to eventually play in ASCII or Unicode
+   mode but are intimidated by it at first.
+
+ * Excalibur is now easier to get for Knights, harder for others.
+
+ * Gehennom is now mostly composed of a new type of cavern level,
+   generated by the ais cavern algorithm.  Mazes can still be found
+   in Gehennom on special levels, for now.
+
+ * The number of maze levels between Medusa's Island and the Castle
+   has been increased slightly.
+
+ * The #enhance screen how shows you both your current skill level
+   and your skill cap (maximum level your character can achieve).
+
+ * Sylphs can no longer be Valkyries; but they can be Rangers and,
+   for the time being, Wizards.  (Sylph Wizard is highly tentative
+   and may get removed if it proves too unbalanced.)
+
+ * Wands of digging now dig multiple tiles in Gehennom (and other
+   maze levels), the same as everywhere else.
+
+ * Any weapon you get in starting inventory will have a skill cap
+   no less than basic.  (Your starting skill was already being
+   raised to basic.  This prevents you from being above your max.)
+
+ * Dwarves can now always get to at least skilled in pick-axe,
+   and can get to expert if a human of the same role would be
+   able to get to skilled.
+
+ * Gnomes can always get to skilled in crossbow and aklys and can
+   go two skill ranks higher than a human of the same role, up to
+   a maximum of expert (crossbow) or master (club).
+
+ * Orcs can get at least skilled in scimitar and two ranks higher
+   than a human of the same role up to a maximum of master.
+
+ * Sylphs can always get at least basic skill in healing spells,
+   regardless of their role, and can get to skilled if a human of
+   the same role could get to basic.
+
+ * The scroll of amnesia has been removed from the game.  It is
+   replaced with the scroll of water, which generally creates pools
+   around the player.  (Some dungeon features can be destroyed by
+   this, replaced with a pool; others, such as stairs, cannot.)  If
+   cursed, one of the pools will be placed at the player's location.
+   If blessed, there is a small chance to get a fountain instead.
+   Although the scroll of amnesia was one of the most useless items
+   and thus was never given as starting inventory, I consider the
+   scroll of water to be potentially more useful than the scroll of
+   punishment, which previously could be; so scroll of water can be
+   given as starting inventory, and scroll of punishment now cannot.
+   Note that the scroll of water will not work on the Planes.
+
+ * Intelligence-draining attacks no longer also cause amnesia.
+
+ * Multi-firing is more difficult when using silver projectiles.
+   (They're still advantageous against silver-fearing targets, of
+   course, because the increased silver damage is worth more than
+   a higher multi-fire rate.)
+
+ * Added a new type of stone, silver nuggets.  These count as sling
+   ammo and do silver damage.  The best place to find silver nuggets
+   is on the caveman quest, but they can also be generated randomly.
+
+ * The Rogue quest now contains a guaranteed spellbook of sleep.
+
+ * Further alignment record adjustments have been made.  The penalties
+   for attacking peacefuls and for killing generated-peaceful and
+   always-peaceful monsters have been adjusted again.  Non-lawfuls now
+   get no penalty for killing mundane peaceful monsters; killing
+   always-peaceful ones still has a penalty for all alignments, but it
+   is smaller than before.  Lawful characters can regain alignment
+   points by killing hostile chaotic demons.  The alignment benefits
+   of sacrifice have been restored to their vanilla level of
+   effectiveness.  Using a poisoned weapon while lawful will no longer
+   take your record below 0.
+
+ * Valkyrie starting inventory has been rebalanced again.  They
+   always get the wand of cold now, and their starting enchants
+   have been rebalanced again.
+
+ * Sokoban tries to give you a prize you don't already have.  For
+   example, if the level you get would normally have a bag of holding
+   but you already have one and don't yet have reflection, an amulet
+   of reflection may be substituted in place of the bag.  There are
+   limits to how creative the game gets, however; you can still end up
+   with something redundant if you already have more than one of the
+   possible prizes.  Note that unidentified rings you are carrying
+   can have an impact on which ring you get as your prize, even if
+   they are not equipped.  Also, the prize is determined at the moment
+   the prize level is generated, so if you enter the level but don't
+   finish it and come back later, the prize is not changed again.
+
+ * Rogues now get the "backstab" bonus if the target monster is
+   fleeing (strike from behind); frozen, trapped, or unable to move
+   (catch at a disadvantage); or sleeping, blind, confused, or stunned
+   (strike unaware).
+
+ * Grimtooth is permanently poisoned and also grants poison resistance;
+   additionally it warns of elves and does extra damage to them, even
+   if they are poison resistant.
+
+ * The call/name menu implicitly allows alternate menu accelerators:
+   a for C, b for y, c for n.  (This is to accommodate players whose
+   muscle-memory was trained on NAO.)
+
+ * Barbarians attacking with an axe or battle-axe at Skilled or better
+   get free bonus attacks against adjacent enemies.  In each of the
+   diagrams below, you (@) attack a monster at target position (T),
+   and any monsters at the free-attack positions (F) will be attacked
+   as well.  Also, Barbarians can now get Master skill in axe.
+
+   Skilled ("wide arc"):
+   .....  .....  .....  .....  .....  .....  .....  .....
+   ...F.  .F...  .FTF.  .....  .TF..  ..FT.  .....  .....
+   ..@T.  .T@..  ..@..  ..@..  .F@..  ..@F.  ..@F.  .F@..
+   ...F.  .F...  .....  .FTF.  .....  .....  ..FT.  .TF..
+   .....  .....  .....  .....  .....  .....  .....  .....
+
+   Master ("tremendous arc"):
+   .....  .....  .....  .....  .....  .....  .....  .....
+   ..FF.  .FF..  .FTF.  .....  .TFF.  .FFT.  ...F.  .F...
+   ..@T.  .T@..  .F@F.  .F@F.  .F@..  ..@F.  ..@F.  .F@..
+   ..FF.  .FF..  .....  .FTF.  .F...  ...F.  .FFT.  .TFF.
+   .....  .....  .....  .....  .....  .....  .....  .....
+
+ * Lower-level nymphs now blink away when they steal something.
+   Blinking normally works on a straight-line clear-path basis (sort
+   of like line of sight, but they can blink into the dark or when
+   blind) with a distance based on the nymph's level.  (However, if
+   there are no available spaces to blink to, the nymph may be placed
+   farther away.)  For wood and water nymphs, this replaces their
+   ability to teleport at random times or warp to an entirely random
+   location when stealing.  One side-effect of this change is that you
+   can no longer get intrinsic teleportitis by eating them, which
+   seems fair.  Mountain nymphs, which are higher level, blink when
+   they steal but can also teleport at other times; and you CAN get
+   teleportitis by eating them.  I reduced the mountain nymphs'
+   frequency number (from 2 to 1), but they can now generate in small
+   groups (the only n to do so).  Also, a fourth, even higher level
+   type of nymph has been added, the island nymph.  These warp away
+   just like vanilla nymphs; of course you can get teleportitis by
+   eating them.  They normally generate infrequently but can be
+   summoned by the Summon Nasties monster spell.
+
+ * A new playable race has been added, Sylph.  Sylphs are a type of
+   elemental fairy creature.  As such, they have fairy senses and so
+   tend to see monsters as they are, rather than as they appear --
+   they see invisible and are not fooled by shape changers, and they
+   get infravision at level 5 and intrinsic detect monsters at level
+   16.  They also get stealth at level 5 and displacement at 7.
+   Perhaps most interestingly, Sylphs regenerate health and power by
+   drawing from their environment (which can heal status effects as
+   well as restore HP and Pw), but in order to do so they must be able
+   to feel the natural world around them -- the air on their skin, the
+   ground under their toes, etc.  Thus, they cannot draw power and
+   health if wearing armor made of anything but cloth or wood (except
+   for their own quest artifact), or if they are levitating, or while
+   polymorphed.  (Also, there is very little healing to be drawn from
+   the environment in Gehennom.)  Sylphs are always female.  They can
+   be neutral or chaotic and can currently be Priests, Rogues,
+   Healers, Rangers, or Wizards.
+
+ * Attribute maxima now depend on role as well as race.
+   The role contributions are as follows (where 1 places
+   the character's overall maximum where it was in vanilla):
+   Rol | Str Int Wis Dex Con Cha
+   ----+-------------------------
+   Arc |  1   1   1   1   1   1
+   Bar |  2   0   0   2   2   0
+   Cav |  3   0   0   1   1   1
+   Hea |  0   1   2   1   1   1
+   Kni |  2   2   0   0   0   2
+   Mon |  2   1   2   1   0   0
+   Pri |  1   2   0   1   2   0
+   Rog |  1   1   0   2   1   1
+   Ran |  1   1   1   2   0   1
+   Sam |  2   0   1   2   1   0
+   Tou |  0   1   2   1   0   2
+   Val |  1   1   1   2   1   0
+   Wiz |  0   2   2   1   0   1
+   These values are experimental; some of them will probably
+   need to be adjusted, but this is a starting point.
+
+ * Ice devils now have an attack that immobilizes the target
+   in ice.  (Fiery monsters, such as fire elementals, are not
+   immobilized but sustain damage.)
+
+ * Piranha generate in larger groups and have more attacks.
+
+ * Mazes in Gehennom can now have wall and/or corridor widths
+   other than 1 tile.  Occasionally, they can have "walls" that
+   are not made of wall or rock.
+
+ * Hezrou now have a passive attack that gives off a foul stench
+   (implemented as stinking cloud).
+
+ * "melon" is now the default name for custom fruit.
+
+ * The number of different kinds of polearms has been reduced.
+   Also, stiletto is no longer a distinct object from knife.
+
+ * The "stone giant" has been renamed to just "giant", meaning
+   its corpse can now be used for things like giant mummies,
+   eliminating the need for the otherwise-unused generic "giant"
+   monster.  This reduces the number of monsters in monst.c by
+   one, with probably no gameplay effect at all.
+
+ * Cavemen have had their race and alignment options adjusted.
+
+ * The Caveman quest artifact is now Big Stick, an artifact club.
+   Big Stick good.  Hit things with it.  Bam.  Bam bam.  If I did
+   the coding correctly, it grants stealth when carried and magic
+   resistance when wielded.  The bonus is +5 to-hit, +1d12 damage.
+
+ * Mastodons have been replaced with mammoths.
+
+
+Changes in 4.3.0.1:
+-------------------
+
+ * The game calls unseen monsters "something" rather than "it",
+   since in many cases there is no (or a misleading) antecedent.
+
+ * Sinks are usually placed next to walls.
+
+ * Throwing gauntlets at a peaceful monster makes it hostile,
+   allowing you to kill it without incurring the usual alignment
+   penalty for angering or killing a generated-peaceful monster.
+
+ * There are now four versions of Orcus Town.
+
+ * There are now two versions of Asmodeus' Lair and two versions
+   of Baalzebub's, but in any given game you only get one of them
+   (i.e., you either get Asmo or Baal, not both).  However, you also
+   get either Yeenoghu's Plaza or Dispater's Gauntlet, so the total
+   number of demon lairs per game is the same as vanilla.
+
+ * Random rooms, if large enough, can sometimes be non-rectangular.
+
+ * The alignment record penalties for killing peaceful monsters have
+   been rebalanced, and your maximum and minimum alignment record
+   are always 100 and -100, respectively.
+
+ * Changed the Caveman/Cavewoman rank titles.
+
+ * Chaotics get alignment points for killing (hostile members of)
+   their own race.
+
+ * Neutrals can get alignment points for successful prayer (when not
+   in trouble) even if their alignment record is already positive.
+
+ * Lawfuls now reliably get an alignment point each time they help
+   someone out of a trap (previously, you had a random chance of
+   getting the point, depending on luck).
+
+ * Slings have been buffed.  They now get a damage bonus (albeit, a
+   reduced one compared to melee).  Cavemen get a multishot bonus for
+   using a sling.  Flint and hard gems are less likely to break.
+   Dual-wielding two slings lets you fire (on average) twice as many
+   projectiles, provided your stack of projectiles is large enough;
+   this uses your sling skill, not two-weapon skill (although you do
+   still have to be capable of two-weapon combat to do it).
+
+ * The range for projectiles fired from a launcher has been increased,
+   especially for crossbow bolts.
+
+ * Shamelessly copied the multiple-bones-pools implementation from
+   NAO, then enhanced it to keep separate pools for each game mode
+   (normal, explore, wizmode, setseed, polyinit).  I'd like to see
+   this eventually go in upstream (but not until the next save break,
+   because bones files from before the change won't load after).
+
+ * Some monsters have been given more interesting attacks.  Notably,
+   pit fiends now have an attack that creates pits.
+
+ * Fixing status ailments with a unicorn horn is now mostly free; the
+   only penalty is that a blessed horn can become uncursed.  Blessed
+   horns are now guaranteed to fix at least one trouble (assuming you
+   have any they can fix).  However, restoring lost attributes with a
+   unicorn horn now always degrades its enchantment.
+
+ * When you lose alignment points, you now get warning messages
+   about it.  You also get messages when you regain alignment.
+
+ * Engraving Elbereth no longer exercises wisdom.
+
+ * Engravings are no longer degraded by walking, and the probability
+   that random actions or inactions (including resting, searching)
+   will erode an engraving is greatly reduced.  However, engraving
+   additional text degrades what is already there.
+
+ * Lizards (specifically), acid blobs, F, P, and T are guaranteed to
+   drop corpses for the first hundred kills per monster type.
+
+ * The effect of weapon skill on chance to hit has been magnified,
+   and being restricted is now worse than being unskilled.
+
+ * Bugfix: the monstr value for floating eyes was being calculated
+   incorrectly, due to the way they are implemented.  This was
+   causing them to generate too often too early.
+
+ * Added a digit to the version number, so I can do more than one
+   release based on a given version of upstream, without getting my
+   version numbers horribly out of sync.
+
+ * The chance for thrown projectiles to break now depends primarily on
+   your skill.  Enchanted objects get an extra chance to survive (and
+   negatively enchanted ones get an extra chance to break).
+
+ * You can now #untrap falling rock traps, obtaining rocks.
+   Also, disarming a projectile trap (rocks, arrows, or darts)
+   now produces a few more projectiles than previously.
+
+ * Players who wish to use spears should be able to find more
+   of them now, introduced via the monster inventory mechanism.
+
+ * Quasits have been buffed slightly, because they're boring, but
+   I don't want to just remove them if they can be made interesting.
+
+ * Manes are now in the W mlet, with wraiths and ghosts and other
+   spirits of the dead.  This fits their flavour much better than
+   their previous mlet assignment and also reduces color conflicts.
+
+ * Rings that are dropped down a sink end up buried in the ground
+   under the sink.  They can be reclaimed by destroying the sink,
+   drying up the resulting fountain, and digging up the rings,
+   which will now be identified.
+
+ * The backstab bonus now scales with your skill in whatever weapon
+   you are using.  Currently, the bonus potentially goes as high as 28
+   per hit if you are expert but falls off significantly at lower
+   skill levels.  This change probably gives rogues a very powerful
+   mid-game, without making them overpowered in the late game; but
+   it will need play testing for balance.
+
+ * Added single-use wish sources at the top of Vlad's tower
+   and in Orcus Town.  (Update: and one in the Wizard's Tower.)
+
+ * The Wizard of Yendor gets more starting inventory now.  Some
+   of it might actually be useful at that stage of the game.
+
+ * Cherry-picked the "monsters get better equipment in Gehennom"
+   feature from the Gehennom Fun Patch.  Also, arrow traps in
+   Gehennom may yield silver arrows.
+
+ * Now that Sokoban is somewhat easier for the haters to bypass or
+   deal with in some other way without properly solving it, we're
+   free to add a few new Sokoban levels:
+   + Add four new versions of Soko-1: "Boomerang Boulders", "Through
+     the Cracks", "Easy Peasey", and "First Things First".  The two
+     existing vanilla versions are retained also, for a total of six.
+   + Add three new versions of Soko-2, for a total of four.
+     The added versions are "Fly on the Wall", "Boulder Halls
+     of Zim", and "Two-Phase".  One of the existing vanilla
+     versions is also retained.  The infamous "Sokoban 2 B"
+     (steelypips) aka "soko2a" (nethackwiki) is excluded.
+   + Add two new versions of Soko-3, for a total of four.
+     The new ones are "Bring 'em on Down" and "Slot Machine".
+   + Add one new version of Soko-4, "'Ring 'em Around", with
+     the prize being a ring of polymorph control.
+   I have some reservations about a couple of these, but it's hard
+   for me to be objective about them, since I created them.  I've
+   included them for now, pending user feedback.
+
+ * The Oracle can now sell you enlightenment, in addition to the
+   other services.  Also, the prices are calculated differently,
+   in a way that should make them lower in the early game.
+
+ * Monkeys are better at stealing things and getting away.
+
+ * Additional rocks are sometimes generated on the floor of rooms.
+   This is mainly a balance change, to prevent sling users from
+   trivially running out of ammo -- sling has to have _some_ kind
+   of advantage, as it's worse than other ranged weapons in most
+   ways.  However, it also makes flavor sense, IMO, to have a lot
+   of rocks laying around.
+
+ * Wands of wishing are no longer rechargeable.
+
+ * Role rebalance, round one.
+   + Starting inventory has been adjusted for some roles: a bit more
+     ammo or an additional spell book; low-percentage-chance items are
+     either guranteed or removed, or you get a consolation prize if
+     you don't get them; healers get eucalyptus; some roles get small
+     enchantment adjustments on starting equipment.
+   + Several role/race and role/alignment combinations are permitted
+     that previously were not, and in one case vice versa.
+   + The Barbarian role has had its melee skill options and quest
+     artifact buffed.  (The Heart can now be invoked for a
+     remove-curse effect; Barbarians get the blessed remove curse
+     effect; other roles get the uncursed effect.)
+   + Valkyries, Knights, and Samurai have had their melee prowess
+     reduced a bit (so that their melee options are worse than
+     Barbarians) but are compensated in other ways.
+     - Valkyries now start with different inventory and can find a
+       spellbook of cone of cold on quest home.  Their casting
+       abilities still need to be balanced so they can use attack
+       spells without becomming general-purpose casters.  I may need
+       to give them starting skill in attack, we'll see.  Also,
+       Valkyries fly now.
+     - Knights can now get expert in crossbow, can find spare lances
+       and a spare saddle on quest home, will not fall off and die
+       when mounting their pony on turn 1, and will not break their
+       lance while jousting if at least devoutly aligned.  Figuring
+       out how to get to devout as early as possible under the Fourk
+       alignment record formula is left as an exercise.
+     - Samurai are guaranteed a longsword and some replacement ya and
+       a saddle on the quest, and the Tsurugi now provides extrinsic
+       speed when wielded.
+
+ * Pulled in about fifty fixes for various vanilla bugs from an
+   upstream "4.3 maintenance" branch.  The upstream master branch
+   hasn't merged these changes yet for reasons involving release
+   timing, but Fourk is at a different place in its dev cycle that
+   makes them appropriate now.
+
+ * The luck penalty in Sokoban can now be avoided by carrying a
+   non-cursed luckstone or by hallucinating.  Also, the Sokoban luck
+   penalty will never take your luck below -3.
+
+ * The Statue of Perseus is now guaranteed to contain the shield of
+   reflection and the sack (and the scimitar, just because).  This is
+   mainly intended as a sop for players who insist on skipping
+   Sokoban.  At least you don't have to do the Castle with no
+   reflection and no container.
+
+ * The differences between the different versions of Minetown have
+   been enhanced.  Previously, several of them felt almost the same
+   as one another.  Hopefully that is not the case now.
+
+ * Barring bones, the only variant of Minetown that might not have a
+   general store now is College Town, which has a guaranteed book
+   shop, so you can at least easily price check scrolls (and books).
+
+ * The Mimic of the Mines level has been made more interesting,
+   bringing it somewhat closer to the other Mine's End levels in terms
+   of both difficulty and loot.
+
+ * Certain normally rare items are supplied in small numbers early in
+   the game as floor items.  Specifically, filler levels at depth 2-6
+   in the main dungeon each have an 80% chance to get one of these
+   items, which is most often a scroll of scare monster but can also
+   be wolfsbane, eucalytus, or a wand of enlightenment.
+
+ * The ever controversial and rather boring Acehack/NetHack4 floating
+   eye behavior (wherein you can't melee them at all) has been
+   replaced with a new behavior that will probably be equally
+   controversial but hopefully more interesting:  whatever hp damage
+   you do to the floating eye you also sustain yourself, amplified
+   proprortionally to your own experience level.  The exact formula
+   may need to be tweaked, pending play testing.  The formula for
+   monster-vs-monster is different from the formula for
+   player-vs-monster, not because I think it should be, but because
+   rebalancing player hitpoints vs monster hitpoints is a larger
+   change that I didn't want to rush into yet.
+
+ * Insteadeath by poison when you could have survived the damage
+   will now only drain a level rather than killing you outright,
+   if you are at least XL3.  Furthermore, starting characters have
+   a 500-turn grace period to reach XL3 to protect against this.
+   (You can still die by falling onto poisoned spikes or being hit by
+   a poisoned weapon or whatever, if you do not have enough current HP
+   to survive the damage that it does, or if you are running around
+   at XL1 or XL2 past turn 500.)
+
+ * The supply of rocks (embedded within the rock) has been increased,
+   because slings are bad enough, compared to other launchers, without
+   having to constantly worry about running out of rocks (which aren't
+   even supposed to be the primary ammo; they're what you use when
+   you're trying to conserve or have run out of flint and glass).
+
+ * The Wizard of Yendor now has an attack that can change your
+   alignment (law/neu/cha), but this effect is blocked if you are
+   pious.  The main upshot of this is that early (pre-quest) alignment
+   conversion no longer makes the game unwinnable, although it is
+   still a significant inconvenience, since you will need to fight the
+   Wizard before doing the quest, which is not the usual strategy.
+
+ * The shopkeeper names list for general stores has been expanded,
+   since that is the most common type of shop.  Also, some tool shop
+   owners have been re-inserted into the list that were in (at least
+   some ports of) 3.4.3 but had been removed at some point due to the
+   #ifdef purge and/or platforms being dropped.  (This re-insert was
+   not comprehensive.)
+
+ * Arrows (against small monsters) and darts have been slightly
+   buffed: one additional point of base damage.
+
+ * Cherry-picked two trap-related changes from the Gehennom Fun Patch.
+   Falling rock traps are no longer generated on levels 1-3 in the
+   main dungeon, and when a monster is changed by a polymorph trap,
+   there is now a chance for the trap to be used up.  The probability
+   of this drops off deeper into the dungeon.  To be able to use the
+   same polymorph trap on pets indefinitely with no chance of it being
+   used up, you must find one at dungeon level 35 or deeper.
+
+ * Made rock piercers brown, lurkers above red.  Eventually
+   these will all be in mlet t (S_TRAPPER).
+
+ * Marked umber hulks as HI_ULINE (i.e., underlined).  This
+   is a pre-emptive measure, done for the same reason that xorns
+   are now red:  eventually both of these large, distinctive,
+   deep-rock-dwelling creatures are going to be in the same
+   monster class together, probably mlet X (S_XORN), and I don't
+   want either of them looking exactly the same as the other
+   one used to look, if it can be avoided.
+
+ * Moved leprechauns into the S_IMP (lowercase i) mlet class.
+   For detailed justification, see the changelog entry (834cebee),
+   but in brief, they are mischevious but usually not outright
+   dangerous spirit/faerie beings appearing with a physical body,
+   playing pranks, meddling, occasionally making people's fortunes,
+   and there is folklore associated with capturing them, all of
+   which is also true of imps and tengu.  Additionally, they are
+   diminutive in stature like imps and quasits.  This reduces the
+   number of in-use map characters by one, which is a Good Thing.
+   To distinguish, leprechauns are bright green and homonculi are
+   now gray (previously, both were green).
+
+ * Differentiated nymphs.  Wood nymphs are the lowest-level and
+   slightly easier to deal with than before (notably, they are now
+   slightly slower than the player); water nymphs are a little
+   tougher, and mountain nymphs are now the highest-level and most
+   difficult nymphs.  They do NOT grow up into each other.  However,
+   water nymphs (barring fountain schenanighans, which are always a
+   player's fault) and especially mountain nymphs should now start
+   showing up a little later in the game than before; wood nymphs
+   should start showing up around the same time as before.
+
+ * Changed the colors of two monsters (xorns to red, acid blobs to
+   yellow, matching yellow dragons).  This is a pre-emptive measure
+   to reduce color conflicts later, when certain monster classes
+   eventually get combined.  Might as well let users go ahead and
+   get used to the new colors for these monsters now.
+
+ * Unicorn horns are now a technically finite resource (unless you can
+   cast cancellation).  Cursed unicorn horns and the "Nothing happens"
+   case are unchanged.
+
+ * The formula for the player's odds of hitting monsters has been
+   adjusted significantly.  Luck and experience level are now only
+   added in on a logarithmic scale (together), meaning that always
+   hitting everything no matter what is (hopefully) no longer a
+   foregone conclusion in the late game.  It is to be expected that
+   further tweaks to this formula will be required.
+
+ * Disabled the "network MOTD" feature, since it requires a public
+   server, which Fourk currently does not have.
+
+ * Alignment record points are no longer granted for killing most
+   kinds of monsters.
+
+ * Gaining alignment record points through sacrifice is now somewhat
+   more difficult (especially for non-chaotics); although certain
+   kinds of special-cased corpses are still particularly effective.
+
+ * Alignment record now starts at 10 for lawfuls, 15 for neutrals,
+   20 for chaotics.  (These numbers may get adjusted later, not sure;
+   as it stands, it means chaotics don't have to improve their record
+   at all to go on the quest; lawfuls must improve it by 10.)  For
+   now, the role-specific differences in starting alignment have been
+   evened out; this may change later, as part of role differentiation,
+   but I want to get the basic balance figured out first.
+
+ * The chance for an engraving to be successfully written exactly as
+   intended, rather than in a pre-eroded form, now starts higher than
+   in 3.4.3 but falls off if you write Elbereth too many times.  The
+   number of times you can write Elbereth and still keep a good chance
+   of writing things successfully is proportional to experience level
+   and is also somewhat better for forms of engraving that use up
+   resources.  Players who use Elbereth sparingly in emergencies are
+   likely to notice a positive effect on its reliability (if they know
+   enough not to smudge it after writing it, write one at a time,
+   etc.); players who abuse Elbereth extensively will definitely
+   notice that it is less reliable now.  Failure is accompanied by
+   messages about your body_part(HAND) cramping up.
+
+ * To compensate for the reduced death drops as you kill many monsters
+   of the same kind (which happens in normal play for some monsters,
+   particularly common ones generated in groups), the base death drop
+   probability has been adjusted upward.  Thus, the first few monsters
+   you kill of any given type are now more likely to leave death drops
+   than before.  This needs play testing for balance, but the
+   intention is that the overall number of death drops in a typical
+   normal (non-farming) game should be about the same.
+
+ * Any given type of monster becomes less likely to drop corpses and
+   death drops as you kill more and more of them.  Somewhere around 80
+   kills you stop getting death drops from that type of monster, and
+   somewhere around 225 kills, you stop getting corpses for that kind
+   of monster.  This is expected to be most noticeable with puddings
+   but may also be relevant for extinctionists and throne farmers.
+   I'd have made it top out at a thousand or so kills, but the kill
+   count only goes up to 255, probably so it can fit in a single byte.
+   In any case, this is unlikely to be noticed in normal play except
+   with large creatures such as dragons, which are no longer
+   guaranteed to drop corpses every single time.
+
+ * Updated branding, docs, build rules, and such to refer to nhfourk
+   (for filenames) and NetHack Fourk (for human-readable names) where
+   appropriate.  References to NetHack 4 and nethack4 have also been
+   retained in many places, since that is the upstream codebase on
+   which NetHack Fourk is based.

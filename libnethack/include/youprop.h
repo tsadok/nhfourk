@@ -110,6 +110,10 @@
 # define Infravision            u_any_property(INFRAVISION)
 # define HDetect_monsters       u.uintrinsic[DETECT_MONSTERS]
 # define Detect_monsters        u_any_property(DETECT_MONSTERS)
+# define HProt_shapechangers    u.uintrinsic[PROT_FROM_SHAPE_CHANGERS]
+# define Prot_shapechangers     u_any_property(PROT_FROM_SHAPE_CHANGERS)
+# define HDisplacement          u.uintrinsic[DISPLACED]
+# define Displacement           u_any_property(DISPLACED)
 
 /*** Appearance and behavior ***/
 # define Adornment              worn_extrinsic(ADORNED)
@@ -119,12 +123,17 @@
 # define BInvis                 worn_blocked(INVIS)
 # define Invisible              (Invis && !See_invisible)
 # define Displaced              worn_extrinsic(DISPLACED)
+/* u_any_property(STEALTH) should no longer be checked directly.
+   Use get_stealth() instead.
 # define HStealth               u.uintrinsic[STEALTH]
 # define Stealth                u_any_property(STEALTH)
+*/
 # define HAggravate_monster     u.uintrinsic[AGGRAVATE_MONSTER]
 # define Aggravate_monster      u_any_property(AGGRAVATE_MONSTER)
+# define HStormprone            u.uintrinsic[STORMPRONE]
+# define Stormprone             u_any_property(STORMPRONE)
 # define HConflict              u.uintrinsic[CONFLICT]
-# define Conflict               u_any_property(CONFLICT)
+# define Conflict               (u_any_property(CONFLICT) && !Stormprone)
 
 /*** Transportation ***/
 # define Lev_at_will                                                    \
@@ -254,6 +263,15 @@ enum player_conduct {
     conduct_puddingsplit,                /* split a pudding */
     conduct_lostalign,                   /* lost alignment record points */
     conduct_unused1,                     /* unused, might not be 0 in -beta1 */
+    conduct_sokoban_guilt,               /* did guilt-inducing things */
+    conduct_clothing,                    /* put on any clothing or armor */
+    conduct_jewelry,                     /* wore rings, amulets, or eyewear */
+    conduct_unihorns,                    /* applied a unicorn horn */
+    conduct_containers,                  /* applied or looted containers */
+    conduct_tools,                       /* applied or looted any tools */
+    conduct_conflict,                    /* generated conflict */
+    conduct_invisible,                   /* were invisible */
+    conduct_displacement,                /* were displaced */
     num_conducts,
 };
 

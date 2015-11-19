@@ -299,9 +299,23 @@ chat_with_leader(void)
         if (!on_level(&u.uz, &qstart_level))
             return;
 
+        if ((is_pure(FALSE) > 0) && (u.ulevelmax < 2) &&
+            ((!challengemode) || !(u.uconduct[conduct_killer]))) {
+            qt_pager(QT_LOWLEVEL);
+            if (yn_function("Confirm your readiness and start the quest?",
+                            "yn", 'n') == 'y') {
+                pline(msgc_npcvoice, "\"Go on then.\"");
+                Qstat(got_quest) = TRUE;
+                /* TODO: levelport the player straight to Quest 2? */
+                historic_event(FALSE, FALSE, "embarked upon an epic quest.");
+            } else {
+                qt_pager(QT_BADLEVEL);
+                expulsion(FALSE);
+            }
+            return;
+        }
         if (not_capable()) {
             qt_pager(QT_BADLEVEL);
-            exercise(A_WIS, TRUE);
             expulsion(FALSE);
         } else if (is_pure(TRUE) < 0) {
             com_pager(QT_BANISHED);
@@ -313,12 +327,10 @@ chat_with_leader(void)
                 expulsion(TRUE);
             } else {
                 Qstat(not_ready)++;
-                exercise(A_WIS, TRUE);
                 expulsion(FALSE);
             }
         } else {        /* You are worthy! */
             qt_pager(QT_ASSIGNQUEST);
-            exercise(A_WIS, TRUE);
             Qstat(got_quest) = TRUE;
             historic_event(FALSE, FALSE, "embarked upon an epic quest.");
         }

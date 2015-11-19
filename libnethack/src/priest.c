@@ -165,7 +165,8 @@ pri_move(struct monst *priest)
     gx += rn1(3, -1);   /* mill around the altar */
     gy += rn1(3, -1);
 
-    if (!priest->mpeaceful || (Conflict && !resist(priest, RING_CLASS, 0, 0))) {
+    if (!priest->mpeaceful || (Conflict && !resist(priest, RING_CLASS, 0, 0))
+        || Stormprone) {
         if (monnear(priest, u.ux, u.uy)) {
             if (Displaced)
                 pline(msgc_notresisted,
@@ -381,6 +382,9 @@ intemple(int roomno)
     const char *msg1, *msg2;
     enum msg_channel msgc = msgc_npcvoice;
 
+    if (In_mines(&u.uz) && !historysearch("entered the Minetown temple", TRUE))
+        historic_event(FALSE, TRUE, "entered the Minetown temple");
+
     if (!temple_occupied(u.urooms0)) {
         if (tended) {
             shrined = has_shrine(priest);
@@ -521,7 +525,6 @@ priest_talk(struct monst *priest)
             } else
                 pline(msgc_npcvoice, "%s preaches the virtues of poverty.",
                       Monnam(priest));
-            exercise(A_WIS, TRUE);
         } else
             pline(msgc_npcvoice, "%s is not interested.", Monnam(priest));
         return;
@@ -539,8 +542,6 @@ priest_talk(struct monst *priest)
                 verbalize(msgc_npcvoice, "Cheapskate.");
             else {
                 verbalize(msgc_npcvoice, "I thank thee for thy contribution.");
-                /* give player some token */
-                exercise(A_WIS, TRUE);
             }
         } else if (offer < (u.ulevel * 400)) {
             verbalize(msgc_aligngood, "Thou art indeed a pious individual.");
@@ -710,8 +711,7 @@ ghod_hitsu(struct monst *priest)
     }
 
     /* bolt of lightning */
-    buzz(-10 - (AD_ELEC - 1), 6, x, y, sgn(tbx), sgn(tby));
-    exercise(A_WIS, FALSE);
+    buzz(-10 - (AD_ELEC - 1), 6, x, y, sgn(tbx), sgn(tby), 0);
 }
 
 void

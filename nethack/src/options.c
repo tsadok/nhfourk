@@ -49,6 +49,8 @@ static struct nh_enum_option menu_headings_spec =
 static struct nh_listitem palette_list[] = {
     {PALETTE_NONE,      "terminal default (may require new window)"},
     {PALETTE_DEFAULT,   "uncursed default"},
+    {PALETTE_SEPTBRITE, "September Bright"},
+    {PALETTE_SEPTEMBER, "September Compromise"},
     {PALETTE_SATURATED, "saturated bold"},
     {PALETTE_TERTIARY,  "tertiary colors"},
     {PALETTE_EQUILUM,   "equiluminous"},
@@ -185,6 +187,9 @@ static struct nh_option_desc curses_options[] = {
     {"msg_window", "Messages and Menus",
      "behaviour of the 'previous message' command",
      nh_birth_ingame, OPTTYPE_ENUM, {.e = PREVMSG_FULL}},
+    {"msgnomerge", "Messages and Menus",
+     "messages always start on new lines",
+     nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"networkmotd", "Online and Tournaments",
      "get tips and announcements from the Internet",
      nh_birth_ingame, OPTTYPE_ENUM, {.e = MOTD_ASK}},
@@ -193,7 +198,11 @@ static struct nh_option_desc curses_options[] = {
      nh_birth_ingame, OPTTYPE_ENUM, {.e = OPTSTYLE_FULL}},
     {"palette", "Terminal and Rendering",
      "color palette used for text",
+#ifdef WIN32
      nh_birth_ingame, OPTTYPE_ENUM, {.e = PALETTE_DEFAULT}},
+#else
+     nh_birth_ingame, OPTTYPE_ENUM, {.e = PALETTE_NONE}},
+#endif
     {"prompt_inline", "Messages and Menus",
      "place prompts in the message window",
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
@@ -229,6 +238,7 @@ static struct nhlib_boolopt_map boolopt_map[] = {
     {"extmenu", &settings.extmenu},
     {"invweight", &settings.invweight},
     {"mouse", &settings.mouse},
+    {"msgnomerge", &settings.msgnomerge},
     {"prompt_inline", &settings.prompt_inline},
     {"scores_own", &settings.end_own},
     {"status3", &settings.status3},
@@ -385,6 +395,8 @@ curses_set_option(const char *name, union nh_optvalue value)
     } else if (!strcmp(option->name, "msghistory")) {
         settings.msghistory = option->value.i;
         discard_message_history(settings.msghistory);
+    } else if (!strcmp(option->name, "msgnomerge")) {
+        settings.msgnomerge = option->value.b;
     }
     else
         return FALSE;
@@ -1394,11 +1406,11 @@ get_config_name(fnchar * buf, nh_bool ui)
 #endif
 
     fnncat(buf, ui_flags.connection_only ? usernamew :
-                ui ? FN("curses.conf") :
-                FN("NetHack4.conf"),
+                ui ? FN("NHFUI.conf") :
+                FN("NHFourk.conf"),
            BUFSZ - fnlen(buf) - 1);
     if (ui_flags.connection_only)
-        fnncat(buf, ui ? FN(".curses.rc") : FN(".NetHack4.rc"),
+        fnncat(buf, ui ? FN(".NHFUI.rc") : FN(".NHFourk.rc"),
                BUFSZ - fnlen(buf) - 1);
 
     return 1;
@@ -1486,6 +1498,9 @@ write_nh_config(void)
 
     if (get_config_name(filename, FALSE) &&
         (fp = open_config_file(filename))) {
+#ifdef UNIX
+        fchmod(fileno(fp), 0644);
+#endif
         write_config_options(fp, nh_options);
         fclose(fp);
     } else {
@@ -1507,6 +1522,9 @@ write_ui_config(void)
 
     if (get_config_name(filename, TRUE) &&
         (fp = open_config_file(filename))) {
+#ifdef UNIX
+        fchmod(fileno(fp), 0644);
+#endif
         write_config_options(fp, curses_options);
         fclose(fp);
     } else {

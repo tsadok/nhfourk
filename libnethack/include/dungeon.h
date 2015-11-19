@@ -93,7 +93,7 @@ typedef struct branch {
 
 /* dungeon overview information, generated and used by dooverview */
 struct overview_info {
-    char fountains, sinks, thrones, trees, temples;
+    char fountains, magic_chests, sinks, thrones, trees, temples;
     char altars;              /* number of non-high altars */
     char high_altars;         /* number of high altars */
     boolean lawful_altar;     /* lawful altar present */
@@ -142,6 +142,7 @@ struct overview_info {
 # define Is_qlocate(x)          (on_level(x, &qlocate_level))
 # define Is_nemesis(x)          (on_level(x, &nemesis_level))
 # define Is_knox(x)             (on_level(x, &knox_level))
+# define Is_advent_calendar(x)  (on_level(x, &advcal_level))
 
 # define In_sokoban(x)          ((x)->dnum == sokoban_dnum)
 # define Inhell                 In_hell(&u.uz)  /* now gehennom */

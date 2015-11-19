@@ -16,7 +16,7 @@
 # include <unistd.h>
 #endif
 
-#define DEFAULT_NETHACKDIR "/usr/share/NetHack4/"
+#define DEFAULT_NETHACKDIR "/usr/share/NetHackFourk/"
 
 static void process_args(int, char **);
 void append_slash(char *name);
@@ -63,36 +63,35 @@ static struct nh_menuitem mainmenu_items_noclient[] = {
     {EXITGAME, MI_NORMAL, 0, "quit", 'q', 'x'}
 };
 
-const char *nhlogo_small[11] = {        /* created using pbmtoascii */
-    "                                                       oo               _d#,   ",
-    "MMM,   MM            oo    MM     MM                   MM             ,HMMP'   ",
-    "MMMM   MM            MM    MM     MM                   MM           ,HMMMM     ",
-    "MMMM|  MM    ,oo,   oMMoo  MM     MM   ,ooo      ,ooo  MM   oo,   .dMM*MMM     ",
-    "MM`MH  MM   dMMMMb  #MM##  MM     MM  |MMMMM,   dMM#M| MM  dMP   ,MMH' MMM     ",
-    "MM TM, MM  |MM' 9Mb  MM    MM#####MM  `'  `Mb  |MH' `' MM dMP  ,HMM?   ]MM##HMH",
-    "MM `Mb MM  MMboodMM  MM    MM\"\"\"\"\"MM    ,ooMM  MM'     MMMMP  ?MMMH##MMMMMH*\"'\"",
-    "MM  HM.MM  MMH#####  MM    MM     MM  .HMH#MM  MM      MMMMb  *###\"\"\"\"\"9MM|    ",
-    "MM  |MMMM  9Mb       MM    MM     MM  HM' .MM  9M?     MM 9Mb          |MM|    ",
-    "MM   MMMM  `MMbood|  MMoo  MM     MM  HMbdMMM  `MMb_d| MM `MMb          MMb    ",
-    "MM   `MMM   `9MMMP'  `MMM  MM     MM  `*MM'MM   `9MMM' MM  `MMb         ?MH    ",
+const char *nhlogo_small[6] = {
+    /* created by hand */
+    "      _ ___      _   _   ",     /* 1 */
+    "|\\ | |_  |  |_| /_\\ /  |/",   /* 2 */
+    "| \\| |_  |  | | | | \\_ |\\",  /* 3 */
+    "     _  _       _        ",     /* 4 */
+    "    |_ / \\ | | |/ |/     ",    /* 5 */
+    "    |  \\_/ \\_/ |\\ |\\     ", /* 6 */
 };
 
+
 const char *nhlogo_large[14] = {
-    "                                                                     ooo                   .##.    ",
-    "####     ##b                      ###     ###                        MMM                 dMMMM'    ",
-    "MMMMb    MMM              MMM     MMM     MMM                        MMM              .dHMMMM'     ",
-    "MMMMM.   MMM              MMM     MMM     MMM                        MMM             oHMMMMMT      ",
-    "MMMMM|   MMM     ooo,    oMMMoo,  MMM     MMM    ,oooo        oooo,  MMM   ooo,    .dMMH*MMM|      ",
-    "MMM\"MH|  MMM   JMMMMMM.  MMMMMM|  MMM     MMM   dMMMMMM_    _MMMMMM  MMM  JMM|    JMMMH  MMM|      ",
-    "MMM 9M|  MMM  |MMM\"\"MMH   MMM     MMMoooooMMM  |MP\"\"\"TMM   |MMP' \"9  MMM |MMT   oHMMP\"   9MMbooo##b",
-    "MMM |MM  MMM  dMM'  |MMM  MMM     MMMMMMMMMMM         MMH  MMH'      MMMdMM\"  .dMMMR:_,ooHMMMMMMM##",
-    "MMM `MM| MMM  MMM###HMMM  MMM     MMM\"\"\"\"\"MMM    .o###MMM  MM|       MMMMMT  ,dMMMMMMMMMMMMMH*'\"\"  ",
-    "MMM  HML MMM  MMM#######  MMM     MMM     MMM   ,MMM##MMM  MM|       MMMMMb  `*###*\"\"\"'  9MMM      ",
-    "MMM  |MMMMMM  HMM.        MMM     MMM     MMM  ,MM*'  MMM  MMH       MMM|HMM.            |MMM|     ",
-    "MMM   |MMMMM  |MMH    ?b  MMM     MMM     MMM  |MM\\ ,dMMM  TMMb,  d  MMM |MMH            `MMM|     ",
-    "MMM   `MMMMM   9MMMMMMMH  `MMMM|  MMM     MMM  `9MMMMPMMM   \"MMM#MM  MMM  9MMb,           #MMM     ",
-    "###    ?####   `\"#####'    ?###|  ###     ###    `##' ###    \"####?  ###  `###b            *#*     ",
+    /* created by hand */
+    "                             ",     /*  1 */
+    "                             ",     /*  2 */
+    "|  |          |  |        |  ",     /*  3 */
+    "|\\ |  __  _|_ |__|  _   _ | /",    /*  4 */
+    "| \\| / _)  |  |  | / | /  |< ",    /*  5 */
+    "|  | \\__/  \\_ |  | \\_| \\_ | \\", /* 6 */
+    "      ___                    ",     /*  7 */
+    "     |               |       ",     /*  8 */
+    "     |__  _          | /     ",     /*  9 */
+    "     |   / \\ | | |/` |<      ",    /* 10 */
+    "     |   \\_/ \\_| |   | \\     ",  /* 11 */
+    "                             ",     /* 12 */
+    "                             ",     /* 13 */
+    "     A Fork of NetHack 4     ",     /* 14 */
 };
+
 
 
 static char **
@@ -227,7 +226,7 @@ mainmenu(void)
     char verstr[32];
     nh_bool first = TRUE;
 
-    snprintf(verstr, ARRAY_SIZE(verstr), "Version %d.%d.%d", VERSION_MAJOR, VERSION_MINOR,
+    snprintf(verstr, ARRAY_SIZE(verstr), "Version 4.%d.%d.%d", VERSION_MAJOR, VERSION_MINOR,
             PATCHLEVEL);
 
 #if defined(NETCLIENT)
@@ -240,7 +239,7 @@ mainmenu(void)
     load_keymap(); /* netgame() assumes the keymap isn't loaded */
 
     while (n >= 0) {
-        if (COLS >= 100) {
+        if (LINES >= 30) {
             nhlogo = nhlogo_large;
             logoheight = sizeof (nhlogo_large) / sizeof (nhlogo_large[0]);
         } else {
@@ -407,7 +406,7 @@ process_args(int argc, char *argv[])
         switch (argv[0][1]) {
         case '-':
             if (!strcmp(argv[0], "--help")) {
-                puts("Usage: nethack4 [--interface PLUGIN] [OPTIONS]");
+                puts("Usage: nhfourk [--interface PLUGIN] [OPTIONS]");
                 puts("");
                 puts("-k          connection-only mode");
                 puts("-D          start games in wizard mode");
@@ -424,7 +423,7 @@ process_args(int argc, char *argv[])
                 puts("on your system; examples may include 'tty' and 'sdl'.");
                 exit(0);
             } else if (!strcmp(argv[0], "--version")) {
-                printf("NetHack 4 version %d.%d.%d\n",
+                printf("NetHack Fourk version %d.%d.%d\n",
                        VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL);
                 exit(0);
             }

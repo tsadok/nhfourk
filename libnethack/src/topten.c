@@ -108,9 +108,8 @@ encode_uevent(void)
     if (u.uevent.ascended)
         c |= 0x0100UL;  /* someone needs to use this variable */
 
-    /* notable other events */
-    if (u.uevent.uhand_of_elbereth)
-        c |= 0x0200UL;  /* was crowned */
+    /* 0x0200UL is in the other events section below,
+       because it was assigned before the boss kills */
 
     /* boss kills */
     if (u.quest_status.killed_nemesis)
@@ -126,6 +125,19 @@ encode_uevent(void)
     if (mvitals[PM_HIGH_PRIEST].died)
         c |= 0x8000UL;  /* defeated a high priest */
 
+    /* notable other events */
+    if (u.uevent.uhand_of_elbereth)
+        c |= 0x0200UL;  /* was crowned */
+    if (historysearch("opened a magic chest", TRUE))
+        c |= 0x00010000UL;
+    if (historysearch("entered the Sokoban zoo", TRUE))
+        c |= 0x00020000UL;
+    if (historysearch("entered the Minetown temple", TRUE))
+        c |= 0x00040000UL;
+    if (historysearch("reached the bottom of the Mines", TRUE))
+        c |= 0x00080000UL;
+    if (historysearch("reached the Astral Plane", TRUE))
+        c |= 0x000F0000UL;
     return c;
 }
 
@@ -201,7 +213,8 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
 
     /* regular logfile data */
     fprintf(rfile,
-            "version=%d.%d.%d" SEP "points=%d" SEP "deathdnum=%d" SEP
+            "version=%d.%d.%d" SEP "variant=Fourk" SEP
+            "points=%d" SEP "deathdnum=%d" SEP
             "deathlev=%d" SEP "maxlvl=%d" SEP "hp=%d" SEP "maxhp=%d" SEP
             "deaths=%d" SEP "deathdate=%ld" SEP "birthdate=%ld" SEP "uid=%d",
             tt->ver_major, tt->ver_minor, tt->patchlevel, tt->points,
@@ -280,7 +293,8 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
     fprintf(rfile, SEP "mode=%s",
             (flags.debug ? "debug" : flags.explore ? "explore" :
              *flags.setseed ? "setseed" :
-             flags.polyinit_mnum != -1 ? "polyinit" : "normal"));
+             flags.polyinit_mnum != -1 ? "polyinit" :
+             flags.challenge ? "challenge" : "normal"));
 
     fprintf(rfile, "\n");
 }

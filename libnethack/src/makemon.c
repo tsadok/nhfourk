@@ -123,9 +123,11 @@ m_initgrp(struct monst *mtmp, struct level *lev, int x, int y, int n,
           int mm_flags)
 {
     coord mm;
-    int cnt = 1 + rn2_on_rng(n, (mm_flags & MM_ALLLEVRNG) ?
-                             rng_for_level(&lev->z) : rng_main);
+    enum rng lrng = (mm_flags & MM_ALLLEVRNG) ?
+        rng_for_level(&lev->z) : rng_main;
+    int cnt = 1 + rn2_on_rng(n, lrng);
     int dl = level_difficulty(&lev->z);
+    struct monst *mtmp2;
 
     /* Tuning: cut down on swarming at low depths */
     if (dl > 0) {
@@ -139,11 +141,19 @@ m_initgrp(struct monst *mtmp, struct level *lev, int x, int y, int n,
        the player's stats, meaning that the layout of a level would no longer be
        the same for the same seed. Nowadays, we just let it happen, and hope
        that it won't get too spammy. */
+    /* TODO: groups of peacefuls do cause problems in Fourk due to the alignment
+       record changes that make you not want to just slaughter them all.  This
+       is particularly a problem with hiders (e.g., garter snakes) and in
+       Sokoban. */
     mm.x = x;
     mm.y = y;
     while (cnt--)
-        if (enexto(&mm, lev, mm.x, mm.y, mtmp->data))
-            makemon(mtmp->data, lev, mm.x, mm.y, mm_flags);
+        if (enexto(&mm, lev, mm.x, mm.y, mtmp->data)) {
+            mtmp2 = makemon(mtmp->data, lev, mm.x, mm.y, mm_flags);
+            if (mtmp2 && !rn2_on_rng((mtmp->msleeping ? 2 : 4), lrng) &&
+                !resists_sleep(mtmp2))
+                mtmp2->msleeping = 1;
+        }
 }
 
 static void
@@ -157,6 +167,58 @@ m_initthrow(struct monst *mtmp, int otyp, int oquan, enum rng rng)
     if (otyp == ORCISH_ARROW)
         otmp->opoisoned = TRUE;
     mpickobj(mtmp, otmp);
+}
+
+static int
+rodneyitem(enum rng rng)
+{
+    switch(rn2_on_rng(30, rng)) {
+    case 1:
+        return MAGIC_MARKER;
+    case 2:
+        return WAN_DEATH;
+    case 3:
+        return WAN_TELEPORTATION;
+    case 4:
+        return ATHAME;
+    case 5:
+        return TALLOW_CANDLE;
+    case 6:
+    case 7:
+        return WAX_CANDLE;
+    case 8:
+        return LUMP_OF_ROYAL_JELLY;
+    case 9:
+        return T_SHIRT;
+    case 10:
+        return RIN_LEVITATION;
+    case 11:
+        return SCR_CHARGING;
+    case 12:
+        return RIN_CONFLICT;
+    case 13:
+        return RIN_POLYMORPH;
+    case 14:
+        return RIN_FREE_ACTION;
+    case 15:
+        return RIN_POLYMORPH_CONTROL;
+    case 16:
+        return BAG_OF_HOLDING;
+    case 17:
+        return OILSKIN_SACK;
+    case 18:
+        return ROBE;
+    case 19:
+        return SPE_MAGIC_MISSILE;
+    case 20:
+        return SPE_FINGER_OF_DEATH;
+    case 21:
+        return SPE_JUMPING;
+    case 22:
+        return SPE_EXTRA_HEALING;
+    default:
+        return FAKE_AMULET_OF_YENDOR;
+    }
 }
 
 static void
@@ -177,6 +239,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
  *      centaurs get some sort of bow & arrows or bolts
  *      soldiers get all sorts of things.
  *      kops get clubs & cream pies.
+ *      the Wizard of Yendor gets various stuff
  */
     switch (ptr->mlet) {
     case S_GIANT:
@@ -184,16 +247,25 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             mongets(mtmp, (mm != PM_ETTIN) ? BOULDER : CLUB, rng);
         break;
     case S_HUMAN:
-        if (is_mercenary(ptr)) {
+        if (mtmp->iswiz) {
+            mongets(mtmp, rodneyitem(rng), rng);
+            if (!rn2_on_rng(3, rng))
+                mongets(mtmp, rodneyitem(rng), rng);
+        } else if (is_mercenary(ptr)) {
             int w1 = 0, w2 = 0;
 
             switch (mm) {
 
             case PM_WATCHMAN:
+                /* Naming them here ensures it happens when they are created
+                   normally, but not when they are loaded from bones or created
+                   from a statue or figurine.  Also PM_WATCH_CAPTAIN below.  */
+                namewatchman(mtmp, lev);
+                /* fall through */
             case PM_SOLDIER:
                 if (!rn2_on_rng(3, rng)) {
                     w1 = PARTISAN +
-                        rn2_on_rng(BEC_DE_CORBIN - PARTISAN + 1, rng);
+                        rn2_on_rng(LUCERN_HAMMER - PARTISAN + 1, rng);
                     w2 = rn2_on_rng(2, rng) ? DAGGER : KNIFE;
                 } else
                     w1 = rn2_on_rng(2, rng) ? SPEAR : SHORT_SWORD;
@@ -204,8 +276,10 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             case PM_LIEUTENANT:
                 w1 = rn2_on_rng(2, rng) ? BROADSWORD : LONG_SWORD;
                 break;
-            case PM_CAPTAIN:
             case PM_WATCH_CAPTAIN:
+                namewatchman(mtmp, lev);
+                /* fall through */
+            case PM_CAPTAIN:
                 w1 = rn2_on_rng(2, rng) ? LONG_SWORD : SILVER_SABER;
                 break;
             default:
@@ -308,6 +382,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 break;
             case 2:
                 mongets(mtmp, SLING, rng);
+                if (!rn2_on_rng(4, rng))
+                    mongets(mtmp, FLINT, rng);
                 break;
             }
             if (!rn2_on_rng(10, rng))
@@ -331,6 +407,11 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 mongets(mtmp, DWARVISH_IRON_HELM, rng);
                 if (!rn2_on_rng(3, rng))
                     mongets(mtmp, DWARVISH_MITHRIL_COAT, rng);
+            } else if (!rn2_on_rng(5, rng)) {
+                mongets(mtmp, DWARVISH_SPEAR, rng);
+                mongets(mtmp, DWARVISH_ROUNDSHIELD, rng);
+                mongets(mtmp, DWARVISH_IRON_HELM, rng);
+                
             } else {
                 mongets(mtmp, !rn2_on_rng(3, rng) ? PICK_AXE : DAGGER, rng);
             }
@@ -351,6 +432,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
         case PM_MORDOR_ORC:
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, SCIMITAR, rng);
+            else if (!rn2_on_rng(3, rng))
+                mongets(mtmp, ORCISH_SPEAR, rng);
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, ORCISH_SHIELD, rng);
             if (!rn2_on_rng(3, rng))
@@ -363,6 +446,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 mongets(mtmp, ORCISH_CLOAK, rng);
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, ORCISH_SHORT_SWORD, rng);
+            else if (!rn2_on_rng(3, rng))
+                mongets(mtmp, ORCISH_SPEAR, rng);
             if (!rn2_on_rng(3, rng))
                 mongets(mtmp, IRON_SHOES, rng);
             if (!rn2_on_rng(3, rng)) {
@@ -387,18 +472,15 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
         break;
     case S_TROLL:
         if (!rn2_on_rng(2, rng))
-            switch (rn2_on_rng(4, rng)) {
+            switch (rn2_on_rng(3, rng)) {
             case 0:
-                mongets(mtmp, RANSEUR, rng);
+                mongets(mtmp, LUCERN_HAMMER, rng);
                 break;
             case 1:
                 mongets(mtmp, PARTISAN, rng);
                 break;
             case 2:
                 mongets(mtmp, GLAIVE, rng);
-                break;
-            case 3:
-                mongets(mtmp, SPETUM, rng);
                 break;
             }
         break;
@@ -418,6 +500,10 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             }
         }
         break;
+    case S_XORN:
+        if (ptr == &mons[PM_ETTIN])
+            mongets(mtmp, PICK_AXE, rng);
+        break;
     case S_WRAITH:
         if (!noncorporeal(mtmp->data)) {
             mongets(mtmp, KNIFE, rng);
@@ -433,7 +519,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
     case S_LIZARD:
         if (mm == PM_SALAMANDER)
             mongets(mtmp, (rn2_on_rng(7, rng) ? SPEAR :
-                           rn2_on_rng(3, rng) ? TRIDENT : STILETTO), rng);
+                           rn2_on_rng(3, rng) ? TRIDENT : KNIFE), rng);
         break;
     case S_DEMON:
         switch (mm) {
@@ -687,21 +773,21 @@ m_initinv(struct monst *mtmp, enum rng rng)
         if (rn2_on_rng(7, rng))
             mongets(mtmp, MUMMY_WRAPPING, rng);
         break;
-    case S_QUANTMECH:
-        if (!rn2_on_rng(20, rng)) {
+    case S_HUMANOID:
+        if ((ptr == &mons[PM_QUANTUM_MECHANIC]) && !rn2_on_rng(20, rng)) {
             otmp = mksobj(lev, LARGE_BOX, FALSE, FALSE, rng);
             otmp->spe = 1;      /* flag for special box */
             otmp->owt = weight(otmp);
             mpickobj(mtmp, otmp);
         }
         break;
-    case S_LEPRECHAUN:
-    {
+    case S_IMP:
         /* leave the dice() roll on rng_main, because it factors in the
            level_difficulty */
-        mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
+        if (mtmp->data == &mons[PM_LEPRECHAUN])
+            mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z), 30), rng);
+        /* Nothing special for the other i for now. */
         break;
-    }
     case S_DEMON:
         /* moved here from m_initweap() because these don't have AT_WEAP so
            m_initweap() is not called for them */
@@ -1072,6 +1158,23 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     case S_MIMIC:
         set_mimic_sym(mtmp, lev, stats_rng);
         break;
+    case S_COCKATRICE:
+        if (in_mklev && touch_petrifies(mtmp->data)) {
+            /* Place a few random statues around the level. */
+            int count, tries;
+            for (count = 0; count < 6; count++) {
+                int dx = 0, dy = 0;
+                tries = 20;
+                while (tries && (((dx == 0) && (dy == 0)) ||
+                                 !isok(x+dx,y+dy) ||
+                                 !(lev->locations[x+dx][y+dy].typ == ROOM))) {
+                    dx = 5 - rn2_on_rng(10, rng_main);
+                    dy = 3 - rn2_on_rng(6, rng_main);
+                }
+                mksobj_at(STATUE, lev, x + dx, y + dy, TRUE, FALSE, rng_main);
+            }
+        }
+        break;
     case S_SPIDER:
     case S_SNAKE:
         /* TODO: This is awkward, because we might have fallen back to a random
@@ -1096,8 +1199,9 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         if (is_pool(lev, x, y))
             mtmp->mundetected = TRUE;
         break;
-    case S_LEPRECHAUN:
-        mtmp->msleeping = 1;
+    case S_IMP:
+        if (mndx == PM_LEPRECHAUN)
+            mtmp->msleeping = 1;
         break;
     case S_JABBERWOCK:
     case S_NYMPH:
@@ -1164,7 +1268,8 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     if (in_mklev) {
         if (((is_ndemon(ptr)) || (mndx == PM_WUMPUS) || (mndx == PM_LONG_WORM)
              || (mndx == PM_GIANT_EEL)) && rn2_on_rng(5, stats_rng))
-            mtmp->msleeping = TRUE;
+            if (mtmp && !resists_sleep(mtmp))
+                mtmp->msleeping = 1;
     } else {
         if (byyou && lev == level) {
             newsym(mtmp->mx, mtmp->my);
@@ -1323,11 +1428,11 @@ restore_rndmonst_state(struct memfile *mf)
    of monsters that "want" to generate, and we pick the first appropriate
    monster from the list.)
 
-   Arguments: dlev = level to generate on, class = class to generate or 0, flags
-   = generation rules to /ignore/ (e.g. G_NOGEN or G_INDEPTH), rng = random
-   number generator to use */
+   Arguments: dlev = level to generate on, class = class to generate or 0,
+   ignoreflags = generation rules to /ignore/ (e.g. G_NOGEN or G_INDEPTH),
+   rng = random number generator to use */
 static const struct permonst *
-rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
+rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
 {
     const struct permonst *ptr = NULL;
     int tryct = 1000;
@@ -1351,11 +1456,18 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
     else
         maxmlev = (zlevel + u.ulevel) / 2;
 
+    if (challengemode) {
+        minmlev++;
+        maxmlev = maxmlev * 5 / 4;
+        while (maxmlev <= minmlev)
+            maxmlev++;
+    }
+
     boolean hell = In_hell(dlev);
     boolean rogue = Is_rogue_level(dlev);
     boolean elem_plane = In_endgame(dlev) && !Is_astralevel(dlev);
 
-    int geno = ptr ? ptr->geno & ~flags : 0;
+    int geno = ptr ? ptr->geno & ~ignoreflags : 0;
 
     int lowest_legal = LOW_PM;
     int beyond_highest_legal = SPECIAL_PM;
@@ -1408,17 +1520,17 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
                                              lowest_legal, rng);
 
         ptr = mons + mndx;
-        geno = ptr->geno & ~flags;
+        geno = ptr->geno & ~ignoreflags;
 
         /* Soft checks: these stop monsters generating unless they've been
            suggested by Quest bias or the like.
 
            Potential TODO: Make some of these less strict as tryct gets
            smaller (something like this was a TODO in the old code too). */
-        if (ptr && !(flags & G_INDEPTH) &&
+        if (ptr && !(ignoreflags & G_INDEPTH) &&
             (tooweak(mndx, minmlev) || toostrong(mndx, maxmlev)))
             ptr = NULL;             /* monster is out of depth or under-depth */
-        if (ptr && hell && !(flags & G_ALIGN) && ptr->maligntyp > A_NEUTRAL)
+        if (ptr && hell && !(ignoreflags & G_ALIGN) && ptr->maligntyp > A_NEUTRAL)
             ptr = NULL;                        /* lawful monsters in Gehennom */
 
         /* Rejection probabilities. */
@@ -1429,7 +1541,8 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
          * (potentially bringing a frequency of 0 up into the positives).
          *
          * It can also be adjusted by out-of-depthness, if we turned off the OOD
-         * check using flags & G_INDEPTH. The rules for this from 3.4.3 are:
+         * check using ignoreflags & G_INDEPTH. The rules for this from 3.4.3
+         * are:
          *
          * - Calculate the total frequency of all legal monsters. For each
          *   discrete monster strength band that would be out of depth at half
@@ -1479,14 +1592,14 @@ rndmonst_inner(const d_level *dlev, char class, int flags, enum rng rng)
          * every 2 strength bands that a monster is out of depth compared to
          * half the dungeon level, we halve its probability.
          */
-        if (ptr && !(flags & G_FREQ)) {
+        if (ptr && !(ignoreflags & G_FREQ)) {
             int genprob = geno & G_FREQ;
             int maxgenprob = 5;
-            if (!(flags & G_ALIGN)) {
+            if (!(ignoreflags & G_ALIGN)) {
                 genprob += align_shift(dlev, ptr);
                 maxgenprob += 5;
             }
-            if (flags & G_INDEPTH && genprob) {
+            if (ignoreflags & G_INDEPTH && genprob) {
                 /* implement a rejection chance from the first check*/
                 int ood_distance = (int)monstr[mndx] - (int)maxmlev / 2;
                 if (ood_distance > 14)
@@ -1653,6 +1766,96 @@ grow_up(struct monst *mtmp,   /* `mtmp' might "grow up" into a bigger version */
 }
 
 
+/* Gehennom Fun Patch:  In Gehennom, certain objects may get upgraded. */
+int
+superioritem(struct monst *mon, int original)
+{
+    int superioritem = original;
+    int nosilver = (mon && hates_silver(mon->data)) ? 1 : 0;
+    if (!Inhell)
+        return original;
+    /* Note: I'm sure some of these probabilities will need tweaked. */
+    switch (original) {
+    /* I haven't implemented steel sabers in NetHack Fourk. */
+    // case STEEL_SABER:
+    //    return nosilver ? original : SILVER_SABER;
+    //    /* In practice, I don't think anything that fears silver ever gets
+    //     * a saber in the first place, so this one always upgrades.  That's
+    //     * intended.  Steel sabers only exist to make the silver version
+    //     * harder to find outside Gehennom. */
+    case ARROW:
+        return (nosilver || rn2_on_rng(4, rng_superior_item))
+            ? original : SILVER_ARROW;
+    /* I haven't implemented silver darts in NetHack Fourk. */
+    // case DART:
+    //     return (nosilver || rn2_on_rng(4, rng_superior_item))
+    //         ? original : SILVER_DART;
+    case SPEAR:
+        return (nosilver || rn2_on_rng(4, rng_superior_item))
+            ? original : SILVER_SPEAR;
+    case DAGGER:
+        return (nosilver || rn2_on_rng(6, rng_superior_item))
+            ? original : SILVER_DAGGER;
+    case LONG_SWORD:
+        return rn2_on_rng(4, rng_superior_item) ? original : KATANA;
+    case ORCISH_HELM:
+    case DWARVISH_IRON_HELM:
+    case DENTED_POT:
+    case HELMET:
+        switch (rn2_on_rng(8, rng_superior_item)) {
+        case 1:
+            superioritem = DUNCE_CAP;
+            break;
+        case 2:
+            superioritem = HELM_OF_OPPOSITE_ALIGNMENT;
+            break;
+        case 3:
+            superioritem = HELM_OF_TELEPATHY;
+            break;
+        case 4:
+            superioritem = CORNUTHAUM;
+            break;
+        case 5:
+            superioritem = ELVEN_LEATHER_HELM;
+            break;
+        case 6:
+            superioritem = HELM_OF_BRILLIANCE;
+            break;
+        default:
+            return original;
+        }
+        return rn2_on_rng(25, rng_superior_item)
+            ? original : superioritem;
+    case PLATE_MAIL:
+    case SPLINT_MAIL:
+    case BANDED_MAIL:
+    case CHAIN_MAIL:
+    case SCALE_MAIL:
+    case RING_MAIL:
+        switch (rn2_on_rng(8, rng_superior_item)) {
+        case 1:
+            superioritem = T_SHIRT;
+            break;
+        case 2:
+            superioritem = BLACK_DRAGON_SCALE_MAIL;
+            break;
+        case 3:
+            superioritem = SILVER_DRAGON_SCALE_MAIL;
+            break;
+        case 4:
+            superioritem = GRAY_DRAGON_SCALE_MAIL;
+            break;
+        default:
+            superioritem = T_SHIRT;
+        }
+        return rn2_on_rng(25, rng_superior_item)
+            ? original : superioritem;
+    default:
+        return original;
+    }
+}
+
+
 int
 mongets(struct monst *mtmp, int otyp, enum rng rng)
 {
@@ -1661,9 +1864,26 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
 
     if (!otyp)
         return 0;
-    otmp = mksobj(mtmp->dlevel, otyp, TRUE, FALSE, rng);
+
+    otmp = mksobj(mtmp->dlevel, superioritem(mtmp, otyp), TRUE, FALSE, rng);
 
     if (otmp) {
+        if (Inhell) { /* GFP: monster items in Gehennom tend to be better */
+            if ((otmp->oclass == WEAPON_CLASS) || 
+                (otmp->oclass == ARMOR_CLASS)) {
+                otmp->spe += rn2_on_rng(3, rng);
+            }
+        }
+        if (otmp->otyp == SPEAR || otmp->otyp == DWARVISH_SPEAR ||
+            otmp->otyp == ELVEN_SPEAR || otmp->otyp == ORCISH_SPEAR ||
+            otmp->otyp == JAVELIN) {
+            otmp->quan = rne_on_rng(2, rng);
+            otmp->owt = weight(otmp);
+        }
+        if (otmp->otyp == FLINT) {
+            otmp->quan += rn2_on_rng(4, rng);
+            otmp->owt = weight(otmp);
+        }
         if (mtmp->data->mlet == S_DEMON) {
             /* demons never get blessed objects */
             if (otmp->blessed)
@@ -1691,11 +1911,12 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
         }
 
         /* leaders don't tolerate inferior quality battle gear */
+        /* Gehennom Fun Patch:  this is especially so in Gehennom. */
         if (is_prince(mtmp->data)) {
             if (otmp->oclass == WEAPON_CLASS && otmp->spe < 1)
-                otmp->spe = 1;
+                otmp->spe = Inhell ? (1 + rn2_on_rng(3, rng)) : 1;
             else if (otmp->oclass == ARMOR_CLASS && otmp->spe < 0)
-                otmp->spe = 0;
+                otmp->spe = Inhell ? rn2_on_rng(3, rng) : 0;
         }
 
         spe = otmp->spe;
@@ -1787,18 +2008,15 @@ peace_minded(const struct permonst *ptr)
 }
 
 /*
- * Set malign to have the proper effect on player alignment if monster is
- * killed. Negative numbers mean it's bad to kill this monster; positive
- * numbers mean it's good. Since there are more hostile monsters than
- * peaceful monsters, the penalty for killing a peaceful monster should be
- * greater than the bonus for killing a hostile monster to maintain balance.
- * (TODO: This balance attempt doesn't actually work; alignment still drifts
- * up to infinity with any playstyle that isn't outright insane)
- *
- * Rules:
- *   it's bad to kill peaceful monsters, potentially worse to kill always-
- *      peaceful monsters
- *   it's never bad to kill a hostile monster, although it may not be good
+ * The semantics of this were designed around the old player alignment
+ * record system wherein killing anything cross-aligned gained you points.
+ * No amount of tweaking the relative alignments of various monsters could
+ * ever make that balanced, so for Fourk I opted to remove the alignment
+ * record bonus for killing cross-aligned monsters entirely.
+ * 
+ * Until I rebalance it, this function still sets malign according to the
+ * old vanilla rules, which means malign is basically only useful for its
+ * sign (negative = co-aligned and bad to kill).
  */
 void
 set_malign(struct monst *mtmp)
@@ -1876,7 +2094,7 @@ set_mimic_sym(struct monst *mtmp, struct level *lev, enum rng rng)
     my = mtmp->my;
     tt = t_at(lev, mx, my);
     above_pit = !(!tt ||
-                  ((tt->ttyp == PIT) || (tt->ttyp == SPIKED_PIT) ||
+                  (is_pit_trap(tt->ttyp) ||
                    (tt->ttyp == HOLE) || (tt->ttyp == TRAPDOOR)));
     typ = lev->locations[mx][my].typ;
     /* only valid for INSIDE of room */
@@ -2215,7 +2433,7 @@ restore_mon(struct memfile *mf, struct level *l)
     mon->mtrapped = (mflags >> 8) & 1;
     mon->mleashed = (mflags >> 7) & 1;
     mon->msuspicious = (mflags >> 6) & 1;
-    /* 1 free bit */
+    mon->mnitro = (mflags >> 5) & 1;
     mon->isshk = (mflags >> 4) & 1;
     mon->isminion = (mflags >> 3) & 1;
     mon->isgd = (mflags >> 2) & 1;
@@ -2353,7 +2571,7 @@ save_mon(struct memfile *mf, const struct monst *mon, const struct level *l)
         (mon->mstun << 11) | (mon->mconf << 10) | (mon->mpeaceful << 9) |
         (mon->mtrapped << 8) | (mon->mleashed << 7) |
         (mon->msuspicious << 6) |
-        /* 1 free bit */
+        (mon->mnitro << 5) |
         (mon->isshk << 4) |
         (mon->isminion << 3) | (mon->isgd << 2) |
         (mon->ispriest << 1) | (mon->iswiz << 0); /* savemap: ignore */

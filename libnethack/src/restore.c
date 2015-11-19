@@ -458,6 +458,7 @@ restgamestate(struct memfile *mf)
     restore_timers(mf, lev, RANGE_GLOBAL, FALSE, 0L);
     restore_light_sources(mf, lev);
     restobjchn(mf, lev, FALSE, FALSE, &invent, NULL);
+    restobjchn(mf, lev, FALSE, FALSE, &magic_chest_objs, NULL);
     migrating_mons = restmonchn(mf, NULL, FALSE);
     restore_mvitals(mf);
 
@@ -774,6 +775,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->autodig = mread8(mf);
     f->autodigdown = mread8(mf);
     f->autoquiver = mread8(mf);
+    f->autowear_starting_armor = mread8(mf);
     f->beginner = mread8(mf);
     f->bones_enabled = mread8(mf);
     f->cblock = mread8(mf);
@@ -781,6 +783,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->debug = mread8(mf);
     f->desync = mread8(mf);
     f->explore = mread8(mf);
+    f->challenge = mread8(mf);
     f->elbereth_enabled = mread8(mf);
     f->end_disclose = mread8(mf);
     f->friday13 = mread8(mf);
@@ -802,6 +805,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->pushweapon = mread8(mf);
     f->rogue_enabled = mread8(mf);
     f->seduce_enabled = mread8(mf);
+    f->servermail = mread8(mf);
     f->showrace = mread8(mf);
     f->show_uncursed = mread8(mf);
     f->sortpack = mread8(mf);

@@ -270,7 +270,7 @@ makeroguerooms(struct level *lev, int *smeq)
                    but since Rogue rooms are only encountered below level 10,
                    use !rn2(7). */
                 add_room(lev, lowx, lowy, hix, hiy,
-                         (boolean)!mklev_rn2(7, lev), OROOM, FALSE);
+                         (boolean)!mklev_rn2(7, lev), OROOM, FALSE, FALSE);
             }
         }
 
@@ -317,7 +317,8 @@ makerogueghost(struct level *lev)
 
     if (!(ghost = makemon(&mons[PM_GHOST], lev, x, y, MM_ALLLEVRNG)))
         return;
-    ghost->msleeping = 1;
+    if (!resists_sleep(ghost))
+        ghost->msleeping = 1;
     christen_monst(ghost, roguename());
 
     if (mklev_rn2(4, lev)) {

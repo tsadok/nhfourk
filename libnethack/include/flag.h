@@ -248,6 +248,8 @@ struct flag {
     boolean desync;     /* set this to desync the save */
     boolean explore;    /* in exploration mode */
 # define discover flags.explore
+    boolean challenge;  /* challenge mode -- harder than normal */
+# define challengemode flags.challenge
     boolean friday13;   /* it's Friday the 13th */
     boolean legacy;     /* print game entry "story" */
     boolean made_amulet;
@@ -263,6 +265,7 @@ struct flag {
     boolean pushweapon; /* When wielding, push old weapon into second slot */
     boolean showrace;   /* show hero glyph by race rather than by role */
     boolean show_uncursed;      /* always show uncursed items as such */
+    boolean servermail; /* check for messages from other players */
     boolean sortpack;   /* sorted inventory */
     boolean sparkle;    /* show "resisting" special FX (Scott Bigham) */
     boolean tombstone;  /* print tombstone */
@@ -323,6 +326,7 @@ struct flag {
     microseconds turntime;
 
     /* === BIRTH OPTIONS === */
+    boolean autowear_starting_armor; /* autoequip starting armor */
     boolean elbereth_enabled;   /* should the E-word repel monsters? */
     boolean rogue_enabled;      /* create a rogue level */
     boolean seduce_enabled;     /* succubus seduction */

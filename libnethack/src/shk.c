@@ -1794,6 +1794,8 @@ find_oid(unsigned id)
     /* first check various obj lists directly */
     if ((obj = o_on(id, invent)))
         return obj;
+    if ((obj = o_on(id, magic_chest_objs)))
+        return obj;
 
     /* not found yet; check inventory for members of various monst lists */
     for (mon = migrating_mons; mon; mon = mon->nmon)
@@ -2036,6 +2038,9 @@ set_cost(struct obj *obj, struct monst *shkp)
     /* shopkeeper may notice if the player isn't very knowledgeable -
        especially when gem prices are concerned */
     if (!obj->dknown || !objects[obj->otyp].oc_name_known) {
+        unsigned int pseudorand = (int) ((((unsigned long) u.ubirthday) /
+                                          ((unsigned long) obj->otyp)) %
+                                         1073741823UL);
         if (obj->oclass == GEM_CLASS) {
             /* different shop keepers give different prices */
             if (objects[obj->otyp].oc_material == GEMSTONE ||
@@ -2043,7 +2048,7 @@ set_cost(struct obj *obj, struct monst *shkp)
                 tmp = (obj->otyp % (6 - shkp->m_id % 3));
                 tmp = (tmp + 3) * obj->quan;
             }
-        } else if (tmp > 1L && !rn2(4))
+        } else if (tmp > 1L && !(pseudorand % 4))
             tmp -= tmp / 4L;
     }
     return tmp;
@@ -2921,6 +2926,11 @@ add_damage(xchar x, xchar y, long cost)
     struct damage *tmp_dam;
     char *shops;
 
+    if (!level) {
+        impossible("add_damage on an undefined level");
+        return;
+    }
+
     if (IS_DOOR(level->locations[x][y].typ)) {
         struct monst *mtmp;
 
@@ -3083,8 +3093,7 @@ repair_damage(struct level *lev, struct monst *shkp, struct damage *tmp_dam,
             otmp->quan = 1;
             otmp->owt = weight(otmp);
             mpickobj(shkp, otmp);
-        } else if (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT ||
-                   ttmp->ttyp == HOLE)
+        } else if (is_pit_trap(ttmp->ttyp) || ttmp->ttyp == HOLE)
             floordamage = TRUE;
         deltrap(lev, ttmp);
         if (IS_DOOR(tmp_dam->typ)) {
@@ -3202,7 +3211,8 @@ shk_move(struct monst *shkp)
 
     if ((udist = distu(omx, omy)) < 3 &&
         (shkp->data != &mons[PM_GRID_BUG] || (omx == u.ux || omy == u.uy))) {
-        if (ANGRY(shkp) || (Conflict && !resist(shkp, RING_CLASS, 0, 0))) {
+        if (ANGRY(shkp) || (Conflict && !resist(shkp, RING_CLASS, 0, 0)) ||
+            Stormprone) {
             if (Displaced)
                 pline(msgc_notresisted,
                       "Your displaced image doesn't fool %s!", mon_nam(shkp));
@@ -3875,7 +3885,6 @@ check_unpaid_usage(struct obj *otmp, boolean altusage)
     if (shkp->mcanmove || !shkp->msleeping)
         verbalize(msgc_unpaid, fmt, arg1, arg2, tmp, currency(tmp));
     ESHK(shkp)->debit += tmp;
-    exercise(A_WIS, TRUE);      /* you just got info */
 }
 
 /* for using charges of unpaid objects "used in the normal manner" */

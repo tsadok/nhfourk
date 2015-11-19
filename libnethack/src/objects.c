@@ -86,20 +86,20 @@ const struct objclass const_objects[] = {
 
 /* missiles */
     PROJECTILE("arrow", NULL,
-               1, 55, 1, 2, 6, 6, 0, IRON, -P_BOW, HI_METAL),
+               1, 55, 1, 2, 7, 6, 0, IRON, -P_BOW, HI_METAL),
     PROJECTILE("elven arrow", "runed arrow",
-               0, 20, 1, 2, 7, 6, 0, WOOD, -P_BOW, HI_WOOD),
+               0, 20, 1, 2, 8, 6, 0, WOOD, -P_BOW, HI_WOOD),
     PROJECTILE("orcish arrow", "crude arrow",
-               0, 20, 1, 2, 5, 6, 0, IRON, -P_BOW, CLR_BLACK),
+               0, 20, 1, 2, 6, 6, 0, IRON, -P_BOW, CLR_BLACK),
     PROJECTILE("silver arrow", NULL,
-               1, 12, 1, 5, 6, 6, 0, SILVER, -P_BOW, HI_SILVER),
+               1, 12, 1, 5, 7, 6, 0, SILVER, -P_BOW, HI_SILVER),
     PROJECTILE("ya", "bamboo arrow",
-               0, 15, 1, 4, 7, 7, 1, METAL, -P_BOW, HI_METAL),
+               0, 15, 1, 4, 8, 7, 1, METAL, -P_BOW, HI_METAL),
     PROJECTILE("crossbow bolt", NULL,
-               1, 55, 1, 2, 4, 6, 0, IRON, -P_CROSSBOW, HI_METAL),
+               1, 55, 1, 2, 5, 6, 0, IRON, -P_CROSSBOW, HI_METAL),
 
     WEAPON("dart", NULL,
-           1, 1, 0, 60, 1, 2, 3, 2, 0, P, -P_DART, IRON, HI_METAL),
+           1, 1, 0, 60, 1, 2, 4, 3, 0, P, -P_DART, IRON, HI_METAL),
     WEAPON("shuriken", "throwing star",
            0, 1, 0, 35, 1, 5, 8, 6, 2, P, -P_SHURIKEN, IRON, HI_METAL),
     WEAPON("boomerang", NULL,
@@ -137,9 +137,7 @@ const struct objclass const_objects[] = {
     WEAPON("scalpel", NULL,
            1, 1, 0, 0, 5, 6, 3, 3, 2, S, P_KNIFE, METAL, HI_METAL),
     WEAPON("knife", NULL,
-           1, 1, 0, 20, 5, 4, 3, 2, 0, P | S, P_KNIFE, IRON, HI_METAL),
-    WEAPON("stiletto", NULL,
-           1, 1, 0, 5, 5, 4, 3, 2, 0, P | S, P_KNIFE, IRON, HI_METAL),
+           1, 1, 0, 25, 5, 4, 3, 2, 0, P | S, P_KNIFE, IRON, HI_METAL),
     WEAPON("worm tooth", NULL,
            1, 0, 0, 0, 20, 2, 2, 2, 0, 0, P_KNIFE, 0, CLR_WHITE),
     WEAPON("crysknife", NULL,
@@ -189,48 +187,18 @@ const struct objclass const_objects[] = {
     /* +5d2 +d8 from level drain */
 
 /* polearms */
-/* spear-type */
     WEAPON("partisan", "vulgar polearm",
-           0, 0, 1, 5, 80, 10, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
-    /* +1 large */
-    WEAPON("ranseur", "hilted polearm",
-           0, 0, 1, 5, 50, 6, 4, 4, 0, P, P_POLEARMS, IRON, HI_METAL),
-    /* +d4 both */
-    WEAPON("spetum", "forked polearm",
-           0, 0, 1, 5, 50, 5, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
-    /* +1 small, +d6 large */
+           0, 0, 1, 15, 80, 10, 6, 6, 0, P, P_POLEARMS, IRON, HI_METAL),
     WEAPON("glaive", "single-edged polearm",
-           0, 0, 1, 8, 75, 6, 6, 10, 0, S, P_POLEARMS, IRON, HI_METAL),
+           0, 0, 1, 15, 75, 6, 6, 10, 0, S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("lance", NULL,
-           1, 0, 0, 4, 180, 10, 6, 8, 0, P, P_LANCE, IRON, HI_METAL),
-/* axe-type */
+           1, 0, 0, 8, 180, 10, 6, 8, 0, P, P_POLEARMS, IRON, HI_METAL),
     WEAPON("halberd", "angled poleaxe",
-           0, 0, 1, 8, 150, 10, 10, 6, 0, P | S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d6 large */
-    WEAPON("bardiche", "long poleaxe",
-           0, 0, 1, 4, 120, 7, 4, 4, 0, S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small, +2d4 large */
-    WEAPON("voulge", "pole cleaver",
-           0, 0, 1, 4, 125, 5, 4, 4, 0, S, P_POLEARMS, IRON, HI_METAL),
-    /* +d4 both */
+           0, 0, 1, 15, 150, 10, 10, 6, 0, P | S, P_POLEARMS, IRON, HI_METAL),
     WEAPON("dwarvish mattock", "broad pick",
            0, 0, 1, 13, 120, 50, 12, 8, -1, B, P_PICK_AXE, IRON, HI_METAL),
-
-/* curved/hooked */
-    WEAPON("fauchard", "pole sickle",
-           0, 0, 1, 6, 60, 5, 6, 8, 0, P | S, P_POLEARMS, IRON, HI_METAL),
-    WEAPON("guisarme", "pruning hook",
-           0, 0, 1, 6, 80, 5, 4, 8, 0, S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small */
-    WEAPON("bill-guisarme", "hooked polearm",
-           0, 0, 1, 4, 120, 7, 4, 10, 0, P | S, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small */
-/* other */
     WEAPON("lucern hammer", "pronged polearm",
-           0, 0, 1, 5, 150, 7, 4, 6, 0, B | P, P_POLEARMS, IRON, HI_METAL),
-    /* +1d4 small */
-    WEAPON("bec de corbin", "beaked polearm",
-           0, 0, 1, 4, 100, 8, 8, 6, 0, B | P, P_POLEARMS, IRON, HI_METAL),
+           0, 0, 1, 15, 130, 7, 4, 6, 0, B | P, P_POLEARMS, IRON, HI_METAL),
 
 /* bludgeons */
     WEAPON("mace", NULL,
@@ -245,7 +213,7 @@ const struct objclass const_objects[] = {
     WEAPON("club", NULL,
            1, 0, 0, 12, 30, 3, 6, 3, 0, B, P_CLUB, WOOD, HI_WOOD),
     WEAPON("rubber hose", NULL,
-           1, 0, 0, 0, 20, 3, 4, 3, 0, B, P_WHIP, PLASTIC, CLR_BROWN),
+           1, 0, 0, 0, 20, 3, 4, 3, 0, 0, P_WHIP, PLASTIC, CLR_BROWN),
     WEAPON("quarterstaff", "staff",
            0, 0, 1, 11, 40, 5, 6, 6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */
@@ -367,36 +335,40 @@ const struct objclass const_objects[] = {
     DRGN_ARMR("yellow dragon scales", 0, ACID_RES, 500, 7, CLR_YELLOW),
 #undef DRGN_ARMR
 
-    ARMOR("plate mail", NULL,
-          1, 0, 1, 0, 44, 5, 450, 600, 3, 2, ARM_SUIT, IRON, HI_METAL),
-    ARMOR("crystal plate mail", NULL,
-          1, 0, 1, 0, 10, 5, 450, 820, 3, 2, ARM_SUIT, GLASS, CLR_WHITE),
-    ARMOR("bronze plate mail", NULL,
-          1, 0, 1, 0, 25, 5, 450, 400, 4, 0, ARM_SUIT, COPPER, HI_COPPER),
-    ARMOR("splint mail", NULL,
-          1, 0, 1, 0, 62, 5, 400, 80, 4, 1, ARM_SUIT, IRON, HI_METAL),
-    ARMOR("banded mail", NULL,
-          1, 0, 1, 0, 72, 5, 350, 90, 4, 0, ARM_SUIT, IRON, HI_METAL),
-    ARMOR("dwarvish mithril-coat", NULL,
-          1, 0, 0, 0, 10, 1, 150, 240, 4, 3, ARM_SUIT, MITHRIL, HI_METAL),
-    ARMOR("elven mithril-coat", NULL,
-          1, 0, 0, 0, 15, 1, 150, 240, 5, 3, ARM_SUIT, MITHRIL, HI_METAL),
-    ARMOR("chain mail", NULL,
-          1, 0, 0, 0, 72, 5, 300, 75, 5, 1, ARM_SUIT, IRON, HI_METAL),
-    ARMOR("orcish chain mail", "crude chain mail",
-          0, 0, 0, 0, 20, 5, 300, 75, 6, 1, ARM_SUIT, IRON, CLR_BLACK),
-    ARMOR("scale mail", NULL,
-          1, 0, 0, 0, 72, 5, 250, 45, 6, 0, ARM_SUIT, IRON, HI_METAL),
-    ARMOR("studded leather armor", NULL,
-          1, 0, 0, 0, 72, 3, 200, 15, 7, 1, ARM_SUIT, LEATHER, HI_LEATHER),
-    ARMOR("ring mail", NULL,
-          1, 0, 0, 0, 72, 5, 250, 100, 7, 0, ARM_SUIT, IRON, HI_METAL),
-    ARMOR("orcish ring mail", "crude ring mail",
-          0, 0, 0, 0, 20, 5, 250, 80, 8, 1, ARM_SUIT, IRON, CLR_BLACK),
-    ARMOR("leather armor", NULL,
-          1, 0, 0, 0, 82, 3, 150, 5, 8, 0, ARM_SUIT, LEATHER, HI_LEATHER),
+    /* The order in which armor is defined is relevant for sacrifice_gift()
+       when giving armor to weaponless characters. */
     ARMOR("leather jacket", NULL,
           1, 0, 0, 0, 12, 0, 30, 10, 9, 0, ARM_SUIT, LEATHER, CLR_BLACK),
+    ARMOR("leather armor", NULL,
+          1, 0, 0, 0, 82, 3, 150, 5, 8, 0, ARM_SUIT, LEATHER, HI_LEATHER),
+    ARMOR("orcish ring mail", "crude ring mail",
+          0, 0, 0, 0, 20, 5, 250, 80, 8, 1, ARM_SUIT, IRON, CLR_BLACK),
+    ARMOR("ring mail", NULL,
+          1, 0, 0, 0, 72, 5, 250, 100, 7, 0, ARM_SUIT, IRON, HI_METAL),
+    ARMOR("studded leather armor", NULL,
+          1, 0, 0, 0, 72, 3, 200, 15, 7, 1, ARM_SUIT, LEATHER, HI_LEATHER),
+    ARMOR("scale mail", NULL,
+          1, 0, 0, 0, 72, 5, 250, 45, 6, 0, ARM_SUIT, IRON, HI_METAL),
+    ARMOR("orcish chain mail", "crude chain mail",
+          0, 0, 0, 0, 20, 5, 300, 75, 6, 1, ARM_SUIT, IRON, CLR_BLACK),
+    ARMOR("chain mail", NULL,
+          1, 0, 0, 0, 72, 5, 300, 75, 5, 1, ARM_SUIT, IRON, HI_METAL),
+    ARMOR("banded mail", NULL,
+          1, 0, 1, 0, 72, 5, 350, 90, 4, 0, ARM_SUIT, IRON, HI_METAL),
+    ARMOR("splint mail", NULL,
+          1, 0, 1, 0, 62, 5, 400, 80, 4, 1, ARM_SUIT, IRON, HI_METAL),
+
+    ARMOR("elven mithril-coat", NULL,
+          1, 0, 0, 0, 15, 1, 150, 240, 5, 3, ARM_SUIT, MITHRIL, HI_METAL),
+    ARMOR("dwarvish mithril-coat", NULL,
+          1, 0, 0, 0, 10, 1, 150, 240, 4, 3, ARM_SUIT, MITHRIL, HI_METAL),
+
+    ARMOR("bronze plate mail", NULL,
+          1, 0, 1, 0, 25, 5, 500, 400, 3, 0, ARM_SUIT, COPPER, HI_COPPER),
+    ARMOR("plate mail", NULL,
+          1, 0, 1, 0, 44, 5, 450, 600, 2, 2, ARM_SUIT, IRON, HI_METAL),
+    ARMOR("crystal plate mail", NULL,
+          1, 0, 1, 0, 10, 5, 600, 1000, 1, 3, ARM_SUIT, GLASS, CLR_WHITE),
 
 /* shirts */
     ARMOR("Hawaiian shirt", NULL,
@@ -506,7 +478,7 @@ const struct objclass const_objects[] = {
          200, 1, 0, 6, MINERAL, HI_MINERAL),
     RING("searching", SEARCHING, "tiger eye", 200, 1, 0, 6, GEMSTONE,
          CLR_BROWN),
-    RING("stealth", STEALTH, "jade", 100, 1, 0, 6, GEMSTONE, CLR_GREEN),
+    RING("stealth", STEALTH, "jade", 100, 1, 1, 6, GEMSTONE, CLR_GREEN),
     RING("sustain ability", FIXED_ABIL, "bronze",
          100, 1, 0, 4, COPPER, HI_COPPER),
     RING("levitation", LEVITATION, "agate", 200, 1, 0, 7, GEMSTONE, CLR_RED),
@@ -547,16 +519,17 @@ const struct objclass const_objects[] = {
     AMULET("amulet of life saving", "spherical", LIFESAVED, 75),
     AMULET("amulet of strangulation", "oval", STRANGLED, 135),
     AMULET("amulet of restful sleep", "triangular", SLEEPING, 135),
-    AMULET("amulet versus poison", "pyramidal", POISON_RES, 165),
-    AMULET("amulet of change", "square", 0, 130),
+    AMULET("amulet versus poison", "pyramidal", POISON_RES, 150),
+    AMULET("amulet of change", "square", 0, 124),
     /* POLYMORPH */
     AMULET("amulet of unchanging", "concave", UNCHANGING, 45),
     AMULET("amulet of reflection", "hexagonal", REFLECTING, 75),
+    AMULET("amulet of flying", "convex", FLYING, 20),
     AMULET("amulet of magical breathing", "octagonal", MAGICAL_BREATHING, 65),
     OBJECT(OBJ("cheap plastic imitation of the Amulet of Yendor",
                "Amulet of Yendor"), BITS(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                          PLASTIC), 0,
-           AMULET_CLASS, 0, 0, 20, 0, 0, 0, 0, 0, 1, HI_METAL),
+           AMULET_CLASS, 1, 0, 20, 0, 0, 0, 0, 0, 1, HI_METAL),
     OBJECT(OBJ("Amulet of Yendor",      /* note: description == name */
                "Amulet of Yendor"), BITS(0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0,
                                          MITHRIL), 0,
@@ -654,7 +627,7 @@ const struct objclass const_objects[] = {
             0, 0, 0, 5, 30, 50, 2, 6, WHACK, P_FLAIL, IRON, HI_METAL),
 /* 3.4.1: unicorn horn left classified as "magic" */
     WEPTOOL("unicorn horn", NULL,
-            1, 1, 1, 0, 20, 100, 12, 12, PIERCE, P_UNICORN_HORN, BONE,
+            1, 1, 1, 0,  8, 100, 12, 12, PIERCE, P_UNICORN_HORN, BONE,
             CLR_WHITE),
 
 /* two special unique artifact "tools" */
@@ -698,13 +671,12 @@ const struct objclass const_objects[] = {
     FOOD("kelp frond", 0, 1, 1, 0, VEGGY, 30, CLR_GREEN),
     FOOD("eucalyptus leaf", 3, 1, 1, 0, VEGGY, 30, CLR_GREEN),
     FOOD("apple", 15, 1, 2, 0, VEGGY, 50, CLR_RED),
-    FOOD("orange", 10, 1, 2, 0, VEGGY, 80, CLR_ORANGE),
-    FOOD("pear", 10, 1, 2, 0, VEGGY, 50, CLR_BRIGHT_GREEN),
-    FOOD("melon", 10, 1, 5, 0, VEGGY, 100, CLR_BRIGHT_GREEN),
-    FOOD("banana", 10, 1, 2, 0, VEGGY, 80, CLR_YELLOW),
+    FOOD("orange", 14, 1, 2, 0, VEGGY, 80, CLR_ORANGE),
+    FOOD("pear", 12, 1, 2, 0, VEGGY, 50, CLR_BRIGHT_GREEN),
+    FOOD("banana", 12, 1, 2, 0, VEGGY, 80, CLR_YELLOW),
     FOOD("carrot", 15, 1, 2, 0, VEGGY, 50, CLR_ORANGE),
-    FOOD("sprig of wolfsbane", 7, 1, 1, 0, VEGGY, 40, CLR_GREEN),
-    FOOD("clove of garlic", 7, 1, 1, 0, VEGGY, 40, CLR_WHITE),
+    FOOD("sprig of wolfsbane", 8, 1, 1, 0, VEGGY, 40, CLR_GREEN),
+    FOOD("clove of garlic", 8, 1, 1, 0, VEGGY, 40, CLR_WHITE),
     FOOD("slime mold", 75, 1, 5, 0, VEGGY, 250, HI_ORGANIC),
 
 /* people food */
@@ -773,12 +745,17 @@ const struct objclass const_objects[] = {
     SCROLL("food detection", "YUM YUM", 1, 25, 100),
     SCROLL("identify", "KERNOD WEL", 1, 180, 20),
     SCROLL("magic mapping", "ELAM EBOW", 1, 45, 100),
-    SCROLL("amnesia", "DUAM XNAHT", 1, 35, 200),
+    SCROLL("water", "DUAM XNAHT", 1, 35, 200),
     SCROLL("fire", "ANDOVA BEGARIN", 1, 30, 100),
     SCROLL("earth", "KIRJE", 1, 18, 200),
     SCROLL("punishment", "VE FORBRYDERNE", 1, 15, 300),
     SCROLL("charging", "HACKEM MUCHE", 1, 15, 300),
     SCROLL("stinking cloud", "VELOX NEB", 1, 15, 300),
+    //SCROLL("wishing", "RATSANOPU", 1, 0, 9000),
+    OBJECT(OBJ("wishing","RATSANOPU"),
+           BITS(0,1,0,0,1,0,0,1,0,0,0,P_NONE,PAPER),
+           0, SCROLL_CLASS, 0, 0, 5, 9000,
+           0, 0, 0, 0, 6, HI_PAPER ),
     SCROLL(NULL, "FOOBIE BLETCH", 1, 0, 100),
     SCROLL(NULL, "TEMOV", 1, 0, 100),
     SCROLL(NULL, "GARVEN DEH", 1, 0, 100),
@@ -1006,7 +983,8 @@ const struct objclass const_objects[] = {
     ROCK("luckstone", "gray", 0, 10, 10, 60, 3, 3, 1, 10, 7, MINERAL, CLR_GRAY),
     ROCK("loadstone", "gray", 0, 10, 500, 1, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
     ROCK("touchstone", "gray", 0, 8, 10, 45, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
-    ROCK("flint", "gray", 0, 10, 10, 1, 6, 6, 0, 10, 7, MINERAL, CLR_GRAY),
+    ROCK("flint", "gray", 0, 9, 10, 1, 6, 6, 0, 10, 7, MINERAL, CLR_GRAY),
+    ROCK("silver nugget", "shiny", 0, 1, 10, 1, 6, 6, 0, 10, 7, SILVER, HI_SILVER),
     ROCK("rock", NULL, 1, 100, 10, 0, 3, 3, 0, 10, 7, MINERAL, CLR_GRAY),
 #undef GEM
 #undef ROCK
@@ -1036,6 +1014,9 @@ const struct objclass const_objects[] = {
     OBJECT(OBJ("blinding venom", "splash of venom"),
            BITS(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, P_NONE, LIQUID), 0,
            VENOM_CLASS, 500, 0, 1, 0, 0, 0, 0, 0, 0, HI_ORGANIC),
+    OBJECT(OBJ("vampire blood", "splash of blood"), /* GFP: Vlad */
+           BITS(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, P_NONE, LIQUID), 0,
+           VENOM_CLASS,   0, 0, 1, 1, 9, 9, 40, 0, 0, CLR_RED),
     OBJECT(OBJ("acid venom", "splash of venom"),
            BITS(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, P_NONE, LIQUID), 0,
            VENOM_CLASS, 500, 0, 1, 0, 6, 6, 0, 0, 0, HI_ORGANIC),

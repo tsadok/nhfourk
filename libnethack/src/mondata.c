@@ -76,7 +76,7 @@ resists_magm(const struct monst * mon)
 
     /* as of 3.2.0: gray dragons, Angels, Oracle, Yeenoghu */
     if (dmgtype(ptr, AD_MAGM) || ptr == &mons[PM_BABY_GRAY_DRAGON] ||
-        dmgtype(ptr, AD_RBRE))    /* Chromatic Dragon */
+        dmgtype(ptr, AD_RBRE)) /* Chromatic Dragon / Great Fierce Beast */
         return TRUE;
     /* check for magic resistance granted by wielded weapon */
     o = (mon == &youmonst) ? uwep : MON_WEP(mon);
@@ -235,7 +235,8 @@ hates_silver(const struct permonst * ptr)
     return ((boolean)
             (is_were(ptr) || ptr->mlet == S_VAMPIRE || is_demon(ptr) ||
              ptr == &mons[PM_SHADE] || (ptr->mlet == S_IMP &&
-                                        ptr != &mons[PM_TENGU])));
+                                        ptr != &mons[PM_TENGU] &&
+                                        ptr != &mons[PM_LEPRECHAUN])));
 }
 
 /* true iff the type of monster pass through iron bars */
@@ -440,7 +441,10 @@ name_to_mon(const char *in_str)
             short pm_val;
         } names[] = {
             /* Alternate spellings */
+            { "great grey dragon", PM_GREAT_GRAY_DRAGON },
+            { "grey elder dragon", PM_GRAY_ELDER_DRAGON },
             { "grey dragon", PM_GRAY_DRAGON },
+            { "young grey dragon", PM_YOUNG_GRAY_DRAGON },
             { "baby grey dragon", PM_BABY_GRAY_DRAGON },
             { "grey unicorn", PM_GRAY_UNICORN },
             { "grey ooze", PM_GRAY_OOZE },
@@ -569,15 +573,42 @@ static const short grownups[][2] = {
     {PM_LICH, PM_DEMILICH}, {PM_DEMILICH, PM_MASTER_LICH},
     {PM_MASTER_LICH, PM_ARCH_LICH},
     {PM_VAMPIRE, PM_VAMPIRE_LORD}, {PM_BAT, PM_GIANT_BAT},
-    {PM_BABY_GRAY_DRAGON, PM_GRAY_DRAGON},
-    {PM_BABY_SILVER_DRAGON, PM_SILVER_DRAGON},
-    {PM_BABY_RED_DRAGON, PM_RED_DRAGON},
-    {PM_BABY_WHITE_DRAGON, PM_WHITE_DRAGON},
-    {PM_BABY_ORANGE_DRAGON, PM_ORANGE_DRAGON},
-    {PM_BABY_BLACK_DRAGON, PM_BLACK_DRAGON},
-    {PM_BABY_BLUE_DRAGON, PM_BLUE_DRAGON},
-    {PM_BABY_GREEN_DRAGON, PM_GREEN_DRAGON},
-    {PM_BABY_YELLOW_DRAGON, PM_YELLOW_DRAGON},
+    {PM_BABY_GRAY_DRAGON, PM_YOUNG_GRAY_DRAGON},
+    {PM_BABY_SILVER_DRAGON, PM_YOUNG_SILVER_DRAGON},
+    {PM_BABY_RED_DRAGON, PM_YOUNG_RED_DRAGON},
+    {PM_BABY_WHITE_DRAGON, PM_YOUNG_WHITE_DRAGON},
+    {PM_BABY_ORANGE_DRAGON, PM_YOUNG_ORANGE_DRAGON},
+    {PM_BABY_BLACK_DRAGON, PM_YOUNG_BLACK_DRAGON},
+    {PM_BABY_BLUE_DRAGON, PM_YOUNG_BLUE_DRAGON},
+    {PM_BABY_GREEN_DRAGON, PM_YOUNG_GREEN_DRAGON},
+    {PM_BABY_YELLOW_DRAGON, PM_YOUNG_YELLOW_DRAGON},
+    {PM_YOUNG_GRAY_DRAGON, PM_GRAY_DRAGON},
+    {PM_YOUNG_SILVER_DRAGON, PM_SILVER_DRAGON},
+    {PM_YOUNG_RED_DRAGON, PM_RED_DRAGON},
+    {PM_YOUNG_WHITE_DRAGON, PM_WHITE_DRAGON},
+    {PM_YOUNG_ORANGE_DRAGON, PM_ORANGE_DRAGON},
+    {PM_YOUNG_BLACK_DRAGON, PM_BLACK_DRAGON},
+    {PM_YOUNG_BLUE_DRAGON, PM_BLUE_DRAGON},
+    {PM_YOUNG_GREEN_DRAGON, PM_GREEN_DRAGON},
+    {PM_YOUNG_YELLOW_DRAGON, PM_YELLOW_DRAGON},
+    {PM_GRAY_DRAGON, PM_GRAY_ELDER_DRAGON},
+    {PM_SILVER_DRAGON, PM_SILVER_ELDER_DRAGON},
+    {PM_RED_DRAGON, PM_RED_ELDER_DRAGON},
+    {PM_WHITE_DRAGON, PM_WHITE_ELDER_DRAGON},
+    {PM_ORANGE_DRAGON, PM_ORANGE_ELDER_DRAGON},
+    {PM_BLACK_DRAGON, PM_BLACK_ELDER_DRAGON},
+    {PM_BLUE_DRAGON, PM_BLUE_ELDER_DRAGON},
+    {PM_GREEN_DRAGON, PM_GREEN_ELDER_DRAGON},
+    {PM_YELLOW_DRAGON, PM_YELLOW_ELDER_DRAGON},
+    {PM_GRAY_ELDER_DRAGON, PM_GREAT_GRAY_DRAGON},
+    {PM_SILVER_ELDER_DRAGON, PM_GREAT_SILVER_DRAGON},
+    {PM_RED_ELDER_DRAGON, PM_GREAT_RED_DRAGON},
+    {PM_WHITE_ELDER_DRAGON, PM_GREAT_WHITE_DRAGON},
+    {PM_ORANGE_ELDER_DRAGON, PM_GREAT_ORANGE_DRAGON},
+    {PM_BLACK_ELDER_DRAGON, PM_GREAT_BLACK_DRAGON},
+    {PM_BLUE_ELDER_DRAGON, PM_GREAT_BLUE_DRAGON},
+    {PM_GREEN_ELDER_DRAGON, PM_GREAT_GREEN_DRAGON},
+    {PM_YELLOW_ELDER_DRAGON, PM_GREAT_YELLOW_DRAGON},
     {PM_RED_NAGA_HATCHLING, PM_RED_NAGA},
     {PM_BLACK_NAGA_HATCHLING, PM_BLACK_NAGA},
     {PM_GOLDEN_NAGA_HATCHLING, PM_GOLDEN_NAGA},
@@ -596,7 +627,7 @@ static const short grownups[][2] = {
     {PM_PAGE, PM_KNIGHT},
     {PM_ACOLYTE, PM_PRIEST},
     {PM_APPRENTICE, PM_WIZARD},
-    {PM_MANES, PM_LEMURE},
+    {PM_MANES, PM_IMP},
     {PM_KEYSTONE_KOP, PM_KOP_SERGEANT},
     {PM_KOP_SERGEANT, PM_KOP_LIEUTENANT},
     {PM_KOP_LIEUTENANT, PM_KOP_KAPTAIN},
@@ -617,12 +648,17 @@ little_to_big(int montype)
 int
 big_to_little(int montype)
 {
-    int i;
-
-    for (i = 0; grownups[i][0] >= LOW_PM; i++)
-        if (montype == grownups[i][1])
-            return grownups[i][0];
-    return montype;
+    int i, k = montype;
+    boolean done = FALSE;
+    while (!done) {
+        done = TRUE;
+        for (i = 0; grownups[i][0] >= LOW_PM; i++)
+            if (k == grownups[i][1]) {
+                k = grownups[i][0];
+                done = FALSE;
+            }
+    }
+    return k;
 }
 
 /*
@@ -715,6 +751,16 @@ on_fire(const struct permonst *mptr, const struct attack *mattk)
         break;
     }
     return what;
+}
+
+
+/* check monster proficiency */
+short
+mprof(const struct monst * mon, int proficiency)
+{
+    const struct permonst *ptr = mon->data;
+    /* return the relevant bits. */
+    return (short) (((ptr)->mskill / proficiency) % 4);
 }
 
 /*mondata.c*/

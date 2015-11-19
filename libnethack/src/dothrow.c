@@ -125,6 +125,10 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
             if (obj->otyp == YA && uwep && uwep->otyp == YUMI)
                 multishot++;
             break;
+        case PM_CAVEMAN:
+            if (skill == P_SLING)
+                multishot++; /* This gets doubled if you dual-wield slings. */
+            break;
         default:
             break;      /* No bonus */
         }
@@ -138,8 +142,19 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
             if (obj->otyp == ORCISH_ARROW && uwep && uwep->otyp == ORCISH_BOW)
                 multishot++;
             break;
+        case PM_GNOME:
+            if (uwep && ammo_and_launcher(obj, uwep) &&
+                weapon_type(uwep) == P_CROSSBOW)
+                multishot++;
         default:
             break;      /* No bonus */
+        }
+        /* Multi-shot malus for silver projectiles, for balance reasons */
+        if (objects[obj->otyp].oc_material == SILVER) {
+            if (multishot > 2)
+                multishot -= 2;
+            else if (multishot > 1)
+                multishot--;
         }
     }
     /* crossbows are slow to load and probably shouldn't allow multiple
@@ -148,6 +163,11 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
     if (multishot > 1 && (int)ACURRSTR < (Race_if(PM_GNOME) ? 16 : 18) &&
         ammo_and_launcher(obj, uwep) && weapon_type(uwep) == P_CROSSBOW)
         multishot = rnd(multishot);
+
+    /* Sling buff: dual-wielding two slings allows double multishot. */
+    if (ammo_and_launcher(obj, uwep) && (weapon_type(uwep) == P_SLING) &&
+        uswapwep && (weapon_type(uswapwep) == P_SLING))
+        multishot *= 2;
 
     if ((long)multishot > obj->quan)
         multishot = (int)obj->quan;
@@ -491,8 +511,8 @@ hurtle_step(void *arg, int x, int y)
                    killer_msg(DIED, "touching the edge of the universe"));
             return FALSE;
         }
-        if ((u.ux - x) && (u.uy - y) && bad_rock(youmonst.data, u.ux, y) &&
-            bad_rock(youmonst.data, x, u.uy)) {
+        if ((u.ux - x) && (u.uy - y) && bad_rock(URACEDATA, u.ux, y) &&
+            bad_rock(URACEDATA, x, u.uy)) {
             boolean too_much = (invent && (inv_weight() + weight_cap() > 600));
 
             /* Move at a diagonal. */
@@ -512,8 +532,8 @@ hurtle_step(void *arg, int x, int y)
         wakeup(mon, TRUE);
         return FALSE;
     }
-    if ((u.ux - x) && (u.uy - y) && bad_rock(youmonst.data, u.ux, y) &&
-        bad_rock(youmonst.data, x, u.uy)) {
+    if ((u.ux - x) && (u.uy - y) && bad_rock(URACEDATA, u.ux, y) &&
+        bad_rock(URACEDATA, x, u.uy)) {
         /* Move at a diagonal. */
         if (In_sokoban(&u.uz)) {
             pline(msgc_cancelled1, "You come to an abrupt halt!");
@@ -541,7 +561,7 @@ hurtle_step(void *arg, int x, int y)
             dotrap(ttmp, 0);    /* doesn't print messages */
         } else if (ttmp->ttyp == FIRE_TRAP) {
             dotrap(ttmp, 0);
-        } else if ((ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT ||
+        } else if ((is_pit_trap(ttmp->ttyp) ||
                     ttmp->ttyp == HOLE || ttmp->ttyp == TRAPDOOR) &&
                    In_sokoban(&u.uz)) {
             /* Air currents overcome the recoil */
@@ -610,6 +630,7 @@ hurtle(int dx, int dy, int range, boolean verbose)
         pline(msgc_yafm, "You are anchored by the %s.",
               u.utraptype == TT_WEB ? "web" :
               u.utraptype == TT_LAVA ? "lava" :
+              u.utraptype == TT_ICEBLOCK ? "ice" :
               u.utraptype == TT_INFLOOR ? surface(u.ux, u.uy) : "trap");
         action_completed();
         return;
@@ -634,8 +655,7 @@ hurtle(int dx, int dy, int range, boolean verbose)
                       m_shot.s ? "shoot" : "throw", m_shot.s ? "shot" : "toss");
         m_shot.n = m_shot.i;    /* make current shot be the last */
     }
-    if (In_sokoban(&u.uz))
-        change_luck(-1);        /* Sokoban guilt */
+    sokoban_guilt();
     uc.x = u.ux;
     uc.y = u.uy;
     /* this setting of cc is only correct if dx and dy are [-1,0,1] only */
@@ -1001,7 +1021,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
                 if (crossbowing)
                     range = BOLT_LIM;
                 else
-                    range++;
+                    range += 2;
             } else if (obj->oclass != GEM_CLASS)
                 range /= 2;
         }
@@ -1020,7 +1040,8 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             range = 20; /* you must be giant */
         else if (obj->oartifact == ART_MJOLLNIR)
             range = (range + 1) / 2;    /* it's heavy */
-        else if (obj == uball && u.utrap && u.utraptype == TT_INFLOOR)
+        else if (obj == uball && u.utrap && (u.utraptype == TT_INFLOOR ||
+                                             u.utraptype == TT_ICEBLOCK))
             range = 1;
 
         if (Underwater)
@@ -1239,11 +1260,13 @@ thitmonst(struct monst *mon, struct obj *obj)
     boolean guaranteed_hit = (Engulfed && mon == u.ustuck);
 
     /* Differences from melee weapons: Dex still gives a bonus, but strength
-       does not. Polymorphed players lacking attacks may still throw. There's a 
-       base -1 to hit. No bonuses for fleeing or stunned targets (they don't
-       dodge melee blows as readily, but dodging arrows is hard anyway). Not
-       affected by traps, etc. Certain items which don't in themselves do
-       damage ignore tmp. Distance and monster size affect chance to hit. */
+       does not (unless it's a stone fired from a sling, and even then the
+       strength bonus is reduced compared to melee). Polymorphed players lacking
+       attacks may still throw. There's a base -1 to hit. No bonuses for fleeing
+       or stunned targets (they don't dodge melee blows as readily, but dodging
+       arrows is hard anyway). Not affected by traps, etc. Certain items which
+       don't in themselves do damage ignore tmp. Distance and monster size
+       affect chance to hit. */
     tmp =
         -1 + Luck + find_mac(mon) + u.uhitinc +
         maybe_polyd(youmonst.data->mlevel, u.ulevel);
@@ -1337,6 +1360,15 @@ thitmonst(struct monst *mon, struct obj *obj)
         return 0;
     }
 
+    if (obj->oclass == ARMOR_CLASS &&
+        objects[obj->otyp].oc_armcat == ARM_GLOVES &&
+        mon->mpeaceful && !mon->mtame) {
+        mon->mpeaceful = 0;
+        pline(msgc_consequence, "%s accepts your challenge!", Monnam(mon));
+        set_malign(mon);
+        return 0;
+    }
+
     if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
         obj->oclass == GEM_CLASS) {
         if (is_ammo(obj)) {
@@ -1384,17 +1416,31 @@ thitmonst(struct monst *mon, struct obj *obj)
             if (objects[otyp].oc_skill < P_NONE &&
                 objects[otyp].oc_skill > -P_BOOMERANG &&
                 !objects[otyp].oc_magic) {
-                /* we were breaking 2/3 of everything unconditionally. we still 
-                   don't want anything to survive unconditionally, but we need
-                   ammo to stay around longer on average. */
-                int broken, chance;
+                /* The previous version of this logic made sure early-game
+                 * characters couldn't use their ranged weapons much or they'd
+                 * all break.  That isn't what we want.  So instead, we use a
+                 * combination of skill and max skill to determine the base
+                 * chance of breakage, then use item enchantment for the
+                 * item's saving throw as it were. */
+                int broken;
+                if (P_RESTRICTED(weapon_type(obj)) ? rn2(2) :
+                    !rn2(P_SKILL(weapon_type(obj)) *
+                         P_MAX_SKILL(weapon_type(obj)) * 2)) {
+                    /* Object will break unless its enchantment saves it. */
+                    broken = (obj->spe > 0) ? !rn2(1 + obj->spe) : 1;
+                } else {
+                    /* Object survives unless negative enchantment dooms it. */
+                    broken = (obj->spe < 0) ? rn2(1 - obj->spe) : 0;
+                }
+                /* Cursed objects have an additional chance to break. */
+                if (obj->cursed && !broken && rnl(10) > 5)
+                    broken = 1;
 
-                chance = 3 + greatest_erosion(obj) - obj->spe;
-                if (chance > 1)
-                    broken = rn2(chance);
-                else
-                    broken = !rn2(4);
-                if (obj->blessed && !rnl(4))
+                /* Hard stones are harder to break. */
+                if (broken && (obj->otyp == FLINT ||
+                               ((obj->oclass == GEM_CLASS) &&
+                                objects[obj->otyp].oc_tough))
+                    && rn2(1))
                     broken = 0;
 
                 if (broken) {
@@ -1433,7 +1479,7 @@ thitmonst(struct monst *mon, struct obj *obj)
         }
 
     } else if ((otyp == EGG || otyp == CREAM_PIE || otyp == BLINDING_VENOM ||
-                otyp == ACID_VENOM)) {
+                otyp == ACID_VENOM || otyp == VAMPIRE_BLOOD)) {
         if ((guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
             hmon(mon, obj, 1);
             return 1;   /* hmon used it up */
@@ -1715,7 +1761,8 @@ boolean
 breaktest(struct obj *obj)
 {
     /* Venom can never resist destruction. */
-    if (obj->otyp == ACID_VENOM || obj->otyp == BLINDING_VENOM)
+    if (obj->otyp == ACID_VENOM || obj->otyp == BLINDING_VENOM ||
+        obj->otyp == VAMPIRE_BLOOD)
         return 1;
 
     if (obj_resists(obj, 1, 99))
@@ -1730,7 +1777,6 @@ breaktest(struct obj *obj)
     case EXPENSIVE_CAMERA:
     case EGG:
     case CREAM_PIE:
-    case MELON:
         return 1;
     default:
         return 0;
@@ -1762,7 +1808,6 @@ breakmsg(struct obj *obj, boolean in_view)
                   (obj->quan == 1) ? "s" : "", to_pieces);
         break;
     case EGG:
-    case MELON:
         pline(msgc_itemloss, "Splat!");
         break;
     case CREAM_PIE:
@@ -1771,6 +1816,7 @@ breakmsg(struct obj *obj, boolean in_view)
         break;
     case ACID_VENOM:
     case BLINDING_VENOM:
+    case VAMPIRE_BLOOD:
         /* these items are temporary anyway, so not msgc_itemloss */
         pline(msgc_failrandom, "Splash!");
         break;

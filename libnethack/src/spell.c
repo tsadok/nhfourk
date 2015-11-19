@@ -426,7 +426,8 @@ learn(void)
     if (++u.uoccupation_progress[tos_book] < 0)
         return 1;       /* still busy */
 
-    exercise(A_WIS, TRUE);      /* you're studying. */
+    if (ACURR(A_WIS) < 12)
+        exercise(A_WIS, TRUE); /* you're studying. */
 
     splname = msgprintf(objects[booktype].oc_name_known ?
                         "\"%s\"" : "the \"%s\" spell",
@@ -443,8 +444,9 @@ learn(void)
                       splname);
                 incrnknow(i);
                 u.utracked[tos_book]->spestudied++;
-                exercise(A_WIS, TRUE);  /* extra study */
-            } else {    /* spell known already, book studiable*/
+                if (ACURR(A_WIS) < 12)
+                    exercise(A_WIS, TRUE); /* extra study */
+            } else {    /* 1000 < spellknow(i) <= MAX_SPELL_STUDY */
                 pline(msgc_hint, "You know %s quite well already.", splname);
                 if (yn("Do you want to read the book anyway?") == 'y') {
                     pline(msgc_actionok, "You refresh your knowledge of %s.",
@@ -784,7 +786,7 @@ cast_protection(void)
 {
     int loglev = 0;
     int l = u.ulevel;
-    int natac = get_player_ac() - u.uspellprot;
+    int natac = get_player_ac() + u.uspellprot;
     int gain;
 
     /* loglev=log2(u.ulevel)+1 (1..5) */
@@ -1060,7 +1062,6 @@ spelleffects(int spell, boolean atme, const struct nh_cmd_arg *arg)
     }
 
     u.uen -= energy;
-    exercise(A_WIS, TRUE);
     /* pseudo is a temporary "false" object containing the spell stats */
     pseudo = mktemp_sobj(level, spellid(spell));
     pseudo->blessed = pseudo->cursed = 0;
@@ -1090,7 +1091,7 @@ spelleffects(int spell, boolean atme, const struct nh_cmd_arg *arg)
                             u.ulevel / 2 + 1 + spell_damage_bonus(), 0,
                             (pseudo->otyp ==
                              SPE_CONE_OF_COLD) ? EXPL_FROSTY : EXPL_FIERY,
-                            NULL);
+                            NULL, 0);
                 }
                 dx = cc.x + rnd(3) - 2;
                 dy = cc.y + rnd(3) - 2;

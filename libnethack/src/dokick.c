@@ -168,7 +168,7 @@ kick_monster(xchar x, xchar y, schar dx, schar dy)
        all your kicks, or else take one turn and attack the monster normally,
        getting all your attacks _including_ all your kicks. If you have >1 kick
        attack, you get all of them. */
-    if (Upolyd && attacktype(youmonst.data, AT_KICK)) {
+    if (attacktype(URACEDATA, AT_KICK)) {
         const struct attack *uattk;
         int sum;
         schar tmp = find_roll_to_hit(mon);
@@ -447,8 +447,7 @@ kick_object(xchar x, xchar y, schar dx, schar dy, struct obj **kickobj_p)
         return 0;
 
     if ((trap = t_at(level, x, y)) != 0 &&
-        (((trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) && !Passes_walls) ||
-         trap->ttyp == WEB)) {
+        ((is_pit_trap(trap->ttyp) && !Passes_walls) || trap->ttyp == WEB)) {
         if (!trap->tseen)
             find_trap(trap);
         pline(msgc_cancelled1, "You can't kick something that's in a %s!",
@@ -728,11 +727,20 @@ dokick(const struct nh_cmd_arg *arg)
             break;
         case TT_WEB:
         case TT_BEARTRAP:
+        case TT_LAVA:
             pline(msgc_cancelled, "You can't move your %s!", body_part(LEG));
             break;
         default:
             break;
         }
+        no_kick = TRUE;
+    } else if (!rn2(2) && is_puddle(level, u.ux, u.uy) &&
+               !Levitation && !Flying && !Wwalking &&
+               /* mud boots negate water resistance */
+               (!uarmf || strncmp(OBJ_DESCR(objects[uarmf->otyp]), "mud ", 4))) {
+        pline(msgc_cancelled1,
+              "The water at your %s hinders your ability to kick.",
+              makeplural(body_part(FOOT)));
         no_kick = TRUE;
     }
 
@@ -835,7 +843,7 @@ dokick(const struct nh_cmd_arg *arg)
 
     reveal_monster_at(x, y, TRUE);
 
-    if (is_pool(level, x, y) ^ !!u.uinwater) {
+    if (is_damp_terrain(level, x, y) ^ !!u.uinwater) {
         /* objects normally can't be removed from water by kicking */
         pline(msgc_cancelled1, "You splash some water around.");
         return 1;
@@ -943,6 +951,13 @@ dokick(const struct nh_cmd_arg *arg)
             }
             goto ouch;
         }
+        if (IS_MAGIC_CHEST(maploc->typ)) {
+            if (Levitation) goto dumb;
+            pline(msgc_actionok, "You kick %s.",
+                  (Blind ? "something" : Hallucination ?
+                   "the Luggage" : "the magic chest"));
+            goto ouch;
+        }
         if (IS_ALTAR(maploc->typ)) {
             if (Levitation)
                 goto dumb;
@@ -1004,7 +1019,6 @@ dokick(const struct nh_cmd_arg *arg)
                     dealloc_obj(treefruit);
                 }
                 exercise(A_DEX, TRUE);
-                exercise(A_WIS, TRUE);  /* discovered a new food source! */
                 newsym(x, y);
                 maploc->looted |= TREE_LOOTED;
                 return 1;
@@ -1095,7 +1109,6 @@ dokick(const struct nh_cmd_arg *arg)
                     mkobj_at(RING_CLASS, level, x, y, TRUE, rng_sink_ring);
                     newsym(x, y);
                     exercise(A_DEX, TRUE);
-                    exercise(A_WIS, TRUE);      /* a discovery! */
                     maploc->looted |= S_LRING;
                 } else {
                     pline(msgc_noconsequence, "Flupp!  %s.",
@@ -1155,6 +1168,10 @@ dokick(const struct nh_cmd_arg *arg)
 
     /* not enough leverage to kick open doors while levitating */
     if (Levitation)
+        goto ouch;
+
+    /* Ali - artifact doors */
+    if (artifact_door(/*level, */x, y))
         goto ouch;
 
     exercise(A_DEX, TRUE);

@@ -121,8 +121,9 @@ struct monst {
 
     unsigned mcan:1;    /* has been cancelled */
     unsigned mburied:1; /* has been buried */
-    unsigned mspeed:2;  /* current speed */
+    unsigned mspeed:2;  /* current speed (MFAST or MSLOW) */
     unsigned permspeed:2;       /* intrinsic mspeed value */
+    /* see also mnitro, further down */
     unsigned mrevived:1;        /* has been revived from the dead */
     unsigned mavenge:1; /* did something to deserve retaliation */
 
@@ -133,11 +134,11 @@ struct monst {
     unsigned mstun:1;   /* stunned (off balance) */
     unsigned mconf:1;   /* confused */
     unsigned mpeaceful:1;       /* does not attack unprovoked */
-    unsigned mtrapped:1;        /* trapped in a pit, web or bear trap */
+    unsigned mtrapped:1;        /* trapped in a pit, web, bear trap, etc. */
 
     unsigned mleashed:1;        /* monster is on a leash */
     unsigned msuspicious:1;     /* monster is suspicious of the player */
-    /* 1 spare bit */
+    unsigned mnitro:1;          /* single-use burst of extra speed */
     unsigned isshk:1;   /* is shopkeeper */
     unsigned isminion:1;        /* is a minion */
     unsigned isgd:1;    /* is guard */

@@ -59,6 +59,21 @@ static const struct icp rogueprobs[] = {
     {5, RING_CLASS}
 };
 
+static const struct icp mazeprobs[] = {
+    {10, WEAPON_CLASS},
+    {10, ARMOR_CLASS},
+    {20, FOOD_CLASS},
+    {10, TOOL_CLASS},
+    {3, GEM_CLASS},
+    {2, COIN_CLASS},
+    {10, POTION_CLASS},
+    {10, SCROLL_CLASS},
+    {10, SPBOOK_CLASS},
+    {10, WAND_CLASS},
+    {10, RING_CLASS},
+    {5, AMULET_CLASS}
+};
+
 static const struct icp hellprobs[] = {
     {20, WEAPON_CLASS},
     {20, ARMOR_CLASS},
@@ -110,6 +125,9 @@ mkobj(struct level *lev, char oclass, boolean artif, enum rng rng)
         const struct icp *iprobs =
             (Is_rogue_level(&lev->z)) ? (const struct icp *)rogueprobs :
             In_hell(&lev->z) ? (const struct icp *)hellprobs :
+            ((lev->z.dnum == medusa_level.dnum) &&
+             (depth(&lev->z) > depth(&medusa_level))) ?
+            (const struct icp *)mazeprobs :
             (const struct icp *) mkobjprobs;
 
         for (tprob = rn2_on_rng(100, rng) + 1;
@@ -565,7 +583,17 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 blessorcurse(otmp, 10, rng);
                 break;
             case SLIME_MOLD:
-                otmp->spe = gamestate.fruits.current;
+                if ((getmonth() == 12) &&
+                    (getmday() >= 24) && (getmday() <= 25))
+                    otmp->spe = (moves % 2) ? fruitadd("candy cane") :
+                        (moves % 3)  ? fruitadd("Christmas cookie") :
+                        (moves % 5)  ? fruitadd("sugar plum") :
+                        (moves % 7)  ? fruitadd("cup of figgy pudding") :
+                        fruitadd("slice of plum cake");
+                else if (Race_if(PM_SCURRIER))
+                    otmp->spe = fruitadd("chestnut");
+                else
+                    otmp->spe = gamestate.fruits.current;
                 break;
             case KELP_FROND:
                 otmp->quan = 1 + rn2_on_rng(2, rng);
@@ -581,6 +609,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 curse(otmp);
             else if (otmp->otyp == ROCK)
                 otmp->quan = 6 + rn2_on_rng(6, rng);
+            else if (otmp->otyp == FLINT)
+                otmp->quan = 1 + rn2_on_rng(5, rng);
             else if (otmp->otyp != LUCKSTONE && !rn2_on_rng(6, rng))
                 otmp->quan = 2L;
             else
@@ -711,13 +741,15 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                or the level creation RNG; in both cases we want the charges on
                the wand of wishing to be determined on the same RNG, rather than
                using a separate RNG for wand of wishing charges */
-            if (otmp->otyp == WAN_WISHING)
+            if (otmp->otyp == WAN_WISHING) {
                 otmp->spe = 1 + rn2_on_rng(3, rng);
-            else
+                otmp->recharged = rne_on_rng(3, rng_main);
+            } else {
                 otmp->spe = rn2_on_rng(5, rng) +
                     ((objects[otmp->otyp].oc_dir == NODIR) ? 11 : 4);
+                otmp->recharged = 0;        /* used to control recharging */
+            }
             blessorcurse(otmp, 17, rng);
-            otmp->recharged = 0;        /* used to control recharging */
             break;
         case RING_CLASS:
             if (objects[otmp->otyp].oc_charged) {
@@ -773,6 +805,12 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
     /* unique objects may have an associated artifact entry */
     if (objects[otyp].oc_unique && !otmp->oartifact)
         otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
+
+    /* Every once in a great while, an object is greased. */
+    if (((let == WEAPON_CLASS) ||
+         (let == ARMOR_CLASS)) &&
+        !rn2_on_rng(23263, rng))
+        otmp->greased = 1;
 
     otmp->owt = weight(otmp); /* update, in case we changed it */
     return otmp;
@@ -1262,6 +1300,10 @@ place_object(struct obj *otmp, struct level *lev, int x, int y)
 
     if (otmp->timed)
         obj_timer_checks(otmp, x, y, 0);
+
+    /* for objects initially created in water */
+    if (is_damp_terrain(lev, x, y))
+	water_damage(otmp, FALSE, FALSE);
 }
 
 #define ON_ICE(a) ((a)->recharged)
@@ -1450,6 +1492,10 @@ obj_extract_self(struct obj *obj)
         break;
     case OBJ_ONBILL:
         extract_nobj(obj, &obj->olev->billobjs,
+                     &turnstate.floating_objects, OBJ_FREE);
+        break;
+    case OBJ_MAGIC_CHEST:
+        extract_nobj(obj, &magic_chest_objs,
                      &turnstate.floating_objects, OBJ_FREE);
         break;
     case OBJ_MIGRATING:

@@ -111,7 +111,8 @@ static const char *const shktools[] = {
     "Htargcm", "Enrobwem", "Kachzi Rellim", "Regien", "Donmyar",
     "Yelpur", "Nosnehpets", "Stewe", "Renrut", "_Zlaw", "Nosalnef",
     "Rewuorb", "Rellenk", "Yad", "Cire Htims", "Y-crad", "Nenilukah",
-    "Corsh", "Aned", "Shimt", "Rathel",
+    "Corsh", "Aned", "Kivenhoug", "Rebrol-nek", "Niknar", "Lapu",
+    "Shimt", "Rathel", "Thusenna", "Linnalek", "Yakdreer",
 #ifdef WIN32
     "Lechaim", "Lexa", "Niod",
 #endif
@@ -145,6 +146,12 @@ static const char *const shkgeneral[] = {
     /* Iceland */
     "Akureyri", "Kopasker", "Budereyri", "Akranes", "Bordeyri",
     "Holmavik",
+    /* Sub-Saharan Africa */
+    "Kataule", "Zambo", "Mbambe", "Msowero", "Kehemu", "Cheboi",
+    /* Japan */
+    "Tanyama", "Minamoto", "Watanabe", "Nomura",
+    /* Ancient Near East */
+    "Shedeur", "Zebul", "Nidinta", "Phraates", "Gemariah",
     0
 };
 

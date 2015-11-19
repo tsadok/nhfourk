@@ -242,6 +242,11 @@ do_earthquake(int force)
                         pline(msgc_consequence,
                               "The altar falls into a chasm.");
                     goto do_pit;
+                case MAGIC_CHEST:
+                    if (cansee(x,y))
+                        pline(msgc_consequence,
+                              "The magic chest falls into a chasm.");
+                    goto do_pit;
                 case GRAVE:
                     if (cansee(x, y))
                         pline(msgc_consequence,
@@ -260,8 +265,8 @@ do_earthquake(int force)
                        landmines detonate, but that's more trouble than it's
                        worth. */
                     if ((oldtrap = t_at(level, x, y))) {
-                        if (oldtrap->ttyp == PIT || oldtrap->ttyp == SPIKED_PIT
-                            || oldtrap->ttyp == HOLE ||
+                        if (is_pit_trap(oldtrap->ttyp) ||
+                            oldtrap->ttyp == HOLE ||
                             oldtrap->ttyp == TRAPDOOR ||
                             oldtrap->ttyp == VIBRATING_SQUARE ||
                             oldtrap->ttyp == MAGIC_PORTAL)
@@ -300,48 +305,17 @@ do_earthquake(int force)
                     /* We have to check whether monsters or player falls in a
                        chasm... */
 
-                    if (mtmp) {
-                        if (!is_flyer(mtmp->data) && !is_clinger(mtmp->data)) {
-                            mtmp->mtrapped = 1;
-                            if (cansee(x, y))
-                                pline(combat_msgc(&youmonst, mtmp, cr_hit),
-                                      "%s falls into a chasm!", Monnam(mtmp));
-                            else if (humanoid(mtmp->data))
-                                You_hear(msgc_levelsound, "a scream!");
-                            mselftouch(mtmp, "Falling, ", &youmonst);
-                            if (!DEADMONSTER(mtmp))
-                                if ((mtmp->mhp -= rnd(6)) <= 0) {
-                                    if (!cansee(x, y))
-                                        pline(msgc_kill, "It is destroyed!");
-                                    else {
-                                        pline(msgc_petfatal, "You destroy %s!",
-                                              mtmp->mtame ?
-                                              x_monnam(mtmp, ARTICLE_THE,
-                                                       "poor", mtmp->mnamelth ?
-                                                       SUPPRESS_SADDLE : 0,
-                                                       FALSE) : mon_nam(mtmp));
-                                    }
-                                    xkilled(mtmp, 0);
-                                }
-                        }
+                    if (mtmp && !(mtmp == &youmonst)) {
+                        pit_under_monster(mtmp, PIT, TRUE);
                     } else if (!u.utrap && x == u.ux && y == u.uy) {
-                        if (Levitation || Flying || is_clinger(youmonst.data)) {
-                            pline(msgc_noconsequence,
-                                  "A chasm opens up under you!");
-                            pline(msgc_noconsequence, "You don't fall in!");
-                        } else {
-                            pline(msgc_badidea, "You fall into a chasm!");
-                            u.utrap = rn1(6, 2);
-                            u.utraptype = TT_PIT;
-                            turnstate.vision_full_recalc = TRUE;
-                            losehp(rnd(6), "fell into a chasm");
-                            selftouch("Falling, you",
-                                      "falling into a chasm while wielding");
-                        }
+                        pit_under_player(PIT);
                     } else
                         newsym(x, y);
                     break;
                 case DOOR:     /* Make the door collapse */
+                     /* ALI - artifact doors */
+		    if (artifact_door(/*level, */x, y))
+                        break;
                     if (level->locations[x][y].doormask == D_NODOOR)
                         goto do_pit;
                     if (cansee(x, y))
@@ -405,7 +379,7 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
                 }
             } else {
                 buzz((instr->otyp == FROST_HORN) ? AD_COLD - 1 : AD_FIRE - 1,
-                     rn1(6, 6), u.ux, u.uy, dx, dy);
+                     rn1(6, 6), u.ux, u.uy, dx, dy, 0);
             }
             makeknown(instr->otyp);
             break;
@@ -413,13 +387,11 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
     case TOOLED_HORN:  /* Awaken or scare monsters */
         pline(msgc_actionok, "You produce a frightful, grave sound.");
         awaken_monsters(u.ulevel * 30);
-        exercise(A_WIS, FALSE);
         break;
     case BUGLE:        /* Awaken & attract soldiers */
         pline(msgc_actionok, "You extract a loud noise from %s.",
               the(xname(instr)));
         awaken_soldiers(&youmonst);
-        exercise(A_WIS, FALSE);
         break;
     case MAGIC_HARP:   /* Charm monsters */
         if (do_spec && instr->spe > 0) {
@@ -456,7 +428,6 @@ do_improvisation(struct obj *instr, const struct nh_cmd_arg *arg)
     case LEATHER_DRUM: /* Awaken monsters */
         pline(msgc_actionok, "You beat a deafening row!");
         awaken_monsters(u.ulevel * 40);
-        exercise(A_WIS, FALSE);
         break;
     default:
         impossible("What a weird instrument (%d)!", instr->otyp);
@@ -519,7 +490,6 @@ do_play_instrument(struct obj *instr, const struct nh_cmd_arg *arg)
         /* Check if there was the Stronghold drawbridge near and if the tune
            conforms to what we're waiting for. */
         if (Is_stronghold(&u.uz)) {
-            exercise(A_WIS, TRUE);      /* just for trying */
             if (!strcmp(buf, gamestate.castle_tune)) {
                 /* Search for the drawbridge */
                 for (y = u.uy - 1; y <= u.uy + 1; y++)

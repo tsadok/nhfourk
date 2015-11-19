@@ -194,7 +194,7 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
         }
 
         if (l->mem_bg >= S_stone && l->mem_bg <= S_trwall &&
-            bad_rock(youmonst.data, x, y) && (!uwep || !is_pick(uwep))) {
+            bad_rock(URACEDATA, x, y) && (!uwep || !is_pick(uwep))) {
             if (!cansee(x, y))
                 pline(msgc_controlhelp, "Use the 'moveonly' command "
                       "to move into a remembered wall.");
@@ -346,8 +346,7 @@ moverock(schar dx, schar dy)
 
             if (mtmp && !noncorporeal(mtmp->data) &&
                 (!mtmp->mtrapped ||
-                 !(ttmp &&
-                   ((ttmp->ttyp == PIT) || (ttmp->ttyp == SPIKED_PIT))))) {
+                 !(ttmp && is_pit_trap(ttmp->ttyp)))) {
                 if (Blind)
                     feel_location(sx, sy);
                 if (canspotmon(mtmp))
@@ -521,7 +520,36 @@ moverock(schar dx, schar dy)
                       the(xname(otmp)));
             if (Blind)
                 feel_location(sx, sy);
-            return FALSE;
+            /* cannot_push: */
+            if (throws_rocks(youmonst.data)) {
+                if (u.usteed && P_SKILL(P_RIDING) < P_BASIC) {
+                    pline(msgc_yafm,
+                          "You aren't skilled enough to %s %s from %s.",
+                          (flags.pickup && !In_sokoban(&u.uz))
+                          ? "pick up" : "push aside", the(xname(otmp)),
+                          y_monnam(u.usteed));
+                } else {
+                    pline(msgc_substitute, "However, you can easily %s.",
+                          (flags.pickup && !In_sokoban(&u.uz))
+                          ? "pick it up" : "push it aside");
+                    sokoban_guilt();
+                    break;
+                }
+                break;
+            }
+
+            if (!u.usteed &&
+                (((!invent || inv_weight() <= -850) &&
+                  (!dx || !dy || (IS_ROCK(level->locations[u.ux][sy].typ)
+                                  && IS_ROCK(level->locations[sx][u.uy].typ))))
+                 || verysmall(youmonst.data))) {
+                pline
+                    (msgc_substitute,
+                     "However, you can squeeze yourself into a small opening.");
+                sokoban_guilt();
+                break;
+            } else
+                return FALSE;
         }
     }
     return anyboulders;
@@ -814,6 +842,28 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
         if (closed_door(level, x, y)) {
             if (cache->blind && mode == DO_MOVE)
                 feel_location(x, y);
+            /* ALI - artifact doors */
+	    if (artifact_door(/*level, */x, y)) {
+		if (mode == DO_MOVE) {
+		    if (amorphous(youmonst.data))
+			pline(msgc_yafm, "You try to ooze under the door, "
+                              "but the gap is too small.");
+		    else if (tunnels(youmonst.data) &&
+                             !needspick(youmonst.data))
+			pline(msgc_badidea,
+                              "You hurt yourself on the reinforced door.");
+		    else if (x == u.ux || y == u.uy) {
+			if (Blind || Stunned || ACURR(A_DEX) < 10 || Fumbling) {
+                            pline(msgc_badidea,
+                                  "Ouch!  You bump into a heavy door.");
+			    exercise(A_DEX, FALSE);
+			} else {
+                            pline(msgc_cancelled1, "That door is closed.");
+                        }
+		    }
+		}
+		return FALSE;
+	    } else
             if (cache->passwall)
                 ; /* do nothing */
             else if (can_ooze(&youmonst)) {
@@ -865,8 +915,8 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
                 return TRUE;
         }
     }
-    if (dx && dy && bad_rock(youmonst.data, ux, y) &&
-        bad_rock(youmonst.data, x, uy)) {
+    if (dx && dy && bad_rock(URACEDATA, ux, y) &&
+        bad_rock(URACEDATA, x, uy)) {
         /* Move at a diagonal. */
         if (In_sokoban(&u.uz)) {
             if (mode == DO_MOVE)
@@ -1641,7 +1691,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         x = u.ux + turnstate.move.dx;
         y = u.uy + turnstate.move.dy;
         int tries = 0;
-        while ((!isok(x, y) || bad_rock(youmonst.data, x, y)) &&
+        while ((!isok(x, y) || bad_rock(URACEDATA, x, y)) &&
                (uia != uia_attack) && (!uwep || !is_pick(uwep))) {
             if (tries++ > 50 || (!Stunned && !Confusion)) {
                 action_completed();
@@ -2032,16 +2082,19 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 else
                     pline(msgc_actionok, "You disentangle yourself.");
             }
-        } else if (u.utraptype == TT_INFLOOR) {
+        } else if (u.utraptype == TT_INFLOOR ||
+                   u.utraptype == TT_ICEBLOCK) {
             if (--u.utrap) {
                 predicament = "stuck in the";
                 if (u.usteed)
                     pline_once(msgc_trapescape, "%s is %s %s.",
                                msgupcasefirst(y_monnam(u.usteed)),
-                               predicament, surface(u.ux, u.uy));
+                               predicament, u.utraptype == TT_ICEBLOCK ?
+                               "ice" : surface(u.ux, u.uy));
                 else
-                    pline_once(msgc_trapescape, "You are %s %s.",
-                               predicament, surface(u.ux, u.uy));
+                    pline_once(msgc_trapescape, "You are %s %s.", predicament,
+                               u.utraptype == TT_ICEBLOCK ? "ice" : 
+                               surface(u.ux, u.uy));
             } else {
                 if (u.usteed)
                     pline(msgc_actionok, "%s finally wiggles free.",
@@ -2067,7 +2120,9 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                    DO_MOVE, &cache)) {
         /* We can't move there... but maybe we can dig. */
         if (flags.autodig && uim != uim_nointeraction &&
-            thismove != occ_move && uwep && is_pick(uwep)) {
+            thismove != occ_move && ((uwep && is_pick(uwep)) ||
+                                     (tunnels(URACEDATA) &&
+                                      !needspick(URACEDATA)))) {
             /* MRKR: Automatic digging when wielding the appropriate tool */
             return use_pick_axe(uwep, &newarg);
         }
@@ -2117,7 +2172,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
      */
     if (uia == uia_displace && mtmp && !(m_mhiding(mtmp))) {
         /* if trapped, there's a chance the pet goes wild */
-        if (mtmp->mtrapped) {
+        if (mtmp->mtrapped && t_at(level, mtmp->mx, mtmp->my)) {
             if (!rn2(mtmp->mtame)) {
                 mtmp->msleeping = 0;
                 msethostility(mtmp, TRUE, FALSE);
@@ -2138,7 +2193,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
            back. I'm not sure if there's any cases where that matters, but if
            someone finds one, it should be reported to the NH3 devteam. */
         if (mtmp->mtrapped && (trap = t_at(level, mtmp->mx, mtmp->my)) != 0 &&
-            (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT) &&
+            is_pit_trap(trap->ttyp) &&
             sobj_at(BOULDER, level, trap->tx, trap->ty)) {
             /* can't swap places with pet pinned in a pit by a boulder */
             u.ux = u.ux0, u.uy = u.uy0; /* didn't move after all */
@@ -2151,6 +2206,12 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                we've already done a random check for the displacement failing;
                the code would need to be restructured. */
             pline(msgc_cancelled1, "You stop.  %s won't fit through.",
+                  msgupcasefirst(y_monnam(mtmp)));
+        } else if (mtmp->mtrapped && !t_at(level, mtmp->mx, mtmp->my)) {
+            /* can't swap places if pet is trapped in a block of ice */
+            u.ux = u.ux0; u.uy = u.uy0; /* didn't move after all */
+            pline(msgc_yafm,
+                  "You stop.  %s is encased in an immobile block of ice.",
                   msgupcasefirst(y_monnam(mtmp)));
         } else {
             /* save its current description in case of polymorph */
@@ -2191,19 +2252,10 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                 newexplevel();      /* will decide if you go up */
             }
                 if (rn2(4)) {
-                    /* That's no way to treat a pet!  Your god gets angry.
-                     *
-                     * [This has always been pretty iffy.  Why does your
-                     * patron deity care at all, let alone enough to get mad?]
-                     *
-                     * [Yeah, IMO, this should hit your alignment record, rather than
-                     * anger, and probably only for non-chaotics; but that can wait
-                     * for the next alignment/luck/anger rebalance/overhaul -- NAE]
-                     */
+                    /* That's no way to treat a pet! */
                     pline(msgc_alignbad,
                           "You feel guilty about losing your pet like this.");
-                    u.ugangr++;
-                    adjalign(-15);
+                    adjalign(-5);
                 }
 
                 break;
@@ -2339,6 +2391,56 @@ invocation_message(void)
     }
 }
 
+static const char * const hallu_adverb[] = {
+    "mildly", "mostly", "somewhat", "slightly", "probably", "massively", "extremely",
+    "flagrantly", "flamboyantly", "supremely", "excessively", "truly", "terribly",
+    "incredibly", "unbelievably", "obscenely", "insanely", "amazingly", "absolutely"
+};
+
+void
+wounds_message(struct monst *mon)
+{
+    const char *mwounds = mon_wounds(mon);
+    if (mwounds)
+        pline(msgc_wounds, "%s is %s.", Monnam(mon), mwounds);
+}
+
+const char *
+mon_wounds(struct monst *mon)
+{
+    boolean wounded = ((!nonliving(mon->data) || 
+                        /* Zombies and mummies (but not skeletons) have flesh */
+                        ((mon->data->mlet == S_ZOMBIE && mon->data != &mons[PM_SKELETON])
+                         || mon->data->mlet == S_MUMMY || mon->data->mlet == S_VAMPIRE
+                         || mon->data == &mons[PM_FLESH_GOLEM]))
+                       && !vegetarian(mon->data));   
+
+    /* Able to detect wounds? */
+    if (!(canseemon(mon) || (u.ustuck == mon && u.uswallow && !Blind))
+        || !Role_if(PM_HEALER))
+        return NULL;
+    if (mon->mhp == mon->mhpmax || DEADMONSTER(mon))
+        return NULL;
+    if (!Hallucination && mon->mhp <= mon->mhpmax / 6) {
+        return msgprintf("almost %s",
+                         nonliving(mon->data) ? "destroyed" : "dead");
+    } else {
+        if (Hallucination) {
+            return msgprintf("%s %s",
+                             hallu_adverb[rn2(SIZE(hallu_adverb))],
+                             (rn2(2) ? "wounded" : "damaged"));
+        }
+        else if (mon->mhp <= mon->mhpmax / 4)
+            return msgprintf("horribly %s",   (wounded ? "wounded" : "damaged"));
+        else if (mon->mhp <= mon->mhpmax / 3)
+            return msgprintf("heavily %s",    (wounded ? "wounded" : "damaged"));
+        else if (mon->mhp <= 3 * mon->mhpmax / 4)
+            return msgprintf("moderately %s", (wounded ? "wounded" : "damaged"));
+        else
+            return msgprintf("lightly %s",    (wounded ? "wounded" : "damaged"));
+    }
+}
+
 
 void
 spoteffects(boolean pick)
@@ -2392,6 +2494,34 @@ stillinwater:
                     return;
             } else if (!Wwalking && drown())
                 return;
+        } else if (is_puddle(level, u.ux, u.uy) && !Wwalking) {
+            /*pline(msgc_consequence, "You %s through the shallow water.",
+                    verysmall(youmonst.data) ? "wade" : "splash");
+              if (!verysmall(youmonst.data) && !rn2(4)) wake_nearby();*/
+            
+            if(Upolyd && youmonst.data  == &mons[PM_GREMLIN])
+                (void) split_mon(&youmonst, NULL);
+            else if (youmonst.data == &mons[PM_IRON_GOLEM] &&
+                     /* mud boots keep the feet dry */
+                     (!uarmf ||
+                      strncmp(OBJ_DESCR(objects[uarmf->otyp]), "mud ", 4))) {
+                int dam = rnd(6);
+                pline_implied(msgc_badidea, "Your %s rust!",
+                              makeplural(body_part(FOOT)));
+                if (u.mhmax > dam)
+                    u.mhmax -= dam;
+                losehp(dam, killer_msg(DIED, "rusting away"));
+            } else if (is_longworm(youmonst.data)) {
+                int dam = dice(3, 12);
+                if (u.mhmax > dam)
+                    u.mhmax -= ((dam + 1) / 2);
+                pline_implied(msgc_badidea, "The water burns your flesh!");
+                losehp(dam, killer_msg(DIED, "contact with water"));
+            }
+            if (verysmall(youmonst.data))
+                water_damage_chain(invent, FALSE);
+            if (!u.usteed)
+                (void) water_damage(uarmf, "boots", TRUE);
         }
     }
     check_special_room(FALSE);
@@ -2421,7 +2551,7 @@ stillinwater:
          * If not a pit, pickup before triggering trap.
          * If pit, trigger trap before pickup.
          */
-        pit = (trap && (trap->ttyp == PIT || trap->ttyp == SPIKED_PIT));
+        pit = (trap && is_pit_trap(trap->ttyp));
         if (trap && pit)
             dotrap(trap, 0);    /* fall into pit */
         /* TODO: This might not be correct if you m-direction into a pit. */
@@ -2433,32 +2563,34 @@ stillinwater:
     if ((mtmp = m_at(level, u.ux, u.uy)) && !Engulfed) {
         mtmp->mundetected = mtmp->msleeping = 0;
         switch (mtmp->data->mlet) {
-        case S_PIERCER:
+        case S_TRAPPER:
             /* Note: turning off monneutral is reasonable, but if the monster
                actually does something relevant to you (rather than dropping),
                there's a separate message that mentions the monster's name and
                with a more urgent channel. */
-            pline(msgc_monneutral, "%s suddenly drops from the %s!",
-                  Amonnam(mtmp), ceiling(u.ux, u.uy));
-            if (mtmp->mtame)    /* jumps to greet you, not attack */
-                ;
-            else if (uarmh && is_metallic(uarmh))
-                pline(msgc_playerimmune, "%s glances off your %s.",
-                      msgupcasefirst(
-                          x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE)),
-                      helmet_name(uarmh));
-            else if (get_player_ac() + 3 <= rnd(20))
-                pline(msgc_moncombatgood, "You are almost hit by %s!",
-                      x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
-            else {
-                int dmg;
-
-                pline(msgc_moncombatbad, "You are hit by %s!",
-                      x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
-                dmg = dice(4, 6);
-                if (Half_physical_damage)
-                    dmg = (dmg + 1) / 2;
-                mdamageu(mtmp, dmg);
+            if (mtmp->data == &mons[PM_ROCK_PIERCER] ||
+                mtmp->data == &mons[PM_IRON_PIERCER] ||
+                mtmp->data == &mons[PM_GLASS_PIERCER]) {
+                pline(msgc_monneutral, "%s suddenly drops from the %s!",
+                      Amonnam(mtmp), ceiling(u.ux, u.uy));
+                if (mtmp->mtame)    /* jumps to greet you, not attack */
+                    ;
+                else if (uarmh && is_metallic(uarmh))
+                    pline(msgc_playerimmune, "Its blow glances off your %s.",
+                          helmet_name(uarmh));
+                else if (get_player_ac() + 3 <= rnd(20))
+                    pline(msgc_moncombatgood, "You are almost hit by %s!",
+                          x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
+                else {
+                    int dmg;
+                    
+                    pline(msgc_moncombatbad, "You are hit by %s!",
+                          x_monnam(mtmp, ARTICLE_A, "falling", 0, TRUE));
+                    dmg = dice(4, 6);
+                    if (Half_physical_damage)
+                        dmg = (dmg + 1) / 2;
+                    mdamageu(mtmp, dmg);
+                }
             }
             break;
         default:       /* monster surprises you. */
@@ -2649,6 +2781,12 @@ check_special_room(boolean newlev)
         switch (rt) {
         case ZOO:
             pline(msgc_levelsound, "Welcome to David's treasure zoo!");
+            if (In_sokoban(&u.uz) &&
+                !historysearch("entered the Sokoban zoo.", TRUE)) {
+                if (!u.uconduct[conduct_sokoban_guilt])
+                    pluslvl(FALSE);
+                historic_event(FALSE, TRUE, "entered the Sokoban zoo.");
+            }
             break;
         case SWAMP:
             pline(msgc_levelsound, "It %s rather %s down here.",
@@ -2659,6 +2797,9 @@ check_special_room(boolean newlev)
             break;
         case LEPREHALL:
             pline(msgc_levelsound, "You enter a leprechaun hall!");
+            break;
+        case DRAGONHALL:
+            pline(msgc_levelsound, "You enter a dragon hall!");
             break;
         case MORGUE:
             if (midnight()) {
@@ -2704,8 +2845,8 @@ check_special_room(boolean newlev)
             level->rooms[roomno].rtype = OROOM;
             if (rt == COURT || rt == SWAMP || rt == MORGUE || rt == ZOO)
                 for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
-                    if (!DEADMONSTER(mtmp) && !Stealth && !rn2(3))
-                        mtmp->msleeping = 0;
+                    if (!DEADMONSTER(mtmp) && !rn2(3))
+                        disturb(mtmp);
         }
     }
 
@@ -2767,7 +2908,11 @@ dopickup(const struct nh_cmd_arg *arg)
         }
     }
     if (!OBJ_AT(u.ux, u.uy)) {
-        pline(msgc_cancelled, "There is nothing here to pick up.");
+        if (IS_MAGIC_CHEST(level->locations[u.ux][u.uy].typ))
+            pline(msgc_cancelled,
+                  "The magic chest is firmly attached to the floor.");
+        else
+            pline(msgc_cancelled, "There is nothing here to pick up.");
         return 0;
     }
     if (!can_reach_floor()) {
@@ -2784,7 +2929,7 @@ dopickup(const struct nh_cmd_arg *arg)
         /* Allow pickup from holes and trap doors that you escaped from because
            that stuff is teetering on the edge just like you, but not pits,
            because there is an elevation discrepancy with stuff in pits. */
-        if ((traphere->ttyp == PIT || traphere->ttyp == SPIKED_PIT) &&
+        if (is_pit_trap(traphere->ttyp) &&
             (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) && !Passes_walls) {
             pline(msgc_cancelled, "You cannot reach the bottom of the pit.");
             return 0;
@@ -3101,7 +3246,7 @@ maybe_wail(void)
 {
     static const short powers[] = { TELEPORT, SEE_INVIS, POISON_RES, COLD_RES,
         SHOCK_RES, FIRE_RES, SLEEP_RES, DISINT_RES,
-        TELEPORT_CONTROL, STEALTH, FAST, INVIS
+        TELEPORT_CONTROL, FAST, INVIS
     };
 
     if (moves <= wailmsg + 50)

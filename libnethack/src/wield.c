@@ -256,9 +256,11 @@ ready_weapon(struct obj *wep)
                 tmp = thestr;
             else
                 tmp = "";
-            pline(msgc_substitute, "%s%s %s to your %s!", tmp,
-                  aobjnam(wep, "weld"),
+            pline(msgc_substitute, "%s%s %s %sto your %s!", tmp,
+                  aobjnam(wep, (objects[wep->otyp].oc_material == WOOD) ?
+                          "grow" : "weld"),
                   (wep->quan == 1L) ? "itself" : "themselves", /* a3 */
+                  (objects[wep->otyp].oc_material == WOOD) ? "right in" : "",
                   bimanual(wep) ? (const char *)makeplural(body_part(HAND))
                   : body_part(HAND));
             wep->bknown = TRUE;
@@ -659,9 +661,11 @@ welded(struct obj *obj)
 void
 weldmsg(enum msg_channel msgc, struct obj *obj)
 {
-    pline(msgc, "Your %s %s welded to your %s!", xname(obj),
-          otense(obj, "are"), bimanual(obj) ?
-          (const char *)makeplural(body_part(HAND)) : body_part(HAND));
+    pline(msgc, "Your %s %s %s your %s!", xname(obj), otense(obj, "are"),
+          (objects[obj->otyp].oc_material == WOOD) ?
+          "grown right into" : "welded to",
+          bimanual(obj) ? (const char *)makeplural(body_part(HAND))
+          : body_part(HAND));
 }
 
 /* Unwields all weapons silently. */

@@ -14,18 +14,21 @@
  */
 #define PN_BARE_HANDED       (-1)       /* includes martial arts */
 #define PN_TWO_WEAPONS       (-2)
-#define PN_RIDING            (-3)
-#define PN_POLEARMS          (-4)
-#define PN_SABER             (-5)
-#define PN_HAMMER            (-6)
-#define PN_WHIP              (-7)
-#define PN_ATTACK_SPELL      (-8)
-#define PN_HEALING_SPELL     (-9)
-#define PN_DIVINATION_SPELL  (-10)
-#define PN_ENCHANTMENT_SPELL (-11)
-#define PN_CLERIC_SPELL      (-12)
-#define PN_ESCAPE_SPELL      (-13)
-#define PN_MATTER_SPELL      (-14)
+#define PN_SHIELD            (-3)
+#define PN_WANDS             (-4)
+#define PN_RIDING            (-5)
+#define PN_STEALTH           (-6)
+#define PN_POLEARMS          (-8)
+#define PN_SABER             (-8)
+#define PN_HAMMER            (-9)
+#define PN_WHIP              (-10)
+#define PN_ATTACK_SPELL      (-11)
+#define PN_HEALING_SPELL     (-12)
+#define PN_DIVINATION_SPELL  (-13)
+#define PN_ENCHANTMENT_SPELL (-14)
+#define PN_CLERIC_SPELL      (-15)
+#define PN_ESCAPE_SPELL      (-16)
+#define PN_MATTER_SPELL      (-17)
 
 static void give_may_advance_msg(int);
 
@@ -43,7 +46,7 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
     PN_CLERIC_SPELL, PN_ESCAPE_SPELL,
     PN_MATTER_SPELL,
     PN_BARE_HANDED, PN_TWO_WEAPONS,
-    PN_RIDING
+    PN_SHIELD, PN_WANDS, PN_RIDING, PN_STEALTH
 };
 
 /* note: entry [0] isn't used */
@@ -51,7 +54,10 @@ static const char *const odd_skill_names[] = {
     "no skill",
     "bare hands",       /* use barehands_or_martial[] instead */
     "two weapon combat",
+    "shield",
+    "wands",
     "riding",
+    "stealth",
     "polearms",
     "saber",
     "hammer",
@@ -82,7 +88,9 @@ give_may_advance_msg(int skill)
 static boolean could_advance(int);
 static boolean peaked_skill(int);
 static int slots_required(int);
+static const char *skill_level_name_from_constant(int);
 static const char *skill_level_name(int);
+static const char *max_skill_level_name(int);
 static void skill_advance(int);
 
 #define P_NAME(type) skill_name(type)
@@ -255,19 +263,15 @@ dmgval(struct obj *otmp, struct monst *mon)
             break;
 
         case FLAIL:
-        case RANSEUR:
-        case VOULGE:
             tmp += rnd(4);
             break;
 
         case ACID_VENOM:
         case HALBERD:
-        case SPETUM:
             tmp += rnd(6);
             break;
 
         case BATTLE_AXE:
-        case BARDICHE:
         case TRIDENT:
             tmp += dice(2, 4);
             break;
@@ -287,22 +291,16 @@ dmgval(struct obj *otmp, struct monst *mon)
         case MACE:
         case WAR_HAMMER:
         case FLAIL:
-        case SPETUM:
         case TRIDENT:
             tmp++;
             break;
 
         case BATTLE_AXE:
-        case BARDICHE:
-        case BILL_GUISARME:
-        case GUISARME:
         case LUCERN_HAMMER:
         case MORNING_STAR:
-        case RANSEUR:
         case BROADSWORD:
         case ELVEN_BROADSWORD:
         case RUNESWORD:
-        case VOULGE:
             tmp += rnd(4);
             break;
 
@@ -402,8 +400,7 @@ static const int rwep[] =
 };
 
 static const int pwep[] =
-    { HALBERD, BARDICHE, SPETUM, BILL_GUISARME, VOULGE, RANSEUR, GUISARME,
-    GLAIVE, LUCERN_HAMMER, BEC_DE_CORBIN, FAUCHARD, PARTISAN, LANCE
+    { HALBERD, GLAIVE, LUCERN_HAMMER, PARTISAN, LANCE
 };
 
 boolean
@@ -823,9 +820,11 @@ mon_wield_item(struct monst *mon)
             pline(msgc_monneutral, "%s wields %s%s", Monnam(mon),
                   singular(obj, doname), mon->mtame ? "." : "!");
             if (mwelded(mon, obj)) {
-                pline(msgc_monneutral, "%s %s to %s %s!",
-                      Tobjnam(obj, "weld"),
-                      is_plural(obj) ? "themselves" : "itself",
+                boolean iswood = (objects[obj->otyp].oc_material == WOOD);
+                pline(msgc_monneutral, "%s %sto %s %s!",
+                      Tobjnam(obj, iswood ? "grow" : "weld"),
+                      (iswood ? "roots right in " :
+                       is_plural(obj) ? "themselves " : "itself "),
                       s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
                 obj->bknown = 1;
             }
@@ -921,12 +920,12 @@ dbon(void)
         return 6;
 }
 
-
-/* return the level name for the given skill */
+/* return the level name for a given skill level constant;
+   this is used by skill_level_name and max_skill_level_name
+   to avoid duplicating the switch statement */
 static const char *
-skill_level_name(int skill)
-{
-    switch (P_SKILL(skill)) {
+skill_level_name_from_constant(int skill_level) {
+    switch (skill_level) {
     case P_UNSKILLED:
         return "Unskilled";
     case P_BASIC:
@@ -935,7 +934,6 @@ skill_level_name(int skill)
         return "Skilled";
     case P_EXPERT:
         return "Expert";
-        /* these are for unarmed combat/martial arts only */
     case P_MASTER:
         return "Master";
     case P_GRAND_MASTER:
@@ -943,6 +941,22 @@ skill_level_name(int skill)
     default:
         return "Unknown";
     }
+}
+
+/* return the level name of the player's current skill level 
+   for the given skill */
+static const char *
+skill_level_name(int skill)
+{
+    return skill_level_name_from_constant(P_SKILL(skill));
+}
+
+/* return the level name of the player's skill cap
+   (maximum achievable skill level) for the given skill */
+static const char *
+max_skill_level_name(int skill)
+{
+    return skill_level_name_from_constant(P_MAX_SKILL(skill));
 }
 
 /* return the # of slots required to advance the skill */
@@ -1010,7 +1024,7 @@ static const struct skill_range {
     const char *name;
     short first, last;
 } skill_ranges[] = {
-    {"Fighting Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
+    {"Miscellaneous Skills", P_FIRST_H_TO_H, P_LAST_H_TO_H},
     {"Weapon Skills", P_FIRST_WEAPON, P_LAST_WEAPON},
     {"Spellcasting Skills", P_FIRST_SPELL, P_LAST_SPELL}
 };
@@ -1105,9 +1119,13 @@ enhance_weapon_skill(const struct nh_cmd_arg *arg)
                     buf = msgprintf(" %s%s\t%s\t%5d(%4d)", prefix, P_NAME(i),
                                     skill_level_name(i), P_ADVANCE(i),
                                     practice_needed_to_advance(P_SKILL(i)));
-                else
+                else if (P_SKILL(i) == P_MAX_SKILL(i))
                     buf = msgprintf(" %s%s\t[%s]", prefix, P_NAME(i),
                                     skill_level_name(i));
+                else
+                    buf = msgprintf(" %s%s\t[%s / %s]", prefix, P_NAME(i),
+                                    skill_level_name(i),
+                                    max_skill_level_name(i));
 
                 if (could_advance(i) || can_advance(i, speedy))
                     buf = msgprintf("%s (%d to advance)",
@@ -1314,6 +1332,9 @@ weapon_hit_bonus(struct obj *weapon)
     type = (u.twoweap &&
             (weapon == uwep ||
              weapon == uswapwep)) ? P_TWO_WEAPON_COMBAT : wep_type;
+    /* special exception: do not use two-weapon skill for launchers */
+    if (weapon && is_launcher(weapon))
+        type = wep_type;
     if (type == P_NONE) {
         bonus = 0;
     } else if (type <= P_LAST_WEAPON) {
@@ -1321,8 +1342,10 @@ weapon_hit_bonus(struct obj *weapon)
         default:
             impossible(bad_skill, P_SKILL(type));       /* fall through */
         case P_ISRESTRICTED:
+            bonus = -6;
+            break;
         case P_UNSKILLED:
-            bonus = -4;
+            bonus = -3;
             break;
         case P_BASIC:
             bonus = 0;
@@ -1331,8 +1354,27 @@ weapon_hit_bonus(struct obj *weapon)
             bonus = 2;
             break;
         case P_EXPERT:
-            bonus = 3;
+            bonus = 5;
             break;
+        case P_MASTER:
+            bonus = 7;
+            break;
+        }
+        switch (P_MAX_SKILL(type)) {
+            /* Note fall-through at every step, e.g. 2+2+2 = 6 for P_EXPERT. */
+        default:
+        case P_MASTER:
+        case P_EXPERT:
+            bonus += 2;
+        case P_SKILLED:
+            bonus += 2;
+        case P_BASIC:
+            bonus += 2;
+        /* case P_NONE: the compiler won't allow this because after
+                        preprocessing it becomes a duplicate case value */
+        case P_ISRESTRICTED:
+        case P_UNSKILLED:
+            ;
         }
     } else if (type == P_TWO_WEAPON_COMBAT) {
         skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1342,17 +1384,18 @@ weapon_hit_bonus(struct obj *weapon)
         default:
             impossible(bad_skill, skill);       /* fall through */
         case P_ISRESTRICTED:
+            bonus = -11;
         case P_UNSKILLED:
-            bonus = -9;
-            break;
-        case P_BASIC:
             bonus = -7;
             break;
-        case P_SKILLED:
+        case P_BASIC:
             bonus = -5;
             break;
-        case P_EXPERT:
+        case P_SKILLED:
             bonus = -3;
+            break;
+        case P_EXPERT:
+            bonus = 0;
             break;
         }
     } else if (type == P_BARE_HANDED_COMBAT) {
@@ -1426,6 +1469,9 @@ weapon_dam_bonus(struct obj *weapon)
         case P_EXPERT:
             bonus = 2;
             break;
+        case P_MASTER:
+            bonus = 3;
+            break;
         }
     } else if (type == P_TWO_WEAPON_COMBAT) {
         skill = P_SKILL(P_TWO_WEAPON_COMBAT);
@@ -1444,6 +1490,7 @@ weapon_dam_bonus(struct obj *weapon)
             bonus = 0;
             break;
         case P_EXPERT:
+        case P_MASTER:
             bonus = 1;
             break;
         }
@@ -1505,9 +1552,18 @@ skill_init(const struct def_skill *class_skill)
     for (obj = invent; obj; obj = obj->nobj) {
         if (obj->otyp == TOUCHSTONE || obj->otyp == LUCKSTONE)
             continue;
-        skill = weapon_type(obj);
-        if (skill != P_NONE)
-            P_SKILL(skill) = P_BASIC;
+        if (is_shield(obj))
+            skill = P_SHIELD;
+        else if (obj->oclass == WAND_CLASS)
+            skill = P_WANDS;
+        else
+            skill = weapon_type(obj);
+
+        if (skill != P_NONE) {
+            if (P_MAX_SKILL(skill) < P_BASIC)
+                P_MAX_SKILL(skill) = P_BASIC;
+            P_SKILL(skill)     = P_BASIC;
+        }
     }
 
     /* set skills for magic */
@@ -1519,7 +1575,7 @@ skill_init(const struct def_skill *class_skill)
         P_SKILL(P_ATTACK_SPELL) = P_BASIC;
         P_SKILL(P_ENCHANTMENT_SPELL) = P_BASIC;
     }
-
+    
     /* walk through array to set skill maximums */
     for (; class_skill->skill != P_NONE; class_skill++) {
         skmax = class_skill->skmax;

@@ -355,7 +355,7 @@ wiz_wish(const struct nh_cmd_arg *arg)
        wishing for the same item. */
 
     flags.verbose = FALSE;
-    makewish();
+    makewish(99);
     flags.verbose = save_verbose;
     encumber_msg();
 
@@ -377,17 +377,12 @@ wiz_identify(const struct nh_cmd_arg *arg)
 static int
 wiz_map(const struct nh_cmd_arg *arg)
 {
-    struct trap *t;
     long save_Hconf = HConfusion, save_Hhallu = HHallucination;
 
     (void) arg;
 
     HConfusion = HHallucination = 0L;
-    for (t = level->lev_traps; t != 0; t = t->ntrap) {
-        t->tseen = 1;
-        map_trap(t, TRUE, FALSE);
-    }
-    do_mapping();
+    do_mapping(TRUE);
     HConfusion = save_Hconf;
     HHallucination = save_Hhallu;
 
@@ -431,7 +426,7 @@ wiz_detect(const struct nh_cmd_arg *arg)
 {
     (void) arg;
 
-    findit();
+    findit(BOLT_LIM);
 
     return 0;
 }
@@ -874,7 +869,7 @@ doattributes(const struct nh_cmd_arg *arg)
     add_menutext(&menu, buf);
 
     wc = weight_cap();
-    buf = msgprintf("%-10s: %ld (", "burden", wc + inv_weight());
+    buf = msgprintf("%-10s: %ld (", "burden", wc + (long) inv_weight());
 
     switch (calc_capacity(wc / 4)) {
     case UNENCUMBERED:
@@ -1376,6 +1371,7 @@ contained(struct nh_menulist *menu, const char *src, long *total_count,
     count_obj(invent, &count, &size, FALSE, TRUE);
     count_obj(level->objlist, &count, &size, FALSE, TRUE);
     count_obj(level->buriedobjlist, &count, &size, FALSE, TRUE);
+    count_obj(magic_chest_objs, &count, &size, FALSE, TRUE);
     /* DEADMONSTER check not required in this loop since they have no
        inventory */
     for (mon = level->monlist; mon; mon = mon->nmon)
@@ -1433,6 +1429,8 @@ wiz_show_stats(const struct nh_cmd_arg *arg)
     obj_chain(&menu, "level->objlist", level->objlist, &total_obj_count,
               &total_obj_size);
     obj_chain(&menu, "buried", level->buriedobjlist, &total_obj_count,
+              &total_obj_size);
+    obj_chain(&menu, "magic chest obj", magic_chest_objs, &total_obj_count,
               &total_obj_size);
     mon_invent_chain(&menu, "minvent", level->monlist, &total_obj_count,
                      &total_obj_size);

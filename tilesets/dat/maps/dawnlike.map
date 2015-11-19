@@ -870,7 +870,7 @@ leocrotta: [Quadraped0.png] 0x59
 wumpus: [Quadraped0.png] 0x58
 titanothere: [Quadraped0.png] 0x50
 baluchitherium: [Quadraped0.png] 0x51
-mastodon: [Quadraped0.png] 0x48
+mammoth: [Quadraped0.png] 0x48
 
 ! Rodents
 
@@ -1317,7 +1317,7 @@ Neferet the Green: [Player0.png] 0x3E
 
 Minion of Huhetotl: [Demon0.png] 0xC
 Thoth Amon: [Demon0.png] 0x13
-Chromatic Dragon: [Reptile0.png] 0x17
+Great Fierce Beast: [Reptile0.png] 0x17
 Cyclops: [Humanoid0.png] 0x9
 Ixoth: [Demon0.png] 0xD
 Master Kaen: [Undead0.png] 0x3A

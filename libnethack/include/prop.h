@@ -33,7 +33,7 @@ enum youprop {
     POLYMORPH                = 16,
     POLYMORPH_CONTROL        = 17,
     LEVITATION               = 18,
-    STEALTH                  = 19,
+    STEALTH                  = 19, /* objects, artifacts use this constant */
     AGGRAVATE_MONSTER        = 20,
     CONFLICT                 = 21,
     PROTECTION               = 22,
@@ -83,7 +83,9 @@ enum youprop {
     WARN_OF_MON              = 66,
     XRAY_VISION              = 67,
     DETECT_MONSTERS          = 68,
-    LAST_PROP                = DETECT_MONSTERS,
+    FAST_DIGGING             = 69,
+    STORMPRONE               = 70,
+    LAST_PROP                = STORMPRONE,
 };
 
 /* This enum holds all the equipment that is tracked indirectly in struct you;
@@ -258,6 +260,7 @@ enum tracked_location {
 # define uquiver  EQUIP(os_quiver)
 # define uball    (u.utracked[tos_ball])
 # define uchain   (u.utracked[tos_chain])
+# define magic_chest_objs (u.magicchestobjs)
 
 /* Flags for intrinsics
 

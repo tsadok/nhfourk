@@ -17,7 +17,7 @@ static void do_dknown_of(struct obj *);
 static boolean check_map_spot(int, int, char, unsigned);
 static boolean clear_stale_map(char, unsigned);
 static void sense_trap(struct trap *, xchar, xchar, int);
-static void show_map_spot(int, int);
+static void show_map_spot(int, int, boolean);
 static void findone(int, int, void *);
 static void openone(int, int, void *);
 static const char *level_distance(d_level *);
@@ -258,7 +258,6 @@ outgoldmap:
 
     newsym(u.ux, u.uy);
     pline(msgc_youdiscover, "You feel very greedy, and sense gold!");
-    exercise(A_WIS, TRUE);
     win_pause_output(P_MAP);
     doredraw();
     u.uinwater = uw;
@@ -376,7 +375,6 @@ food_detect(struct obj *sobj, boolean * scr_known)
         } else
             pline(msgc_youdiscover, "You sense %s.", what);
         win_pause_output(P_MAP);
-        exercise(A_WIS, TRUE);
         doredraw();
         u.uinwater = uw;
         if (Underwater)
@@ -964,13 +962,23 @@ use_crystal_ball(struct obj *obj)
 }
 
 static void
-show_map_spot(int x, int y)
+show_map_spot(int x, int y, boolean showtraps)
 {
     struct rm *loc;
+    struct trap *ttmp = t_at(level, x, y);
 
     if (Confusion && rn2(7))
         return;
     loc = &level->locations[x][y];
+
+    if (showtraps && ttmp)
+        sense_trap(ttmp, 0, 0, 0);
+
+    /* Don't make it impossible to distinguished mapped area from area that's
+       actually been seen (because in the former case, there might still be
+       items generated on the floor that the player might care about). */
+    if (loc->typ == ROOM)
+        return;
 
     loc->seenv = SVALL;
 
@@ -993,7 +1001,7 @@ show_map_spot(int x, int y)
 
 
 void
-do_mapping(void)
+do_mapping(boolean showtraps)
 {
     int zx, zy;
     int uw = u.uinwater;
@@ -1001,8 +1009,7 @@ do_mapping(void)
     u.uinwater = 0;
     for (zx = 0; zx < COLNO; zx++)
         for (zy = 0; zy < ROWNO; zy++)
-            show_map_spot(zx, zy);
-    exercise(A_WIS, TRUE);
+            show_map_spot(zx, zy, showtraps);
     u.uinwater = uw;
     if (!level->flags.hero_memory || Underwater) {
         flush_screen(); /* flush temp screen */
@@ -1023,7 +1030,7 @@ do_vicinity_map(void)
 
     for (zx = lo_x; zx < hi_x; zx++)
         for (zy = lo_y; zy < hi_y; zy++)
-            show_map_spot(zx, zy);
+            show_map_spot(zx, zy, FALSE);
 
     if (!level->flags.hero_memory || Underwater) {
         flush_screen(); /* flush temp screen */
@@ -1068,13 +1075,9 @@ findone(int zx, int zy, void *num)
         magic_map_background(zx, zy, 0);
         newsym(zx, zy);
         (*(int *)num)++;
-    } else if ((ttmp = t_at(level, zx, zy)) != 0) {
-        if (!ttmp->tseen && ttmp->ttyp != STATUE_TRAP) {
-            ttmp->tseen = 1;
-            newsym(zx, zy);
-            (*(int *)num)++;
-        }
-    } else if ((mtmp = m_at(level, zx, zy)) != 0) {
+    } else if ((ttmp = t_at(level, zx, zy)) != 0)
+        sense_trap(ttmp, 0, 0, 0);
+    else if (cansee(zx, zy) && (mtmp = m_at(level, zx, zy)) != 0) {
         if (mtmp->m_ap_type && !level->locations[zx][zy].mem_invis) {
             map_invisible(zx, zy);
             (*(int *)num)++;
@@ -1148,13 +1151,20 @@ openone(int zx, int zy, void *num)
 }
 
 int
-findit(void)
+findit(int radius)
 {       /* returns number of things found */
     int num = 0;
 
     if (Engulfed)
         return 0;
-    do_clear_area(u.ux, u.uy, BOLT_LIM, findone, &num);
+    if (radius == -1) {
+        int x, y;
+
+        for (x = 0; x < COLNO; x++)
+            for (y = 0; y < ROWNO; y++)
+                findone(x, y, &num);
+    } else
+        do_clear_area(u.ux, u.uy, radius, findone, &num);
     return num;
 }
 
@@ -1186,7 +1196,6 @@ find_trap(struct trap *trap)
     boolean cleared = FALSE;
 
     trap->tseen = 1;
-    exercise(A_WIS, TRUE);
     if (Blind)
         feel_location(trap->tx, trap->ty);
     else
@@ -1247,7 +1256,7 @@ reveal_monster_at(int x, int y, boolean unhide)
     }
 
     if (unhide)
-        wakeup(mon, TRUE);
+        mon->msleeping = 0; /* wakeup() angers mon */
 
     if (!canspotmon(mon) && !knownwormtail(x, y))
         map_invisible(x, y);
@@ -1290,7 +1299,6 @@ dosearch0(int aflag)
                             continue;
                         /* changes .type to DOOR */
                         cvt_sdoor_to_door(&level->locations[x][y], &u.uz);
-                        exercise(A_WIS, TRUE);
                         action_completed();
                         if (Blind && !aflag)
                             feel_location(x, y);   /* make sure it shows up */
@@ -1301,7 +1309,6 @@ dosearch0(int aflag)
                             continue;
                         level->locations[x][y].typ = CORR;
                         unblock_point(x, y);    /* vision */
-                        exercise(A_WIS, TRUE);
                         action_completed();
                         newsym(x, y);
                     } else {
@@ -1309,7 +1316,6 @@ dosearch0(int aflag)
                            SDOOR. */
                         if (!aflag) {
                             if (reveal_monster_at(x, y, FALSE)) {
-                                exercise(A_WIS, TRUE);
                                 /* changed mechanic = changed message; also
                                    don't imply we're touching a trice */
                                 if (m_at(level, x, y)->m_ap_type)
@@ -1327,8 +1333,6 @@ dosearch0(int aflag)
                             action_interrupted();
 
                             if (trap->ttyp == STATUE_TRAP) {
-                                if (activate_statue_trap(trap, x, y, FALSE))
-                                    exercise(A_WIS, TRUE);
                                 return 1;
                             } else {
                                 find_trap(trap);

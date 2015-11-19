@@ -111,7 +111,7 @@ static const struct {
       { "Overtaxed", CLR_ORANGE, -1 },
       { "Overloaded", CLR_ORANGE, -1 },
       /* hunger */
-      { "Satiated", CLR_RED, -1 },
+      { "Bloated", CLR_RED, -1 },
       { "Hungry", CLR_RED, -1 },
       { "Weak", CLR_ORANGE, CLR_YELLOW },
       { "Fainting", CLR_BRIGHT_MAGENTA, CLR_YELLOW },
@@ -130,6 +130,7 @@ static const struct {
       { "Held", CLR_RED, -1 },
       { "Pit", CLR_RED, -1 },
       { "Bear", CLR_RED, -1 },
+      { "IceB", CLR_RED, -1 },
       { "Web", CLR_RED, -1 },
       { "Infloor", CLR_RED, -1 },
       { "Lava", CLR_BRIGHT_MAGENTA, CLR_BRIGHT_MAGENTA },

@@ -68,23 +68,27 @@ static const struct {
     'F', "|-"}, {
     'G', "C("}, {
     'H', "|-"}, {
-    'I', "|"}, {
+    'I', "|T_"}, {
     'K', "|<"}, {
     'L', "|_"}, {
-    'M', "|"}, {
+    'M', "|NV"}, {
     'N', "|\\"}, {
-    'O', "C("}, {
+    'O', "C()"}, {
     'P', "F"}, {
-    'Q', "C("}, {
+    'Q', "OC("}, {
     'R', "PF"}, {
+    'S', "5"}, {
     'T', "|"}, {
     'U', "J"}, {
     'V', "/\\"}, {
-    'W', "V/\\"}, {
+    'W', "^V/\\"}, {
+    'X', "/\\"}, {
     'Z', "/"}, {
+    'a', "c"}, {
     'b', "|"}, {
     'd', "c|"}, {
     'e', "c"}, {
+    'f', "t"}, {
     'g', "c"}, {
     'h', "n"}, {
     'j', "i"}, {
@@ -94,10 +98,12 @@ static const struct {
     'n', "r"}, {
     'o', "c"}, {
     'q', "c"}, {
+    't', "-"}, {
     'w', "v"}, {
     'y', "v"}, {
     ':', "."}, {
     ';', ","}, {
+    ',', ","}, {
     '0', "C("}, {
     '1', "|"}, {
     '6', "o"}, {
@@ -202,7 +208,7 @@ surface(int x, int y)
         return "maw";
     else if (IS_AIR(loc->typ) && Is_airlevel(&u.uz))
         return "air";
-    else if (is_pool(level, x, y))
+    else if (is_damp_terrain(level, x, y))
         return (Underwater && !Is_waterlevel(&u.uz)) ? "bottom" : "water";
     else if (is_ice(level, x, y))
         return "ice";
@@ -290,8 +296,8 @@ wipe_engr_at(struct level *lev, xchar x, xchar y, xchar cnt)
 {
     struct engr *ep = engr_at(lev, x, y);
 
-    /* Headstones are indelible */
-    if (ep && ep->engr_type != HEADSTONE) {
+    /* Headstones are indelible and lights don't randomly erode */
+    if (ep && ep->engr_type != HEADSTONE && ep->engr_type != ENGR_LIGHTS) {
         if (ep->engr_type != BURN || is_ice(lev, x, y)) {
             if (ep->engr_type != DUST && ep->engr_type != ENGR_BLOOD) {
                 cnt = rn2(1 + 50 / (cnt + 1)) ? 0 : 1;
@@ -355,6 +361,12 @@ read_engr_at(int x, int y)
                 pline(msgc_info, "You see a message scrawled in blood here.");
             }
             break;
+        case ENGR_LIGHTS:
+            if (!Blind) {
+                sensed = 1;
+                pline(msgc_info, "Colored lights spell out a message.");
+            }
+            break;
         default:
             impossible("Something is written in a very strange way.");
             sensed = 1;
@@ -404,15 +416,12 @@ make_engr_at(struct level *lev, int x, int y, const char *s, long e_time,
     ep->engr_txt[engr_len] = '\0';
     while (ep->engr_txt[0] == ' ')
         ep->engr_txt++;
-    /* engraving Elbereth shows wisdom */
-    if (!in_mklev && !strcmp(s, "Elbereth"))
-        exercise(A_WIS, TRUE);
     ep->engr_time = e_time;
     /* the caller shouldn't be asking for a random engrave type except during
        polymorph; if they do anyway, using the poly_engrave RNG isn't the end of
        the world */
     ep->engr_type = e_type > 0 ? e_type :
-        1 + rn2_on_rng(N_ENGRAVE - 1, rng_poly_engrave);
+        1 + rn2_on_rng(MAX_RND_ENGR - 1, rng_poly_engrave);
     ep->engr_lth = engr_len + 1;
 }
 
@@ -504,6 +513,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     const char *helpless_endmsg;/* Temporary for helpless end message */
     struct engr *oep = engr_at(level, u.ux, u.uy);
     struct obj *otmp;
+    int cramps = 0;             /* How much your hand is cramping up from writing */
 
     /* The current engraving */
     const char *writer;
@@ -534,7 +544,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     } else if (Underwater) {
         pline(msgc_cancelled, "You can't write underwater!");
         return 0;
-    } else if (is_pool(level, u.ux, u.uy) ||
+    } else if (is_damp_terrain(level, u.ux, u.uy) ||
                IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
         pline(msgc_cancelled, "You can't write on the water!");
         return 0;
@@ -546,6 +556,12 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         pline (msgc_cancelled,
                "You can't write on the %s while embedded therein.",
                surface(u.ux, u.uy));
+        return 0;
+    } else if (u.utrap && u.utraptype == TT_ICEBLOCK) {
+        pline(msgc_cancelled,
+              "You cannot write on the %s while embedded in a block of %s.",
+              surface(u.ux,u.uy),
+              (level->locations[u.ux][u.uy].typ == ICE) ? "it" : "ice");
         return 0;
     } else if (!accessible(level, u.ux, u.uy)) {
         /* stone, tree, wall, secret corridor, pool, lava, bars */
@@ -609,7 +625,6 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             pline(msgc_badidea, "You disturb the undead!");
             level->locations[u.ux][u.uy].disturbed = 1;
             makemon(&mons[PM_GHOUL], level, u.ux, u.uy, NO_MM_FLAGS);
-            exercise(A_WIS, FALSE);
             return 1;
         }
     }
@@ -915,6 +930,13 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
 
     /* End of implement setup */
 
+    /* If engraving with wand, blow up the wand if cursed+unskilled */
+    if (zapwand && !getwandlevel(&youmonst, otmp)) {
+        backfire(otmp);
+        exercise(A_STR, FALSE);
+        return 1;
+    }
+
     /* Identify stylus */
     if (doknown) {
         makeknown(otmp->otyp);
@@ -970,6 +992,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             c = 'y';
         } else if ((type == oep->engr_type) &&
                    (!Blind || (oep->engr_type == BURN) ||
+                    (oep->engr_type == ENGR_LIGHTS) ||
                     (oep->engr_type == ENGRAVE))) {
             if (auto_elbereth)
                 c = 'y';
@@ -1007,6 +1030,16 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                       "engraved in",
                       surface(u.ux, u.uy));
                 return 1;
+            } else if (oep->engr_type == ENGR_LIGHTS) {
+                if (type == BURN) {
+                    pline(msgc_actionok,
+                          "The colored lights short out and go dark.");
+                    eow = TRUE;
+                } else {
+                    pline(msgc_cancelled1, "The colored lights distract you, "
+                          "and nothing really gets written.");
+                    return 1;
+                }
             } else if ((type != oep->engr_type) || (c == 'n')) {
                 if (!Blind || can_reach_floor())
                     pline_implied(msgc_hint,
@@ -1043,6 +1076,11 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         break;
     case ENGR_BLOOD:
         everb = (oep && !eow ? "add to the scrawl on" : "scrawl on");
+        break;
+    case ENGR_LIGHTS:
+        /* This probably can't actually happen. */
+        everb = (oep && !eow ? "add to the writing in" : "write in");
+        eloc  = (oep && !eow ? "the colored lights"    : "colored lights");
         break;
     }
 
@@ -1088,20 +1126,44 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     if (len != 1 || (!strchr(ebuf, 'x') && !strchr(ebuf, 'X')))
         break_conduct(conduct_illiterate);
 
-    /* Mix up engraving if surface or state of mind is unsound. Note: this
-       won't add or remove any spaces. */
+    /* Degrade any existing text: */
+    u_wipe_engr(rnd(3));
 
+    /* Mix up the new text we are engraving if surface or state of mind is
+       unsound. Note: this won't add or remove any spaces. */
     char ebuf_copy[strlen(ebuf) + 1];
     strcpy(ebuf_copy, ebuf);
     for (sp = ebuf_copy; *sp; sp++) {
         if (isspace(*sp))
             continue;
-        if (((type == DUST || type == ENGR_BLOOD) && !rn2(25)) ||
+        /* NetHack Fourk balance adjustment:  writing Elbereth a whole lot of
+         * times makes it harder to continue writing anything successfully.  */
+        if (!rn2((((type == DUST || type == ENGR_BLOOD)) ? 150
+                  : (type == ENGRAVE) ? 350 : 1500)
+                 * u.ulevel / (1 + u.uconduct[conduct_elbereth])) ||
             (Blind && !rn2(11)) || (Confusion && !rn2(7)) ||
-            (Stunned && !rn2(4)) || (Hallucination && !rn2(2)))
+            (Stunned && !rn2(4)) || (Hallucination && !rn2(2))) {
             *sp = ' ' + rnd(96 - 2);    /* ASCII '!' thru '~' (excludes ' ' and 
                                            DEL) */
+            cramps++;
+        }
     }
+    if ((Blind || Confusion || Hallucination || Stunned) && (cramps > 0))
+        pline(msgc_yafm,
+              "You have difficulty writing in your present condition.");
+    else if (cramps > 6)
+        pline(msgc_yafm, "Your entire %s is cramping up.  "
+              "You simply cannot write any more right now.", body_part(ARM));
+    else if (cramps > 4)
+        pline(msgc_yafm,
+              "Your %s is cramping up very severely.", body_part(HAND));
+    else if (cramps > 2)
+        pline(msgc_yafm, "Your %s is really cramping up.", body_part(HAND));
+    else if (cramps > 1)
+        pline(msgc_yafm, "Your %s is cramping up.", body_part(HAND));
+    else if (cramps > 0)
+        pline(msgc_yafm, "Your writing %s is beginning to cramp.",
+              body_part(HAND));
 
     /* Previous engraving is overwritten */
     if (eow) {
@@ -1176,6 +1238,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         break;
     case ENGR_BLOOD:
         helpless_endmsg = "You finish scrawling.";
+        break;
+    case ENGR_LIGHTS:
+        /* Probably can't actually happen. */
+        helpless_endmsg = "You finish arranging the colored lights.";
         break;
     }
 
@@ -1383,7 +1449,7 @@ static const char *const epitaphs[] = {
     "Look out below!",
     "Please don't dig me up. I'm perfectly happy down here. -- Resident",
     "Postman, please note forwarding address: Gehennom, Asmodeus's Fortress, "
-        "fifth lemure on the left",
+        "fifth manes on the left",
     "Mary had a little lamb/Its fleece was white as snow/When Mary was in "
         "trouble/The lamb was first to go",
     "Be careful, or this could happen to you!",

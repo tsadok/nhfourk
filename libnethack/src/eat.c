@@ -10,7 +10,7 @@ static int eat_one_turn(void);
 static void costly_tin(const char *);
 static int eat_tin_one_turn(void);
 static const char *food_xname(struct obj *, boolean);
-static void choke(struct obj *);
+/* static void choke(struct obj *); */
 static void nutrition_calculations(struct obj *, unsigned *,
                                    unsigned *, unsigned *);
 static void touchfood(void);
@@ -148,35 +148,38 @@ food_xname(struct obj *food, boolean the_pfx)
     return result;
 }
 
-
+/*
 static void
 choke(struct obj *food)
-{       /* To a full belly all food is bad. (It.) */
-    /* only happens if you were satiated */
+{       // To a full belly all food is bad. (It.)
+    // only happens if you were satiated 
     if (u.uhs != SATIATED) {
         if (!food || food->otyp != AMULET_OF_STRANGULATION)
             return;
     } else if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
-        adjalign(-1);   /* gluttony is unchivalrous */
+        adjalign(-1);   // gluttony is unchivalrous
         pline(msgc_alignbad, "You feel like a glutton!");
     }
 
     exercise(A_CON, FALSE);
 
-    /* Whatever you were doing, you're going to get rather distracted... */
+    // Whatever you were doing, you're going to get rather distracted...
     action_interrupted();
 
     if (Breathless || (!Strangled && !rn2(20))) {
-        /* choking by eating AoS doesn't involve stuffing yourself */
+
+        // choking by eating AoS doesn't involve stuffing yourself
         if (food && food->otyp == AMULET_OF_STRANGULATION) {
             pline(msgc_fatalavoid, "You choke, but recover your composure.");
             return;
         }
         pline(msgc_fatalavoid,
               "You stuff yourself and then vomit voluminously.");
-        morehungry(1000);       /* you just got *very* sick! */
+        morehungry(1000);       // you just got *very* sick!
         vomit();
     } else {
+    // This used to be fatal, but now that being satiated slows down
+    // your movement points, choking outright is no longer a thing.
         const char *killer;
         if (food) {
             pline(msgc_fatal_predone, "You choke over your %s.",
@@ -194,7 +197,7 @@ choke(struct obj *food)
         done(CHOKING, killer);
     }
 }
-
+*/
 
 /* Recalculate information about food. This will set the weight of the
    pointed-to object according to how much has been eaten, and optionally also
@@ -678,9 +681,11 @@ cpostfx(int pm)
     switch (pm) {
     case PM_NEWT:
         /* MRKR: "eye of newt" may give small magical energy boost */
-        if (rn2_on_rng(3, rng_newt_pw_boost) || 3 * u.uen <= 2 * u.uenmax) {
+        if (rn2_on_rng(3, rng_newt_pw_boost) || 3 * u.uen <= 2 * u.uenmax ||
+            u.uen < 15) {
             int old_uen = u.uen;
-            boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost);
+            boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost) ||
+                ((u.uen + u.uenmax) < 35);
             enum msg_channel msgc = msgc_statusheal;
 
             u.uen += 1 + rn2_on_rng(3, rng_newt_pw_boost);
@@ -1151,6 +1156,9 @@ rottenfood(struct obj *obj)
             what = "you slap against the", where =
                 (u.usteed) ? "saddle" : surface(u.ux, u.uy);
         pline(msgc_statusbad, "The world spins and %s %s.", what, where);
+        if (!Levitation && !Flying && !u.usteed &&
+            is_damp_terrain(level, u.ux, u.uy))
+            water_damage_chain(invent, FALSE);
         helpless(rnd(10), hr_fainted, "unconscious from rotten food", NULL);
         see_monsters(FALSE);
         see_objects(FALSE);
@@ -1500,9 +1508,10 @@ eataccessory(struct obj *otmp)
                 rehumanize(DIED, NULL);
             }
             break;
-        case AMULET_OF_STRANGULATION:  /* bad idea! */
-            /* no message--this gives no permanent effect */
-            choke(otmp);
+        case AMULET_OF_STRANGULATION:
+            pline(msgc_cancelled1,
+                  "You have difficulty getting the amulet down.");
+            /* choke(otmp); */
             break;
         case AMULET_OF_RESTFUL_SLEEP:  /* another bad idea! */
             if (!(HSleeping & FROMOUTSIDE))
@@ -1761,9 +1770,11 @@ edibility_prompts(struct obj *otmp)
             return 2;
     }
     if (cadaver && !vegetarian(&mons[mnum]) &&
-        !u.uconduct[conduct_vegetarian] && Role_if(PM_MONK)) {
-        buf = msgprintf("%s unsuitable for a vegetarian monk. %s",
-                        foodsmell, eat_it_anyway);
+        !u.uconduct[conduct_vegetarian] &&
+        (Role_if(PM_MONK) || Race_if(PM_SYLPH))) {
+        buf = msgprintf("%s unsuitable for a vegetarian %s. %s",
+                        foodsmell, (Role_if(PM_MONK) ? "monk" : "sylph"),
+                        eat_it_anyway);
         if (yn_function(buf, ynchars, 'n') == 'n')
             return 1;
         else
@@ -1997,10 +2008,12 @@ doeat(const struct nh_cmd_arg *arg)
                 return 0;
         }
 
+        /*
         if (u.uhunger >= 2000) {
             choke(u.utracked[tos_food]);
             return 0;
         }
+        */
 
         u.utracked[tos_food] = otmp;
 
@@ -2286,7 +2299,7 @@ floorfood(const char *verb, const struct nh_cmd_arg *arg)
                                                            while riding */
         ((is_pool(level, u.ux, u.uy) || is_lava(level, u.ux, u.uy)) &&
          (Wwalking || is_clinger(youmonst.data) || (Flying && !Breathless))) ||
-        (ttmp && ttmp->tseen && (ttmp->ttyp == PIT || ttmp->ttyp == SPIKED_PIT)
+        (ttmp && ttmp->tseen && is_pit_trap(ttmp->ttyp)
          && (!u.utrap || (u.utrap && u.utraptype != TT_PIT)) && !Passes_walls))
         goto skipfloor;
 

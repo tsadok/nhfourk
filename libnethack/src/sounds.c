@@ -136,6 +136,64 @@ dosounds(void)
             }
         }
     }
+    if (search_special(level, DRAGONHALL) && !rn2(200)) {
+        for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
+            if (DEADMONSTER(mtmp))
+                continue;
+            if (mon_in_room(mtmp, DRAGONHALL)) {
+                if (monsndx(mtmp->data) == PM_RED_DRAGON) {
+                    if (Hallucination)
+                        pline(msgc_levelsound,
+                              "Someone is having a barbecue!");
+                    else if (!(moves % 3))
+                        pline(msgc_levelsound,
+                              "Sulfrous fumes are heavy on the air.");
+                    else if ((moves % 3) == 1)
+                        pline(msgc_levelsound, "You smell charred flesh.");
+                    else if (!Blind)
+                        pline(msgc_levelsound, "Black smoke drifts overhead.");
+                    else
+                        pline(msgc_levelsound, "You smell smoke.");
+                    return;
+                } else if (monsndx(mtmp->data) == PM_GREEN_DRAGON) {
+                    if (Hallucination)
+                        pline(msgc_levelsound, "Are you jealous?");
+                    else if (!(moves %3)) {
+                        if (!Blind)
+                            pline(msgc_levelsound,
+                                  "Out of the corner of your %s you spot "
+                                  "a faint zephyr of strange fumes.",
+                                  body_part(EYE));
+                    } else
+                        pline(msgc_levelsound, "The air seems toxic here.");
+                    return;
+                } else if (monsndx(mtmp->data) == PM_WHITE_DRAGON) {
+                    if (Hallucination)
+                        pline(msgc_levelsound, "You see %s.",
+                              (moves % 2) ? "penguins" : "a polar bear");
+                    else
+                        pline(msgc_levelsound, "You shiver %s",
+                              Cold_resistance ? "." :
+                              msgprintf("violently, your %s chattering!",
+                                        /* TODO:  teach body_part TEETH */
+                                        "teeth"));
+                    return;
+                } else if (monsndx(mtmp->data) == PM_ORANGE_DRAGON) {
+                    if (Hallucination)
+                        pline(msgc_levelsound,
+                              "You hear someone reading actuarial tables.");
+                    else if (Sleep_resistance)
+                        pline(msgc_levelsound, "You yawn.");
+                    else
+                        pline(msgc_levelsound, "You hear gentle snoring.");
+                    return;
+                } else if (monsndx(mtmp->data) == PM_BLUE_DRAGON) {
+                        pline(msgc_levelsound, "You tingle all over.");
+                    return;
+                }
+            }
+        }
+    }
     if (search_special(level, MORGUE) && !rn2(200)) {
         for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
             if (DEADMONSTER(mtmp))

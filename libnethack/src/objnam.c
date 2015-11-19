@@ -58,7 +58,7 @@
    makeplural(str): returns plural version of str
    "sheep" -> "sheep", "lump of sheep" -> "lumps of sheep", "mumak" -> "mumakil"
    makesingular(str): opposite of makeplural
-   readobjname(str, default_obj, from_user): convert string to object
+   readobjname(str, default_obj, from_user, wishtype): convert string to object
    if "nothing" is given, default_obj is returned
    cloak_simple_name(cloak): return vague description of given cloak
    "robe", "wrapping", "apron", "smock", "cloak"
@@ -160,7 +160,9 @@ obj_typename(int otyp)
         } else {
             buf = dn ? dn : actualn;
             if (ocl->oc_class == GEM_CLASS)
-                buf = msgcat(buf, (ocl->oc_material == MINERAL) ?
+                buf = msgcat(buf, (ocl->oc_material == MINERAL ||
+                                   (ocl->oc_material >= SILVER &&
+                                    ocl->oc_material <= MITHRIL)) ?
                              " stone" : " gem");
             if (un)
                 buf = msgcat_many(buf, " called ", un, NULL);
@@ -385,7 +387,7 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
     case FOOD_CLASS:
         if (typ == SLIME_MOLD) {
             struct fruit *f;
-
+                
             for (f = gamestate.fruits.chain; f; f = f->nextf) {
                 if (f->fid == obj->spe) {
                     buf = msg_from_string(f->fname);
@@ -519,7 +521,9 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
 
     case GEM_CLASS:
         {
-            const char *rock = (ocl->oc_material == MINERAL) ? "stone" : "gem";
+            const char *rock = ((ocl->oc_material == MINERAL) ||
+                                (ocl->oc_material == SILVER)) ?
+                "stone" : "gem";
 
             if (!dknown) {
                 buf = rock;
@@ -1783,9 +1787,16 @@ static const struct alt_spellings {
  *
  * TODO: This function assumes writable space beyond the end of bp, and
  * making it work on a message rather than buffer would be nice.
+ *
+ * wishtype values are as follows:
+ *  0 readobjnam() was called by something other than makewish()
+ *  1 normal wish
+ *  2 uncursed scroll of wishing
+ *  3 blessed scroll of wishing
+ * 99 debug-mode wish
  */
 struct obj *
-readobjnam(char *bp, struct obj *no_wish, boolean from_user)
+readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
 {
     char *p;
     int i;
@@ -2398,6 +2409,12 @@ srch:
             newsym(u.ux, u.uy);
             return &zeroobj;
         }
+        if (!BSTRCMP(bp, p - 11, "magic chest")) {
+            level->locations[u.ux][u.uy].typ = MAGIC_CHEST;
+            pline(msgc_info, "A magic chest.");
+            newsym(u.ux, u.uy);
+            return &zeroobj;
+        }
         if (!BSTRCMP(bp, p - 4, "sink")) {
             level->locations[u.ux][u.uy].typ = SINK;
             pline(msgc_info, "A sink.");
@@ -2409,6 +2426,15 @@ srch:
             del_engr_at(level, u.ux, u.uy);
             pline(msgc_info, "A pool.");
             /* Must manually make kelp! */
+            water_damage_chain(level->objects[u.ux][u.uy], TRUE);
+            newsym(u.ux, u.uy);
+            return &zeroobj;
+        }
+        if(!BSTRCMP(bp, p-13, "shallow water") ||
+           !BSTRCMP(bp, p-6, "puddle")) {
+            level->locations[u.ux][u.uy].typ = PUDDLE;
+            del_engr_at(level, u.ux, u.uy);
+            pline(msgc_info, "Shallow water.");
             water_damage_chain(level->objects[u.ux][u.uy], TRUE);
             newsym(u.ux, u.uy);
             return &zeroobj;
@@ -2498,9 +2524,9 @@ typfnd:
     if (objects[typ].oc_nowish && !wizard)
         return NULL;
 
-    /* convert magic lamps to regular lamps before lighting them or setting the 
+    /* convert magic lamps to regular lamps before lighting them or setting the
        charges */
-    if (typ == MAGIC_LAMP && !wizard)
+    if (typ == MAGIC_LAMP && !wizard && !(wishtype >= 3))
         typ = OIL_LAMP;
 
     if (typ) {
@@ -2528,8 +2554,14 @@ typfnd:
         (wizard || (cnt <= 7 && Is_candle(otmp)) ||
          (cnt <= 20 && ((oclass == WEAPON_CLASS && is_ammo(otmp))
                         || typ == ROCK || is_missile(otmp))) ||
-         cnt <= rn2_on_rng(6, rng_wish_quantity)))
+         cnt <= rn2_on_rng((wishtype > 2) ? 10 : 6, rng_wish_quantity)))
         otmp->quan = (long)cnt;
+    if ((typ == SCR_WISHING) && !wizard) {
+        /* If I got the thing right in objects.c, this won't happen. */
+        impossible("Ixnay on the wishing for more wishes.");
+        otmp->quan = 1L;
+        change_luck(-1);
+    }
 
     if (spesgn == 0)
         spe = otmp->spe;
@@ -2537,7 +2569,7 @@ typfnd:
         ;
     else if (oclass == ARMOR_CLASS || oclass == WEAPON_CLASS || is_weptool(otmp)
              || (oclass == RING_CLASS && objects[typ].oc_charged)) {
-        if (spe > 1 + rn2_on_rng(5, rng_wish_quality))
+        if (spe > ((wishtype > 1) ? 3 : 1) + rn2_on_rng(5, rng_wish_quality))
             spe = 0;
         if (spe > 2 && Luck < 0)
             spesgn = -1;
@@ -2549,7 +2581,7 @@ typfnd:
             if (spe > 0 && spesgn == -1)
                 spe = 0;
         }
-        if (spe > otmp->spe)
+        if (spe > otmp->spe && wishtype <= 2)
             spe = otmp->spe;
     }
 
@@ -2730,7 +2762,8 @@ typfnd:
     /* and make them pay; charge them for the wish anyway! */
     if ((is_quest_artifact(otmp) ||
          (otmp->oartifact &&
-          rn2_on_rng(nartifact_exist(), rng_artifact_wish) > 1)) && !wizard) {
+          rn2_on_rng(nartifact_exist(), rng_artifact_wish) >
+          ((wishtype == 3) ? 2 : 1))) && !wizard) {
         artifact_exists(otmp, ONAME(otmp), FALSE);
         obfree(otmp, NULL);
         otmp = &zeroobj;

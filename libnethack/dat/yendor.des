@@ -12,7 +12,7 @@ MAP
 ----------------------------.
 |.......|..|.........|.....|.
 |.......S..|.}}}}}}}.|.....|.
-|..--S--|..|.}}---}}.|---S-|.
+|..--S--|(.|.}}---}}.|---S-|.
 |..|....|..|.}--.--}.|..|..|.
 |..|....|..|.}|...|}.|..|..|.
 |..--------|.}--.--}.|..|..|.
@@ -83,6 +83,7 @@ OBJECT:'!',random,random
 OBJECT:'!',random,random
 OBJECT:'?',random,random
 OBJECT:'?',random,random
+OBJECT:'?',"wishing",random
 OBJECT:'+',random,random
 OBJECT:'+',random,random
 OBJECT:'+',random,random

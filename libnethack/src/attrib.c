@@ -7,6 +7,7 @@
 
 #include "hack.h"
 #include "hungerstatus.h"
+#include "alignrec.h"
 
 /* #define DEBUG *//* uncomment for debugging info */
 
@@ -26,7 +27,6 @@ struct innate {
 };
 
 static const struct innate arc_abil[] = {
-    {1, &(HStealth), "", ""},
     {1, &(HFast), "", ""},
     {10, &(HSearching), "perceptive", ""},
     {0, 0, 0, 0}
@@ -35,7 +35,6 @@ static const struct innate arc_abil[] = {
 static const struct innate bar_abil[] = {
     {1, &(HPoison_resistance), "", ""},
     {7, &(HFast), "quick", "slow"},
-    {15, &(HStealth), "stealthy", ""},
     {0, 0, 0, 0}
 };
 
@@ -61,7 +60,6 @@ static const struct innate mon_abil[] = {
     {1, &(HSleep_resistance), "", ""},
     {1, &(HSee_invisible), "", ""},
     {3, &(HPoison_resistance), "healthy", ""},
-    {5, &(HStealth), "stealthy", ""},
     {7, &(HWarning), "sensitive", ""},
     {9, &(HSearching), "perceptive", "unaware"},
     {11, &(HFire_resistance), "cool", "warmer"},
@@ -79,20 +77,17 @@ static const struct innate pri_abil[] = {
 
 static const struct innate ran_abil[] = {
     {1, &(HSearching), "", ""},
-    {7, &(HStealth), "stealthy", ""},
     {15, &(HSee_invisible), "", ""},
     {0, 0, 0, 0}
 };
 
 static const struct innate rog_abil[] = {
-    {1, &(HStealth), "", ""},
     {10, &(HSearching), "perceptive", ""},
     {0, 0, 0, 0}
 };
 
 static const struct innate sam_abil[] = {
     {1, &(HFast), "", ""},
-    {15, &(HStealth), "stealthy", ""},
     {0, 0, 0, 0}
 };
 
@@ -104,7 +99,6 @@ static const struct innate tou_abil[] = {
 
 static const struct innate val_abil[] = {
     {1, &(HCold_resistance), "", ""},
-    {1, &(HStealth), "", ""},
     {7, &(HFast), "quick", "slow"},
     {0, 0, 0, 0}
 };
@@ -123,6 +117,18 @@ static const struct innate elf_abil[] = {
 
 static const struct innate orc_abil[] = {
     {1, &(HPoison_resistance), "", ""},
+    {0, 0, 0, 0}
+};
+
+static const struct innate sylph_abil[] = {
+    {1,  &(HSee_invisible), "", ""},
+    {1,  &(HProt_shapechangers), "", ""},
+    /* They also get a form of slotless regeneration, but only under
+       certain conditions, and with hunger implications so that's
+       special-cased elsewhere. */
+    {5,  &(HInfravision), "perceptive", "half blind"},
+    {7,  &(HDisplacement), "elusive", "exposed"},
+    {16, &(HDetect_monsters), "perceptive", "dull"},
     {0, 0, 0, 0}
 };
 
@@ -205,6 +211,55 @@ adjattrib(int ndx, int incr, int msgflg)
     return TRUE;
 }
 
+/* This function is only necessary because the strength number is weird. */
+/* Note that it does NOT add like gaining a single point of strength.
+   That would be easier.  This is adding for purposes of determining
+   the maximum, which is delimited in larger increments from 18 to 19. */
+int
+addattrib(int attr, int value, int addend)
+{
+    if (attr != A_STR)
+        return value + addend;
+
+    while (addend < 0) {
+        addend++;
+        if (value > STR18(100))
+            value -= 1;
+        else if (value > STR18(75))
+            value = STR18(75);
+        else if (value > STR18(50))
+            value = STR18(50);
+        else if (value > STR18(25))
+            value = STR18(25);
+        else if (value > 18)
+            value = 18;
+        else
+            value--;
+    }
+    if (value > 18) {
+        while (value > STR18(100)) {
+            addend++;
+            value--;
+        }
+        while (value >= STR18(25)) {
+            addend++;
+            value -= 25;
+        }
+    } else {
+        while (value < 18 && addend > 0) {
+            value++;
+            addend--;
+        }
+    }
+    if (addend > 4) {
+        return STR19(addend - 4);
+    } else if (addend > 0) {
+        return STR18(addend * 25);
+    } else {
+        return value;
+    }
+}
+
 void
 gainstr(struct obj *otmp, int incr)
 {
@@ -274,6 +329,34 @@ change_luck(schar n)
         u.uluck = LUCKMIN;
     if (u.uluck > 0 && u.uluck > LUCKMAX)
         u.uluck = LUCKMAX;
+}
+
+/* Called when an action is performed that would be bad luck in Sokoban: */
+void
+sokoban_guilt(void)
+{
+    if (!In_sokoban(&u.uz)) return; /* Guilt only applies in Sokoban. */
+    if (historysearch("entered the Sokoban zoo.", TRUE))
+        return; /* Once you've solved the puzzle, guilt no longer applies. */
+
+    break_conduct(conduct_sokoban_guilt); /* Keep track even if no penalty. */
+
+    if (u.moreluck > 0)     return; /* Non-cursed luckstone protects you. */
+    if (Luck <= -3)         return; /* That's bad enough already. */
+
+    if (Hallucination) {
+        pline(msgc_consequence, "Avalanche!");
+        mksobj_at(BOULDER, level, u.ux, u.uy, TRUE, FALSE, rng_main);
+        if (uarmh && is_metallic(uarmh)) {
+            losehp(rnd(4), "crushed by a hallucinatory boulder, despite wearing a hard helmet.");
+        } else {
+            losehp(rnd(12), "crushed by a hallucinatory boulder");
+        }
+        /* No luck penalty if you get the hallucinatory boulder. */
+        return;
+    }
+    pline(msgc_statusbad, "You feel like a cheater.");
+    change_luck(-1);
 }
 
 int
@@ -408,14 +491,10 @@ exerper(void)
 
     /* status checks */
     if (!(moves % 5)) {
-        if ((HClairvoyant & (INTRINSIC | TIMEOUT)) && !BClairvoyant)
-            exercise(A_WIS, TRUE);
         if (HRegeneration)
             exercise(A_STR, TRUE);
         if (Sick || Vomiting)
             exercise(A_CON, FALSE);
-        if (Confusion || Hallucination)
-            exercise(A_WIS, FALSE);
         if ((Wounded_legs && !u.usteed) || Fumbling || HStun)
             exercise(A_DEX, FALSE);
     }
@@ -463,10 +542,11 @@ exerchk(void)
                 /* then print an explanation */
                 switch (i) {
                 case A_STR:
-                    pline_implied(msgc_hint, (mod_val > 0) ?
-                                  "You must have been exercising." :
-                                  msgprintf("You must have been abusing "
-                                            "your %s.", body_part(BODY)));
+                    pline_implied(msgc_hint, "%s",
+                                  ((mod_val > 0) ?
+                                   "You must have been exercising." :
+                                   msgprintf("You must have been abusing "
+                                             "your %s.", body_part(BODY))));
                     break;
                 case A_WIS:
                     pline_implied(msgc_hint, (mod_val > 0) ?
@@ -640,6 +720,9 @@ adjabil(int oldlevel, int newlevel)
     case PM_ORC:
         rabil = orc_abil;
         break;
+    case PM_SYLPH:
+        rabil = sylph_abil;
+        break;
     case PM_HUMAN:
     case PM_DWARF:
     case PM_GNOME:
@@ -716,7 +799,9 @@ newhp(void)
 
         /* Initialize alignment stuff */
         u.ualign.type = aligns[u.initalign].value;
-        u.ualign.record = urole.initrecord;
+        /* NetHack Fourk balance adjustment:  lawful characters start with a lower alignment record, chaotics higher */
+        u.ualign.record = urole.initrecord + ((u.ualign.type == A_CHAOTIC) ? 10
+                                              : ((u.ualign.type == A_NEUTRAL) ? 5 : 0));
 
         return hp;
     } else {
@@ -793,6 +878,79 @@ acurrstr(void)
         return (schar) (str - 100);
 }
 
+/* Returns a monster's (or the player's) current level of stealth.  Note that 1
+   is subtracted, because a base value of 1 is the default "no stealth unless
+   wearing stealth-granting item" level.  If a monster is given a base stealth
+   value of 0, wearing a single stealth-granting item is not enough to make it
+   stealthy.  2 or more means stealthy by default, and higher is stealthier. */
+/* Invisibility is NOT added in here, because we don't know who the observer is,
+   and they may be able to see invisible.  So that is handled in the caller. */
+schar
+get_stealth(struct monst *mon)
+{
+    boolean player = (mon == &youmonst) ? TRUE : FALSE;
+    enum objslot i;
+    /* start with intrinsic stealth */
+    int s = player ? (Upolyd ? youmonst.data->stealth :
+                      mons[urace.malenum].stealth) : mon->data->stealth;
+    int equipweight = 0;
+    /* Now check the armor and ring slots for stealth-granting items: */
+    for (i = os_arm; i <= os_last_equip; i++) {
+        if (i != os_quiver && i != os_swapwep) {
+            /* TODO: should the off-hand weapon count toward equipweight?
+               Perhaps only if #twoweapon combat is engaged?  How would that
+               work for non-player monsters? */
+            struct obj *item = which_armor(mon, i);
+            if (item)
+                equipweight += item->owt;
+            if (item && item_provides_extrinsic(item, STEALTH, 0)) {
+                equipweight -= item->owt; /* Stealth-granting items don't
+                                             count extra against stealth. */
+                if (i == os_ringl || i == os_ringr)
+                    s += item->spe;
+                else
+                    s++;
+            }
+        }
+    }
+    if (player) {
+        int iwt = inv_weight();
+        switch (calc_capacity(equipweight)) {
+            /* Calling calc_capacity in this way, with equipweight, basically
+               causes equipped items such as armor and weapons to count double,
+               for stealth purposes.  What we're saying is, "What would the
+               player's encumbrance level be if he picked up additional weight
+               equal to all his worn gear?"  Thus, wearing lightweight armor,
+               or none, is good for stealth.  Cf OOTS #25 and following. */
+        case UNENCUMBERED:
+            s++;
+            if (iwt <= (weight_cap() / 10))
+                iwt = 1 + (weight_cap() / 10);
+            while (calc_capacity(iwt) <= UNENCUMBERED) {
+                s++;
+                iwt = iwt * 5 / 3;
+            }
+            break;
+        case OVERLOADED:
+            s--; /* Fall Through */
+        case EXT_ENCUMBER: /* Overtaxed */
+            s--; /* Fall Through */
+        case HVY_ENCUMBER: /* Strained */
+            s--; /* Fall Through */
+        case MOD_ENCUMBER: /* Stressed */
+            s--; /* Fall Through */
+        case SLT_ENCUMBER: /* Burdened */
+            s -= calc_capacity(0);  
+        }
+    }
+    /* Finally, add in skill modifier: */
+    if (player)
+        s += P_SKILL(P_STEALTH);
+    if (s > 1)
+        return (schar) s - 1;
+    return (schar) 0;
+}
+
 /* Returns the player's effective AC rating. Use in place of u.uac. */
 schar
 get_player_ac(void)
@@ -830,8 +988,14 @@ get_player_ac(void)
         player_ac -= ARM_BONUS(uarmh);
     if (uarmf)
         player_ac -= ARM_BONUS(uarmf);
-    if (uarms)
-        player_ac -= ARM_BONUS(uarms);
+    if (uarms) {
+        int armb = ARM_BONUS(uarms);
+        int mult = P_SKILL(P_SHIELD) - 1;
+        if (armb > 0)
+            player_ac -= (armb * mult);
+        else
+            player_ac -= (mult - armb);
+    }
     if (uarmg)
         player_ac -= ARM_BONUS(uarmg);
     if (uarmu)
@@ -853,6 +1017,11 @@ adjalign(int n)
 {
     int cnt; /* for loop initial declarations are only allowed in C99 mode */
     int newalign = u.ualign.record + n;
+    int minalign = 0 - ALIGNLIM;
+    if (newalign > ALIGNLIM)
+        newalign = ALIGNLIM;
+    if (newalign < minalign)
+        newalign = minalign;
 
     if (n < 0) {
         if (newalign < u.ualign.record) {
@@ -860,11 +1029,41 @@ adjalign(int n)
                 break_conduct(conduct_lostalign);
             }
             u.ualign.record = newalign;
+            if (u.ualign.record < SEARED_CONSCIENCE) {
+                /* No warning -- your conscience no longer works. */
+            } else if (u.ualign.record < SINNED) {
+                pline(msgc_alignbad, "Your transgressions are "
+                      "more than you can bear to think about.");
+            } else if (u.ualign.record < STRAYED) {
+                pline(msgc_alignbad,
+                      "You worry that your sins will catch up with you.");
+            } else if (u.ualign.record < HALTINGLY) {
+                pline(msgc_alignbad,
+                      "Your conscience bothers you, but you dismiss it.");
+            } else if (u.ualign.record < FERVENT) {
+                pline(msgc_alignbad, "Your conscience bothers you.");
+            } else if (u.ualign.record < PIOUS) {
+                pline(msgc_alignbad,
+                   "You hesitate for a moment, bothered by your conscience.");
+            } else {
+                pline(msgc_alignbad, "You hesitate for just a moment.");
+            }
         }
     } else if (newalign > u.ualign.record) {
         u.ualign.record = newalign;
-        if (u.ualign.record > ALIGNLIM)
-            u.ualign.record = ALIGNLIM;
+        if (u.uconduct[conduct_lostalign]) {
+            if (u.ualign.record < SINNED) {
+                /* No message -- let 'em sweat a bit. */
+            } else if (u.ualign.record < NOMINALLY) {
+                pline(msgc_aligngood,
+                      "Your conscience bothers you just a little less.");
+            } else if (u.ualign.record < PIOUS) {
+                pline(msgc_aligngood,
+                      "Your conscience bothers you a little less.");
+            } else if (u.ualign.record == PIOUS) {
+                pline(msgc_aligngood, "Your conscience is assuaged.");
+            }
+        }
     }
 }
 
@@ -916,13 +1115,12 @@ calc_attr_bonus(void)
             ABON(A_DEX) += spe;
             break;
 
+        case CORNUTHAUM:
+            ABON(A_CHA) += (Role_if(PM_WIZARD) ? 1 : -1);
+            /* Fall Through */
         case HELM_OF_BRILLIANCE:
             ABON(A_INT) += spe;
             ABON(A_WIS) += spe;
-            break;
-
-        case CORNUTHAUM:
-            ABON(A_CHA) += (Role_if(PM_WIZARD) ? 1 : -1);
             break;
         }
     }

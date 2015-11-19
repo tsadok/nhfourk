@@ -211,7 +211,7 @@ open_datafile(const char *filename, int oflags, int prefix)
 char *
 bones_filename(const char *bonesid)
 {
-    static const char base[] = "bonesnn.xxx";
+    static const char base[] = "bonesnn.Nf.xxx";
     char *fn = malloc(SIZE(base));
     strncpy(fn, base, SIZE(base));
     snprintf(fn, SIZE(base), "bon%s", bonesid);

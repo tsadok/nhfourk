@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "alignrec.h"
 
 extern const int monstr[];
 
@@ -20,6 +21,7 @@ extern const int monstr[];
 #define MGC_SUMMON_MONS 9
 #define MGC_CLONE_WIZ   10
 #define MGC_DEATH_TOUCH 11
+#define MGC_RND_ALIGN   12
 
 /* monster cleric spells */
 #define CLC_OPEN_WOUNDS 0
@@ -92,6 +94,7 @@ choose_magic_spell(int spellval)
     case 20:
         return MGC_DEATH_TOUCH;
     case 19:
+        return rn2(5) ? MGC_CLONE_WIZ : MGC_RND_ALIGN;
     case 18:
         return MGC_CLONE_WIZ;
     case 17:
@@ -421,6 +424,26 @@ cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
         dmg = 0;
         break;
     }
+    case MGC_RND_ALIGN:
+        if (mtmp->iswiz) {
+            if (u.ualign.record >= PIOUS)
+                verbalize(msgc_playerimmune, /* or msgc_npcvoice ? */
+                          "Bah! Pious are thou? What shall it avail thee?");
+            else {
+                schar olda = u.ualign.type; /* prior alignment */
+                schar aln1 = A_LAWFUL;
+                schar aln2 = A_CHAOTIC;
+                if (u.ualign.type == A_LAWFUL)  aln1 = A_NEUTRAL;
+                if (u.ualign.type == A_CHAOTIC) aln2 = A_NEUTRAL;
+                /* This magic is stronger than any helm: */
+                u.ualign.type = u.ualignbase[A_CURRENT] =
+                    (rn2(2) ? aln1 : aln2);
+                pline(msgc_alignbad,
+                      "Suddenly, you don't feel so %s.", align_str(olda));
+                /* if (!rn2(3)) angrygods(olda); */
+                /* TODO: figure out the scoping so we can call that function. */
+            }
+        }
     case MGC_CLONE_WIZ:
         if (mtmp->iswiz && flags.no_of_wizards == 1) {
             pline(msgc_levelwarning, "Double Trouble...");
@@ -838,7 +861,8 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
     boolean believed_loe = mdef ? clear_path(magr->mx, magr->my,
                                              believed_mdef_mx, believed_mdef_my,
                                              appropriate_vizarray) : FALSE;
-    boolean magr_peaceful = magr == &youmonst || magr->mpeaceful;
+    boolean magr_peaceful = ((magr == &youmonst) ||
+                             (magr->mpeaceful && !Stormprone));
     boolean magr_tame = magr == &youmonst || magr->mtame;
 
     if (adtyp == AD_SPEL) {
@@ -846,7 +870,7 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
            or would cause problems if they were */
         if (magr_peaceful &&
             (spellnum == MGC_AGGRAVATION || spellnum == MGC_SUMMON_MONS ||
-             spellnum == MGC_CLONE_WIZ))
+             spellnum == MGC_CLONE_WIZ || spellnum == MGC_RND_ALIGN))
             return TRUE;
         /* haste self when already fast */
         if (m_has_property(magr, FAST, ANY_PROPERTY, TRUE) &&
@@ -876,11 +900,14 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
             (spellnum == MGC_SUMMON_MONS ||
              (!magr->iswiz && spellnum == MGC_CLONE_WIZ)))
             return TRUE;
+        /* only the Wizard of Yendor can cast certain spells */
+        if ((spellnum == MGC_RND_ALIGN) && !magr->iswiz)
+            return TRUE;
         if ((!magr->iswiz || flags.no_of_wizards > 1)
             && spellnum == MGC_CLONE_WIZ)
             return TRUE;
         /* spells that harm master while tame and not conflicted */
-        if (magr_tame && !Conflict &&
+        if (magr_tame && !Conflict && !Stormprone &&
             (spellnum == MGC_CURSE_ITEMS || spellnum == MGC_DISAPPEAR ||
              spellnum == MGC_DESTRY_ARMR))
             return TRUE;
@@ -896,12 +923,13 @@ mmspell_would_be_useless(struct monst *magr, struct monst *mdef,
         if (!believed_loe && spellnum == CLC_INSECTS)
             return TRUE;
         /* blindness spell on blinded target */
-        if ((m_has_property(mdef, BLINDED, ANY_PROPERTY, TRUE) ||
-             !haseyes(mdef->data)) &&
+        if (mdef && (m_has_property(mdef, BLINDED, ANY_PROPERTY, TRUE) ||
+                     !haseyes(mdef->data)) &&
             spellnum == CLC_BLIND_YOU)
             return TRUE;
         /* spells that harm master while tame and not conflicted */
-        if (magr_tame && !Conflict && spellnum == CLC_CURSE_ITEMS)
+        if (magr_tame && !Conflict && !Stormprone &&
+            spellnum == CLC_CURSE_ITEMS)
             return TRUE;
     }
     return FALSE;
@@ -931,7 +959,7 @@ buzzmu(struct monst *mtmp, const struct attack *mattk)
                       "%s zaps you with a %s!", Monnam(mtmp),
                       flash_types[ad_to_typ(mattk->adtyp)]);
             buzz(-ad_to_typ(mattk->adtyp), (int)mattk->damn, mtmp->mx, mtmp->my,
-                 sgn(tbx), sgn(tby));
+                 sgn(tbx), sgn(tby), 0);
         }
     }
     return 1;
@@ -1482,7 +1510,7 @@ ucast_wizard_spell(struct monst *mattk, struct monst *mtmp, int dmg,
         break;
     }
 
-    if (dmg > 0 && mtmp->mhp > 0) {
+    if (dmg > 0 && !DEADMONSTER(mtmp)) {
         mtmp->mhp -= dmg;
         if (mtmp->mhp < 1) {
             if (yours)
@@ -1749,7 +1777,7 @@ ucast_cleric_spell(struct monst *mattk, struct monst *mtmp, int dmg,
         break;
     }
 
-    if (dmg > 0 && mtmp->mhp > 0) {
+    if (dmg > 0 && !DEADMONSTER(mtmp)) {
         mtmp->mhp -= dmg;
         if (mtmp->mhp < 1) {
             if (yours)

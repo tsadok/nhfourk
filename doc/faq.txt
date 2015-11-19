@@ -16,8 +16,8 @@ that have been asked less often but I expect to be asked and thus need
 to be answered pre-emptively, together with their answers.
 
 
-About the NetHack 4 project
-===========================
+About NetHack Fourk
+===================
 
 What is NetHack?
 ----------------
@@ -43,6 +43,25 @@ something, you probably can, and unlike many roguelikes, the emphasis is on
 allowing you to build the character you want to play, rather than on trying to
 make do with a limited number of tools.
 
+What is NetHack Fourk?
+----------------------
+
+NetHack Fourk is a derivative (in software development parlance, a "fork")
+of NetHack 4.  In most respects it is very similar to NetHack 4, and it
+regularly incorporates new enhancements, bug fixes, and other changes 
+from that codebase.  However, NetHack Fourk also has additional changes.
+
+Why Fork?  What's Wrong with NetHack 4?
+---------------------------------------
+
+I did not fork because of anything wrong with NetHack 4, but rather
+the reverse:  I wanted to test out some changes to see whether they
+work out in practice as well as I hope that they do, but I wanted to
+do it in a way that does not disrupt the stability of NetHack 4.  By
+forking, I am able to try out some things and see how they work in
+practice, before deciding whether they ultimately belong in the game
+or not.  Those that pass muster will hopefully be merged upstream into
+NetHack 4.  Others may need to be refined further or even reverted.
 
 What is NetHack 4?
 ------------------
@@ -74,37 +93,19 @@ based on.  The result is, hopefully, a more modern NetHack that still has
 gameplay familiar to fans of previous versions.
 
 
-Why is the game called NetHack 4, if it isn't made by the DevTeam?
-------------------------------------------------------------------
 
-NetHack seems liable to die if nobody tries to take it forwards.  If the
-DevTeam can't or won't take it forwards, someone else will have to.  NetHack 4
-aims to be a direct successor to NetHack 3.4.3, rather than a "challenge
-patch", and it felt like the most appropriate name for a project that aims at
-continuing the legacy of NetHack.
+How can I follow/contribute to NetHack Fourk development?
+---------------------------------------------------------
 
-Basically, we like NetHack too much to want to let it die.  Using only a minor
-modification to the name (adding the "4") lets us signify that we're trying to
-keep it alive, rather than abandoning it in favour of an alternative.
+Uncontroversial changes, such as straightforward bug fixes and interface
+enhancements, should instead be contributed to NetHack 4 directly.  NetHack
+Fourk regularly pulls in changes from NetHack 4, so anything contributed there
+will automatically become a part of NetHack Fourk as well.
 
-(Incidentally, the DevTeam are aware of the variant, and have not objected to
-the name; they've even been known to copy the occasional patch from NetHack 4
-into their own development version.  They spell it "NetHack4", with no space;
-sometimes, we do too.  This helps to be unambiguous if you want to distinguish
-NetHack 4 from DevTeam-released versions of NetHack.)
-
-
-What will you do if the DevTeam releases a new version of NetHack?
-------------------------------------------------------------------
-
-We'll merge as many of their changes as we think are good ideas into NetHack
-4, hopefully producing a game with the advantages of most versions.  There's
-already been some progress in this respect; although we don't have access to
-all the DevTeam's internal development code, they've been willing to share
-large amounts of it with us (mostly bugfixes), which is incidentally how we
-know they're working on it in the first place.  We haven't made much use of it
-yet, in favour of getting 4.3.0 released, but are likely to merge in most of
-the bugfixes for 4.3.1.
+Beyond that, the source repository is available on Gitorious.  Anyone can clone
+this repository and commit additional changes to their own repository.  If you
+have changes that you believe should be merged into NetHack Fourk for testing
+(but are not ready for NetHack 4), contact Jonadab.
 
 
 How can I follow/contribute to the programming of NetHack 4?
@@ -117,6 +118,7 @@ development is typically in branch "master".  (That repository also contains
 bug tracker also contains a web-based view of the repository, which may be
 more convenient for browsing it (the official repository can only reasonably
 be read using `git` itself).
+
 
 Sometimes, interim development projects take place on other branches, because
 the "master" branch is expected to be at least somewhat playable.  In
@@ -157,7 +159,10 @@ we couldn't stop spambots using it.)
 What about playing in tournaments?
 ----------------------------------
 
-NetHack 4 is one of the games featured in the annual
+NetHack Fourk is unable to participate in tournaments at this time, due to
+lack of a public server.  Sorry.
+
+However, NetHack 4 is one of the games featured in the annual
 [Junethack tournament][5], which looks at the future of NetHack by allowing
 competition on the various forks and variants (as well as 3.4.3).  As the name
 might suggest, it runs in June every year.  See the tournament site for more
@@ -167,98 +172,63 @@ details.
 What license is the code under?
 -------------------------------
 
-Just like previous versions of NetHack, NetHack 4 is licensed under the
-NetHack General Public License (which is similar to old versions of the GNU
-General Public License).  Some of the newer files are dual-licensed and also
-allow other licensing options in addition to the NGPL.  (The build system,
-aimake version 3, is licensed under version 3 of the GNU GPL, rather than
-under the NGPL; however, its license does not extend onto the license of the
-code it compiles, leaving the resulting executables as purely NGPL.)
+Just like previous versions of NetHack, NetHack Fourk is licensed
+under the NetHack General Public License (which is similar to old
+versions of the GNU General Public License).  Some of the files added
+in NetHack 4 are dual-licensed and also allow other licensing options
+in addition to the NGPL.  (The build system, aimake version 3, is
+licensed under version 3 of the GNU GPL, rather than under the NGPL;
+however, its license does not extend onto the license of the code it
+compiles, leaving the resulting executables as purely NGPL.)
 
-Several of the libraries on which NetHack 4 depends have other licenses; for
-instance, libjansson (which ships with the NetHack 4 source, nowadays) is
+Several of the libraries on which NetHack Fourk depends have other licenses; for
+instance, libjansson (which is included with the NetHack Fourk source) is
 licensed under the Expat license, and SDL2 (which does not ship with the
-source, but which does ship with the binaries) is licensed under the zlib
+source, but which is needed for grahical tiles) is licensed under the zlib
 license.  Likewise, the tilesets mostly have licenses of their own.  The file
 `copyright` in the root of the source distribution gives a machine-readable
 explanation of the copyright status of the source files in the distribution.
 For binary distributions, full copyright information will be installed with
 the documentation.
 
-Please note that there is no warranty for NetHack 4.
+Please note that there is no warranty for NetHack Fourk.
 
 
 Getting the game running
 ========================
 
-How can I play NetHack 4?
+Is there a public server?
 -------------------------
 
-There are two ways to play NetHack 4: you can either run it locally on your
-own computer, or use telnet or ssh to connect to a public server and play on
-the server.  Server play has the advantage that your save file is available no
-matter which computer you play on, and that you can (on Linux or Mac OS X) use
-standard software that comes with the operating system rather than having to
-install a separate binary; it's also much easier to prove that you aren't
-cheating, because you cannot modify the game's code.  Local play works even
-without an Internet connection, and allows you to experiment with patches to
-the code and otherwise modify the game as you like.
+Not at this time.  I would like to provide one, but I currently do not
+have a suitable place to host it.
 
+How can I compile the game?
+---------------------------
 
-How can I play on a public server?
-----------------------------------
-
-The official (and to our knowledge, only) public server is nethack4.org.  Open
-a terminal in your favourite terminal emulator, and use telnet (default
-settings) or ssh (username "nethack43", password "nethack43") to connect. At
-the command prompt:
-
-    telnet nethack4.org
-
-or
-
-    ssh nethack43@nethack4.org
-
-You'll be asked to give a username and password upon connecting; if you use a
-currently unknown username, you'll be prompted to create an account.
-
-If you're using Windows, this is rather harder to do than on Linux or Mac OS
-X, because Windows doesn't come with ssh, its telnet client (when it even
-exists at all) is buried in an obscure corner of the menus and is disabled by
-default, and its default terminal emulator is woefully inadequate for pretty
-much anything (and probably doesn't run NetHack 4 over telnet correctly; I'm
-not sure if anyone has tried).  As such, it is probably best to install a
-separate terminal emulator / telnet / ssh package.  The most commonly used is
-[PuTTY][6].  Note that PuTTY's defaults are somewhat dubious (e.g. the cursor
-looks a little out of place), so it may need some amount of configuration in
-order to provide the best play experience.  Note also that it has something
-called "NetHack mode"; this is a workaround for keybinding issues in
-considerably older (pre-3.4.3) versions of NetHack, and is more harmful than
-useful with NetHack 4, so try to get things working with it turned off first,
-and use it only as a last resort.
-
-
-How can I compile the game for local play?
-------------------------------------------
-
-NetHack 4 can be compiled on most commonly used systems; we've tested Linux,
-OS X, and Windows.  Linux and Mac OS X work out of the box.  Windows is a
+NetHack Fourk can be compiled on most commonly used desktop systems; the
+NetHack 4 developers have tested Linux, OS X, and Windows, and these should all
+work for Fourk as well.  Linux and Mac OS X work out of the box.  Windows is a
 little harder but still relatively easy to compile on, if you don't mind
 downloading several extra tools to do the compilation with.
 
-In order to compile NetHack 4 locally, you can get a copy of the source from
-the repository, and follow the instructions in the README file (if you're on
-Mac OS X, follow the instructions for UNIX/Linux, because OS X is a UNIX
-derivative).  You'll need some dependencies in addition to NetHack 4 itself: a
-working C toolchain and zlib.  (You'll also need postgresql, pgcrypto and
-inetd if you're planning to run your own server, but you probably aren't; for
-local play, the game works just fine without a server to connect to.)
-Previous versions of NetHack 4 depended on the [libjansson library][7].  You
-can still use your own copy of libjansson, but the source to this library is
-now shipped with NetHack 4 in order to reduce library dependency issues, and
-you can tell the build system to use that copy instead.  Previous versions of
-NetHack 4 also depended on libncursesw, but that dependency no longer exists
-(NetHack 4 now uses its own rendering library, named libuncursed).
+In order to compile NetHack Fourk locally, you can get a copy of the
+source from the repository, and follow the instructions in the README
+file (if you're on Mac OS X, follow the instructions for UNIX/Linux,
+because OS X is a UNIX derivative).  You'll need some dependencies in
+addition to NetHack Fourk itself: a working C toolchain and zlib.
+(You'll also need postgresql, pgcrypto and inetd if you're planning to
+run your own server, but you probably aren't; for local play, the game
+works just fine without a server to connect to.)  Previous versions of
+NetHack 4 depended on the [libjansson library][7].  You can still use
+your own copy of libjansson, but by the time NetHack Fourk was
+created, the source to this library was already being shipped with
+NetHack 4 in order to reduce library dependency issues; this tradition
+is continued in NetHack Fourk, and so you can tell the build system to
+use that copy instead.  Similarly, NetHack Fourk depends on
+libuncursed (a curses library written primarily for NetHack 4 and
+secondarily for other similar games), but it is included in the source
+tree and will be built automatically.
 
 To build a binary capable of tiles play, you will also need version 2 of the
 [Simple DirectMedia Layer][8] library (and its development headers and (on
@@ -280,31 +250,35 @@ Linux Mint), you'll need to install the `build-essential` package (and also
 Are precompiled binaries available?
 -----------------------------------
 
-Currently, precompiled binaries are available from the NetHack 4 website, but
-only for Windows and Debian-based Linux distributions, and they are not
-regularly updated.  If you can, we recommend you compile your own binaries
-from source.
+Currently, no precompiled binaries are available.  I could provide them
+for Debian amd64 systems, but there seems little point, since compiling
+is a routine activity for most Debian users.  The people most likely to
+want precompiled binaries are Windows and possibly Mac users, but I do
+not have the facilities to compile for those platforms.
 
 
 What does the "connect to server" option in the main menu do?
 -------------------------------------------------------------
 
-NetHack 4 inherits a server API from NitroHack that should theoretically allow
-a local executable (even tiles) to play on a remote system.  This mode works
-fine in testing, but there are no publically available servers right now to
-connect to, so it's not that useful in practice.
+NetHack Fourk inherits a server API from NetHack 4 and NitroHack
+before it that should theoretically allow a local executable (even
+tiles) to play on a remote system.  This mode works fine in testing,
+but there are no public servers right now to connect to, so it's not
+useful in practice.
 
-We don't host such a server on nethack4.org because there are known security
-problems in the implementation (which do not affect local play).
+Even NetHack 4 (which does have a public server) does not allow this
+kind of connection, because there are known security problems in the
+implementation (which do not affect local play).  The NetHack 4
+development team intends at some point to do a security audit of the
+network protocol in question, but even then the network protocol would
+only be usable in NetHack Fourk if a public server existed; currently
+there isn't one.
 
 
-Does NetHack 4 depend on curses/ncurses?
-----------------------------------------
+Does NetHack Fourk depend on curses/ncurses?
+--------------------------------------------
 
-Not any more; it used to, but that dependency has since been removed.
-(Likewise, it does not use the "curses interface patch" seen in some NetHack
-variants, such as the one running on nethack.alt.org, despite some visual
-similarities.)
+No.  NetHack Fourk ships with and uses libuncursed.
 
 
 How do I set the interface to look more like 3.4.3?
@@ -315,16 +289,17 @@ you're playing in an 80x24 terminal), the various `draw_` options,
 `menupaging`, `prompt_inline`, and `tileset`.
 
 
-How do I select which interface NetHack 4 uses?
------------------------------------------------
+How do I select which interface NetHack Fourk uses?
+---------------------------------------------------
 
-NetHack 4 does its rendering via the libuncursed rendering library.  By
-default, it will use a terminal for rendering, using its `tty` or `wincon`
-interface (depending on your platform).  In order to use other interfaces, you
-will need a plugin for libuncursed; for instance, `libuncursed_sdl.dll` ships
-with the Windows executables (and the sources for that plugin ship with the
-NetHack 4 source, meaning that it will be built when you compile the source on
-other operating systems, too).
+NetHack Fourk does its rendering via the libuncursed rendering
+library.  By default, it will use a terminal for rendering, using its
+`tty` or `wincon` interface (depending on your platform).  In order to
+use other interfaces, you will need a plugin for libuncursed; for
+instance, `libuncursed_sdl.dll` ships with the Windows executables
+(and the sources for that plugin ship with the NetHack Fourk source,
+meaning that it will be built when you compile the source on other
+operating systems, too).
 
 In order to load the `sdl` rather than `tty` or `wincon` interface, you will
 need to make this request known to libuncursed via either of the following
@@ -332,7 +307,7 @@ methods:
 
   * Use the `--interface sdl` command line option when starting NetHack 4; or
   * Use an executable whose name ends `-sdl` (the build system will create an
-    executable or symlink `nethack4-sdl` for this purpose if building in tiles
+    executable or symlink `nhfourk-sdl` for this purpose if building in tiles
     mode).
 
 The `sdl` interface is a "fake terminal" port that simulates a terminal
@@ -352,7 +327,7 @@ rather than text-based, tileset.  The `libuncursed_sdl` interface is currently
 recommended for tiles play (being the only current graphical interface plugin
 for libuncursed).
 
-There are currently five tilesets available:
+There are currently six tilesets available:
 
   * The "ASCII" tileset is a very traditional 3.4.3-like text-based tileset
     that uses only ASCII characters;
@@ -371,6 +346,15 @@ There are currently five tilesets available:
     amount of detail (e.g. you can typically make out the type of monster that
     makes up a statue, or the race and gender of a player, simply from details
     in the art).
+  * The "Geoduck" tileset is based on the idea of incorporating the
+    traditional ASCII symbols prominently into the artwork but also
+    supplying additional, differentiating details so that the player
+    can easily distinguish one thing from another.  For example, the
+    tiger looks like an f but is depicted in tiger stripes.  This set
+    may be of particular interest to players who would like to learn
+    to play with the ASCII or Unicode sets but who are intimidated at
+    first and feel that they need a little extra help learning the
+    details.
 
 Note that as libuncursed plugins do not currently work correctly on Mac OS X,
 graphical tilesets will not work there either.
@@ -399,13 +383,14 @@ up on the options menu in-game.
 Why is the build system building things I didn't expect it to?
 --------------------------------------------------------------
 
-There are two main causes of this.  If your problem is that it's building
-shared libraries repeatedly, this is because a shared library is used for two
-different purposes on some OSes: being loaded at runtime, and being read at
-compile time to determine how to link against it.  There are a bunch of
-circular dependencies between libraries in NetHack 4, so the build system
-sometimes creates one or more provisional copies of a library in order to get
-all the dependencies correctly figured out.
+There are two main causes of this.  If your problem is that it's
+building shared libraries repeatedly, this is because a shared library
+is used for two different purposes on some OSes: being loaded at
+runtime, and being read at compile time to determine how to link
+against it.  There are a bunch of circular dependencies between
+libraries in NetHack Fourk, so the build system sometimes creates one
+or more provisional copies of a library in order to get all the
+dependencies correctly figured out.
 
 Alternatively, if your problem is that it seems to be building the tiles code
 and you're not running a graphical install, this is because tilesets are now
@@ -445,39 +430,44 @@ find other players unspoiled on external sources, and share your findings
 among yourselves; this is the way that NetHack was played for many years, in
 UNIX computer labs all over the world, and it still works today.
 
-If you're interested in reading spoilers, good resources include IRC (#acehack
-and #nethack on irc.freenode.net), and the [NetHack wiki][10].  NetHack 4 has
-some deviations from 3.4.3, but the changes are relatively conservative, so
-spoilers for 3.4.3 will still be mostly applicable.
+If you're interested in reading spoilers, good resources include IRC
+(#acehack and #nethack on irc.freenode.net), and the [NetHack
+wiki][10].  NetHack 4 has some deviations from 3.4.3, and NetHack
+Fourk has more, but spoilers for 3.4.3 are still a good starting point.
+
+If you are already familiar with NetHack and want to know about the
+differences in NetHack Fourk, you might be interested in the changelog,
+found in doc/changelog-fourk.txt in the NetHack Fourk source tree.
 
 
 Which character should I select?
 --------------------------------
 
-Whatever you enjoy playing with.  Try a few playstyles out, and note that
-trying the more difficult characters is often good practice for eventually
-winning with the easier ones.
+Whatever you enjoy playing with.  Try a few playstyles out, and note
+that trying the more difficult characters is often good practice for
+eventually winning with the easier ones.
 
-There's widespread disagreement about role difficulty (some people think
-Wizards are the easiest role, others one of the hardest; they do seem to be
-good for unusual challenge runs, though), but if you're just looking for a
-win, dwarven Valkyries seem to have the easiest time overall.  (Not that any
-role is particularly easy; NetHack is much harder than typical modern games
-are, and only the most experienced players can get anything like a consistent
-win rate at it.)
+There's widespread disagreement about role difficulty (some people
+think Wizards are the easiest role, others one of the hardest; they do
+seem to be good for unusual challenge runs, though), but if you're
+just looking for a win, lawful Valkyries seem to have the easiest time
+overall.  (Not that any role is particularly easy; NetHack is much
+harder than typical modern games are, and only the most experienced
+players can get anything like a consistent win rate at it.)
 
 
 What are the main gameplay changes from NetHack 3.4.3?
 ------------------------------------------------------
 
-The interface has many improvements; we don't consider things like warning the
-character that a corpse is dangerously old to be gameplay-related, as it's
-information that should be theoretically available anyway, but maybe you do.
-Apart from that, some of the largest changes were added as compensation to
-balance gameplay elements that were balanced via means of perverse interface
-in 3.4.3; for instance, amnesia now drains skill points, and floating eyes can
-protect themselves from melee attacks.  There are also noticeable improvements
-to the monster AI, especially where pets are involved.
+The interface has many improvements; we don't consider things like
+warning the character that a corpse is dangerously old to be
+gameplay-related, as it's information that should be theoretically
+available anyway, but maybe you do.  Apart from that, some of the
+largest changes were added as compensation to balance gameplay
+elements that were balanced via means of perverse interface in 3.4.3;
+for instance, amnesia now drains skill points, and floating eyes can
+protect themselves from melee attacks.  There are also noticeable
+improvements to the monster AI, especially where pets are involved.
 
 
 Doesn't making the interface less hostile take away the challenge?
@@ -555,8 +545,8 @@ score penalty as dying?), but the option's there.
 Where are the save files / recordings / dump files?
 ---------------------------------------------------
 
-On Linux and UNIX, by default, `~/.config/NetHack4/save`,
-`~/.config/NetHack4/log`, `~/.config/NetHack4/dumps` respectively.  (If
+On Linux and UNIX, by default, `~/.config/NHFourk/save`,
+`~/.config/NHFourk/log`, `~/.config/NHFourk/dumps` respectively.  (If
 misconfigured, it's possible that the game will put dump files in your home
 directory.)  The dump files record details of games that have ended, whether
 in victory or defeat.
@@ -566,9 +556,9 @@ whatever directory `CSIDL_APPDATA` refers to.  This is normally something like
 `C:\Users\username\AppData\Roaming`, although it depends on how Windows is
 configured.
 
-There's often a `save` folder in the NetHack 4 install directory (depending on
-how it was installed), but this is used for save information common to all
-users: bones files, xlogfiles, that sort of thing.
+There's often a `save` folder in the install directory (depending on
+how the game was installed), but this is used for save information
+common to all users: bones files, xlogfiles, that sort of thing.
 
 
 How do I eat an item from the ground?
@@ -665,10 +655,9 @@ easily.  So it's basically a bunch of filler levels, with no challenge (mostly
 because the damage formula doesn't scale into the late game), with repetitive
 and tedious maps, with nothing much to aim for.
 
-We're aware of this problem, and are currently looking for fixes.  A new map
-generator would solve one of the problems, at least, but larger changes are
-needed to solve the others, and there's no easy fix to solve its problems as a
-whole.
+We're aware of this problem, and are currently looking at various
+fixes.  The NetHack 4 developers are planning an overhaul for their
+version 4.4, and NetHack Fourk may also try out some additional things.
 
 
 Internals
@@ -731,24 +720,8 @@ that sort of thing).  Various executables are built out of code from various
 directories (but not with a 1:1 correspondence; most of them use code from
 multiple directories).
 
-
-What is grammartree?
---------------------
-
-An experimental project, that's nowhere near finished, to give NetHack 4 an
-understanding of the grammatical structure of the messages it outputs.  This
-should hopefully allow us to eventually output combined messages to heavily
-reduce message spam, such as "Ten fire elementals step on fire traps!  They
-don't seem harmed.".  As a nice side effect, this should make the game much
-easier to internationalize.  The project is mostly stalled, because it ended
-up with design-by-committee problems, and then was put on hold so that we
-could actually get other changes done rather than spending all our time trying
-to get the design behind grammartree perfect; we do plan to start it up again
-someday, though.
-
-If you're interested in our progress on grammartree, or want to help out, look
-at the `grammartree` branch in the repository to see how far we've got.
-
+-------------------------------------
+References:
 
 [1]: http://nethack.org
 [2]: http://nethack4.org
@@ -760,3 +733,4 @@ at the `grammartree` branch in the repository to see how far we've got.
 [8]: http://www.libsdl.org
 [9]: http://strawberryperl.com
 [10]: http://nethackwiki.com
+

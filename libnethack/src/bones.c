@@ -16,13 +16,26 @@ static char *
 make_bones_id(char *buf, d_level * dlev)
 {
     s_level *sptr;
+    int len;
 
     sprintf(buf, "%c%s", find_dungeon(dlev).boneid,
             In_quest(dlev) ? urole.filecode : "0");
-    if ((sptr = Is_special(dlev)) != 0)
+    if ((sptr = Is_special(dlev)) != 0) {
         sprintf(buf + 2, ".%c", sptr->boneid);
-    else
+        len = 4;
+    } else {
         sprintf(buf + 2, ".%d", dlev->dlevel);
+        len = 3 + (dlev->dlevel > 99 ? 3 :
+                   dlev->dlevel > 9  ? 2 : 1);
+    }
+
+    sprintf(buf + len, ".%s%x",
+            flags.debug ? "W" : flags.explore ? "X" :
+            *flags.setseed ? "S" :
+            (flags.polyinit_mnum != -1) ? "P" :
+            flags.challenge ? "C" : "N",
+            (unsigned int) (u.ubirthday % 16));
+    /* len += 3; // but we don't use the value below this point. */
 
     return buf;
 }
@@ -208,11 +221,6 @@ can_make_bones(d_level *lev)
         return FALSE;
     /* don't let multiple restarts generate multiple copies of objects in bones 
        files */
-    if (discover)
-        return FALSE;
-    /* don't drop multiple bones files from the same dungeon */
-    if (*flags.setseed)
-        return FALSE;
     return TRUE;
 }
 
@@ -226,7 +234,7 @@ savebones(struct obj *corpse, boolean take_items)
     struct monst *mtmp;
     const struct permonst *mptr;
     struct fruit *f;
-    char c, bonesid[10];
+    char c, bonesid[13];
     struct memfile mf;
     struct obj *statue = 0;
     uchar cnamelth = 0, snamelth = 0;
@@ -328,7 +336,8 @@ make_bones:
         mtmp->m_lev = (u.ulevel ? u.ulevel : 1);
         mtmp->mhp = mtmp->mhpmax = u.uhpmax;
         mtmp->female = u.ufemale;
-        mtmp->msleeping = 1;
+        if (!resists_sleep(mtmp))
+            mtmp->msleeping = 1;
 #ifdef LIVELOG_BONES_KILLER
         mtmp->former_player = 1 + /* Guarantee former_player > 0 */
             (2 * u.initgend    /*   2 * (0-2) = 0-4 */) +
@@ -403,7 +412,7 @@ int
 getbones(d_level *levnum)
 {
     int ok;
-    char c, bonesid[10], oldbonesid[10];
+    char c, bonesid[13], oldbonesid[13];
     struct memfile mf;
     boolean from_file = FALSE;
     char *bonesfn = NULL;

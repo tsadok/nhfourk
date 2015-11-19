@@ -22,8 +22,11 @@ static void burn_object(void *, long);
 
 /* He is being petrified - dialogue by inmet!tower */
 static const char *const stoned_texts[] = {
-    "You are slowing down.",    /* 5 */
-    "Your limbs are stiffening.",       /* 4 */
+    "You seem to be slowing down.",     /* 8 */
+    "You may indeed be slowing down.",  /* 7 */
+    "You are definitely slowing down.", /* 6 */
+    "Your limbs are stiffening.",       /* 5 */
+    "Your limbs are turning to stone.", /* 4 */
     "Your limbs have turned to stone.", /* 3 */
     "You have turned to stone.",        /* 2 */
     "You are a statue." /* 1 */
@@ -39,7 +42,7 @@ stoned_dialogue(void)
         /* ensure the player is able to act on this message */
         action_interrupted();
     }
-    if (i == 5L)
+    if (i <= 6L)
         HFast = 0L;
     if (i == 3L)
         helpless(3, hr_paralyzed, "unable to move due to turning to stone",
@@ -122,9 +125,14 @@ static boolean
 is_green(struct monst *mon)
 {
     if (mon->data == &mons[PM_GREMLIN] || mon->data == &mons[PM_LEPRECHAUN] ||
-        /* Are wood nymphs green?  Sylphs are, but they might be different? */
+        /* Are wood nymphs green? */
+        mon->data == &mons[PM_SYLPH] ||
+        (mon == &youmonst && Race_if(PM_SYLPH)) ||
         mon->data == &mons[PM_BABY_GREEN_DRAGON] ||
+        mon->data == &mons[PM_YOUNG_GREEN_DRAGON] ||
         mon->data == &mons[PM_GREEN_DRAGON] ||
+        mon->data == &mons[PM_GREEN_ELDER_DRAGON] ||
+        mon->data == &mons[PM_GREAT_GREEN_DRAGON] ||
         /* Are NetHack's lichens green?  Some real lichens are, some not.
          * What about guardian nagas and their hatchlings?  Their default
          * representation is green, but that's also true of hobbits, among
@@ -1169,7 +1177,7 @@ do_storms(void)
             diry = rn2(3) - 1;
             if (dirx != 0 || diry != 0)
                 buzz(-15,       /* "monster" LIGHTNING spell */
-                     8, x, y, dirx, diry);
+                     8, x, y, dirx, diry, 0);
         }
     }
 
@@ -1593,6 +1601,7 @@ obj_is_local(struct obj *obj)
     switch (obj->where) {
     case OBJ_INVENT:
     case OBJ_MIGRATING:
+    case OBJ_MAGIC_CHEST:
         return FALSE;
     case OBJ_FLOOR:
     case OBJ_BURIED:

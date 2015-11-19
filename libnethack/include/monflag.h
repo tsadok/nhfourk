@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-12 */
+/* Last modified by FIQ, 2015-08-07 */
 /* Copyright (c) 1989 Mike Threepoint                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -67,6 +67,35 @@
 /* other resistances: magic, sickness */
 /* other conveyances: teleport, teleport control, telepathy */
 
+/* The MRACE_FOO replace both the old M2_FOO flags and also the corresponding
+   MH_FOO.  In monst.c, they are only needed for monsters that count as being
+   the "same race" for some player characters.  All others use MRACE_NONE.
+   Note that some races do get both MRACE_FOO and M2_FOO, because they need
+   the M2 flag for Sting/Orcrist/Grimtooth reasons. */
+# define MRACE_NONE     0x00000000L     /* not a playable race */
+/* These start at 8 for historical reasons because they used to be in M2 */
+# define MRACE_HUMAN    0x00000008L     /* is a human */
+# define MRACE_ELF      0x00000010L     /* is an elf */
+# define MRACE_DWARF    0x00000020L     /* is a dwarf */
+# define MRACE_GNOME    0x00000040L     /* is a gnome */
+# define MRACE_ORC      0x00000080L     /* is an orc */
+# define MRACE_FAIRY    0x00000100L     /* is a fairy creature */
+# define MRACE_SYLPH    MRACE_FAIRY     /* for clarity in role.c */
+# define MRACE_RODENT   0x00000200L     /* is a rodent */
+# define MRACE_SCURRIER MRACE_RODENT    /* for clarity in role.c */
+
+# define MP_WANDS        0x00000001L
+# define MP_WAND_BASIC   0x00000001L
+# define MP_WAND_SKILLED 0x00000002L
+# define MP_WAND_EXPERT  0x00000003L
+
+
+# define MP_WANDS        0x00000001L
+# define MP_WAND_BASIC   0x00000001L
+# define MP_WAND_SKILLED 0x00000002L
+# define MP_WAND_EXPERT  0x00000003L
+
+
 # define M1_FLY          0x00000001L    /* can fly or float */
 # define M1_SWIM         0x00000002L    /* can traverse water */
 # define M1_AMORPHOUS    0x00000004L    /* can flow under doors */
@@ -104,10 +133,9 @@
 # define M2_NOPOLY       0x00000001L    /* players mayn't poly into one */
 # define M2_UNDEAD       0x00000002L    /* is walking dead */
 # define M2_WERE         0x00000004L    /* is a lycanthrope */
-# define M2_HUMAN        0x00000008L    /* is a human */
+/* The race flags used to be here; they are now on their own field (MRACE_FOO),
+   but ones that are needed for artifact SPFX_DFLAG2 are duplicated here. */
 # define M2_ELF          0x00000010L    /* is an elf */
-# define M2_DWARF        0x00000020L    /* is a dwarf */
-# define M2_GNOME        0x00000040L    /* is a gnome */
 # define M2_ORC          0x00000080L    /* is an orc */
 # define M2_DEMON        0x00000100L    /* is a demon */
 # define M2_MERC         0x00000200L    /* is a guard or soldier */
@@ -152,6 +180,9 @@
    in NH4 at this time; currently the flag is only honored by the corpse
    revival code.  In the Dev Team's unreleased code, monster movement also
    uses it, which is something we could consider importing in the future. */
+# define M3_BLINKAWAY    0x1000 /* teleports only in LOS, when fleeing */
+# define M3_VANDMGRDUC   0x2000 /* damage reduction as in 3.4.3
+                                   (i.e., ac_threshhold is always 0) */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */
@@ -162,38 +193,29 @@
 # define MZ_GIGANTIC     7              /* off the scale */
 
 
-/* Monster races -- must stay within ROLE_RACEMASK */
-/* Eventually this may become its own field */
-# define MH_HUMAN       M2_HUMAN
-# define MH_ELF         M2_ELF
-# define MH_DWARF       M2_DWARF
-# define MH_GNOME       M2_GNOME
-# define MH_ORC         M2_ORC
-
-
 /* for mons[].geno (constant during game) */
-# define G_UNIQ         0x1000  /* generated only once */
-# define G_NOHELL       0x0800  /* not generated in "hell" */
-# define G_HELL         0x0400  /* generated only in "hell" */
-# define G_NOGEN        0x0200  /* generated only specially */
-# define G_SGROUP       0x0080  /* appear in small groups normally */
-# define G_LGROUP       0x0040  /* appear in large groups normally */
-# define G_GENO         0x0020  /* can be genocided */
-# define G_NOCORPSE     0x0010  /* no corpse left ever */
-# define G_FREQ         0x0007  /* creation frequency mask */
+# define G_UNIQ          0x1000  /* generated only once */
+# define G_NOHELL        0x0800  /* not generated in "hell" */
+# define G_HELL          0x0400  /* generated only in "hell" */
+# define G_NOGEN         0x0200  /* generated only specially */
+# define G_SGROUP        0x0080  /* appear in small groups normally */
+# define G_LGROUP        0x0040  /* appear in large groups normally */
+# define G_GENO          0x0020  /* can be genocided */
+# define G_NOCORPSE      0x0010  /* no corpse left ever */
+# define G_FREQ          0x0007  /* creation frequency mask */
 
 /* rndmonst_inner uses the above flags, and: */
-# define G_INDEPTH      0x2000  /* not too weak or strong for the level */
-# define G_ALIGN        0x4000  /* an appropriate alignment for the level */
+# define G_INDEPTH       0x2000  /* not too weak or strong for the level */
+# define G_ALIGN         0x4000  /* an appropriate alignment for the level */
 /* (It's safe to change the numerical values of these flags in order to fit
    more data into mons[].geno.) */
 
 /* for mvitals[].mvflags (variant during game), along with G_NOCORPSE */
-# define G_KNOWN        0x0004  /* have been encountered */
-# define G_GONE         (G_GENOD|G_EXTINCT)
-# define G_GENOD        0x0002  /* have been genocided */
-# define G_EXTINCT      0x0001  /* have been extinguished as population control
+# define G_KNOWN         0x0004  /* have been encountered */
+# define G_GONE          (G_GENOD|G_EXTINCT)
+# define G_GENOD         0x0002  /* have been genocided */
+# define G_EXTINCT       0x0001  /* have been extinguished as population control
                                  */
-# define MV_KNOWS_EGG   0x0008  /* player recognizes egg of this monster type */
+# define MV_KNOWS_EGG    0x0008  /* player recognizes egg of this monster type */
 
 #endif /* MONFLAG_H */
