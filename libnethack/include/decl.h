@@ -166,7 +166,8 @@ extern struct obj zeroobj;      /* init'd and defined in decl.c */
 
 extern struct monst youmonst;   /* init'd and defined in decl.c */
 # define URACEDATA (Upolyd ? youmonst.data : u.ufemale ? \
-                    &mons[urace.femalenum] : &mons[urace.malenum])
+                    ((urace.femalenum == NON_PM) ? &mons[urace.malenum] : \
+                     &mons[urace.femalenum]) : &mons[urace.malenum])
 extern struct monst *migrating_mons;
 
 extern struct mvitals {
