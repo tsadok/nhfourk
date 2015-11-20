@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright 1988, 1989, 1990, 1992, M. Stephenson                */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -148,21 +148,24 @@ adjattrib(int ndx, int incr, int msgflg)
     if ((ndx == A_INT || ndx == A_WIS)
         && uarmh && uarmh->otyp == DUNCE_CAP) {
         if (msgflg == 0)
-            pline("Your cap constricts briefly, then relaxes again.");
+            pline(msgc_playerimmune,
+                  "Your cap constricts briefly, then relaxes again.");
         return FALSE;
     }
 
     if (incr > 0) {
         if ((AMAX(ndx) >= ATTRMAX(ndx)) && (ACURR(ndx) >= AMAX(ndx))) {
             if (msgflg == 0 && flags.verbose)
-                pline("You're already as %s as you can get.", plusattr[ndx]);
+                pline(msgc_playerimmune, "You're already as %s as you can get.",
+                      plusattr[ndx]);
             ABASE(ndx) = AMAX(ndx) = ATTRMAX(ndx);      /* just in case */
             return FALSE;
         }
 
         if (ABASE(ndx) == ATTRMAX(ndx)) {
             if (msgflg == 0 && flags.verbose)
-                pline("You're as %s as you can be right now.", plusattr[ndx]);
+                pline(msgc_playerimmune,
+                      "You're as %s as you can be right now.", plusattr[ndx]);
             return FALSE;
         }
 
@@ -177,14 +180,16 @@ adjattrib(int ndx, int incr, int msgflg)
     } else {
         if (ABASE(ndx) <= ATTRMIN(ndx)) {
             if (msgflg == 0 && flags.verbose)
-                pline("You're already as %s as you can get.", minusattr[ndx]);
+                pline(msgc_playerimmune, "You're already as %s as you can get.",
+                      minusattr[ndx]);
             ABASE(ndx) = ATTRMIN(ndx);  /* just in case */
             return FALSE;
         }
 
         if (ABASE(ndx) == ATTRMIN(ndx)) {
             if (msgflg == 0 && flags.verbose)
-                pline("You're as %s as you can be right now.", minusattr[ndx]);
+                pline(msgc_playerimmune,
+                      "You're as %s as you can be right now.", minusattr[ndx]);
             return FALSE;
         }
 
@@ -198,7 +203,8 @@ adjattrib(int ndx, int incr, int msgflg)
         }
     }
     if (msgflg <= 0)
-        pline("You feel %s%s!", (incr > 1 || incr < -1) ? "very " : "",
+        pline((incr > 0) ? msgc_intrgain : msgc_intrloss,
+              "You feel %s%s!", (incr > 1 || incr < -1) ? "very " : "",
               (incr > 0) ? plusattr[ndx] : minusattr[ndx]);
     if (moves > 1 && (ndx == A_STR || ndx == A_CON))
         encumber_msg();
@@ -288,8 +294,12 @@ losestr(int num, int how, const char *killer, struct monst *magr)
             u.mhmax -= 6;
 
             if (u.mh <= 0) {
+                /* Would normally be only msgc_statusend, but the player will
+                   presumably still be in serious nutrition trouble, so treat
+                   it as an extra warning of impending doom */
                 if (how == STARVING)
-                    pline("You can't go on any more like this.");
+                    pline(msgc_fatal,
+                          "You can't go on any more like this.");
                 rehumanize(how, killer);
             }
         } else {
@@ -298,7 +308,8 @@ losestr(int num, int how, const char *killer, struct monst *magr)
 
             if (u.uhp <= 0) {
                 if (how == STARVING)
-                    pline("You die from hunger and exhaustion.");
+                    pline(msgc_fatal_predone,
+                          "You die from hunger and exhaustion.");
 
                 if (magr) /* don't give at the same time as STARVING */
                     done_in_by(magr, killer);
@@ -334,7 +345,7 @@ sokoban_guilt(void)
     if (Luck <= -3)         return; /* That's bad enough already. */
 
     if (Hallucination) {
-        pline("Avalanche!");
+        pline(msgc_consequence, "Avalanche!");
         mksobj_at(BOULDER, level, u.ux, u.uy, TRUE, FALSE, rng_main);
         if (uarmh && is_metallic(uarmh)) {
             losehp(rnd(4), "crushed by a hallucinatory boulder, despite wearing a hard helmet.");
@@ -344,7 +355,7 @@ sokoban_guilt(void)
         /* No luck penalty if you get the hallucinatory boulder. */
         return;
     }
-    pline("You feel like a cheater.");
+    pline(msgc_statusbad, "You feel like a cheater.");
     change_luck(-1);
 }
 
@@ -531,25 +542,27 @@ exerchk(void)
                 /* then print an explanation */
                 switch (i) {
                 case A_STR:
-                    pline((mod_val >
-                           0) ? "You must have been exercising." :
-                          "You must have been abusing your %s.",
-                          body_part(BODY));
+                    pline_implied(msgc_hint, "%s",
+                                  ((mod_val > 0) ?
+                                   "You must have been exercising." :
+                                   msgprintf("You must have been abusing "
+                                             "your %s.", body_part(BODY))));
                     break;
                 case A_WIS:
-                    pline((mod_val >
-                           0) ? "You must have been very observant." :
-                          "You haven't been paying attention.");
+                    pline_implied(msgc_hint, (mod_val > 0) ?
+                                  "You must have been very observant." :
+                                  "You haven't been paying attention.");
                     break;
                 case A_DEX:
-                    pline((mod_val >
-                           0) ? "You must have been working on your reflexes." :
-                          "You haven't been working on reflexes lately.");
+                    pline_implied(
+                        msgc_hint, (mod_val > 0) ?
+                        "You must have been working on your reflexes." :
+                        "You haven't been working on reflexes lately.");
                     break;
                 case A_CON:
-                    pline((mod_val >
-                           0) ? "You must be leading a healthy life-style." :
-                          "You haven't been watching your health.");
+                    pline_implied(msgc_hint, (mod_val > 0) ?
+                                  "You must be leading a healthy life-style." :
+                                  "You haven't been watching your health.");
                     break;
                 }
             }
@@ -742,15 +755,16 @@ adjabil(int oldlevel, int newlevel)
                 *(abil->ability) |= mask;
             if (!(*(abil->ability) & INTRINSIC & ~mask)) {
                 if (*(abil->gainstr))
-                    pline("You feel %s!", abil->gainstr);
+                    pline(msgc_intrgain_level, "You feel %s!", abil->gainstr);
             }
         } else if (oldlevel >= abil->ulevel && newlevel < abil->ulevel) {
             *(abil->ability) &= ~mask;
             if (!(*(abil->ability) & INTRINSIC)) {
                 if (*(abil->losestr))
-                    pline("You feel %s!", abil->losestr);
+                    pline(msgc_intrloss_level, "You feel %s!", abil->losestr);
                 else if (*(abil->gainstr))
-                    pline("You feel less %s!", abil->gainstr);
+                    pline(msgc_intrloss_level, "You feel less %s!",
+                          abil->gainstr);
             }
         }
         if (prevabil != *(abil->ability))       /* it changed */
@@ -1018,15 +1032,21 @@ adjalign(int n)
             if (u.ualign.record < SEARED_CONSCIENCE) {
                 /* No warning -- your conscience no longer works. */
             } else if (u.ualign.record < SINNED) {
-                pline("Your transgressions are more than you can bear to think about.");
+                pline(msgc_alignbad, "Your transgressions are "
+                      "more than you can bear to think about.");
             } else if (u.ualign.record < STRAYED) {
-                pline("You worry that your sins will catch up with you.");
+                pline(msgc_alignbad,
+                      "You worry that your sins will catch up with you.");
             } else if (u.ualign.record < HALTINGLY) {
-                pline("Your conscience bothers you, but you dismiss it.");
+                pline(msgc_alignbad,
+                      "Your conscience bothers you, but you dismiss it.");
             } else if (u.ualign.record < FERVENT) {
-                pline("Your conscience bothers you.");
+                pline(msgc_alignbad, "Your conscience bothers you.");
             } else if (u.ualign.record < PIOUS) {
-                pline("You hesitate for a moment, bothered by your conscience.");
+                pline(msgc_alignbad,
+                   "You hesitate for a moment, bothered by your conscience.");
+            } else {
+                pline(msgc_alignbad, "You hesitate for just a moment.");
             }
         }
     } else if (newalign > u.ualign.record) {
@@ -1035,11 +1055,13 @@ adjalign(int n)
             if (u.ualign.record < SINNED) {
                 /* No message -- let 'em sweat a bit. */
             } else if (u.ualign.record < NOMINALLY) {
-                pline("Your conscience bothers you just a little less.");
+                pline(msgc_aligngood,
+                      "Your conscience bothers you just a little less.");
             } else if (u.ualign.record < PIOUS) {
-                pline("Your conscience bothers you a little less.");
+                pline(msgc_aligngood,
+                      "Your conscience bothers you a little less.");
             } else if (u.ualign.record == PIOUS) {
-                pline("Your conscience is assuaged.");
+                pline(msgc_aligngood, "Your conscience is assuaged.");
             }
         }
     }

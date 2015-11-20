@@ -57,7 +57,7 @@ mailhashname(const char *str)
 static void
 delivermail(const char *from, const char *message)
 {
-    pline(maildelivery[mailhashname(from)], from, message);
+    pline(msgc_mail, maildelivery[mailhashname(from)], from, message);
 }
 
 void

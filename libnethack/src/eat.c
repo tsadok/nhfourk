@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -158,7 +158,7 @@ choke(struct obj *food)
             return;
     } else if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL) {
         adjalign(-1);   // gluttony is unchivalrous
-        pline("You feel like a glutton!");
+        pline(msgc_alignbad, "You feel like a glutton!");
     }
 
     exercise(A_CON, FALSE);
@@ -170,10 +170,11 @@ choke(struct obj *food)
 
         // choking by eating AoS doesn't involve stuffing yourself
         if (food && food->otyp == AMULET_OF_STRANGULATION) {
-            pline("You choke, but recover your composure.");
+            pline(msgc_fatalavoid, "You choke, but recover your composure.");
             return;
         }
-        pline("You stuff yourself and then vomit voluminously.");
+        pline(msgc_fatalavoid,
+              "You stuff yourself and then vomit voluminously.");
         morehungry(1000);       // you just got *very* sick!
         vomit();
     } else {
@@ -181,17 +182,18 @@ choke(struct obj *food)
     // your movement points, choking outright is no longer a thing.
         const char *killer;
         if (food) {
-            pline("You choke over your %s.", foodword(food));
+            pline(msgc_fatal_predone, "You choke over your %s.",
+                  foodword(food));
             if (food->oclass == COIN_CLASS) {
                 killer = killer_msg(CHOKING, "a very rich meal");
             } else {
                 killer = killer_msg_obj(CHOKING, food);
             }
         } else {
-            pline("You choke over it.");
+            pline(msgc_fatal_predone, "You choke over it.");
             killer = killer_msg(CHOKING, "a quick snack");
         }
-        pline("You die...");
+        pline(msgc_fatal_predone, "You die...");
         done(CHOKING, killer);
     }
 }
@@ -268,7 +270,7 @@ touchfood(void)
         if ((!carried(*uttf) && costly_spot((*uttf)->ox, (*uttf)->oy) &&
              !(*uttf)->no_charge) || (*uttf)->unpaid) {
             /* create a dummy duplicate to put on bill */
-            verbalize("You bit it, you bought it!");
+            verbalize(msgc_unpaid, "You bit it, you bought it!");
             bill_dummy_object(*uttf);
         }
         nutrition_calculations(*uttf, &((*uttf)->oeaten), NULL, NULL);
@@ -290,7 +292,8 @@ touchfood(void)
         if (*uttf) /* it wasn't destroyed by dropy() */
             (*uttf)->oxlth--;
         else /* explain what happened */
-            pline("You must have fumbled and dropped your food.");
+            pline(msgc_substitute,
+                  "You must have fumbled and dropped your food.");
     }
 }
 
@@ -310,7 +313,7 @@ eat_one_turn(void)
            was on the ground and the character teleported; reset_occupations
            does not check for this because walking away from a meal, back to it,
            and continuing to eat counts as continuing */
-        pline("Huh? Where did my food go?");
+        pline(msgc_interrupted, "Huh? Where did my food go?");
         return 0;
     }
 
@@ -346,7 +349,7 @@ done_eating(boolean message)
     newuhs(FALSE);
 
     if (message)
-        pline("You finish eating %s.", food_xname(otmp, TRUE));
+        pline(msgc_actionok, "You finish eating %s.", food_xname(otmp, TRUE));
 
     if (otmp->otyp == CORPSE)
         cpostfx(otmp->corpsenm);
@@ -365,8 +368,8 @@ maybe_cannibal(int pm, boolean allowmsg)
     if (!CANNIBAL_ALLOWED() && your_race(&mons[pm])) {
         if (allowmsg) {
             if (Upolyd)
-                pline("You have a bad feeling deep inside.");
-            pline("You cannibal!  You will regret this!");
+                pline(msgc_intrloss, "You have a bad feeling deep inside.");
+            pline(msgc_intrloss, "You cannibal!  You will regret this!");
         }
         HAggravate_monster |= FROMOUTSIDE;
         change_luck(-rn1(4, 2));        /* -5..-2 */
@@ -384,7 +387,7 @@ cprefx(int pm)
     if (flesh_petrifies(&mons[pm])) {
         if (!Stone_resistance && !(poly_when_stoned(youmonst.data) &&
                                    polymon(PM_STONE_GOLEM, TRUE))) {
-            pline("You turn to stone.");
+            pline(msgc_fatal_predone, "You turn to stone.");
             done(STONING,
                  killer_msg(STONING,
                             msgcat_many("tasting ", mons[pm].mname,
@@ -401,7 +404,7 @@ cprefx(int pm)
     case PM_HOUSECAT:
     case PM_LARGE_CAT:
         if (!CANNIBAL_ALLOWED()) {
-            pline("You feel that eating the %s was a bad idea.",
+            pline(msgc_intrloss, "You feel that eating the %s was a bad idea.",
                   mons[pm].mname);
             HAggravate_monster |= FROMOUTSIDE;
         }
@@ -414,7 +417,7 @@ cprefx(int pm)
     case PM_PESTILENCE:
     case PM_FAMINE:
         {
-            pline("Eating that is instantly fatal.");
+            pline(msgc_fatal_predone, "Eating that is instantly fatal.");
             done(DIED, msgcat("unwisely ate the body of ", mons[pm].mname));
             /* It so happens that since we know these monsters cannot appear in
                tins, u.utracked[tos_food] will always be what we want, which is
@@ -429,7 +432,7 @@ cprefx(int pm)
             !unsolid(youmonst.data) &&
             level->locations[u.ux][u.uy].typ != LAVAPOOL &&
             youmonst.data != &mons[PM_GREEN_SLIME]) {
-            pline("You don't feel very well.");
+            pline(msgc_fatal, "You don't feel very well.");
             Slimed = 10L;
         }
         /* Fall through */
@@ -446,10 +449,11 @@ fix_petrification(void)
     Stoned = 0;
     set_delayed_killer(STONING, NULL);
     if (Hallucination)
-        pline("What a pity - you just ruined a future piece of %sart!",
+        pline(msgc_statusheal,
+              "What a pity - you just ruined a future piece of %sart!",
               ACURR(A_CHA) > 15 ? "fine " : "");
     else
-        pline("You feel limber!");
+        pline(msgc_statusheal, "You feel limber!");
 }
 
 /*
@@ -585,7 +589,7 @@ givit(int type, const struct permonst *ptr, int scalefactor)
     switch (type) {
     case FIRE_RES:
         if (!(HFire_resistance & FROMOUTSIDE)) {
-            pline(Hallucination ? "You be chillin'." :
+            pline(msgc_intrgain, Hallucination ? "You be chillin'." :
                   "You feel a momentary chill.");
             HFire_resistance |= FROMOUTSIDE;
         }
@@ -593,21 +597,22 @@ givit(int type, const struct permonst *ptr, int scalefactor)
 
     case SLEEP_RES:
         if (!(HSleep_resistance & FROMOUTSIDE)) {
-            pline("You feel wide awake.");
+            pline(msgc_intrgain, "You feel wide awake.");
             HSleep_resistance |= FROMOUTSIDE;
         }
         break;
 
     case COLD_RES:
         if (!(HCold_resistance & FROMOUTSIDE)) {
-            pline("You feel full of hot air.");
+            pline(msgc_intrgain, "You feel full of hot air.");
             HCold_resistance |= FROMOUTSIDE;
         }
         break;
 
     case DISINT_RES:
         if (!(HDisint_resistance & FROMOUTSIDE)) {
-            pline(Hallucination ? "You feel totally together, man." :
+            pline(msgc_intrgain,
+                  Hallucination ? "You feel totally together, man." :
                   "You feel very firm.");
             HDisint_resistance |= FROMOUTSIDE;
         }
@@ -616,16 +621,17 @@ givit(int type, const struct permonst *ptr, int scalefactor)
     case SHOCK_RES:    /* shock (electricity) resistance */
         if (!(HShock_resistance & FROMOUTSIDE)) {
             if (Hallucination)
-                pline("You feel grounded in reality.");
+                pline(msgc_intrgain, "You feel grounded in reality.");
             else
-                pline("Your health currently feels amplified!");
+                pline(msgc_intrgain, "Your health currently feels amplified!");
             HShock_resistance |= FROMOUTSIDE;
         }
         break;
 
     case POISON_RES:
         if (!(HPoison_resistance & FROMOUTSIDE)) {
-            pline(Poison_resistance ? "You feel especially healthy." :
+            pline(msgc_intrgain,
+                  Poison_resistance ? "You feel especially healthy." :
                   "You feel healthy.");
             HPoison_resistance |= FROMOUTSIDE;
         }
@@ -633,7 +639,8 @@ givit(int type, const struct permonst *ptr, int scalefactor)
 
     case TELEPORT:
         if (!(HTeleportation & FROMOUTSIDE)) {
-            pline(Hallucination ? "You feel diffuse." : "You feel very jumpy.");
+            pline(msgc_intrgain,
+                  Hallucination ? "You feel diffuse." : "You feel very jumpy.");
             HTeleportation |= FROMOUTSIDE;
             update_supernatural_abilities();
         }
@@ -641,7 +648,8 @@ givit(int type, const struct permonst *ptr, int scalefactor)
 
     case TELEPORT_CONTROL:
         if (!(HTeleport_control & FROMOUTSIDE)) {
-            pline(Hallucination ? "You feel centered in your personal space." :
+            pline(msgc_intrgain,
+                  Hallucination ? "You feel centered in your personal space." :
                   "You feel in control of yourself.");
             HTeleport_control |= FROMOUTSIDE;
         }
@@ -649,7 +657,8 @@ givit(int type, const struct permonst *ptr, int scalefactor)
 
     case TELEPAT:
         if (!(HTelepat & FROMOUTSIDE)) {
-            pline(Hallucination ? "You feel in touch with the cosmos." :
+            pline(msgc_intrgain,
+                  Hallucination ? "You feel in touch with the cosmos." :
                   "You feel a strange mental acuity.");
             HTelepat |= FROMOUTSIDE;
             /* If blind, make sure monsters show up. */
@@ -677,15 +686,17 @@ cpostfx(int pm)
             int old_uen = u.uen;
             boolean can_boost_max = !rn2_on_rng(3, rng_newt_pw_boost) ||
                 ((u.uen + u.uenmax) < 35);
+            enum msg_channel msgc = msgc_statusheal;
 
             u.uen += 1 + rn2_on_rng(3, rng_newt_pw_boost);
             if (u.uen > u.uenmax) {
                 if (can_boost_max)
                     u.uenmax++;
                 u.uen = u.uenmax;
+                msgc = msgc_intrgain;
             }
             if (old_uen != u.uen)
-                pline("You feel a mild buzz.");
+                pline(msgc, "You feel a mild buzz.");
         }
         break;
     case PM_WRAITH:
@@ -716,7 +727,7 @@ cpostfx(int pm)
                 self_invis_message();
         } else {
             if (!(HInvis & INTRINSIC))
-                pline("You feel hidden!");
+                pline(msgc_intrgain, "You feel hidden!");
             HInvis |= FROMOUTSIDE;
             HSee_invisible |= FROMOUTSIDE;
         }
@@ -741,7 +752,8 @@ cpostfx(int pm)
         if (youmonst.data->mlet != S_MIMIC && !Unchanging) {
             const char *buf;
 
-            pline("You can't resist the temptation to mimic %s...",
+            pline(msgc_statusgood,
+                  "You can't resist the temptation to mimic %s...",
                   Hallucination ? "an orange" : "a pile of gold");
             /* A pile of gold can't ride. */
             if (u.usteed)
@@ -761,13 +773,14 @@ cpostfx(int pm)
         }
         break;
     case PM_QUANTUM_MECHANIC:
-        pline("Your velocity suddenly seems very uncertain!");
+        pline_implied((HFast & INTRINSIC) ? msgc_statusbad : msgc_statusgood,
+                      "Your velocity suddenly seems very uncertain!");
         if (HFast & INTRINSIC) {
             HFast &= ~INTRINSIC;
-            pline("You seem slower.");
+            pline(msgc_intrloss, "You seem slower.");
         } else {
             HFast |= FROMOUTSIDE;
-            pline("You seem faster.");
+            pline(msgc_intrgain, "You seem faster.");
         }
         break;
     case PM_LIZARD:
@@ -780,7 +793,7 @@ cpostfx(int pm)
     case PM_DOPPELGANGER:
         /* case PM_SANDESTIN: */
         if (!Unchanging) {
-            pline("You feel a change coming over you.");
+            pline(msgc_statusbad, "You feel a change coming over you.");
             polyself(FALSE);
         }
         break;
@@ -788,12 +801,12 @@ cpostfx(int pm)
     case PM_MASTER_MIND_FLAYER:
         if (ABASE(A_INT) < ATTRMAX(A_INT)) {
             if (!rn2_on_rng(2, rng_50percent_a_int)) {
-                pline("Yum! That was real brain food!");
+                pline(msgc_intrgain, "Yum! That was real brain food!");
                 adjattrib(A_INT, 1, FALSE);
                 break;  /* don't give them telepathy, too */
             }
         } else {
-            pline("For some reason, that tasted bland.");
+            pline(msgc_noconsequence, "For some reason, that tasted bland.");
         }
         /* fall through to default case */
     default:{
@@ -802,7 +815,7 @@ cpostfx(int pm)
 
             if (dmgtype(ptr, AD_STUN) || dmgtype(ptr, AD_HALU) ||
                 pm == PM_VIOLET_FUNGUS) {
-                pline("Oh wow!  Great stuff!");
+                pline(msgc_statusbad, "Oh wow!  Great stuff!");
                 make_hallucinated(HHallucination + 200, FALSE);
             }
             if (is_giant(ptr))
@@ -858,7 +871,8 @@ costly_tin(const char *verb /* if 0, the verb is "open" */ )
           costly_spot(u.utracked[tos_tin]->ox, u.utracked[tos_tin]->oy) &&
           !u.utracked[tos_tin]->no_charge)
          || u.utracked[tos_tin]->unpaid)) {
-        verbalize("You %s it, you bought it!", verb ? verb : "open");
+        verbalize(msgc_unpaid, "You %s it, you bought it!",
+                  verb ? verb : "open");
         if (u.utracked[tos_tin]->quan > 1L)
             u.utracked[tos_tin] = splitobj(u.utracked[tos_tin], 1L);
         bill_dummy_object(u.utracked[tos_tin]);
@@ -890,7 +904,8 @@ eat_tin_one_turn(void)
         (!carried(u.utracked[tos_tin]) &&
          !obj_here(u.utracked[tos_tin], u.ux, u.uy))) {
         /* perhaps it was stolen? */
-        pline("The tin you were opening seems to have gone missing.");
+        pline(msgc_interrupted,
+              "The tin you were opening seems to have gone missing.");
         return 0;
     }
 
@@ -898,7 +913,8 @@ eat_tin_one_turn(void)
        this, a tin that would take more than 50 moves is given a remaining moves
        count of -1 (i.e. infinity), and we complain when it reaches -51. */
     if (u.uoccupation_progress[tos_tin]-- < -50) {
-        pline("You give up your attempt to open the tin.");
+        pline(msgc_interrupted,
+              "You give up your attempt to open the tin.");
         u.utracked[tos_tin] = 0;
         u.uoccupation_progress[tos_tin] = 0;
         return 0;
@@ -915,10 +931,10 @@ eat_tin_one_turn(void)
         costly_tin("destroyed");
         goto use_me;
     }
-    pline("You succeed in opening the tin.");
+    pline(msgc_actionok, "You succeed in opening the tin.");
     if (u.utracked[tos_tin]->spe != 1) {
         if (u.utracked[tos_tin]->corpsenm == NON_PM) {
-            pline("It turns out to be empty.");
+            pline(msgc_noconsequence, "It turns out to be empty.");
             u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
             costly_tin(NULL);
             goto use_me;
@@ -949,28 +965,28 @@ eat_tin_one_turn(void)
         }
         if (which == 0)
             what = makeplural(what);
-        pline("It smells like %s%s.", (which == 2) ? "the " : "", what);
+        pline(msgc_info, "It smells like %s%s.",
+              (which == 2) ? "the " : "", what);
         
         /* Note that edibility_prompts requires u.uedibility to warn about tin
          * contents, so it will return 0 if you don't have that property. */
         foodwarn = edibility_prompts(u.utracked[tos_tin]);
         if (foodwarn && u.uedibility) {
-            pline("Your %s stops tingling and your "
+            pline(msgc_statusend, "Your %s stops tingling and your "
                   "sense of smell returns to normal.", body_part(NOSE));
             u.uedibility = 0;
         }
         if (foodwarn == 1) { /* Player chose not to eat it. */
             costly_tin(NULL);
             if (flags.verbose)
-                pline("You discard the open tin.");
+                pline(msgc_actionboring, "You discard the open tin.");
             goto use_me;
         } else if (foodwarn == 2) { /* Player chose to go ahead and eat it. */
             /* Fall through to the code below. */
         } else if (yn("Eat it?") == 'n') {
             if (!Hallucination)
                 u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
-            if (flags.verbose)
-                pline("You discard the open tin.");
+            pline(msgc_actionboring, "You discard the open tin.");
             costly_tin(NULL);
             goto use_me;
         }
@@ -978,7 +994,7 @@ eat_tin_one_turn(void)
         /* in case a previous meal was cancelled */
         u.utracked[tos_food] = NULL;
 
-        pline("You consume %s %s.", tintxts[r].txt,
+        pline(msgc_actionok, "You consume %s %s.", tintxts[r].txt,
               mons[u.utracked[tos_tin]->corpsenm].mname);
 
         /* KMH, conduct */
@@ -1007,21 +1023,22 @@ eat_tin_one_turn(void)
         if (r == 0 || r == FRENCH_FRIED_TIN) {
             /* Assume !Glib, because you can't open tins when Glib. */
             incr_itimeout(&Glib, rnd(15));
-            pline("Eating deep fried food made your %s very slippery.",
+            pline(msgc_statusbad,
+                  "Eating deep fried food made your %s very slippery.",
                   makeplural(body_part(FINGER)));
         }
     } else {
         if (u.utracked[tos_tin]->cursed)
-            pline("It contains some decaying%s%s substance.", Blind ? "" : " ",
+            pline(msgc_info,
+                  "It contains some decaying%s%s substance.", Blind ? "" : " ",
                   Blind ? "" : hcolor("green"));
         else
-            pline("It contains spinach.");
+            pline(msgc_info, "It contains spinach.");
 
         if (yn("Eat it?") == 'n') {
             if (!Hallucination && !u.utracked[tos_tin]->cursed)
                 u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
-            if (flags.verbose)
-                pline("You discard the open tin.");
+            pline(msgc_actionboring, "You discard the open tin.");
             costly_tin(NULL);
             goto use_me;
         }
@@ -1030,8 +1047,8 @@ eat_tin_one_turn(void)
         costly_tin(NULL);
 
         if (!u.utracked[tos_tin]->cursed)
-            pline("This makes you feel like %s!",
-                  Hallucination ? "Swee'pea" : "Popeye");
+            pline_implied(msgc_intrgain, "This makes you feel like %s!",
+                          Hallucination ? "Swee'pea" : "Popeye");
         lesshungry(600, u.utracked[tos_tin]);
         gainstr(u.utracked[tos_tin], 0);
         break_conduct(conduct_food);
@@ -1055,13 +1072,13 @@ start_tin(struct obj *otmp)
     int tmp;
 
     if (metallivorous(youmonst.data)) {
-        pline("You bite right into the metal tin...");
+        pline(msgc_occstart, "You bite right into the metal tin...");
         tmp = 1;
     } else if (nolimbs(youmonst.data)) {
-        pline("You cannot handle the tin properly to open it.");
+        pline(msgc_cancelled, "You cannot handle the tin properly to open it.");
         return FALSE;
     } else if (otmp->blessed) {
-        pline("The tin opens like magic!");
+        pline(msgc_occstart, "The tin opens like magic!");
         tmp = 1;
     } else if (uwep) {
         switch (uwep->otyp) {
@@ -1083,12 +1100,14 @@ start_tin(struct obj *otmp)
         default:
             goto no_opener;
         }
-        pline("Using your %s you try to open the tin.", aobjnam(uwep, NULL));
+        pline(msgc_occstart, "Using your %s you try to open the tin.",
+              aobjnam(uwep, NULL));
     } else {
     no_opener:
-        pline("It is not so easy to open this tin.");
+        pline(msgc_occstart, "It is not so easy to open this tin.");
         if (Glib) {
-            pline("The tin slips from your %s.", makeplural(body_part(FINGER)));
+            pline(msgc_badidea, "The tin slips from your %s.",
+                  makeplural(body_part(FINGER)));
             if (otmp->quan > 1L) {
                 otmp = splitobj(otmp, 1L);
             }
@@ -1113,18 +1132,19 @@ start_tin(struct obj *otmp)
 static int
 rottenfood(struct obj *obj)
 {
-    pline("Blecch!  Rotten %s!", foodword(obj));
+    pline(msgc_substitute, "Blecch!  Rotten %s!", foodword(obj));
     if (!rn2(4)) {
         if (Hallucination)
-            pline("You feel rather trippy.");
+            pline(msgc_statusbad, "You feel rather trippy.");
         else
-            pline("You feel rather %s.", body_part(LIGHT_HEADED));
+            pline(msgc_statusbad, "You feel rather %s.",
+                  body_part(LIGHT_HEADED));
         make_confused(HConfusion + dice(2, 4), FALSE);
     } else if (!rn2(4) && !Blind) {
-        pline("Everything suddenly goes dark.");
+        pline(msgc_statusbad, "Everything suddenly goes dark.");
         make_blinded((long)dice(2, 10), FALSE);
         if (!Blind)
-            pline("Your vision quickly clears.");
+            pline(msgc_statusheal, "Your vision quickly clears.");
     } else if (!rn2(3)) {
         const char *what, *where;
 
@@ -1135,7 +1155,7 @@ rottenfood(struct obj *obj)
         else
             what = "you slap against the", where =
                 (u.usteed) ? "saddle" : surface(u.ux, u.uy);
-        pline("The world spins and %s %s.", what, where);
+        pline(msgc_statusbad, "The world spins and %s %s.", what, where);
         if (!Levitation && !Flying && !u.usteed &&
             is_damp_terrain(level, u.ux, u.uy))
             water_damage_chain(invent, FALSE);
@@ -1179,12 +1199,14 @@ eatcorpse(void)
     if (mnum != PM_ACID_BLOB && !stoneable && rotted > 5L) {
         boolean cannibal = maybe_cannibal(mnum, FALSE);
 
-        pline("Ulch!  That %s was tainted%s!",
-              mons[mnum].mlet ==
-              S_FUNGUS ? "fungoid vegetation" : !vegetarian(&mons[mnum]) ?
-              "meat" : "protoplasm", cannibal ? "; you cannibal" : "");
+        pline(Sick_resistance ? msgc_playerimmune : msgc_fatal,
+              "Ulch!  That %s was tainted%s!",
+              mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
+              !vegetarian(&mons[mnum]) ? "meat" : "protoplasm",
+              cannibal ? "; you cannibal" : "");
         if (Sick_resistance) {
-            pline("It doesn't seem at all sickening, though...");
+            pline(msgc_playerimmune,
+                  "It doesn't seem at all sickening, though...");
         } else {
             const char *buf;
             long sick_time;
@@ -1208,22 +1230,26 @@ eatcorpse(void)
         return 2;
     } else if (acidic(&mons[mnum]) && !Acid_resistance) {
         tp++;
-        pline("You have a very bad case of stomach acid.");
+        pline(msgc_badidea, "You have a very bad case of stomach acid.");
         /* not body_part() */
         losehp(rnd(15), killer_msg(DIED, "an acidic corpse"));
     } else if (poisonous(&mons[mnum]) && rn2(5)) {
         tp++;
-        pline("Ecch - that must have been poisonous!");
         if (!Poison_resistance) {
+            pline(msgc_intrloss, "Ecch - that must have been poisonous!");
             losestr(rnd(4), DIED, killer_msg(DIED, "a poisonous corpse"), NULL);
             losehp(rnd(15), killer_msg(DIED, "a poisonous corpse"));
-        } else
-            pline("You seem unaffected by the poison.");
+        } else {
+            /* change from 3.4.3: reduce message spam by condensing two
+               messages into one */
+            pline(msgc_playerimmune,
+                  "It doesn't seem as poisonous as you thought...");
+        }
         /* now any corpse left too long will make you mildly ill */
     } else if ((rotted > 5L || (rotted > 3L && rn2(5)))
                && !Sick_resistance) {
         tp++;
-        pline("You feel %ssick.", (Sick) ? "very " : "");
+        pline(msgc_statusbad, "You feel %ssick.", (Sick) ? "very " : "");
         losehp(rnd(8), killer_msg(DIED, "a cadaver"));
     }
 
@@ -1244,7 +1270,7 @@ eatcorpse(void)
             if (u.utracked[tos_food]) {
                 otmp = u.utracked[tos_food];
                 if (!retcode)
-                    pline("The corpse rots away completely.");
+                    pline(msgc_itemloss, "The corpse rots away completely.");
                 if (carried(otmp))
                     useup(otmp);
                 else
@@ -1253,7 +1279,7 @@ eatcorpse(void)
             retcode = 2;
         }
     } else {
-        pline("%s%s %s!",
+        pline(msgc_actionok, "%s%s %s!",
               !uniq ? "This " : !type_is_pname(&mons[mnum]) ? "The " : "",
               food_xname(otmp, FALSE), (vegan(&mons[mnum])
                                         ? (!carnivorous(youmonst.data) &&
@@ -1277,19 +1303,23 @@ fprefx(struct obj *otmp)
     switch (otmp->otyp) {
     case FOOD_RATION:
         if (u.uhunger <= 200)
-            pline(Hallucination ? "Oh wow, like, superior, man!" :
+            pline(msgc_statusheal,
+                  Hallucination ? "Oh wow, like, superior, man!" :
                   "That food really hit the spot!");
         else if (u.uhunger <= 700)
-            pline("That satiated your %s!", body_part(STOMACH));
+            pline(msgc_statusbad, "That satiated your %s!",
+                  body_part(STOMACH));
         break;
     case TRIPE_RATION:
         if (carnivorous(youmonst.data) && !humanoid(youmonst.data))
-            pline("That tripe ration was surprisingly good!");
+            pline(msgc_playerimmune,
+                  "That tripe ration was surprisingly good!");
         else if (maybe_polyd(is_orc(youmonst.data), Race_if(PM_ORC)))
-            pline(Hallucination ? "Tastes great! Less filling!" :
+            pline(msgc_playerimmune,
+                  Hallucination ? "Tastes great! Less filling!" :
                   "Mmm, tripe... not bad!");
         else {
-            pline("Yak - dog food!");
+            pline(msgc_badidea, "Yak - dog food!");
             more_experienced(1, 0);
             newexplevel();
             /* not cannibalism, but we use similar criteria for deciding
@@ -1318,36 +1348,39 @@ fprefx(struct obj *otmp)
     default:
         if (otmp->otyp == SLIME_MOLD && !otmp->cursed &&
             otmp->spe == gamestate.fruits.current)
-            pline("My, that was a %s %s!", Hallucination ? "primo" : "yummy",
-                  singular(otmp, xname));
+            pline(msgc_actionok, "My, that was a %s %s!",
+                  Hallucination ? "primo" : "yummy", singular(otmp, xname));
         else
 #ifdef UNIX
         if (otmp->otyp == APPLE || otmp->otyp == PEAR) {
             if (!Hallucination)
-                pline("Core dumped.");
+                pline(msgc_actionok, "Core dumped.");
             else {
-/* This is based on an old Usenet joke, a fake a.out manual page */
+                /* This is based on an old Usenet joke, a fake a.out manual
+                   page */
                 int x = rnd(100);
 
                 if (x <= 75)
-                    pline("Segmentation fault -- core dumped.");
+                    pline(msgc_actionok, "Segmentation fault -- core dumped.");
                 else if (x <= 99)
-                    pline("Bus error -- core dumped.");
+                    pline(msgc_actionok, "Bus error -- core dumped.");
                 else
-                    pline("Yo' mama -- core dumped.");
+                    pline(msgc_actionok, "Yo' mama -- core dumped.");
             }
         } else
 #endif
         if (otmp->otyp == EGG && stale_egg(otmp)) {
-            pline("Ugh.  Rotten egg."); /* perhaps others like it */
+            /* perhaps others like it */
+            pline(msgc_statusbad, "Ugh.  Rotten egg.");
             make_vomiting(Vomiting + dice(10, 4), TRUE);
-        } else
+        } else {
         give_feedback:
-            pline("This %s is %s", singular(otmp, xname),
+            pline(msgc_actionok, "This %s is %s", singular(otmp, xname),
                   otmp->cursed ? (Hallucination ? "grody!" : "terrible!")
                   : (otmp->otyp == CRAM_RATION || otmp->otyp == K_RATION ||
                      otmp->otyp == C_RATION)
                   ? "bland." : Hallucination ? "gnarly!" : "delicious!");
+        }
         break;
     }
 }
@@ -1355,7 +1388,8 @@ fprefx(struct obj *otmp)
 static void
 accessory_has_effect(struct obj *otmp)
 {
-    pline("Magic spreads through your %s as you digest the %s.",
+    pline(msgc_intrgain,
+          "Magic spreads through your %s as you digest the %s.",
           body_part(BODY), otmp->oclass == RING_CLASS ? "ring" : "amulet");
 }
 
@@ -1394,7 +1428,7 @@ eataccessory(struct obj *otmp)
                 if (Invis && !oldprop && !worn_extrinsic(SEE_INVIS) &&
                     !perceives(youmonst.data) && !Blind) {
                     newsym(u.ux, u.uy);
-                    pline("Suddenly you can see yourself.");
+                    pline(msgc_intrgain, "Suddenly you can see yourself.");
                     makeknown(typ);
                 }
                 break;
@@ -1402,7 +1436,8 @@ eataccessory(struct obj *otmp)
                 if (!oldprop && !worn_extrinsic(INVIS) &&
                     !worn_blocked(INVIS) && !See_invisible && !Blind) {
                     newsym(u.ux, u.uy);
-                    pline("Your %s takes on a %s transparency...",
+                    pline(msgc_intrgain,
+                          "Your %s takes on a %s transparency...",
                           body_part(BODY),
                           Hallucination ? "normal" : "strange");
                     makeknown(typ);
@@ -1455,14 +1490,14 @@ eataccessory(struct obj *otmp)
             if (!(HSleep_resistance & FROMOUTSIDE))
                 accessory_has_effect(otmp);
             if (!Sleep_resistance)
-                pline("You feel wide awake.");
+                pline(msgc_intrgain, "You feel wide awake.");
             HSleep_resistance |= FROMOUTSIDE;
             break;
         case AMULET_OF_CHANGE:
             accessory_has_effect(otmp);
             makeknown(typ);
             change_sex();
-            pline("You are suddenly very %s!",
+            pline(msgc_intrloss, "You are suddenly very %s!",
                   u.ufemale ? "feminine" : "masculine");
             break;
         case AMULET_OF_UNCHANGING:
@@ -1474,7 +1509,8 @@ eataccessory(struct obj *otmp)
             }
             break;
         case AMULET_OF_STRANGULATION:
-            pline("You have difficulty getting the amulet down.");
+            pline(msgc_cancelled1,
+                  "You have difficulty getting the amulet down.");
             /* choke(otmp); */
             break;
         case AMULET_OF_RESTFUL_SLEEP:  /* another bad idea! */
@@ -1518,12 +1554,13 @@ eatspecial(int nutrition, struct obj *otmp)
 
     /* KMH -- idea by "Tommy the Terrorist" */
     if ((otmp->otyp == TRIDENT) && !otmp->cursed) {
-        pline(Hallucination ? "Four out of five dentists agree." :
+        pline(msgc_yafm,
+              Hallucination ? "Four out of five dentists agree." :
               "That was pure chewing satisfaction!");
         exercise(A_WIS, TRUE);
     }
     if ((otmp->otyp == FLINT) && !otmp->cursed) {
-        pline("Yabba-dabba delicious!");
+        pline(msgc_yafm, "Yabba-dabba delicious!");
         exercise(A_CON, TRUE);
     }
 
@@ -1809,7 +1846,8 @@ doeat(const struct nh_cmd_arg *arg)
     struct obj *otmp;
 
     if (Strangled) {
-        pline("If you can't breathe air, how can you consume solids?");
+        pline(msgc_cancelled,
+              "If you can't breathe air, how can you consume solids?");
         return 0;
     }
     /* In the case of a continued action, continue eating the existing object if
@@ -1836,12 +1874,12 @@ doeat(const struct nh_cmd_arg *arg)
           touch_artifact(otmp, &youmonst))) {
         return 1;
     } else if (!is_edible(otmp, TRUE)) {
-        pline("You cannot eat that!");
+        pline(msgc_mispaste, "You cannot eat that!");
         return 0;
     } else if ((otmp->owornmask & (W_ARMOR | W_MASK(os_tool) |
                                    W_MASK(os_amul) | W_MASK(os_saddle))) != 0) {
         /* let them eat rings */
-        pline("You can't eat something you're wearing.");
+        pline(msgc_cancelled, "You can't eat something you're wearing.");
         return 0;
     }
     if (is_metallic(otmp) && u.umonnum == PM_RUST_MONSTER &&
@@ -1853,12 +1891,12 @@ doeat(const struct nh_cmd_arg *arg)
             else
                 otmp = splitobj(otmp, 1L);
         }
-        pline("Ulch!  That %s was rustproofed!", xname(otmp));
+        pline(msgc_statusbad, "Ulch!  That %s was rustproofed!", xname(otmp));
         /* The regurgitated object's rustproofing is gone now */
         otmp->oerodeproof = 0;
         make_stunned(HStun + rn2(10), TRUE);
-        pline("You spit %s out onto the %s.", the(xname(otmp)),
-              surface(u.ux, u.uy));
+        pline(msgc_consequence, "You spit %s out onto the %s.",
+              the(xname(otmp)), surface(u.ux, u.uy));
         if (carried(otmp)) {
             unwield_silently(otmp);
             freeinv(otmp);
@@ -1869,7 +1907,7 @@ doeat(const struct nh_cmd_arg *arg)
     }
     /* KMH -- Slow digestion is... indigestible */
     if (otmp->otyp == RIN_SLOW_DIGESTION) {
-        pline("This ring is indigestible!");
+        pline(msgc_statusbad, "This ring is indigestible!");
         rottenfood(otmp);
         if (otmp->dknown && !objects[otmp->otyp].oc_name_known &&
             !objects[otmp->otyp].oc_uname)
@@ -1884,7 +1922,7 @@ doeat(const struct nh_cmd_arg *arg)
         if (!touch_artifact(otmp, &youmonst))
             return 1;
         if (!is_edible(otmp, TRUE)) {
-            pline("You can no longer eat %s.", doname(otmp));
+            pline(msgc_interrupted, "You can no longer eat %s.", doname(otmp));
             return 1;
         }
 
@@ -1912,14 +1950,15 @@ doeat(const struct nh_cmd_arg *arg)
             rottenfood(otmp);
 
         if (otmp->oclass == WEAPON_CLASS && otmp->opoisoned) {
-            pline("Ecch - that must have been poisonous!");
             if (!Poison_resistance) {
+                pline(msgc_intrloss, "Ecch - that must have been poisonous!");
                 losestr(rnd(4), DIED, killer_msg_obj(DIED, otmp), NULL);
                 losehp(rnd(15), killer_msg_obj(DIED, otmp));
-            } else
-                pline("You seem unaffected by the poison.");
+            } else /* now a single message, as with the poisonous() check for
+                      corpses, but a different one for ID knowledge reasons */
+                pline(msgc_playerimmune, "Was that thing poisoned?");
         } else if (!otmp->cursed)
-            pline("This %s is delicious!",
+            pline(msgc_actionok, "This %s is delicious!",
                   otmp->oclass == COIN_CLASS ? foodword(otmp) :
                   singular(otmp, xname));
 
@@ -1939,7 +1978,7 @@ doeat(const struct nh_cmd_arg *arg)
     if (otmp == u.utracked[tos_food]) {
         /* Continuing a meal. */
         if (turnstate.continue_message)
-            pline("You resume your meal.");
+            pline(msgc_occstart, "You resume your meal.");
 
         /* 3.4.3 indirectly has a cprefx check here, but it doesn't make sense
            that the number of cannibalism penalties you get depends on how many
@@ -1960,7 +1999,8 @@ doeat(const struct nh_cmd_arg *arg)
             int res = edibility_prompts(otmp);
 
             if (res && u.uedibility) {
-                pline("Your %s stops tingling and your "
+                pline(msgc_intrloss,
+                      "Your %s stops tingling and your "
                       "sense of smell returns to normal.", body_part(NOSE));
                 u.uedibility = 0;
             }
@@ -2119,7 +2159,7 @@ lesshungry(int num, struct obj *otmp)
        when you're about to choke. Exception: fruit juice. This now uses
        a new interface (stop automatically, continue with control-A). */
     if (u.uhunger >= 1500 && u.uhunger - num < 1500) {
-        pline("You're having a hard time getting all of it down.");
+        pline(msgc_fatal, "You're having a hard time getting all of it down.");
         /* Hack: the interruption can mean that you drop just back under
            1500 for next turn and get warned again. Using a range would mean
            that sometimes the warning doesn't appear, so instead we add on
@@ -2159,7 +2199,7 @@ newuhs(boolean incr)
             if (u.uhs != FAINTED && !u_helpless(hm_all)) {
                 /* stop what you're doing, then faint */
                 action_interrupted();
-                pline("You faint from lack of food.");
+                pline(msgc_fatal, "You faint from lack of food.");
                 newhs = u.uhs = FAINTED;
                 helpless(10 - (u.uhunger / 10), hr_fainted,
                          "fainted from lack of food", NULL);
@@ -2169,7 +2209,7 @@ newuhs(boolean incr)
         } else if (u.uhunger < -(int)(200 + 20 * ACURR(A_CON))) {
             u.uhs = STARVED;
             bot();
-            pline("You die from starvation.");
+            pline(msgc_fatal_predone, "You die from starvation.");
             done(STARVING, killer_msg(STARVING, "starvation"));
             /* if we return, we lifesaved, and that calls newuhs */
             return;
@@ -2177,13 +2217,14 @@ newuhs(boolean incr)
     }
 
     if (newhs != u.uhs) {
+        enum msg_channel msgc = incr ? msgc_statusbad : msgc_statusheal;
         switch (newhs) {
         case HUNGRY:
             if (Hallucination) {
-                pline((!incr) ? "Your munchies are not as bad now." :
+                pline(msgc, (!incr) ? "Your munchies are not as bad now." :
                       "You are getting the munchies.");
             } else
-                pline((!incr) ? "You don't feel so weak now." :
+                pline(msgc, (!incr) ? "You don't feel so weak now." :
                       (u.uhunger < 145) ? "You feel hungry." :
                       "You are beginning to feel hungry.");
             if (incr && flags.occupation != occ_food)
@@ -2191,17 +2232,18 @@ newuhs(boolean incr)
             break;
         case WEAK:
             if (Hallucination)
-                pline((!incr) ? "You still have the munchies." :
+                pline(msgc, (!incr) ? "You still have the munchies." :
                       "The munchies are interfering with your motor "
                       "capabilities.");
             else if (incr &&
                      (Role_if(PM_WIZARD) || Race_if(PM_ELF) ||
                       Role_if(PM_VALKYRIE)))
-                pline("%s needs food, badly!",
+                pline(msgc_fatal, "%s needs food, badly!",
                       (Role_if(PM_WIZARD) ||
                        Role_if(PM_VALKYRIE)) ? urole.name.m : "Elf");
             else
-                pline((!incr) ? "You feel less faint." : (u.uhunger < 45) ?
+                pline(incr ? msgc_fatal : msgc_statusheal,
+                      (!incr) ? "You feel less faint." : (u.uhunger < 45) ?
                       "You feel weak." : "You are beginning to feel weak.");
             if (incr && flags.occupation != occ_food)
                 action_interrupted();
@@ -2337,7 +2379,7 @@ skipfloor:
     }
 
     if (otmp && !(*floorfood_check)(otmp)) {
-        pline("You can't %s that!", verb);
+        pline(msgc_mispaste, "You can't %s that!", verb);
         return NULL;
     }
     return otmp;

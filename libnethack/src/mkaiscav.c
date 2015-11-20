@@ -213,7 +213,7 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
                     map[stairx][stairy] = AIS_STAIR;
                     /*
                     if (wizard)
-                        pline("Chose %s stair location (%d,%d)"
+                        pline(msgc_debug, "Chose %s stair location (%d,%d)"
                               " at prob %d (starting from %d)"
                               " having considered %d positions.",
                               which, stairx, stairy, prob, baseprob, poscount);
@@ -226,9 +226,8 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
         prob++;
     }
     if (wizard)
-        pline("Failed to find %s stair location"
-              " at prob %d (starting from %d)"
-              " having considered %d positions",
+        pline(msgc_debug, "Failed to find %s stair location at prob %d "
+              "(starting from %d) having considered %d positions",
               which, prob, baseprob, poscount);
     sloc.x = 0; /* signal retry */
     return sloc;
