@@ -2172,21 +2172,25 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         } else {
             /* save its current description in case of polymorph */
             const char *pnambuf = y_monnam(mtmp);
+            struct trap *ttmp = t_at(level, u.ux0, u.uy0);
+            boolean tseen = (ttmp) ? ttmp->tseen : FALSE;
 
             mtmp->mtrapped = 0;
             remove_monster(level, x, y);
             place_monster(mtmp, u.ux0, u.uy0);
             pline("You %s %s.", mtmp->mtame ? "displace" : "frighten", pnambuf);
 
-            /* check for displacing it into pools and traps */
+            /* check for displacing it into pools and known traps */
             switch (minliquid(mtmp) ? 2 : mintrap(mtmp)) {
             case 0:
                 break;
             case 1:    /* trapped */
             case 3:    /* changed levels */
-                /* there's already been a trap message, reinforce it */
-                abuse_dog(mtmp);
-                adjalign(-3);
+                if (tseen || !ttmp) { /* !ttmp is the pool case */
+                    /* there's already been a trap message, reinforce it */
+                    abuse_dog(mtmp);
+                    adjalign(-3);
+                }
                 break;
             case 2:
                     /* drowned or died...
@@ -2197,15 +2201,17 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                      */ {
                 /* minliquid() and mintrap() call mondead() rather than
                    killed() so we duplicate some of the latter here */
-                int tmp, mndx;
+                if (tseen || !ttmp) {
+                    int tmp, mndx;
                 
-                break_conduct(conduct_killer);
-                mndx = monsndx(mtmp->data);
-                tmp = experience(mtmp, (int)mvitals[mndx].died + 1);
-                more_experienced(tmp, 0);
-                newexplevel();      /* will decide if you go up */
+                    break_conduct(conduct_killer);
+                    mndx = monsndx(mtmp->data);
+                    tmp = experience(mtmp, (int)mvitals[mndx].died + 1);
+                    more_experienced(tmp, 0);
+                    newexplevel();      /* will decide if you go up */
+                }
             }
-                if (rn2(4)) {
+                if ((tseen || !ttmp) && rn2(4)) {
                     /* That's no way to treat a pet! */
                     pline("You feel guilty about losing your pet like this.");
                     adjalign(-5);
