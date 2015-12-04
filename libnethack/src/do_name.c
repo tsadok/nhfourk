@@ -1016,11 +1016,19 @@ static struct {
     {"kestrel", FALSE},
     {"xeroc", FALSE},
     {"venus flytrap", FALSE},
+        /* Dredmore */
+    {"octo", FALSE},
+    {"enraged diggle", FALSE},
+    {"arch diggle", FALSE},
         /* Wesnoth */
     {"chocobone", FALSE},
         /* Minecraft */
     {"creeper", FALSE},
     {"enderman", FALSE},
+        /* Keen */
+    {"garg", FALSE}, /* Keen 1 */
+    {"poison slug", FALSE}, /* Keen 4 */
+    {"dopefish", FALSE}, /* Keen 4 */
         /* Notable console games */
     {"octorok", FALSE}, /* Zelda series */
     {"goomba", FALSE},  /* Mario series */
@@ -1068,7 +1076,7 @@ static struct {
     {"tribble", FALSE},
     {"Klingon", FALSE},
     {"Cardassian", FALSE},
-    {"Borg", FALSE},
+    {"Borg drone", FALSE},
         /* Star Wars */
     {"wookiee", FALSE},
     {"protocol droid", FALSE},
