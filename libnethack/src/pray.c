@@ -1299,8 +1299,8 @@ sacrifice_gift(void)
             }
         }
         if (oclass == ARMOR_CLASS) {
-            int tryforslot = os_tool; /* sentinel value means any slot */
-            int choice = T_SHIRT;     /* default, try to do better */
+            int tryforslot = os_invalid; /* sentinel value means any slot */
+            int choice = T_SHIRT;        /* default, try to do better */
             int i;
             if (Race_if(PM_SYLPH)) {
                 if (!uarms)
@@ -1327,7 +1327,7 @@ sacrifice_gift(void)
                 if ((!objects[i].oc_unique && !objects[i].oc_nowish) &&
                     (objects[i].oc_prob > 0) &&
                     (objects[i].oc_class == ARMOR_CLASS) &&
-                    ((tryforslot == os_tool) || (objects[i].oc_armcat)) &&
+                    ((tryforslot == os_invalid) || (objects[i].oc_armcat)) &&
                     ((!Race_if(PM_SYLPH)) ||
                      (objects[i].oc_material == WOOD) ||
                      (objects[i].oc_material == CLOTH)) &&
