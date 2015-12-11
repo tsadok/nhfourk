@@ -130,15 +130,15 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
         wandlevel = getwandlevel(mon, obj);
         if (wandlevel == P_FAILURE) {
             /* critical failure */
-            if (canhear()) {
-                if (vis)
-                    pline(combat_msgc(NULL, mon, cr_hit),
-                          "%s zaps %s, which suddenly explodes!", Monnam(mon),
-                          an(xname(obj)));
-                else
-                    You_hear(msgc_levelsound,
-                             "a zap and an explosion in the distance.");
-            }
+            /* No canhear() filter: the 'if' message doesn't warrant it, 'else'
+               message doesn't need it since Your_hear() has one of its own. */
+            if (vis)
+                pline(combat_msgc(NULL, mon, cr_hit),
+                      "%s zaps %s, which suddenly explodes!", Monnam(mon),
+                      an(xname(obj)));
+            else
+                You_hear(msgc_levelsound,
+                         "a zap and an explosion in the distance.");
             mon_break_wand(mon, obj);
             m_useup(mon, obj);
             m->has_defense = m->has_offense = m->has_misc = MUSE_NONE;
@@ -152,10 +152,13 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
 static void
 mzapmsg(struct monst *mtmp, struct obj *otmp, boolean self)
 {
-    if (!mon_visible(mtmp))
+    if (!mon_visible(mtmp)) {
+        int range = couldsee(mtmp->mx, mtmp->my) /* 9 or 5 in 3.6 */
+            ? (BOLT_LIM + 0) : (BOLT_LIM - 3);   /* 12 or 9 for us. */
         You_hear(msgc_levelsound, "a %s zap.",
                  (distu(mtmp->mx, mtmp->my) <=
-                  (BOLT_LIM + 1) * (BOLT_LIM + 1)) ? "nearby" : "distant");
+                  (range * range)) ? "nearby" : "distant");
+    }
     else if (self)
         pline(combat_msgc(mtmp, NULL, cr_hit), "%s zaps %sself with %s!",
               Monnam(mtmp), mhim(mtmp), doname(otmp));
