@@ -381,8 +381,11 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
 
                 for (i = 0; i < listlen; i++) {
                     id = list[i].id + 1;
-                    add_menu_item(&menu, id, list[i].caption,
-                                  list[i].caption[0], 0);
+                    thisch = tolower(*list[i].caption);
+                    if (thisch == lastch)
+                        thisch = toupper(thisch);
+                    add_menu_item(&menu, id, list[i].caption, thisch, 0);
+                    lastch = thisch;
                 }
                 pick_list[0] = id = list[rand() % listlen].id + 1;
                 add_menu_item(&menu, id, "Random", '*', 0);
