@@ -779,6 +779,19 @@ m_initinv(struct monst *mtmp, enum rng rng)
             otmp->spe = 1;      /* flag for special box */
             otmp->owt = weight(otmp);
             mpickobj(mtmp, otmp);
+        } else if (mtmp->data->mflagsr == MRACE_DWARF) {
+            /* In AceHack, Gnomes had a chance of generating with candles,
+               especially on dark Mines levels. This tradition continued into
+               NetHack 4 (albeit in a much simpler way, to avoid littering
+               inventory with junk candles of different lengths).  In terms of
+               lore, however, this made little sense -- Gnomes should not need
+               light sources -- and since player Gnomes now _officially_ see in
+               the dark, I am moving the candles to dwarves.  However, it only
+               happens in the Mines -- dwarves elsewhere are just as before. */
+            if (In_mines(&lev->z) && !rn2_on_rng(4, rng)) {
+                mongets(mtmp, rn2_on_rng(4, rng) ?
+                        TALLOW_CANDLE : WAX_CANDLE, rng);
+            }
         }
         break;
     case S_IMP:
@@ -798,15 +811,6 @@ m_initinv(struct monst *mtmp, enum rng rng)
             mongets(mtmp, WAN_FIRE, rng);
         }
         break;
-    case S_GNOME:
-        /* In AceHack, these have a chance of generating with candles,
-           especially on dark Mines levels. This tradition was stolen by
-           UnNetHack, and continued onwards into NetHack 4. But in a much
-           simpler way, to avoid littering inventory with junk candles of
-           different lengths. */
-        if (!rn2_on_rng(4, rng)) {
-            mongets(mtmp, rn2_on_rng(4, rng) ? TALLOW_CANDLE : WAX_CANDLE, rng);
-        }
 
     default:
         break;

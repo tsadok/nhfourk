@@ -37,6 +37,7 @@
                                 (!(breathless(ptr) && \
                                    (ptr->msound == MS_SILENT || \
                                     ptr->msound == MS_BONES)))
+# define can_see_in_dark(ptr)   ((ptr)->mflags3 & M3_SEEINDARK)
 # define amphibious(ptr) \
     (((ptr)->mflags1 & (M1_AMPHIBIOUS | M1_BREATHLESS)) != 0L)
 # define passes_walls(ptr)      (((ptr)->mflags1 & M1_WALLWALK) != 0L)

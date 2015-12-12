@@ -57,10 +57,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Dwarves in the Gnomish Mines now sometimes carry candles
+   (monster starting inventory).  Gnomes do not.
+
  * Quantum mechanics are now considered humanoid (h).
 
  * Gnomes, due to their small size, cannot wear body armor.
-   (Neither can scurriers.)
+   (Neither can scurriers.)  However, Gnomes can now see in the dark.
 
  * Added a new playable race, scurriers.  Scurriers are bipedal
    humanoid rodents -- something like a cross between a rabbit, a

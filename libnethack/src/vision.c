@@ -555,6 +555,8 @@ vision_recalc(int control)
     } else if (Is_rogue_level(&u.uz)) {
         rogue_vision(next_array, next_rmin, next_rmax);
     } else {
+        /* I suspect the has_night_vision variable is horribly misnamed.
+           Near as I can tell, it's true unless you're underwater. */
         int has_night_vision = 1;       /* hero has night vision */
 
         if (Underwater && !Is_waterlevel(&u.uz)) {
@@ -702,32 +704,34 @@ vision_recalc(int control)
 
         for (col = start; col <= stop;
              loc += ROWNO, sv += (int)colbump[++col]) {
+            /* struct monst *mtmp = m_at(level,row,col); */
             oldseenv = loc->seenv;
             if (next_row[col] & IN_SIGHT) {
-                /* 
-                 * We see this position because of night- or xray-vision.
-                 */
+                /* We see this position because of night- or xray-vision.  */
                 /* update seen angle */
                 loc->seenv |= new_angle(loc, sv, row, col);
             }
 
             else if ((next_row[col] & COULD_SEE)
-                     && (loc->lit || (next_row[col] & TEMP_LIT))) {
-                /* 
-                 * We see this position because it is lit.
-                 */
+                     && ((loc->lit || (next_row[col] & TEMP_LIT)) ||
+                         (can_see_in_dark(URACEDATA) &&
+                          (Underwater || !is_damp_terrain(level,col,row) /* ||
+                             (is_puddle(level,col,row) &&
+                              (!mtmp || !is_swimmer(mtmp->data)))*/
+                              )))) {
+                /* We see this position because it is lit, or because we don't
+                   need light to see. */
                 if ((IS_DOOR(loc->typ) || loc->typ == SDOOR ||
                      IS_WALL(loc->typ)) && !viz_clear[row][col]) {
-                    /* 
-                     * Make sure doors, walls, boulders or mimics don't show up
-                     * at the end of dark hallways.  We do this by checking
-                     * the adjacent position.  If it is lit, then we can see
-                     * the door or wall, otherwise we can't.
-                     */
+                    /* Make sure doors, walls, boulders or mimics don't show up
+                       at the end of dark hallways.  We do this by checking the
+                       adjacent position.  If it is lit, then we can see the
+                       door or wall, otherwise we can't. */
                     dx = u.ux - col;
                     dx = sign(dx);
                     flev = &(level->locations[col + dx][row + dy]);
                     if (flev->lit ||
+                        //can_see_in_dark(URACEDATA) ||
                         next_array[row + dy][col + dx] & TEMP_LIT) {
                         next_row[col] |= IN_SIGHT;      /* we see it */
 
@@ -739,13 +743,11 @@ vision_recalc(int control)
                     loc->seenv |= new_angle(loc, sv, row, col);
                 }
             } else if ((next_row[col] & COULD_SEE) && loc->waslit) {
-                /* 
-                 * If we make it here, the hero _could see_ the location,
-                 * but doesn't see it (location is not lit).
-                 * However, the hero _remembers_ it as lit (waslit is true).
-                 * The hero can now see that it is not lit, so change waslit
-                 * and update the location.
-                 */
+                /* If we make it here, the hero _could see_ the location, but
+                   doesn't see it (location is not lit).  However, the hero
+                   _remembers_ it as lit (waslit is true).  The hero can now see
+                   that it is not lit, so change waslit and update the
+                   location.  */
                 loc->waslit = 0;        /* remember lit condition */
                 newsym(col, row);
             }

@@ -183,6 +183,7 @@
 # define M3_BLINKAWAY    0x1000 /* teleports only in LOS, when fleeing */
 # define M3_VANDMGRDUC   0x2000 /* damage reduction as in 3.4.3
                                    (i.e., ac_threshhold is always 0) */
+# define M3_SEEINDARK    0x4000 /* does not require light to see */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */
