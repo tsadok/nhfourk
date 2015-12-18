@@ -2889,6 +2889,7 @@ domagictrap(void)
         /* Most of the time, it creates some monsters. */
         int cnt = rnd(4);
 
+        /* blindness effects */
         if (!resists_blnd(&youmonst)) {
             pline(msgc_statusbad,
                   "You are momentarily blinded by a flash of light!");
@@ -2897,9 +2898,15 @@ domagictrap(void)
                 pline(msgc_statusheal, "Your vision quickly clears.");
         } else if (!Blind) {
             pline(msgc_levelwarning, "You see a flash of light!");
-        } else if (!Deaf) {
+        }
+
+        if (!Deaf) {
             You_hear(msgc_levelwarning, "a deafening roar!");
             incr_itimeout(&HDeaf, rn1(20,30));
+        } else {
+            /* magic vibrations still hit you */
+            pline(msgc_statusbad, "You feel rankled.");
+            incr_itimeout(&HDeaf, rn1(5, 15));
         }
         /* Use the "create monster used by monster" RNG for the species; the
            other option is the "random monster generation on this level" RNG,

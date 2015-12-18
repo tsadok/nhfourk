@@ -380,23 +380,23 @@ yelp(struct monst *mtmp)
     else
         switch (mtmp->data->msound) {
         case MS_MEW:
-            yelp_verb = "yowl";
+            yelp_verb = (!Deaf) ? "yowl" : "arch";
             break;
         case MS_BARK:
         case MS_GROWL:
-            yelp_verb = "yelp";
+            yelp_verb = (!Deaf) ? "yelp" : "recoil";
             break;
         case MS_ROAR:
-            yelp_verb = "snarl";
+            yelp_verb = (!Deaf) ? "snarl" : "bluff";
             break;
         case MS_SQEEK:
-            yelp_verb = "squeal";
+            yelp_verb = (!Deaf) ? "squeal" : "quiver";
             break;
         case MS_SQAWK:
-            yelp_verb = "screak";
+            yelp_verb = (!Deaf) ? "screak" : "thrash";
             break;
         case MS_WAIL:
-            yelp_verb = "wail";
+            yelp_verb = (!Deaf) ? "wail" : "cringe";
             break;
         }
     if (yelp_verb) {

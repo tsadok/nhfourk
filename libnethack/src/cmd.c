@@ -28,6 +28,7 @@ static int dospoilers(const struct nh_cmd_arg *);
 static int doquit(const struct nh_cmd_arg *);
 static int wiz_wish(const struct nh_cmd_arg *);
 static int wiz_identify(const struct nh_cmd_arg *);
+static int wiz_intrinsic(const struct nh_cmd_arg *);
 static int wiz_map(const struct nh_cmd_arg *);
 static int wiz_genesis(const struct nh_cmd_arg *);
 static int wiz_levelcide(const struct nh_cmd_arg *);
@@ -252,6 +253,8 @@ const struct cmd_desc cmdlist[] = {
      wiz_identify, CMD_DEBUG | CMD_EXT},
     {"impossible", "(DEBUG) test nonfatal error handling", 0, 0, TRUE,
      wiz_impossible, CMD_DEBUG | CMD_EXT},
+    {"intrinsic", "(DEBUG) set player character intrinsics", 0, 0, TRUE,
+     wiz_intrinsic, CMD_DEBUG | CMD_EXT},
     {"levelchange", "(DEBUG) change experience level", 0, 0, TRUE,
      wiz_level_change, CMD_DEBUG | CMD_EXT},
     {"levelcide", "(DEBUG) kill all other monsters on the level", 0, 0, TRUE,
@@ -370,6 +373,44 @@ wiz_identify(const struct nh_cmd_arg *arg)
 
     identify_pack(0);
 
+    return 0;
+}
+
+static int
+wiz_intrinsic(const struct nh_cmd_arg *arg)
+{
+    (void) arg;
+    struct nh_menulist menu;
+    const int *selected;
+    int i, accelerator;
+
+    static const char *const intrinsics[] = {
+        "deafness",
+        "blindness",
+    };
+
+    if (!wizard) {
+        impossible("wiz_intrinsic outside of debug mode?");
+        return 0;
+    }
+    init_menulist(&menu);
+
+    for (i = 0; i < SIZE(intrinsics); i++) {
+        const char *intrname = intrinsics[i];
+        accelerator = intrname[0];
+        add_menuitem(&menu, i, intrname, accelerator, FALSE);
+    }
+
+    display_menu(&menu, "Which intrinsic?", PICK_ONE,
+                 PLHINT_ANYWHERE, &selected);
+
+    if (!strcmp(intrinsics[*selected],"deafness")) {
+        pline(msgc_statusbad, "You go deaf.");
+        incr_itimeout(&HDeaf, 30);
+    } else if (!strcmp(intrinsics[*selected],"blindness")) {
+        pline(msgc_statusbad, "You go blind.");
+        incr_itimeout(&Blinded, 30);
+    }
     return 0;
 }
 
