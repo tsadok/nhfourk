@@ -57,6 +57,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Merged the DYWYPISI patch, by Jafet.  This causes end-of-game item
+   identification to place information the player character did not
+   know in brackets, so that you can tell (e.g. in the dumplog)
+   whether an item was identified or not.
+
  * Dwarves in the Gnomish Mines now sometimes carry candles
    (monster starting inventory).  Gnomes do not.
 

@@ -159,6 +159,9 @@ struct turnstate {
        that aren't logged in the save file, which is an exception to the normal
        logging discipline.) */
     boolean generating_bones;
+    /* DYWYPISI patch - a dumplog is currently being generated, so show the
+       identities of otherwise unidentified objects, in square brackets. */
+    boolean generating_dump;
 
     /* Pets migrating with their owner between levels. */
     struct monst *migrating_pets;

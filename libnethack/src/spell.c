@@ -10,7 +10,8 @@
 #define SPELLMENU_VIEW (-1)
 
 #define KEEN 20000
-#define MAX_SPELL_STUDY 3
+#define MAX_SPELL_STUDY 3 /* Cf the SPBOOK_CLASS case in doname_base where
+                             it decides whether to say a book was faint. */
 #define incrnknow(spell)        spl_book[spell].sp_know = KEEN
 
 #define spellev(spell)          spl_book[spell].sp_lev

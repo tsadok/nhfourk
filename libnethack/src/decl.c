@@ -147,6 +147,7 @@ static const struct turnstate default_turnstate = {
     .vision_full_recalc = FALSE,
     .delay_flushing = FALSE,
     .generating_bones = FALSE,
+    .generating_dump = FALSE,
     .migrating_pets = NULL,
     .migrating_objs = NULL,
     .pray = { .align = A_NONE, .type = pty_invalid, .trouble = ptr_invalid },
@@ -221,6 +222,8 @@ neutral_turnstate_tasks(void)
         impossible("flushing delayed over a turn");
     if (turnstate.generating_bones)
         impossible("made bones, yet the game continues");
+    if (turnstate.generating_dump)
+        impossible("made dump, yet the game continues");
     if (turnstate.intended_dx || turnstate.intended_dy)
         impossible("turnstate is still recording an intended direction");
 

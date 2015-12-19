@@ -298,12 +298,7 @@ disclose(int how, boolean taken, long umoney)
         if (!done_stopprint) {
             c = ask ? yn_function(qbuf, ynqchars, defquery) : defquery;
             if (c == 'y') {
-                struct obj *obj;
-
-                for (obj = invent; obj; obj = obj->nobj) {
-                    discover_object(obj->otyp, TRUE, FALSE, TRUE);
-                    obj->known = obj->bknown = obj->dknown = obj->rknown = 1;
-                }
+                turnstate.generating_dump = TRUE;
                 display_inventory(NULL, FALSE);
                 container_contents(invent, TRUE, TRUE);
             }
@@ -1259,6 +1254,8 @@ container_contents(struct obj *list, boolean identified, boolean all_containers)
     struct nh_objlist objmenu;
 
     for (box = list; box; box = box->nobj) {
+        int saveknown = objects[box->otyp].oc_name_known;
+        objects[box->otyp].oc_name_known = 1;
         if (Is_container(box) || box->otyp == STATUE) {
             if (box->otyp == BAG_OF_TRICKS) {
                 continue;       /* wrong type of container */
@@ -1274,11 +1271,6 @@ container_contents(struct obj *list, boolean identified, boolean all_containers)
                 /* add the objects to a list */
                 icount = 0;
                 for (obj = box->cobj; obj; obj = obj->nobj) {
-                    if (identified) {
-                        discover_object(obj->otyp, TRUE, FALSE, TRUE);
-                        obj->known = obj->bknown = obj->dknown =
-                            obj->rknown = 1;
-                    }
                     contents[icount++] = obj;
                 }
 
@@ -1296,6 +1288,7 @@ container_contents(struct obj *list, boolean identified, boolean all_containers)
                                 msgprintf("Contents of %s:", the(xname(box))),
                                 PICK_NONE, PLHINT_CONTAINER, NULL);
 
+                objects[box->otyp].oc_name_known = saveknown;
                 if (all_containers)
                     container_contents(box->cobj, identified, TRUE);
 
