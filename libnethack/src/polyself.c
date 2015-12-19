@@ -1480,11 +1480,11 @@ mbodypart(struct monst *mon, int part)
         S_ORC, S_GIANT, /* quest nemeses */
         '\0'    /* string terminator; assert( S_xxx != 0 ); */
     };
-    const struct permonst *mptr = mon->data;
+    const struct permonst *mptr = (mon == &youmonst) ? URACEDATA : mon->data;
 
     if (part == HAND || part == HANDED) {       /* some special cases */
         if (mptr->mlet == S_DOG || mptr->mlet == S_FELINE ||
-            mptr->mlet == S_YETI)
+            mptr->mlet == S_YETI || mptr == &mons[PM_SCURRIER])
             return part == HAND ? "paw" : "pawed";
         if (humanoid(mptr) && attacktype(mptr, AT_CLAW) &&
             !strchr(not_claws, mptr->mlet) && mptr != &mons[PM_STONE_GOLEM] &&
