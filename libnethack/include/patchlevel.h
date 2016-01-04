@@ -10,7 +10,7 @@
 #define EDITLEVEL 0
 
 #define COPYRIGHT_BANNER_A \
-"NetHack Fourk, Copyright 2015; based on NetHack, Copyright 1985-2003"
+"NetHack Fourk, Copyright 2016; based on NetHack, Copyright 1985-2015"
 
 #define COPYRIGHT_BANNER_B \
 "  NetHack Fourk is based on NetHack 4 by Alex Smith and many others."
