@@ -113,12 +113,7 @@ How can I follow/contribute to the programming of NetHack 4?
 
 NetHack 4's development can be followed from its [git repository][3]; active
 development is typically in branch "master".  (That repository also contains
-(often out-of-date) versions of some related variants.)  There is also a
-[bug tracker][4], where you can read or report bugs, or submit patches; the
-bug tracker also contains a web-based view of the repository, which may be
-more convenient for browsing it (the official repository can only reasonably
-be read using `git` itself).
-
+(often out-of-date) versions of some related variants.)
 
 Sometimes, interim development projects take place on other branches, because
 the "master" branch is expected to be at least somewhat playable.  In
@@ -150,10 +145,7 @@ I'm not a programmer.  Can I still help with NetHack 4?
 You can.  One way any NetHack player can help out is in playtesting; connect
 to the server (following the instructions below) and start playing the most
 recent version.  If you encounter a bug, or if the game tells you that
-something is wrong and asks you to make a bug report, file it at the
-[bug tracker][4].  (You will need a bug tracker account; we give these out
-freely on request by email.  There's no automated way to create them because
-we couldn't stop spambots using it.)
+something is wrong and asks you to make a bug report, please do contact us.
 
 
 What about playing in tournaments?
@@ -726,7 +718,6 @@ References:
 [1]: http://nethack.org
 [2]: http://nethack4.org
 [3]: http://nethack4.org/media/nethack4.git
-[4]: http://trac.nethack4.org
 [5]: http://junethack.de
 [6]: http://www.chiark.greenend.org.uk/~sgtatham/putty/
 [7]: http://www.digip.org/jansson

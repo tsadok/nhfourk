@@ -1325,8 +1325,8 @@ sacrifice_gift(void)
             }
         }
         if (oclass == ARMOR_CLASS) {
-            int tryforslot = os_tool; /* sentinel value means any slot */
-            int choice = T_SHIRT;     /* default, try to do better */
+            int tryforslot = os_invalid; /* sentinel value means any slot */
+            int choice = T_SHIRT;        /* default, try to do better */
             int i;
             if (Race_if(PM_SYLPH)) {
                 if (!uarms)
@@ -1360,7 +1360,7 @@ sacrifice_gift(void)
                     (i != GAUNTLETS_OF_FUMBLING) && (i != FUMBLE_BOOTS) &&
                     /* Match the slot we're aiming for, if we have
                        chosen a slot to aim for. */
-                    ((tryforslot == os_tool) ||
+                    ((tryforslot == os_invalid) ||
                      (tryforslot == objects[i].oc_armcat)) &&
                     /* Don't give regen-blocking armor to a Sylph. */
                     ((!Race_if(PM_SYLPH)) ||

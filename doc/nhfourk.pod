@@ -112,9 +112,16 @@ L<http://nethack4.org>
 
 =head1 BUGS
 
-Plenty.  Bugs that can also be reproduced in NetHack 4 should be
-reported to that bug tracker at L<http://trac.nethack4.org>.  Bugs
-that may be unique to NetHack Fourk, or have not been reproduced in
-vanilla NetHack 4, should be reported directly to Jonadab instead.
+Plenty.  If you find a bug, please do report it.  The most immediate
+way to get a response from me is via IRC (/msg jonadab on the freenode
+IRC network; there is also a channel, #nhfourk, also on freenode), or
+via email (my email username is jonadab, and the domain name to use is
+that of my ISP, columbus.rr.com, and of course you put an at sign
+between them).  I try to keep an eye on rec.games.roguelike.nethack on
+Google Groups and /r/nethack on reddit as well.
+
+Currently, there is no public bug tracker.  This is not because I
+don't want to offer one but rather because I don't have a good place
+to host it.
 
 =cut

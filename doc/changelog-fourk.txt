@@ -160,6 +160,14 @@ Changes in 4.3.0.4:
 Changes in 4.3.0.3:
 -------------------
 
+ * Quasits are sometimes generated invisible.  Also, they can always
+   see invisible.
+
+ * Magic mapping no longer makes explored and unexplored territory
+   indistinguishable (in lit areas).  Thus players who care about
+   keeping track of such things (e.g. so as not to miss any floor
+   items) can freely use magic mapping.
+
  * Merged several patches from L, http://l.j-factor.com/nethack/
    The "whack" patch causes more differentiated weapon hit messages.
    The "wounds" patch gives Healers information about how wounded
