@@ -333,7 +333,7 @@ invault(void)
 
         trycount = 5;
         do {
-            buf = getlin(Deaf ? "You are required to sign in with your name. -"
+            buf = getlin(Deaf ? "You are required to supply your name. -"
                          : "\"Hello stranger, who are you?\" -", FALSE);
             buf = msgmungspaces(buf);
         } while (!letter(buf[0]) && --trycount > 0);
