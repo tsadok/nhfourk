@@ -25,6 +25,7 @@
 # define AT_BOOM 14     /* explodes when killed */
 # define AT_GAZE 15     /* gaze - ranged */
 # define AT_TENT 16     /* tentacles */
+# define AT_SPIN 17     /* web spinners */
 
 # define AT_WEAP 254    /* uses weapon */
 # define AT_MAGC 255    /* uses magic spell(s) */
@@ -82,7 +83,8 @@
 # define AD_SCLD 44     /* creates a stinking cloud */
 # define AD_PITS 45     /* creates pits */
 # define AD_ICEB 46     /* embeds in block of ice */
-# define AD_OTHER 47    /* Numbers starting here can be used for non-damage
+# define AD_WEBS 47     /* traps in a web; this also causes temp slowness */
+# define AD_OTHER 60    /* Numbers starting here can be used for non-damage
                          * constants stored in a damage type field, such as the
                          * field in the artilist that governs what an artifact
                          * grants when equipped, which in vanilla can only be a
@@ -96,6 +98,8 @@
 # define AD_SAMU 252    /* hits, may steal Amulet (Wizard) */
 # define AD_CURS 253    /* random curse (ex. gremlin) */
 
+
+# define AD_WEBS_MAX_TURNCOUNT 150
 
 /*
  *  Monster to monster attacks.  When a monster attacks another (mattackm),

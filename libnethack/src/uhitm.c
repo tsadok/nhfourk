@@ -1874,6 +1874,11 @@ damageum(struct monst *mdef, const struct attack *mattk)
     case AD_ICEB:
         tmp = do_iceblock(mdef, tmp);
         break;
+    case AD_WEBS: {
+        do_web_attack(level, &youmonst, mdef, tmp, TRUE);
+        tmp = 0;
+        break;
+    }
     case AD_PITS:
         do_pit_attack(level, mdef, &youmonst);
         break;
@@ -1899,6 +1904,81 @@ damageum(struct monst *mdef, const struct attack *mattk)
         return 2;
     }
     return 1;
+}
+
+/* AD_WEBS.  Either magr or mdef can be &youmonst, or not.  Whatever. */
+void
+do_web_attack(struct level *lev, struct monst *magr, struct monst *mdef,
+              int webstrength, boolean mentioned)
+{
+    uchar oldmslowed = mdef->mslowed;
+    struct trap *ttmp = t_at(lev, m_mx(mdef), m_my(mdef));
+    struct rm *mloc = &lev->locations[m_mx(mdef)][m_my(mdef)];
+    boolean didtrap = FALSE;
+
+    if (webmaker(mdef->data)) /* Don't attack spiders with webs */
+        return;
+
+    if (mdef->mslowed < AD_WEBS_MAX_TURNCOUNT) {
+        mdef->mslowed += webstrength * 2;
+        if (mdef->mslowed > AD_WEBS_MAX_TURNCOUNT)
+            mdef->mslowed = AD_WEBS_MAX_TURNCOUNT;
+    }
+
+    if (!ttmp && (mloc->typ == ROOM || mloc->typ == CORR ||
+                  mloc->typ == SCORR)) {
+        ttmp = maketrap(lev, m_mx(mdef), m_my(mdef), WEB, rng_main);
+        if (ttmp) {
+            if (mdef == &youmonst) {
+                u.utrap = mdef->mslowed;
+                u.utraptype = TT_WEB;
+            } else { 
+                mdef->mtrapped = 1;
+            }
+            didtrap = TRUE;
+        }
+    } else if (ttmp && ttmp->ttyp == WEB) {
+        if (mdef == &youmonst) {
+            if (!u.utrap) {
+                u.utrap = mdef->mslowed;
+                u.utraptype = TT_WEB;
+                didtrap = TRUE;
+            }
+        } else if (!mdef->mtrapped) {
+            mdef->mtrapped = 1;
+            didtrap = TRUE;
+        }
+    }
+    if (ttmp && (ttmp->ttyp == WEB) &&
+        (mdef == &youmonst || canseemon(mdef))) {
+        ttmp->tseen = 1;
+        newsym(m_mx(mdef),m_my(mdef));
+    }
+
+    if (((mdef->mslowed > oldmslowed) || didtrap) &&
+        (magr == &youmonst || mdef == &youmonst ||
+         canseemon(magr) || canseemon(mdef))) {
+        if (!mentioned)
+            pline(combat_msgc(magr, mdef, cr_hit),
+                  "%s %s spinnerets around %s.",
+                  M_verbs(magr, "move"),
+                  ((magr == &youmonst) ? "your" : mhis(magr)),
+                  ((mdef == &youmonst) ? "you" : mon_nam(mdef)));
+        if (didtrap) {
+            pline(combat_msgc(magr, mdef, cr_hit),
+                  "The web sticks %s to the %s.",
+                  (mdef == &youmonst ? "you" : mon_nam(mdef)),
+                  surface(m_mx(mdef), m_my(mdef)));
+        }
+    } else if (!ttmp || ttmp->ttyp != WEB) {
+        pline(msgc_combatimmune, "%s webbing does not adhere to the %s.",
+              ((magr == &youmonst) ? "Your" :
+               msgupcasefirst(s_suffix(mon_nam(magr)))),
+              ((mdef->data == &mons[PM_LURKER_ABOVE] ||
+                is_clinger(mdef->data)) ?
+               ceiling(m_mx(mdef), m_my(mdef)) :
+               surface(m_mx(mdef), m_my(mdef))));
+    }   
 }
 
 /* do_iceblock handles the trapping-in-ice stuff (which can have effects that
@@ -2356,6 +2436,7 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
         case AT_TUCH:
         case AT_BUTT:
         case AT_TENT:
+        case AT_SPIN:
             if (i == 0 && uwep && (youmonst.data->mlet == S_LICH))
                 goto use_weapon;
             if ((dhit = (tmp > rnd(20) || Engulfed))) {
@@ -2403,6 +2484,9 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
                 else if (mattk->aatyp == AT_CLAW)
                     pline(combat_msgc(&youmonst, mon, cr_hit),
                           "You %s %s.", barehitmsg(&youmonst), mon_nam(mon));
+                else if (mattk->aatyp == AT_SPIN)
+                    pline(combat_msgc(&youmonst, mon, cr_hit),
+                          "You move your spinnerets around %s.", mon_nam(mon));
                 else
                     pline(combat_msgc(&youmonst, mon, cr_hit),
                           "You hit %s.", mon_nam(mon));

@@ -25,6 +25,11 @@ wildmiss(struct monst *mtmp, const struct attack *mattk)
     compat = (mattk->adtyp == AD_SEDU || mattk->adtyp == AD_SSEX) &&
         could_seduce(mtmp, &youmonst, NULL);
 
+    if (mattk->aatyp == AT_SPIN)
+        pline(combat_msgc(mtmp, &youmonst, cr_miss),
+              "%s waves %s spinnerets around in the air.",
+              Monnam(mtmp), mhis(mtmp));
+
     switch(awareness_reason(mtmp)) {
 
     case mar_guessing_other:
@@ -169,6 +174,7 @@ mattackq(struct monst *mtmp, int x, int y)
         case AT_TUCH:
         case AT_BUTT:
         case AT_TENT:
+        case AT_SPIN:
             wildmiss(mtmp, mattk);
             break;
 

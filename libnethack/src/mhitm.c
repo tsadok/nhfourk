@@ -421,6 +421,7 @@ mattackm(struct monst *magr, struct monst *mdef)
         case AT_TUCH:
         case AT_BUTT:
         case AT_TENT:
+        case AT_SPIN:
             /* Nymph that teleported away on first attack? */
             if (dist2(magr->mx, magr->my, mdef->mx, mdef->my) > 2) {
                 strike = 0;
@@ -616,6 +617,9 @@ hitmm(struct monst *magr, struct monst *mdef, const struct attack *mattk)
                 break;
             case AT_TENT:
                 buf = msgcat(s_suffix(buf), " tentacles suck");
+                break;
+            case AT_SPIN:
+                buf = msgcat(s_suffix(buf), " spinnerets move around");
                 break;
             case AT_WEAP:
                 if (MON_WEP(magr)) {
@@ -1591,6 +1595,10 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     case AD_PITS:
         do_pit_attack(level, mdef, magr);
         break;
+    case AD_WEBS:
+        do_web_attack(level, magr, mdef, tmp, TRUE);
+        tmp = 0;
+        break;
     default:
         tmp = 0;
         break;
@@ -1967,6 +1975,7 @@ attk_protection(int aatyp)
     case AT_STNG:
     case AT_ENGL:
     case AT_TENT:
+    case AT_SPIN:
     default:
         w_mask = 0L;    /* no defense available */
         break;

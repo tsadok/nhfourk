@@ -57,6 +57,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Giant spiders now have a web-spinning attack, which causes
+   temporary slowness (which times out), as well as causing you to be
+   stuck in the web (same as stepping in one).  Spiders are immune.
+
  * Merged the DYWYPISI patch, by Jafet.  This causes end-of-game item
    identification to place information the player character did not
    know in brackets, so that you can tell (e.g. in the dumplog)

@@ -1851,6 +1851,8 @@ extern schar find_roll_to_hit(struct monst *);
 extern enum attack_check_status attack(struct monst *, schar, schar, boolean);
 extern boolean hmon(struct monst *, struct obj *, int);
 extern int damageum(struct monst *, const struct attack *);
+extern void do_web_attack(struct level *, struct monst *, struct monst *,
+                          int, boolean);
 extern int do_iceblock(struct monst *, int);
 extern void missum(struct monst *, const struct attack *);
 extern int passive(struct monst *, boolean, int, uchar);

@@ -2331,6 +2331,7 @@ restore_mon(struct memfile *mf, struct level *l)
     mon->m_ap_type = mread8(mf);
     mon->mfrozen = mread8(mf);
     mon->mblinded = mread8(mf);
+    mon->mslowed = mread8(mf);
     mon->mappearance = mread32(mf);
     mflags = mread32(mf);
 
@@ -2566,6 +2567,7 @@ save_mon(struct memfile *mf, const struct monst *mon, const struct level *l)
     mwrite8(mf, mon->m_ap_type);
     mwrite8(mf, mon->mfrozen);
     mwrite8(mf, mon->mblinded);
+    mwrite8(mf, mon->mslowed);
     mwrite32(mf, mon->mappearance);
 
     mflags =

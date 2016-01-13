@@ -1007,6 +1007,7 @@ makepinobotyaml(void)
                 case AT_BOOM: fprintf(f, "%s", "AtSuicideExplode"); break;
                 case AT_GAZE: fprintf(f, "%s", "AtGaze"); break;
                 case AT_TENT: fprintf(f, "%s", "AtTentacle"); break;
+                case AT_SPIN: fprintf(f, "%s", "AtSpin"); break;
                 case AT_WEAP: fprintf(f, "%s", "AtWeapon"); break;
                 case AT_MAGC: fprintf(f, "%s", "AtCast"); break;
                 default:      fprintf(f, "%s", "AtUnknown");
@@ -1064,6 +1065,7 @@ makepinobotyaml(void)
                 case AD_SCLD: fprintf(f, ", %s", "AdStinkingCloud"); break;
                 case AD_PITS: fprintf(f, ", %s", "AdPits"); break;
                 case AD_ICEB: fprintf(f, ", %s", "AdIceBlock"); break;
+                case AD_WEBS: fprintf(f, ", %s", "AdWebs"); break;
                 case AD_CLRC: fprintf(f, ", %s", "AdClerical"); break;
                 case AD_SPEL: fprintf(f, ", %s", "AdSpell"); break;
                 case AD_RBRE: fprintf(f, ", %s", "AdRandomBreath"); break;

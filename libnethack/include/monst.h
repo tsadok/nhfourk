@@ -99,6 +99,7 @@ struct monst {
 
     uchar mfrozen;
     uchar mblinded;     /* cansee 0, temp.blinded n, blind 0 */
+    uchar mslowed;      /* turns of temporary slowness */
 
     unsigned int mappearance;   /* for undetected mimics and the wiz */
 
@@ -188,7 +189,7 @@ struct monst {
 # define dealloc_monst(mon) free((mon))
 
 /* these are in mspeed */
-# define MSLOW 1/* slow monster */
+# define MSLOW 1/* slow monster - see also mslowed for temp/timeout slowness */
 # define MFAST 2/* speeded monster */
 
 # define NAME(mtmp)         (((const char *)(mtmp)->mextra) + (mtmp)->mxlth)

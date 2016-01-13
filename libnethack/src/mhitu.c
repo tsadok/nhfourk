@@ -197,6 +197,10 @@ hitmsg(struct monst *mtmp, const struct attack *mattk)
             pline(combat_msgc(mtmp, &youmonst, cr_hit),
                   "%s tentacles suck you!", s_suffix(Monnam(mtmp)));
             break;
+        case AT_SPIN:
+            pline(combat_msgc(mtmp, &youmonst, cr_hit),
+                  "%s spinnerets move around you.", s_suffix(Monnam(mtmp)));
+            break;
         case AT_EXPL:
         case AT_BOOM:
             pline(combat_msgc(mtmp, &youmonst, cr_hit),
@@ -626,6 +630,7 @@ mattacku(struct monst *mtmp)
         case AT_TUCH:
         case AT_BUTT:
         case AT_TENT:
+        case AT_SPIN:
             if (!range2 &&
                 (!MON_WEP(mtmp) || mtmp->mconf || Conflict ||
                  !touch_petrifies(youmonst.data))) {
@@ -1822,6 +1827,10 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                       "A block of ice surrounds you!");
             }
         }
+        break;
+    case AD_WEBS:
+        do_web_attack(level, mtmp, &youmonst, dmg, FALSE);
+        dmg = 0;
         break;
     case AD_PITS:
         do_pit_attack(level, &youmonst, mtmp);

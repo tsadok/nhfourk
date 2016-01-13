@@ -576,6 +576,10 @@ mcalcmove(struct monst *mon)
     /* Note: MSLOW's `+ 1' prevents slowed speed 1 getting reduced to 0;
        MFAST's `+ 2' prevents hasted speed 1 from becoming a no-op; both
        adjustments have negligible effect on higher speeds. */
+    if (mon->mslowed > 0) { /* temporary slowness as from webs */
+        mmove = (2 * mmove + 1) / 3;
+        mon->mslowed--; /* eventually times out */
+    } /* intrinsic speed is multiplicative with the temporary mslowed: */
     if (mon->mspeed == MSLOW)
         mmove = (2 * mmove + 1) / 3;
     else if (mon->mspeed == MFAST)
@@ -638,6 +642,7 @@ mcalcdistress(void)
             mtmp->mcanmove = 1;
         if (mtmp->mfleetim && !--mtmp->mfleetim)
             mtmp->mflee = 0;
+        /* mslowed times itself out as it reduces movement */
 
         /* FIXME: mtmp->mlstmv ought to be updated here */
     }
@@ -1711,6 +1716,7 @@ lifesaved_monster(struct monst *mtmp)
         m_useup(mtmp, lifesave);
         mtmp->mcanmove = 1;
         mtmp->mfrozen = 0;
+        mtmp->mslowed = 0;
         if (mtmp->mtame && !mtmp->isminion) {
             wary_dog(mtmp, FALSE);
         }

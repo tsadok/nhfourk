@@ -842,8 +842,12 @@ you_moved(void)
             } else {
                 u.moveamt = Upolyd ? youmonst.data->mmove : urace.basespeed;
                 /* Different sources of speed now stack: */
-                /* TODO: if (temporarily_slowed)
-                   u.moveamt = u.moveamt * 2 / 3; */
+                if (youmonst.mslowed > 0) {
+                   u.moveamt = u.moveamt * 2 / 3;
+                   youmonst.mslowed--;
+                   if (youmonst.mslowed == 0)
+                       pline(msgc_statusheal, "You move more freely.");
+                }
                 if ((u.uintrinsic[FAST] & INTRINSIC) && (rn2(3) != 0))
                     u.moveamt += NORMAL_SPEED / 2; /* intrinsic speed */
                 if (u.uintrinsic[FAST] & ~INTRINSIC)
