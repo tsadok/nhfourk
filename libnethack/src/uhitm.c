@@ -1918,6 +1918,10 @@ do_web_attack(struct level *lev, struct monst *magr, struct monst *mdef,
 
     if (webmaker(mdef->data)) /* Don't attack spiders with webs */
         return;
+    /* Some other monsters are also immune. */
+    if (amorphous(mdef->data) || is_whirly(mdef->data) ||
+        unsolid(mdef->data))
+        return;
 
     if (mdef->mslowed < AD_WEBS_MAX_TURNCOUNT) {
         mdef->mslowed += webstrength * 2;

@@ -1118,6 +1118,11 @@ dotrap(struct trap *trap, unsigned trflags)
                   a_your[trap->madeby_u]);
         }
         u.utraptype = TT_WEB;
+        if (!youmonst.mslowed)
+            pline(msgc_statusbad, "The web impedes your movement.");
+        youmonst.mslowed += 3 + dice(2,4);
+        if (youmonst.mslowed > AD_WEBS_MAX_TURNCOUNT)
+            youmonst.mslowed = AD_WEBS_MAX_TURNCOUNT;
 
         /* Time stuck in the web depends on your/steed strength. */
         {
@@ -2273,6 +2278,9 @@ mintrap(struct monst *mtmp)
                 }
                 break;
             }
+            mtmp->mslowed += 3 + dice(2,4);
+            if (mtmp->mslowed > AD_WEBS_MAX_TURNCOUNT)
+                mtmp->mslowed = AD_WEBS_MAX_TURNCOUNT;
             tear_web = FALSE;
             switch (monsndx(mptr)) {
             case PM_OWLBEAR:   /* Eric Backus */
