@@ -81,7 +81,7 @@ setuwep(struct obj *obj)
     if (obj == uwep)
         return; /* necessary to not set bashmsg */
     /* This message isn't printed in the caller because it happens *whenever*
-       Sunsword is unwielded, from whatever cause. */
+       Trollsbane is unwielded, from whatever cause. */
     setworn(obj, W_MASK(os_wep));
     if (uwep == obj && artifact_light(olduwep) && olduwep->lamplit) {
         end_burn(olduwep, FALSE);

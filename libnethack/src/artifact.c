@@ -1649,7 +1649,8 @@ boolean
 artifact_light(const struct obj * obj)
 {
     return get_artifact(obj) &&
-        (obj->oartifact == ART_SUNSWORD || obj->oartifact == ART_TROLLSBANE);
+        (/*obj->oartifact == ART_SUNSWORD || */
+            obj->oartifact == ART_TROLLSBANE);
 }
 
 /* KMH -- Talking artifacts are finally implemented */

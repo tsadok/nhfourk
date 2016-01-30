@@ -192,9 +192,11 @@ static const struct artifact const_artilist[] = {
       SPFX_RESTR, 0, 0,
       PHYS(0, 8), NO_DFNS, NO_CARY, 0, A_LAWFUL, PM_SAMURAI, NON_PM, 1200L),
 
+/*
     A("Sunsword", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_UNDEAD,
       PHYS(5, 0), DFNS(AD_BLND), NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 1500L),
+*/
 
 /*
  *      The artifacts for the quest dungeon, all self-willed.

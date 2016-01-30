@@ -57,6 +57,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Certain of the more pointless and/or redundant artifact weapons
+   have been removed from the list.  Perhaps the most notable of these
+   was Sunsword, which has been superceded by the improved Trollsbane.
+
  * Monsters now regenerate hitpoints somewhat faster than before.
 
  * Giant spiders now have a web-spinning attack, which causes

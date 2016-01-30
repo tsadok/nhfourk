@@ -353,8 +353,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
 
             /* maybe make it special */
             if (!rn2_on_rng(20, rng) || is_lord(ptr))
-                otmp = oname(otmp, artiname(rn2_on_rng(2, rng) ?
-                                            ART_DEMONBANE : ART_SUNSWORD));
+                otmp = oname(otmp, artiname(/* rn2_on_rng(2, rng) ? */
+                                            ART_DEMONBANE/*: ART_SUNSWORD */));
             bless(otmp);
             otmp->oerodeproof = TRUE;
             spe2 = rn2_on_rng(4, rng);

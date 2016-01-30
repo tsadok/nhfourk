@@ -462,7 +462,7 @@ snuff_light_source(int x, int y)
         if (ls->type == LS_OBJECT && ls->x == x && ls->y == y) {
             obj = (struct obj *)ls->id;
             if (obj_is_burning(obj)) {
-                /* The only way to snuff Sunsword is to unwield it.  Darkness
+                /* The only way to snuff Trollsbane is to unwield it.  Darkness
                    scrolls won't affect it.  (If we got here because it was
                    dropped or thrown inside a monster, this won't matter anyway
                    because it will go out when dropped.) */
