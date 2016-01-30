@@ -57,6 +57,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Monsters now regenerate hitpoints somewhat faster than before.
+
  * Giant spiders now have a web-spinning attack, which causes
    temporary slowness (which times out), as well as causing you to be
    stuck in the web (same as stepping in one).  Spiders are immune.
