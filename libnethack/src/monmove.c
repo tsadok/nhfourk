@@ -38,11 +38,24 @@ mb_trapped(struct monst *mtmp)
 
 void
 mon_yells(struct monst *mon, enum msg_channel shout_msgc, const char *shout) {
-    if (canspotmon(mon))
-	pline(msgc_npcvoice, "%s yells:", Amonnam(mon));
-    else
-	You_hear(msgc_npcvoice, "someone yell:");
-    verbalize(shout_msgc, shout);
+    if (Deaf) {
+        if (canspotmon(mon)) {
+            /* Sidenote on "A watchman angrily waves her arms!"  A female being
+               called a watchman is valid (because it's a career name). */
+            pline(shout_msgc, "%s angrily %s %s %s!",
+                Amonnam(mon),
+                nolimbs(mon->data) ? "shakes" : "waves",
+                mhis(mon),
+                nolimbs(mon->data) ? mbodypart(mon, HEAD)
+                                   : makeplural(mbodypart(mon, ARM)));
+        }
+    } else {
+        if (canspotmon(mon))
+            pline(msgc_npcvoice, "%s yells:", Amonnam(mon));
+        else
+            You_hear(msgc_npcvoice, "someone yell:");
+        verbalize(shout_msgc, shout);
+    }
 }
 
 /* Called every turn by the Watch to see if they notice any misbehaviour.

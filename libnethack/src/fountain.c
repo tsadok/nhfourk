@@ -201,9 +201,19 @@ dryup(xchar x, xchar y, boolean isyou)
                 if ((mtmp->data == &mons[PM_WATCHMAN] ||
                      mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
                     couldsee(mtmp->mx, mtmp->my) && mtmp->mpeaceful) {
-                    pline(msgc_npcvoice, "%s yells:", Amonnam(mtmp));
-                    verbalize(msgc_npcvoice,
-                              "Hey, stop using that fountain!");
+                    if (!Deaf) {
+                        pline(msgc_npcvoice, "%s yells:", Amonnam(mtmp));
+                        verbalize(msgc_npcvoice,
+                                  "Hey, stop using that fountain!");
+                    } else {
+                        pline(msgc_hint, "%s earnestly %s %s %s!",
+                              Amonnam(mtmp),
+                              nolimbs(mtmp->data) ? "shakes" : "waves",
+                              mhis(mtmp),
+                              nolimbs(mtmp->data)
+                                      ? mbodypart(mtmp, HEAD)
+                                      : makeplural(mbodypart(mtmp, ARM)));
+                    }
                     break;
                 }
             }
