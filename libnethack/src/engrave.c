@@ -810,8 +810,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                         "Splinters fly up from the bridge." :
                         "Gravel flies up from the floor.";
                 }
-                else
+                else if (!Deaf)
                     post_engr_text = "You hear drilling!";
+                else
+                    post_engr_text = "You feel tremors.";
                 break;
 
                 /* type = BURN wands */
@@ -839,8 +841,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 if (!Blind) {
                     post_engr_text = "Lightning arcs from the wand.";
                     doblind = TRUE;
-                } else
+                } else if (!Deaf)
                     post_engr_text = "You hear crackling!";
+                else
+                    post_engr_text = "Your hair stands up!";
                 break;
             
                 /* type = MARK wands */
