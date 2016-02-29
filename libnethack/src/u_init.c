@@ -765,19 +765,10 @@ u_init_inv_skills(void)
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 10);
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
-    case PM_MONK:
+    case PM_MONK: {
+        static short M_spell[] = { SPE_HEALING, SPE_PROTECTION, SPE_SLEEP };
         trobj_list = copy_trobj_list(Monk);
-        switch (rolern2(3)) {
-        case 0:
-            trobj_list[M_BOOK].trotyp = SPE_HEALING;
-            break;
-        case 1:
-            trobj_list[M_BOOK].trotyp = SPE_PROTECTION;
-            break;
-        case 2:
-            trobj_list[M_BOOK].trotyp = SPE_SLEEP;
-            break;
-        }
+        trobj_list[M_BOOK].trotyp = M_spell[rolern2(3)];
         role_ini_inv(trobj_list, nclist);
         if (!rolern2(5))
             role_ini_inv(Magicmarker, nclist);
@@ -786,12 +777,15 @@ u_init_inv_skills(void)
             role_ini_inv(Shuri, nclist);
         }
         knows_class(ARMOR_CLASS);
+        /* sufficiently martial-arts oriented item to ignore language issue: */
+        knows_object(SHURIKEN);
         skill_init(Skill_Mon);
         augment_magic_chest_contents(0, FOOD_CLASS, 5);
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         augment_magic_chest_contents(0, SPBOOK_CLASS, 3);
         augment_magic_chest_contents(SPE_BLANK_PAPER, 0, 1);
         break;
+    }
     case PM_PRIEST:
         role_ini_inv(Priest, nclist);
         if (!rolern2(5))
