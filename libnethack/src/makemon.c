@@ -332,6 +332,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 if (!rn2_on_rng(50, rng))
                     mongets(mtmp, CRYSTAL_BALL, rng);
             }
+        } else if (mm == PM_NINJA || mm == PM_ROSHI) {
+            m_initthrow(mtmp, SHURIKEN, 8, rng);
         } else if (ptr->msound == MS_PRIEST ||
                    quest_mon_represents_role(ptr, PM_PRIEST)) {
             otmp = mksobj(lev, MACE, FALSE, FALSE, rng);
