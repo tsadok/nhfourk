@@ -144,7 +144,7 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       FIRE(5, 0), FIRE(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
 
-    A("Dragonbane", BROADSWORD,
+    A("Dragonbane", LANCE,
       (SPFX_RESTR | SPFX_DCLAS), 0, S_DRAGON,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 500L),
 

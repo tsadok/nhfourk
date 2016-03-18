@@ -181,7 +181,8 @@ hitval(struct obj *otmp, struct monst *mon)
     if (Is_weapon && otmp->blessed && (is_demon(ptr) || is_undead(ptr)))
         tmp += 2;
 
-    if (is_spear(otmp) && strchr(kebabable, ptr->mlet))
+    if ((is_spear(otmp) || (otmp->otyp == LANCE)) &&
+        strchr(kebabable, ptr->mlet))
         tmp += 2;
 
     /* trident is highly effective against swimmers */

@@ -688,6 +688,18 @@ gcrownu(void)
         /* monks rarely wield a weapon */
         class_gift = SPE_RESTORE_ABILITY;
         goto make_splbk;
+    } else if (Role_if(PM_KNIGHT) &&
+               !exist_artifact(LANCE, artiname(ART_DRAGONBANE))) {
+        class_gift = LANCE;
+        obj = mksobj(level, class_gift, TRUE, FALSE, rng_main);
+        obj = oname(obj, artiname(ART_DRAGONBANE));
+        bless(obj);
+        obj->oeroded = obj->oeroded2 = 0;
+        obj->oerodeproof = TRUE;
+        obj->bknown = TRUE;
+        at_your_feet("A weapon");
+        dropy(obj);
+        u.ugifts++;
     }
 
     switch (u.ualign.type) {
