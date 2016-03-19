@@ -2397,18 +2397,19 @@ mintrap(struct monst *mtmp)
                     if (lev == level)
                         newsym(mtmp->mx, mtmp->my);
                     pline(combat_msgc(culprit, mtmp, cr_hit),
-                          "KAABLAMM!!!  %s triggers %s land mine!",
+                          "%s%s triggers %s land mine!",
+                          (!Deaf ? "KAABLAMM!!!  " : ""),
                           Monnam(mtmp), a_your[trap->madeby_u]);
                 }
-                if (!in_sight)
+                if (!in_sight && !Deaf)
                     pline(msgc_levelsound,
                           "Kaablamm!  You hear an explosion in the distance!");
                 blow_up_landmine(trap);
                 if (DEADMONSTER(mtmp))
                     trapkilled = TRUE;
-                else if (thitm(0, mtmp, NULL, rnd(16), FALSE))
+                else if (thitm(0, mtmp, NULL, rnd(16), FALSE)) {
                     trapkilled = TRUE;
-                else {
+                } else {
                     /* monsters recursively fall into new pit */
                     if (mintrap(mtmp) == 2)
                         trapkilled = TRUE;

@@ -599,6 +599,8 @@ scatter(int sx, int sy, /* location of objects to scatter */
                 if (visible)
                     pline(msgc_consequence, "%s apart.",
                           Tobjnam(otmp, "break"));
+                else
+                    You_hear(msgc_levelsound, "stone breaking.");
                 fracture_rock(otmp);
                 place_object(otmp, lev, sx, sy);
                 if ((otmp = sobj_at(BOULDER, lev, sx, sy)) != 0) {
@@ -613,6 +615,8 @@ scatter(int sx, int sy, /* location of objects to scatter */
                     deltrap(lev, trap);
                 if (visible)
                     pline(msgc_consequence, "%s.", Tobjnam(otmp, "crumble"));
+                else
+                    You_hear(msgc_levelsound, "stone crumbling.");
                 break_statue(otmp);
                 place_object(otmp, lev, sx, sy); /* put fragments on floor */
             }
