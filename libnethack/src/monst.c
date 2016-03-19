@@ -1914,8 +1914,26 @@ const struct permonst mons[] = {
         MP_WAND_BASIC, CLR_BROWN),
 /* 'I' is a visual marker for all invisible monsters and must be unused */
 /*
- * Jabberwock
+ * Jabberwocks, and other dangerous large chimeric mythical birdies.
  */
+    MON("baby gryphon", S_JABBERWOCK,
+        LVL(7, 18, 0, 25, 5), G_GENO,
+        A(ATTK(AT_BITE, AD_PHYS, 1, 14),
+          ATTK(AT_CLAW, AD_PHYS, 1, 6), ATTK(AT_CLAW, AD_PHYS, 1, 6),
+          NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(1300, 300, 0, MS_SQAWK, MZ_LARGE), MR_FIRE, 0,
+        MRACE_NONE, M1_ANIMAL | M1_FLY | M1_CARNIVORE | M1_OVIPAROUS,
+        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_STALK | M2_MAGIC,
+        M3_INFRAVISIBLE | M3_INFRAVISION | M3_SCENT, 0, CLR_BROWN),
+    MON("gryphon", S_JABBERWOCK,
+        LVL(12, 22, 0, 50, 10), (G_GENO | 2),
+        A(ATTK(AT_BITE, AD_PHYS, 1, 18),
+          ATTK(AT_CLAW, AD_PHYS, 1, 10), ATTK(AT_CLAW, AD_PHYS, 1, 10),
+          NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(1600, 400, 0, MS_SQAWK, MZ_LARGE), MR_FIRE, 0,
+        MRACE_NONE, M1_ANIMAL | M1_FLY | M1_CARNIVORE | M1_OVIPAROUS,
+        M2_HOSTILE | M2_STRONG | M2_NASTY | M2_STALK | M2_MAGIC,
+        M3_INFRAVISIBLE | M3_INFRAVISION | M3_SCENT, 0, CLR_YELLOW),
     MON("jabberwock", S_JABBERWOCK,
         LVL(15, 19, 12, -2, 50, 0), (G_GENO | 1),
         A(ATTK(AT_BITE, AD_PHYS, 2, 10), ATTK(AT_BITE, AD_PHYS, 2, 10),

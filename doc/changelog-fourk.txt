@@ -329,6 +329,10 @@ Changes in 4.3.0.4:
 
  * Dragonbane is now a lance.  Knights can get it by crowning.
 
+ * Gryphons have been added to the game; they may be useful as
+   steeds in the midgame, since they can fly but are rather
+   faster than dragons, easier to get than jabberwocks.
+
 Changes in 4.3.0.3:
 -------------------
 

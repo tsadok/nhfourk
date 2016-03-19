@@ -1441,6 +1441,11 @@ mbodypart(struct monst *mon, int part)
         "light headed", "neck", "spine", "toe",
         "feathers", "blood", "lung", "bill", "stomach", "plumage",
         "limbs", "skin", "body"
+    }, *const gryphon_parts[] = { "foreleg", "eye", "face", "talon",
+        "talon", "hind leg", "claw", "clawed", "head", "hind leg",
+        "light headed", "ruff", "spine", "hind claw", "feathers",
+        "blood", "lung", "beak", "stomach", "hide",
+        "limbs", "hide", "body"
     }, *const horse_parts[] =
         { "foreleg", "eye", "face", "forehoof", "hoof tip",
         "rear hoof", "forehoof", "hooved", "head", "rear leg",
@@ -1528,6 +1533,12 @@ mbodypart(struct monst *mon, int part)
         (part == ARM || part == FINGER || part == FINGERTIP || part == HAND ||
          part == HANDED || part == LIMBS))
         return humanoid_parts[part];
+    if ((mptr)->mlet == S_JABBERWOCK && !((mptr) == &mons[PM_JABBERWOCK]))
+        return gryphon_parts[part];
+    if ((mptr) == &mons[PM_JABBERWOCK] && part == HAIR)
+        return "scales"; /* NOT feathers */
+    if ((mptr) == &mons[PM_JABBERWOCK] && part == NOSE)
+        return "gaping maw"; /* NOT beak */
     if (is_bird(mptr))
         return bird_parts[part];
     if (has_beak(mptr) && part == NOSE) /* MOUTH is not a part, oddly */
