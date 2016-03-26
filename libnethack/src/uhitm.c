@@ -2061,6 +2061,7 @@ do_iceblock(struct monst * mdef, int dmg)
         /* fall through */
     case NO_TRAP:
     default:
+        mdef->miceblk  = 1;
         mdef->mtrapped = 1; /* Using dmg here would make sense, if mtrapped
                                supported that, but it's only one bit, and
                                the escape chance is random per turn.  This
@@ -2068,15 +2069,6 @@ do_iceblock(struct monst * mdef, int dmg)
         if (canseemon(mdef))
             pline(msgc_monneutral, "%s is encased in a block of ice.",
                   Monnam(mdef));
-        /*
-        if ((t = t_at(level, mdef->mx, mdef->my))) {
-            if ((t->tseen) && (canseemon(mdef)))
-                pline(mdef->mtame ? msgc_petfatal : msgc_monneutral,
-                      "%s is destroyed by the ice.",
-                      An(trapexplain[t->ttyp - 1]));
-            deltrap(level, t);
-        }
-        */
     }
     newsym(mdef->mx, mdef->my);
     return 0;

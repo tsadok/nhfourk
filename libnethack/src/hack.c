@@ -2192,7 +2192,13 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         /* TODO: this code is a little suspect because it doesn't move the steed
            back. I'm not sure if there's any cases where that matters, but if
            someone finds one, it should be reported to the NH3 devteam. */
-        if (mtmp->mtrapped && (trap = t_at(level, mtmp->mx, mtmp->my)) != 0 &&
+        if (mtmp->miceblk) {
+            /* can't swap places if pet is trapped in a block of ice */
+            u.ux = u.ux0; u.uy = u.uy0; /* didn't move after all */
+            pline(msgc_yafm,
+                  "You stop.  %s is encased in an immobile block of ice.",
+                  msgupcasefirst(y_monnam(mtmp)));
+        } else if (mtmp->mtrapped && (trap = t_at(level, mtmp->mx, mtmp->my)) != 0 &&
             is_pit_trap(trap->ttyp) &&
             sobj_at(BOULDER, level, trap->tx, trap->ty)) {
             /* can't swap places with pet pinned in a pit by a boulder */
@@ -2206,12 +2212,6 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                we've already done a random check for the displacement failing;
                the code would need to be restructured. */
             pline(msgc_cancelled1, "You stop.  %s won't fit through.",
-                  msgupcasefirst(y_monnam(mtmp)));
-        } else if (mtmp->mtrapped && !t_at(level, mtmp->mx, mtmp->my)) {
-            /* can't swap places if pet is trapped in a block of ice */
-            u.ux = u.ux0; u.uy = u.uy0; /* didn't move after all */
-            pline(msgc_yafm,
-                  "You stop.  %s is encased in an immobile block of ice.",
                   msgupcasefirst(y_monnam(mtmp)));
         } else {
             /* save its current description in case of polymorph */

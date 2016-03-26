@@ -1818,14 +1818,16 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                   "A sudden chill sweeps through you.");
             dmg *= 2;
         } else {
-            u.utrap = dmg;
-            dmg = 0;
             if (armpro < 5) {
-                if (!Passes_walls)
+                if (!Passes_walls) {
+                    u.utrap = dmg;
                     u.utraptype = TT_ICEBLOCK;
-                pline(combat_msgc(mtmp, &youmonst, cr_hit),
+                }
+                pline(Passes_walls ? msgc_playerimmune :
+                      combat_msgc(mtmp, &youmonst, cr_hit),
                       "A block of ice surrounds you!");
             }
+            dmg = 0;
         }
         break;
     case AD_WEBS:

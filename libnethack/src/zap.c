@@ -4127,6 +4127,7 @@ remove_iceblock(int x, int y, const char *message)
         }
     } else if (mtmp && mtmp->mtrapped && !t_at(level, x, y)) {
         mtmp->mtrapped = 0;
+        mtmp->miceblk  = 0;
         if (canseemon(mtmp))
             /* TODO: s/petneutral/petgood/, except we have no such msgc */
             pline(mtmp->mtame ? msgc_petneutral : msgc_monneutral,
@@ -4153,7 +4154,7 @@ weaken_iceblock(int x, int y)
        it with a percentage chance. */
     } else if (!rn2(3)) {
         remove_iceblock(x, y, removemsg);
-    } else if (mtmp && mtmp->mtrapped && !t_at(level, x, y)) {
+    } else if (mtmp && mtmp->miceblk) {
         /* This message is purely for flavor. */
         if (canseemon(mtmp))
             /* TODO: s/petneutral/petgood/ if we had such an msgc */
@@ -4171,7 +4172,7 @@ strengthen_iceblock(int x, int y)
             u.utrap += rnd(5);
             pline(msgc_statusbad, "The ice around you seems more solid.");
         }
-    } else if (mtmp && mtmp->mtrapped && !t_at(level, x, y)) {
+    } else if (mtmp && mtmp->miceblk) {
         /* Because mtrapped is a single bit, a monster's ice can't really
            be "strengthened" in the sense of the time being reduced.
            Ergo, this message is purely for flavor. */
@@ -4193,6 +4194,8 @@ poly_iceblock(int x, int y)
               
     if (!mtmp && !isyou)
         return;
+    if (!isyou && !mtmp->miceblk)
+        return;
     switch(rn2_on_rng(5, rng_poly_obj)) {
     case 1:
         for (i = 1; i < 3; i++)
@@ -4202,16 +4205,16 @@ poly_iceblock(int x, int y)
         for (i = 1; i < 3; i++)
             mksobj_at(ROCK, level, x, y, FALSE, FALSE, rng_main);
         pline(escapechan,
-              "The ice around %s turns to stone and crumbles from around %s.",
-              (isyou ? "you" : mon_nam(mtmp)), isyou ? "you" : mhim(mtmp));
+              "The ice turns to stone and crumbles from around %s.",
+              isyou ? "you" : mhim(mtmp));
         break;
     case 3:
         for (i = 1; i < 3; i++)
             mksobj_at(WORTHLESS_PIECE_OF_WHITE_GLASS,
                       level, x, y, FALSE, FALSE, rng_main);
         pline(escapechan,
-              "The ice around %s turns to glass and crumbles from around %s.",
-              (isyou ? "you" : mon_nam(mtmp)), isyou ? "you" : mhim(mtmp));
+              "The ice turns to glass and crumbles from around %s.",
+              isyou ? "you" : mhim(mtmp));
         break;        
     default:
         level->locations[x][y].typ = STONE;
@@ -4435,7 +4438,7 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
             if (mon->isshk && !*u.ushops)
                 hot_pursuit(mon);
         }
-        if (mon->mtrapped && !t_at(level, x, y)) {
+        if (mon->miceblk) {
             /* Monster is encased in a block of ice. */
             switch (abstype) {
             case ZT_DEATH:

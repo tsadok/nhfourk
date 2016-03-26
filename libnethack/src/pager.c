@@ -357,7 +357,9 @@ describe_mon(int x, int y, int monnum, char *buf)
         if (mtmp->mleashed)
             strcat(buf, ", leashed to you");
 
-        if (mtmp->mtrapped && cansee(mtmp->mx, mtmp->my)) {
+        if (mtmp->miceblk) {
+            sprintf(buf + strlen(buf), ", frozen in ice");
+        } else if (mtmp->mtrapped && cansee(mtmp->mx, mtmp->my)) {
             struct trap *t = t_at(level, mtmp->mx, mtmp->my);
             int tt = t ? t->ttyp : NO_TRAP;
 
@@ -365,9 +367,6 @@ describe_mon(int x, int y, int monnum, char *buf)
             if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB)
                 sprintf(buf + strlen(buf),
                         ", trapped in %s", an(trapexplain[tt - 1]));
-            if (!t)
-                /* If a monster is trapped without a trap, it's in ice. */
-                sprintf(buf + strlen(buf), ", frozen in ice");
         }
 
 #ifdef DEBUG_STRATEGY

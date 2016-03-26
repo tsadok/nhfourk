@@ -122,6 +122,7 @@ struct monst {
 
     unsigned mcan:1;    /* has been cancelled */
     unsigned mburied:1; /* has been buried */
+    unsigned miceblk:1; /* has been encased in ice */
     unsigned mspeed:2;  /* current speed (MFAST or MSLOW) */
     unsigned permspeed:2;       /* intrinsic mspeed value */
     /* see also mnitro, further down */

@@ -1889,6 +1889,12 @@ mintrap(struct monst *mtmp)
                 mtmp->meating = 5;
             }
         }
+    } else if (mtmp->miceblk) {
+        /* Monster is encased in ice.  Can it get free? */
+        if (!rn2(5)) {
+            mtmp->mtrapped = 0;
+            mtmp->miceblk  = 0;
+        }
     } else if (trap) {
         int tt = trap->ttyp;
         boolean in_sight, tear_web, see_it, inescapable =
@@ -2477,10 +2483,6 @@ mintrap(struct monst *mtmp)
             impossible("Some monster encountered a strange trap of type %d.",
                        tt);
         }
-    } else if (mtmp->mtrapped) {
-        /* Monster is encased in ice.  Can it get free? */
-        if (!rn2(5))
-            mtmp->mtrapped = 0;
     }
     if (trapkilled)
         return 2;
@@ -4040,12 +4042,12 @@ untrap(const struct nh_cmd_arg *arg, boolean force)
         return 1;
     }
 
-    if ((mtmp = m_at(level, x, y)) && mtmp->mtrapped && !t_at(level, x, y)) {
-        /* If the monster is trapped and there's no trap, it's iced. */
+    if ((mtmp = m_at(level, x, y)) && mtmp->miceblk) {
         if (flaming(youmonst.data)) {
             mtmp->mtrapped = 0;
+            mtmp->miceblk  = 0;
             pline(msgc_actionok, "You melt some of the ice from around %s.  "
-                  "The rest softens and falls apart on its own.",
+                  "The rest softens and falls apart.",
                   mon_nam(mtmp));
         } else {
             pline(msgc_yafm, "How exactly do you intend to free %s?",
