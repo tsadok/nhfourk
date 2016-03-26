@@ -9,6 +9,12 @@
 #include "hungerstatus.h"
 #include "alignrec.h"
 
+#define INITALIGNREC_CHA 10
+#define INITALIGNREC_NEU  5
+#define INITALIGNREC_LAW  0
+#define INIT_ALIGNREC(alntyp) (alntyp == A_CHAOTIC) ? INITALIGNREC_CHA : \
+    (alntyp == A_NEUTRAL) ? INITALIGNREC_NEU : INITALIGNREC_LAW
+
 /* #define DEBUG *//* uncomment for debugging info */
 
 /* part of the output on gain or loss of attribute */
@@ -799,9 +805,9 @@ newhp(void)
 
         /* Initialize alignment stuff */
         u.ualign.type = aligns[u.initalign].value;
-        /* NetHack Fourk balance adjustment:  lawful characters start with a lower alignment record, chaotics higher */
-        u.ualign.record = urole.initrecord + ((u.ualign.type == A_CHAOTIC) ? 10
-                                              : ((u.ualign.type == A_NEUTRAL) ? 5 : 0));
+        /* NetHack Fourk balance adjustment:  lawful characters start with a
+           lower alignment record, chaotics higher.  */
+        u.ualign.record = urole.initrecord + INIT_ALIGNREC(u.ualign.type);
 
         return hp;
     } else {
@@ -1032,11 +1038,11 @@ adjalign(int n)
             if (u.ualign.record < SEARED_CONSCIENCE) {
                 /* No warning -- your conscience no longer works. */
             } else if (u.ualign.record < SINNED) {
-                pline(msgc_alignbad, "Your transgressions are "
-                      "more than you can bear to think about.");
+                pline(msgc_alignbad,
+                      "You have stopped listening to your conscience.");
             } else if (u.ualign.record < STRAYED) {
                 pline(msgc_alignbad,
-                      "You worry that your sins will catch up with you.");
+                      "You ignore your conscience.");
             } else if (u.ualign.record < HALTINGLY) {
                 pline(msgc_alignbad,
                       "Your conscience bothers you, but you dismiss it.");
@@ -1049,11 +1055,13 @@ adjalign(int n)
                 pline(msgc_alignbad, "You hesitate for just a moment.");
             }
         }
-    } else if (newalign > u.ualign.record) {
+    } else if ((newalign > u.ualign.record) &&
+               (u.ualign.record < (urole.initrecord +
+                                INIT_ALIGNREC((aligns[u.initalign]).value)))) {
         u.ualign.record = newalign;
         if (u.uconduct[conduct_lostalign]) {
             if (u.ualign.record < SINNED) {
-                /* No message -- let 'em sweat a bit. */
+                ; /* No message -- let 'em sweat a bit. */
             } else if (u.ualign.record < NOMINALLY) {
                 pline(msgc_aligngood,
                       "Your conscience bothers you just a little less.");
@@ -1063,6 +1071,11 @@ adjalign(int n)
             } else if (u.ualign.record == PIOUS) {
                 pline(msgc_aligngood, "Your conscience is assuaged.");
             }
+        }
+    } else if (!(u.ualign.record == newalign)) {
+        u.ualign.record = newalign;
+        if (u.ualign.record == PIOUS) {
+            pline(msgc_aligngood, "Your conscience is clear.");
         }
     }
 }
