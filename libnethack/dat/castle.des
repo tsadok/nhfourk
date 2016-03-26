@@ -203,6 +203,9 @@ MONSTER:monster[3],random,(27,11)
 MONSTER:monster[4],random,(30,11)
 MONSTER:monster[5],random,(33,11)
 MONSTER:monster[6],random,(36,11)
+# Randomly place a couple of xorns
+MONSTER:'X',"xorn",random
+MONSTER:'X',"xorn",random
 # MazeWalks
 MAZEWALK:(00,10),west
 MAZEWALK:(62,06),east
