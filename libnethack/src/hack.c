@@ -78,7 +78,9 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
         int peaceful = 0; /* how peaceful is the monster? */
 
         if (mtmp && !Hallucination && canclassifymon(mtmp)) {
-            if (mtmp->mtame)
+            if (mtmp->mtame ||
+                (mtmp->data->msound == MS_GUARDIAN &&
+                 mtmp->mpeaceful))
                 peaceful = 3;
             else if (mtmp->mpeaceful)
                 peaceful = always_peaceful(mtmp->data) ? 2 : 1;
@@ -1891,7 +1893,9 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                       Monnam(mtmp));
                 action_completed();
                 return 1;
-            } else if (!mtmp->mtame) {
+            } else if (!mtmp->mtame &&
+                       (mtmp->data->msound != MS_GUARDIAN ||
+                        !mtmp->mpeaceful)) {
                 /* can happen through stun/confusion */
                 pline(msgc_failrandom, "You bump into %s.  "
                       "%s's apparently unwilling to swap places.",
@@ -2218,12 +2222,16 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
             const char *pnambuf = y_monnam(mtmp);
             struct trap *ttmp = t_at(level, u.ux0, u.uy0);
             boolean tseen = (ttmp) ? ttmp->tseen : FALSE;
+            boolean displaced =
+                (mtmp->mtame ||
+                 (mtmp->data->msound == MS_GUARDIAN &&
+                  mtmp->mpeaceful));
 
             mtmp->mtrapped = 0;
             remove_monster(level, x, y);
             place_monster(mtmp, u.ux0, u.uy0);
-            pline_once(mtmp->mtame ? msgc_petneutral : msgc_petfatal,
-                       "You %s %s.", mtmp->mtame ? "displace" : "frighten",
+            pline_once(displaced ? msgc_petneutral : msgc_petfatal,
+                       "You %s %s.", displaced ? "displace" : "frighten",
                        pnambuf);
 
             /* check for displacing it into pools and known traps */
