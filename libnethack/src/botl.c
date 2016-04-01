@@ -317,6 +317,8 @@ make_player_info(struct nh_player_info *pi)
         /* Don't show the default Melee status light, as that's the most common case. */
         /* 15 (last case) */
     }
+    if (youmonst.mslowed > 0)
+        strncpy(pi->statusitems[pi->nr_items++], "Slow", ITEMLEN);
     if (u.utrap)        /* 16 */
         strncpy(pi->statusitems[pi->nr_items++], trap_stat[u.utraptype],
                 ITEMLEN);

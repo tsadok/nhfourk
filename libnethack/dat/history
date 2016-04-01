@@ -1,5 +1,5 @@
-NetHack Fourk History file for release 4.3.0.3
-This file was last updated by Jonadab, 2015-07-01
+NetHack Fourk History file for release 4.3.0.4
+This file was last updated by Jonadab, 2015-09-16
 
 Behold, mortal, the origins of NetHack...
 
@@ -206,6 +206,10 @@ for most of the bug reports before 4.3 went into beta, and Morwen, who did
 much of the playtesting in the later 4.3 betas).  And finally, thank you
 for playing our game.  We hope you have fun!
 
+I would also like to thank hackedhead specially for being the first person
+to provide a great deal of very useful feedback on the changes in NetHack
+Fourk, as well as all the others who have provided useful feedback since.
+
 			   - - - - - - - - - -
 
 From time to time, some depraved individual out there in netland sends a
@@ -279,4 +283,4 @@ NetHack Fourk also contains contributions from:
 
     The Mighty Khor           Chris Plus Alphanumeric Gibberish
     hackedhead                Leon Arnott
-    Robert M. Cook
+    Robert M. Cook            Maya "GoldenIvy"

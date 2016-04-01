@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /*      Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -228,11 +228,11 @@ is_ok_location(struct level *lev, schar x, schar y, int humidity)
     if (humidity & DRY) {
         typ = lev->locations[x][y].typ;
         if (typ == ROOM || typ == AIR || typ == CLOUD || typ == ICE ||
-            typ == CORR)
+            typ == CORR || typ == PUDDLE)
             return TRUE;
     }
     if (humidity & WET) {
-        if (is_pool(lev, x, y) || is_lava(lev, x, y))
+        if (is_damp_terrain(lev, x, y) || is_lava(lev, x, y))
             return TRUE;
     }
     return FALSE;
@@ -1666,10 +1666,10 @@ fill_advent_calendar(struct level *lev, boolean init)
 		if ((lev->locations[x][y].doormask & D_LOCKED) &&
                     (getmonth() == 12)) {
 		    if (getmday() == 24 && door_nr == 24) {
-		        You_hear("a little bell ringing!");
+		        You_hear(msgc_levelsound, "a little bell ringing!");
 		        lev->locations[x][y].doormask = D_CLOSED;
 		    } else if (getmday() == door_nr) {
-			You_hear("a door unlocking!");
+			You_hear(msgc_levelsound, "a door unlocking!");
 		        lev->locations[x][y].doormask = D_CLOSED;
 		    }
                 }
@@ -3063,10 +3063,10 @@ fixup_special(struct level *lev)
 
         for (str = lev_message; (nl = strchr(str, '\n')) != 0; str = nl + 1) {
             *nl = '\0';
-            pline("%s", str);
+            pline(msgc_branchchange, "%s", str);
         }
         if (*str)
-            pline("%s", str);
+            pline(msgc_branchchange, "%s", str);
         free(lev_message);
         lev_message = 0;
     }

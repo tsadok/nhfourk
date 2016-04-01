@@ -81,6 +81,8 @@
 # define MRACE_ORC      0x00000080L     /* is an orc */
 # define MRACE_FAIRY    0x00000100L     /* is a fairy creature */
 # define MRACE_SYLPH    MRACE_FAIRY     /* for clarity in role.c */
+# define MRACE_RODENT   0x00000200L     /* is a rodent */
+# define MRACE_SCURRIER MRACE_RODENT    /* for clarity in role.c */
 
 # define MP_WANDS        0x00000001L
 # define MP_WAND_BASIC   0x00000001L
@@ -174,6 +176,7 @@
 # define M3_BLINKAWAY    0x1000 /* teleports only in LOS, when fleeing */
 # define M3_VANDMGRDUC   0x2000 /* damage reduction as in 3.4.3
                                    (i.e., ac_threshhold is always 0) */
+# define M3_SEEINDARK    0x4000 /* does not require light to see */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -135,7 +135,7 @@ getrumor(int truth,     /* 1=true, -1=false, 0=either */
         else
             ltruth = (adjtruth > 0) ? 1 : -1;
     } else {
-        pline("Can't open rumors file!");
+        pline(msgc_saveload, "Can't open rumors file!");
         true_rumor_size = -1;   /* don't try to open it again */
         if (truth_out)
             *truth_out = 0;
@@ -161,8 +161,8 @@ outrumor(int truth,     /* 1=true, -1=false, 0=either */
             return;
         else if (Blind) {
             if (mechanism == BY_COOKIE)
-                pline(fortune_msg);
-            pline("What a pity that you cannot read it!");
+                pline(msgc_rumor, fortune_msg);
+            pline(msgc_badidea, "What a pity that you cannot read it!");
             return;
         }
     }
@@ -172,19 +172,19 @@ outrumor(int truth,     /* 1=true, -1=false, 0=either */
     switch (mechanism) {
     case BY_ORACLE:
         /* Oracle delivers the rumor */
-        pline("True to her word, the Oracle %ssays: ",
+        pline(msgc_npcvoice, "True to her word, the Oracle %ssays: ",
               (!rn2(4) ? "offhandedly "
                : (!rn2(3) ? "casually " : (rn2(2) ? "nonchalantly " : ""))));
-        verbalize("%s", line);
+        verbalize(msgc_rumor, "%s", line);
         return;
     case BY_COOKIE:
-        pline(fortune_msg);
+        pline(msgc_rumor, fortune_msg);
         /* FALLTHRU */
     case BY_PAPER:
-        pline("It reads:");
+        pline(msgc_npcvoice, "It reads:");
         break;
     }
-    pline("%s", line);
+    pline(msgc_rumor, "%s", line);
 }
 
 static void
@@ -301,7 +301,7 @@ outoracle(boolean special, boolean delphi)
                      NULL);
         dlb_fclose(oracles);
     } else {
-        pline("Can't open oracles file!");
+        pline(msgc_saveload, "Can't open oracles file!");
         oracle_flg = -1;        /* don't try to open it again */
     }
 }
@@ -321,13 +321,14 @@ doconsult(struct monst *oracl)
     action_completed();
 
     if (!oracl) {
-        pline("There is no one here to consult.");
+        pline(msgc_cancelled, "There is no one here to consult.");
         return 0;
-    } else if (!oracl->mpeaceful) {
-        pline("%s is in no mood for consultations.", Monnam(oracl));
+    } else if (Stormprone || !oracl->mpeaceful) {
+        pline(msgc_cancelled, "%s is in no mood for consultations.",
+              Monnam(oracl));
         return 0;
     } else if (!umoney) {
-        pline("You have no money.");
+        pline(msgc_cancelled, "You have no money.");
         return 0;
     }
 
@@ -338,14 +339,14 @@ doconsult(struct monst *oracl)
         return 0;
     case 'y':
         if (umoney < enlcost) {
-            pline("\"Thou canst not afford it.\"");
+            pline(msgc_npcvoice, "\"Thou canst not afford it.\"");
             break;
         }
         money2mon(oracl, enlcost);
-        pline("You feel self-knowledgeable...");
+        pline(msgc_actionok, "You feel self-knowledgeable...");
         win_pause_output(P_MESSAGE);
         enlightenment(FALSE);
-        pline("The feeling subsides.");
+        pline_implied(msgc_actionboring, "The feeling subsides.");
         return 1;
     case 'n':
     default:
@@ -360,7 +361,8 @@ doconsult(struct monst *oracl)
         return 0;
     case 'y':
         if (umoney < minor_cost) {
-            pline("\"Thou hast not even enough money for that!\"");
+            pline(msgc_cancelled,
+                  "\"Thou hast not even enough money for that!\"");
             return 0;
         }
         u_pay = minor_cost;

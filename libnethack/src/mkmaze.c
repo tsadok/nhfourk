@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -469,7 +469,8 @@ makemaz(struct level *lev, const char *s, int *smeq)
     maxx = (x_maze_max - 0) / xtotlwidth;
     maxy = (y_maze_max - 0) / ytotlwidth;
     /* 
-    pline("Generating maze with cw (%d,%d), ww (%d,%d), tw (%d,%d).",
+    pline(msgc_debug,
+          "Generating maze with cw (%d,%d), ww (%d,%d), tw (%d,%d).",
           xcorrwidth, ycorrwidth, xwallwidth, ywallwidth, xtotlwidth,
           ytotlwidth);
     */
@@ -579,12 +580,18 @@ makemaz(struct level *lev, const char *s, int *smeq)
                   TRUE, FALSE, rng_for_level(&lev->z));
     }
     for (x = mklev_rn2(3, lev); x; x--) {
+        struct monst *minotaur;
         mazexy(lev, &mm);
-        makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, MM_ALLLEVRNG);
+        minotaur = makemon(&mons[PM_MINOTAUR], lev, mm.x, mm.y, MM_ALLLEVRNG);
+        if (minotaur && !resists_sleep(minotaur))
+            minotaur->msleeping = 1;
     }
     for (x = 7 + mklev_rn2(5, lev); x; x--) {
+        struct monst *mtmp;
         mazexy(lev, &mm);
-        makemon(NULL, lev, mm.x, mm.y, MM_ALLLEVRNG);
+        mtmp = makemon(NULL, lev, mm.x, mm.y, MM_ALLLEVRNG);
+        if (mtmp && !mklev_rn2(((x / 2)) || 1, lev) && !resists_sleep(mtmp))
+            mtmp->msleeping = 1;
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--) {
         mazexy(lev, &mm);
@@ -990,7 +997,7 @@ water_friction(schar * udx, schar * udy)
         eff = TRUE;
     }
     if (eff)
-        pline("Water turbulence affects your movements.");
+        pline(msgc_substitute, "Water turbulence affects your movements.");
 }
 
 
@@ -1081,7 +1088,8 @@ waterbody_impl(xchar x, xchar y, boolean article)
         return "ice";
     else if (is_moat(level, x, y))
         return msgcat(article ? "a " : "", "moat");
-    else if ((ltyp != POOL) && (ltyp != WATER) && Is_juiblex_level(&u.uz))
+    else if ((ltyp != POOL) && (ltyp != WATER) && (ltyp != PUDDLE) &&
+             Is_juiblex_level(&u.uz))
         return msgcat(article ? "a " : "", "swamp");
     else if (ltyp == POOL)
         return msgcat(article ? "a " : "", "pool of water");
@@ -1199,7 +1207,7 @@ mv_bubble(struct level *lev, struct bubble *b, int dx, int dy, boolean ini)
 
     /* move bubble */
     if (dx < -1 || dx > 1 || dy < -1 || dy > 1) {
-        /* pline("mv_bubble: dx = %d, dy = %d", dx, dy); */
+        /* pline(msgc_debug, "mv_bubble: dx = %d, dy = %d", dx, dy); */
         dx = sgn(dx);
         dy = sgn(dy);
     }
@@ -1218,19 +1226,21 @@ mv_bubble(struct level *lev, struct bubble *b, int dx, int dy, boolean ini)
         colli |= 1;
 
     if (b->x < bxmin) {
-        pline("bubble xmin: x = %d, xmin = %d", b->x, bxmin);
+        pline(msgc_debug, "bubble xmin: x = %d, xmin = %d", b->x, bxmin);
         b->x = bxmin;
     }
     if (b->y < bymin) {
-        pline("bubble ymin: y = %d, ymin = %d", b->y, bymin);
+        pline(msgc_debug, "bubble ymin: y = %d, ymin = %d", b->y, bymin);
         b->y = bymin;
     }
     if ((int)(b->x + b->bm[0] - 1) > bxmax) {
-        pline("bubble xmax: x = %d, xmax = %d", b->x + b->bm[0] - 1, bxmax);
+        pline(msgc_debug, "bubble xmax: x = %d, xmax = %d",
+              b->x + b->bm[0] - 1, bxmax);
         b->x = bxmax - b->bm[0] + 1;
     }
     if ((int)(b->y + b->bm[1] - 1) > bymax) {
-        pline("bubble ymax: y = %d, ymax = %d", b->y + b->bm[1] - 1, bymax);
+        pline(msgc_debug, "bubble ymax: y = %d, ymax = %d",
+              b->y + b->bm[1] - 1, bymax);
         b->y = bymax - b->bm[1] + 1;
     }
 

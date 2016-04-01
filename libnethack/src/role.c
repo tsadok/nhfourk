@@ -48,8 +48,8 @@ const struct Role roles[] = {
      PM_LORD_CARNARVON, PM_STUDENT, PM_MINION_OF_HUHETOTL,
      NON_PM, PM_HUMAN_MUMMY, S_SNAKE, S_MUMMY,
      ART_ORB_OF_DETECTION,
-     MRACE_HUMAN | MRACE_DWARF | MRACE_GNOME | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL |
-     ROLE_NEUTRAL,
+     MRACE_HUMAN | MRACE_DWARF | MRACE_GNOME | MRACE_SCURRIER |
+     ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
      {7, 10, 10, 7, 7, 7},
      {20, 20, 20, 10, 20, 10},
@@ -256,7 +256,7 @@ const struct Role roles[] = {
      PM_FOREST_CENTAUR, PM_SCORPION, S_CENTAUR, S_SPIDER,
      ART_LONGBOW_OF_DIANA,
      MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | MRACE_SYLPH |
-     ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
+     MRACE_SCURRIER | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {13, 13, 13, 9, 13, 7},
      {30, 10, 10, 20, 20, 10},
@@ -306,7 +306,8 @@ const struct Role roles[] = {
      PM_TWOFLOWER, PM_GUIDE, PM_MASTER_OF_THIEVES,
      PM_GIANT_SPIDER, PM_FOREST_CENTAUR, S_SPIDER, S_CENTAUR,
      ART_YENDORIAN_EXPRESS_CARD,
-     MRACE_HUMAN | MRACE_GNOME | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
+     MRACE_HUMAN | MRACE_GNOME | MRACE_SCURRIER |
+     ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
      {7, 10, 6, 7, 7, 10},
      {15, 10, 10, 15, 30, 20},
@@ -382,6 +383,7 @@ struct Role urole;
 const struct Race races[] = {
     {"human", "human", "humanity", "Hum",
      {"man", "woman"},
+     12, /* base speed, normal */
      PM_HUMAN, NON_PM, PM_HUMAN_MUMMY, PM_HUMAN_ZOMBIE,
      MRACE_HUMAN | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL | ROLE_NEUTRAL |
      ROLE_CHAOTIC,
@@ -395,6 +397,7 @@ const struct Race races[] = {
      },
     {"elf", "elven", "elvenkind", "Elf",
      {0, 0},
+     12, /* base speed, normal */
      PM_ELF, NON_PM, PM_ELF_MUMMY, PM_ELF_ZOMBIE,
      MRACE_ELF | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC,
      MRACE_ELF, MRACE_ELF, MRACE_ORC,
@@ -407,6 +410,7 @@ const struct Race races[] = {
      },
     {"dwarf", "dwarven", "dwarvenkind", "Dwa",
      {0, 0},
+     10, /* base speed, a bit slow */
      PM_DWARF, NON_PM, PM_DWARF_MUMMY, PM_DWARF_ZOMBIE,
      MRACE_DWARF | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL,
      MRACE_DWARF, MRACE_DWARF | MRACE_GNOME, MRACE_ORC,
@@ -419,6 +423,7 @@ const struct Race races[] = {
      },
     {"gnome", "gnomish", "gnomehood", "Gno",
      {0, 0},
+     11, /* base speed, just below normal */
      PM_GNOME, NON_PM, PM_GNOME_MUMMY, PM_GNOME_ZOMBIE,
      MRACE_GNOME | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
      MRACE_GNOME, MRACE_DWARF | MRACE_GNOME, MRACE_HUMAN,
@@ -431,6 +436,7 @@ const struct Race races[] = {
      },
     {"orc", "orcish", "orcdom", "Orc",
      {0, 0},
+     12, /* base speed, normal for now (this may change) */
      PM_ORC, NON_PM, PM_ORC_MUMMY, PM_ORC_ZOMBIE,
      MRACE_ORC | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC,
      MRACE_ORC, 0, MRACE_HUMAN | MRACE_ELF | MRACE_DWARF,
@@ -443,6 +449,7 @@ const struct Race races[] = {
      },
     {"sylph", "sylph", "sylphood", "Syl",
      {0,0},
+     12, /* base speed, normal for now (this may change) */
      PM_SYLPH, NON_PM, NON_PM, NON_PM,
      MRACE_FAIRY | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
      MRACE_FAIRY, 0, 0,
@@ -452,6 +459,24 @@ const struct Race races[] = {
      {2, 0, 1, 1, 1, 1},        /* Hit points */
      {2, 0, 3, 0, 2, 2} /* Energy */
     },
+    {"scurrier", "scurrid", "scurridae", "Scu",
+     /* Yes, I am aware that "scurrier" and "sciurid" are etymologically
+        unrelated, and that "sciurid" as in squirrel is spelled "sciurid".
+        Scurriers, however, aren't squirrels as such; they're a heavily
+        anthropomorphized cross between squirrel, rabbit (hence the digging
+        ability), and all-round general-purpose (humanoid) rodent. */
+     {"scurrier", "scurrier"},
+     16, /* base speed on the fast side (may need tweaked) */
+     PM_SCURRIER, NON_PM, NON_PM, NON_PM,
+     MRACE_SCURRIER | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
+     MRACE_SCURRIER, 0, MRACE_ORC,
+     /* Str Int Wis Dex Con Cha */
+     {2, 2, 3, 4, 2, 3},
+     {16, 16, 18, 22, 15, 22},
+     /* Init Lower Higher */
+     {1, 0, 0, 1, 1, 0},        /* Hit points */
+     {1, 0, 2, 0, 2, 0} /* Energy */
+     },
 /* Array terminator */
     {0, 0, 0, 0}
 };

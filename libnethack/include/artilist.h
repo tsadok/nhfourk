@@ -89,7 +89,8 @@ static const struct artifact const_artilist[] = {
  *      providing 8 more.
  */
     A("Stormbringer", RUNESWORD,
-      (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN | SPFX_INTEL | SPFX_DRLI), 0, 0,
+      (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN | SPFX_INTEL | SPFX_DRLI |
+       SPFX_STRM), 0, 0,
       DRLI(5, 2), DRLI(0, 0), NO_CARY, 0, A_CHAOTIC, NON_PM, NON_PM, 8000L),
 /*
  *      Mjollnir will return to the hand of the wielder when thrown
@@ -143,7 +144,7 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       FIRE(5, 0), FIRE(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
 
-    A("Dragonbane", BROADSWORD,
+    A("Dragonbane", LANCE,
       (SPFX_RESTR | SPFX_DCLAS), 0, S_DRAGON,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 500L),
 
@@ -191,9 +192,11 @@ static const struct artifact const_artilist[] = {
       SPFX_RESTR, 0, 0,
       PHYS(0, 8), NO_DFNS, NO_CARY, 0, A_LAWFUL, PM_SAMURAI, NON_PM, 1200L),
 
+/*
     A("Sunsword", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_UNDEAD,
       PHYS(5, 0), DFNS(AD_BLND), NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 1500L),
+*/
 
 /*
  *      The artifacts for the quest dungeon, all self-willed.

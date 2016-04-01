@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Sean Hunt, 2014-10-15 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* NetHack may be freely redistributed.  See license for details. */
 /* Copyright 1988, M. Stephenson */
 
@@ -25,6 +25,7 @@
 # define AT_BOOM 14     /* explodes when killed */
 # define AT_GAZE 15     /* gaze - ranged */
 # define AT_TENT 16     /* tentacles */
+# define AT_SPIN 17     /* web spinners */
 
 # define AT_WEAP 254    /* uses weapon */
 # define AT_MAGC 255    /* uses magic spell(s) */
@@ -82,7 +83,8 @@
 # define AD_SCLD 44     /* creates a stinking cloud */
 # define AD_PITS 45     /* creates pits */
 # define AD_ICEB 46     /* embeds in block of ice */
-# define AD_OTHER 47    /* Numbers starting here can be used for non-damage
+# define AD_WEBS 47     /* traps in a web; this also causes temp slowness */
+# define AD_OTHER 60    /* Numbers starting here can be used for non-damage
                          * constants stored in a damage type field, such as the
                          * field in the artilist that governs what an artifact
                          * grants when equipped, which in vanilla can only be a
@@ -96,6 +98,8 @@
 # define AD_SAMU 252    /* hits, may steal Amulet (Wizard) */
 # define AD_CURS 253    /* random curse (ex. gremlin) */
 
+
+# define AD_WEBS_MAX_TURNCOUNT 150
 
 /*
  *  Monster to monster attacks.  When a monster attacks another (mattackm),
@@ -118,6 +122,17 @@ enum attack_check_status {
     ac_cancel,          /* the attack-like action was cancelled */
     ac_somethingelse,   /* something else happened, which consumes time */
     ac_monsterhit,      /* the attack-like action hit a monster */
+};
+
+/* Argument to combat_msgc, describing what happened. */
+enum combatresult {
+    cr_miss,   /* an attack missed; or a passive attack hit an immunity */
+    cr_hit,    /* an attack hit */
+    cr_immune, /* an active attack hit, but is 100% resisted by the target */
+    cr_resist, /* an attack hit but not for full effect */
+    cr_kill,   /* an attack hit and killed the target, potentially petfatal */
+    cr_kill0,  /* ditto, but never prints a petfatal (presumably because the
+                  caller will in that case) */
 };
 
 #endif /* MONATTK_H */

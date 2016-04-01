@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985,1993. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -263,7 +263,7 @@ savebones(struct obj *corpse, boolean take_items)
                 if (delete_bonesfile(bonesid))
                     goto make_bones;
                 else
-                    pline("Cannot unlink old bones.");
+                    pline(msgc_saveload, "Cannot unlink old bones.");
             }
         }
         return;
@@ -326,7 +326,7 @@ make_bones:
         }
         mtmp = christen_monst(mtmp, u.uplname);
         newsym(u.ux, u.uy);
-        pline("Your %s rises from the dead as %s...",
+        pline(msgc_outrobad, "Your %s rises from the dead as %s...",
               body_part(BODY), an(mons[u.ugrave_arise].mname));
         win_pause_output(P_MESSAGE);
         drop_upon_death(mtmp, NULL);
@@ -336,7 +336,8 @@ make_bones:
         mtmp->m_lev = (u.ulevel ? u.ulevel : 1);
         mtmp->mhp = mtmp->mhpmax = u.uhpmax;
         mtmp->female = u.ufemale;
-        mtmp->msleeping = 1;
+        if (!resists_sleep(mtmp))
+            mtmp->msleeping = 1;
 #ifdef LIVELOG_BONES_KILLER
         mtmp->former_player = 1 + /* Guarantee former_player > 0 */
             (2 * u.initgend    /*   2 * (0-2) = 0-4 */) +
@@ -382,7 +383,7 @@ make_bones:
     fd = create_bonesfile(bonesid, &whynot);
     if (fd < 0) {
         if (wizard)
-            pline("%s", whynot);
+            pline(msgc_saveload, "%s", whynot);
 
         /* bones file creation problems are silent to the player. Keep it that
            way, but place a clue into the paniclog. */
@@ -464,7 +465,8 @@ getbones(d_level *levnum)
     bonesfn = bones_filename(bonesid);
     if ((ok = uptodate(&mf, bonesfn)) == 0) {
         if (!wizard)
-            pline("Discarding unuseable bones; no need to panic...");
+            pline(msgc_saveload,
+                  "Discarding unuseable bones; no need to panic...");
     } else {
 
         if (wizard && yn("Get bones?") == 'n')
@@ -479,7 +481,7 @@ getbones(d_level *levnum)
                                oldbonesid, bonesid);
 
             if (wizard) {
-                pline("%s", errbuf);
+                pline(msgc_saveload, "%s", errbuf);
                 ok = FALSE;     /* won't die of trickery */
             }
 
@@ -517,7 +519,7 @@ getbones(d_level *levnum)
            of them will fail to delete it (the first N-1 under AmigaDOS, the
            last N-1 under UNIX). So no point in a mysterious message for a
            normal event -- just generate a new level for those N-1 games. */
-        /* pline("Cannot unlink bones."); */
+        /* pline(msgc_saveload, "Cannot unlink bones."); */
         freelev(ledger_no(levnum));
         return 0;
     }

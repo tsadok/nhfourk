@@ -486,6 +486,9 @@ enlightenment(int final)
 
         buf = msgprintf(" %d / %ld", u.ualign.record, ALIGNLIM);
         enl_msg(&menu, "Your alignment ", "is", "was", buf);
+
+        buf = msgprintf(" MC level %d", magic_negation(&youmonst));
+        enl_msg(&menu, "You ", "have", "had", buf);
     }
 
         /*** Resistances to troubles ***/
@@ -611,8 +614,19 @@ enlightenment(int final)
         you_are(&menu, "visible");
     if (Displaced)
         you_are(&menu, "displaced");
-    if (Stealth)
+    switch(get_stealth(&youmonst)) {
+    case 0:
+        break; /* no message if you aren't stealthy at all */
+    case 1:
+    case 2:
+        you_are(&menu, "somewhat stealthy");
+    case 3:
+    case 4:
         you_are(&menu, "stealthy");
+    case 5:
+    default: /* more than 5 is possible */
+        you_are(&menu, "very stealthy");
+    }
     if (Aggravate_monster)
         enl_msg(&menu, "You aggravate", "", "d", " monsters");
     if (Conflict)
@@ -649,7 +663,7 @@ enlightenment(int final)
         you_are(&menu, msgcat("swallowed by ", a_monnam(u.ustuck)));
     else if (u.ustuck) {
         const char *buf = msgprintf(
-            "%s %s", (Upolyd && sticks(youmonst.data)) ? "holding" : "held by",
+            "%s %s", (sticks(URACEDATA)) ? "holding" : "held by",
             a_monnam(u.ustuck));
         you_are(&menu, buf);
     }
@@ -858,8 +872,6 @@ unspoilered_intrinsics(void)
         add_menutext(&menu, "You are invisible.");
     if (HInvis && !Invisible)
         add_menutext(&menu, "You are invisible to others.");
-    if (HStealth)
-        add_menutext(&menu, "You are stealthy.");
     if (HAggravate_monster)
         add_menutext(&menu, "You aggravte monsters.");
     if (HConflict)
@@ -936,6 +948,19 @@ show_conduct(int final)
     else if (!u.uconduct[conduct_clothing])
         enl_msg(&menu, You_, "have not worn", "did not wear",
                 " any clothing or armor");
+
+    /* Conflict message only at game end for now, because otherwise #conduct
+       would provide trivial identification for the ring of conflict.  We may
+       ultimately decide to just auto-ID it when worn, but that would be a
+       separate decision.  (If so, then we could remove final && here.) */
+    if (final && !u.uconduct[conduct_conflict])
+        enl_msg(&menu, You_, "have not caused", "did not cause", " conflict");
+    /* Similarly, it's possible to be invisible and not know (if blind). */
+    if (final && !u.uconduct[conduct_invisible])
+        enl_msg(&menu, You_, "have not been", "were not", " invisible");
+    /* But displacement auto-identifies. */
+    if (!u.uconduct[conduct_displacement])
+        enl_msg(&menu, You_, "have not been", "were not", " displaced");
 
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");

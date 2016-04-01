@@ -54,6 +54,130 @@ Chronological Changelog (most recent at top):
 =============================================
 =============================================
 
+Changes in 4.3.0.4:
+-------------------
+
+ * Certain of the more pointless and/or redundant artifact weapons
+   have been removed from the list.  Perhaps the most notable of these
+   was Sunsword, which has been superceded by the improved Trollsbane.
+
+ * Monsters now regenerate hitpoints somewhat faster than before.
+
+ * Giant spiders now have a web-spinning attack, which causes
+   temporary slowness (which times out), as well as causing you to be
+   stuck in the web (same as stepping in one).  Spiders are immune.
+
+ * Merged the DYWYPISI patch, by Jafet.  This causes end-of-game item
+   identification to place information the player character did not
+   know in brackets, so that you can tell (e.g. in the dumplog)
+   whether an item was identified or not.  I expect players to find
+   a few bugs in my adaptation of this patch; it's a bit complex,
+   and I had to make some changes to the patch due to code divergence.
+
+ * Dwarves in the Gnomish Mines now sometimes carry candles
+   (monster starting inventory).  Gnomes do not.
+
+ * Quantum mechanics are now considered humanoid (h).
+
+ * Gnomes, due to their small size, cannot wear body armor.
+   (Neither can scurriers.)  However, Gnomes can now see in the dark.
+
+ * Added a new playable race, scurriers.  Scurriers are bipedal
+   humanoid rodents -- something like a cross between a rabbit, a
+   squirrel, and a human.  They are small, fast, and stealthy and have
+   a natural digging ability, all of which makes them very well suited
+   to avoiding combat rather than engaging in it.  They can be
+   archeologists or tourists, and I intend to add the ability for them
+   to be rangers as well, but that doesn't actually work yet.
+
+ * The formula for how many moves you get per turn has changed.  Four
+   factors contribute more or less independently:  your "base speed",
+   which is based on your race; whether you are intrinsically "fast"
+   or not; whether you have extrinsic speed (e.g., from speed boots);
+   and whether you are temporarily hasted (as from a spell of haste
+   self or a potion of speed).
+
+ * Wielding Stormbringer now causes peaceful and tame monsters to
+   attack you.  It also stops conflict from working in your favor.
+   However, the interface problems it creates in 3.4.3 (wherein you
+   attack things you don't intend to attack) are not present:  you
+   have the normal amount of control over your actions, can displace
+   your pets as usual, chat with shopkeepers, etc.  (If you actually
+   want to attack peaceful and tame monsters, you can of course do so
+   using the Fight command as usual, with the usual caveats.)
+
+ * The life cycle for D has been extended.  They now start life as
+   a [color] dragon egg, hatch into a baby [color] dragon, then grow
+   progressively into a young [color] dragon, a [color] dragon, a
+   [color] elder dragon, and finally into a great [color] dragon.
+   The more they advance, the more dangerous they become.  The
+   top two levels, elder and great, are not generated randomly.
+   Any age of dragon that lays eggs lays the same type of dragon
+   egg, in its respective color, which will hatch into a baby.
+
+ * Support has been added for receiving dgamelaunch SimpleMail
+   messages, when playing on a dgamelaunch-based public server,
+   provided the server admin has set an environment variable to
+   tell the game where to find the player's inbox.
+
+ * The shallow water portion of the L terrain patch has been merged.
+   This changes a number of existing special levels and also adds
+   a new version of Minetown.
+
+ * Stealth is no longer binary (all or nothing); there are degrees
+   now:  you can be more or less stealthy.  Examples of things that
+   are good for your stealth include:  being a elf (this is especially
+   good), a sylph, or a gnome; wearing an elven cloak; wearing elven
+   boots; wearing a +1 or better ring of steath; having basic or
+   better skill in stealth; using sufficiently light equipment that
+   you would still be unburdened even if its weight were doubled.
+   Going the other way, being burdened or worse hurts your stealth.
+   Being more stealthy decreases the odds that sleaping monsters will
+   wake up when you are around (via normal actions, such as walking;
+   things like exploding a gas spore still wake stuff up anyway).
+
+ * Monsters are now generated asleep in a wider variety of situations,
+   especially at level generation time.
+
+ * Protection from rings of protection, the spell of protection, and
+   cloak of protection now add into your magic cancellation level, in
+   addition to the base MC from your worn armor.  From armor alone you
+   can reach MC3 and with protection up to MC5.  The odds of magic
+   cancellation completely canceling an attack (of a type that MC can
+   cancel) are now 22%, 44%, 65%, 87%, or 98% for levels 1-5.  Even if
+   the attack is not completely canceled, the "worst effects" may
+   still be blocked.  For example, in the case of a fire, cold, or
+   lightning attack, the odds of your inventory being protected from
+   destruction are 61% at MC1, 86% at MC2, 94% at MC3, 98% at MC4,
+   100% at MC5.  A sleep or paralysis attack that isn't blocked
+   completely does have its duration shortened -- higher MC shortens
+   it more.  Brain eating attacks, which could not be blocked by MC at
+   all in vanilla, can now have their worst effects nerfed, though
+   this is not totally guaranteed even at MC5.  At MC4 or better,
+   drain attacks cannot take your last three experience levels and
+   xans cannot wound your legs.  Higher MC may give you extra turns
+   when subject to delayed instadeath (illness, some sources of
+   stoning) or protect you from attribute loss or deadly poison
+   (sometimes) or your armor from rusting or corrosion.  MC3 or higher
+   may delay drowning attacks (no guarantees) and protect you from
+   attribute loss due to seduction.  This list is not exhaustive.
+
+ * Cornuthaums now improve your wisdom and intelligence by their
+   enchantment, as a helm of brilliance does.  Their other effects
+   are unchanged.
+
+ * For public-server installations, dgamelaunch simple mail is
+   now supported.
+
+ * Some object weights have been adjusted to match the 3.6.0 values.
+
+ * Monster starting inventory has been further adjusted, for
+   flavor and balance.
+
+ * Lances now get the same "kebab" bonus as spears.
+
+ * Dragonbane is now a lance.  Knights can get it by crowning.
+
 Changes in 4.3.0.3:
 -------------------
 
@@ -96,7 +220,8 @@ Changes in 4.3.0.3:
    foreground color.
 
  * Weaponless characters can get items other than weapons as
-   sacrifice gifts.
+   sacrifice gifts.  Notably, weaponless spellcasters can get
+   spellbooks.  Armor and rings are also possible.
 
  * Some special levels have been changed, or new versions have
    been introduced.  Notable examples include Mine's End, the

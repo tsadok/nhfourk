@@ -72,11 +72,12 @@
 # define ALTAR           31
 # define MAGIC_CHEST     32
 # define ICE             33
-# define DRAWBRIDGE_DOWN 34
-# define AIR             35
-# define CLOUD           36
+# define PUDDLE          34 /* L */
+# define DRAWBRIDGE_DOWN 35
+# define AIR             36
+# define CLOUD           37
 
-# define MAX_TYPE        37
+# define MAX_TYPE        (CLOUD+1)
 # define INVALID_TYPE    127
 
 /*
@@ -105,6 +106,7 @@
 # define IS_FURNITURE(typ)  ((typ) >= STAIRS && (typ) <= MAGIC_CHEST)
 # define IS_AIR(typ)        ((typ) == AIR || (typ) == CLOUD)
 # define IS_SOFT(typ)       ((typ) == AIR || (typ) == CLOUD || IS_POOL(typ))
+# define IS_PUDDLE(typ)     ((typ) == PUDDLE)
 
 /*
  * The screen symbols may be the default or defined at game startup time.
@@ -156,7 +158,8 @@ enum dungeon_symbols {
     S_sink,
     S_fountain,
     S_magic_chest,
-/*40*/ S_vodbridge,
+/*40*/ S_puddle,
+    S_vodbridge,
     S_hodbridge,
     S_vcdbridge,        /* closed drawbridge, vertical wall */
     S_hcdbridge,        /* closed drawbridge, horizontal wall */
@@ -311,6 +314,7 @@ enum dungeon_symbols {
 /*
  * Room areas may be iced pools
  */
+# define ICED_PUDDLE    4       /* I'm kind of amazed this bit was available */
 # define ICED_POOL      8
 # define ICED_MOAT      16
 

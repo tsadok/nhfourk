@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -40,10 +40,9 @@ dodrop(const struct nh_cmd_arg *arg)
 }
 
 
-/* Called when a boulder is dropped, thrown, or pushed.  If it ends up
- * in a pool, it either fills the pool up or sinks away.  In either case,
- * it's gone for good...  If the destination is not a pool, returns FALSE.
- */
+/* Called when a boulder is dropped, thrown, or pushed. If it ends up in a pool,
+   it either fills the pool up or sinks away. In either case, it's gone for
+   good... If the destination is not a pool, returns FALSE. */
 boolean
 boulder_hits_pool(struct obj * otmp, int rx, int ry, boolean pushing)
 {
@@ -78,23 +77,26 @@ boulder_hits_pool(struct obj * otmp, int rx, int ry, boolean pushing)
                 if (u.usteed) {
                     const char *bp = y_monnam(u.usteed);
 
-                    pline("%s pushes %s into the %s.",
+                    pline(msgc_consequence, "%s pushes %s into the %s.",
                           msgupcasefirst(bp), the(xname(otmp)), what);
                 } else
-                    pline("You push %s into the %s.", the(xname(otmp)), what);
-                if (flags.verbose && !Blind)
-                    pline("Now you can cross it!");
+                    pline(msgc_consequence, "You push %s into the %s.",
+                          the(xname(otmp)), what);
+                if (!Blind)
+                    pline_implied(msgc_consequence, "Now you can cross it!");
                 /* no splashing in this case */
             }
         }
         if (!fills_up || !pushing) {    /* splashing occurs */
             if (!u.uinwater) {
                 if (pushing ? !Blind : cansee(rx, ry)) {
-                    pline("There is a large splash as %s %s the %s.",
+                    pline(msgc_consequence,
+                          "There is a large splash as %s %s the %s.",
                           the(xname(otmp)), fills_up ? "fills" : "falls into",
                           what);
                 } else
-                    You_hear("a%s splash.", lava ? " sizzling" : "");
+                    You_hear(msgc_levelsound, "a%s splash.",
+                             lava ? " sizzling" : "");
                 wake_nearto(rx, ry, 40);
             }
 
@@ -102,16 +104,15 @@ boulder_hits_pool(struct obj * otmp, int rx, int ry, boolean pushing)
                 u.uinwater = 0;
                 doredraw();
                 turnstate.vision_full_recalc = TRUE;
-                pline("You find yourself on dry land again!");
+                pline(msgc_consequence, "You find yourself on dry land again!");
             } else if (lava && distu(rx, ry) <= 2) {
-                pline("You are hit by molten lava%c",
+                pline(msgc_nonmonbad, "You are hit by molten lava%c",
                       Fire_resistance ? '.' : '!');
                 burn_away_slime();
                 losehp(dice((Fire_resistance ? 1 : 3), 6),
                        killer_msg(DIED, "molten lava"));
-            } else if (!fills_up && flags.verbose &&
-                       (pushing ? !Blind : cansee(rx, ry)))
-                pline("It sinks without a trace!");
+            } else if (!fills_up && (pushing ? !Blind : cansee(rx, ry)))
+                pline(msgc_noconsequence, "It sinks without a trace!");
         }
 
         /* boulder is now gone */
@@ -125,9 +126,7 @@ boulder_hits_pool(struct obj * otmp, int rx, int ry, boolean pushing)
 }
 
 /* Used for objects which sometimes do special things when dropped; must be
- * called with the object not in any chain.  Returns TRUE if the object goes
- * away.
- */
+   called with the object floating. Returns TRUE if the object goes away. */
 boolean
 flooreffects(struct obj * obj, int x, int y, const char *verb)
 {
@@ -151,8 +150,8 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
         if (((mtmp = m_at(lev, x, y)) && mtmp->mtrapped) ||
             (u.utrap && u.ux == x && u.uy == y)) {
             if (*verb)
-                pline("The boulder %s into the pit%s.", vtense(NULL, verb),
-                      (mtmp) ? "" : " with you");
+                pline(msgc_consequence, "The boulder %s into the pit%s.",
+                      vtense(NULL, verb), (mtmp) ? "" : " with you");
             if (mtmp) {
                 if (!passes_walls(mtmp->data) && !throws_rocks(mtmp->data)) {
                     if (hmon(mtmp, obj, TRUE) && !is_whirly(mtmp->data))
@@ -168,17 +167,21 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
             }
         }
         if (*verb) {
+            /* TODO: Should some of these be msgc_consequence? It rather
+               depends on whose turn it is and if the boulder movement was
+               intentional. */
             if (Blind && couldsee(x, y)) {
                 if ((x == u.ux) && (y == u.uy))
-                    You_hear("a CRASH! beneath you.");
+                    You_hear(msgc_levelsound, "a CRASH! beneath you.");
                 else
-                    You_hear("a nearby CRASH!");
+                    You_hear(msgc_levelsound, "a nearby CRASH!");
             } else if (cansee(x, y))
-                pline("The boulder %s%s.", t->tseen ? "" : "triggers and ",
-                      t->ttyp == TRAPDOOR ? "plugs a trap door" : t->ttyp ==
-                      HOLE ? "plugs a hole" : "fills a pit");
+                pline(msgc_consequence, "The boulder %s%s.",
+                      t->tseen ? "" : "triggers and ",
+                      t->ttyp == TRAPDOOR ? "plugs a trap door" :
+                      t->ttyp == HOLE ? "plugs a hole" : "fills a pit");
             else
-                You_hear("a distant CRASH!");
+                You_hear(msgc_levelsound, "a distant CRASH!");
         }
         deltrap(lev, t);
         obfree(obj, NULL);
@@ -188,33 +191,34 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
         return TRUE;
     } else if (is_lava(lev, x, y)) {
         return fire_damage(obj, FALSE, TRUE, x, y);
-    } else if (is_pool(lev, x, y)) {
+    } else if (is_damp_terrain(lev, x, y)) {
         /* Reasonably bulky objects (arbitrary) splash when dropped. If you're
            floating above the water even small things make noise. Stuff dropped 
-           near fountains always misses */
+           near fountains always misses. */
         if ((Blind || (Levitation || Flying)) && canhear() &&
             ((x == u.ux) && (y == u.uy))) {
             if (!Underwater) {
                 if (weight(obj) > 9) {
-                    pline("Splash!");
+                    pline(msgc_consequence, "Splash!");
                 } else if (Levitation || Flying) {
-                    pline("Plop!");
+                    pline(msgc_consequence, "Plop!");
                 }
             }
-            map_background(x, y, 0);
+            /* map_background(x, y, 0); *//* Can't tell what kind of water. */
             if (lev == level)
                 newsym(x, y);
         }
-        return water_damage(obj, NULL, FALSE) == 3;
+        /* L: water_damage() moved to place_object() */
+        /* return water_damage(obj, NULL, FALSE) == 3; */
     } else if (u.ux == x && u.uy == y && (!u.utrap || u.utraptype != TT_PIT) &&
                (t = t_at(lev, x, y)) != 0 && t->tseen &&
                is_pit_trap(t->ttyp)) {
         /* you escaped a pit and are standing on the precipice */
         if (Blind)
-            You_hear("%s tumble downwards.", the(xname(obj)));
+            You_hear(msgc_consequence, "%s tumble downwards.", the(xname(obj)));
         else
-            pline("%s %s into %s pit.", The(xname(obj)), otense(obj, "tumble"),
-                  the_your[t->madeby_u]);
+            pline(msgc_consequence, "%s %s into %s pit.", The(xname(obj)),
+                  otense(obj, "tumble"), the_your[t->madeby_u]);
     }
     return FALSE;
 }
@@ -230,13 +234,14 @@ doaltarobj(struct obj *obj)
     break_conduct(conduct_gnostic);
 
     if ((obj->blessed || obj->cursed) && obj->oclass != COIN_CLASS) {
-        pline("There is %s flash as %s %s the altar.",
-              an(hcolor(obj->blessed ? "amber" : "black")), doname(obj),
-              otense(obj, "hit"));
+        pline_implied(msgc_hint, "There is %s flash as %s %s the altar.",
+                      an(hcolor(obj->blessed ? "amber" : "black")), doname(obj),
+                      otense(obj, "hit"));
         if (!Hallucination)
             obj->bknown = 1;
     } else {
-        pline("%s %s on the altar.", Doname2(obj), otense(obj, "land"));
+        pline_implied(msgc_noconsequence, "%s %s on the altar.", Doname2(obj),
+                      otense(obj, "land"));
         obj->bknown = 1;
     }
     /* Also BCU one level deep inside containers */
@@ -251,11 +256,13 @@ doaltarobj(struct obj *obj)
                 otmp->bknown = 1;
         }
         if (bcucount == 1) {
-            pline("Looking inside %s, you see a colored flash.",
-                  the(xname(obj)));
+            pline_implied(msgc_hint,
+                          "Looking inside %s, you see a colored flash.",
+                          the(xname(obj)));
         } else if (bcucount > 1) {
-            pline("Looking inside %s, you see colored flashes.",
-                  the(xname(obj)));
+            pline_implied(msgc_hint,
+                          "Looking inside %s, you see colored flashes.",
+                          the(xname(obj)));
         }
     }
 }
@@ -266,15 +273,16 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
     struct obj *otmp, *otmp2;
     boolean ideed = TRUE;
 
-    pline("You drop %s down the drain.", doname(obj));
+    pline(msgc_occstart, "You drop %s down the drain.", doname(obj));
     obj->in_use = TRUE; /* block free identification via interrupt */
     switch (obj->otyp) {        /* effects that can be noticed without eyes */
     case RIN_SEARCHING:
-        pline("You thought your %s got lost in the sink, but there it is!",
+        pline(msgc_consequence,
+              "You thought your %s got lost in the sink, but there it is!",
               xname(obj));
         goto giveback;
     case RIN_SLOW_DIGESTION:
-        pline("The ring is regurgitated!");
+        pline(msgc_consequence, "The ring is regurgitated!");
     giveback:
         obj->in_use = FALSE;
         /* this is safe, the ring was unwielded by the caller */
@@ -282,37 +290,37 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
         makeknown(obj->otyp);
         return;
     case RIN_LEVITATION:
-        pline("The sink quivers upward for a moment.");
+        pline(msgc_info, "The sink quivers upward for a moment.");
         break;
     case RIN_POISON_RESISTANCE:
-        pline("You smell rotten %s.", makeplural(fruitname(FALSE)));
+        pline(msgc_info, "You smell rotten %s.", makeplural(fruitname(FALSE)));
         break;
     case RIN_AGGRAVATE_MONSTER:
-        pline("Several flies buzz angrily around the sink.");
+        pline(msgc_info, "Several flies buzz angrily around the sink.");
         break;
     case RIN_SHOCK_RESISTANCE:
-        pline("Static electricity surrounds the sink.");
+        pline(msgc_info, "Static electricity surrounds the sink.");
         break;
     case RIN_CONFLICT:
-        You_hear("loud noises coming from the drain.");
+        You_hear(msgc_info, "loud noises coming from the drain.");
         break;
     case RIN_SUSTAIN_ABILITY:  /* KMH */
-        pline("The water flow seems fixed.");
+        pline(msgc_info, "The water flow seems fixed.");
         break;
     case RIN_GAIN_STRENGTH:
-        pline("The water flow seems %ser now.",
+        pline(msgc_info, "The water flow seems %ser now.",
               (obj->spe < 0) ? "weak" : "strong");
         break;
     case RIN_GAIN_CONSTITUTION:
-        pline("The water flow seems %ser now.",
+        pline(msgc_info, "The water flow seems %ser now.",
               (obj->spe < 0) ? "less" : "great");
         break;
     case RIN_INCREASE_ACCURACY:        /* KMH */
-        pline("The water flow %s the drain.",
+        pline(msgc_info, "The water flow %s the drain.",
               (obj->spe < 0) ? "misses" : "hits");
         break;
     case RIN_INCREASE_DAMAGE:
-        pline("The water's force seems %ser now.",
+        pline(msgc_info, "The water's force seems %ser now.",
               (obj->spe < 0) ? "small" : "great");
         break;
     case RIN_HUNGER:
@@ -321,8 +329,8 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
             otmp2 = otmp->nexthere;
             if (otmp != uball && otmp != uchain && !obj_resists(otmp, 1, 99)) {
                 if (!Blind) {
-                    pline("Suddenly, %s %s from the sink!", doname(otmp),
-                          otense(otmp, "vanish"));
+                    pline(msgc_consequence, "Suddenly, %s %s from the sink!",
+                          doname(otmp), otense(otmp, "vanish"));
                     ideed = TRUE;
                 }
                 delobj(otmp);
@@ -331,7 +339,7 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
         break;
     case MEAT_RING:
         /* Not the same as aggravate monster; besides, it's obvious. */
-        pline("Several flies buzz around the sink.");
+        pline(msgc_info, "Several flies buzz around the sink.");
         break;
     default:
         ideed = FALSE;
@@ -341,64 +349,69 @@ dosinkring(struct obj *obj)  /* obj is a ring being dropped over a sink */
         ideed = TRUE;
         switch (obj->otyp) {    /* effects that need eyes */
         case RIN_ADORNMENT:
-            pline("The faucets flash brightly for a moment.");
+            pline(msgc_info, "The faucets flash brightly for a moment.");
             break;
         case RIN_REGENERATION:
-            pline("The sink looks as good as new.");
+            pline(msgc_info, "The sink looks as good as new.");
             break;
         case RIN_INVISIBILITY:
-            pline("You don't see anything happen to the sink.");
+            pline(msgc_info, "You don't see anything happen to the sink.");
             break;
         case RIN_FREE_ACTION:
-            pline("You see the ring slide right down the drain!");
+            pline(msgc_info, "You see the ring slide right down the drain!");
             break;
         case RIN_SEE_INVISIBLE:
-            pline("You see some air in the sink.");
+            pline(msgc_info, "You see some air in the sink.");
             break;
         case RIN_STEALTH:
-            pline("The sink seems to blend into the floor for a moment.");
+            pline(msgc_info,
+                  "The sink seems to blend into the floor for a moment.");
             break;
         case RIN_FIRE_RESISTANCE:
-            pline("The hot water faucet flashes brightly for a moment.");
+            pline(msgc_info,
+                  "The hot water faucet flashes brightly for a moment.");
             break;
         case RIN_COLD_RESISTANCE:
-            pline("The cold water faucet flashes brightly for a moment.");
+            pline(msgc_info,
+                  "The cold water faucet flashes brightly for a moment.");
             break;
         case RIN_PROTECTION_FROM_SHAPE_CHANGERS:
-            pline("The sink looks nothing like a fountain.");
+            pline(msgc_info, "The sink looks nothing like a fountain.");
             break;
         case RIN_PROTECTION:
-            pline("The sink glows %s for a moment.",
+            pline(msgc_info, "The sink glows %s for a moment.",
                   hcolor((obj->spe < 0) ? "black" : "silver"));
             break;
         case RIN_WARNING:
-            pline("The sink glows %s for a moment.", hcolor("white"));
+            pline(msgc_info, "The sink glows %s for a moment.",
+                  hcolor("white"));
             break;
         case RIN_TELEPORTATION:
-            pline("The sink momentarily vanishes.");
+            pline(msgc_info, "The sink momentarily vanishes.");
             break;
         case RIN_TELEPORT_CONTROL:
-            pline("The sink looks like it is being beamed aboard somewhere.");
+            pline(msgc_info,
+                  "The sink looks like it is being beamed aboard somewhere.");
             break;
         case RIN_POLYMORPH:
-            pline("The sink momentarily looks like a fountain.");
+            pline(msgc_info, "The sink momentarily looks like a fountain.");
             break;
         case RIN_POLYMORPH_CONTROL:
-            pline ("The sink momentarily looks like a regularly erupting "
-                   "geyser.");
+            pline(msgc_info, "The sink momentarily looks like a "
+                  "regularly erupting geyser.");
             break;
         }
     }
     if (ideed)
         makeknown(obj->otyp);
     else
-        You_hear("the ring bouncing down the drainpipe.");
+        You_hear(msgc_info, "the ring bouncing down the drainpipe.");
 
     /* A custom RNG would be nice here, but I can't see a way to make it work
        without having a different RNG for each class of ring, which would be
        overkill. */
     if (!rn2(20)) {
-        pline("The sink backs up, leaving %s.", doname(obj));
+        pline(msgc_youdiscover, "The sink backs up, leaving %s.", doname(obj));
         obj->in_use = FALSE;
         /* the caller has checked this is safe */
         dropx(obj);
@@ -420,7 +433,8 @@ canletgo(struct obj *obj, const char *word)
 {
     if (obj->owornmask & W_WORN) {
         if (*word)
-            pline_once("You cannot %s something you are wearing.", word);
+            pline_once(msgc_mispaste,
+                       "You cannot %s something you are wearing.", word);
         return FALSE;
     }
     if (obj->otyp == LOADSTONE && obj->cursed) {
@@ -431,7 +445,11 @@ canletgo(struct obj *obj, const char *word)
                forced to be 1; replicate its kludge... */
             if (!strcmp(word, "throw") && obj->quan > 1L)
                 obj->corpsenm = 1;
-            pline("For some reason, you cannot %s%s the stone%s!", word,
+            /* TODO: reverse msgc_cancelled1 if curse status is not known,
+               because we're spoiling the cursed knowledge without consuming
+               time */
+            pline(msgc_cancelled,
+                  "For some reason, you cannot %s%s the stone%s!", word,
                   obj->corpsenm ? " any of" : "", plur(obj->quan));
         }
         obj->corpsenm = 0;      /* reset */
@@ -440,12 +458,14 @@ canletgo(struct obj *obj, const char *word)
     }
     if (obj->otyp == LEASH && obj->leashmon != 0) {
         if (*word)
-            pline("The leash is tied around your %s.", body_part(HAND));
+            pline(msgc_cancelled,
+                  "The leash is tied around your %s.", body_part(HAND));
         return FALSE;
     }
     if (obj->owornmask & W_MASK(os_saddle)) {
         if (*word)
-            pline("You cannot %s something you are sitting on.", word);
+            pline(msgc_mispaste,
+                  "You cannot %s something you are sitting on.", word);
         return FALSE;
     }
     return TRUE;
@@ -460,7 +480,7 @@ drop(struct obj *obj)
         return 0;
     if (obj == uwep) {
         if (welded(uwep)) {
-            weldmsg(obj);
+            weldmsg(msgc_cancelled, obj);
             return 0;
         }
     }
@@ -468,10 +488,8 @@ drop(struct obj *obj)
 
     if (Engulfed) {
         /* barrier between you and the floor */
-        if (flags.verbose) {
-            pline("You drop %s into %s %s.", doname(obj),
-                  s_suffix(mon_nam(u.ustuck)), mbodypart(u.ustuck, STOMACH));
-        }
+        pline(msgc_actionboring, "You drop %s into %s %s.", doname(obj),
+              s_suffix(mon_nam(u.ustuck)), mbodypart(u.ustuck, STOMACH));
     } else {
         if ((obj->oclass == RING_CLASS || obj->otyp == MEAT_RING) &&
             IS_SINK(level->locations[u.ux][u.uy].typ)) {
@@ -479,15 +497,14 @@ drop(struct obj *obj)
             return 1;
         }
         if (!can_reach_floor()) {
-            if (flags.verbose)
-                pline("You drop %s.", doname(obj));
+            pline(msgc_actionboring, "You drop %s.", doname(obj));
 
             freeinv(obj);
             hitfloor(obj);
             return 1;
         }
         if (!IS_ALTAR(level->locations[u.ux][u.uy].typ) && flags.verbose)
-            pline("You drop %s.", doname(obj));
+            pline(msgc_actionboring, "You drop %s.", doname(obj));
     }
     dropx(obj);
     return 1;
@@ -538,7 +555,7 @@ dropy(struct obj *obj)
                             FALSE, could_slime);
                     delobj(obj);        /* corpse is digested */
                 } else if (could_petrify) {
-                    minstapetrify(u.ustuck, TRUE);
+                    minstapetrify(u.ustuck, &youmonst);
                     /* Don't leave a cockatrice corpse in a statue */
                     if (!Engulfed)
                         delobj(obj);
@@ -716,7 +733,7 @@ dodown(boolean autodig_ok)
             floating_above(known_stairs ? "stairs" : known_ladder ? "ladder" :
                            surface(u.ux, u.uy));
         } else {
-            pline("You are floating high in the air.");
+            pline(msgc_cancelled, "You are floating high in the air.");
         }
         return 0;       /* didn't move */
     }
@@ -731,38 +748,46 @@ dodown(boolean autodig_ok)
             || (!can_fall_thru(level) && can_fall) || !trap->tseen) {
 
             if (flags.autodig && autodig_ok && flags.autodigdown &&
-                flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                flags.occupation == occ_none &&
+                ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
+                 (uwep && is_pick(uwep)))) {
                 struct nh_cmd_arg arg;
                 arg_from_delta(0, 0, 1, &arg);
-                return use_pick_axe(uwep, &arg);
+                return use_pick_axe(((uwep && is_pick(uwep)) ?
+                                     uwep : NULL), &arg);
             } else {
-                pline("You can't go down here.");
+                pline(msgc_mispaste, "You can't go down here.");
                 return 0;
             }
         }
     }
     if (u.ustuck) {
-        pline("You are %s, and cannot go down.",
+        pline(msgc_cancelled1, "You are %s, and cannot go down.",
               !Engulfed ? "being held" :
               is_animal(u.ustuck->data) ? "swallowed" : "engulfed");
         return 1;
     }
     if (on_level(&valley_level, &u.uz) && !u.uevent.gehennom_entered) {
-        pline("You are standing at the gate to Gehennom.");
-        pline("Unspeakable cruelty and harm lurk down there.");
+        pline_implied(msgc_branchchange,
+                      "You are standing at the gate to Gehennom.");
+        pline_implied(msgc_branchchange,
+                      "Unspeakable cruelty and harm lurk down there.");
         if (yn("Are you sure you want to enter?") != 'y')
             return 0;
         else {
             if (Hallucination)
-                pline("Please insert Disc 2.");
+                pline_implied(msgc_branchchange, "Please insert Disc 2.");
             else
-                pline("So be it.");
+                pline_implied(msgc_branchchange, "So be it.");
         }
         u.uevent.gehennom_entered = 1;  /* don't ask again */
     }
 
     if (!next_to_u()) {
-        pline("You are held back by your pet!");
+        /* TODO: This has side effects in the case where you have multiple
+           leashed pets; sort-of a reverse msgc_cancelled1 but only due to a
+           bug, it shouldn't have side effects really  */
+        pline(msgc_cancelled, "You are held back by your pet!");
         return 0;
     }
 
@@ -770,25 +795,28 @@ dodown(boolean autodig_ok)
         if (is_pit_trap(trap->ttyp)) {
             if (u.utrap && (u.utraptype == TT_PIT)) {
                 if (flags.autodig && autodig_ok && flags.autodigdown &&
-                    flags.occupation == occ_none && uwep && is_pick(uwep)) {
+                    flags.occupation == occ_none &&
+                    ((tunnels(URACEDATA) && !needspick(URACEDATA)) ||
+                     (uwep && is_pick(uwep)))) {
                     struct nh_cmd_arg arg;
                     arg_from_delta(0, 0, 1, &arg);
                     return use_pick_axe(uwep, &arg);
                 } else {
-                    pline("You have already capitulated to gravity.");
+                    pline(msgc_mispaste,
+                          "You have already capitulated to gravity.");
                 }
             } else {
                 u.utrap = 1;
                 u.utraptype = TT_PIT;
-                pline("You %s down into the pit.",
+                pline(msgc_actionok, "You %s down into the pit.",
                       locomotion(youmonst.data, "go"));
                 turnstate.vision_full_recalc = TRUE;
             }
             return 0;
         } else {
-            pline("You %s %s.", locomotion(youmonst.data, "jump"),
-                  trap->ttyp ==
-                  HOLE ? "down the hole" : "through the trap door");
+            pline(msgc_actionboring, "You %s %s.",
+                  locomotion(youmonst.data, "jump"), trap->ttyp == HOLE ?
+                  "down the hole" : "through the trap door");
         }
     }
 
@@ -809,32 +837,33 @@ doup(void)
         && (u.ux != level->upladder.sx || u.uy != level->upladder.sy)
         && (u.ux != level->sstairs.sx || u.uy != level->sstairs.sy ||
             !level->sstairs.up)) {
-        pline("You can't go up here.");
+        pline(msgc_mispaste, "You can't go up here.");
         return 0;
     }
     if (stucksteed(TRUE)) {
         return 0;
     } else if (u.usteed && u.usteed->meating) {
-        pline("%s is still eating.", Monnam(u.usteed));
+        pline(msgc_cancelled, "%s is still eating.", Monnam(u.usteed));
         return 0;
     } else if (u.ustuck) {
-        pline("You are %s, and cannot go up.",
+        pline(msgc_cancelled1, "You are %s, and cannot go up.",
               !Engulfed ? "being held" :
               is_animal(u.ustuck->data) ? "swallowed" : "engulfed");
         return 1;
     }
     if (near_capacity() > SLT_ENCUMBER) {
         /* No levitation check; inv_weight() already allows for it */
-        pline("Your load is too heavy to climb the %s.",
+        pline(msgc_cancelled1, "Your load is too heavy to climb the %s.",
               level->locations[u.ux][u.uy].typ == STAIRS ? "stairs" : "ladder");
         return 1;
     }
     if (ledger_no(&u.uz) == 1) {
-        if (yn("Beware, there will be no return! Still climb?") != 'y')
+        pline(msgc_fatal, "If you leave the dungeon, you cannot return!");
+        if (yn("Climb out of the dungeon anyway?") != 'y')
             return 0;
     }
     if (!next_to_u()) {
-        pline("You are held back by your pet!");
+        pline(msgc_cancelled, "You are held back by your pet!");
         return 0;
     }
     at_ladder = (boolean) (level->locations[u.ux][u.uy].typ == LADDER);
@@ -1031,7 +1060,8 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
             }
             /* Remove bug which crashes with levitation/punishment KAA */
             if (Punished && !Levitation) {
-                pline("With great effort you climb the %s.",
+                pline(msgc_actionboring,
+                      "With great effort you climb the %s.",
                       at_ladder ? "ladder" : "stairs");
             }
         } else {        /* down */
@@ -1044,11 +1074,12 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
                     u_on_upstairs();
             }
             if (at_stairs && Flying)
-                pline("You fly down along the %s.",
+                pline(msgc_actionboring, "You fly down along the %s.",
                       at_ladder ? "ladder" : "stairs");
             else if (at_stairs &&
                      (near_capacity() > UNENCUMBERED || Punished || Fumbling)) {
-                pline("You fall down the %s.", at_ladder ? "ladder" : "stairs");
+                pline(msgc_substitute, "You fall down the %s.",
+                      at_ladder ? "ladder" : "stairs");
                 if (Punished) {
                     drag_down();
                     if (carried(uball)) {
@@ -1135,7 +1166,7 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
             /* there was an unconditional impossible("mnearto failed")
                 here, but it's not impossible and we're prepared to cope
                 with the situation, so only say something when debugging */
-            if (wizard) pline("(monster in hero's way)");
+            pline(msgc_debug, "(monster in hero's way)");
 
             if (!rloc(mtmp, TRUE))
                 /* no room to move it; send it away, to return later */
@@ -1173,13 +1204,16 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     /* Check whether we just entered Gehennom. */
     if (!In_hell(&orig_d) && Inhell) {
         if (Is_valley(&u.uz)) {
-            pline("You arrive at the Valley of the Dead...");
-            pline("The odor of burnt flesh and decay pervades the air.");
-            You_hear("groans and moans everywhere.");
+            pline(msgc_branchchange, "You arrive at the Valley of the Dead...");
+            pline_implied(msgc_branchchange,
+                          "The odor of burnt flesh and decay pervades the air.");
+            /* TODO: You_hear_implied? */
+            You_hear(msgc_levelsound, "groans and moans everywhere.");
         } else
-            pline("It is hot here.  You smell smoke...");
+            pline(msgc_branchchange, "It is hot here.  You smell smoke...");
     }
 
+    /* TODO: This is probably all dead code. */
     if (familiar) {
         static const char *const fam_msgs[4] = {
             "You have a sense of deja vu.",
@@ -1205,16 +1239,17 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
             mesg = (msgprintf)(mesg, !Blind ? "looks" : "seems");
         }
         if (mesg)
-            pline("%s", mesg);
+            pline(msgc_levelwarning, "%s", mesg);
     }
 
     if (new && Is_rogue_level(&u.uz))
-        pline("You enter what seems to be an older, more primitive world.");
+        pline(msgc_branchchange,
+              "You enter what seems to be an older, more primitive world.");
     /* Final confrontation */
     if (In_endgame(&u.uz) && newdungeon && Uhave_amulet)
         resurrect();
     if (newdungeon && In_V_tower(&u.uz) && In_hell(&orig_d))
-        pline("The heat and smoke are gone.");
+        pline(msgc_branchchange, "The heat and smoke are gone.");
 
     /* the message from your quest leader */
     if (!In_quest(&orig_d) && at_dgn_entrance(&u.uz, "The Quest") &&
@@ -1231,7 +1266,7 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
 
     if ((getmonth()==12) && (getmday() < 25)) {
         if (mk_advcal_portal(level))
-            pline("You smell chocolate!");
+            pline(msgc_levelsound, "You smell chocolate!");
     }
     if (Is_advent_calendar(&u.uz)) {
         fill_advent_calendar(level, FALSE);
@@ -1239,8 +1274,8 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
 
     /* once Croesus is dead, his alarm doesn't work any more */
     if (Is_knox(&u.uz) && (new || !mvitals[PM_CROESUS].died)) {
-        pline("You penetrated a high security area!");
-        pline("An alarm sounds!");
+        pline(msgc_branchchange, "You penetrated a high security area!");
+        pline_implied(msgc_levelwarning, "An alarm sounds!");
         for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
             if (!DEADMONSTER(mtmp) && mtmp->msleeping)
                 mtmp->msleeping = 0;
@@ -1254,7 +1289,7 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
         onquest(&orig_d);
 
     if (*level->levname)
-        pline("You named this level: %s.", level->levname);
+        pline(msgc_info, "You named this level: %s.", level->levname);
 
     /* assume this will always return TRUE when changing level */
     reset_occupations(TRUE);    /* you moved */
@@ -1300,10 +1335,12 @@ final_level(void)
     int angel_xlvl  = rn2_on_rng(8, astral_rng) + 15;
 
     /* create a guardian angel next to player, if worthy */
-    if (Conflict) {
+    if (Conflict || Stormprone) {
         /* unworthy: generate one angel on astral_rng (for consistency), others
            on the main RNG */
-        pline("A voice booms: \"Thy desire for conflict shall be fulfilled!\"");
+        pline(msgc_levelwarning,
+              "A voice booms: \"Thy desire for %s shall be fulfilled!\"",
+              Conflict ? "conflict" : "stormy relationships");
         for (i = angel_count; i > 0; --i) {
             mm.x = u.ux;
             mm.y = u.uy;
@@ -1315,17 +1352,18 @@ final_level(void)
     } else if (u.ualign.record > 8) {   /* fervent */
         /* worthy: generate one angel on astral_rng and buff it using the main
            RNG (except for m_lev which is relevant to balance), no others */
-        pline("A voice whispers: \"Thou hast been worthy of me!\"");
+        pline(msgc_statusgood,
+              "A voice whispers: \"Thou hast been worthy of me!\"");
         mm.x = u.ux;
         mm.y = u.uy;
         if (enexto(&mm, level, mm.x, mm.y, &mons[PM_ANGEL])) {
             if (((mtmp = mk_roamer(&mons[PM_ANGEL], u.ualign.type, level,
                                    mm.x, mm.y, TRUE, MM_ALLLEVRNG)))) {
                 if (!Blind)
-                    pline("An angel appears near you.");
+                    pline_implied(msgc_statusgood, "An angel appears near you.");
                 else
-                    pline
-                        ("You feel the presence of a friendly angel near you.");
+                    pline_implied(msgc_statusgood, "You feel the presence of "
+                                  "a friendly angel near you.");
                 /* guardian angel -- the one case mtame doesn't imply an edog
                    structure, so we don't want to call tamedog(). */
                 mtmp->mtame = 10;
@@ -1391,8 +1429,10 @@ deferred_goto(void)
     if (!on_level(&u.uz, &dest)) {
         int typmask = turnstate.goto_info.flags;
 
+        /* assumption: used for flavour text for the level change mechanism
+           (e.g. branch change via portal) */
         if (*turnstate.goto_info.pre_msg)
-            pline("%s", turnstate.goto_info.pre_msg);
+            pline_implied(msgc_branchchange, "%s", turnstate.goto_info.pre_msg);
 
         goto_level(&dest, ! !(typmask & 1), ! !(typmask & 2), ! !(typmask & 4));
         retval = TRUE;
@@ -1406,8 +1446,10 @@ deferred_goto(void)
             }
         }
 
+        /* assumption: used for flavour text for a level changer resetting
+           after use (e.g. trapdoor) */
         if (*turnstate.goto_info.post_msg)
-            pline("%s", turnstate.goto_info.post_msg);
+            pline_implied(msgc_consequence, "%s", turnstate.goto_info.post_msg);
     }
 
     turnstate.goto_info.dlevel.dnum = turnstate.goto_info.dlevel.dlevel = -1;
@@ -1447,8 +1489,8 @@ revive_corpse(struct obj *corpse)
 
         container = corpse->ocontainer;
         mtmp2 = get_container_location(container, &container_where, NULL);
-        /* container_where is the outermost container's location even if nested 
-         */
+        /* container_where is the outermost container's location even if
+           nested */
         if (container_where == OBJ_MINVENT && mtmp2)
             mcarry = mtmp2;
     }
@@ -1461,9 +1503,10 @@ revive_corpse(struct obj *corpse)
         switch (where) {
         case OBJ_INVENT:
             if (is_uwep)
-                pline("The %s writhes out of your grasp!", cname);
+                pline(msgc_nonmonbad, "The %s writhes out of your grasp!",
+                      cname);
             else
-                pline("You feel squirming in your backpack!");
+                pline(msgc_nonmonbad, "You feel squirming in your backpack!");
             break;
 
         case OBJ_FLOOR:
@@ -1472,7 +1515,7 @@ revive_corpse(struct obj *corpse)
                 && vis
 #endif
                 )
-                pline("%s rises from the dead!",
+                pline(msgc_levelwarning, "%s rises from the dead!",
                       chewed ? Adjmonnam(mtmp, "bite-covered") : Monnam(mtmp));
             break;
 
@@ -1480,10 +1523,11 @@ revive_corpse(struct obj *corpse)
             if (cansee(mtmp->mx, mtmp->my)) {
                 /* OK for long worms because we checked the location already */
                 if (canseemon(mcarry))
-                    pline("Startled, %s drops %s as it revives!",
+                    pline(msgc_levelwarning,
+                          "Startled, %s drops %s as it revives!",
                           mon_nam(mcarry), an(cname));
                 else
-                    pline("%s suddenly appears!",
+                    pline(msgc_levelwarning, "%s suddenly appears!",
                           chewed ? Adjmonnam(mtmp,
                                              "bite-covered") : Monnam(mtmp));
             }
@@ -1495,14 +1539,15 @@ revive_corpse(struct obj *corpse)
 
                 sackname = msgprintf("%s %s", s_suffix(mon_nam(mcarry)),
                                      xname(container));
-                pline("%s writhes out of %s!", Amonnam(mtmp), sackname);
+                pline(msgc_levelwarning, "%s writhes out of %s!",
+                      Amonnam(mtmp), sackname);
             } else if (container_where == OBJ_INVENT && container) {
-                pline("%s %s out of %s in your pack!",
+                pline(msgc_nonmonbad, "%s %s out of %s in your pack!",
                       Blind ? "Something" : Amonnam(mtmp),
                       locomotion(mtmp->data, "writhes"), an(xname(container)));
             } else if (container_where == OBJ_FLOOR && container &&
                        cansee(mtmp->mx, mtmp->my)) {
-                pline("%s escapes from %s!", Amonnam(mtmp),
+                pline(msgc_levelwarning, "%s escapes from %s!", Amonnam(mtmp),
                       an(xname(container)));
             }
             break;
@@ -1534,11 +1579,13 @@ revive_mon(void *arg, long timeout)
         const char *monname = Monnam(mtmp);           /* ditto */
         if (rloc(mtmp, TRUE)) {
             if (notice_it && !canseemon(mtmp))
-                pline("%s vanishes.", monname);
+                pline(msgc_monneutral, "%s vanishes.", monname);
             else if (!notice_it && canseemon(mtmp))
-                pline("%s appears.", Monnam(mtmp)); /* not pre-rloc monname */
+                pline(msgc_monneutral, "%s appears.",
+                      Monnam(mtmp)); /* not pre-rloc monname */
             else if (notice_it && dist2(mtmp->mx, mtmp->my, x, y) > 2)
-                pline("%s teleports.", monname); /* saw it and still see it */
+                pline(msgc_monneutral, "%s teleports.",
+                      monname); /* saw it and still see it */
         }
     }
 
@@ -1554,7 +1601,7 @@ revive_mon(void *arg, long timeout)
             start_timer(body->olev, when, TIMER_OBJECT, REVIVE_MON, arg);
         } else { /* Rot this corpse away. */
             if (is_rider(&mons[body->corpsenm]))
-                pline("You feel less hassled.");
+                pline(msgc_intrgain, "You feel less hassled.");
             start_timer(body->olev, 250L - (moves - body->age), TIMER_OBJECT,
                         ROT_CORPSE, arg);
         }
@@ -1574,7 +1621,7 @@ dowipe(const struct nh_cmd_arg *arg)
     (void) arg;
 
     if (!u.ucreamed) {
-        pline("Your %s is already clean.", body_part(FACE));
+        pline(msgc_mispaste, "Your %s is already clean.", body_part(FACE));
         return 0;
     }
 
@@ -1589,7 +1636,7 @@ dowipe(const struct nh_cmd_arg *arg)
 
     if (!Blinded) {
 
-        pline("You've got the glop off.");
+        pline(msgc_actionok, "You've got the glop off.");
         u.ucreamed = 0;
         Blinded = 1;
         make_blinded(0L, TRUE);
@@ -1597,7 +1644,7 @@ dowipe(const struct nh_cmd_arg *arg)
 
     } else if (!u.ucreamed) {
 
-        pline("Your %s feels clean now.", body_part(FACE));
+        pline(msgc_actionok, "Your %s feels clean now.", body_part(FACE));
         return 1;
 
     } else {
@@ -1642,7 +1689,7 @@ heal_legs(int side)
         (!(side & RIGHT_SIDE) && RWounded_legs)) {
         /* Heal one leg. */
         if (!u.usteed)
-            pline("One of your %s feels somewhat better.",
+            pline(msgc_statusheal, "One of your %s feels somewhat better.",
                   makeplural(body_part(LEG)));
         if (side == LEFT_SIDE) LWounded_legs = 0;
         if (side == RIGHT_SIDE) RWounded_legs = 0;
@@ -1657,10 +1704,11 @@ heal_legs(int side)
     if (!u.usteed) {
         /* KMH, intrinsics patch */
         if (side == (LEFT_SIDE | RIGHT_SIDE)) {
-            pline("Your %s feel somewhat better.",
+            pline(msgc_statusheal, "Your %s feel somewhat better.",
                   makeplural(body_part(LEG)));
         } else {
-            pline("Your %s feels somewhat better.", body_part(LEG));
+            pline(msgc_statusheal, "Your %s feels somewhat better.",
+                  body_part(LEG));
         }
     }
     LWounded_legs = RWounded_legs = 0;

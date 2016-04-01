@@ -485,7 +485,7 @@ spoilartalign(struct artifact *art)
 static const char *
 spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s",
+    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
                      ((spfx & SPFX_SEEK) ?
                       /* TODO: currently, the code checks SPFX_SEARCH for both
                          auto-searching and the +n search bonus and never
@@ -525,6 +525,8 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
                       "<span class=\"spfx spfxxray\">xray</span> " : ""),
                      ((spfx & SPFX_REFLECT) ?
                       "<span class=\"spfx spfxreflect\">reflect</span> " : ""),
+                     ((spfx & SPFX_STRM) ?
+                      "<span class=\"spfx spfxstrm\">storm</span>" : ""),
                      msgprintf("<span class=\"artattk\">%s</span>",
                                /* TODO: handle attk.damn and attk.damd */
                                (attk.adtyp && attk.adtyp == AD_MAGM) ? "MR" :
@@ -596,7 +598,7 @@ makehtmlspoilers(void)
     /* ######################## Weapons ######################## */
 
     if (fd < 0) {
-        pline("Failed to write weapon spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write weapon spoiler.  Is it writable?");
         return;
     }
 
@@ -664,7 +666,7 @@ makehtmlspoilers(void)
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write armor spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write armor spoiler.  Is it writable?");
         return;
     }
     
@@ -709,7 +711,8 @@ makehtmlspoilers(void)
     fd = open_datafile("artifact-spoiler.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     if (fd < 0) {
-        pline("Failed to write artifact spoiler.  Is it writable?");
+        pline(msgc_debug,
+              "Failed to write artifact spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -761,7 +764,7 @@ makehtmlspoilers(void)
     fd = open_datafile("objects-spoiler.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     if (fd < 0) {
-        pline("Failed to write object spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write object spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -799,7 +802,7 @@ makehtmlspoilers(void)
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write monster spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write monster spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -885,7 +888,7 @@ makehtmlspoilers(void)
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write spoiler index.  Is it writable?");
+        pline(msgc_debug, "Failed to write spoiler index.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -914,7 +917,7 @@ makehtmlspoilers(void)
         fclose(outfile);             
     }
     
-    pline("Spoiler HTML files generated.");
+    pline(msgc_debug, "Spoiler HTML files generated.");
 }
 
 void
@@ -929,7 +932,8 @@ makepinobotyaml(void)
     int fd = open_datafile(filename, O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write monster .yaml for Pinobot.  Is it writeable?");
+        pline(msgc_debug,
+              "Failed to write monster .yaml for Pinobot.  Is it writeable?");
         return;
     }
 
@@ -1003,10 +1007,11 @@ makepinobotyaml(void)
                 case AT_BOOM: fprintf(f, "%s", "AtSuicideExplode"); break;
                 case AT_GAZE: fprintf(f, "%s", "AtGaze"); break;
                 case AT_TENT: fprintf(f, "%s", "AtTentacle"); break;
+                case AT_SPIN: fprintf(f, "%s", "AtSpin"); break;
                 case AT_WEAP: fprintf(f, "%s", "AtWeapon"); break;
                 case AT_MAGC: fprintf(f, "%s", "AtCast"); break;
                 default:      fprintf(f, "%s", "AtUnknown");
-                    pline("Error: Unknown attack type: %d",
+                    pline(msgc_debug, "Error: Unknown attack type: %d",
                           pm->mattk[j].aatyp);
                     break;
                 }
@@ -1021,9 +1026,9 @@ makepinobotyaml(void)
                 case AD_DRST: fprintf(f, ", %s", "AdStrDrain"); break;
                 case AD_ACID: fprintf(f, ", %s", "AdAcid"); break;
                 case AD_SPC1: fprintf(f, ", %s", "AdSpc1");
-                    pline("Warning: AD_SPC1 used directly"); break;
+                    pline(msgc_debug, "Warning: AD_SPC1 used directly"); break;
                 case AD_SPC2: fprintf(f, ", %s", "AdSpc2");
-                    pline("Warning: AD_SPC2 used directly"); break;
+                    pline(msgc_debug, "Warning: AD_SPC2 used directly"); break;
                 case AD_BLND: fprintf(f, ", %s", "AdBlind"); break;
                 case AD_STUN: fprintf(f, ", %s", "AdStun"); break;
                 case AD_SLOW: fprintf(f, ", %s", "AdSlow"); break;
@@ -1060,13 +1065,14 @@ makepinobotyaml(void)
                 case AD_SCLD: fprintf(f, ", %s", "AdStinkingCloud"); break;
                 case AD_PITS: fprintf(f, ", %s", "AdPits"); break;
                 case AD_ICEB: fprintf(f, ", %s", "AdIceBlock"); break;
+                case AD_WEBS: fprintf(f, ", %s", "AdWebs"); break;
                 case AD_CLRC: fprintf(f, ", %s", "AdClerical"); break;
                 case AD_SPEL: fprintf(f, ", %s", "AdSpell"); break;
                 case AD_RBRE: fprintf(f, ", %s", "AdRandomBreath"); break;
                 case AD_SAMU: fprintf(f, ", %s", "AdAmuletSteal"); break;
                 case AD_CURS: fprintf(f, ", %s", "AdCurse"); break;
                 default:      fprintf(f, ", %s", "AdUnknown");
-                    pline("Error: Unknown damage type: %d",
+                    pline(msgc_debug, "Error: Unknown damage type: %d",
                           pm->mattk[j].adtyp);
                     break;
                 }
@@ -1098,7 +1104,7 @@ makepinobotyaml(void)
             else if (pm->msize == MZ_GIGANTIC) fprintf(f, "gigantic\n");
             else {
                 fprintf(f, "unknownsize\n");
-                pline("Error: Unknown size: %d", pm->msize);
+                pline(msgc_debug, "Error: Unknown size: %d", pm->msize);
             }
 
             fprintf(f, "   resistances:\n");
@@ -1254,7 +1260,8 @@ makepinobotyaml(void)
             case CLR_BRIGHT_MAGENTA: fprintf(f, "BrightMagenta"); break;
             case CLR_YELLOW: fprintf(f, "Yellow"); break;
             case CLR_WHITE: fprintf(f, "White"); break;
-            default: pline("Error: I don't know what color %d is.\n", clr);
+            default: pline(msgc_debug,
+                           "Error: I don't know what color %d is.\n", clr);
                 fprintf(f, "UnknownColor"); break;
             }
             fprintf(f, "\n");
@@ -1272,7 +1279,7 @@ makepinobotyaml(void)
 
         change_fd_lock(fd, FALSE, LT_NONE, 0);
         fclose(f);
-        pline("YAML for Pinobot generated: %s", filename);
+        pline(msgc_debug, "YAML for Pinobot generated: %s", filename);
     }
 }
 

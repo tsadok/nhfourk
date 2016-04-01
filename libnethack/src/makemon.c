@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-10-09 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -123,9 +123,11 @@ m_initgrp(struct monst *mtmp, struct level *lev, int x, int y, int n,
           int mm_flags)
 {
     coord mm;
-    int cnt = 1 + rn2_on_rng(n, (mm_flags & MM_ALLLEVRNG) ?
-                             rng_for_level(&lev->z) : rng_main);
+    enum rng lrng = (mm_flags & MM_ALLLEVRNG) ?
+        rng_for_level(&lev->z) : rng_main;
+    int cnt = 1 + rn2_on_rng(n, lrng);
     int dl = level_difficulty(&lev->z);
+    struct monst *mtmp2;
 
     /* Tuning: cut down on swarming at low depths */
     if (dl > 0) {
@@ -139,11 +141,19 @@ m_initgrp(struct monst *mtmp, struct level *lev, int x, int y, int n,
        the player's stats, meaning that the layout of a level would no longer be
        the same for the same seed. Nowadays, we just let it happen, and hope
        that it won't get too spammy. */
+    /* TODO: groups of peacefuls do cause problems in Fourk due to the alignment
+       record changes that make you not want to just slaughter them all.  This
+       is particularly a problem with hiders (e.g., garter snakes) and in
+       Sokoban. */
     mm.x = x;
     mm.y = y;
     while (cnt--)
-        if (enexto(&mm, lev, mm.x, mm.y, mtmp->data))
-            makemon(mtmp->data, lev, mm.x, mm.y, mm_flags);
+        if (enexto(&mm, lev, mm.x, mm.y, mtmp->data)) {
+            mtmp2 = makemon(mtmp->data, lev, mm.x, mm.y, mm_flags);
+            if (mtmp2 && !rn2_on_rng((mtmp->msleeping ? 2 : 4), lrng) &&
+                !resists_sleep(mtmp2))
+                mtmp2->msleeping = 1;
+        }
 }
 
 static void
@@ -322,6 +332,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 if (!rn2_on_rng(50, rng))
                     mongets(mtmp, CRYSTAL_BALL, rng);
             }
+        } else if (mm == PM_NINJA || mm == PM_ROSHI) {
+            m_initthrow(mtmp, SHURIKEN, 8, rng);
         } else if (ptr->msound == MS_PRIEST ||
                    quest_mon_represents_role(ptr, PM_PRIEST)) {
             otmp = mksobj(lev, MACE, FALSE, FALSE, rng);
@@ -343,8 +355,8 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
 
             /* maybe make it special */
             if (!rn2_on_rng(20, rng) || is_lord(ptr))
-                otmp = oname(otmp, artiname(rn2_on_rng(2, rng) ?
-                                            ART_DEMONBANE : ART_SUNSWORD));
+                otmp = oname(otmp, artiname(/* rn2_on_rng(2, rng) ? */
+                                            ART_DEMONBANE/*: ART_SUNSWORD */));
             bless(otmp);
             otmp->oerodeproof = TRUE;
             spe2 = rn2_on_rng(4, rng);
@@ -763,12 +775,25 @@ m_initinv(struct monst *mtmp, enum rng rng)
         if (rn2_on_rng(7, rng))
             mongets(mtmp, MUMMY_WRAPPING, rng);
         break;
-    case S_QUANTMECH:
-        if (!rn2_on_rng(20, rng)) {
+    case S_HUMANOID:
+        if ((ptr == &mons[PM_QUANTUM_MECHANIC]) && !rn2_on_rng(20, rng)) {
             otmp = mksobj(lev, LARGE_BOX, FALSE, FALSE, rng);
             otmp->spe = 1;      /* flag for special box */
             otmp->owt = weight(otmp);
             mpickobj(mtmp, otmp);
+        } else if (mtmp->data->mflagsr == MRACE_DWARF) {
+            /* In AceHack, Gnomes had a chance of generating with candles,
+               especially on dark Mines levels. This tradition continued into
+               NetHack 4 (albeit in a much simpler way, to avoid littering
+               inventory with junk candles of different lengths).  In terms of
+               lore, however, this made little sense -- Gnomes should not need
+               light sources -- and since player Gnomes now _officially_ see in
+               the dark, I am moving the candles to dwarves.  However, it only
+               happens in the Mines -- dwarves elsewhere are just as before. */
+            if (In_mines(&lev->z) && !rn2_on_rng(4, rng)) {
+                mongets(mtmp, rn2_on_rng(4, rng) ?
+                        TALLOW_CANDLE : WAX_CANDLE, rng);
+            }
         }
         break;
     case S_IMP:
@@ -793,15 +818,6 @@ m_initinv(struct monst *mtmp, enum rng rng)
             mongets(mtmp, WAN_FIRE, rng);
         }
         break;
-    case S_GNOME:
-        /* In AceHack, these have a chance of generating with candles,
-           especially on dark Mines levels. This tradition was stolen by
-           UnNetHack, and continued onwards into NetHack 4. But in a much
-           simpler way, to avoid littering inventory with junk candles of
-           different lengths. */
-        if (!rn2_on_rng(4, rng)) {
-            mongets(mtmp, rn2_on_rng(4, rng) ? TALLOW_CANDLE : WAX_CANDLE, rng);
-        }
 
     default:
         break;
@@ -833,7 +849,7 @@ clone_mon(struct monst *mon, xchar x, xchar y)
     }
 
     /* may be too weak or have been extinguished for population control */
-    if (mon->mhp <= 1 || (mvitals[monsndx(mon->data)].mvflags & G_EXTINCT))
+    if (mon->mhp < 2 || (mvitals[monsndx(mon->data)].mvflags & G_EXTINCT))
         return NULL;
 
     if (x == 0) {
@@ -1263,7 +1279,8 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     if (in_mklev) {
         if (((is_ndemon(ptr)) || (mndx == PM_WUMPUS) || (mndx == PM_LONG_WORM)
              || (mndx == PM_GIANT_EEL)) && rn2_on_rng(5, stats_rng))
-            mtmp->msleeping = TRUE;
+            if (mtmp && !resists_sleep(mtmp))
+                mtmp->msleeping = 1;
     } else {
         if (byyou && lev == level) {
             newsym(mtmp->mx, mtmp->my);
@@ -1671,7 +1688,7 @@ grow_up(struct monst *mtmp,   /* `mtmp' might "grow up" into a bigger version */
 
     /* monster died after killing enemy but before calling this function */
     /* currently possible if killing a gas spore */
-    if (mtmp->mhp <= 0)
+    if (DEADMONSTER(mtmp))
         return NULL;
 
     /* note: none of the monsters with special hit point calculations have both
@@ -1731,7 +1748,8 @@ grow_up(struct monst *mtmp,   /* `mtmp' might "grow up" into a bigger version */
         ptr = &mons[newtype];
         if (mvitals[newtype].mvflags & G_GENOD) {       /* allow G_EXTINCT */
             if (sensemon(mtmp))
-                pline("As %s grows up into %s, %s %s!", mon_nam(mtmp),
+                pline(mtmp->mtame ? msgc_petfatal : msgc_monneutral,
+                      "As %s grows up into %s, %s %s!", mon_nam(mtmp),
                       an(ptr->mname), mhe(mtmp),
                       nonliving(ptr) ? "expires" : "dies");
             set_mon_data(mtmp, ptr, -1);        /* keep mvitals[] accurate */
@@ -2195,7 +2213,9 @@ bagotricks(struct obj *bag)
     if (!bag || bag->otyp != BAG_OF_TRICKS) {
         impossible("bad bag o' tricks");
     } else if (bag->spe < 1) {
-        pline("Nothing happens.");
+        pline(bag->known ? msgc_cancelled1 : msgc_failcurse,
+              "You feel an absence of magical power.");
+        bag->known = 1;
     } else {
         boolean gotone = FALSE;
         int cnt = 1;
@@ -2313,6 +2333,7 @@ restore_mon(struct memfile *mf, struct level *l)
     mon->m_ap_type = mread8(mf);
     mon->mfrozen = mread8(mf);
     mon->mblinded = mread8(mf);
+    mon->mslowed = mread8(mf);
     mon->mappearance = mread32(mf);
     mflags = mread32(mf);
 
@@ -2431,6 +2452,9 @@ restore_mon(struct memfile *mf, struct level *l)
     mon->ispriest = (mflags >> 1) & 1;
     mon->iswiz = (mflags >> 0) & 1;
 
+    /* turnstate has a fixed value on save */
+    mon->deadmonster = 0;
+
     return mon;
 }
 
@@ -2545,6 +2569,7 @@ save_mon(struct memfile *mf, const struct monst *mon, const struct level *l)
     mwrite8(mf, mon->m_ap_type);
     mwrite8(mf, mon->mfrozen);
     mwrite8(mf, mon->mblinded);
+    mwrite8(mf, mon->mslowed);
     mwrite32(mf, mon->mappearance);
 
     mflags =
@@ -2652,6 +2677,10 @@ save_mon(struct memfile *mf, const struct monst *mon, const struct level *l)
             save_fcorr(mf, &CONST_EGD(mon)->fakecorr[i]);
         break;
     }
+
+    /* verify turnstate */
+    if (mon->deadmonster)
+        panic("attempting to save a dead monster");
 }
 
 /*makemon.c*/
