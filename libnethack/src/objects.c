@@ -215,7 +215,7 @@ const struct objclass const_objects[] = {
     WEAPON("rubber hose", NULL,
            1, 0, 0, 0, 20, 3, 4, 3, 0, 0, P_WHIP, PLASTIC, CLR_BROWN),
     WEAPON("quarterstaff", "staff",
-           0, 0, 1, 11, 40, 5, 6, 6, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
+           0, 0, 1, 11, 40, 5, 4, 4, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */
     WEAPON("aklys", "thonged club",
            0, 0, 0, 8, 15, 4, 6, 3, 0, B, P_CLUB, IRON, HI_METAL),

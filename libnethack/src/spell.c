@@ -1405,11 +1405,19 @@ percent_success(int spell)
     if (splcaster > 20)
         splcaster = 20;
 
+    /* Wielding a quarterstaff provides focus, making it easier to cast spells. */
+    if (uwep && uwep->otyp == QUARTERSTAFF && uwep->spe >= 0) {
+        splcaster = splcaster * 4 / 5;
+        chance = 5 * (uwep->spe + 2);
+    } else {
+        chance = 0;
+    }
+
     /* Calculate learned ability */
 
     /* Players basic likelihood of being able to cast any spell is based of
        their `magic' statistic. (Int or Wis) */
-    chance = 11 * statused / 2;
+    chance += 11 * statused / 2;
 
     /*
      * High level spells are harder.  Easier for higher level casters.
