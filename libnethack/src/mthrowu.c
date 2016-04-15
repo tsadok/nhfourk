@@ -753,7 +753,7 @@ m_beam_ok(struct monst *magr, int dx, int dy, struct monst **mdef, boolean helpf
                     tby = y - magr->my;
                 }
 
-                if (!Conflict) {
+                if (!Conflict|| resist(magr, RING_CLASS, 0, 0)) {
                     if ((!helpful && magr->mpeaceful && !Stormprone) ||
                         (helpful && !magr->mpeaceful))
                     return FALSE;
