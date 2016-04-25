@@ -1999,6 +1999,7 @@ dopray(const struct nh_cmd_arg *arg)
             return 0;
 
     break_conduct(conduct_gnostic);
+    historic_event(FALSE, FALSE, "prayed to %s.", u_gname());
 
     /* set up turnstate alignment and trouble */
     if (!can_pray(TRUE))

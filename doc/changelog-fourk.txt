@@ -57,6 +57,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Prayer is now shown in the history.
+
  * Wielding a quarterstaff now improves spell success rates.  This can
    help compensate (partially) both for armor penalties and also for
    the spell being too hard for your level or attributes.  When spell
