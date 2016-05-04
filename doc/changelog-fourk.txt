@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When skilled in wand use, the player may learn the number of
+   remaining charges when zaping a wand.
+
  * Prayer is now shown in the history.
 
  * Wielding a quarterstaff now improves spell success rates.  This can
