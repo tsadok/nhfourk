@@ -1097,7 +1097,7 @@ augment_magic_chest_contents(int otyp, int oclass, int count)
                 }
                 if ((i != LARGE_BOX) && (i != CHEST) && (i != ICE_BOX)) {
                     typ = i;
-                    otmp = mksobj(level, otyp, TRUE, FALSE, rng_main);
+                    otmp = mksobj(level, typ, TRUE, FALSE, rng_main);
                 }
             }
         } else {
