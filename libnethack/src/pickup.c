@@ -2052,7 +2052,9 @@ use_container(struct obj *obj, int held)
        there's no point in synchronizing that either). */
     if (cobj_is_magic_chest(obj)) {
         curr = magic_chest_objs;
-        historic_event(FALSE, FALSE, "opened a magic chest.");
+        if (!historysearch("opened a magic chest.", FALSE)) {
+            historic_event(FALSE, FALSE, "opened a magic chest.");
+        }
     }
     else
         curr = obj->cobj;
