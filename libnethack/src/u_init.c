@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "mkobj.h"
 #include <stdint.h>
 
 struct trobj {
@@ -1057,14 +1058,52 @@ u_init_inv_skills(void)
     return;
 }
 
+static const struct icp magicchestprobs[] = {
+    {10, WEAPON_CLASS},
+    {10, ARMOR_CLASS},
+    {15, FOOD_CLASS},
+    {10, TOOL_CLASS},
+    {10, GEM_CLASS},
+    {15, POTION_CLASS},
+    {15, SCROLL_CLASS},
+    {5, SPBOOK_CLASS},
+    {5, WAND_CLASS},
+    {3, RING_CLASS},
+    {2, AMULET_CLASS}
+};
+
 static void
 augment_magic_chest_contents(int otyp, int oclass, int count)
 {
-    int i;
+    int class = oclass;
+    int i, tprob;
     struct obj *otmp;
     for (i = 1; i <= count; i++) {
-        otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
-                        mkobj(level, oclass, FALSE, rng_main);
+        if (oclass == RANDOM_CLASS) {
+            const struct icp *iprobs = magicchestprobs;
+            for (tprob = rn2_on_rng(100, rng_main) + 1;
+                 (tprob -= iprobs->iprob) > 0; iprobs++)
+                ;
+            class = iprobs->iclass;
+        }
+        if ((class == TOOL_CLASS) && !otyp) {
+            int typ = 0;
+            int i, p;
+            while (!typ) {
+                i    = bases[(int)class];
+                p = 1 + rn2_on_rng(1000, rng_main); /* reroll as necessary */
+                while ((p -= objects[i].oc_prob) > 0) {
+                    i++;
+                }
+                if ((i != LARGE_BOX) && (i != CHEST) && (i != ICE_BOX)) {
+                    typ = i;
+                    otmp = mksobj(level, otyp, TRUE, FALSE, rng_main);
+                }
+            }
+        } else {
+            otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
+                            mkobj(level, class, FALSE, rng_main);
+        }
         obj_extract_self(otmp);
         add_to_magic_chest(otmp);
     }
