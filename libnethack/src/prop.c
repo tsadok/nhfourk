@@ -620,9 +620,11 @@ enlightenment(int final)
     case 1:
     case 2:
         you_are(&menu, "somewhat stealthy");
+        break;
     case 3:
     case 4:
         you_are(&menu, "stealthy");
+        break;
     case 5:
     default: /* more than 5 is possible */
         you_are(&menu, "very stealthy");
