@@ -40,9 +40,9 @@ pet_type(struct newgame_options *ngo)
     else if (ngo && ngo->preferred_pet == 'c')
         return PM_KITTEN;
     else if (ngo && ngo->preferred_pet == 'd')
-        return PM_LITTLE_DOG;
+        return PM_PUPPY;
     else
-        return which_pet ? PM_KITTEN : PM_LITTLE_DOG;
+        return which_pet ? PM_KITTEN : PM_PUPPY;
 }
 
 struct monst *
@@ -147,7 +147,7 @@ makedog(struct newgame_options *ngo)
         return NULL;
 
     pettype = pet_type(ngo);
-    if (pettype == PM_LITTLE_DOG)
+    if (pettype == PM_PUPPY)
         petname = ngo->dogname;
     else if (pettype == PM_PONY)
         petname = ngo->horsename;
@@ -155,7 +155,7 @@ makedog(struct newgame_options *ngo)
         petname = ngo->catname;
 
     /* default pet names */
-    if (!*petname && pettype == PM_LITTLE_DOG) {
+    if (!*petname && pettype == PM_PUPPY) {
         /* All of these names were for dogs. */
         if (Role_if(PM_CAVEMAN))
             petname = "Slasher";        /* The Warrior */

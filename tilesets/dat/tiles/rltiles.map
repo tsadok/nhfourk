@@ -27,7 +27,7 @@ jackal
 fox
 coyote
 werejackal
-little dog
+puppy
 dog
 large dog
 dingo
@@ -1458,7 +1458,7 @@ sub figurine gremlin; sub figurine gargoyle; sub figurine winged gargoyle; sub f
 ! Insect-like
 sub figurine * ant; sub figurine * bee; sub figurine giant beetle; sub figurine cave spider; sub figurine centipede; sub figurine giant spider; sub figurine scorpion; sub figurine grid bug; sub figurine xan
 ! Canines
-sub figurine jackal; sub figurine fox; sub figurine coyote; sub figurine werejackal; sub figurine little dog; sub figurine dog; sub figurine large dog; sub figurine dingo; sub figurine wolf; sub figurine werewolf; sub figurine warg; sub figurine winter wolf*; sub figurine hell hound*
+sub figurine jackal; sub figurine fox; sub figurine coyote; sub figurine werejackal; sub figurine puppy; sub figurine dog; sub figurine large dog; sub figurine dingo; sub figurine wolf; sub figurine werewolf; sub figurine warg; sub figurine winter wolf*; sub figurine hell hound*
 ! Felines
 sub figurine kitten; sub figurine housecat; sub figurine jaguar; sub figurine lynx; sub figurine panther; sub figurine large cat; sub figurine tiger
 ! Quadrupeds
@@ -1516,7 +1516,7 @@ sub statue jackal
 sub statue fox
 sub statue coyote
 sub statue werejackal
-sub statue little dog
+sub statue puppy
 sub statue dog
 sub statue large dog
 sub statue dingo

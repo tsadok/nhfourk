@@ -720,7 +720,7 @@ $ = (71, 108, 108)
   MMMLMLLMMOOAMMMM
   MMMMMMLMMMMMMMMM
 }
-# tile 37 (little dog)
+# tile 37 (puppy)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM

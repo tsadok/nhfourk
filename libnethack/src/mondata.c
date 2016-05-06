@@ -553,7 +553,7 @@ levl_follower(struct monst *mtmp)
 
 static const short grownups[][2] = {
     {PM_CHICKATRICE, PM_COCKATRICE},
-    {PM_LITTLE_DOG, PM_DOG}, {PM_DOG, PM_LARGE_DOG},
+    {PM_PUPPY, PM_DOG}, {PM_DOG, PM_LARGE_DOG},
     {PM_HELL_HOUND_PUP, PM_HELL_HOUND},
     {PM_WINTER_WOLF_CUB, PM_WINTER_WOLF},
     {PM_KITTEN, PM_HOUSECAT}, {PM_HOUSECAT, PM_LARGE_CAT},

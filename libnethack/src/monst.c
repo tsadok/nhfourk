@@ -68,7 +68,7 @@
  * Guidelines for color assignment:
  *
  * * Use the same color for all `growth stages' of a monster (ex.
- *   little dog/big dog, baby naga/full-grown naga.
+ *   puppy/dog/big dog, baby naga/full-grown naga.
  *
  * * Use colors given in names wherever possible. If the class has `real'
  *   members with strong color associations, use those.
@@ -197,7 +197,7 @@ const struct permonst mons[] = {
         M1_NOHANDS | M1_POIS | M1_REGEN | M1_CARNIVORE,
         M2_NOPOLY | M2_WERE | M2_HOSTILE, M3_INFRAVISIBLE | M3_SCENT,
         0, CLR_BROWN | HI_ULINE),
-    MON("little dog", S_DOG,
+    MON("puppy", S_DOG,
         LVL(2, 18, 6, 0, 0), (G_GENO | 1),
         A(ATTK(AT_BITE, AD_PHYS, 1, 6),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),

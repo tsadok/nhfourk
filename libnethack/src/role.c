@@ -96,7 +96,7 @@ const struct Role roles[] = {
                                 {"Cave God", 0}},
      "Anu", "_Ishtar", "Anshar",        /* Babylonian */
      "Cav", "Home Cave", "the Dragon's Lair",
-     PM_CAVEMAN, PM_CAVEWOMAN, PM_LITTLE_DOG,
+     PM_CAVEMAN, PM_CAVEWOMAN, PM_PUPPY,
      PM_SHAMAN_KARNOV, PM_NEANDERTHAL, PM_GREAT_FIERCE_BEAST,
      PM_BUGBEAR, PM_HILL_GIANT, S_HUMANOID, S_GIANT,
      ART_BIG_STICK,
@@ -251,7 +251,7 @@ const struct Role roles[] = {
                      {"Marksman", "Markswoman"}},
      "Mercury", "_Venus", "Mars",       /* Roman/planets */
      "Ran", "Orion's camp", "the cave of the wumpus",
-     PM_RANGER, NON_PM, PM_LITTLE_DOG /* Orion & canis major */ ,
+     PM_RANGER, NON_PM, PM_PUPPY /* Orion & canis major */ ,
      PM_ORION, PM_HUNTER, PM_SCORPIUS,
      PM_FOREST_CENTAUR, PM_SCORPION, S_CENTAUR, S_SPIDER,
      ART_LONGBOW_OF_DIANA,
@@ -277,7 +277,7 @@ const struct Role roles[] = {
                       {"Shogun", 0}},   /* supreme commander, warlord */
      "_Amaterasu Omikami", "Raijin", "Susanowo",        /* Japanese */
      "Sam", "the Castle of the Taro Clan", "the Shogun's Castle",
-     PM_SAMURAI, NON_PM, PM_LITTLE_DOG,
+     PM_SAMURAI, NON_PM, PM_PUPPY,
      PM_LORD_SATO, PM_ROSHI, PM_ASHIKAGA_TAKAUJI,
      PM_WOLF, PM_STALKER, S_DOG, S_ELEMENTAL,
      ART_TSURUGI_OF_MURAMASA,
