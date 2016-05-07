@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * More special levels have been updated or changed, e.g., the Wizard
+   quest locate level.
+
  * When skilled in wand use, the player may learn the number of
    remaining charges when zaping a wand.
 
