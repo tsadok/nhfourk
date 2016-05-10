@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "mkobj.h"
 #include <stdint.h>
 
 struct trobj {
@@ -717,7 +718,7 @@ u_init_inv_skills(void)
         skill_init(Skill_C);
         augment_magic_chest_contents(SLING, 0, 1);
         augment_magic_chest_contents(FLINT, 0, 15);
-        augment_magic_chest_contents(SILVER_NUGGET, 0, 1);
+        augment_magic_chest_contents(SILVER_NUGGET, 0, 5);
         break;
     case PM_HEALER:
         u.umoney0 = 1001 + rolern2(1000);
@@ -740,7 +741,7 @@ u_init_inv_skills(void)
         HJumping |= FROMOUTSIDE;
         skill_init(Skill_K);
         augment_magic_chest_contents(LONG_SWORD, 0, 1);
-        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
+        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 10);
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
     case PM_MONK:
@@ -884,9 +885,11 @@ u_init_inv_skills(void)
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
         augment_magic_chest_contents(0, ARMOR_CLASS, 20);
+        augment_magic_chest_contents(0, WAR_HAMMER, 1);
         augment_magic_chest_contents(WAN_COLD, 0, 1);
         augment_magic_chest_contents(BROADSWORD, 0, 2);
         augment_magic_chest_contents(JAVELIN, 0, 10);
+        augment_magic_chest_contents(SPEAR, 0, 5);
         break;
     }        
     case PM_WIZARD:
@@ -925,7 +928,7 @@ u_init_inv_skills(void)
         };
         augment_magic_chest_contents(LEMBAS_WAFER, 0, 3);
         augment_magic_chest_contents(ELVEN_SHIELD, 0, 1);
-        augment_magic_chest_contents(ELVEN_BOOTS, 0, 5);
+        augment_magic_chest_contents(ELVEN_BOOTS, 0, 1);
         augment_skill_cap(P_STEALTH, 1, P_SKILLED, P_EXPERT);
 
         if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
@@ -972,8 +975,6 @@ u_init_inv_skills(void)
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
         augment_skill_cap(P_STEALTH, 1, P_BASIC, P_EXPERT);
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
-        augment_magic_chest_contents(TALLOW_CANDLE, 0, 5);
-        augment_magic_chest_contents(WAX_CANDLE, 0, 5);
         break;
 
     case PM_ORC:
@@ -1057,14 +1058,52 @@ u_init_inv_skills(void)
     return;
 }
 
+static const struct icp magicchestprobs[] = {
+    {10, WEAPON_CLASS},
+    {10, ARMOR_CLASS},
+    {15, FOOD_CLASS},
+    {10, TOOL_CLASS},
+    {10, GEM_CLASS},
+    {15, POTION_CLASS},
+    {15, SCROLL_CLASS},
+    {5, SPBOOK_CLASS},
+    {5, WAND_CLASS},
+    {3, RING_CLASS},
+    {2, AMULET_CLASS}
+};
+
 static void
 augment_magic_chest_contents(int otyp, int oclass, int count)
 {
-    int i;
+    int class = oclass;
+    int i, tprob;
     struct obj *otmp;
     for (i = 1; i <= count; i++) {
-        otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
-                        mkobj(level, oclass, FALSE, rng_main);
+        if (oclass == RANDOM_CLASS) {
+            const struct icp *iprobs = magicchestprobs;
+            for (tprob = rn2_on_rng(100, rng_main) + 1;
+                 (tprob -= iprobs->iprob) > 0; iprobs++)
+                ;
+            class = iprobs->iclass;
+        }
+        if ((class == TOOL_CLASS) && !otyp) {
+            int typ = 0;
+            int i, p;
+            while (!typ) {
+                i    = bases[(int)class];
+                p = 1 + rn2_on_rng(1000, rng_main); /* reroll as necessary */
+                while ((p -= objects[i].oc_prob) > 0) {
+                    i++;
+                }
+                if ((i != LARGE_BOX) && (i != CHEST) && (i != ICE_BOX)) {
+                    typ = i;
+                    otmp = mksobj(level, typ, TRUE, FALSE, rng_main);
+                }
+            }
+        } else {
+            otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
+                            mkobj(level, class, FALSE, rng_main);
+        }
         obj_extract_self(otmp);
         add_to_magic_chest(otmp);
     }

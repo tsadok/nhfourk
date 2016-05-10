@@ -5,6 +5,7 @@
 
 #include "hack.h"
 #include "prop.h"
+#include "mkobj.h"
 
 #include <limits.h>
 
@@ -17,12 +18,7 @@ static void extract_nexthere(struct obj *, struct obj **);
 
 /* #define DEBUG_EFFECTS *//* show some messages for debugging */
 
-struct icp {
-    int iprob;  /* probability of an item type */
-    char iclass;        /* item class */
-};
-
-
+/* See also magicchestprobs in u_init.c */
 static const struct icp mkobjprobs[] = {
     {10, WEAPON_CLASS},
     {10, ARMOR_CLASS},

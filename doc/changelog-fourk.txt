@@ -57,6 +57,25 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * More special levels have been updated or changed, e.g., the Wizard
+   quest locate level.
+
+ * When skilled in wand use, the player may learn the number of
+   remaining charges when zaping a wand.
+
+ * Prayer is now shown in the history.
+
+ * Wielding a quarterstaff now improves spell success rates.  This can
+   help compensate (partially) both for armor penalties and also for
+   the spell being too hard for your level or attributes.  When spell
+   success rates are low (but not zero), enchanting the staff will
+   generally improve them further.  However, quarterstaves now do less
+   damage in melee than before.
+
+ * Quest guardians may now be displaced.
+
+ * Knights may now reach Expert in shield skill.  Barbarians may not.
+
  * Certain of the more pointless and/or redundant artifact weapons
    have been removed from the list.  Perhaps the most notable of these
    was Sunsword, which has been superceded by the improved Trollsbane.

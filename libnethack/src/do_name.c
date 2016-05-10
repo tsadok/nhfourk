@@ -805,7 +805,7 @@ m_monnam(const struct monst *mtmp)
     return x_monnam(mtmp, ARTICLE_NONE, NULL, EXACT_NAME, FALSE);
 }
 
-/* pet name: "your little dog" */
+/* pet name: "your puppy" */
 const char *
 y_monnam(const struct monst *mtmp)
 {

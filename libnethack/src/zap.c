@@ -2780,6 +2780,8 @@ weffects(struct obj *obj, schar dx, schar dy, schar dz)
         wandlevel = getwandlevel(&youmonst, obj);
     if (wandlevel)
         use_skill(P_WANDS, wandlevel); /* successful wand use exercises */
+    if ((wandlevel >= P_SKILLED) && (wandlevel >= rn2_on_rng(20, rng_main)))
+        obj->known = 1; /* reveal charge and recharge counts */
 
     if (u.usteed && (objects[otyp].oc_dir != NODIR) && !dx && !dy && (dz > 0) &&
         zap_steed(obj)) {

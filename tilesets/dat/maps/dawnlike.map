@@ -758,7 +758,7 @@ jackal: [Dog0.png] 0x0
 fox: [Dog0.png] 0x1
 coyote: [Dog0.png] 0x2
 werejackal: [Dog0.png] 0x4
-little dog: [Dog0.png] 0x10
+puppy: [Dog0.png] 0x10
 dog: [Dog0.png] 0x11
 large dog: [Dog0.png] 0x12
 dingo: [Dog0.png] 0x3

@@ -397,7 +397,7 @@ cprefx(int pm)
     }
 
     switch (pm) {
-    case PM_LITTLE_DOG:
+    case PM_PUPPY:
     case PM_DOG:
     case PM_LARGE_DOG:
     case PM_KITTEN:
