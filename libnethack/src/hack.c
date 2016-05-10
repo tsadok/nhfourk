@@ -1819,9 +1819,14 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
 
     /* Special case: monsters that are hiding on the ceiling don't block
        movement; they'll move off their square in spoteffects(). This doesn't
-       apply if the player can suspect something there, or is forcefighting. */
-    if (mtmp && m_mhiding(mtmp) && !cansuspectmon(mtmp) && uia != uia_attack)
+       apply if the player can suspect something there, or is forcefighting.
+       We don't want to do reveal_monster_at below in this case either because
+       we shouldn't log any I when about to blunder into piercers... */
+    boolean do_reveal = TRUE;
+    if (mtmp && m_mhiding(mtmp) && !cansuspectmon(mtmp) && uia != uia_attack) {
         mtmp = NULL;
+        do_reveal = FALSE;
+    }
 
     if (mtmp) {
         if (uia != uia_attack && uia != uia_displace) {
@@ -1938,8 +1943,10 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
 
     /* Regardless of whether the player was trying to attack or to move onto the
        square, they're going to interact with the square, and will discover if
-       it contains a monster as a result. */
-    reveal_monster_at(x, y, TRUE);
+       it contains a monster as a result, unless it's a piercer which is taken
+       care of in spoteffects(). */
+    if (do_reveal)
+        reveal_monster_at(x, y, TRUE);
 
     /* Is the player trying to attack? There isn't a monster there (displacing
        implies not attacking, and we've handled all non-displacement effects of
