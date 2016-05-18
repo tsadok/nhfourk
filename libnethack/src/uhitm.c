@@ -576,7 +576,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     if (obj->opoisoned && is_poisonable(obj))
                         ispoisoned = TRUE;
                 }
-                if (is_axe(obj) && !obj->axeinuse && !Engulfed &&
+                if (is_axe(obj) && !obj->axeinuse && !Engulfed && !thrown &&
                     (P_SKILL(P_AXE) >= P_SKILLED) &&
                     (P_MAX_SKILL(P_AXE) >= P_EXPERT)) {
                     /* Axes also hit adjacent enemies */

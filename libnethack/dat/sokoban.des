@@ -1320,8 +1320,8 @@ OBJECT:'%',random,random
 OBJECT:'%',random,random
 OBJECT:'%',random,random
 OBJECT:'%',random,random
-OBJECT:'=',random,random
-OBJECT:'/',random,random
+OBJECT:'=',random,(16,07)
+OBJECT:'/',random,(09,09)
 
 
 # The infamous "soko2a" (nethackwiki) / "Sokoban 2 B" (steelypips):
@@ -1757,7 +1757,7 @@ MAP
   |.........|   --|.....|.|
   |.........|   |.+.....|.|
   |-.----...|   |-|.....|.|
-  |........--   |.+.....+.|
+  |........--   |.+..(..+.|
   |........|    |-|.....|--
   |.....----    |.+.....|  
   -------       --|.....|  
