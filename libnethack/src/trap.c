@@ -4182,6 +4182,7 @@ chest_trap(struct obj *obj, int bodypart, boolean disarm)
     } else if (armpro > rn2(5)) {
         msg = Hallucination ? "eggs wobble but do not fall down" :
             "ineptly-constructed mechanism fails";
+        pline(msgc_nonmongood, "Fortunately, the %s.", msg);
     } else {
         switch ((rn2(20) || (armpro >= 3)) ?
                 ((Luck >= 13) ? 0 : rn2(13 - Luck)) : rn2(26)) {
@@ -4247,6 +4248,7 @@ chest_trap(struct obj *obj, int bodypart, boolean disarm)
                 }
                 return TRUE;
             }
+            break;
         case 20:
         case 19:
         case 18:
