@@ -1357,7 +1357,7 @@ dosearch0(int aflag)
 
     if (already) {
         action_completed();
-        pline("There's still a monster there.");
+        pline(msgc_youdiscover, "There's still a monster there.");
         return 1;
     }
 
