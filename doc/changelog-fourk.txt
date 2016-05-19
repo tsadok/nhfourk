@@ -57,6 +57,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Added a new random-appearance cloak, the cloak of endurance.  It
+   does not provide MC but does grant half physical damage.
+
  * More special levels have been updated or changed, e.g., the Wizard
    quest locate level.
 

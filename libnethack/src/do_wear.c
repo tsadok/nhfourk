@@ -310,6 +310,7 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case ORCISH_CLOAK:
     case DWARVISH_CLOAK:
     case CLOAK_OF_MAGIC_RESISTANCE:
+    case CLOAK_OF_ENDURANCE:
     case ROBE:
     case LEATHER_CLOAK:
     case ALCHEMY_SMOCK:

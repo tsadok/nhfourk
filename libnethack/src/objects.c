@@ -401,7 +401,7 @@ const struct objclass const_objects[] = {
           0, 1, INVIS, 10, 0, 10, 60, 9, 2, CLOTH, CLR_BRIGHT_MAGENTA),
     CLOAK("cloak of magic resistance", "ornamental cope",
           0, 1, ANTIMAGIC, 2, 0, 10, 60, 9, 3, CLOTH, CLR_WHITE),
-    CLOAK("cloak of half physical damage", "dirty rag",
+    CLOAK("cloak of endurance", "dirty rag",
           0, 1, HALF_PHDAM, 1, 0, 100, 300, 9, 0, CLOTH, CLR_GREEN),
     CLOAK("cloak of displacement", "piece of cloth",
           0, 1, DISPLACED, 10, 0, 10, 50, 9, 2, CLOTH, HI_CLOTH),
