@@ -98,17 +98,46 @@ dochugw(struct monst *mtmp)
 boolean
 onscary(int x, int y, struct monst * mtmp)
 {
-    if (mtmp->isshk || mtmp->isgd || mtmp->iswiz || !mtmp->mcansee ||
-        mtmp->mpeaceful || mtmp->data->mlet == S_HUMAN || is_lminion(mtmp) ||
-        mtmp->data == &mons[PM_ANGEL] || is_rider(mtmp->data) ||
-        mtmp->data == &mons[PM_MINOTAUR])
+    /* Certain creatures are directly resistant to being magically scared:
+       Rodney, lawful minions, angels, and the other Riders. */
+    if (mtmp->iswiz || is_lminion(mtmp) || mtmp->data == &mons[PM_ANGEL] ||
+        is_rider(mtmp->data)) {
         return FALSE;
+    }
 
-    return (boolean) (sobj_at(SCR_SCARE_MONSTER, level, x, y)
-                      || (sengr_at("Elbereth", x, y) &&
-                          flags.elbereth_enabled && !Conflict && !Stormprone)
-                      || (mtmp->data->mlet == S_VAMPIRE &&
-                          IS_ALTAR(level->locations[x][y].typ)));
+    /* Nothing is afraid to attack you if you wield Stormbringer. */
+    if ((Stormprone) && (x == u.ux) && (y == u.uy)) {
+        return FALSE;
+    }
+
+    /* Vampires are afraid of altars (and can sense them even if blind): */
+    if (IS_ALTAR(level->locations[x][y].typ) &&
+        mtmp->data->mlet == S_VAMPIRE) {
+        return TRUE;
+    }
+
+    /* Blinded monsters can't see scary things: */
+    if (!mtmp->mcansee) {
+        return FALSE;
+    }
+
+    /* Scrolls of scare monster have fewer restrictions than Elbereth: */
+    if (sobj_at(SCR_SCARE_MONSTER, level, x, y)) {
+        return TRUE;
+    }
+
+    /* Some creatures just don't fear the name of Elbereth: */
+    if (mtmp->isshk || mtmp->isgd || mtmp->mpeaceful ||
+        mtmp->data->mflagsr == MRACE_ELF || mtmp->data == &pm_nemesis ||
+        mtmp->data == &mons[PM_WATCHMAN] ||
+        mtmp->data == &mons[PM_WATCH_CAPTAIN] ||
+        mtmp->data == &mons[PM_MINOTAUR]) {
+        return FALSE;
+    }
+
+    /* TODO:  should Elbereth only be scary if it's the entire engraving? */
+    return (boolean) ((sengr_at("Elbereth", x, y) &&
+                       flags.elbereth_enabled && !Conflict));
 }
 
 

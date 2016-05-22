@@ -28,26 +28,30 @@ categories:
 
  * Balance adjustments.  Various formulae have been revised, to
    improve the overall balance and difficulty curve of the game.
-   Things like death-drop probability, engraving success rate,
-   alignment record, etc. have had the shape of their curve adjusted,
-   and some game features have been buffed or gently nerfed so that
-   they fit better into the overall scheme of the game's balance.
+   Things like engraving success rate, alignment record, to-hit
+   calculations, etc. have had the shape of their curve adjusted, and
+   some game features have been buffed or gently nerfed so that they
+   fit better into the overall scheme of the game's balance.
    
  * Monster/class reorganization.  Some classes with very few monsters
    have been combined and thus freed up, so that in a subsequent
    version some heavily overloaded monster classes can be split,
-   without running out of letters.  I tried to be conservative about
-   this, and for now I tried to avoid having any monster look exactly
-   the same as another monster used to look, when it can be avoided.
+   without running out of letters.  Some monsters have switched from
+   one symbol/letter class to another one where they fit better.
+   Additionally, some monsters that were formerly represented by
+   punctuation marks are now represented by actual letters.  I have
+   tried to be conservative about all of this, and for now I tried to
+   avoid having any monster look exactly the same as another monster
+   used to look, when it can be avoided.
    
  * Differentiation (aka improved variety).  Some monsters, items, or
    special levels that were practically identical have been tweaked
    slightly so that they are no longer quite so closely the same.
-   Some special levels may get new versions, as well.
+   Some special levels have entirely new versions, as well.
 
  * Consolidation.  Some meaningless things that didn't really add to
    the game have been removed or combined with others.  Monsters,
-   objects, skills, etc.
+   objects, skills, etc.  You won't miss them.
 
 
 Chronological Changelog (most recent at top):
@@ -56,6 +60,17 @@ Chronological Changelog (most recent at top):
 
 Changes in 4.3.0.4:
 -------------------
+
+ * Most creatures that are not afraid of Elbereth can still be
+   frightened by a scroll of scare monster.  Exceptions are Rodney,
+   lawful minions, Angels (specifically, not all A), and Riders.
+
+ * The name Elbereth now works to frighten most humans (with notable
+   exceptions being the shopkeepers, vault guards, the Minetown Watch,
+   and of course the Wizard of Yendor).  Elves, of course, still don't
+   fear the name of this Vala of light (because they revere her).
+
+ * Your quest nemesis is not afraid of Elbereth.
 
  * Added a new random-appearance cloak, the cloak of endurance.  It
    does not provide MC but does grant half physical damage.
