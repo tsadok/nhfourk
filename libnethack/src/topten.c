@@ -63,7 +63,11 @@ static char end_killer[DTHSZ + 1] = {0};
 
 /* xlogfile writing. Based on the xlogfile patch by Aardvark Joe. */
 
-#define SEP ":"
+#ifdef XLOGFILE_FIELD_SEPARATOR
+#define SEP XLOGFILE_FIELD_SEPARATOR
+#else
+#define SEP "\t"
+#endif
 #define SEPC (SEP[0])
 
 static void

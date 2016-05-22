@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The xlog and livelog field separators now default to a horizontal
+   tab character but can be customized at compile time by defining
+   XLOGFILE_FIELD_SEPARATOR and LIVELOG_FIELD_SEPARATOR
+
  * Most creatures that are not afraid of Elbereth can still be
    frightened by a scroll of scare monster.  Exceptions are Rodney,
    lawful minions, Angels (specifically, not all A), and Riders.
