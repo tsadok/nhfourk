@@ -55,7 +55,7 @@ Changes in 4.3.0.2:
 -------------------
 
  * It is possible to specify COLNO and ROWNO at compile time (put
-   something like -ROWNO=30 in the CFLAGS environment variable
+   something like -DROWNO=30 in the CFLAGS environment variable
    when running aimake).  Note that changing these values breaks
    save compatibility and is known to be buggy at this time.
 
