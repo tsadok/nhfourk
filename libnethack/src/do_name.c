@@ -6,8 +6,9 @@
 #include "hack.h"
 #include "epri.h"
 
-static void namemonsterfromlist(struct monst *mon, const char *const *nlist,
-                                struct level *lev, boolean unique);
+static struct monst * namemonsterfromlist(struct monst *mon,
+                                          const char *const *nlist,
+                                          struct level *lev, boolean unique);
 
 static const char *const watchname[] = {
     "Andrews", "Ashton", "Aynesworth", "Babington", "Bartleby", "Beckingham",
@@ -36,17 +37,17 @@ static const char *const watchname[] = {
     0
 };
 
-void
+struct monst *
 namewatchman(struct monst *mon, struct level *lev)
 {
-    namemonsterfromlist(mon, watchname, lev, TRUE);
+    return namemonsterfromlist(mon, watchname, lev, TRUE);
 }
 
 /* Assign a name to a monster, taken from a list of possible names.
    Note that shopkeepers are special and use nameshk instead, partly
    because it contains additional logic peculiar to them and also
    because their name is stored in ESHK because of reasons. */
-static void
+struct monst *
 namemonsterfromlist(struct monst *mon, const char *const *nlist,
                     struct level *lev, boolean unique)
 {
@@ -56,20 +57,19 @@ namemonsterfromlist(struct monst *mon, const char *const *nlist,
     if (!mon) {
         if (wizard)
             impossible("Cannot name a non-existent monster.");
-        return;
+        return mon;
     }
     if (!nlist[0]) {
         if (wizard)
             impossible("No names available for the %s.", mon_nam(mon));
-        return;
+        return mon;
     }
     for (names_avail = 0; nlist[names_avail]; names_avail++)
         ;
     for (tryct = 0; tryct < 500; tryct++) {
         ourname = nlist[rn2(names_avail)];
         if (!unique) {
-            christen_monst(mon, ourname);
-            return;
+            return christen_monst(mon, ourname);
         }
         for (mtmp = lev->monlist; mtmp; mtmp = mtmp->nmon) {
             if (DEADMONSTER(mtmp) || (mtmp == mon) ||
@@ -80,14 +80,14 @@ namemonsterfromlist(struct monst *mon, const char *const *nlist,
             break;
         }
         if (!mtmp) {
-            christen_monst(mon, ourname);
-            return;
-        } 
+            return christen_monst(mon, ourname);
+        }
     }
     /* We're not going to name this monster. */
     if (wizard)
         pline(msgc_debug, "Failed to find %s name for the %s.",
               (unique ? "an unused" : "a"), mon_nam(mon));
+    return mon;
 }
 
 struct monst *

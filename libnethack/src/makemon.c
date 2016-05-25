@@ -257,11 +257,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             switch (mm) {
 
             case PM_WATCHMAN:
-                /* Naming them here ensures it happens when they are created
-                   normally, but not when they are loaded from bones or created
-                   from a statue or figurine.  Also PM_WATCH_CAPTAIN below.  */
-                namewatchman(mtmp, lev);
-                /* fall through */
             case PM_SOLDIER:
                 if (!rn2_on_rng(3, rng)) {
                     w1 = PARTISAN +
@@ -277,8 +272,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 w1 = rn2_on_rng(2, rng) ? BROADSWORD : LONG_SWORD;
                 break;
             case PM_WATCH_CAPTAIN:
-                namewatchman(mtmp, lev);
-                /* fall through */
             case PM_CAPTAIN:
                 w1 = rn2_on_rng(2, rng) ? LONG_SWORD : SILVER_SABER;
                 break;
@@ -1312,6 +1305,17 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     }
 
     if (allow_minvent) {
+        if ((monsndx(ptr) == PM_WATCHMAN) ||
+            (monsndx(ptr) == PM_WATCH_CAPTAIN)) {
+            /* Name them inside the allow_minvent check to ensure it happens
+               when they are created normally but not when they are loaded from
+               bones or created from a statue or figurine.  Do it before
+               starting to give them any inventory, because naming a monster
+               causes reallocation, which can result in inventory being
+               generated but not added to the correct monst struct. */
+            mtmp = namewatchman(mtmp, lev);
+            ptr  = mtmp->data;
+        }
         if (is_armed(ptr))
             m_initweap(lev, mtmp, stats_rng); /* equip with weapons / armor */
         m_initinv(mtmp, stats_rng);           /* more armor, other items */
