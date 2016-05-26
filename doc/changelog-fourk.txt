@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The odds of failure when wishing for an artifact are now higher
+   if the artifact is cross-aligned than if it is co-aligned.
+
  * The xlog and livelog field separators now default to a horizontal
    tab character but can be customized at compile time by defining
    XLOGFILE_FIELD_SEPARATOR and LIVELOG_FIELD_SEPARATOR

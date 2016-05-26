@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "artifact.h"
 
 /* Summary of all NetHack's object naming functions:
    obj_typename(otyp): entry in discovery list, from player's point of view
@@ -1939,6 +1940,7 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
     struct fruit *f;
     int ftype = gamestate.fruits.current;
     const char *fruitbuf;
+    struct artifact *art;
 
     /* Fruits may not mess up the ability to wish for real objects (since you
        can leave a fruit in a bones file and it will be added to another
@@ -2880,6 +2882,8 @@ typfnd:
         if (otmp->oartifact) {
             otmp->quan = 1L;
             break_conduct(conduct_artiwish);      /* KMH, conduct */
+            art = ((otmp && otmp->oartifact) ? &artilist[(int) otmp->oartifact]
+                   : ((struct artifact *) 0));
         }
     }
 
@@ -2887,7 +2891,10 @@ typfnd:
     /* and make them pay; charge them for the wish anyway! */
     if ((is_quest_artifact(otmp) ||
          (otmp->oartifact &&
-          rn2_on_rng(nartifact_exist(), rng_artifact_wish) >
+          rn2_on_rng((nartifact_exist() + ((art && art->alignment != A_NONE &&
+                                            art->alignment != u.ualign.type) ?
+                                           (challengemode ? 2 : 1) : 0)),
+                     rng_artifact_wish) >
           ((wishtype == 3) ? 2 : 1))) && !wizard) {
         artifact_exists(otmp, ONAME(otmp), FALSE);
         obfree(otmp, NULL);
