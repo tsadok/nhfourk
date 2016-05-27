@@ -135,9 +135,12 @@ onscary(int x, int y, struct monst * mtmp)
         return FALSE;
     }
 
-    /* TODO:  should Elbereth only be scary if it's the entire engraving? */
-    return (boolean) ((sengr_at("Elbereth", x, y) &&
-                       flags.elbereth_enabled && !Conflict));
+    char *engr = (engr_at(level,x,y)) ? (engr_at(level,x,y))->engr_txt : "x";
+    return ((flags.elbereth_enabled && !Conflict &&
+             ((strncmpi(engr, "Elbereth", strlen(engr)) == 0) ||
+              (strncmpi(engr, "Elbereth Gilthoniel", strlen(engr)) == 0) ||
+              (strncmpi(engr, "A Elbereth Gilthoniel", strlen(engr)) == 0)))
+            ? TRUE : FALSE);
 }
 
 

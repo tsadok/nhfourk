@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The name of Elbereth only scares monsters if it is the only thing
+   engraved there (although you can also use the more complete form
+   of the name that Frodo used at Weathertop).
+
  * Levitation no longer places you at maximum carry capacity.
 
  * The odds of failure when wishing for an artifact are now higher

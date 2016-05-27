@@ -11,6 +11,7 @@
 static const char *const random_mesg[] = {
     "Elbereth", "ElberethElbereth", "ElberethElberethElbereth",
     "ElberetnElherethLlberethElbcrethElbere?hElbercthFlbereth",
+    "A Elbereth Gilthoniel",
     /* trap engravings */
     "Vlad was here", "ad aerarium",
     /* other NetHack-specific references */
