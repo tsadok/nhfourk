@@ -1191,7 +1191,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         if (can_blnd(mtmp, &youmonst, mattk->aatyp, NULL)) {
             if (!Blind)
                 pline(msgc_statusbad, "%s blinds you!", Monnam(mtmp));
-            make_blinded(Blinded + (long)(dmg * 2 / armpro), FALSE);
+            make_blinded(Blinded + (long)(dmg * 2 / (armpro || 1)), FALSE);
             if (!Blind)
                 pline(msgc_statusheal, "Your vision quickly clears.");
         }
