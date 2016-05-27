@@ -885,7 +885,7 @@ u_init_inv_skills(void)
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
         augment_magic_chest_contents(0, ARMOR_CLASS, 20);
-        augment_magic_chest_contents(0, WAR_HAMMER, 1);
+        augment_magic_chest_contents(WAR_HAMMER, 0, 1);
         augment_magic_chest_contents(WAN_COLD, 0, 1);
         augment_magic_chest_contents(BROADSWORD, 0, 2);
         augment_magic_chest_contents(JAVELIN, 0, 10);
