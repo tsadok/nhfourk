@@ -2972,6 +2972,11 @@ fixup_special(struct level *lev)
         struct obj *otmp;
         int tryct;
 
+        if (!lev->nroom) {
+            impossible("fixup_special: "
+                       "Medusa's level must have at least one room.");
+            return;
+        }
         croom = &lev->rooms[0]; /* only one room on the medusa level */
         for (tryct = 1 + mrn2(4); tryct; tryct--) {
             x = somex(croom, mrng());

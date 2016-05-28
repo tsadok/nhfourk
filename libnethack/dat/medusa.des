@@ -6,6 +6,7 @@
 # These are the Medusa's levels :
 #
 
+# Medusa's Island, plain vanilla version
 MAZE:"medusa-1",' '
 FLAGS: noteleport
 GEOMETRY:center,center
@@ -106,6 +107,7 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
+# Medusa's Island, Titan Hall version
 MAZE:"medusa-2",' '
 FLAGS: noteleport
 GEOMETRY:center,center
@@ -213,3 +215,268 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
+
+# Medusa's Island, raven version, introduced in NetHack 3.6.0
+MAZE:"medusa-3",' '
+FLAGS: noteleport,shortsighted
+#INIT_MAP:solidfill,' '
+GEOMETRY:center,center
+#
+# Here you disturb ravens nesting in the trees.
+#         1         2         3         4         5         6         7
+#123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}w.ww}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}w.}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}wT..T.w}}}}}}}}}}}}}}}}}}}..w}}}}}}}.www...}}}}}}}.}}}}}......}}}}}}}
+}}}}}w.......T.}}}}}}}}}}w..w}}}..T.w}}}}}...T...T..}}...T..}w..-----..}}}}}
+}}}...-----....w}}}}}}}}w.T..w}}}}...ww}}}.....T..ww}}}......T..|...|.T..}}}
+}}}wT.|...|...T.}}}}}ww.T......}}}w..T..}}.www.ww...}}}}w.T.....+...|...w}}}
+}}}}w.|...|.ww.w}}}w.....wwwT.w}}}.....w}}}}w.T}ww}}}}}}}}ww..T.|...|.ww}}}}
+}}}}}.|...|.w}}}}}..T..w}}}}}}}}}}}wT.w}}}}}}}..}}}}}}}}}}}.....-----.}}}}}}
+}}}}w.--+--..}}}}}w...w}}}}}}}}}}}}}}}}}}T.w}}}}}}}}}}}}}}}.T.w........}}}}}
+}}}ww.......w}}}}}..w}}}}}}ww.w}}}}}}}}}}}}}}}}}}}}}}}}}}}}}.}}}.w}.T.w}}}}}
+}}.T...T...w}}}T}}}}}}}}}}w....w}}}}}}}}}T}}}}w.T}w...}}}}}}}}}}}}}w...}}}}}
+}}w...Tww}}}}}..ww}}}}}}}}w.T...}}}}}}}}.T.w.T.....T....}}}}}}}}}}}}w.}}}}}}
+}}}}}}}}}}}}}}w....w}}}}}}...ww.}}}}}}}}ww............T..}}}}w.T.}}}}}}}}}}}
+}}}}}}}}}}}}}}}w..T..w}}}}}www}}}}}..}}}}w..------+--...T.}}}....w}}}}}}}}}}
+}}}}.w..wwww}}}.T.....}}}}}}}}}}}..T.}}}}.T.|...|...|....}}}}}.ww}}w...ww}}}
+}}}.T.w...w..w}}wT.T.w}}}}w.ww}}}}}....}}...|...+...|.w}}}}}}}}}}ww..T...}}}
+}}}}..www.....w}...ww}}}}w...ww}}}}}}}}}}wT.|...|...|w}}}}}}}}}}....T..w}}}}
+}}}}}..}ww.T..}}w.w}}}}}ww.T..ww}}}}}}}}}}}w---S-----w}}}}}}}}}}}w....w}}}}}
+}}}}}}}}}}}..w}}}}}}}}}}}www.w}}}}}}}}}}}}}}}}T..T}}}}}}}}}}}}}}}}}ww}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+ENDMAP
+RANDOM_PLACES: (08,06),(66,05),(46,15)
+REGION:(00,00,74,19),lit,"ordinary"
+REGION:(48,13,52,17),random,"ordinary",unfilled
+REGION:(06,04,10,08),unlit,"ordinary"
+REGION:(64,03,68,07),unlit,"ordinary"
+REGION:(44,13,47,17),unlit,"ordinary"
+# Non diggable walls
+# 4th room has diggable walls as Medusa is never placed there
+NON_DIGGABLE:(06,04,10,08)
+NON_DIGGABLE:(64,03,68,07)
+NON_DIGGABLE:(44,13,48,17)
+# All places are accessible also with jumping, so don't bother
+# restricting the placement when teleporting from levels below this.
+TELEPORT_REGION:(33,02,38,07),(0,0,1,1),down
+STAIR:(32,01,39,07),(0,0,1,1),up
+STAIR:place[0],down
+DOOR:locked,(08,08)
+DOOR:locked,(64,05)
+DOOR:random,(50,13)
+DOOR:locked,(48,15)
+# 
+FOUNTAIN:place[1]
+#
+CONTAINER:'`',"statue",place[2],uncursed,"knight",3,"Perseus"
+OBJECT:'[',"shield of reflection",contained,cursed,+0
+OBJECT[45%]:'[',"levitation boots",contained,random,+0
+OBJECT:')',"scimitar",contained,blessed,+2
+OBJECT:'(',"sack",contained
+#
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+
+# Eight random objects:
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Two blank scrolls:
+OBJECT:'?',"blank paper",(48,18)
+OBJECT:'?',"blank paper",(48,18)
+# Some traps:
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"board",random
+TRAP:"board",random
+TRAP:random,random
+# Miscellaneous Monsters:
+MONSTER:'@',"Medusa",place[0]
+MONSTER:';',"giant eel",random
+MONSTER:';',"giant eel",random
+MONSTER:';',"jellyfish",random
+MONSTER:';',"jellyfish",random
+MONSTER:'n',"wood nymph",random
+MONSTER:'n',"water nymph",random
+MONSTER:'n',"water nymph",random
+MONSTER:'n',"island nymph",random
+# The thirty ravens for which the variant is named.
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+MONSTER:'B',"raven",random,hostile
+
+# Medusa's Island, Queen of the Snakes
+MAZE:"medusa-4",' '
+FLAGS: noteleport
+#INIT_MAP:solidfill,' '
+GEOMETRY:center,center
+#
+# Here the Medusa rules some slithery monsters from her 'palace', with
+# a yellow dragon nesting in the backyard.
+#
+# Note that this version currently has some kind of bug that causes it
+# to not have any rooms; this would cause a crash in fixup_special.
+# I added a check that causes it instead to impossible() and return,
+# skipping the fixup to prevent segfaults; but this version of the
+# level really should not be enabled until the bug is fixed.
+MAP
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}ww}}}}}}}}}}}}}}}}}}}}}}
+}}}}}}}}}}}www........ww}}}}}}}}}}}}}}}}}}}}w..w}}.....ww}}}}}}}}}----|}}}}}
+}}}}ww..----------F-.....www}}}}}}}}w}}}w..---...}}ww....T.ww}}}}}....|w}}}}
+}}}.....|...F......S}}}w....w}}}}}ww..}}.....|}w.}}}}}}w......}}}w|......}}}
+}}w.....+...|..{...|}}}}}}}}}}}w.....w}}}|...|}}}}}}}}}}w.ww}}}}}}----.ww}}}
+}}......|...|......|}}}}}}}}w......ww}}}}|.......ww}}}}}}}}}}}..}}}}w...}}}}
+}}|-+--F|-+--....|F|-|}}}}}....ww}....}}}-----ww.....w}}}}}}......}}}}.w}}}}
+}}|...}}|...|....|}}}|}}}}}}}..}}}}}ww}}}}w}}}}}}}w....}}}}}}}w....T.}}}}}}}
+}}|...}}F...+....F}}}}}}w..}}}}}}}}}}}}}w...}}}}}}}}}}}}}}}}}w}}}w....}w..}}
+}w|...}}|...|....|}}}|w....}}}}}}....}}w...}}}ww...}}}}}}}}}}}}}}}ww.....}}}
+}w--+--F|-+--....-F|-|....w}}}}}}}ww.T...ww}}....---}}}}}}}}}}}}}}}}}}}}}}}}
+}w......|...|......|w}}}w.}}}}}}}}}....ww}}}}w.....|}}}}}}}}w.ww}}}}}}}}}}}}
+}}ww....+...|..{...|.w}}}}}}}}}}}}}}}ww}}}}}}}}.|..|}}}}}}w......}}}w...}}}}
+}}}www..|...F......|...w}}}}}}}}}..---}}}}}}}}}w--.-}}}}}....w}w}}}....w}}}}
+}}}}}www-----S----F|....w}}}}}}}}|...|}}}}}}}}}}}}...}}}}}w...w}}}}}..w}}}}}
+}}}}}}}}}..............T...}}}}w.|.......}}}}}}}}}}}}}}..w...w.}}}}....}}}}}
+}}}}}}}}}}....ww}w...w...w}}}}.......|.w}}}}}}}}}}}}}.......w}}}}}}}w...}}}}
+}}}}}}}}}w..ww}}}}}}w}.w}}}}}}}ww-..--.}}}}}}}w..}}}}}w..T...w}}..w}}}ww}}}}
+}}}}}}}}}...w}}}}}}}}}}}}}}}}}}}}}w...w}}}}}w....w}}}}}w.w}w..}}}...}}}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}w.}}}}}}...ww}}}}}}}}}}}}}}}}ww...}}}}}}
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+ENDMAP
+#
+RANDOM_PLACES: (04,08),(10,04),(10,08),(10,12)
+#
+REGION:(00,00,74,19),lit,"ordinary"
+REGION:(13,03,18,13),lit,"ordinary"
+REGION:(08,02,12,05),unlit,"ordinary"
+REGION:(08,06,12,10),unlit,"ordinary"
+REGION:(08,11,12,14),unlit,"ordinary"
+#
+TELEPORT_REGION:(64,01,74,17),(0,0,0,0),down
+TELEPORT_REGION:(02,02,18,13),(0,0,0,0),up
+#
+STAIR:(67,01,74,20),(0,0,0,0),up
+STAIR:place[0],down
+#
+DOOR:locked,(04,06)
+DOOR:locked,(04,10)
+DOOR:locked,(08,04)
+DOOR:locked,(08,12)
+DOOR:locked,(10,06)
+DOOR:locked,(10,10)
+DOOR:locked,(12,08)
+#
+BRANCH:levregion(27,00,79,20),(0,0,0,0)
+#
+NON_DIGGABLE:(01,01,22,14)
+#
+OBJECT:'(',"crystal ball",(07,08)
+#
+CONTAINER:'`',"statue",place[1],uncursed,"knight",3,"Perseus"
+OBJECT: '[',"shield of reflection",contained,cursed,+0
+OBJECT[55%]: '[',"levitation boots",contained,random,+0
+OBJECT: ')',"scimitar",contained,blessed,+2
+OBJECT: '(',"sack",contained
+#
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+OBJECT:'`',"statue",random
+# Eight random objects:
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Seven random traps:
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+# The major monsters:
+MONSTER:'@',"Medusa",place[0]
+MONSTER:';',"kraken",(07,07)
+# the nesting dragon
+MONSTER:'D',"yellow dragon", (05,04), asleep
+MONSTER[50%]:'D',"baby yellow dragon", (04,04), asleep
+MONSTER[25%]:'D',"baby yellow dragon", (04,05), asleep
+OBJECT:'%',"egg",(05,04),"yellow dragon",0
+OBJECT[55%]: '%',"egg",(05,04),"yellow dragon",0
+OBJECT[25%]: '%',"egg",(05,04),"yellow dragon",0
+#
+MONSTER:';',"giant eel",random
+MONSTER:';',"giant eel",random
+MONSTER:';',"jellyfish",random
+MONSTER:';',"jellyfish",random
+# Fourteen assorted snakes
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+# Four (adult) black nagas:
+MONSTER:'N',"black naga",random
+MONSTER:'N',"black naga",random
+MONSTER:'N',"black naga",random
+MONSTER:'N',"black naga",random
+# Four black naga hatchlings
+MONSTER:'N',"black naga hatchling",random
+MONSTER:'N',"black naga hatchling",random
+MONSTER:'N',"black naga hatchling",random
+MONSTER:'N',"black naga hatchling",random
