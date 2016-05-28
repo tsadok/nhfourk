@@ -404,7 +404,7 @@ DOOR:locked,(10,06)
 DOOR:locked,(10,10)
 DOOR:locked,(12,08)
 #
-BRANCH:levregion(27,00,79,20),(0,0,0,0)
+BRANCH:levregion(27,00,75,20),(0,0,0,0)
 #
 NON_DIGGABLE:(01,01,22,14)
 #
