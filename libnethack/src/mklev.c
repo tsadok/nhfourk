@@ -1881,6 +1881,8 @@ mkinvokearea(void)
                       "The walls around you begin to bend and crumble!");
     win_pause_output(P_MESSAGE);
 
+    achievement(achieve_invocation);
+
     mkinvpos(xmin, ymin, 0);    /* middle, before placing stairs */
 
     for (dist = 1; dist < 7; dist++) {

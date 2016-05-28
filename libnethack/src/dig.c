@@ -305,6 +305,8 @@ dig(void)
         return 0;
     }
 
+    achievement(achieve_dig);
+
     u.uoccupation_progress[tos_dig] +=
         10 + rn2(5) + abon() +
         (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0) + u.udaminc;

@@ -237,8 +237,10 @@ doaltarobj(struct obj *obj)
         pline_implied(msgc_hint, "There is %s flash as %s %s the altar.",
                       an(hcolor(obj->blessed ? "amber" : "black")), doname(obj),
                       otense(obj, "hit"));
-        if (!Hallucination)
+        if (!Hallucination) {
             obj->bknown = 1;
+            achievement(achieve_altar_buctest);
+        }
     } else {
         pline_implied(msgc_noconsequence, "%s %s on the altar.", Doname2(obj),
                       otense(obj, "land"));
@@ -781,6 +783,7 @@ dodown(boolean autodig_ok)
                 pline_implied(msgc_branchchange, "So be it.");
         }
         u.uevent.gehennom_entered = 1;  /* don't ask again */
+        achievement(achieve_valley_stairs);
     }
 
     if (!next_to_u()) {
@@ -1095,6 +1098,15 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
                 selftouch("Falling, you", "falling downstairs while wielding");
             }
         }
+        /* Either way, up or down, works for achievement purposes: */
+        if (newdungeon) {
+            achievement(achieve_stairs_branch);
+            /* achieve_valley_stairs is handled elsewhere */
+        } else if (In_sokoban(&u.uz)) {
+            achievement(achieve_soko_stairs);
+        } else {
+            achievement(achieve_stairs_normal);
+        }
     } else {    /* trap door or level_tele or In_endgame */
         if (was_in_W_tower && On_W_tower_level(&u.uz))
             /* Stay inside the Wizard's tower when feasible. */
@@ -1309,8 +1321,10 @@ on_mines_level(const struct level *lev)
     if (!In_mines(&lev->z))
         return;
     if (!can_dig_down(lev)) {
-        if (!historysearch("reached the bottom of the Mines", TRUE))
+        if (!historysearch("reached the bottom of the Mines", TRUE)) {
             historic_event(FALSE, TRUE, "reached the bottom of the Mines.");
+            achievement(achieve_mines_end);
+        }
     }
 }
 

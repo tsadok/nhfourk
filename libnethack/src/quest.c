@@ -333,6 +333,7 @@ chat_with_leader(void)
             qt_pager(QT_ASSIGNQUEST);
             Qstat(got_quest) = TRUE;
             historic_event(FALSE, FALSE, "embarked upon an epic quest.");
+            achievement(urole.questach);
         }
     }
 }

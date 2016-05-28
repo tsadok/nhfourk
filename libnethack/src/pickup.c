@@ -1167,6 +1167,9 @@ struct obj *
 pick_obj(struct obj *otmp)
 {
     obj_extract_self(otmp);
+    if (otmp->oclass == COIN_CLASS && vault_occupied(u.urooms)) {
+        achievement(achieve_vault_gold);
+    }
     if (!Engulfed && otmp != uball && costly_spot(otmp->ox, otmp->oy)) {
         char saveushops[5], fakeshop[2];
 

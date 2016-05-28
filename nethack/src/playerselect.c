@@ -328,6 +328,11 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
        validate_character_presets we know they're OK */
     if (role < 0) {
         listlen = get_valid_roles(ri, race, gend, align, list, LISTSZ);
+        if (listlen < 1) {
+            /* This theoretically shouldn't happen. */
+            curses_msgwin("No valid roles.", krc_notification);
+            return FALSE;
+        }
 
         /* Process the choice */
         if (pick4u == 'y' || role == ROLE_RANDOM || randomall) {

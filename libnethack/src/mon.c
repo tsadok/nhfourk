@@ -2161,6 +2161,13 @@ xkilled(struct monst *mtmp, int dest)
         historic_event(FALSE, FALSE, "killed %s %s.",
                        x_monnam(mtmp, ARTICLE_NONE, NULL, EXACT_NAME, TRUE),
                        hist_lev_name(&u.uz, TRUE));
+        if (mtmp->data == &mons[PM_MEDUSA]) {
+            achievement(achieve_kill_medusa);
+        } else if (mtmp->data == &mons[urole.neminum]) {
+            achievement(achieve_kill_nemesis);
+        } else if (mtmp->data == &mons[PM_WIZARD_OF_YENDOR]) {
+            achievement(achieve_kill_rodney);
+        }
     }
 
     mdat = mtmp->data;  /* note: mondead can change mtmp->data */

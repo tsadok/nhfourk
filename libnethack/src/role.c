@@ -57,7 +57,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
-     10, 5, 0, 2, 10, A_INT, SPE_MAGIC_MAPPING, -4},
+     10, 5, 0, 2, 10, A_INT, SPE_MAGIC_MAPPING, -4, achieve_quest_archeologist,
+     UNLOCKFEAT_ROLE_ARCHEOLOGIST, UNLOCKFEAT_ROLE_ARCHEOLOGIST},
     {{"Barbarian", 0}, {
                         {"Plunderer", "Plunderess"},
                         {"Pillager", 0},
@@ -84,7 +85,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 10, 2, 0},      /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 15, 0, 0, 8, A_INT, SPE_HASTE_SELF, -4},
+     10, 15, 0, 0, 8, A_INT, SPE_HASTE_SELF, -4, achieve_quest_barb,
+     UNLOCKFEAT_ROLE_BARBARIAN, UNLOCKFEAT_ALLROLES_BARB},
     {{"Caveman", "Cavewoman"}, {
                                 {"Cave Boy", "Cave Girl"},
                                 {"Cave Teen", 0},
@@ -110,7 +112,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 12, 0, 1, 8, A_INT, SPE_DIG, -4},
+     10, 12, 0, 1, 8, A_INT, SPE_DIG, -4, achieve_quest_caveman,
+     UNLOCKFEAT_ROLE_CAVEMAN, UNLOCKFEAT_ROLE_CAVEMAN},
     {{"Healer", 0}, {
                      {"Rhizotomist", 0},
                      {"Empiric", 0},
@@ -135,7 +138,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 20,    /* Energy */
-     10, 3, -3, 2, 10, A_INT, SPE_CURE_SICKNESS, -4},
+     10, 3, -3, 2, 10, A_INT, SPE_CURE_SICKNESS, -4, achieve_quest_healer,
+     UNLOCKFEAT_ROLE_HEALER, UNLOCKFEAT_ROLE_HEALER},
     {{"Knight", 0}, {
                      {"Gallant", 0},
                      {"Esquire", 0},
@@ -160,7 +164,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 10,    /* Energy */
-     10, 8, -2, 0, 9, A_INT, SPE_TURN_UNDEAD, -4},
+     10, 8, -2, 0, 9, A_INT, SPE_TURN_UNDEAD, -4, achieve_quest_knight,
+     UNLOCKFEAT_ROLE_KNIGHT, UNLOCKFEAT_ROLE_KNIGHT},
     {{"Monk", 0}, {
                    {"Candidate", 0},
                    {"Novice", 0},
@@ -187,7 +192,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {2, 2, 0, 2, 0, 2}, 10,    /* Energy */
-     10, 8, -2, 2, 20, A_INT, SPE_RESTORE_ABILITY, -4},
+     10, 8, -2, 2, 20, A_INT, SPE_RESTORE_ABILITY, -4, achieve_quest_monk,
+     UNLOCKFEAT_ROLE_MONK, UNLOCKFEAT_ROLE_MONK},
     {{"Priest", "Priestess"}, {
                                {"Aspirant", 0},
                                {"Acolyte", 0},
@@ -213,7 +219,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 2}, 10,    /* Energy */
-     10, 3, -2, 2, 10, A_INT, SPE_REMOVE_CURSE, -4},
+     10, 3, -2, 2, 10, A_INT, SPE_REMOVE_CURSE, -4,
+     achieve_quest_priest, UNLOCKFEAT_ROLE_PRIEST, UNLOCKFEAT_ROLE_PRIEST},
     /* Note: Rogue precedes Ranger so that use of `-R' on the command line
        retains its traditional meaning. */
     {{"Rogue", 0}, {
@@ -240,7 +247,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 11,    /* Energy */
-     10, 8, 0, 1, 9, A_INT, SPE_DETECT_TREASURE, -4},
+     10, 8, 0, 1, 9, A_INT, SPE_DETECT_TREASURE, -4,
+     achieve_quest_rogue, UNLOCKFEAT_ROLE_ROGUE, UNLOCKFEAT_ROLE_ROGUE},
     {{"Ranger", 0}, {
                      {"Tenderfoot", 0},
                      {"Lookout", 0},
@@ -267,7 +275,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {13, 0, 0, 6, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 12,    /* Energy */
-     10, 9, 2, 1, 10, A_INT, SPE_INVISIBILITY, -4},
+     10, 9, 2, 1, 10, A_INT, SPE_INVISIBILITY, -4,
+     achieve_quest_ranger, UNLOCKFEAT_ROLE_RANGER, UNLOCKFEAT_ROLE_RANGER},
     {{"Samurai", 0}, {
                       {"Hatamoto", 0},  /* Banner Knight */
                       {"Ronin", 0},     /* no allegiance */
@@ -292,7 +301,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {13, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 11,    /* Energy */
-     10, 10, 0, 0, 8, A_INT, SPE_CLAIRVOYANCE, -4},
+     10, 10, 0, 0, 8, A_INT, SPE_CLAIRVOYANCE, -4,
+     achieve_quest_samurai, UNLOCKFEAT_ROLE_SAMURAI, UNLOCKFEAT_ROLE_SAMURAI},
     {{"Tourist", 0}, {
                       {"Rambler", 0},
                       {"Sightseer", 0},
@@ -318,7 +328,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {8, 0, 0, 8, 0, 0},        /* Hit points */
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
-     10, 5, 1, 2, 10, A_INT, SPE_CHARM_MONSTER, -4},
+     10, 5, 1, 2, 10, A_INT, SPE_CHARM_MONSTER, -4,
+     achieve_quest_tourist, UNLOCKFEAT_ROLE_TOURIST, UNLOCKFEAT_ROLE_TOURIST},
     {{"Valkyrie", 0}, {
                        {"Stripling", 0},
                        {"Skirmisher", 0},
@@ -343,7 +354,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4},
+     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4, achieve_quest_valkyrie,
+     UNLOCKFEAT_ROLE_VALKYRIE, UNLOCKFEAT_ROLE_VALKYRIE},
     {{"Wizard", 0}, {
                      {"Evoker", 0},
                      {"Conjurer", 0},
@@ -369,7 +381,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 3}, 12,    /* Energy */
-     10, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE, -4},
+     10, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE, -4,
+     achieve_quest_wizard, UNLOCKFEAT_ROLE_WIZARD, UNLOCKFEAT_ALLROLES_WIZARD},
 /* Array terminator */
     {{0, 0}}
 };
@@ -814,6 +827,19 @@ ok_align(int rolenum, int racenum, int gendnum, int alignnum)
     int i;
     short allow;
 
+    // TODO:  XXX YOU ARE HERE
+/*
+    if (rolenum >= 0 && rolenum < SIZE(roles) - 1 &&
+        !is_unlocked_feature(UNLOCK_FIELD_ROLE,
+                             roles[rolenum].unlocked)) {
+        return FALSE;
+    }
+    if (racenum >= 0 && racenum < SIZE(races) - 1 &&
+        !is_unlocked_feature(UNLOCK_FIELD_RACE,
+                             races[racenum].unlockedrace)) {
+        return FALSE;
+    }
+*/
     if (alignnum >= 0 && alignnum < ROLE_ALIGNS) {
         allow = aligns[alignnum].allow;
         if (rolenum >= 0 && rolenum < SIZE(roles) - 1 &&

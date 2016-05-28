@@ -246,6 +246,7 @@ enum FLAG_ENUM helpless_mask {
 /* The game's player conducts.
  * Editing this enum will break save compatibility. */
 enum player_conduct {
+    /* If adding any easy conducts, update is_nontrivial_conduct in pray.c */
     conduct_first = 0,
     conduct_food = conduct_first,        /* eaten any comestible */
     conduct_vegan,                       /* ... or any animal byproduct */

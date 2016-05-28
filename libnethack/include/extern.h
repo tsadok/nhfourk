@@ -61,6 +61,10 @@ struct trietable;
 struct version_info;
 struct you;
 
+/* ### achieve.c ### */
+extern void achievement(enum achievement ach);
+extern boolean is_unlocked_feature(int fieldidx, unsigned long fieldbit);
+
 /* ### allmain.c ### */
 
 extern void startup_common(boolean);

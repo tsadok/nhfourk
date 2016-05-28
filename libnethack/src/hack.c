@@ -2809,6 +2809,9 @@ check_special_room(boolean newlev)
                 if (!u.uconduct[conduct_sokoban_guilt])
                     pluslvl(FALSE);
                 historic_event(FALSE, TRUE, "entered the Sokoban zoo.");
+                achievement(achieve_soko_complete);
+            } else if (!In_sokoban(&u.uz)) {
+                achievement(achieve_sproom_zoo);
             }
             break;
         case SWAMP:
@@ -2817,11 +2820,14 @@ check_special_room(boolean newlev)
             break;
         case COURT:
             pline(msgc_levelsound, "You enter an opulent throne room!");
+            achievement(achieve_sproom_throne);
             break;
         case LEPREHALL:
             pline(msgc_levelsound, "You enter a leprechaun hall!");
+            achievement(achieve_sproom_lephall);
             break;
         case DRAGONHALL:
+            achievement(achieve_sproom_dragons);
             pline(msgc_levelsound, "You enter a dragon hall!");
             break;
         case MORGUE:

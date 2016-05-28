@@ -23,6 +23,7 @@ static void gods_upset(aligntyp);
 static void consume_offering(struct obj *);
 static struct obj *sacrifice_gift(void);
 static boolean water_prayer(boolean);
+static boolean is_nontrivial_conduct(enum player_conduct);
 static boolean blocked_boulder(int, int);
 
 /* simplify a few tests */
@@ -1111,6 +1112,9 @@ water_prayer(boolean bless_water)
               ((other || changed > 1L) ? "s" : ""), (changed > 1L ? "" : "s"),
               (bless_water ? hcolor("light blue") : hcolor("black")));
     }
+    if (bless_water && changed > 0L) {
+        achievement(achieve_holy_water);
+    }
     return (boolean) (changed > 0L);
 }
 
@@ -1670,6 +1674,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
                       hcolor("orange"));
                 done(ESCAPED, NULL); /* "in celestial disgrace" added later */
             } else {    /* super big win */
+                int numconducts = 0, hardconducts = 0;
+                enum player_conduct pcond;
                 adjalign(10);
                 pline(msgc_outrogood,
                       "An invisible choir sings, and you are bathed in "
@@ -1691,6 +1697,39 @@ dosacrifice(const struct nh_cmd_arg *arg)
                                "offered the Amulet of Yendor to %s and ascended"
                                " to the status of Demigod%s!", u_gname(),
                                u.ufemale ? "dess" : "");
+                achievement(achieve_ascend);
+                for (pcond = conduct_first; pcond < num_conducts; pcond++) {
+                    if (!u.uconduct[pcond]) {
+                        achievement (achieve_ascend_conduct);
+                        if (is_nontrivial_conduct(pcond)) {
+                            achievement(achieve_ascend_conduct_med);
+                            hardconducts++;
+                        }
+                    }
+                }
+                if (challengemode) {
+                    achievement(achieve_ascend_challenge);
+                }
+                if (flags.permablind || flags.permahallu) {
+                    /* TODO: support other permanent impairments */
+                    achievement(achieve_ascend_impaired);
+                }
+                if ((hardconducts > 3) || (numconducts > 10) ||
+                    (!u.uconduct[conduct_food] && /* foodless atheist */
+                     !u.uconduct[conduct_gnostic]) ||
+                    (!u.uconduct[conduct_killer] && /* foodless pacifist */
+                     !u.uconduct[conduct_food]) ||
+                    (!u.uconduct[conduct_killer] && /* illit. pacifist */
+                     !u.uconduct[conduct_illiterate]) ||
+                    (!u.uconduct[conduct_clothing] && /* nude atheist */
+                     !u.uconduct[conduct_gnostic]) ||
+                    (!u.uconduct[conduct_killer] && /* pacifist speedrun */
+                     (moves <= 10000))) {
+                    achievement(achieve_ascend_conduct_hard);
+                }
+                if (moves <= 10000) {
+                    achievement(achieve_ascend_speedrun);
+                }
                 done(ASCENDED, NULL);
             }
         }
@@ -1804,6 +1843,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
                             msgc_info, "The altar glows %s.",
                             hcolor(u.ualign.type == A_LAWFUL ? "white" :
                                    u.ualign.type ? "black" : "gray"));
+                    achievement(achieve_altar_convert);
 
                     if (rnl(u.ulevel) > 6 && UALIGNREC > 0 &&
                         rnd(UALIGNREC) > (3 * ALIGNLIM) / 4)
@@ -1937,6 +1977,22 @@ dosacrifice(const struct nh_cmd_arg *arg)
     return 1;
 }
 
+/* Return TRUE if the conduct in question is, subjectively, one of the harder
+   ones to manage for players who are (barely) good enough to ascend. */
+static boolean
+is_nontrivial_conduct(enum player_conduct c) {
+    if ((c == conduct_vegan)     || (c == conduct_vegetarian) ||
+        (c == conduct_weaphit)   || (c == conduct_polypile) ||
+        (c == conduct_polyself)  || (c == conduct_wish) ||
+        (c == conduct_artiwish)  || (c == conduct_genocide) ||
+        (c == conduct_elbereth)  || (c == conduct_puddingsplit) ||
+        (c == conduct_lostalign) || (c == conduct_sokoban_guilt) ||
+        (c == conduct_conflict)  || (c == conduct_invisible) ||
+        (c == conduct_displacement)) {
+        return FALSE;
+    }
+    return TRUE;
+}
 
 /* determine prayer results in advance; also used for enlightenment */
 /* praying: false means no messages should be given */

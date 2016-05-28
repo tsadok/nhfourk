@@ -382,8 +382,10 @@ intemple(int roomno)
     const char *msg1, *msg2;
     enum msg_channel msgc = msgc_npcvoice;
 
-    if (In_mines(&u.uz) && !historysearch("entered the Minetown temple", TRUE))
+    if (In_mines(&u.uz) && !historysearch("entered the Minetown temple", TRUE)) {
         historic_event(FALSE, TRUE, "entered the Minetown temple");
+        achievement(achieve_mines_temple);
+    }
 
     if (!temple_occupied(u.urooms0)) {
         if (tended) {
