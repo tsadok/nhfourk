@@ -1171,7 +1171,7 @@ consume_offering(struct obj *otmp)
 struct obj *
 sacrifice_gift(void)
 {
-    struct obj *otmp;
+    struct obj *otmp = (struct obj *) NULL;
     if (!u.uconduct[conduct_weaphit] ||
         ((uwep && uwep->oartifact && !rn2_on_rng(7, rng_altar_gift)))) {
         int oclass = ARMOR_CLASS;

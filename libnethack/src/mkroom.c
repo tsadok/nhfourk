@@ -486,6 +486,8 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
             mon = makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutoffthree) {
             mon = makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
+        } else {
+            mon = NULL;
         }
         if (mon && !resists_sleep(mon))
             mon->msleeping = 1;

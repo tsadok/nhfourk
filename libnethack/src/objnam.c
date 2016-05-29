@@ -1940,7 +1940,7 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
     struct fruit *f;
     int ftype = gamestate.fruits.current;
     const char *fruitbuf;
-    struct artifact *art;
+    struct artifact *art = (struct artifact *) 0;
 
     /* Fruits may not mess up the ability to wish for real objects (since you
        can leave a fruit in a bones file and it will be added to another
@@ -2882,8 +2882,8 @@ typfnd:
         if (otmp->oartifact) {
             otmp->quan = 1L;
             break_conduct(conduct_artiwish);      /* KMH, conduct */
-            art = ((otmp && otmp->oartifact) ? &artilist[(int) otmp->oartifact]
-                   : ((struct artifact *) 0));
+            if (otmp && otmp->oartifact)
+                art = &artilist[(int) otmp->oartifact];
         }
     }
 
