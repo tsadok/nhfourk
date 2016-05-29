@@ -1198,7 +1198,7 @@ sacrifice_gift(void)
                 total = 0; k = 0;
                 for (i = P_FIRST_SPELL; ((i <= P_LAST_SPELL) &&
                                          (total < j)); i++) {
-                    total += sweight[i];
+                    total += sweight[i - P_FIRST_SPELL];
                     k++;
                 }
                 i = spclass[k - 1]; /* This school */
