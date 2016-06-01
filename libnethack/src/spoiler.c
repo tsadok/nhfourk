@@ -38,7 +38,7 @@ static const char * spoilresistances(uchar res, boolean convey, int i);
 static const char * spoilmonsize(int i);
 static const char * spoilmrace(int i);
 static const char * spoilmonflagone(unsigned long flags);
-static const char * spoilmonflagtwo(unsigned long flags);
+static const char * spoilmonflagtwo(unsigned long flags, boolean dorace);
 static const char * spoilmonflagthree(unsigned long flags);
 static const char * spoilmonflags(int i);
 static void spoilobjclass(FILE *file, const char *hrname, const char *aname,
@@ -137,7 +137,7 @@ spoilversus(struct artifact *art)
     } else if (art->spfx & SPFX_DFLAG1) {
         return spoilmonflagone(art->mtype);
     } else if (art->spfx & SPFX_DFLAG2) {
-        return spoilmonflagtwo(art->mtype);
+        return spoilmonflagtwo(art->mtype, TRUE);
     } else if (art->spfx & SPFX_DALIGN) {
         return "cross-aligned";
     } else if (art->spfx & SPFX_ATTK) {
@@ -386,17 +386,21 @@ spoilmonflagone(unsigned long mflags)
 }
 
 static const char *
-spoilmonflagtwo(unsigned long mflags)
+spoilmonflagtwo(unsigned long mflags, boolean dorace)
 {
-    return msgprintf("%s%s%s"           "%s%s%s%s%s%s"
+    return msgprintf("%s%s%s%s%s"       "%s%s%s%s%s%s"
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s",
                      /* M2 least significant byte */
                      ((mflags & M2_NOPOLY)     ? "<span class=\"flgnopoly\">NoPoly</span> " : ""),
                      ((mflags & M2_UNDEAD)     ? "<span class=\"flgundead\">Undead</span> " : ""),
                      ((mflags & M2_WERE)       ? "<span class=\"flgwere\">Lycanthrope</span> " : ""),
                      /* human, dwarf, elf, orc, and gnome are moved to MRACE, q.v. */
-                     /* Well, I mean, a couple of them do have M2 flags for artifact reasons, but
-                        that's an implementation detail.  MRACE tells you what you want to know. */
+                     /* However, for artifact purposes, a couple of them still have an M2_ flag,
+                        which we may want to show (e.g., for an SPFX_DFLAG2 artifact) */
+                     ((dorace && (mflags & M2_ELF))
+                                               ? "<span class=\"flgelf\">Elf</span> " : ""),
+                     ((dorace && (mflags & M2_ORC))
+                                               ? "<span class=\"flgorc\">Orc</span> " : ""),
                      /* M2 second least byte */
                      ((mflags & M2_DEMON)      ? "<span class=\"flgdemon\">Demon</span> " : ""),
                      ((mflags & M2_MERC)       ? "<span class=\"flgmerc\">Mercinary</span> " : ""),
@@ -460,7 +464,7 @@ spoilmonflags(int i)
 {
     return msgprintf("%s%s%s",
                      spoilmonflagone((unsigned long) mons[i].mflags1),
-                     spoilmonflagtwo((unsigned long) mons[i].mflags2),
+                     spoilmonflagtwo((unsigned long) mons[i].mflags2, FALSE),
                      spoilmonflagthree((unsigned long) mons[i].mflags3));
 }
 
