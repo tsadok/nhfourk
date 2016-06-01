@@ -148,8 +148,11 @@ const char *
 spoildamage(int i, boolean large, struct artifact *art)
 {
     int dmg = large ? objects[i].oc_wldam : objects[i].oc_wsdam;
-    const char *bonus = (art && art->attk.damd) ?
-        msgprintf("<span class=\"dbon\">+d%d</span>", art->attk.damd) : "";
+    const char *bonus = (art) ?
+        (art->attk.damd ? msgprintf("<span class=\"dbon\">+%s%d</span>",
+                                    ((art->attk.damd == 1) ? "" : "d"),
+                                    art->attk.damd)
+                        : ("<span class=\"dbon dbldam\">x2</span>")) : "";
     return msgprintf("d%d%s", dmg, bonus);
 }
 
