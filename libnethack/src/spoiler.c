@@ -24,6 +24,7 @@ static const char * htmlheader(const char *spoilername);
 static const char * spoiloname(int i);
 static const char * spoilweapskill(int i);
 static const char * spoilschool(int i);
+static const char * spoilversus(struct artifact *art);
 static const char * spoildamage(int i, boolean large, struct artifact *);
 #define SDAM FALSE
 #define LDAM TRUE
@@ -36,6 +37,9 @@ static const char * spoilattacks(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
 static const char * spoilmonsize(int i);
 static const char * spoilmrace(int i);
+static const char * spoilmonflagone(unsigned long flags);
+static const char * spoilmonflagtwo(unsigned long flags);
+static const char * spoilmonflagthree(unsigned long flags);
 static const char * spoilmonflags(int i);
 static void spoilobjclass(FILE *file, const char *hrname, const char *aname,
                           int classone, int classtwo);
@@ -117,11 +121,40 @@ spoilschool(int i)
 }
 
 const char *
+spoilversus(struct artifact *art)
+{
+    const struct permonst *pm;
+    /* Other Relevant SPFX_ things: DBONUS */
+    if (!(art->spfx & (SPFX_DBONUS | SPFX_ATTK))) {
+        return (art->attk.adtyp == AD_PHYS) ? "all" : "none";
+    } else if (art->spfx & SPFX_DMONS) {
+        pm = &mons[(int)art->mtype];
+        return pm->mname;
+        // TODO
+    } else if (art->spfx & SPFX_DCLAS) {
+        return msgprintf("%c", (char) def_monsyms[(int) art->mtype]);
+        // TODO
+    } else if (art->spfx & SPFX_DFLAG1) {
+        return spoilmonflagone(art->mtype);
+    } else if (art->spfx & SPFX_DFLAG2) {
+        return spoilmonflagtwo(art->mtype);
+    } else if (art->spfx & SPFX_DALIGN) {
+        return "cross-aligned";
+    } else if (art->spfx & SPFX_ATTK) {
+        return "non-resistant";
+    }
+    return "N/A";
+}
+
+const char *
 spoildamage(int i, boolean large, struct artifact *art)
 {
     int dmg = large ? objects[i].oc_wldam : objects[i].oc_wsdam;
-    const char *bonus = (art && art->attk.damd) ?
-        msgprintf("<span class=\"dbon\">+d%d</span>", art->attk.damd) : "";
+    const char *bonus = (art) ?
+        (art->attk.damd ? msgprintf("<span class=\"dbon\">+%s%d</span>",
+                                    ((art->attk.damd == 1) ? "" : "d"),
+                                    art->attk.damd)
+                        : ("<span class=\"dbon dbldam\">x2</span>")) : "";
     return msgprintf("d%d%s", dmg, bonus);
 }
 
@@ -306,110 +339,129 @@ spoilmrace(int i)
 }
 
 static const char *
-spoilmonflags(int i)
+spoilmonflagone(unsigned long mflags)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M1 */
-                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s" /* M1 */
-                     "%s%s%s"           "%s%s%s%s%s%s"       /* M2 */
-                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"   /* M2 */
-                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s",      /* M3 */
+    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"
+                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s",
                      /* M1 least significant byte */
-                     ((mons[i].mflags1 & M1_FLY)       ? "<span class=\"flgfly\">Fly</span> " : ""),
-                     ((mons[i].mflags1 & M1_SWIM)      ? "<span class=\"flgswim\">Swim</span> " : ""),
-                     ((mons[i].mflags1 & M1_AMORPHOUS) ? "<span class=\"flgamorph\">Amorph</span> " : ""),
-                     ((mons[i].mflags1 & M1_WALLWALK)  ? "<span class=\"flgwwalk\">Wallwalk</span> " : ""),
-                     ((mons[i].mflags1 & M1_CLING)     ? "<span class=\"flgcling\">Cling</span> " : ""),
-                     (((mons[i].mflags1 & M1_TUNNEL) && !(mons[i].mflags1 & M1_NEEDPICK)) ?
+                     ((mflags & M1_FLY)       ? "<span class=\"flgfly\">Fly</span> " : ""),
+                     ((mflags & M1_SWIM)      ? "<span class=\"flgswim\">Swim</span> " : ""),
+                     ((mflags & M1_AMORPHOUS) ? "<span class=\"flgamorph\">Amorph</span> " : ""),
+                     ((mflags & M1_WALLWALK)  ? "<span class=\"flgwwalk\">Wallwalk</span> " : ""),
+                     ((mflags & M1_CLING)     ? "<span class=\"flgcling\">Cling</span> " : ""),
+                     (((mflags & M1_TUNNEL) && !(mflags & M1_NEEDPICK)) ?
                                                          "<span class=\"flgtunnel\">Tunnel</span> " : ""),
-                     ((mons[i].mflags1 & M1_NEEDPICK)  ? "<span class=\"flgpick\">Pick</span> " : ""),
-                     ((mons[i].mflags1 & M1_CONCEAL)   ? "<span class=\"flgconceal\">Conceal/span> " : ""),
+                     ((mflags & M1_NEEDPICK)  ? "<span class=\"flgpick\">Pick</span> " : ""),
+                     ((mflags & M1_CONCEAL)   ? "<span class=\"flgconceal\">Conceal/span> " : ""),
                      /* M1 second least byte */
-                     ((mons[i].mflags1 & M1_HIDE)       ? "<span class=\"flghide\">Hide</span> " : ""),
-                     ((mons[i].mflags1 & M1_AMPHIBIOUS) ? "<span class=\"flgamphib\">Amphib</span> " : ""),
-                     ((mons[i].mflags1 & M1_BREATHLESS) ? "<span class=\"flgbreathless\">Breathless</span> " : ""),
-                     ((mons[i].mflags1 & M1_NOTAKE)     ? "<span class=\"flgnotake\">NoTake</span> " : ""),
-                     ((mons[i].mflags1 & M1_NOEYES)     ? "<span class=\"flgnoeyes\">NoEyes</span> " : ""),
-                     ((mons[i].mflags1 & M1_NOHANDS)    ? "<span class=\"flgfly\">NoHands</span> " : ""),
-                     ((mons[i].mflags1 & M1_NOLIMBS)    ? "<span class=\"flgfly\">NoLimbs</span> " : ""),
-                     ((mons[i].mflags1 & M1_NOHEAD)     ? "<span class=\"flgnohead\">NoHead</span> " : ""),
+                     ((mflags & M1_HIDE)       ? "<span class=\"flghide\">Hide</span> " : ""),
+                     ((mflags & M1_AMPHIBIOUS) ? "<span class=\"flgamphib\">Amphib</span> " : ""),
+                     ((mflags & M1_BREATHLESS) ? "<span class=\"flgbreathless\">Breathless</span> " : ""),
+                     ((mflags & M1_NOTAKE)     ? "<span class=\"flgnotake\">NoTake</span> " : ""),
+                     ((mflags & M1_NOEYES)     ? "<span class=\"flgnoeyes\">NoEyes</span> " : ""),
+                     ((mflags & M1_NOHANDS)    ? "<span class=\"flgfly\">NoHands</span> " : ""),
+                     ((mflags & M1_NOLIMBS)    ? "<span class=\"flgfly\">NoLimbs</span> " : ""),
+                     ((mflags & M1_NOHEAD)     ? "<span class=\"flgnohead\">NoHead</span> " : ""),
                      /* M1 third byte */
-                     ((mons[i].mflags1 & M1_MINDLESS)   ? "<span class=\"flgmindless\">Mindless</span> " : ""),
-                     ((mons[i].mflags1 & M1_HUMANOID)   ? "<span class=\"flghumanoid\">Humanoid</span> " : ""),
-                     ((mons[i].mflags1 & M1_ANIMAL)     ? "<span class=\"flganimal\">Animal</span> " : ""),
-                     ((mons[i].mflags1 & M1_SLITHY)     ? "<span class=\"flgslithy\">Slithy</span> " : ""),
-                     ((mons[i].mflags1 & M1_UNSOLID)    ? "<span class=\"flgunsolid\">Unsolid</span> " : ""),
-                     ((mons[i].mflags1 & M1_THICK_HIDE) ? "<span class=\"flgthickhide\">ThickHide</span> " : ""),
-                     ((mons[i].mflags1 & M1_OVIPAROUS)  ? "<span class=\"flgoviparous\">Oviparous</span> " : ""),
-                     ((mons[i].mflags1 & M1_REGEN)      ? "<span class=\"flgregen\">Regen</span> " : ""),
+                     ((mflags & M1_MINDLESS)   ? "<span class=\"flgmindless\">Mindless</span> " : ""),
+                     ((mflags & M1_HUMANOID)   ? "<span class=\"flghumanoid\">Humanoid</span> " : ""),
+                     ((mflags & M1_ANIMAL)     ? "<span class=\"flganimal\">Animal</span> " : ""),
+                     ((mflags & M1_SLITHY)     ? "<span class=\"flgslithy\">Slithy</span> " : ""),
+                     ((mflags & M1_UNSOLID)    ? "<span class=\"flgunsolid\">Unsolid</span> " : ""),
+                     ((mflags & M1_THICK_HIDE) ? "<span class=\"flgthickhide\">ThickHide</span> " : ""),
+                     ((mflags & M1_OVIPAROUS)  ? "<span class=\"flgoviparous\">Oviparous</span> " : ""),
+                     ((mflags & M1_REGEN)      ? "<span class=\"flgregen\">Regen</span> " : ""),
                      /* M1 most significant byte */
-                     ((mons[i].mflags1 & M1_SEE_INVIS)  ? "<span class=\"flgseeinvis\">SeeInvis</span> " : ""),
-                     ((mons[i].mflags1 & M1_TPORT)      ? "<span class=\"flgtport\">Tport</span> " : ""),
-                     ((mons[i].mflags1 & M1_TPORT_CNTRL)? "<span class=\"flgtportcntrl\">TeleCtrl</span> " : ""),
-                     ((mons[i].mflags1 & M1_ACID)       ? "<span class=\"flgacid\">Acidic</span> " : ""),
-                     ((mons[i].mflags1 & M1_POIS)       ? "<span class=\"flgpois\">Poisonous</span> " : ""),
-                     (((mons[i].mflags1 & M1_CARNIVORE) && !(mons[i].mflags1 & M1_HERBIVORE)) ?
+                     ((mflags & M1_SEE_INVIS)  ? "<span class=\"flgseeinvis\">SeeInvis</span> " : ""),
+                     ((mflags & M1_TPORT)      ? "<span class=\"flgtport\">Tport</span> " : ""),
+                     ((mflags & M1_TPORT_CNTRL)? "<span class=\"flgtportcntrl\">TeleCtrl</span> " : ""),
+                     ((mflags & M1_ACID)       ? "<span class=\"flgacid\">Acidic</span> " : ""),
+                     ((mflags & M1_POIS)       ? "<span class=\"flgpois\">Poisonous</span> " : ""),
+                     (((mflags & M1_CARNIVORE) && !(mflags & M1_HERBIVORE)) ?
                                                           "<span class=\"flgcarnivore\">Carnivore</span> " : ""),
-                     (((mons[i].mflags1 & M1_HERBIVORE) && !(mons[i].mflags1 & M1_CARNIVORE))  ?
+                     (((mflags & M1_HERBIVORE) && !(mflags & M1_CARNIVORE))  ?
                                                           "<span class=\"flgherbivore\">Herbivore</span> " : ""),
-                     ((mons[i].mflags1 & M1_OMNIVORE)   ? "<span class=\"flgomnivore\">Omnivore</span> " : ""),
-                     ((mons[i].mflags1 & M1_METALLIVORE)? "<span class=\"flgmetallivore\">Metallivore</span> " : ""),
+                     ((mflags & M1_OMNIVORE)   ? "<span class=\"flgomnivore\">Omnivore</span> " : ""),
+                     ((mflags & M1_METALLIVORE)? "<span class=\"flgmetallivore\">Metallivore</span> " : ""));
+}
+
+static const char *
+spoilmonflagtwo(unsigned long mflags)
+{
+    return msgprintf("%s%s%s"           "%s%s%s%s%s%s"
+                     "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s",
                      /* M2 least significant byte */
-                     ((mons[i].mflags2 & M2_NOPOLY)     ? "<span class=\"flgnopoly\">NoPoly</span> " : ""),
-                     ((mons[i].mflags2 & M2_UNDEAD)     ? "<span class=\"flgundead\">Undead</span> " : ""),
-                     ((mons[i].mflags2 & M2_WERE)       ? "<span class=\"flgwere\">Lycanthrope</span> " : ""),
+                     ((mflags & M2_NOPOLY)     ? "<span class=\"flgnopoly\">NoPoly</span> " : ""),
+                     ((mflags & M2_UNDEAD)     ? "<span class=\"flgundead\">Undead</span> " : ""),
+                     ((mflags & M2_WERE)       ? "<span class=\"flgwere\">Lycanthrope</span> " : ""),
                      /* human, dwarf, elf, orc, and gnome are moved to MRACE, q.v. */
                      /* Well, I mean, a couple of them do have M2 flags for artifact reasons, but
                         that's an implementation detail.  MRACE tells you what you want to know. */
                      /* M2 second least byte */
-                     ((mons[i].mflags2 & M2_DEMON)      ? "<span class=\"flgdemon\">Demon</span> " : ""),
-                     ((mons[i].mflags2 & M2_MERC)       ? "<span class=\"flgmerc\">Mercinary</span> " : ""),
-                     ((mons[i].mflags2 & M2_LORD)       ? "<span class=\"flglord\">Lord</span> " : ""),
-                     ((mons[i].mflags2 & M2_PRINCE)     ? "<span class=\"flgprince\">Prince</span> " : ""),
-                     ((mons[i].mflags2 & M2_MINION)     ? "<span class=\"flgminion\">Minion</span> " : ""),
-                     ((mons[i].mflags2 & M2_GIANT)      ? "<span class=\"flggiant\">Giant</span> " : ""),
+                     ((mflags & M2_DEMON)      ? "<span class=\"flgdemon\">Demon</span> " : ""),
+                     ((mflags & M2_MERC)       ? "<span class=\"flgmerc\">Mercinary</span> " : ""),
+                     ((mflags & M2_LORD)       ? "<span class=\"flglord\">Lord</span> " : ""),
+                     ((mflags & M2_PRINCE)     ? "<span class=\"flgprince\">Prince</span> " : ""),
+                     ((mflags & M2_MINION)     ? "<span class=\"flgminion\">Minion</span> " : ""),
+                     ((mflags & M2_GIANT)      ? "<span class=\"flggiant\">Giant</span> " : ""),
                       /* There are two open bits here */
                       /* M2 third byte */
-                     ((mons[i].mflags2 & M2_MALE)       ? "<span class=\"flgmale\">Male</span> " : ""),
-                     ((mons[i].mflags2 & M2_FEMALE)     ? "<span class=\"flgfemale\">Female</span> " : ""),
-                     ((mons[i].mflags2 & M2_NEUTER)     ? "<span class=\"flgneuter\">Neuter</span> " : ""),
-                     ((mons[i].mflags2 & M2_PNAME)      ? "<span class=\"flgpname\">ProperName</span> " : ""),
-                     ((mons[i].mflags2 & M2_HOSTILE)    ? "<span class=\"flghostile\">Hostile</span> " : ""),
-                     ((mons[i].mflags2 & M2_PEACEFUL)   ? "<span class=\"flgpeaceful\">Peaceful</span> " : ""),
-                     ((mons[i].mflags2 & M2_DOMESTIC)   ? "<span class=\"flgdomestic\">Domestic</span> " : ""),
-                     ((mons[i].mflags2 & M2_WANDER)     ? "<span class=\"flgwander\">Wander</span> " : ""),
+                     ((mflags & M2_MALE)       ? "<span class=\"flgmale\">Male</span> " : ""),
+                     ((mflags & M2_FEMALE)     ? "<span class=\"flgfemale\">Female</span> " : ""),
+                     ((mflags & M2_NEUTER)     ? "<span class=\"flgneuter\">Neuter</span> " : ""),
+                     ((mflags & M2_PNAME)      ? "<span class=\"flgpname\">ProperName</span> " : ""),
+                     ((mflags & M2_HOSTILE)    ? "<span class=\"flghostile\">Hostile</span> " : ""),
+                     ((mflags & M2_PEACEFUL)   ? "<span class=\"flgpeaceful\">Peaceful</span> " : ""),
+                     ((mflags & M2_DOMESTIC)   ? "<span class=\"flgdomestic\">Domestic</span> " : ""),
+                     ((mflags & M2_WANDER)     ? "<span class=\"flgwander\">Wander</span> " : ""),
                      /* M2 most significant byte */
-                     ((mons[i].mflags2 & M2_STALK)      ? "<span class=\"flgstalk\">Stalk</span> " : ""),
-                     ((mons[i].mflags2 & M2_NASTY)      ? "<span class=\"flgnasty\">M2_NASTY</span> " : ""),
-                     ((mons[i].mflags2 & M2_STRONG)     ? "<span class=\"flgstrong\">Strong</span> " : ""),
-                     ((mons[i].mflags2 & M2_ROCKTHROW)  ? "<span class=\"flgrockthrow\">Boulders</span> " : ""),
-                     ((mons[i].mflags2 & M2_GREEDY)     ? "<span class=\"flggreedy\">Greedy</span> " : ""),
-                     ((mons[i].mflags2 & M2_JEWELS)     ? "<span class=\"flgjewels\">Jewels</span> " : ""),
-                     ((mons[i].mflags2 & M2_COLLECT)    ? "<span class=\"flgcollect\">Collects</span> " : ""),
-                     ((mons[i].mflags2 & M2_MAGIC)      ? "<span class=\"flgmagic\">MagicItems</span> " : ""),
+                     ((mflags & M2_STALK)      ? "<span class=\"flgstalk\">Stalk</span> " : ""),
+                     ((mflags & M2_NASTY)      ? "<span class=\"flgnasty\">M2_NASTY</span> " : ""),
+                     ((mflags & M2_STRONG)     ? "<span class=\"flgstrong\">Strong</span> " : ""),
+                     ((mflags & M2_ROCKTHROW)  ? "<span class=\"flgrockthrow\">Boulders</span> " : ""),
+                     ((mflags & M2_GREEDY)     ? "<span class=\"flggreedy\">Greedy</span> " : ""),
+                     ((mflags & M2_JEWELS)     ? "<span class=\"flgjewels\">Jewels</span> " : ""),
+                     ((mflags & M2_COLLECT)    ? "<span class=\"flgcollect\">Collects</span> " : ""),
+                     ((mflags & M2_MAGIC)      ? "<span class=\"flgmagic\">MagicItems</span> " : ""));
+}
+
+static const char *
+spoilmonflagthree(unsigned long mflags)
+{
+    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s",
                      /* M3 least significant byte */
-                     (((mons[i].mflags3 & M3_WANTSAMUL) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
+                     (((mflags & M3_WANTSAMUL) && !((mflags & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsamul\">Amulet</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSBELL) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
+                     (((mflags & M3_WANTSBELL) && !((mflags & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsbell\">Bell</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSBOOK) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
+                     (((mflags & M3_WANTSBOOK) && !((mflags & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsbook\">Book</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSCAND) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
+                     (((mflags & M3_WANTSCAND) && !((mflags & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantscand\">Candellabrum</span> " : ""),
-                     (((mons[i].mflags3 & M3_WANTSARTI) && !((mons[i].mflags1 & M3_COVETOUS) == M3_WANTSALL)) ?
+                     (((mflags & M3_WANTSARTI) && !((mflags & M3_COVETOUS) == M3_WANTSALL)) ?
                                                           "<span class=\"flgwantsarti\">Artifact</span> " : ""),
-                     (((mons[i].mflags3 & M3_COVETOUS) == M3_WANTSALL) ?
+                     (((mflags & M3_COVETOUS) == M3_WANTSALL) ?
                                                           "<span class=\"flgcovetous\">Covetous</span> " : ""),
                      /* There's an open bit here */
-                     ((mons[i].mflags3 & M3_WAITFORU)   ? "<span class=\"flgwaitforu\">WaitForYou</span> " : ""),
-                     ((mons[i].mflags3 & M3_CLOSE)      ? "<span class=\"flgclose\">Close</span> " : ""),
+                     ((mflags & M3_WAITFORU)   ? "<span class=\"flgwaitforu\">WaitForYou</span> " : ""),
+                     ((mflags & M3_CLOSE)      ? "<span class=\"flgclose\">Close</span> " : ""),
                      /* M3 second byte */
-                     ((mons[i].mflags3 & M3_INFRAVISION)  ? "<span class=\"flginfravision\">InfraVision</span> " : ""),
-                     ((mons[i].mflags3 & M3_INFRAVISIBLE) ? "<span class=\"flginfravisible\">InfraVisible</span> " : ""),
-                     ((mons[i].mflags3 & M3_SCENT)        ? "<span class=\"flgscent\">Scent</span> " : ""),
-                     ((mons[i].mflags3 & M3_DISPLACES)    ? "<span class=\"flgdisplaces\">Displaces</span> " : ""),
-                     ((mons[i].mflags3 & M3_BLINKAWAY)    ? "<span class=\"flgblinkaway\">BlinkAway</span> " : ""),
-                     ((mons[i].mflags3 & M3_VANDMGRDUC)   ? "<span class=\"flgvandmgrduc\">VanDmgReduce</span> " : "")
+                     ((mflags & M3_INFRAVISION)  ? "<span class=\"flginfravision\">InfraVision</span> " : ""),
+                     ((mflags & M3_INFRAVISIBLE) ? "<span class=\"flginfravisible\">InfraVisible</span> " : ""),
+                     ((mflags & M3_SCENT)        ? "<span class=\"flgscent\">Scent</span> " : ""),
+                     ((mflags & M3_DISPLACES)    ? "<span class=\"flgdisplaces\">Displaces</span> " : ""),
+                     ((mflags & M3_BLINKAWAY)    ? "<span class=\"flgblinkaway\">BlinkAway</span> " : ""),
+                     ((mflags & M3_VANDMGRDUC)   ? "<span class=\"flgvandmgrduc\">VanDmgReduce</span> " : "")
         );
+}
+
+static const char *
+spoilmonflags(int i)
+{
+    return msgprintf("%s%s%s",
+                     spoilmonflagone((unsigned long) mons[i].mflags1),
+                     spoilmonflagtwo((unsigned long) mons[i].mflags2),
+                     spoilmonflagthree((unsigned long) mons[i].mflags3));
 }
 
 static void
@@ -613,6 +665,7 @@ makehtmlspoilers(void)
                 "<th class=\"damage ldam\">ldam</th>"
                 "<th class=\"numeric weight\">wt</th>"
                 "<th class=\"numeric price\">zm</th>"
+                "<th class=\"versus\">bonus vs</th>"
                 "</tr>\n</thead><tbody>\n");
         for (i = 0; !i || objects[i].oc_class != ILLOBJ_CLASS; i++) {
             if (objects[i].oc_class != WEAPON_CLASS &&
@@ -646,11 +699,12 @@ makehtmlspoilers(void)
                             "<td class=\"damage ldam\">%s</td>"
                             "<td class=\"numeric weight\">%d</td>"
                             "<td class=\"numeric price\">%d</td>"
+                            "<td class=\"versus\">%s</td>"
                             "</tr>", art->name, spoilweapskill(i),
                             material[objects[i].oc_material],
                             spoiltohit(i, art), spoildamage(i, SDAM, art),
                             spoildamage(i, LDAM, art), objects[i].oc_weight,
-                            objects[i].oc_cost);
+                            objects[i].oc_cost, spoilversus(art));
                 }
             }
         }
