@@ -630,6 +630,7 @@ MONSTER:'Y',"monkey",random
 MONSTER:'Y',"monkey",random
 MONSTER:'n',random,random
 DOOR: false, closed, south, random
+DOOR: true, locked, east, random
 
 SUBROOM: "ordinary", random, (14,2), (4,2), "town"
 DOOR: false, closed, south, 0
@@ -669,7 +670,8 @@ DOOR: false, closed, north, random
 
 SUBROOM: "ordinary", random, (22,11), (2,2), "town"
 DOOR: false, closed, south, random
-SINK: (00,00)
+DOOR: true, locked, north, random
+SINK: (01,00)
 
 SUBROOM: "food shop", lit, (25,11), (3,2), "town"
 CHANCE: 50
@@ -679,7 +681,7 @@ SUBROOM: "tool shop", lit, (25,2), (3,3), "town"
 CHANCE: 30
 DOOR: false, closed, west, random
 
-SUBROOM: "temple", lit, (24,6), (4,4), "town"
+SUBROOM: "temple", lit, (24,8), (4,2), "town"
 DOOR: false, closed, west, random
 ALTAR:(02,01),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
