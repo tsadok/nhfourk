@@ -1452,9 +1452,9 @@ arti_invoke(struct obj *obj)
         case ENERGY_BOOST:{
                 int epboost = (u.uenmax + 1 - u.uen) / 2;
 
-                if (epboost > 120)
-                    epboost = 120;      /* arbitrary */
-                else if (epboost < 12)
+                if (epboost > 240)
+                    epboost = 240;      /* arbitrary */
+                else if (epboost < 60)
                     epboost = u.uenmax - u.uen;
                 if (epboost) {
                     pline(msgc_statusgood, "You feel re-energized.");

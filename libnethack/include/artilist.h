@@ -221,7 +221,7 @@ static const struct artifact const_artilist[] = {
     A("The Sceptre of Might", MACE,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DALIGN), 0, 0,
       PHYS(5, 0), NO_DFNS, CARY(AD_MAGM),
-      CONFLICT, A_LAWFUL, PM_CAVEMAN, NON_PM, 2500L),
+      ENERGY_BOOST, A_LAWFUL, PM_PRIEST, NON_PM, 2500L),
 
     A("The Staff of Aesculapius", QUARTERSTAFF,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_ATTK | SPFX_INTEL | SPFX_DRLI |
@@ -239,10 +239,12 @@ static const struct artifact const_artilist[] = {
       NO_ATTK, NO_DFNS, CARY(AD_MAGM),
       ENLIGHTENING, A_NEUTRAL, PM_MONK, NON_PM, 2500L),
 
+/*
     A("The Mitre of Holiness", HELM_OF_BRILLIANCE,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_DFLAG2 | SPFX_INTEL), 0, M2_UNDEAD,
       NO_ATTK, NO_DFNS, CARY(AD_FIRE),
       ENERGY_BOOST, A_LAWFUL, PM_PRIEST, NON_PM, 2000L),
+*/
 
     A("The Longbow of Diana", BOW,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_REFLECT), SPFX_ESP, 0,

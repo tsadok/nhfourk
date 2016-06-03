@@ -61,6 +61,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The Priest quest artifact is now the Sceptre of Might.  Its
+   #invoke power is an energy boost, similar to the one the Mitre
+   (which is now removed from the game) had, but buffed somewhat:
+   it can boost your Pw by up to 240 now, and the limit on taking
+   you to maximum has been bumped up as well.
+
  * The name of Elbereth only scares monsters if it is the only thing
    engraved there (although you can also use the more complete form
    of the name that Frodo used at Weathertop).
