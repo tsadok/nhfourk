@@ -112,7 +112,7 @@ struct Race {
     const char *filecode;       /* code for filenames */
     struct RoleName individual; /* individual as a noun ("man", "elf") */
 
-    short basespeed; /* Base speed of the role */
+    short basespeed; /* Base speed of the race */
 
         /*** Indices of important monsters and objects ***/
     short malenum,      /* PM_ as a male monster */

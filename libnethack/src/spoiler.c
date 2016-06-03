@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Nathan Eady, 2015-05-19 */
+/* Last modified by Nathan Eady, 2016-06-01 */
 /* File opening code based on the xlogfile code. */
 /* Object-looping code based on makedefs.c */
 /* Concept based on Autospoil, by Cristan Szmajda
@@ -37,9 +37,9 @@ static const char * spoilattacks(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
 static const char * spoilmonsize(int i);
 static const char * spoilmrace(int i);
-static const char * spoilmonflagone(unsigned long flags);
-static const char * spoilmonflagtwo(unsigned long flags, boolean dorace);
-static const char * spoilmonflagthree(unsigned long flags);
+static const char * spoilmonflagone(unsigned long mflags);
+static const char * spoilmonflagtwo(unsigned long mflags, boolean dorace);
+static const char * spoilmonflagthree(unsigned long mflags);
 static const char * spoilmonflags(int i);
 static void spoilobjclass(FILE *file, const char *hrname, const char *aname,
                           int classone, int classtwo);
@@ -50,6 +50,24 @@ static const char * spoilarteffects(struct artifact *art,
                                     unsigned long spfx, struct attack attk);
 static const char * spoilartinvoke(struct artifact *art);
 static const char * spoilartotherinfo(struct artifact *art);
+static const char * spoilgenders(short allow);
+static const char * spoilaligns(short allow);
+static const char * spoilraceroles(short allow);
+static const char * spoilroleraces(short allow);
+static const char * attrlabel(int i);
+static const char * spoilattributes(const char *labelone, const xchar *attrone,
+                                    const char *labeltwo, const xchar *attrtwo,
+                                    const char *labelthr, const xchar *attrthr);
+static const char * spoiladvancerow(const char *label,
+                                    const struct RoleAdvance *adv);
+static const char * spoiladvance(const char *labelone,
+                                 const struct RoleAdvance *advone,
+                                 const char *labeltwo,
+                                 const struct RoleAdvance *advtwo, int cutoff);
+static const char * spoilspellpenalty(const char *class, const char *label,
+                                      int p);
+static const char * spoilrolespellcasting(int i);
+static const char * spoilquestart(int i);
 static void makehtmlspoilers(void);
 static void makepinobotyaml(void);
 
@@ -642,6 +660,170 @@ spoilartotherinfo(struct artifact *art)
                       "<span class=\"artother artspeak\">speaks</span> " : ""));
 }
 
+const char *
+spoilgenders(short allow)
+{
+    short g = (allow & ROLE_GENDMASK);
+    return msgprintf("<span class=\"genders\">%s %s %s</span>",
+     ((g & ROLE_MALE)   ?
+     "<span class=\"flgmale\"><abbr title=\"male\">Mal</abbr></span>"   : ""),
+     ((g & ROLE_FEMALE) ?
+     "<span class=\"flgfemale\"><abbr title=\"female\">Fem<abbr></span>": ""),
+     ((g & ROLE_NEUTER) ?
+     "<span class=\"flgneuter\"><abbr title=\"neuter\">Neut</abbr></span>"
+                                                                        : ""));
+}
+
+const char *
+spoilaligns(short allow) {
+    short a = (allow & ROLE_ALIGNMASK);
+    return msgprintf("<span class=\"aligns\">%s %s %s</span>",
+                     ((a & ROLE_LAWFUL)  ? spoilaligntyp(A_LAWFUL)  : ""),
+                     ((a & ROLE_NEUTRAL) ? spoilaligntyp(A_NEUTRAL) : ""),
+                     ((a & ROLE_CHAOTIC) ? spoilaligntyp(A_CHAOTIC) : ""));
+}
+
+const char *
+spoilroleraces(short allow) {
+    const char *thelist = "";
+    int i, j = 0;
+    for (i = 0; races[i].filecode; i++) {
+        if ((races[i].selfmask) & allow) {
+            thelist = msgprintf("%s%s<span class=\"race%s\">"
+                                "<abbr title=\"%s\">%s</abbr></span>",
+                                thelist, ((j++ > 0) ? ", " : ""),
+                                races[i].filecode, races[i].noun,
+                                races[i].filecode);
+        }
+    }
+    return msgprintf("<span class=\"races\">%s</span>", thelist);
+}
+
+const char *
+spoilraceroles (short selfmask) {
+    const char *thelist = "";
+    int i, j = 0;
+    for (i = 0; roles[i].filecode; i++) {
+        short thisrole = (roles[i].allow & ROLE_RACEMASK);
+        if (thisrole & selfmask) {
+            thelist = msgprintf("%s%s<span class=\"role%s\">"
+                                "<abbr title=\"%s\">%s</abbr></span>",
+                                thelist, ((j++ > 0) ? ", " : ""),
+                                roles[i].name.m, roles[i].name.m,
+                                roles[i].filecode);
+        }
+    }
+    return msgprintf("<span class=\"roles\">%s</span>", thelist);
+}
+
+const char *
+attrlabel (int i) {
+    if      (i == A_STR) { return "Str"; }
+    else if (i == A_INT) { return "Int"; }
+    else if (i == A_WIS) { return "Wis"; }
+    else if (i == A_DEX) { return "Dex"; }
+    else if (i == A_CON) { return "Con"; }
+    else if (i == A_CHA) { return "Cha"; }
+    else return msgprintf("%d??", i);
+}
+
+const char *
+spoilattributes(const char *labelone, const xchar *attone,
+                const char *labeltwo, const xchar *attrtwo,
+                const char *labelthr, const xchar *attrthr) {
+    int i;
+    const char *headers = "<th></th>";
+    const char *rowone  = msgprintf("<th>%s:</th>", labelone);
+    const char *rowtwo  = msgprintf("<th>%s:</th>", labeltwo);
+    const char *rowthr  = attrthr ? msgprintf("<th>%s:</th>", labelthr) : "";
+    for (i = 0; i < A_MAX; i++) {
+        headers = msgprintf("%s<th>%s</th>", headers, attrlabel(i));
+        rowone  = msgprintf("%s<td class=\"numeric attr%s\">%d</td>",
+                            rowone, attrlabel(i), attone[i]);
+        rowtwo  = msgprintf("%s<td class=\"numeric attr%s\">%d</td>",
+                            rowtwo, attrlabel(i), attrtwo[i]);
+        if (attrthr)
+            rowthr = msgprintf("%s<td class=\"numeric attr%s\">%s%d</td>",
+                               rowthr, attrlabel(i),
+                               ((attrthr[i] > 0) ? "+" : ""),  attrthr[i] - 1);
+    }
+    return msgprintf("<table class=\"attributes\"><thead>\n"
+                     "  <tr>%s</tr>\n"
+                     "</thead><tbody>\n"
+                     "  <tr class=\"attrow%s\">%s</tr>\n"
+                     "  <tr class=\"attrow%s\">%s</tr>\n"
+                     "%s"
+                     "</tbody></table>",
+                     headers, labelone, rowone, labeltwo, rowtwo,
+                     (attrthr ? msgprintf("  <tr class=\"attrow%s\">%s</tr>\n",
+                                          labelthr, rowthr) : ""));
+}
+
+const char *
+spoiladvancerow(const char *label, const struct RoleAdvance *adv) {
+    return msgprintf("<tr class=\"adv%s\"><th class=\"label\">%s:</th>"
+                     "<td class=\"numeric advin\">"
+                     "    <span class=\"advfix advinfix\">%d</span>"
+                     "    <span class=\"advrnd advinrnd\">+d%d</span></td>"
+                     "<td class=\"numeric advlo\">"
+                     "    <span class=\"advfix advlofix\">%d</span>"
+                     "    <span class=\"advrnd advlornd\">+d%d</span></td>"
+                     "<td class=\"numeric advhi\">"
+                     "    <span class=\"advfix advhifix\">%d</span>"
+                     "    <span class=\"advrnd advhirnd\">+d%d</span></td>"
+                     "</tr>", label, label, adv->infix, adv->inrnd,
+                     adv->lofix, adv->lornd, adv->hifix, adv->hirnd);
+}
+const char *
+spoiladvance(const char *labelone, const struct RoleAdvance *advone,
+             const char *labeltwo, const struct RoleAdvance *advtwo,
+             int cutoff)
+{
+    return msgprintf("<table><thead>"
+                     "  <tr><th></th>"
+                     "      <th class=\"label\">init</th>"
+                     "      <th class=\"label\">early gain</th>"
+                     "      <th class=\"label\">%s</th>"
+                     "  </tr>"
+                     "</thead><tbody>"
+                     "   %s"
+                     "   %s"
+                     "</tbody></table>\n",
+                     (cutoff ? msgprintf("gain &gt;XL%d", cutoff) :
+                      "late gain"),
+                     spoiladvancerow(labelone, advone),
+                     spoiladvancerow(labeltwo, advtwo));
+}
+
+const char *
+spoilspellpenalty(const char *class, const char *label, int p)
+{
+    if (p == 0) { return ""; }
+    const char *sign = (p < 0) ? "<span class=\"penaltyminus\">-</span>" :
+                                 "<span class=\"penaltyplus\">+</span>";
+    const char *signclass = (p < 0) ? " bonus" : (p > 0) ? " malus" : "nil";
+    return msgprintf("<span class=\"%s%s\">%s: "
+                     "%s<span class=\"number\">%d</span></span>",
+                     class, signclass, label, sign, abs(p));
+}
+
+const char *
+spoilrolespellcasting(int i)
+{
+    return msgprintf("<span class=\"rolespellcasting\">%s %s %s %s</span>",
+                     spoilspellpenalty("base", "Base", roles[i].spelbase),
+                     spoilspellpenalty("armr", "Armor",  roles[i].spelarmr),
+                     spoilspellpenalty("shld", "Shield", roles[i].spelshld),
+                     spoilspellpenalty("heal", "Heal", roles[i].spelheal));
+}
+
+const char *
+spoilquestart(int i)
+{
+    const struct artifact *art = &artilist[roles[i].questarti];
+    return art->name;
+}
+
 void
 makehtmlspoilers(void)
 {
@@ -939,7 +1121,95 @@ makehtmlspoilers(void)
         fclose(outfile);     
     }
     /* ####################### Role / Race ####################### */
-    // TODO
+    fd = open_datafile("players.html",
+                       O_CREAT | O_WRONLY, SPOILPREFIX);
+    if (fd < 0) {
+        pline(msgc_debug, "Failed to write players spoiler.  Is it writable?");
+        return;
+    }
+    if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        outfile = fdopen(fd, "w");
+        fprintf(outfile, htmlheader("Playable Characters"));
+
+        fprintf(outfile, "<ul>"
+                "   <li><a href=\"#race\">Race</a></li>"
+                "   <li><a href=\"#role\">Role</a> (Profession/Class)</li>"
+                "</ul><hr />\n");
+
+        fprintf(outfile, "<h1><a name=\"race\">Playable Races</h1>\n");
+        fprintf(outfile, "<table class=\"races\"><thead>\n"
+                "  <tr><th rowspan=\"2\" class=\"filecode\">TLA</th>\n"
+                "      <th class=\"player race\">Race</th>"
+                "      <th class=\"numeric\">speed</th>\n"
+                "      <th class=\"gender\">Gender</th>\n"
+                "      <th rowspan=\"2\" class=\"attr\">Attributes</th>\n"
+                "      <th rowspan=\"2\" class=\"advance\">Advance</th></tr>\n"
+                "  <tr><th class=\"player roles\" colspan=\"2\">Roles</th>\n"
+                "      <th class=\"align\">Aligns</th></tr>\n"
+                "</thead><tbody>\n");
+
+        for (i = 0; races[i].filecode; i++) {
+            fprintf(outfile, "<tr class=\"newsection\">"
+                    "    <th rowspan=\"2\" class=\"filecode\">%s</th>"
+                    "    <td class=\"player race\">%s</td>"
+                    "    <td class=\"numeric\">%d</td>\n"
+                    "    <td class=\"gender\">%s</td>\n"
+                    "    <td class=\"attr\" rowspan=\"2\">%s</td>\n"
+                    "    <td class=\"advance\" rowspan=\"2\">%s</td></tr>\n"
+                    "<tr><td class=\"player roles\" colspan=\"2\">%s</td>\n"
+                    "    <td class=\"align\">%s</td></tr>\n",
+                    races[i].filecode, races[i].noun, races[i].basespeed,
+                    spoilgenders(races[i].allow),
+                    spoilattributes("min", races[i].attrmin,
+                                    "max", races[i].attrmax, "", NULL),
+                    spoiladvance("HP", &races[i].hpadv, "Pw", &races[i].enadv, 0),
+                    spoilraceroles(races[i].selfmask), spoilaligns(races[i].allow));
+        }
+        fprintf(outfile, "</tbody></table>\n");
+
+        fprintf(outfile, "<h1><a name=\"role\">Player Roles</h1>\n");
+        fprintf(outfile, "<table class=\"roles\"><thead>\n"
+                "  <tr><th rowspan=\"3\" class=\"filecode\">TLA</th>\n"
+                "      <th class=\"player role\">Role</th>\n"
+                "      <th class=\"gender\">Gender</th>\n"
+                "      <th rowspan=\"3\" class=\"attr\">Attributes</th>\n"
+                "      <th rowspan=\"3\" class=\"advance\">Advance</th>\n"
+                "  </tr>\n"
+                "  <tr><th class=\"race\">Races</th>\n"
+                "      <th class=\"align\">Aligns</th></tr>\n"
+                "  <tr><th class=\"spellcasting\">Spell Penalties</th>\n"
+                "      <th class=\"questart\">Artifact</th></tr>"
+                "</thead><tbody>");
+        for (i = 0; roles[i].filecode; i++) {
+            fprintf(outfile, "  <tr class=\"newsection\">"
+                    "      <th rowspan=\"3\" class=\"filecode\">%s</th>\n"
+                    "      <td class=\"player role\">%s%s%s</td>\n"
+                    "      <td class=\"gender\">%s</td>\n"
+                    "      <td rowspan=\"3\" class=\"attr\">%s</td>\n"
+                    "      <td rowspan=\"3\" class=\"advance\">%s</td>\n"
+                    "  </tr>\n"
+                    "  <tr><td class=\"races\">%s</td>\n"
+                    "      <td class=\"align\">%s</td></tr>\n"
+                    "  <tr><td class=\"spellcasting\">%s</td>\n"
+                    "      <td class=\"questart\">%s</td></tr>",
+                    roles[i].filecode,
+                    roles[i].name.m, (roles[i].name.f ? "/" : ""),
+                                    (roles[i].name.f ? roles[i].name.f : ""),
+                    spoilgenders(roles[i].allow),
+                    spoilattributes("base", roles[i].attrbase,
+                                    "dist", roles[i].attrdist,
+                                    "max",  roles[i].attrmaxm),
+                    spoiladvance("HP", &roles[i].hpadv, "Pw", &roles[i].enadv,
+                                 roles[i].xlev),
+                    spoilroleraces(roles[i].allow),
+                    spoilaligns(roles[i].allow),
+                    spoilrolespellcasting(i), spoilquestart(i));
+        }
+        fprintf(outfile, "</tbody></table>\n");
+
+        change_fd_lock(fd, FALSE, LT_NONE, 0);
+        fclose(outfile);
+    }
 
     /* ######################### Index ########################### */
     fd = open_datafile("index.html",
@@ -968,6 +1238,10 @@ makehtmlspoilers(void)
                 "   </ul></li>"
                 "   <li><a href=\"artifact-spoiler.html\">Artifacts</a></li>"
                 "   <li><a href=\"monster-spoiler.html\">Monsters</a></li>"
+                "   <li><a href=\"players.html\">Players</a><ul>"
+                "          <li><a href=\"players.html#race\">Races</a></li>"
+                "          <li><a href=\"players.html#role\">Roles</a></li>"
+                "       </ul></li>"
                 "</ul>\n");
 
         fprintf(outfile, "\n</html>\n");
