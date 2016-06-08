@@ -2388,6 +2388,15 @@ srch:
                     && !can_fall_thru(level))
                     trap = ROCKTRAP;
                 maketrap(level, u.ux, u.uy, trap, rng_main);
+                if (trap == VIBRATING_SQUARE) {
+                    struct trap *trap = t_at(level, gamestate.inv_pos.x,
+                                                    gamestate.inv_pos.y);
+                    if (trap) {
+                        deltrap(level, trap);
+                        gamestate.inv_pos.x = u.ux;
+                        gamestate.inv_pos.y = u.uy;
+                    }
+                }
                 pline("%s.", An(tname));
                 return &zeroobj;
             }

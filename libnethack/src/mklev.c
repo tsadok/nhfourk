@@ -1870,8 +1870,17 @@ mkinvpos(xchar x, xchar y, int dist)
         (x, y, x_maze_min + 1, y_maze_min + 1, x_maze_max - 1,
          y_maze_max - 1)) {
         /* only outermost 2 columns and/or rows may be truncated due to edge */
-        if (dist < (7 - 2))
-            panic("mkinvpos: <%d,%d> (%d) off map edge!", x, y, dist);
+        if (dist < (7 - 2)) {
+            impossible("mkinvpos: <%d,%d> (%d) off map edge!", x, y, dist);
+            if (dist == 0)
+                panic("mkinvpos: stairs would be placed off the map.");
+        }
+        return;
+    }
+    if (loc->typ == STAIRS) {
+        impossible("mkinvpos: <%d,%d> (%d) is already stairs.", x, y, dist);
+        if (dist == 0)
+                panic("mkinvpos: can't put two sets of stairs in same place.");
         return;
     }
 
