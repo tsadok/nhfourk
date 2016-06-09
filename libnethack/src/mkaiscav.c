@@ -279,6 +279,7 @@ void mkaisvs(struct level *lev, int x, int y)
            (distmin(x, y, upstair.x, upstair.y) <= mindist) ||
            (x <= xmargin) || (x + xmargin >= COLNO) ||
            (y <= ymargin) || (y + ymargin >= ROWNO) ||
+           (lev->locations[x][y].typ == STAIRS) ||
            (occupied(lev, x, y) && tries < 500)) {
         cc = aisplace(); x = cc.x; y = cc.y;
         tries++;
