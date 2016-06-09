@@ -757,9 +757,10 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                         otmp->spe = rn2_on_rng(2, rng) ?
                             rne_on_rng(3, rng) : -rne_on_rng(3, rng);
                 }
-                /* make useless +0 rings much less common */
+                /* make useless +0 rings MUCH less common */
                 if (otmp->spe == 0)
-                    otmp->spe = rn2_on_rng(4, rng) - rn2_on_rng(3, rng);
+                    otmp->spe = rne_on_rng(2, rng)
+                        * (rn2_on_rng(challengemode ? 2 : 3, rng) ? 1 : -1);
                 /* negative rings are usually cursed */
                 if (otmp->spe < 0 && rn2_on_rng(5, rng))
                     curse(otmp);

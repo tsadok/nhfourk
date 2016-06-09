@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When chargeable rings are generated, the game now tries even
+   harder than before to avoid +0 ones.
+
  * The Priest quest artifact is now the Sceptre of Might.  Its
    #invoke power is an energy boost, similar to the one the Mitre
    (which is now removed from the game) had, but buffed somewhat:
