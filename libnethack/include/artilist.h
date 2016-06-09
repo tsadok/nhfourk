@@ -215,8 +215,8 @@ static const struct artifact const_artilist[] = {
 
     A("Big Stick", CLUB,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DEFN), SPFX_STLTH, 0,
-      PHYS(5, 12), DFNS(AD_MAGM), NO_CARY, 0, A_CHAOTIC, PM_CAVEMAN, NON_PM,
-      2500L),
+      PHYS(5, 12), DFNS(AD_MAGM), NO_CARY,
+      CONFLICT, A_CHAOTIC, PM_CAVEMAN, NON_PM, 2500L),
 
     A("The Sceptre of Might", MACE,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DALIGN), 0, 0,
