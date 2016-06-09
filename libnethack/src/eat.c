@@ -1286,7 +1286,8 @@ eatcorpse(void)
                                            herbivorous(youmonst.data))
                                         : (carnivorous(youmonst.data) &&
                                            !herbivorous(youmonst.data)))
-              ? "is delicious" : "tastes terrible");
+              ? (otmp->corpsenm == PM_BROWN_PUDDING ? "tastes like chocolate"
+                 : "is delicious") : "tastes terrible");
     }
 
     if (!retcode)
