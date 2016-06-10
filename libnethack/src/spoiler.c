@@ -1034,7 +1034,7 @@ makepinobotyaml(void)
                     (pm->geno & G_NOGEN) ? "Yes" : "No");
             fprintf(f, "   appears-in-small-groups: %s\n",
                     (pm->geno & G_SGROUP) ? "Yes" : "No");
-            fprintf(f, "   appears-in-largeGroups: %s\n",
+            fprintf(f, "   appears-in-large-groups: %s\n",
                     (pm->geno & G_LGROUP) ? "Yes" : "No");
             fprintf(f, "   genocidable: %s\n",
                     (pm->geno & G_GENO) ? "Yes" : "No");
