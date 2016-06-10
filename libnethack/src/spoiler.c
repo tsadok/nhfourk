@@ -34,6 +34,7 @@ static const char * spoilmaligntyp(int i);
 static const char * spoilaligntyp(aligntyp aln);
 static const char * spoiloneattack(const struct attack *attk);
 static const char * spoilattacks(int i);
+static const char * spoilmonskills(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
 static const char * spoilmonsize(int i);
 static const char * spoilmrace(int i);
@@ -293,6 +294,28 @@ spoilattacks(int i)
                          semicolonjoin(spoiloneattack(&mons[i].mattk[3]),
            semicolonjoin(spoiloneattack(&mons[i].mattk[4]),
                          spoiloneattack(&mons[i].mattk[5]))))));
+}
+
+static const char *
+spoilskill(const char *label, unsigned int mskill, int proficiency)
+{
+    short level = ((mskill / proficiency) % 4);
+    if (level < 1) return "";
+    const char *levdesc = ((level == 1) ? "Basic" :
+                           (level == 2) ? "Skilled" : "Expert");
+    return msgprintf("<span class=\"skill %sskill\">"
+                     "<span class=\"label\">%s:</span> "
+                     "<span class=\"level\">%s</span></span>",
+                     label, label, levdesc);
+}
+
+static const char *
+spoilmonskills(int i)
+{
+    /* If support for other skills is added to the game,
+       we should add spoiler info for them here as well.
+       For now, there's only wand skill: */
+    return spoilskill("wand", mons[i].mskill, MP_WANDS);
 }
 
 static const char *
@@ -1068,7 +1091,8 @@ makehtmlspoilers(void)
                 "<th class=\"numeric ac\">def</th>"
                 "<th class=\"numeric monmr\">mr</th>"
                 "<th class=\"align\">aln</th>"
-                "<th class=\"attacks\">attacks</th>"
+                "<th><span class=\"skills\">skills</span>"
+                "    <span class=\"attacks\">attacks</span></th>"
                 "<th class=\"resistances\">resists</th>"
                 "<th class=\"resgranted\">grants</th>"
                 "<th class=\"numeric nutrition\">nutr</th>"
@@ -1099,7 +1123,8 @@ makehtmlspoilers(void)
                     "<td class=\"numeric ac\">%d</td>"
                     "<td class=\"numeric monmr\">%d</td>"
                     "<td class=\"align\">%s</td>"
-                    "<td class=\"attacks\">%s</td>"
+                    "<td><span class=\"skills\">%s</span>"
+                    "    <span class=\"attacks\">%s</span></td>"
                     "<td class=\"resistances\">%s</td>"
                     "<td class=\"resgranted\">%s</td>"
                     "<td class=\"numeric nutrition\">%d</td>"
@@ -1109,7 +1134,8 @@ makehtmlspoilers(void)
                     "<td class=\"flags\">%s</td>"
                     "</tr>\n", i, mlet, mons[i].mname, mons[i].mlevel,
                     monstr[i], mons[i].mmove, (10 - mons[i].ac),
-                    mons[i].mr, spoilmaligntyp(i), spoilattacks(i),
+                    mons[i].mr, spoilmaligntyp(i),
+                    spoilmonskills(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
                     spoilresistances(mons[i].mconveys, TRUE, i),
                     mons[i].cnutrit, mons[i].cwt, spoilmonsize(i),
