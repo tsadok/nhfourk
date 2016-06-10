@@ -1231,6 +1231,7 @@ makepinobotyaml(void)
             fprintf(f, " - name: \"%s\"\n", pm->mname);
             fprintf(f, "   symbol: \"%c\"\n", def_monsyms[(int)pm->mlet]);
             fprintf(f, "   base-level: %d\n", pm->mlevel);
+            fprintf(f, "   difficulty: %d\n", monstr[i]);
             fprintf(f, "   speed: %d\n", pm->mmove);
             fprintf(f, "   ac: %d\n", pm->ac);
             fprintf(f, "   mr: %d\n", pm->mr);
@@ -1252,7 +1253,7 @@ makepinobotyaml(void)
                     (pm->geno & G_NOGEN) ? "Yes" : "No");
             fprintf(f, "   appears-in-small-groups: %s\n",
                     (pm->geno & G_SGROUP) ? "Yes" : "No");
-            fprintf(f, "   appears-in-largeGroups: %s\n",
+            fprintf(f, "   appears-in-large-groups: %s\n",
                     (pm->geno & G_LGROUP) ? "Yes" : "No");
             fprintf(f, "   genocidable: %s\n",
                     (pm->geno & G_GENO) ? "Yes" : "No");
