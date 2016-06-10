@@ -220,7 +220,7 @@ static const struct nh_option_desc const_options[] = {
      "disable death and maybe enable debug features",
      nh_birth_lasting, OPTTYPE_ENUM, {.e = MODE_NORMAL}},
     {"seed", "Online and Tournaments",
-     "blank; or 16 letters to play a set non-scoring dungeon",
+     "seed: blank; or 16 letters to play a set non-scoring dungeon",
      nh_birth_lasting, OPTTYPE_STRING, {.s = NULL}},
     {"timezone", "Personalization",
      "time zone to use for time-dependent effects",
