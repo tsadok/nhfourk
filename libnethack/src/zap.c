@@ -333,7 +333,7 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
             if (mtmp == &youmonst)
                 safe_teleds(FALSE);
             else
-                rloc(mtmp, TRUE);
+                rloc(mtmp, TRUE, level);
             break;
         }
         if (mtmp == &youmonst)

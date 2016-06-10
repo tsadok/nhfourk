@@ -891,10 +891,10 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
                 sent out of his room (caller might resort to goodpos() if
                 we report failure here, so this isn't full prevention) */
         if (mtmp->isshk && inhishop(mtmp)) {
-            if (level->locations[x][y].roomno != ESHK(mtmp)->shoproom)
+            if (lev->locations[x][y].roomno != ESHK(mtmp)->shoproom)
                 return FALSE;
         } else if (mtmp->ispriest && inhistemple(mtmp)) {
-            if (level->locations[x][y].roomno != EPRI(mtmp)->shroom)
+            if (lev->locations[x][y].roomno != EPRI(mtmp)->shroom)
                 return FALSE;
         }
         /* current location is <xx,yy> */

@@ -2016,7 +2016,7 @@ gulpmu(struct monst *mtmp, const struct attack *mattk)
             tmp = 0;
         } else if (u.uswldtim == 0) {
             pline(msgc_fatal_predone, "%s totally digests you!", Monnam(mtmp));
-            tmp = u.uhp;
+            tmp = Upolyd ? u.mh : u.uhp;
             if (Half_physical_damage)
                 tmp *= 2;       /* sorry */
         } else {

@@ -1577,7 +1577,7 @@ revive_mon(void *arg, long timeout)
         && ((mtmp = m_at(level, x, y)) != 0)) {
         boolean notice_it = canseemon(mtmp);    /* before rloc() */
         const char *monname = Monnam(mtmp);           /* ditto */
-        if (rloc(mtmp, TRUE)) {
+        if (rloc(mtmp, TRUE, level)) {
             if (notice_it && !canseemon(mtmp))
                 pline(msgc_monneutral, "%s vanishes.", monname);
             else if (!notice_it && canseemon(mtmp))
