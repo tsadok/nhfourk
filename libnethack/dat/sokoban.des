@@ -35,7 +35,7 @@
 MAZE:"soko4-1",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#1234567890123
 MAP
 ------  ----- 
 |....|  |...| 
@@ -98,7 +98,7 @@ OBJECT:'/',random,random
 MAZE:"soko4-2",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#12345678901234
 MAP
 -------- ------
 |.|....|-|....|
@@ -163,7 +163,7 @@ OBJECT:'/',random,random
 MAZE:"soko4-3",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#1234567890123456
 MAP
          ----    
  ---------..---  
@@ -229,7 +229,7 @@ OBJECT:'/',random,random
 MAZE:"soko4-4",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#123456789012345
 MAP
   ------   ---- 
   |.(..-----..| 
@@ -295,7 +295,7 @@ OBJECT:'/',random,random
 MAZE:"soko4-5",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#12345678901234
 MAP
 ---------------
 |.....|.....|.|
@@ -360,7 +360,7 @@ OBJECT:'/',random,random
 MAZE: "soko4-6",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#123456789012345678
 MAP
        ----------- 
    -----.........| 
@@ -422,7 +422,7 @@ OBJECT:'/',random,random
 MAZE: "soko4-7",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#12345678901234
 MAP
    ---------   
  ---..|....--- 
@@ -493,7 +493,7 @@ OBJECT:'/',random,random
 MAZE:"soko3-1",' '
 FLAGS:noteleport
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#1234567890123456789012345678
 MAP
 -----------       -----------
 |....|....|--     |.........|
@@ -570,7 +570,7 @@ OBJECT:'/',random,random
 MAZE:"soko3-2",' '
 FLAGS:noteleport
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#12345678901234567890123456
 MAP
                       ---- 
     -------------------..| 
@@ -647,7 +647,7 @@ OBJECT:'/',random,random
 MAZE:"soko3-3",' '
 FLAGS:noteleport
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#12345678901234567890123456
 MAP
                 -----------
    ---------    |.........|
@@ -718,7 +718,7 @@ OBJECT:'/',random,random
 MAZE:"soko3-4",' '
 FLAGS:noteleport
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#1234567890123456789012345
 MAP
 ----------                
 |........|                
@@ -798,10 +798,11 @@ MONSTER:'m',random,(04,10),m_object "boulder"
 
 
 # "The Snake"
+# (Adapted from Slash'em.)
 MAZE:"soko3-5",' '
 FLAGS:noteleport
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#123456789012345678901234567
 MAP
   ---------                 
  --.......--                
@@ -865,6 +866,65 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# "Into the Middle"
+# (Adapted from Slash'em)
+MAZE: "soko3-6",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#         1
+#12345678901234567
+MAP
+----------------- 
+|........|......| 
+|..--....|......| 
+--.|.....|......| 
+ |.---------.--.| 
+ |...........||.| 
+ |..------...--.--
+ ----    |.......|
+       ---.----.--
+       |........| 
+       |....----- 
+       --...|     
+        -----     
+ENDMAP
+STAIR:(04,03),up
+STAIR:(16,07),down
+REGION:(00,00,17,12),lit,"ordinary"
+NON_DIGGABLE:(00,00,17,12)
+NON_PASSWALL:(00,00,17,12)
+
+# Boulders
+OBJECT:'`',"boulder",(12,02)
+OBJECT:'`',"boulder",(14,02)
+OBJECT:'`',"boulder",(11,03)
+OBJECT:'`',"boulder",(13,03)
+OBJECT:'`',"boulder",(11,06)
+OBJECT:'`',"boulder",(12,06)
+OBJECT:'`',"boulder",(11,07)
+OBJECT:'`',"boulder",(09,09)
+OBJECT:'`',"boulder",(11,09)
+OBJECT:'`',"boulder",(10,10)
+
+# Traps
+TRAP:"hole",(03,01)
+TRAP:"hole",(04,01)
+TRAP:"hole",(02,03)
+TRAP:"hole",(02,04)
+TRAP:"hole",(04,05)
+TRAP:"hole",(05,05)
+TRAP:"hole",(06,05)
+TRAP:"hole",(07,05)
+TRAP:"hole",(08,05)
+TRAP:"hole",(09,05)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
 
 
 ### Third level ###
@@ -1324,6 +1384,7 @@ OBJECT:'=',random,(16,07)
 OBJECT:'/',random,(09,09)
 
 
+# Vanilla Nightmare
 # The infamous "soko2a" (nethackwiki) / "Sokoban 2 B" (steelypips):
 MAZE:"soko2-7",' '
 FLAGS:noteleport
