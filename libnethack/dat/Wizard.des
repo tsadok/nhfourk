@@ -160,6 +160,7 @@ OBJECT:'`',"statue",(64,11)
 OBJECT:'`',"boulder",(28,14)
 OBJECT:'+',"cone of cold",(72,02)
 OBJECT:'+',"fireball",(72,16)
+OBJECT: '(',"magic marker",random
 OBJECT:random,random,random
 OBJECT:random,random,random
 OBJECT:random,random,random

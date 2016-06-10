@@ -899,7 +899,6 @@ u_init_inv_skills(void)
         augment_magic_chest_contents(SPBOOK_CLASS, 0, 5);
         augment_magic_chest_contents(POT_GAIN_ENERGY, 0, 3);
         augment_magic_chest_contents(SPE_MAGIC_MISSILE, 0, 1);
-        augment_magic_chest_contents(MAGIC_MARKER, 0, 1);
         break;
 
     default:   /* impossible */
