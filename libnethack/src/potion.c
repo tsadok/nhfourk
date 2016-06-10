@@ -830,12 +830,16 @@ peffects(struct obj *otmp)
             u.uexp = rndexp(TRUE);
         break;
     case POT_HEALING:
+        if (otmp->blessed && (u.ucramps > 1))
+            u.ucramps = u.ucramps * 3 / 4 - 1;
         pline(msgc_statusheal, "You feel better.");
         healup(dice(6 + 2 * bcsign(otmp), 4), !otmp->cursed ? 1 : 0,
                !!otmp->blessed, !otmp->cursed);
         exercise(A_CON, TRUE);
         break;
     case POT_EXTRA_HEALING:
+        if (otmp->blessed && (u.ucramps > 1))
+            u.ucramps = u.ucramps * 2 / 3 - 1;
         pline(msgc_statusheal, "You feel much better.");
         healup(dice(6 + 2 * bcsign(otmp), 8),
                otmp->blessed ? 5 : !otmp->cursed ? 2 : 0, !otmp->cursed, TRUE);
@@ -844,6 +848,8 @@ peffects(struct obj *otmp)
         exercise(A_STR, TRUE);
         break;
     case POT_FULL_HEALING:
+        if (otmp->blessed && (u.ucramps > 1))
+            u.ucramps = u.ucramps * 1 / 2 - 1;
         pline(msgc_statusheal, "You feel completely healed.");
         healup(400, 4 + 4 * bcsign(otmp), !otmp->cursed, TRUE);
         /* Restore one lost level if blessed */

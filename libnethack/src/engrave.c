@@ -1139,13 +1139,16 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             continue;
         /* NetHack Fourk balance adjustment:  writing Elbereth a whole lot of
          * times makes it harder to continue writing anything successfully.  */
-        if (!rn2((((type == DUST || type == ENGR_BLOOD)) ? 150
-                  : (type == ENGRAVE) ? 350 : 1500)
-                 * u.ulevel / (1 + u.uconduct[conduct_elbereth])) ||
+        u.ucramps++;
+        if ((16 + rn2_on_rng((((type == DUST || type == ENGR_BLOOD)) ? 150
+                              : (type == ENGRAVE) ? 350 : 1500)
+                             * u.ulevel / (1 + u.uconduct[conduct_elbereth]) + 1,
+                             rng_cramps) < u.ucramps) ||
             (Blind && !rn2(11)) || (Confusion && !rn2(7)) ||
             (Stunned && !rn2(4)) || (Hallucination && !rn2(2))) {
-            *sp = ' ' + rnd(96 - 2);    /* ASCII '!' thru '~' (excludes ' ' and 
-                                           DEL) */
+            if (ABASE(A_CON) <= 3)
+                *sp = ' ' + rnd(96 - 2);
+                /* ASCII '!' thru '~' (excludes ' ' and DEL) */
             cramps++;
         }
     }
@@ -1165,6 +1168,12 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     else if (cramps > 0)
         pline(msgc_yafm, "Your writing %s is beginning to cramp.",
               body_part(HAND));
+    if (cramps && (ABASE(A_CON) > 3)) {
+        ABASE(A_CON)--;
+        u.amax.a[A_CON]--;
+        pline(msgc_intrloss, "You manage to get your message written, "
+                             "but the effort is draining.");
+    }
 
     /* Previous engraving is overwritten */
     if (eow) {

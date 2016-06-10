@@ -61,16 +61,29 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * If hand cramping, blindness, confusion, hallucination, or being
+   stunned would have caused your hand to slip while writing,
+   distorting the message, but your base constitution (without any
+   bonus from rings, etc.) is more than 3, the engraving will be
+   completed successfully, at the cost of one point of constitution.
+
+ * Hand cramping (due to excessive engraving) has been made more
+   consistent.  It no longer matters as much what you've written, but
+   it matters much more how recently you've written it.  In addition
+   to gradually healing naturally over time, cramps can also be
+   reduced by drinking blessed potions of healing, extra healing, and
+   full healing; and enlightenment can tell you how cramped your
+   writing hand is.
+
  * When chargeable rings are generated, the game now tries even
    harder than before to avoid +0 ones.
 
- * The Priest quest artifact is now the Sceptre of Might.  Its
-   #invoke power is an energy boost, similar to the one the Mitre
-   (which is now removed from the game) had, but buffed somewhat:
-   it can boost your Pw by up to 240 now, and the limit on taking
-   you to maximum has been bumped up as well.  Meanwhile, the
-   Caveman quest artifact, Big Stick, was given the conflict
-   #invoke effect.
+ * The Priest quest artifact is now the Sceptre of Might.  Its #invoke
+   power is an energy boost, similar to the one the Mitre (which is
+   now removed from the game) had, but buffed somewhat:  it can boost
+   your Pw by up to 240 now, and the limit on taking you to maximum
+   has been bumped up as well.  Meanwhile, the Caveman quest artifact,
+   Big Stick, was given the conflict #invoke effect.
 
  * The name of Elbereth only scares monsters if it is the only thing
    engraved there (although you can also use the more complete form

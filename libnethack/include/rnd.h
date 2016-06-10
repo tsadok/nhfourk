@@ -135,6 +135,7 @@ enum rng {
     rng_levport_results, /* distance to get level-teleported */
     rng_trapdoor_result, /* distance to get trapdoored */
     rng_superior_item,   /* upgrade some items in Gehennom */
+    rng_cramps,          /* hand cramps from excessive engraving */
     first_level_rng
 };
 

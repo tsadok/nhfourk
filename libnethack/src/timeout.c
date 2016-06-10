@@ -235,6 +235,12 @@ nh_timeout(void)
         else if (u.uluck < baseluck && (nostone || time_luck > 0))
             u.uluck++;
     }
+    if ((u.ucramps > 0) &&
+        (((moves + ((unsigned)u.ubirthday % 2500)) % 25) == 0) &&
+        (rn2_on_rng(250, rng_cramps) <
+         rn2_on_rng(8 + u.ucramps, rng_cramps))) {
+        u.ucramps--;
+    }
     if (u.uinvulnerable)
         return; /* things past this point could kill you */
     if (Stoned)

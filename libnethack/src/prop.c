@@ -561,6 +561,19 @@ enlightenment(int final)
         enl_msg(&menu, "You ", "fall", "fell", " asleep");
     if (Hunger)
         enl_msg(&menu, "You hunger", "", "ed", " rapidly");
+    if (u.ucramps > 0) {
+        enl_msg(&menu, msgprintf("Your writing %s ", body_part(HAND)),
+                "is", "was",
+                (u.ucramps > 1536) ? " injured entirely beyond use" :
+                (u.ucramps > 512)  ? " injured severely from excessive use" :
+                (u.ucramps > 128)  ? " injured through excessive use" :
+                (u.ucramps > 32)   ? " thoroughly cramped from overuse" :
+                (u.ucramps > 16)   ? " cramped from overuse" :
+                (u.ucramps >  8)   ? " a little cramped from use" : " ok");
+        if (wizard)
+            enl_msg(&menu, "(Cramp level ", "is", "was",
+                    msgprintf(" %d)", u.ucramps));
+    }
 
         /*** Vision and senses ***/
     if (See_invisible)
