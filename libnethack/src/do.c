@@ -1242,9 +1242,13 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
             pline(msgc_levelwarning, "%s", mesg);
     }
 
-    if (new && Is_rogue_level(&u.uz))
+    if (new && Is_rogue_level(&u.uz)) {
         pline(msgc_branchchange,
               "You enter what seems to be an older, more primitive world.");
+        if (!historysearch("entered the Rogue tribute level", TRUE)) {
+            historic_event(FALSE, TRUE, "entered the Rogue tribute level.");
+        }
+    }
     /* Final confrontation */
     if (In_endgame(&u.uz) && newdungeon && Uhave_amulet)
         resurrect();

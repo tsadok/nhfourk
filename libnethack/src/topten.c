@@ -142,6 +142,8 @@ encode_uevent(void)
         c |= 0x00080000UL;
     if (historysearch("reached the Astral Plane", TRUE))
         c |= 0x000F0000UL;
+    if (historysearch("entered the Rogue tribute level", TRUE))
+        c |= 0x00100000UL;
     return c;
 }
 
