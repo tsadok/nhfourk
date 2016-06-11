@@ -1212,5 +1212,14 @@ DOOR:locked,(62,6)
 DOOR:closed,(30,13)
 DOOR:closed,(37,13)
 DOOR:closed,(48,13)
+# Wake the shamans if anyone tries to take the figurine:
+TRAP:"board",(69,04)
+TRAP:"board",(69,05)
+TRAP:"board",(69,06)
+TRAP:"board",(70,04)
+TRAP:"board",(70,06)
+TRAP:"board",(71,04)
+TRAP:"board",(71,05)
+TRAP:"board",(71,06)
 
 # end mines.des
