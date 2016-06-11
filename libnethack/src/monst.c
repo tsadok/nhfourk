@@ -1842,13 +1842,13 @@ const struct permonst mons[] = {
         M3_INFRAVISIBLE | M3_INFRAVISION | M3_SEEINDARK,
         MP_WAND_BASIC, HI_ZAP),
     MON("gnome king", S_GNOME,
-        SLVL(5, 7, 10, 10, 2, 20, 0), (G_GENO | 1),
+        SLVL(5, 6, 10, 10, 2, 20, 0), (G_GENO | 1),
         A(ATTK(AT_WEAP, AD_PHYS, 2, 6),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(750, 150, 0, MS_ORC, MZ_SMALL), 0, MP_WAND_BASIC, MRACE_GNOME,
+        SIZ(750, 150, 0, MS_ORC, MZ_SMALL), 0, 0, MRACE_GNOME,
         M1_HUMANOID | M1_OMNIVORE, M2_PRINCE | M2_MALE | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION | M3_SEEINDARK,
-        MP_WAND_SKILLED, HI_LORD),
+        MP_WAND_BASIC, HI_LORD),
 
 /*
  * giant Humanoids
