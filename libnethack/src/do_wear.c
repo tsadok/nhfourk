@@ -260,8 +260,9 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case JUMPING_BOOTS:
         /* jumping is obvious no matter what the situation */
         makeknown(otyp);
-        pline(good_msgc, "Your %s feel %s.", makeplural(body_part(LEG)),
-              equipping ? "longer" : "shorter");
+        if (msgtype != em_silent)
+            pline(good_msgc, "Your %s feel %s.", makeplural(body_part(LEG)),
+                  equipping ? "longer" : "shorter");
         break;
     case WATER_WALKING_BOOTS:
         if (is_pool(level, u.ux, u.uy) && !Levitation && !Flying &&
@@ -276,17 +277,18 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
            than potion speed */
         if (!redundant_extrinsic && !(HFast & ~INTRINSIC)) {
             makeknown(otyp);
-            pline(good_msgc, "You feel yourself %s%s.",
-                  equipping ? "speed up" : "slow down",
-                  (redundant) ? " slightly" : "");
+            if (msgtype != em_silent)
+                pline(good_msgc, "You feel yourself %s%s.",
+                      equipping ? "speed up" : "slow down",
+                      (redundant) ? " slightly" : "");
         }
         break;
     case ELVEN_BOOTS:
         if (!redundant) {
             makeknown(otyp);
-            if (equipping)
+            if (equipping && (msgtype != em_silent))
                 pline(good_msgc, "You walk very quietly.");
-            else
+            else if (msgtype != em_silent)
                 pline(good_msgc, "You sure are noisy.");
         }
         break;
@@ -320,29 +322,31 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
            can't just use Invis directly. */
         if (u_have_property(INVIS, ANY_PROPERTY, TRUE) && !Blind) {
             newsym(u.ux, u.uy);
-            pline(equipping ? msgc_statusend : msgc_statusgood, "You can %s!",
-                  equipping ?
-                  (See_invisible ? "no longer see through yourself" :
-                   see_yourself) :
-                  (See_invisible ? "see through yourself" :
-                   "no longer see yourself"));
+            if (msgtype != em_silent)
+                pline(equipping ? msgc_statusend : msgc_statusgood,
+                      "You can %s!", equipping ?
+                      (See_invisible ? "no longer see through yourself" :
+                       see_yourself) :
+                      (See_invisible ? "see through yourself" :
+                       "no longer see yourself"));
         }
         break;
     case CLOAK_OF_INVISIBILITY:
         if (!redundant && !Blind) {
             makeknown(otyp);
             newsym(u.ux, u.uy);
-            pline(good_msgc, "Suddenly you can%s yourself.",
-                  equipping ?
-                  (See_invisible ? " see through" : "not see") :
-                  (See_invisible ? " no longer see through" : " see"));
+            if (msgtype != em_silent)
+                pline(good_msgc, "Suddenly you can%s yourself.",
+                      equipping ?
+                      (See_invisible ? " see through" : "not see") :
+                      (See_invisible ? " no longer see through" : " see"));
         }
         break;
     case OILSKIN_CLOAK:
-        if (equipping) {
+        if (equipping && (msgtype != em_silent))
             pline(good_msgc, "%s very tightly.", Tobjnam(o, "fit"));
+        if (equipping)
             makeknown(otyp);
-        }
         break;
 
         /* Helmets */
@@ -378,23 +382,25 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
         /*FALLTHRU*/
     case DUNCE_CAP:
         if (equipping && !o->cursed) {
-            if (Blind)
+            if (Blind && (msgtype != em_silent))
                 pline(bad_msgc, "%s for a moment.", Tobjnam(o, "vibrate"));
-            else
+            else if (msgtype != em_silent)
                 pline(bad_msgc, "%s %s for a moment.", Tobjnam(o, "glow"),
                       hcolor("black"));
             curse(o);
             o->bknown = TRUE;
         }
-        if (Hallucination) {
+        if (Hallucination && (msgtype != em_silent)) {
             /* from Monty Python's Flying Circus */
             pline(bad_msgc, "My brain hurts!");
         } else if (equipping && otyp == DUNCE_CAP) {
-            pline(bad_msgc, "You feel %s.",   /* track INT change; ignore WIS */
-                  ACURR(A_INT) <=
-                  (ABASE(A_INT) + ABON(A_INT) +
-                   ATEMP(A_INT)) ? "like sitting in a corner" : "giddy");
-        } else if (otyp == HELM_OF_OPPOSITE_ALIGNMENT) {
+            if (msgtype != em_silent)
+                pline(bad_msgc, "You feel %s.", /* track INT; ignore WIS */
+                      ACURR(A_INT) <=
+                      (ABASE(A_INT) + ABON(A_INT) +
+                       ATEMP(A_INT)) ? "like sitting in a corner" : "giddy");
+        } else if (otyp == HELM_OF_OPPOSITE_ALIGNMENT &&
+                   (msgtype != em_silent)) {
             pline(bad_msgc, "Your mind oscillates briefly.");
         }
         makeknown(otyp);
@@ -430,6 +436,10 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
             Slimed = 0;
         break;
     case AMULET_OF_CHANGE:
+        /* Here we ignore em_silent because the messages might be needed to
+           explain the permanent effect and the loss of the amulet (though, in
+           practice, I don't think we're likely to give anyone an amulet of
+           change in starting inventory, so it might be moot). */
         if (equipping) {
             int orig_sex = poly_gender();
 
@@ -453,10 +463,12 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case AMULET_OF_STRANGULATION:
         makeknown(otyp);
         if (equipping && !Strangled) {
-            pline(msgc_fatal, "It constricts your throat!");
+            if (msgtype != em_silent)
+                pline(msgc_fatal, "It constricts your throat!");
             Strangled = 6;
         } else if (Strangled) {
-            pline(msgc_statusheal, "You can breathe more easily!");
+            if (msgtype != em_silent)
+                pline(msgc_statusheal, "You can breathe more easily!");
             Strangled = 0;
         }
         break;
@@ -502,9 +514,10 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
 
         if (Invis && !redundant && !perceives(youmonst.data) && !Blind) {
             newsym(u.ux, u.uy);
-            pline(good_msgc,
-                  equipping ? "Suddenly you are transparent, but there!" :
-                  "Suddenly you cannot see yourself.");
+            if (msgtype != em_silent)
+                pline(good_msgc,
+                      equipping ? "Suddenly you are transparent, but there!" :
+                      "Suddenly you cannot see yourself.");
             makeknown(otyp);
         }
         break;
@@ -512,9 +525,9 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
         if (!redundant && !BInvis && !Blind) {
             makeknown(otyp);
             newsym(u.ux, u.uy);
-            if (equipping)
+            if (equipping && (msgtype != em_silent))
                 self_invis_message();
-            else
+            else if (msgtype != em_silent)
                 pline(good_msgc, "Your %s seems to unfade%s.", body_part(BODY),
                       See_invisible ? " completely" : "..");
         }
@@ -579,12 +592,12 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case TOWEL:
     case LENSES:
         if (Blind && !already_blind) {
-            if (flags.verbose)
+            if (flags.verbose && (msgtype != em_silent))
                 pline(bad_msgc, "You can't see any more.");
             /* set ball&chain variables before the hero goes blind */
             if (Punished)
                 set_bc(0);
-        } else if (already_blind && !Blind) {
+        } else if (already_blind && !Blind && (msgtype != em_silent)) {
             /* "You are now wearing the Eyes of the Overworld." Can't use
                pline_implied here, though, as that message is msgc_actionboring
                and thus many players may hide it. */
