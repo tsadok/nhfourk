@@ -94,7 +94,8 @@ dochugw(struct monst *mtmp)
     return rd;
 }
 
-
+/* Note that if monsters are added to or removed from the list of ones
+   that ignore Elbereth, their difficulty may need to be reconsidered. */
 boolean
 onscary(int x, int y, struct monst * mtmp)
 {

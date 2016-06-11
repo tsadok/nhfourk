@@ -32,8 +32,8 @@ struct monst zeromonst; /* only address matters, value is irrelevant */
     m_initgrp(mtmp, lev, x, y, 3, f)
 #define m_initlgrp(mtmp, lev, x, y, f) \
     m_initgrp(mtmp, lev, x, y, 10, f)
-#define toostrong(monindx, lev)        (monstr[monindx] > lev)
-#define tooweak(monindx, lev)          (monstr[monindx] < lev)
+#define toostrong(monindx, lev)        (MONSTR(monindx) > lev)
+#define tooweak(monindx, lev)          (MONSTR(monindx) < lev)
 
 struct monst *
 newmonst(int extyp, int namelen)
@@ -1616,7 +1616,7 @@ rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
             }
             if (ignoreflags & G_INDEPTH && genprob) {
                 /* implement a rejection chance from the first check*/
-                int ood_distance = (int)monstr[mndx] - (int)maxmlev / 2;
+                int ood_distance = (int)MONSTR(mndx) - (int)maxmlev / 2;
                 if (ood_distance > 14)
                     ood_distance = 14; /* avoid integer overflow problems */
                 if (ood_distance <= 0)

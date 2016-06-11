@@ -213,8 +213,8 @@
 # define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
                                       is_domestic(ptr))
 
-/* Generated in readonly.c */
-extern const int monstr[];
+#define MONSTR(x)    (mons[(x)].difficulty)
+
 /* Dummy address */
 extern struct monst zeromonst;
 

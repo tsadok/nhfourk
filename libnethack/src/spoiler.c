@@ -1085,7 +1085,7 @@ makehtmlspoilers(void)
         fprintf(outfile, "\n<table id=\"monsters\"><thead>\n  "
                 "<tr><th class=\"mlet\"></th>"
                 "<th class=\"monster\">monster</th>"
-                "<th class=\"numeric level\">lvl</th>"
+                "<th class=\"numeric level\">lv</th>"
                 "<th class=\"numeric monstr\">mon<br />str</th>"
                 "<th class=\"numeric speed\">mov</th>"
                 "<th class=\"numeric ac\">def</th>"
@@ -1095,7 +1095,7 @@ makehtmlspoilers(void)
                 "    <span class=\"attacks\">attacks</span></th>"
                 "<th class=\"resistances\">resists</th>"
                 "<th class=\"resgranted\">grants</th>"
-                "<th class=\"numeric nutrition\">nutr</th>"
+                "<th class=\"numeric nutrition\">nut</th>"
                 "<th class=\"numeric weight\">wt</th>"
                 "<th class=\"size\">sz</th>"
                 "<th class=\"mrace\">race</th>"
@@ -1133,7 +1133,7 @@ makehtmlspoilers(void)
                     "<td class=\"mrace\">%s</td>"
                     "<td class=\"flags\">%s</td>"
                     "</tr>\n", i, mlet, mons[i].mname, mons[i].mlevel,
-                    monstr[i], mons[i].mmove, (10 - mons[i].ac),
+                    MONSTR(i), mons[i].mmove, (10 - mons[i].ac),
                     mons[i].mr, spoilmaligntyp(i),
                     spoilmonskills(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
@@ -1316,7 +1316,7 @@ makepinobotyaml(void)
             fprintf(f, " - name: \"%s\"\n", pm->mname);
             fprintf(f, "   symbol: \"%c\"\n", def_monsyms[(int)pm->mlet]);
             fprintf(f, "   base-level: %d\n", pm->mlevel);
-            fprintf(f, "   difficulty: %d\n", monstr[i]);
+            fprintf(f, "   difficulty: %d\n", MONSTR(i));
             fprintf(f, "   speed: %d\n", pm->mmove);
             fprintf(f, "   ac: %d\n", pm->ac);
             fprintf(f, "   mr: %d\n", pm->mr);

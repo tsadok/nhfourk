@@ -12,8 +12,6 @@
 #include "qtext.h"
 #include "epri.h"
 
-extern const int monstr[];
-
 static short which_arti(int);
 static boolean mon_has_arti(const struct monst *, short);
 static struct monst *other_mon_has_arti(struct monst *, short);
@@ -743,7 +741,7 @@ nasty(struct monst *mcast)
                 makeindex = pick_nasty();
                 j++;
             } while (((mcast && attacktype(&mons[makeindex], AT_MAGC) &&
-                       monstr[makeindex] >= monstr[monsndx(mcast->data)]) ||
+                       MONSTR(makeindex) >= MONSTR(monsndx(mcast->data))) ||
                       (mons[makeindex].maligntyp &&
                        sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
                       (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);

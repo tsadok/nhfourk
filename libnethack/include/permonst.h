@@ -54,6 +54,7 @@ struct permonst {
     const char *mname;  /* full name */
     char mlet;  /* symbol */
     schar mlevel,       /* base monster level */
+          difficulty,   /* monster difficulty, formerly monstr/mstrength */
           mmove,        /* move speed */
           ac,   /* (base) armor class */
           stealth, /* (base) stealthiness */

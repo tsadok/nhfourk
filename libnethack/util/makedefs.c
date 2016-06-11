@@ -66,8 +66,6 @@ static int check_control(char *);
 static char *without_control(char *);
 static boolean d_filter(char *);
 static boolean h_filter(char *);
-static boolean ranged_attk(const struct permonst *);
-static int mstrength(const struct permonst *);
 
 static boolean qt_comment(char *);
 static boolean qt_control(char *);
@@ -761,97 +759,14 @@ do_dungeon(const char *infile, const char *outfile)
     return;
 }
 
-/* returns TRUE if monster can attack at range */
-static boolean
-ranged_attk(const struct permonst *ptr)
-{
-    int i, j;
-    int atk_mask = (1 << AT_BREA) | (1 << AT_SPIT) | (1 << AT_GAZE);
-
-    for (i = 0; i < NATTK; i++) {
-        if ((j = ptr->mattk[i].aatyp) >= AT_WEAP || (atk_mask & (1 << j)))
-            return TRUE;
-    }
-
-    return FALSE;
-}
-
-/* This routine is designed to return an integer value which represents
- * an approximation of monster strength.  It uses a similar method of
- * determination as "experience()" to arrive at the strength.
- */
-static int
-mstrength(const struct permonst *ptr)
-{
-    int i, tmp2, n, tmp = ptr->mlevel;
-
-    if (tmp > 49)       /* special fixed hp monster */
-        tmp = 2 * (tmp - 6) / 4;
-
-/* For creation in groups */
-    n = (! !(ptr->geno & G_SGROUP));
-    n += (! !(ptr->geno & G_LGROUP)) << 1;
-
-/* For ranged attacks */
-    if (ranged_attk(ptr))
-        n++;
-
-/* For higher ac values */
-    n += (ptr->ac < 4);
-    n += (ptr->ac < 0);
-
-/* For very fast monsters */
-    n += (ptr->mmove >= 18);
-
-/* For each attack and "special" attack */
-    for (i = 0; i < NATTK; i++) {
-
-        tmp2 = ptr->mattk[i].aatyp;
-        n += (tmp2 > 0);
-        n += (tmp2 == AT_MAGC);
-        n += (tmp2 == AT_WEAP && (ptr->mflags2 & M2_STRONG));
-    }
-
-/* For each "special" damage type */
-    for (i = 0; i < NATTK; i++) {
-
-        tmp2 = ptr->mattk[i].adtyp;
-        if ((tmp2 == AD_DRLI) || (tmp2 == AD_STON) || (tmp2 == AD_DRST)
-            || (tmp2 == AD_DRDX) || (tmp2 == AD_DRCO) || (tmp2 == AD_WERE))
-            n += 2;
-        else if (tmp2 == AD_FLPN)
-            n += 1; /* NH Fourk floating eyes */
-        else if (strcmp(ptr->mname, "grid bug"))
-            n += (tmp2 != AD_PHYS);
-        n += ((int)(ptr->mattk[i].damd * ptr->mattk[i].damn) > 23);
-    }
-
-/* Leprechauns are special cases.  They have many hit dice so they
-   can hit and are hard to kill, but they don't really do much damage. */
-    if (!strcmp(ptr->mname, "leprechaun"))
-        n -= 2;
-
-/* Finally, adjust the monster level  0 <= n <= 24 (approx.) */
-    if (n == 0)
-        tmp--;
-    else if (n >= 6)
-        tmp += (n / 2);
-    else
-        tmp += (n / 3 + 1);
-
-    return (tmp >= 0) ? tmp : 0;
-}
-
 /* Generate the following read-only data tables:
  *
- * monstr:                       mstrength values for monsters
  * bases:                        the first object of each class
  * timezone_list, timezone_spec: timezones
  */
 void
 do_readonly(const char *outfile)
 {
-    const struct permonst *ptr;
     int i, j;
 
     /* create the source file, "readonly.c" */
@@ -867,19 +782,6 @@ do_readonly(const char *outfile)
     fprintf(ofp, "#include \"decl.h\"\n");
     fprintf(ofp, "#include \"objclass.h\"\n");
     fprintf(ofp, "#include \"mondata.h\"\n");
-
-    /* monstr */
-    fprintf(ofp, "\nconst int monstr[] = {\n");
-    j = 0;
-    for (ptr = &mons[0]; ptr->mlet; ptr++) {
-        i = mstrength(ptr);
-        j += fprintf(ofp, "%2d, ", i);
-        if (j > 70) {
-            fprintf(ofp, "\n");
-            j = 0;
-        }
-    }
-    fprintf(ofp, "%s};\n", j > 0 ? "\n" : "");
 
     /* bases: based on code previously in o_init.c */
     int bases[MAXOCLASSES];

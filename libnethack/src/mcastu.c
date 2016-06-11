@@ -6,8 +6,6 @@
 #include "hack.h"
 #include "alignrec.h"
 
-extern const int monstr[];
-
 /* monster mage spells */
 #define MGC_PSI_BOLT    0
 #define MGC_CURE_SELF   1
@@ -1309,7 +1307,7 @@ ucast_wizard_spell(struct monst *mattk, struct monst *mtmp, int dmg,
                         do {
                             makeindex = pick_nasty();
                         } while (attacktype(&mons[makeindex], AT_MAGC) &&
-                                 monstr[makeindex] >= monstr[u.umonnum]);
+                                 MONSTR(makeindex) >= MONSTR(u.umonnum));
                         if (yours &&
                             !enexto(&bypos, level, u.ux, u.uy,
                                     &mons[makeindex]))

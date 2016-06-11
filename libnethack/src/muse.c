@@ -10,8 +10,6 @@
 #include "hack.h"
 #include "edog.h"
 
-extern const int monstr[];
-
 boolean m_using = FALSE;
 
 /* Let monsters use magic items.  Arbitrary assumptions: Monsters only use
@@ -929,7 +927,7 @@ int
 rnd_defensive_item(struct monst *mtmp, enum rng rng)
 {
     const struct permonst *pm = mtmp->data;
-    int difficulty = monstr[monsndx(pm)];
+    int difficulty = MONSTR(monsndx(pm));
     int trycnt = 0;
 
     if (is_animal(pm) || attacktype(pm, AT_EXPL) || mindless(mtmp->data)
@@ -1584,7 +1582,7 @@ int
 rnd_offensive_item(struct monst *mtmp, enum rng rng)
 {
     const struct permonst *pm = mtmp->data;
-    int difficulty = monstr[monsndx(pm)];
+    int difficulty = MONSTR(monsndx(pm));
 
     if (is_animal(pm) || attacktype(pm, AT_EXPL) || mindless(mtmp->data)
         || noncorporeal(pm) || pm->mlet == S_KOP)
@@ -1659,7 +1657,7 @@ find_misc(struct monst * mtmp, struct musable * m)
         dist2(x, y, mtmp->mux, mtmp->muy) > 36)
         return FALSE;
 
-    if (!stuck && !immobile && !mtmp->cham && monstr[monsndx(mdat)] < 6) {
+    if (!stuck && !immobile && !mtmp->cham && MONSTR(monsndx(mdat)) < 6) {
         boolean ignore_boulders = (verysmall(mdat) || throws_rocks(mdat) ||
                                    passes_walls(mdat));
         for (xx = x - 1; xx <= x + 1; xx++)
@@ -1747,21 +1745,21 @@ find_misc(struct monst * mtmp, struct musable * m)
         }
         nomore(MUSE_WAN_POLYMORPH_SELF);
         if (obj->otyp == WAN_POLYMORPH && !mtmp->cham &&
-            monstr[monsndx(mdat)] < 6) {
+            MONSTR(monsndx(mdat)) < 6) {
             m->misc = obj;
             m->has_misc = MUSE_WAN_POLYMORPH_SELF;
             continue;
         }
         nomore(MUSE_POT_POLYMORPH);
         if (obj->otyp == POT_POLYMORPH && !mtmp->cham &&
-            monstr[monsndx(mdat)] < 6) {
+            MONSTR(monsndx(mdat)) < 6) {
             m->misc = obj;
             m->has_misc = MUSE_POT_POLYMORPH;
         }
         nomore(MUSE_WAN_POLYMORPH);
         if (ranged_stuff && target != &youmonst &&
             obj->otyp == WAN_POLYMORPH && !target->cham && !resists_magm(target) &&
-            (monstr[monsndx(tdat)] < 6 || mprof(mtmp, MP_WANDS) == MP_WAND_EXPERT)) {
+            (MONSTR(monsndx(tdat)) < 6 || mprof(mtmp, MP_WANDS) == MP_WAND_EXPERT)) {
             m->misc = obj;
             m->has_misc = MUSE_WAN_POLYMORPH;
         }
@@ -2110,7 +2108,7 @@ int
 rnd_misc_item(struct monst *mtmp, enum rng rng)
 {
     const struct permonst *pm = mtmp->data;
-    int difficulty = monstr[monsndx(pm)];
+    int difficulty = MONSTR(monsndx(pm));
 
     if (is_animal(pm) || attacktype(pm, AT_EXPL) || mindless(mtmp->data)
         || noncorporeal(pm) || pm->mlet == S_KOP)
@@ -2160,7 +2158,7 @@ searches_for_item(struct monst *mon, struct obj *obj)
         if (typ == WAN_DIGGING)
             return (boolean) (!is_floater(mon->data));
         if (typ == WAN_POLYMORPH)
-            return (boolean) (monstr[monsndx(mon->data)] < 6);
+            return (boolean) (MONSTR(monsndx(mon->data)) < 6);
         if (objects[typ].oc_dir == RAY || typ == WAN_STRIKING ||
             typ == WAN_TELEPORTATION || typ == WAN_CREATE_MONSTER)
             return TRUE;

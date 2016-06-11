@@ -1509,7 +1509,6 @@ dosacrifice(const struct nh_cmd_arg *arg)
     if (otmp->otyp == CORPSE) {
         const struct permonst *ptr = &mons[otmp->corpsenm];
         struct monst *mtmp;
-        extern const int monstr[];
 
         /* KMH, conduct */
         break_conduct(conduct_gnostic);
@@ -1519,7 +1518,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
 
         if (otmp->corpsenm == PM_ACID_BLOB ||
             (moves <= peek_at_iced_corpse_age(otmp) + 50)) {
-            value = monstr[otmp->corpsenm] + 1;
+            value = MONSTR(otmp->corpsenm) + 1;
             if (otmp->oeaten)
                 value = eaten_stat(value, otmp);
         }
