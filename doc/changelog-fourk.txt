@@ -61,6 +61,18 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When you throw Mjollnir, if it fails to return to your hand, it now
+   always lands safely at your feet, not dealing any damage to you.
+   The 1% chance of harming yourself and more importantly your
+   inventory may have been interesting flavor, but in practice it just
+   meant Mjollnir was a worse choice for Valkyries than other artifact
+   weapons, such as Excalibur or Frostbane or Grayswandir.  Mjollnir
+   still has downsides (some monsters are shock-resistant, leaving you
+   with the terrible base item damage; and the shock damage against
+   your enemies can still destroy vulnerable items they may be holding
+   in their inventories, such as rings); that's as may be, but you no
+   longer risk hitting yourself with it.
+
  * If hand cramping, blindness, confusion, hallucination, or being
    stunned would have caused your hand to slip while writing,
    distorting the message, but your base constitution (without any

@@ -963,8 +963,8 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
     } else if (dz) {
         if (dz < 0 && Role_if(PM_VALKYRIE) && obj->oartifact == ART_MJOLLNIR &&
             !impaired) {
-            pline(msgc_yafm, "%s the %s and returns to your hand!",
-                  Tobjnam(obj, "hit"), ceiling(u.ux, u.uy));
+            pline(msgc_yafm, "%s the %s and returns to your %s!",
+                  Tobjnam(obj, "hit"), ceiling(u.ux, u.uy), body_part(HAND));
             obj = addinv(obj);
             encumber_msg();
             setuwep(obj);
@@ -1094,11 +1094,9 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             /* we must be wearing Gauntlets of Power to get here */
             sho_obj_return_to_u(obj, dx, dy);   /* display its flight */
 
-            int dmg = rn2_on_rng(2, rng_mjollnir_return);
-
             if (rn2_on_rng(100, rng_mjollnir_return) && !impaired) {
-                pline(msgc_actionok, "%s to your hand!",
-                      Tobjnam(obj, "return"));
+                pline(msgc_actionok, "%s to your %s!",
+                      Tobjnam(obj, "return"), body_part(HAND));
                 obj = addinv(obj);
                 encumber_msg();
                 setuwep(obj);
@@ -1106,21 +1104,11 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
                 if (cansee(bhitpos.x, bhitpos.y))
                     newsym(bhitpos.x, bhitpos.y);
             } else {
-                if (!dmg) {
-                    pline(msgc_substitute, Blind ? "%s lands %s your %s." :
-                          "%s back to you, landing %s your %s.",
-                          Blind ? "Something" : Tobjnam(obj, "return"),
-                          Levitation ? "beneath" : "at",
-                          makeplural(body_part(FOOT)));
-                } else {
-                    dmg += rnd(3);
-                    pline(msgc_substitute, Blind ? "%s your %s!" :
-                          "%s back toward you, hitting your %s!",
-                          Tobjnam(obj, Blind ? "hit" : "fly"),
-                          body_part(ARM));
-                    artifact_hit(NULL, &youmonst, obj, &dmg, 0);
-                    losehp(dmg, killer_msg_obj(DIED, obj));
-                }
+                pline(msgc_substitute, Blind ? "%s lands %s your %s." :
+                      "%s back to you, landing %s your %s.",
+                      Blind ? "Something" : Tobjnam(obj, "return"),
+                      Levitation ? "beneath" : "at",
+                      makeplural(body_part(FOOT)));
                 if (ship_object(obj, u.ux, u.uy, FALSE)) {
                     thrownobj = NULL;
                     return;
