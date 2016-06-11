@@ -2333,8 +2333,8 @@ mintrap(struct monst *mtmp)
 
         case STINKING_TRAP:
             if (in_sight)
-                pline(Hallucination ? msgprintf("%s cuts the cheese.",
-                                                Monnam(mtmp)) : 
+                pline("%s", Hallucination ? msgprintf("%s cuts the cheese.",
+                                                      Monnam(mtmp)) : 
                       msgprintf("A cloud of foul-smelling gas"
                                 " billows up around %s!", mon_nam(mtmp)));
             else
