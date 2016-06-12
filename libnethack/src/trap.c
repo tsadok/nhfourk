@@ -2780,7 +2780,6 @@ dofiretrap(struct obj *box)
     /* Bug: for box case, the equivalent of burn_floor_paper() ought
        to be done upon its contents. */
 
-//<<<<<<< HEAD
     if ((box && !carried(box)) ? is_pool(level, box->ox, box->oy) :
         (Underwater || is_puddle(lev, u.ux, u.uy))) {
         if (Fire_resistance) {
