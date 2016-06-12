@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Kicking open secret doors and secret corridors is easier than
+   before.
+
  * When you throw Mjollnir, if it fails to return to your hand, it now
    always lands safely at your feet, not dealing any damage to you.
    The 1% chance of harming yourself and more importantly your
