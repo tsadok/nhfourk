@@ -996,9 +996,9 @@ get_player_ac(void)
         player_ac -= ARM_BONUS(uarmf);
     if (uarms) {
         int armb = ARM_BONUS(uarms);
-        int mult = P_SKILL(P_SHIELD) - 1;
+        int mult = P_SKILL(P_SHIELD);
         if (armb > 0)
-            player_ac -= (armb * mult);
+            player_ac -= (armb * mult) / 2;
         else
             player_ac -= (mult - armb);
     }
