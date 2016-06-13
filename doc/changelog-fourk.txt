@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The skill bonus for martial arts has changed; advancing the skill
+   is now somewhat more worthwhile, in terms of damage you do.
+
  * Healers now start with a collection of healing herbs (eucalyptus,
    wolfsbane, garlic).
 

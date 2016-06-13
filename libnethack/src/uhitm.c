@@ -419,7 +419,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
             tmp = 0;
         else if (martial_bonus())
              /* bonus for martial arts */
-            tmp = rnd(4) + P_SKILL(P_MARTIAL_ARTS);
+            tmp = rnd(4 + (P_SKILL(P_MARTIAL_ARTS) * 2)) +
+                P_SKILL(P_MARTIAL_ARTS);
         else
             tmp = rnd(2);
         valid_weapon_attack = (tmp > 1);
@@ -1024,7 +1025,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
     } else
         /* VERY small chance of stunning opponent if unarmed. */
     if (unarmed && tmp > 1 && !thrown && !obj && !Upolyd) {
-        if (rnd(100) < P_SKILL(P_BARE_HANDED_COMBAT) && !bigmonst(mdat) &&
+        if (rnd(100) < (P_SKILL(P_BARE_HANDED_COMBAT) * 3 - 3) && !bigmonst(mdat) &&
             !thick_skinned(mdat)) {
             if (canspotmon(mon))
                 pline(msgc_combatalert, "%s %s from your powerful strike!",
