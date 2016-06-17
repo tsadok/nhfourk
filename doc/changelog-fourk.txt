@@ -243,6 +243,12 @@ Changes in 4.3.0.3:
    the wand is blessed or cursed, the effectiveness is adjusted by
    one level, and if an unskilled user zaps a cursed one, it explodes.
    I also introduced wands in starting inventory for more roles.
+   NOTE: the wand balance patch contains several "gotcha" changes,
+   things that can catch you off guard if you expect wands to be
+   like vanilla.  For example, at low skill levels, zapping a wand
+   of teleportation at a monster to teleport it away will not work
+   on a non-teleport level.  Players are advised to read the wiki
+   article, https://nethackwiki.com/wiki/Wands_Balance_Patch
 
  * Added a "new" type of amulet, the amulet of flying.  (Slash'em
    has had this for a long time, of course.)
