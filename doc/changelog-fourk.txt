@@ -61,6 +61,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Some spell levels have changed, for balance reasons.  This is not
+   as comprehensive as the full spell inventory review that I want to
+   do, but it's a start.  Some spells are now easier to cast (e.g.,
+   digging) and others are harder (e.g., charm monster).  See the
+   spellbook section of the auto-generated spoiler for details.
+
  * In Sokoban, monsters that would ordinarly generate peaceful for
    your character because of alignment or race will instead generate
    hostile, unless they have the M2_NASTY flag (in which case they
