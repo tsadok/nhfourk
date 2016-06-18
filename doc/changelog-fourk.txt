@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * In Sokoban, monsters that would ordinarly generate peaceful for
+   your character because of alignment or race will instead generate
+   hostile, unless they have the M2_NASTY flag (in which case they
+   have their usual chance of being peaceful).  In practice, this
+   means no more peaceful garter snakes, gnomes, orcs, etc. clogging
+   up the boulder paths in Sokoban.
+
  * Kicking open secret doors and secret corridors is easier than
    before.
 
