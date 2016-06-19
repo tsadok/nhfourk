@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Combining potions of healing and speed now results in potions of
+   full healing.  (You can still get potions of extra healing by
+   combining potions of healing with gain energy or gain level.)
+
  * The extra healing that you get (above and beyond your maximum
    health, which increases your maximum) from potions of extra healing
    now diminishes asymptotically toward zero as your maximum health

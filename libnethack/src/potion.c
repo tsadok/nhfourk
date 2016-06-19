@@ -1463,6 +1463,7 @@ mixtype(struct obj *o1, struct obj *o2)
     case POT_HEALING:
         switch (o2->otyp) {
         case POT_SPEED:
+            return POT_FULL_HEALING;
         case POT_GAIN_LEVEL:
         case POT_GAIN_ENERGY:
             return POT_EXTRA_HEALING;
