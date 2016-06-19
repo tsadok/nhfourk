@@ -857,7 +857,7 @@ use_defensive(struct monst *mtmp, struct musable *m)
         i = dice(6 + 2 * bcsign(otmp), 4);
         mtmp->mhp += i;
         if (mtmp->mhp > mtmp->mhpmax)
-            mtmp->mhp = ++mtmp->mhpmax;
+            mtmp->mhp = mtmp->mhpmax;
         if (!otmp->cursed && !mtmp->mcansee) {
             mtmp->mcansee = 1;
             mtmp->mblinded = 0;
@@ -894,7 +894,7 @@ use_defensive(struct monst *mtmp, struct musable *m)
         mquaffmsg(mtmp, otmp);
         if (otmp->otyp == POT_SICKNESS)
             unbless(otmp);      /* Pestilence */
-        mtmp->mhp = (mtmp->mhpmax += (otmp->blessed ? 8 : 4));
+        mtmp->mhp = mtmp->mhpmax;
         if (!mtmp->mcansee && otmp->otyp != POT_SICKNESS) {
             mtmp->mcansee = 1;
             mtmp->mblinded = 0;

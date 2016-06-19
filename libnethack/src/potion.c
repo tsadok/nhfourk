@@ -15,6 +15,7 @@ static const char beverages[] = { POTION_CLASS, 0 };
 static long itimeout(long);
 static long itimeout_incr(long, int);
 static void ghost_from_bottle(void);
+static int overheal_amount(int);
 static short mixtype(struct obj *, struct obj *);
 
 /* force `val' to be within valid range for intrinsic timeout value */
@@ -291,7 +292,6 @@ make_hallucinated(long xtime,   /* nonzero if this is an attempt to turn on
     return changed;
 }
 
-
 static void
 ghost_from_bottle(void)
 {
@@ -444,6 +444,14 @@ dopotion(struct obj *otmp)
     return 1;
 }
 
+static int
+overheal_amount(int maxhp)
+{
+    int max = (250 - maxhp) / 5;
+    if ((max <= 0) || (ilog2(max) <= 0))
+        return 0;
+    return rnd(ilog2(max)) / 1000;
+}
 
 int
 peffects(struct obj *otmp)
@@ -837,7 +845,7 @@ peffects(struct obj *otmp)
         if (otmp->blessed && (u.ucramps > 1))
             u.ucramps = u.ucramps * 3 / 4 - 1;
         pline(msgc_statusheal, "You feel better.");
-        healup(dice(6 + 2 * bcsign(otmp), 4), !otmp->cursed ? 1 : 0,
+        healup(dice(6 + 2 * bcsign(otmp), 4), 0,
                !!otmp->blessed, !otmp->cursed);
         exercise(A_CON, TRUE);
         break;
@@ -846,7 +854,7 @@ peffects(struct obj *otmp)
             u.ucramps = u.ucramps * 2 / 3 - 1;
         pline(msgc_statusheal, "You feel much better.");
         healup(dice(6 + 2 * bcsign(otmp), 8),
-               otmp->blessed ? 5 : !otmp->cursed ? 2 : 0, !otmp->cursed, TRUE);
+               overheal_amount(u.uhpmax), !otmp->cursed, TRUE);
         make_hallucinated(0L, TRUE);
         exercise(A_CON, TRUE);
         exercise(A_STR, TRUE);
@@ -855,11 +863,11 @@ peffects(struct obj *otmp)
         if (otmp->blessed && (u.ucramps > 1))
             u.ucramps = u.ucramps * 1 / 2 - 1;
         pline(msgc_statusheal, "You feel completely healed.");
-        healup(400, 4 + 4 * bcsign(otmp), !otmp->cursed, TRUE);
+        healup(250, 0, !otmp->cursed, TRUE);
         /* Restore one lost level if blessed */
         if (otmp->blessed && u.ulevel < u.ulevelmax) {
             /* when multiple levels have been lost, drinking multiple potions
-               will only get half of them back */
+               will only get half of them back, in challenge mode */
             if (challengemode)
                 u.ulevelmax -= 1;
             pluslvl(FALSE);

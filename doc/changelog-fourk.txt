@@ -61,6 +61,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The extra healing that you get (above and beyond your maximum
+   health, which increases your maximum) from potions of extra healing
+   now diminishes asymptotically toward zero as your maximum health
+   approaches 250.  Also, potions of extra healing are now the only
+   potions that grant this extra healing (hence, in full retcon mode,
+   their name).  Regular potions of healing cannot take you above your
+   maximum health, and potions of full healing raise you to your max
+   health or 250, whichever is less.  Monsters also no longer get the
+   extra above-maximum healing from potions of healing and full
+   healing, only from extra healing.
+
  * The use of fountains and sinks and the drinking of magical potions
    are now tracked as conducts.  The avert excessive spamminess, these
    conducts are only mentioned if you've kept them.
