@@ -849,12 +849,14 @@ you_moved(void)
                        pline(msgc_statusheal, "You move more freely.");
                 }
                 if ((u.uintrinsic[FAST] & INTRINSIC) && (rn2(3) != 0))
-                    u.moveamt += NORMAL_SPEED / 2; /* intrinsic speed */
+                    u.moveamt += NORMAL_SPEED / 3; /* intrinsic speed */
+                else if (u.uintrinsic[FAST] & INTRINSIC)
+                    u.moveamt += NORMAL_SPEED / 12;
                 if (u.uintrinsic[FAST] & ~INTRINSIC)
-                    u.moveamt = u.moveamt * 4 / 3; /* temporary haste/potion */
+                    u.moveamt = u.moveamt * 5 / 4; /* temporary haste/potion */
                 if (mworn_extrinsic(&youmonst, FAST))
-                    u.moveamt += rn2(3) ? (NORMAL_SPEED * 3 / 5) :
-                        (NORMAL_SPEED / 3); /* extrinsic speed (e.g., boots) */
+                    u.moveamt += rn2(3) ? (NORMAL_SPEED * 3 / 7) :
+                        (NORMAL_SPEED / 4); /* extrinsic speed (e.g., boots) */
             }
 
             switch (wtcap) {

@@ -191,12 +191,14 @@ Changes in 4.3.0.4:
    to avoiding combat rather than engaging in it.  They can be
    archeologists, rangers, or tourists.
 
- * The formula for how many moves you get per turn has changed.  Four
+ * The formula for how many moves you get per turn has changed.  Five
    factors contribute more or less independently:  your "base speed",
    which is based on your race; whether you are intrinsically "fast"
    or not; whether you have extrinsic speed (e.g., from speed boots);
-   and whether you are temporarily hasted (as from a spell of haste
-   self or a potion of speed).  These all stack.
+   whether you are temporarily hasted (as from a spell of haste self
+   or a potion of speed); and whether you are temporarily slowed
+   (e.g., by a spider's web attack).  These all stack; but
+   individually some of them don't do as much as before.
 
  * Wielding Stormbringer now causes peaceful and tame monsters to
    attack you.  It also stops conflict from working in your favor.
