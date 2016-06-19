@@ -1436,6 +1436,7 @@ arti_invoke(struct obj *obj)
             else
                 do_uncurse_effect(FALSE, TRUE);
             update_inventory();
+            break;
         }
         case UNTRAP:{
                 if (!untrap(&(struct nh_cmd_arg){.argtype = 0}, TRUE)) {
