@@ -894,7 +894,7 @@ not_special:
     if ((!mtmp->mpeaceful || !rn2(10)) && (!Is_rogue_level(&u.uz))) {
         boolean in_line = lined_up(mtmp) &&
             (distmin(mtmp->mx, mtmp->my, mtmp->mux, mtmp->muy) <=
-             (throws_rocks(youmonst.data) ? 20 : ACURRSTR / 2 + 1));
+             (throws_rocks(URACEDATA) ? 20 : ACURRSTR / 2 + 1));
 
         if (appr != 1 || !in_line)
             setlikes = TRUE;

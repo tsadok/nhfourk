@@ -159,7 +159,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
                 }
                 mtmp->mtrapped = 0;
             } else {
-                if (!Passes_walls && !throws_rocks(youmonst.data)) {
+                if (!Passes_walls && !throws_rocks(URACEDATA)) {
                     losehp(rnd(15), "squished under a boulder");
                     return FALSE;       /* player remains trapped */
                 } else

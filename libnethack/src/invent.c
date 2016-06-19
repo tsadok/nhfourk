@@ -897,7 +897,7 @@ object_selection_checks(struct obj *otmp, const char *word)
            (otmp->dknown && objects[OIL_LAMP].oc_name_known)))) ||
         (!strcmp(word, "throw") &&
          !(ammo_and_launcher(otmp, uwep) || is_missile(otmp)) &&
-         !(throws_rocks(youmonst.data) && otyp == BOULDER)) ||
+         !(throws_rocks(URACEDATA) && otyp == BOULDER)) ||
         (!strcmp(word, "charge") && !is_chargeable(otmp)))
         return NONSENSIBLE_USE;
 

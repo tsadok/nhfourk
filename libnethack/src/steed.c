@@ -457,7 +457,7 @@ landing_spot(coord * spot,      /* landing position (we fill it in) */
                         if (i > 0 ||
                             (((t = t_at(level, x, y)) == 0 || !t->tseen) &&
                              (!sobj_at(BOULDER, level, x, y) ||
-                              throws_rocks(youmonst.data)))) {
+                              throws_rocks(URACEDATA)))) {
                             spot->x = x;
                             spot->y = y;
                             min_distance = distance;

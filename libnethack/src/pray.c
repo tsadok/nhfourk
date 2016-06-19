@@ -112,7 +112,7 @@ in_trouble(void)
                 continue;
             if (!isok(u.ux + i, u.uy + j) ||
                 IS_ROCK(level->locations[u.ux + i][u.uy + j].typ)
-                || (blocked_boulder(i, j) && !throws_rocks(youmonst.data)))
+                || (blocked_boulder(i, j) && !throws_rocks(URACEDATA)))
                 count++;
         }
     if (count == 8 && !Passes_walls)

@@ -137,6 +137,7 @@ static const struct trobj Priest[] = {
 };
 
 static const struct trobj Ranger[] = {
+#define RAN_DAGGER      0
 #define RAN_BOW         1
 #define RAN_TWO_ARROWS  2
 #define RAN_ZERO_ARROWS 3
@@ -224,6 +225,11 @@ static const struct trobj Tinopener[] = {
 static const struct trobj GnomeStuff[] = {
     {AKLYS, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     /*  {CROSSBOW_BOLT, 2, WEAPON_CLASS, 12, UNDEF_BLESS}, */
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj GiantStuff[] = {
+    {BOULDER, 0, ROCK_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -336,6 +342,12 @@ static const struct inv_sub {
     {PM_SCURRIER, DAGGER, DART},
     {PM_SCURRIER, BOW, DART},
     {PM_SCURRIER, ARROW, DART},
+    /* Giants can't use body armor */
+    {PM_GIANT, RING_MAIL, HELMET},             /* Bar Gia */
+    {PM_GIANT, LEATHER_ARMOR, FLINT},          /* Cav Gia */
+    {PM_GIANT, BOW, SLING},                    /* Ran Gia */
+    {PM_GIANT, ARROW, FLINT},                  /*  ditto */
+    {PM_GIANT, CLOAK_OF_DISPLACEMENT, HELMET}, /*  ditto */
     {NON_PM, STRANGE_OBJECT, STRANGE_OBJECT}
 };
 
@@ -477,7 +489,7 @@ static const struct def_skill Skill_Ran[] = {
     {P_QUARTERSTAFF, P_BASIC}, {P_POLEARMS, P_SKILLED},
     {P_SPEAR, P_SKILLED}, {P_JAVELIN, P_EXPERT},
     {P_TRIDENT, P_BASIC}, {P_BOW, P_EXPERT},
-    {P_SLING, P_EXPERT}, {P_CROSSBOW, P_EXPERT},
+    {P_SLING, P_SKILLED}, {P_CROSSBOW, P_EXPERT},
     {P_DART, P_EXPERT}, {P_SHURIKEN, P_SKILLED},
     {P_BOOMERANG, P_EXPERT}, {P_WHIP, P_BASIC},
     {P_HEALING_SPELL, P_BASIC},
@@ -796,6 +808,17 @@ u_init_inv_skills(void)
             /* darts */
             trobj_list[RAN_TWO_ARROWS].trquan = 25 + rolern2(10);
             trobj_list[RAN_ZERO_ARROWS].trquan = 15 + rolern2(5);
+        } else if (Race_if(PM_GIANT)) {
+            /* sling ammo */
+            trobj_list[RAN_DAGGER].trotyp = FLINT;
+            trobj_list[RAN_DAGGER].trspe = 0;       /* no +2 flint */
+            trobj_list[RAN_TWO_ARROWS].trquan = 15; /* i.e., 15 stacks */
+            trobj_list[RAN_TWO_ARROWS].trspe = 0;   /* no +2 flint */
+            trobj_list[RAN_ZERO_ARROWS].trquan = 3; /* i.e., 3 stacks */
+            trobj_list[RAN_ZERO_ARROWS].trotyp = ROCK;
+            augment_magic_chest_contents(SLING, 0, 2);
+            augment_magic_chest_contents(FLINT, 0, 5);
+            augment_magic_chest_contents(SILVER_NUGGET, 0, 3);
         } else {
             trobj_list[RAN_TWO_ARROWS].trquan = 50 + rolern2(10);
             trobj_list[RAN_ZERO_ARROWS].trquan = 30 + rolern2(10);
@@ -974,6 +997,13 @@ u_init_inv_skills(void)
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
         augment_skill_cap(P_STEALTH, 1, P_BASIC, P_EXPERT);
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
+        break;
+
+    case PM_GIANT:
+        ini_inv(GiantStuff, nclist, rng_main);
+        augment_skill_cap(P_TWO_HANDED_SWORD, 2, P_SKILLED, P_MASTER);
+        augment_skill_cap(P_SLING, 2, P_BASIC, P_EXPERT);
+        augment_magic_chest_contents(TWO_HANDED_SWORD, 0, 1);
         break;
 
     case PM_ORC:

@@ -245,6 +245,10 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
     case S_GIANT:
         if (rn2_on_rng(2, rng))
             mongets(mtmp, (mm != PM_ETTIN) ? BOULDER : CLUB, rng);
+        else if (mtmp->data->mflagsr == MRACE_GIANT && rn2_on_rng(2, rng)) {
+            mongets(mtmp, SLING, rng);
+            mongets(mtmp, (rn2_on_rng(3, rng) ? ROCK : FLINT), rng);
+        }
         break;
     case S_HUMAN:
         if (mtmp->iswiz) {
@@ -1901,7 +1905,7 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
             otmp->quan = rne_on_rng(2, rng);
             otmp->owt = weight(otmp);
         }
-        if (otmp->otyp == FLINT) {
+        if (otmp->otyp == FLINT || otmp->otyp == ROCK) {
             otmp->quan += rn2_on_rng(4, rng);
             otmp->owt = weight(otmp);
         }

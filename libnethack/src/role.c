@@ -74,7 +74,8 @@ const struct Role roles[] = {
      PM_PELIAS, PM_CHIEFTAIN, PM_THOTH_AMON,
      PM_OGRE, PM_TROLL, S_OGRE, S_TROLL,
      ART_HEART_OF_AHRIMAN,
-     MRACE_HUMAN | MRACE_DWARF | MRACE_ORC | ROLE_MALE | ROLE_FEMALE
+     MRACE_HUMAN | MRACE_DWARF | MRACE_ORC | MRACE_GIANT
+              | ROLE_MALE | ROLE_FEMALE
               | ROLE_LAWFUL | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {16, 7, 7, 15, 16, 6},
@@ -100,7 +101,8 @@ const struct Role roles[] = {
      PM_SHAMAN_KARNOV, PM_NEANDERTHAL, PM_GREAT_FIERCE_BEAST,
      PM_BUGBEAR, PM_HILL_GIANT, S_HUMANOID, S_GIANT,
      ART_BIG_STICK,
-     MRACE_HUMAN | MRACE_ORC | ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC | ROLE_NEUTRAL,
+     MRACE_HUMAN | MRACE_ORC | MRACE_GIANT |
+     ROLE_MALE | ROLE_FEMALE | ROLE_CHAOTIC | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
      {10, 7, 7, 7, 8, 6},
      {30, 6, 7, 20, 30, 7},
@@ -256,7 +258,8 @@ const struct Role roles[] = {
      PM_FOREST_CENTAUR, PM_SCORPION, S_CENTAUR, S_SPIDER,
      ART_LONGBOW_OF_DIANA,
      MRACE_HUMAN | MRACE_ELF | MRACE_GNOME | MRACE_ORC | MRACE_SYLPH |
-     MRACE_SCURRIER | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
+     MRACE_GIANT | MRACE_SCURRIER |
+     ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {13, 13, 13, 9, 13, 7},
      {30, 10, 10, 20, 20, 10},
@@ -433,6 +436,19 @@ const struct Race races[] = {
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
      {2, 0, 2, 0, 2, 0} /* Energy */
+     },
+    {"giant", "giant", "giantdom", "Gia",
+     {"giant", "giantess"},
+     6, /* base speed, slow */
+     PM_GIANT, NON_PM, PM_GIANT_MUMMY, PM_GIANT_ZOMBIE,
+     MRACE_GIANT | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL | ROLE_CHAOTIC,
+     MRACE_GIANT, MRACE_GIANT, 0,
+     /* Str Int Wis Dex Con Cha */
+     {18, 3, 3, 3, 3, 3},
+     {STR18(100), 15, 15, 18, 20, 16},
+     /* Init Lower Higher */
+     {1, 0, 0, 1, 0, 0},        /* Hit points */
+     {1, 0, 1, 0, 1, 0} /* Energy */
      },
     {"orc", "orcish", "orcdom", "Orc",
      {0, 0},

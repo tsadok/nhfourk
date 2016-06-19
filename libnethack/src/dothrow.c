@@ -75,7 +75,7 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
         return 0;
     }
     if ((obj->oartifact == ART_MJOLLNIR && ACURR(A_STR) < STR19(25))
-        || (obj->otyp == BOULDER && !throws_rocks(youmonst.data))) {
+        || (obj->otyp == BOULDER && !throws_rocks(URACEDATA))) {
         pline(msgc_cancelled1, "It's too heavy.");
         return 1;
     }

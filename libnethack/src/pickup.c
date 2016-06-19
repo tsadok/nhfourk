@@ -999,7 +999,7 @@ lift_object(struct obj *obj, struct obj *container, long *cnt_p,
        availability of open inventory slot if and only if the player is
        not already carrying one, so you can always get at least one */
     if (obj->otyp == LOADSTONE ||
-        (obj->otyp == BOULDER && throws_rocks(youmonst.data))) {
+        (obj->otyp == BOULDER && throws_rocks(URACEDATA))) {
         if (inv_cnt(TRUE) < 52 || !carrying(obj->otyp) || merge_choice(invent, obj))
             return 1;       /* lift regardless of current situation */
         /* If we reach here, we're out of slots and already have at least
@@ -1013,7 +1013,7 @@ lift_object(struct obj *obj, struct obj *container, long *cnt_p,
     }
 
     *cnt_p = carry_count(obj, container, *cnt_p, telekinesis, &old_wt, &new_wt);
-    if (obj->otyp == BOULDER && throws_rocks(youmonst.data))
+    if (obj->otyp == BOULDER && throws_rocks(URACEDATA))
         *cnt_p = 1;
 
     if (*cnt_p < 1L) {

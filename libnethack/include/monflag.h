@@ -83,6 +83,7 @@
 # define MRACE_SYLPH    MRACE_FAIRY     /* for clarity in role.c */
 # define MRACE_RODENT   0x00000200L     /* is a rodent */
 # define MRACE_SCURRIER MRACE_RODENT    /* for clarity in role.c */
+# define MRACE_GIANT    0x00000400L     /* is a giant */
 
 # define MP_WANDS        0x00000001L
 # define MP_WAND_BASIC   0x00000001L
