@@ -621,22 +621,32 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     }
                     if (isok(posn1.x, posn1.y) &&
                         (ctarg = m_at(level, posn1.x, posn1.y)) &&
+                        !DEADMONSTER(ctarg) &&
+                        (m_mx(ctarg) == posn1.x) && (m_my(ctarg) == posn1.y) &&
                         !ctarg->mtame && !ctarg->mpeaceful) {
                         hmon(ctarg, obj, thrown);
                     }
                     if (isok(posn2.x, posn2.y) &&
                         (ctarg = m_at(level, posn2.x, posn2.y)) &&
+                        !DEADMONSTER(ctarg) &&
+                        (m_mx(ctarg) == posn2.x) && (m_my(ctarg) == posn2.y) &&
                         !ctarg->mtame && !ctarg->mpeaceful) {
                         hmon(ctarg, obj, thrown);
                     }
                     if (P_SKILL(P_AXE) >= P_MASTER) {
                         if (isok(posn3.x, posn3.y) &&
                             (ctarg = m_at(level, posn3.x, posn1.y)) &&
+                            !DEADMONSTER(ctarg) &&
+                            (m_mx(ctarg) == posn3.x) &&
+                            (m_my(ctarg) == posn3.y) &&
                             !ctarg->mtame && !ctarg->mpeaceful) {
                             hmon(ctarg, obj, thrown);
                         }
                         if (isok(posn4.x, posn4.y) &&
                             (ctarg = m_at(level, posn4.x, posn4.y)) &&
+                            !DEADMONSTER(ctarg) &&
+                            (m_mx(ctarg) == posn4.x) &&
+                            (m_my(ctarg) == posn4.y) &&
                             !ctarg->mtame && !ctarg->mpeaceful) {
                             hmon(ctarg, obj, thrown);
                         }
