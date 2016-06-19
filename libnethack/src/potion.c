@@ -392,6 +392,7 @@ dodrink(const struct nh_cmd_arg *arg)
         if (!strcmp(potion_descr, "milky") && flags.ghost_count < MAXMONNO &&
             !rn2(POTION_OCCUPANT_CHANCE(flags.ghost_count))) {
             ghost_from_bottle();
+            break_conduct(conduct_potions);
             useup(potion);
             return 1;
         } else if (!strcmp(potion_descr, "smoky") &&
@@ -399,6 +400,7 @@ dodrink(const struct nh_cmd_arg *arg)
                    !rn2_on_rng(POTION_OCCUPANT_CHANCE(flags.djinni_count),
                                rng_smoky_potion)) {
             djinni_from_bottle(potion);
+            break_conduct(conduct_potions);
             useup(potion);
             return 1;
         }
@@ -418,6 +420,8 @@ dopotion(struct obj *otmp)
         setuwep(0);
     }
 
+    if (objects[otmp->otyp].oc_magic)
+        break_conduct(conduct_potions);
     otmp->in_use = TRUE;
     nothing = unkn = 0;
     if ((retval = peffects(otmp)) >= 0)

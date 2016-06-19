@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The use of fountains and sinks and the drinking of magical potions
+   are now tracked as conducts.  The avert excessive spamminess, these
+   conducts are only mentioned if you've kept them.
+
  * Some spell levels have changed, for balance reasons.  This is not
    as comprehensive as the full spell inventory review that I want to
    do, but it's a start.  Some spells are now easier to cast (e.g.,

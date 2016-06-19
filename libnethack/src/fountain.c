@@ -245,10 +245,13 @@ drinkfountain(void)
         return;
     }
 
+    break_conduct(conduct_fountains);
+
     if (mgkftn && u.uluck >= 0 && fate >= 10) {
         int i, ii, littleluck = (u.uluck < 4);
 
         pline(msgc_intrgain, "Wow!  This makes you feel great!");
+        break_conduct(conduct_potions);
         /* blessed restore ability */
         for (ii = 0; ii < A_MAX; ii++)
             if (ABASE(ii) < AMAX(ii))
@@ -292,6 +295,7 @@ drinkfountain(void)
         /* 17, 18, 19, 20 are uncurse effects in dipfountain(); match them
            against good effects in drinkfountain() */
         case 17:       /* See invisible */
+            break_conduct(conduct_potions);
             if (Blind) {
                 if (Invisible) {
                     pline(msgc_intrgain, "You feel transparent.");
@@ -308,9 +312,11 @@ drinkfountain(void)
             newsym(u.ux, u.uy);
             break;
         case 18:       /* See monsters */
+            break_conduct(conduct_potions);
             monster_detect(NULL, 0);
             break;
         case 19:       /* Self-knowledge */
+            break_conduct(conduct_potions);
             pline(msgc_youdiscover, "You feel self-knowledgeable...");
             win_pause_output(P_MESSAGE);
             enlightenment(0);
@@ -321,6 +327,7 @@ drinkfountain(void)
             struct monst *mtmp;
             
             pline(msgc_statusgood, "This water gives you bad breath!");
+            break_conduct(conduct_potions);
             for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon)
                 if (!DEADMONSTER(mtmp))
                     monflee(mtmp, 0, FALSE, FALSE);
@@ -389,6 +396,8 @@ dipfountain(struct obj *obj)
         floating_above("fountain");
         return;
     }
+
+    break_conduct(conduct_fountains);
 
     /* Don't grant Excalibur when there's more than one object.  */
     /* (quantity could be > 1 if merged daggers got polymorphed) */
@@ -527,6 +536,7 @@ dipfountain(struct obj *obj)
 void
 breaksink(int x, int y)
 {
+    break_conduct(conduct_sinks);
     if (cansee(x, y) || (x == u.ux && y == u.uy))
         pline(msgc_consequence, "The pipes break!  Water spurts out!");
     level->locations[x][y].doormask = 0;
@@ -544,6 +554,8 @@ drinksink(void)
         floating_above("sink");
         return;
     }
+
+    break_conduct(conduct_sinks);
     switch (rn2_on_rng(20, rng_sink_quaff)) {
     case 0:
         pline(msgc_failrandom, "You take a sip of very cold water.");
@@ -585,7 +597,7 @@ drinksink(void)
         otmp->dknown = !(Blind || Hallucination);
         otmp->quan++;   /* Avoid panic upon useup() */
         otmp->fromsink = 1;     /* kludge for docall() */
-        dopotion(otmp);
+        dopotion(otmp); /* potions conduct handled by dopotion() */
         obfree(otmp, NULL);
         break;
     case 5:
@@ -622,6 +634,7 @@ drinksink(void)
         vomit();
         break;
     case 10:
+        break_conduct(conduct_potions);
         if (!Unchanging) {
             pline_implied(msgc_statusbad,
                           "This water contains toxic wastes!");

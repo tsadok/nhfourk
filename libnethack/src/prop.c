@@ -1015,6 +1015,16 @@ show_conduct(int final)
             enl_msg(&menu, You_, "have not applied", "did not apply",
                     " a unicorn horn");
     }
+    if (!u.uconduct[conduct_fountains]) {
+        enl_msg(&menu, You_, "have not used", "did not use",
+                u.uconduct[conduct_sinks] ? " fountains" :
+                " plumbed fixtures");
+    } else if (!u.uconduct[conduct_sinks]) {
+        enl_msg(&menu, You_, "have not used", "did not use", " sinks");
+    }
+    if (!u.uconduct[conduct_potions])
+        enl_msg(&menu, You_, "have not drunk", "did not drink",
+                " any magical draughts");
 
     if (!u.uconduct[conduct_illiterate])
         you_have_been(&menu, "illiterate");

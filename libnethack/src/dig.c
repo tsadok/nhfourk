@@ -548,6 +548,7 @@ digactualhole(int x, int y, struct monst *madeby, int ttyp)
     /* these furniture checks were in dighole(), but wand breaking bypasses
        that routine and calls us directly */
     if (IS_FOUNTAIN(loc->typ)) {
+        break_conduct(conduct_fountains);
         dogushforth(FALSE);
         SET_FOUNTAIN_WARNED(x, y);      /* force dryup */
         dryup(x, y, madeby_u);
