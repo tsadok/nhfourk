@@ -1069,7 +1069,7 @@ makehtmlspoilers(void)
     fd = open_datafile("players.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     if (fd < 0) {
-        pline("Failed to write players spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write players spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
