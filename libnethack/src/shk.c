@@ -1852,6 +1852,9 @@ static long
 get_cost(const struct obj *obj, struct monst *shkp)
 {       /* if angry, impose a surcharge */
     long tmp = getprice(obj, FALSE);
+    /* used to perform a single calculation even when multiple
+       adjustments (unID'd, dunce/tourist, charisma) are made: */
+    long multiplier = 1L, divisor = 1L;
 
     if (!tmp)
         tmp = 5L;
@@ -1902,32 +1905,57 @@ get_cost(const struct obj *obj, struct monst *shkp)
                 break;
             }
             tmp = (long)objects[i].oc_cost;
-        } else if (!(obj->o_id % 4))    /* arbitrarily impose surcharge */
-            tmp += tmp / 3L;
+        } else if (!(obj->o_id % 4)) {
+            /* unidentified: arbitrarily impose surcharge: tmp *= 4/3 */
+            multiplier *= 4L;
+            divisor    *= 3L;
+        }
     }
-    if ((Role_if(PM_TOURIST) && u.ulevel < (MAXULEV / 2))
-        || (uarmu && !uarm && !uarmc))  /* touristy shirt visible */
-        tmp += tmp / 3L;
-    else if (uarmh && uarmh->otyp == DUNCE_CAP)
-        tmp += tmp / 3L;
+    if (uarmh && uarmh->otyp == DUNCE_CAP) {
+        multiplier *= 4L;
+        divisor    *= 3L;
+    } else if ((Role_if(PM_TOURIST) && u.ulevel < (MAXULEV / 2))
+        || (uarmu && !uarm && !uarmc)) { /* touristy shirt visible */
+        multiplier *= 4L;
+        divisor    *= 3L;
+    }
 
-    if (ACURR(A_CHA) > 18)
-        tmp /= 2L;
-    else if (ACURR(A_CHA) > 17)
-        tmp -= tmp / 3L;
-    else if (ACURR(A_CHA) > 15)
-        tmp -= tmp / 4L;
-    else if (ACURR(A_CHA) < 6)
-        tmp *= 2L;
-    else if (ACURR(A_CHA) < 8)
-        tmp += tmp / 2L;
-    else if (ACURR(A_CHA) < 11)
-        tmp += tmp / 3L;
+    if (ACURR(A_CHA) > 18) {
+        divisor *= 2L;
+    } else if (ACURR(A_CHA) > 17) {
+        multiplier *= 2L;
+        divisor    *= 3L;
+    } else if (ACURR(A_CHA) > 15) {
+        multiplier *= 3L;
+        divisor    *= 4L;
+    } else if (ACURR(A_CHA) < 6) {
+        multiplier *= 2L;
+    } else if (ACURR(A_CHA) < 8) {
+        multiplier *= 3L;
+        divisor    *= 2L;
+    } else if (ACURR(A_CHA) < 11) {
+        multiplier *= 4L;
+        divisor    *= 3L;
+    }
+    /* tmp = (tmp * multiplier) / divisor [with roundoff tweak] */
+    tmp *= multiplier;
+    if (divisor > 1L) {
+        /* tmp = (((tmp * 10) / divisor) + 5) / 10 */
+        tmp *= 10L;
+        tmp /= divisor;
+        tmp += 5L;
+        tmp /= 10L;
+    }
+
     if (tmp <= 0L)
         tmp = 1L;
-    else if (obj->oartifact)
+    /* the artifact prices in artilist[] are also used as a score bonus;
+       inflate their shop price here without affecting score calculation */
+    if (obj->oartifact)
         tmp *= 4L;
-    /* anger surcharge should match rile_shk's */
+
+    /* anger surcharge should match rile_shk's, so we do it separately
+       from the multiplier/divisor calculation */
     if (shkp && ESHK(shkp)->surcharge)
         tmp += (tmp + 2L) / 3L;
     return tmp;
@@ -2026,14 +2054,15 @@ static long
 set_cost(struct obj *obj, struct monst *shkp)
 {
     long tmp = getprice(obj, TRUE) * obj->quan;
+    long multiplier = 1L, divisor = 1L;
 
-    if ((Role_if(PM_TOURIST) && u.ulevel < (MAXULEV / 2))
+    if (uarmh && uarmh->otyp == DUNCE_CAP)
+        divisor *= 3L;
+    else if ((Role_if(PM_TOURIST) && u.ulevel < (MAXULEV / 2))
         || (uarmu && !uarm && !uarmc))  /* touristy shirt visible */
-        tmp /= 3L;
-    else if (uarmh && uarmh->otyp == DUNCE_CAP)
-        tmp /= 3L;
+        divisor *= 3L;
     else
-        tmp /= 2L;
+        divisor *= 2L;
 
     /* shopkeeper may notice if the player isn't very knowledgeable -
        especially when gem prices are concerned */
@@ -2049,8 +2078,25 @@ set_cost(struct obj *obj, struct monst *shkp)
                 tmp = (tmp + 3) * obj->quan;
             }
         } else if (tmp > 1L && !(pseudorand % 4))
-            tmp -= tmp / 4L;
+            multiplier *= 3L;
+            divisor    *= 4L;
+        }
     }
+
+    if (tmp >= 1L) {
+        /* [see comment in get_cost()] */
+        tmp *= multiplier;
+        if (divisor > 1L) {
+            tmp *= 10L;
+            tmp /= divisor;
+            tmp += 5L;
+            tmp /= 10L;
+        }
+        /* avoid adjusting nonzero to zero */
+        if (tmp < 1L) tmp = 1L;
+    }
+
+    /* (no adjustment for angry shk here) */
     return tmp;
 }
 
