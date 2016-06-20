@@ -477,7 +477,8 @@ const struct permonst mons[] = {
         M3_INFRAVISIBLE | M3_INFRAVISION, MP_WAND_SKILLED,
         CLR_BRIGHT_MAGENTA | HI_ULINE),
 /*
- * imps & other minor demons/devils
+ * impish beings: mischevious supernatural creatures who appear
+ *        in essentially human-shaped forms
  */
     MON("homunculus", S_IMP,
         SLVL(2, 3, 12, 6, 2, 10, -7), (G_GENO | 2),
@@ -938,7 +939,8 @@ const struct permonst mons[] = {
         M1_POIS | M1_CARNIVORE,
         M2_HOSTILE, 0, 0, CLR_RED),
 /*
- * trappers, lurkers, &c
+ * trappers, lurkers, &c -- things that pretend to be part of the dungeon
+ *      (wall, ceiling, floor) and then attack you when you enter the tile.
  */
     MON("rock piercer", S_TRAPPER,
         LVL(3, 4, 1, 3, 0, 0), (G_GENO | 4),
@@ -2336,7 +2338,7 @@ const struct permonst mons[] = {
         M2_STRONG | M2_STALK | M2_HOSTILE | M2_COLLECT,
         M3_INFRAVISIBLE | M3_INFRAVISION | M3_SCENT, MP_WAND_SKILLED, HI_LORD),
 /*
- * Unused (formerly umber hulk)
+ * Ursines (bears and bear-like creatures)
  */
 
 /*
@@ -2427,7 +2429,7 @@ const struct permonst mons[] = {
         M2_NOPOLY | M2_UNDEAD | M2_WANDER | M2_STALK | M2_HOSTILE | M2_NASTY,
         M3_INFRAVISION | M3_SEEINDARK, MP_WAND_BASIC, CLR_BRIGHT_BLUE),
 /*
- * Large Deep-Rock Dwellers
+ * X - Large Deep-Rock Dwellers
  */
     MON("xorn", S_XORN,
         LVL(8, 12, 9, -2, 20, 0), (G_GENO | 1),
@@ -2465,7 +2467,7 @@ const struct permonst mons[] = {
         M3_INFRAVISIBLE | M3_INFRAVISION | M3_SEEINDARK,
         MP_WAND_SKILLED, CLR_MAGENTA),
 /*
- * Apelike beasts
+ * Y - Apelike beasts
  */
     MON("monkey", S_YETI,
         SLVL(2, 4, 12, 6, 3, 0, 0), (G_GENO | 1),
