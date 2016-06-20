@@ -55,6 +55,7 @@ static int throwspell(schar *dx, schar *dy, const struct nh_cmd_arg *arg);
 static void cast_protection(void);
 static void spell_backfire(int);
 static const char *spelltypemnemonic(int);
+static boolean spell_hurtle_step(void *arg, int x, int y);
 
 /* The roles[] table lists the role-specific values for tuning
  * percent_success().
@@ -1213,11 +1214,22 @@ spelleffects(int spell, boolean atme, const struct nh_cmd_arg *arg)
     return 1;
 }
 
+static boolean
+spell_hurtle_step(void *arg, int x, int y)
+{
+    if (!isok(x,y)) return FALSE;
+    if (!ZAP_POS(level->locations[x][y].typ)
+        && !(IS_DOOR(level->locations[x][y].typ) &&
+             (level->locations[x][y].doormask & D_ISOPEN)))
+        return FALSE;
+    return TRUE;
+}
+
 /* Choose location where spell takes effect. */
 static int
 throwspell(schar *dx, schar *dy, const struct nh_cmd_arg *arg)
 {
-    coord cc;
+    coord cc, uc;
 
     if (u.uinwater) {
         pline(msgc_cancelled, "You're joking! In this weather?");
@@ -1242,15 +1254,19 @@ throwspell(schar *dx, schar *dy, const struct nh_cmd_arg *arg)
         *dx = 0;
         *dy = 0;
         return 1;
-    } else
-        if ((!cansee(cc.x, cc.y) &&
-             (!MON_AT(level, cc.x, cc.y) ||
-              !canspotmon(m_at(level, cc.x, cc.y)))) ||
-            IS_STWALL(level->locations[cc.x][cc.y].typ)) {
-            pline(msgc_cancelled,
-                  "Your mind fails to lock onto that location!");
+    } else if ((!cansee(cc.x, cc.y) &&
+                (!MON_AT(level, cc.x, cc.y) ||
+                 !canspotmon(m_at(level, cc.x, cc.y)))) ||
+               IS_STWALL(level->locations[cc.x][cc.y].typ)) {
+        pline(msgc_cancelled,
+              "Your mind fails to lock onto that location!");
         return 0;
     } else {
+        int range = (COLNO + ROWNO);
+        uc.x = u.ux;
+        uc.y = u.uy;
+        walk_path(&uc, &cc, spell_hurtle_step, &range);
+
         *dx = cc.x;
         *dy = cc.y;
         return 1;
