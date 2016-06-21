@@ -1996,6 +1996,97 @@ OBJECT:'"',"amulet of reflection",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 
 
+# Running Rings Around
+MAZE: "soko1-6",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#123456789012345678
+MAP
+       ----        
+    ----..----     
+    |........|     
+  ---.|......|     
+  |...|......|     
+  |....-..-..----- 
+  --.............| 
+   |..-....--....| 
+   |.....----....| 
+   |---|.|-------| 
+ ---|  |.||.....---
+ |..----..|.....+.|
+ |........|.....|-|
+ |.|------|..(..+.|
+-|.|      |.....|-|
+|..|------|.....+.|
+|.........+.....|--
+-----------------  
+ENDMAP
+RANDOM_PLACES:(17,11),(17,13),(17,15)
+STAIR:(05,04),down
+DOOR:locked,(16,11)
+DOOR:locked,(16,13)
+DOOR:locked,(16,15)
+DOOR:locked,(10,16)
+REGION:(00,00,18,17),lit,"ordinary"
+NON_DIGGABLE:(00,00,18,17)
+NON_PASSWALL:(00,00,18,17)
+
+# Boulders
+OBJECT:'`',"boulder",(06,02)
+OBJECT:'`',"boulder",(09,03)
+OBJECT:'`',"boulder",(11,03)
+OBJECT:'`',"boulder",(08,04)
+OBJECT:'`',"boulder",(10,04)
+OBJECT:'`',"boulder",(05,05)
+OBJECT:'`',"boulder",(08,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(12,05)
+OBJECT:'`',"boulder",(07,06)
+OBJECT:'`',"boulder",(14,06)
+OBJECT:'`',"boulder",(05,07)
+OBJECT:'`',"boulder",(07,07)
+OBJECT:'`',"boulder",(08,07)
+OBJECT:'`',"boulder",(09,07)
+OBJECT:'`',"boulder",(13,07)
+OBJECT:'`',"boulder",(15,07)
+
+# Traps
+TRAP:"hole",(08,09)
+TRAP:"hole",(08,10)
+TRAP:"hole",(04,12)
+TRAP:"hole",(05,12)
+TRAP:"hole",(06,12)
+TRAP:"hole",(07,12)
+TRAP:"hole",(02,13)
+TRAP:"hole",(02,14)
+TRAP:"hole",(02,15)
+TRAP:"hole",(03,16)
+TRAP:"hole",(04,16)
+TRAP:"hole",(05,16)
+TRAP:"hole",(06,16)
+TRAP:"hole",(07,16)
+TRAP:"hole",(08,16)
+TRAP:"hole",(09,16)
+
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# Rewards
+REGION:(11,10,15,16),lit,"zoo",filled,true
+CONTAINER:'(',"sack",place[0]
+OBJECT:'=',"polymorph control",contained
+OBJECT:'=',"teleport control",contained
+OBJECT:'=',random,contained
+ENGRAVING:place[0],burn,"Elbereth"
+
 
 
 
