@@ -238,7 +238,7 @@ savebones(struct obj *corpse, boolean take_items)
     struct memfile mf;
     struct obj *statue = 0;
     uchar cnamelth = 0, snamelth = 0;
-    const char *whynot;
+    const char *whynot = "unknown reason";
 
     /* Bones creation does require some calls to the RNG. Ensure that they are
     * reproduced correclty so as to get the same bones. */
@@ -381,11 +381,13 @@ make_bones:
 
     fd = create_bonesfile(bonesid, &whynot);
     if (fd < 0) {
-        if (wizard)
+        if (wizard) {
             pline("%s", whynot);
+            return;
+        }
 
-        /* bones file creation problems are silent to the player. Keep it that
-           way, but place a clue into the paniclog. */
+        /* Outside debug mode, bones file creation problems are silent to the
+           player. Keep it that way, but place a clue into the paniclog. */
         paniclog("savebones", whynot);
         return;
     }
