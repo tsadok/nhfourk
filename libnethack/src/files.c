@@ -225,8 +225,10 @@ create_bonesfile(const char *bonesid, const char **errbuf)
     char tempname[PL_NSIZ + 32];
     int fd;
 
-    if (strcmp(fqn_prefix[BONESPREFIX], "$OMIT") == 0)
+    if (strcmp(fqn_prefix[BONESPREFIX], "$OMIT") == 0) {
+        *errbuf = "omitted per fqn_prefix[BONESPREFIX]";
         return -1;
+    }
 
     if (errbuf)
         *errbuf = "";
