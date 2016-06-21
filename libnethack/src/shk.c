@@ -2077,7 +2077,7 @@ set_cost(struct obj *obj, struct monst *shkp)
                 tmp = (obj->otyp % (6 - shkp->m_id % 3));
                 tmp = (tmp + 3) * obj->quan;
             }
-        } else if (tmp > 1L && !(pseudorand % 4))
+        } else if (tmp > 1L && !(pseudorand % 4)) {
             multiplier *= 3L;
             divisor    *= 4L;
         }
