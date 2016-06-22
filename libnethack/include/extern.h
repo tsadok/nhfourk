@@ -1172,8 +1172,8 @@ extern boolean ranged_attk(const struct permonst *);
 extern boolean hates_silver(const struct permonst *);
 extern boolean passes_bars(const struct permonst *);
 extern boolean can_track(const struct permonst *);
-extern boolean breakarm(const struct permonst *);
-extern boolean sliparm(const struct permonst *);
+extern boolean breakarm(const struct permonst *, struct objclass *oc);
+extern boolean sliparm(const struct permonst *, struct objclass *oc);
 extern boolean sticks(const struct permonst *);
 extern int num_horns(const struct permonst *);
 extern boolean dmgtype(const struct permonst *, int);
@@ -2021,6 +2021,7 @@ extern void update_mon_intrinsics(struct monst *, struct obj *, boolean,
 extern int find_mac(struct monst *);
 extern void m_dowear(struct monst *, boolean);
 extern struct obj *which_armor(const struct monst *, enum objslot);
+extern struct objclass *which_armor_oc(const struct monst *, enum objslot);
 extern void mon_break_armor(struct monst *, boolean);
 extern void bypass_obj(struct obj *);
 extern void clear_bypasses(void);

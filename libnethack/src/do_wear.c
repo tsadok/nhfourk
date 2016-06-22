@@ -1390,8 +1390,9 @@ static int
 slot_count(struct monst *mon, enum objslot slot, boolean noisy)
 {
     const struct permonst *racedat = (mon == &youmonst) ? URACEDATA : mon->data;
+    const struct objclass *whichoc = which_armor_oc(mon, slot);
     if ((slot == os_arm || slot == os_armc || slot == os_armu) &&
-        (breakarm(racedat) || sliparm(racedat)) &&
+        whichoc && (breakarm(racedat, whichoc) || sliparm(racedat, whichoc)) &&
         /* TODO: get m_dowear() to look at this function rather than
            repeating the check */
         (slot != os_armc || racedat->msize != MZ_SMALL) &&
@@ -1548,6 +1549,31 @@ canwearobj(struct obj *otmp, long *mask,
                       (objects[uwep->otyp].oc_material == WOOD) ?
                       "are ingrown with" : "are welded to",
                       is_sword(uwep) ? "sword" : c_slotnames[os_wep]);
+            return FALSE;
+        }
+    }
+
+    /* Are you the right size to wear this item? */
+    if (slot <= os_last_worn && (objects[otmp->otyp].a_maxsize > 0)) {
+        /* Because MZ_TINY is 0, max size must be greater than that for these
+           restrictions to apply.  (Jewelry has no such restrictions.)  The
+           os_last_worn check is a precaution, because weapons use the a_maxsize
+           field for an unrelated purpose. */
+        if ((URACEDATA)->msize < objects[otmp->otyp].a_minsize) {
+            if (noisy)
+                pline(msgc, "%s much too large for you and would fall off.",
+                            Tobjnam(otmp, "are"));
+            return FALSE;
+        } else if ((URACEDATA)->msize > objects[otmp->otyp].a_maxsize) {
+            if (noisy)
+                pline(msgc, "%s much too small for your %s.",
+                            Tobjnam(otmp, "are"),
+                            (slot == os_armh ||
+                             slot == os_tool) ? body_part(HEAD) :
+                            (slot == os_arms) ? body_part(ARM) :
+                            (slot == os_armg) ? makeplural(body_part(HAND)) :
+                            (slot == os_armf) ? makeplural(body_part(FOOT)) :
+                                                body_part(BODY));
             return FALSE;
         }
     }

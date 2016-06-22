@@ -774,15 +774,16 @@ break_armor(boolean noisy)
 {
     struct obj *otmp;
 
-    if (breakarm(youmonst.data)) {
-        if ((otmp = uarm) != 0 && otmp != uskin()) {
+    if ( (((otmp = uarm) != 0)) && (otmp != uskin()) &&
+         (breakarm(youmonst.data, &objects[otmp->otyp]))) {
             if (noisy)
                 pline(msgc_itemloss, "You break out of your armor!");
             exercise(A_STR, FALSE);
             setequip(os_arm, NULL, em_silent);
             useup(otmp);
-        }
-        if ((otmp = uarmc) != 0) {
+    }
+    if ( (((otmp = uarmc) != 0)) &&
+         (breakarm(youmonst.data, &objects[otmp->otyp]))) {
             if (otmp->oartifact) {
                 if (noisy)
                     pline(msgc_statusbad, "Your %s falls off!",
@@ -796,22 +797,25 @@ break_armor(boolean noisy)
                 setequip(os_armc, NULL, em_silent);
                 useup(otmp);
             }
-        }
-        if (uarmu) {
+    }
+    if ( (((otmp = uarmu) != 0)) &&
+         (breakarm(youmonst.data, &objects[otmp->otyp]))) {
             if (noisy)
                 pline(msgc_itemloss, "Your shirt rips to shreds!");
             useup(uarmu);
-        }
-    } else if (sliparm(youmonst.data)) {
+    }
+    if ( (((otmp = uarm) != 0)) && (otmp != uskin()) &&
         /* uskin check is paranoia */
-        if (((otmp = uarm) != 0) && (otmp != uskin()) &&
-            (racial_exception(&youmonst, otmp) < 1)) {
+         (sliparm(youmonst.data, &objects[otmp->otyp]))) {
+        if (racial_exception(&youmonst, otmp) < 1)  {
             if (noisy)
                 pline(msgc_statusbad, "Your armor falls around you!");
             setequip(os_arm, NULL, em_silent);
             dropx(otmp);
         }
-        if ((otmp = uarmc) != 0) {
+    }
+    if ( (((otmp = uarmc) != 0)) &&
+         (sliparm(youmonst.data, &objects[otmp->otyp]))) {
             if (noisy) {
                 if (is_whirly(youmonst.data))
                     pline(msgc_statusbad, "Your %s falls, unsupported!",
@@ -822,8 +826,9 @@ break_armor(boolean noisy)
             }
             setequip(os_armc, NULL, em_silent);
             dropx(otmp);
-        }
-        if ((otmp = uarmu) != 0) {
+    }
+    if ( (((otmp = uarmu) != 0)) &&
+         (sliparm(youmonst.data, &objects[otmp->otyp]))) {
             if (noisy) {
                 if (is_whirly(youmonst.data))
                     pline(msgc_statusbad, "You seep right through your shirt!");
@@ -833,7 +838,6 @@ break_armor(boolean noisy)
             }
             setequip(os_armu, NULL, em_silent);
             dropx(otmp);
-        }
     }
     if (has_horns(youmonst.data)) {
         if ((otmp = uarmh) != 0) {

@@ -35,7 +35,7 @@ is_better_armor(const struct monst *mtmp, struct obj *otmp)
     if (mtmp->data == &mons[PM_KI_RIN] || mtmp->data == &mons[PM_COUATL])
         return FALSE;
 
-    if (cantweararm(mtmp->data) &&
+    if (cantweararm(mtmp->data, &objects[otmp->otyp]) &&
         !(is_cloak(otmp) && mtmp->data->msize == MZ_SMALL))
         return FALSE;
 

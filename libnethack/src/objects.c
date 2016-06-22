@@ -14,6 +14,7 @@ struct monst {
 # include "objclass.h"
 # include "prop.h"
 # include "skills.h"
+# include "monflag.h"
 
 #else /* !OBJECTS_PASS_2_ */
 /* second pass */
@@ -248,53 +249,58 @@ const struct objclass const_objects[] = {
  * Only COPPER (including brass), and IRON, corrode.
  * Some creatures are vulnerable to SILVER.
  */
-#define ARMOR(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can,sub,metal, \
-              c) \
+#define ARMOR(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can, \
+              minsz, maxsz, sub, metal, c)                          \
         OBJECT( \
                 OBJ(name,desc), BITS(kn,0,1,0,mgc,1,0,0,blk,0,0,sub,metal), \
-                power, ARMOR_CLASS, prob, delay, wt, cost, 0, 0, 10 - ac, can, \
-                wt, c )
-#define HELM(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,metal,c) \
-        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,ARM_HELM, \
-              metal,c)
-#define CLOAK(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,metal,c) \
-        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,ARM_CLOAK, \
-              metal,c)
-#define SHIELD(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can,metal,c) \
-        ARMOR(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can,ARM_SHIELD, \
-              metal,c)
-#define GLOVES(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,metal,c) \
-        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,ARM_GLOVES, \
-              metal,c)
-#define BOOTS(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,metal,c) \
-        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,ARM_BOOTS, \
-              metal,c)
+                power, ARMOR_CLASS, prob, delay, wt, cost, minsz, maxsz, \
+                10 - ac, can, wt, c )
+#define HELM(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+             metal,c)                                                   \
+        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+              ARM_HELM,metal,c)
+#define CLOAK(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+              metal,c)                                                  \
+        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+              ARM_CLOAK,metal,c)
+#define SHIELD(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can,minsz,\
+               maxsz,metal,c)                                           \
+        ARMOR(name,desc,kn,mgc,blk,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+              ARM_SHIELD, metal,c)
+#define GLOVES(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+               metal,c)                                                 \
+        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+              ARM_GLOVES,metal,c)
+#define BOOTS(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+              metal,c)                                                  \
+        ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,minsz,\
+              maxsz,ARM_BOOTS,metal,c)
 
 /* helmets */
     HELM("elven leather helm", "leather hat",
-         0, 0, 0, 6, 1, 3, 8, 9, 0, LEATHER, HI_LEATHER),
+         0, 0, 0, 6, 1, 3, 8, 9, 0, MZ_SMALL, MZ_LARGE, LEATHER, HI_LEATHER),
     HELM("orcish helm", "iron skull cap",
-         0, 0, 0, 6, 1, 30, 10, 9, 0, IRON, CLR_BLACK),
+         0, 0, 0, 6, 1, 30, 10, 9, 0, MZ_MEDIUM, MZ_LARGE, IRON, CLR_BLACK),
     HELM("dwarvish iron helm", "hard hat",
-         0, 0, 0, 6, 1, 40, 20, 8, 0, IRON, HI_METAL),
+         0, 0, 0, 6, 1, 40, 20, 8, 0, MZ_SMALL, MZ_MEDIUM, IRON, HI_METAL),
     HELM("fedora", NULL,
-         1, 0, 0, 0, 0, 3, 1, 10, 0, CLOTH, CLR_BROWN),
+         1, 0, 0, 0, 0, 3, 1, 10, 0, MZ_HUMAN, MZ_HUMAN, CLOTH, CLR_BROWN),
     HELM("cornuthaum", "conical hat",
          0, 1, CLAIRVOYANT,
-         3, 1, 4, 80, 10, 2, CLOTH, CLR_BLUE),
+         3, 1, 4, 80, 10, 2, MZ_SMALL, MZ_HUGE, CLOTH, CLR_BLUE),
     HELM("dunce cap", "conical hat",
-         0, 1, 0, 3, 1, 4, 1, 10, 0, CLOTH, CLR_BLUE),
+         0, 1, 0, 3, 1, 4, 1, 10, 0, MZ_SMALL, MZ_HUGE, CLOTH, CLR_BLUE),
     HELM("dented pot", NULL,
-         1, 0, 0, 2, 0, 10, 8, 9, 0, IRON, CLR_BLACK),
+         1, 0, 0, 2, 0, 10, 8, 9, 0, MZ_SMALL, MZ_LARGE, IRON, CLR_BLACK),
 /* With shuffled appearances... */
     HELM("helmet", "plumed helmet",
-         0, 0, 0, 10, 1, 30, 10, 9, 0, IRON, HI_METAL),
+         0, 0, 0, 10, 1, 30, 10, 9, 0, MZ_SMALL, MZ_LARGE, IRON, HI_METAL),
     HELM("helm of brilliance", "etched helmet",
-         0, 1, 0, 6, 1, 50, 50, 9, 0, IRON, CLR_GREEN),
+         0, 1, 0, 6, 1, 50, 50, 9, 0, MZ_SMALL, MZ_LARGE, IRON, CLR_GREEN),
     HELM("helm of opposite alignment", "crested helmet",
-         0, 1, 0, 6, 1, 50, 50, 9, 0, IRON, HI_METAL),
+         0, 1, 0, 6, 1, 50, 50, 9, 0, MZ_SMALL, MZ_LARGE, IRON, HI_METAL),
     HELM("helm of telepathy", "visored helmet",
-         0, 1, TELEPAT, 2, 1, 50, 50, 9, 0, IRON, HI_METAL),
+         0, 1, TELEPAT, 2, 1, 50, 50, 9, 0, MZ_SMALL, MZ_LARGE, IRON, HI_METAL),
 
 /* suits of armor */
 /*
@@ -306,8 +312,8 @@ const struct objclass const_objects[] = {
  *          the same defined in monst.c.
  */
 #define DRGN_ARMR(name,mgc,power,cost,ac,color) \
-        ARMOR(name,NULL,1,mgc,1,power,0,5,40,cost,ac,0,ARM_SUIT,DRAGON_HIDE, \
-              color)
+    ARMOR(name,NULL,1,mgc,1,power,0,5,40,cost,ac,0,MZ_HUMAN,MZ_HUMAN,   \
+          ARM_SUIT,DRAGON_HIDE,color)
 /* 3.4.1: dragon scale mail reclassified as "magic" since magic is
    needed to create them */
     DRGN_ARMR("gray dragon scale mail", 1, ANTIMAGIC, 1200, 1, CLR_GRAY),
@@ -338,125 +344,161 @@ const struct objclass const_objects[] = {
     /* The order in which armor is defined is relevant for sacrifice_gift()
        when giving armor to weaponless characters. */
     ARMOR("leather jacket", NULL,
-          1, 0, 0, 0, 12, 0, 30, 10, 9, 0, ARM_SUIT, LEATHER, CLR_BLACK),
+          1, 0, 0, 0, 12, 0, 30, 10, 9, 0, MZ_SMALL, MZ_MEDIUM,
+          ARM_SUIT, LEATHER, CLR_BLACK),
     ARMOR("leather armor", NULL,
-          1, 0, 0, 0, 82, 3, 150, 5, 8, 0, ARM_SUIT, LEATHER, HI_LEATHER),
+          1, 0, 0, 0, 82, 3, 150, 5, 8, 0, MZ_SMALL, MZ_MEDIUM,
+          ARM_SUIT, LEATHER, HI_LEATHER),
     ARMOR("orcish ring mail", "crude ring mail",
-          0, 0, 0, 0, 20, 5, 250, 80, 8, 1, ARM_SUIT, IRON, CLR_BLACK),
+          0, 0, 0, 0, 20, 5, 250, 80, 8, 1, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, IRON, CLR_BLACK),
     ARMOR("ring mail", NULL,
-          1, 0, 0, 0, 72, 5, 250, 100, 7, 0, ARM_SUIT, IRON, HI_METAL),
+          1, 0, 0, 0, 72, 5, 250, 100, 7, 0, MZ_SMALL, MZ_LARGE,
+          ARM_SUIT, IRON, HI_METAL),
     ARMOR("studded leather armor", NULL,
-          1, 0, 0, 0, 72, 3, 200, 15, 7, 1, ARM_SUIT, LEATHER, HI_LEATHER),
+          1, 0, 0, 0, 72, 3, 200, 15, 7, 1, MZ_SMALL, MZ_LARGE,
+          ARM_SUIT, LEATHER, HI_LEATHER),
     ARMOR("scale mail", NULL,
-          1, 0, 0, 0, 72, 5, 250, 45, 6, 0, ARM_SUIT, IRON, HI_METAL),
+          1, 0, 0, 0, 72, 5, 250, 45, 6, 0, MZ_SMALL, MZ_LARGE,
+          ARM_SUIT, IRON, HI_METAL),
     ARMOR("orcish chain mail", "crude chain mail",
-          0, 0, 0, 0, 20, 5, 300, 75, 6, 1, ARM_SUIT, IRON, CLR_BLACK),
+          0, 0, 0, 0, 20, 5, 300, 75, 6, 1, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, IRON, CLR_BLACK),
     ARMOR("chain mail", NULL,
-          1, 0, 0, 0, 72, 5, 300, 75, 5, 1, ARM_SUIT, IRON, HI_METAL),
+          1, 0, 0, 0, 72, 5, 300, 75, 5, 1, MZ_SMALL, MZ_LARGE,
+          ARM_SUIT, IRON, HI_METAL),
     ARMOR("banded mail", NULL,
-          1, 0, 1, 0, 72, 5, 350, 90, 4, 0, ARM_SUIT, IRON, HI_METAL),
+          1, 0, 1, 0, 72, 5, 350, 90, 4, 0, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, IRON, HI_METAL),
     ARMOR("splint mail", NULL,
-          1, 0, 1, 0, 62, 5, 400, 80, 4, 1, ARM_SUIT, IRON, HI_METAL),
+          1, 0, 1, 0, 62, 5, 400, 80, 4, 1, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, IRON, HI_METAL),
 
     ARMOR("elven mithril-coat", NULL,
-          1, 0, 0, 0, 15, 1, 150, 240, 5, 3, ARM_SUIT, MITHRIL, HI_METAL),
+          1, 0, 0, 0, 15, 1, 150, 240, 5, 3, MZ_SMALL, MZ_MEDIUM,
+          ARM_SUIT, MITHRIL, HI_METAL),
     ARMOR("dwarvish mithril-coat", NULL,
-          1, 0, 0, 0, 10, 1, 150, 240, 4, 3, ARM_SUIT, MITHRIL, HI_METAL),
+          1, 0, 0, 0, 10, 1, 150, 240, 4, 3, MZ_SMALL, MZ_MEDIUM,
+          ARM_SUIT, MITHRIL, HI_METAL),
 
     ARMOR("bronze plate mail", NULL,
-          1, 0, 1, 0, 25, 5, 500, 400, 3, 0, ARM_SUIT, COPPER, HI_COPPER),
+          1, 0, 1, 0, 25, 5, 500, 400, 3, 0, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, COPPER, HI_COPPER),
     ARMOR("plate mail", NULL,
-          1, 0, 1, 0, 44, 5, 450, 600, 2, 2, ARM_SUIT, IRON, HI_METAL),
+          1, 0, 1, 0, 44, 5, 450, 600, 2, 2, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, IRON, HI_METAL),
     ARMOR("crystal plate mail", NULL,
-          1, 0, 1, 0, 10, 5, 600, 1000, 1, 3, ARM_SUIT, GLASS, CLR_WHITE),
+          1, 0, 1, 0, 10, 5, 600, 1000, 1, 3, MZ_MEDIUM, MZ_LARGE,
+          ARM_SUIT, GLASS, CLR_WHITE),
 
 /* shirts */
     ARMOR("Hawaiian shirt", NULL,
-          1, 0, 0, 0, 8, 0, 5, 3, 10, 0, ARM_SHIRT, CLOTH, CLR_MAGENTA),
+          1, 0, 0, 0, 8, 0, 5, 3, 10, 0, MZ_SMALL, MZ_MEDIUM,
+          ARM_SHIRT, CLOTH, CLR_MAGENTA),
     ARMOR("T-shirt", NULL,
-          1, 0, 0, 0, 2, 0, 5, 2, 10, 0, ARM_SHIRT, CLOTH, CLR_WHITE),
+          1, 0, 0, 0, 2, 0, 5, 2, 10, 0, MZ_SMALL, MZ_MEDIUM,
+          ARM_SHIRT, CLOTH, CLR_WHITE),
 
 /* cloaks */
 /*  'cope' is not a spelling mistake... leave it be */
     CLOAK("mummy wrapping", NULL,
-          1, 0, 0, 0, 0, 3, 2, 10, 1, CLOTH, CLR_GRAY),
+          1, 0, 0, 0, 0, 3, 2, 10, 1, MZ_TINY, MZ_HUGE, CLOTH, CLR_GRAY),
     CLOAK("elven cloak", "faded pall",
-          0, 1, STEALTH, 8, 0, 10, 60, 9, 3, CLOTH, CLR_BLACK),
+          0, 1, STEALTH, 8, 0, 10, 60, 9, 3, MZ_SMALL, MZ_HUGE,
+          CLOTH, CLR_BLACK),
     CLOAK("orcish cloak", "coarse mantelet",
-          0, 0, 0, 8, 0, 10, 40, 10, 2, CLOTH, CLR_BLACK),
+          0, 0, 0, 8, 0, 10, 40, 10, 2, MZ_MEDIUM, MZ_HUGE, CLOTH, CLR_BLACK),
     CLOAK("dwarvish cloak", "hooded cloak",
-          0, 0, 0, 8, 0, 10, 50, 10, 2, CLOTH, HI_CLOTH),
+          0, 0, 0, 8, 0, 10, 50, 10, 2, MZ_TINY, MZ_LARGE, CLOTH, HI_CLOTH),
     CLOAK("oilskin cloak", "slippery cloak",
-          0, 0, 0, 8, 0, 10, 50, 9, 3, CLOTH, HI_CLOTH),
+          0, 0, 0, 8, 0, 10, 50, 9, 3, MZ_HUMAN, MZ_HUMAN, CLOTH, HI_CLOTH),
     CLOAK("robe", NULL,
-          1, 1, 0, 3, 0, 15, 50, 8, 3, CLOTH, CLR_RED),
+          1, 1, 0, 3, 0, 15, 50, 8, 3, MZ_SMALL, MZ_LARGE, CLOTH, CLR_RED),
     CLOAK("alchemy smock", "apron",
-          0, 1, POISON_RES, 9, 0, 10, 50, 9, 1, CLOTH, CLR_WHITE),
+          0, 1, POISON_RES, 9, 0, 10, 50, 9, 1, MZ_TINY, MZ_HUGE,
+          CLOTH, CLR_WHITE),
     CLOAK("leather cloak", NULL,
-          1, 0, 0, 8, 0, 15, 40, 9, 1, LEATHER, CLR_BROWN),
+          1, 0, 0, 8, 0, 15, 40, 9, 1, MZ_HUMAN, MZ_HUMAN, LEATHER, CLR_BROWN),
 /* With shuffled appearances... */
     CLOAK("cloak of protection", "tattered cape",
-          0, 1, PROTECTION, 8, 0, 10, 50, 7, 3, CLOTH, HI_CLOTH),
+          0, 1, PROTECTION, 8, 0, 10, 50, 7, 3, MZ_SMALL, MZ_LARGE,
+          CLOTH, HI_CLOTH),
     CLOAK("cloak of invisibility", "opera cloak",
-          0, 1, INVIS, 10, 0, 10, 60, 9, 2, CLOTH, CLR_BRIGHT_MAGENTA),
+          0, 1, INVIS, 10, 0, 10, 60, 9, 2, MZ_SMALL, MZ_LARGE,
+          CLOTH, CLR_BRIGHT_MAGENTA),
     CLOAK("cloak of magic resistance", "ornamental cope",
-          0, 1, ANTIMAGIC, 2, 0, 10, 60, 9, 3, CLOTH, CLR_WHITE),
+          0, 1, ANTIMAGIC, 2, 0, 10, 60, 9, 3, MZ_SMALL, MZ_LARGE,
+          CLOTH, CLR_WHITE),
     CLOAK("cloak of endurance", "dirty rag",
-          0, 1, HALF_PHDAM, 1, 0, 100, 300, 9, 0, CLOTH, CLR_GREEN),
+          0, 1, HALF_PHDAM, 1, 0, 100, 300, 9, 0, MZ_SMALL, MZ_LARGE,
+          CLOTH, CLR_GREEN),
     CLOAK("cloak of displacement", "piece of cloth",
-          0, 1, DISPLACED, 10, 0, 10, 50, 9, 2, CLOTH, HI_CLOTH),
+          0, 1, DISPLACED, 10, 0, 10, 50, 9, 2, MZ_SMALL, MZ_LARGE,
+          CLOTH, HI_CLOTH),
 
 /* shields */
     SHIELD("small shield", NULL,
-           1, 0, 0, 0, 6, 0, 30, 3, 9, 0, WOOD, HI_WOOD),
+           1, 0, 0, 0, 6, 0, 30, 3, 9, 0, MZ_TINY, MZ_LARGE, WOOD, HI_WOOD),
     SHIELD("elven shield", "blue and green shield",
-           0, 0, 0, 0, 2, 0, 40, 7, 8, 0, WOOD, CLR_GREEN),
+           0, 0, 0, 0, 2, 0, 40, 7, 8, 0, MZ_SMALL, MZ_HUGE, WOOD, CLR_GREEN),
     SHIELD("Uruk-hai shield", "white-handed shield",
-           0, 0, 0, 0, 2, 0, 50, 7, 9, 0, IRON, HI_METAL),
+           0, 0, 0, 0, 2, 0, 50, 7, 9, 0, MZ_SMALL, MZ_HUGE, IRON, HI_METAL),
     SHIELD("orcish shield", "red-eyed shield",
-           0, 0, 0, 0, 2, 0, 50, 7, 9, 0, IRON, CLR_RED),
+           0, 0, 0, 0, 2, 0, 50, 7, 9, 0, MZ_MEDIUM, MZ_HUGE, IRON, CLR_RED),
     SHIELD("large shield", NULL,
-           1, 0, 1, 0, 7, 0, 100, 10, 8, 0, IRON, HI_METAL),
+           1, 0, 1, 0, 7, 0, 100, 10, 8, 0, MZ_MEDIUM, MZ_HUGE, IRON, HI_METAL),
     SHIELD("dwarvish roundshield", "large round shield",
-           0, 0, 0, 0, 4, 0, 100, 10, 8, 0, IRON, HI_METAL),
+           0, 0, 0, 0, 4, 0, 100, 10, 8, 0, MZ_SMALL, MZ_HUGE, IRON, HI_METAL),
     SHIELD("shield of reflection", "polished silver shield",
-           0, 1, 0, REFLECTING, 3, 0, 50, 50, 8, 0, SILVER, HI_SILVER),
+           0, 1, 0, REFLECTING, 3, 0, 50, 50, 8, 0, MZ_SMALL, MZ_HUGE,
+           SILVER, HI_SILVER),
 
 /* gloves */
 /* these have their color but not material shuffled, so the IRON must stay
  * CLR_BROWN (== HI_LEATHER)
  */
     GLOVES("leather gloves", "old gloves",
-           0, 0, 0, 16, 1, 10, 8, 9, 0, LEATHER, HI_LEATHER),
+           0, 0, 0, 16, 1, 10, 8, 9, 0, MZ_SMALL, MZ_LARGE,
+           LEATHER, HI_LEATHER),
     GLOVES("gauntlets of fumbling", "padded gloves",
-           0, 1, FUMBLING, 8, 1, 10, 50, 9, 0, LEATHER, HI_LEATHER),
+           0, 1, FUMBLING, 8, 1, 10, 50, 9, 0, MZ_SMALL, MZ_LARGE,
+           LEATHER, HI_LEATHER),
     GLOVES("gauntlets of power", "riding gloves",
-           0, 1, 0, 8, 1, 10, 50, 9, 0, IRON, CLR_BROWN),
+           0, 1, 0, 8, 1, 10, 50, 9, 0, MZ_SMALL, MZ_LARGE,
+           IRON, CLR_BROWN),
     GLOVES("gauntlets of dexterity", "fencing gloves",
-           0, 1, 0, 8, 1, 10, 50, 9, 0, LEATHER, HI_LEATHER),
+           0, 1, 0, 8, 1, 10, 50, 9, 0, MZ_SMALL, MZ_LARGE,
+           LEATHER, HI_LEATHER),
 
 /* boots */
     BOOTS("low boots", "walking shoes",
-          0, 0, 0, 25, 2, 10, 8, 9, 0, LEATHER, HI_LEATHER),
+          0, 0, 0, 25, 2, 10, 8, 9, 0, MZ_TINY, MZ_LARGE, LEATHER, HI_LEATHER),
     BOOTS("iron shoes", "hard shoes",
-          0, 0, 0, 7, 2, 50, 16, 8, 0, IRON, HI_METAL),
+          0, 0, 0, 7, 2, 50, 16, 8, 0, MZ_TINY, MZ_LARGE, IRON, HI_METAL),
     BOOTS("high boots", "jackboots",
-          0, 0, 0, 15, 2, 20, 12, 8, 0, LEATHER, HI_LEATHER),
+          0, 0, 0, 15, 2, 20, 12, 8, 0, MZ_SMALL, MZ_HUGE, LEATHER, HI_LEATHER),
 /* With shuffled appearances... */
     BOOTS("speed boots", "combat boots",
-          0, 1, FAST, 12, 2, 20, 50, 9, 0, LEATHER, HI_LEATHER),
+          0, 1, FAST, 12, 2, 20, 50, 9, 0, MZ_SMALL, MZ_HUGE,
+          LEATHER, HI_LEATHER),
     BOOTS("water walking boots", "jungle boots",
-          0, 1, WWALKING, 12, 2, 15, 50, 9, 0, LEATHER, HI_LEATHER),
+          0, 1, WWALKING, 12, 2, 15, 50, 9, 0, MZ_SMALL, MZ_HUGE,
+          LEATHER, HI_LEATHER),
     BOOTS("jumping boots", "hiking boots",
-          0, 1, JUMPING, 12, 2, 20, 50, 9, 0, LEATHER, HI_LEATHER),
+          0, 1, JUMPING, 12, 2, 20, 50, 9, 0, MZ_SMALL, MZ_HUGE,
+          LEATHER, HI_LEATHER),
     BOOTS("elven boots", "mud boots",
-          0, 1, STEALTH, 12, 2, 15, 8, 9, 0, LEATHER, HI_LEATHER),
+          0, 1, STEALTH, 12, 2, 15, 8, 9, 0, MZ_SMALL, MZ_HUGE,
+          LEATHER, HI_LEATHER),
     BOOTS("kicking boots", "buckled boots",
-          0, 1, 0, 12, 2, 50, 8, 9, 0, IRON, CLR_BROWN),
+          0, 1, 0, 12, 2, 50, 8, 9, 0, MZ_SMALL, MZ_HUGE,
+          IRON, CLR_BROWN),
     BOOTS("fumble boots", "riding boots",
-          0, 1, FUMBLING, 12, 2, 20, 30, 9, 0, LEATHER, HI_LEATHER),
+          0, 1, FUMBLING, 12, 2, 20, 30, 9, 0, MZ_SMALL, MZ_HUGE,
+          LEATHER, HI_LEATHER),
     BOOTS("levitation boots", "snow boots",
-          0, 1, LEVITATION, 12, 2, 15, 30, 9, 0, LEATHER, HI_LEATHER),
+          0, 1, LEVITATION, 12, 2, 15, 30, 9, 0, MZ_SMALL, MZ_HUGE,
+          LEATHER, HI_LEATHER),
 #undef HELM
 #undef CLOAK
 #undef SHIELD

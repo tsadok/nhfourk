@@ -114,6 +114,8 @@ struct objclass {
 # define a_ac           oc_oc1  /* armor class, used in ARM_BONUS in do.c */
 # define a_can          oc_oc2  /* armor: used in mhitu.c */
 # define oc_level       oc_oc2  /* books: spell level */
+# define a_minsize      oc_wsdam  /* minimim MZ_ size monster it fits. */
+# define a_maxsize      oc_wldam  /* maximum MZ_ size monster it fits. */
 
     unsigned short oc_nutrition;        /* food value */
 };

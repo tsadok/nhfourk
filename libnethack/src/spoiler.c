@@ -36,7 +36,7 @@ static const char * spoiloneattack(const struct attack *attk);
 static const char * spoilattacks(int i);
 static const char * spoilmonskills(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
-static const char * spoilmonsize(int i);
+static const char * spoilmonsize(uchar s);
 static const char * spoilmrace(int i);
 static const char * spoilmonflagone(unsigned long mflags);
 static const char * spoilmonflagtwo(unsigned long mflags, boolean dorace);
@@ -228,6 +228,19 @@ oslotname(enum objslot os)
 }
 
 static const char *
+spoilarmorsize(struct objclass *oc)
+{
+    uchar minsize = (uchar) abs(oc->a_minsize);
+    uchar maxsize = (uchar) abs(oc->a_maxsize);
+    if (maxsize > minsize) {
+        return msgprintf("<span class=\"range\">%s&nbsp;&mdash; %s</span>",
+                         spoilmonsize(minsize), spoilmonsize(maxsize));
+    } else {
+        return spoilmonsize(maxsize);
+    }
+}
+
+static const char *
 semicolonjoin(const char *a, const char *b)
 {
     if (b[0])
@@ -343,14 +356,14 @@ spoilresistances(uchar res, boolean convey, int i)
 }
 
 static const char *
-spoilmonsize(int i)
+spoilmonsize(uchar s)
 {
-    uchar s = mons[i].msize;
     const char * size[8] =
         { "<span class=\"sizetiny\">tiny</span>",
           "<span class=\"sizesmall\">small</span>",
           "<span class=\"sizemedium\">medium</span>",
           "<span class=\"sizelarge\">large</span>",
+          "<span class=\"huge\">huge</span>",
           "<span class=\"error unknownsize\">size 5</span>",
           "<span class=\"error unknownsize\">size 6</span>",
           "<span class=\"sizegigantic\">gigantic</span>"};
@@ -942,6 +955,7 @@ makehtmlspoilers(void)
                 "<th class=\"numeric mc\">MC</th>"
                 "<th class=\"numeric ac\">def</th>"
                 "<th class=\"material\">mat</th>"
+                "<th class=\"size\">fits</th>"
                 "<th class=\"numeric weight\">wt</th>"
                 "<th class=\"numeric price\">zm</th>"
                 "</tr>\n</thead><tbody>\n");
@@ -954,6 +968,7 @@ makehtmlspoilers(void)
                     "<td class=\"numeric mc\">%s</td>"
                     "<td class=\"numeric ac\">%d</td>"
                     "<td class=\"material\">%s</td>"
+                    "<td class=\"armorsize\">%s</td>"
                     "<td class=\"numeric weight\">%d</td>"
                     "<td class=\"numeric price\">%d</td>"
                     "</tr>\n",
@@ -961,6 +976,7 @@ makehtmlspoilers(void)
                     (objects[i].a_can ?
                      msgprintf("MC%d", objects[i].a_can) : ""),
                     objects[i].a_ac, material[objects[i].oc_material],
+                    spoilarmorsize(&objects[i]),
                     objects[i].oc_weight, objects[i].oc_cost);
         }
 
@@ -1138,7 +1154,7 @@ makehtmlspoilers(void)
                     spoilmonskills(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
                     spoilresistances(mons[i].mconveys, TRUE, i),
-                    mons[i].cnutrit, mons[i].cwt, spoilmonsize(i),
+                    mons[i].cnutrit, mons[i].cwt, spoilmonsize(mons[i].msize),
                     spoilmrace(i), spoilmonflags(i));
         }
         fprintf(outfile, "\n</tbody></table>\n</html>\n");
@@ -1166,11 +1182,12 @@ makehtmlspoilers(void)
         fprintf(outfile, "<table class=\"races\"><thead>\n"
                 "  <tr><th rowspan=\"2\" class=\"filecode\">TLA</th>\n"
                 "      <th class=\"player race\">Race</th>"
-                "      <th class=\"numeric\">speed</th>\n"
+                "      <th class=\"size\">Size</th>"
+                "      <th class=\"numeric speed\">speed</th>\n"
                 "      <th class=\"gender\">Gender</th>\n"
                 "      <th rowspan=\"2\" class=\"attr\">Attributes</th>\n"
                 "      <th rowspan=\"2\" class=\"advance\">Advance</th></tr>\n"
-                "  <tr><th class=\"player roles\" colspan=\"2\">Roles</th>\n"
+                "  <tr><th class=\"player roles\" colspan=\"3\">Roles</th>\n"
                 "      <th class=\"align\">Aligns</th></tr>\n"
                 "</thead><tbody>\n");
 
@@ -1178,14 +1195,17 @@ makehtmlspoilers(void)
             fprintf(outfile, "<tr class=\"newsection\">"
                     "    <th rowspan=\"2\" class=\"filecode\">%s</th>"
                     "    <td class=\"player race\">%s</td>"
-                    "    <td class=\"numeric\">%d</td>\n"
+                    "    <td class=\"size\">%s</td>"
+                    "    <td class=\"numeric speed\">%d</td>\n"
                     "    <td class=\"gender\">%s</td>\n"
                     "    <td class=\"attr\" rowspan=\"2\">%s</td>\n"
                     "    <td class=\"advance\" rowspan=\"2\">%s</td></tr>\n"
-                    "<tr><td class=\"player roles\" colspan=\"2\">%s</td>\n"
+                    "<tr><td class=\"player roles\" colspan=\"3\">%s</td>\n"
                     "    <td class=\"align\">%s</td></tr>\n",
-                    races[i].filecode, races[i].noun, races[i].basespeed,
-                    spoilgenders(races[i].allow),
+                    races[i].filecode, races[i].noun,
+                    spoilmonsize(mons[(races[i].malenum ? races[i].malenum :
+                                       races[i].femalenum)].msize),
+                    races[i].basespeed, spoilgenders(races[i].allow),
                     spoilattributes("min", races[i].attrmin,
                                     "max", races[i].attrmax, "", NULL),
                     spoiladvance("HP", &races[i].hpadv, "Pw", &races[i].enadv, 0),

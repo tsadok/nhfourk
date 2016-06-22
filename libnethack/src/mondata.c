@@ -260,20 +260,30 @@ can_track(const struct permonst * ptr)
 
 /* creature will slide out of armor */
 boolean
-sliparm(const struct permonst * ptr)
+sliparm(const struct permonst * ptr, struct objclass *oc)
 {
     return ((boolean)
-            (is_whirly(ptr) || ptr->msize <= MZ_SMALL || noncorporeal(ptr)));
+            (is_whirly(ptr) || ptr->msize <= oc->a_minsize ||
+             noncorporeal(ptr)));
 }
 
 /* creature will break out of armor */
 boolean
-breakarm(const struct permonst * ptr)
+breakarm(const struct permonst * ptr, struct objclass *oc)
 {
-    return ((bigmonst(ptr) || (ptr->msize > MZ_SMALL && !humanoid(ptr)) ||
-             /* special cases of humanoids that cannot wear body armor */
-             ptr == &mons[PM_MARILITH] || ptr == &mons[PM_WINGED_GARGOYLE])
-            && !sliparm(ptr));
+    if (!ptr) {
+        impossible("breakarm called with invalid permonst pointer");
+        return FALSE;
+    }
+    if (!oc) {
+        impossible("breakarm called with invalid object class pointer");
+        return FALSE;
+    }
+    return ((ptr->msize > oc->a_maxsize) ||
+            (ptr->msize > MZ_SMALL && !humanoid(ptr)) ||
+            /* special cases of humanoids that cannot wear body armor */
+            (ptr == &mons[PM_MARILITH] || ptr == &mons[PM_WINGED_GARGOYLE]))
+        && !sliparm(ptr, oc);
 }
 
 /* creature sticks other creatures it hits */

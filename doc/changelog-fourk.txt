@@ -61,6 +61,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Individual pieces of armor now have minimum and maximum sizes for
+   whether they will fit, depending on your body size.  Check the
+   automatically-generated spoilers for the fit sizes of each piece of
+   armor and the body size of each monster.  (Your racial monster is
+   the one checked, e.g., Gnome if you are a Gnome, unless of course
+   you are polymorphed, in which case it's your polymorph form.) See
+   http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/
+
  * More new Sokoban levels have been added.  Note, however, that
    solutions are now available for most of Fourk's sokoban levels
    in the NetHack Fourk spoilers:

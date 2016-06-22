@@ -121,7 +121,7 @@
 # define can_breathe(ptr)       attacktype(ptr, AT_BREA)
 # define cantwield(ptr)         (nohands(ptr) || verysmall(ptr))
 # define could_twoweap(ptr)     ((ptr)->mattk[1].aatyp == AT_WEAP)
-# define cantweararm(ptr)       (breakarm(ptr) || sliparm(ptr))
+# define cantweararm(ptr,oc)    (breakarm(ptr,oc) || sliparm(ptr,oc))
 # define throws_rocks(ptr)      (((ptr)->mflags2 & M2_ROCKTHROW) != 0L)
 # define type_is_pname(ptr)     (((ptr)->mflags2 & M2_PNAME) != 0L)
 # define is_lord(ptr)           (((ptr)->mflags2 & M2_LORD) != 0L)
