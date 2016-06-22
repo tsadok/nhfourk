@@ -356,7 +356,7 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-# Open the Door
+# "Open the Door"
 MAZE: "soko4-6",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
@@ -418,7 +418,7 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-# Picking out the Seeds
+# "Picking out the Seeds"
 MAZE: "soko4-7",' '
 FLAGS:noteleport,hardfloor
 GEOMETRY:center,center
@@ -489,7 +489,7 @@ OBJECT:'/',random,random
 
 ### Second level ###
 
-# Squared Off (a Vanilla level)
+# "Squared Off" (a Vanilla level)
 MAZE:"soko3-1",' '
 FLAGS:noteleport
 GEOMETRY:center,center
@@ -927,6 +927,72 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# "Count Carefully"
+MAZE: "soko3-7",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567
+MAP
+    --------------
+  ---.....---....|
+ --...--....|....|
+ |...--|.......---
+--...--|.|-...--  
+|..-..-|.|-----   
+|.|....|.|------  
+|.--.....|.....|  
+|.....---|.....|  
+-----.---|.....|  
+ |.......+.....|  
+ |...----|.....|  
+ |...|   -------  
+ -----            
+ENDMAP
+STAIR:(09,03),down
+STAIR:(12,09),up
+DOOR:locked,(09,10)
+REGION:(00,00,17,13),lit,"ordinary"
+NON_DIGGABLE:(00,00,17,13)
+NON_PASSWALL:(00,00,17,13)
+
+# Boulders
+OBJECT:'`',"boulder",(09,02)
+OBJECT:'`',"boulder",(15,02)
+OBJECT:'`',"boulder",(03,03)
+OBJECT:'`',"boulder",(04,03)
+OBJECT:'`',"boulder",(10,03)
+OBJECT:'`',"boulder",(13,03)
+OBJECT:'`',"boulder",(04,05)
+OBJECT:'`',"boulder",(04,06)
+OBJECT:'`',"boulder",(07,07)
+OBJECT:'`',"boulder",(02,08)
+OBJECT:'`',"boulder",(03,11)
+OBJECT:'`',"boulder",(04,11)
+
+# Traps
+TRAP:"hole",(04,04)
+TRAP:"hole",(08,04)
+TRAP:"hole",(02,05)
+TRAP:"hole",(08,05)
+TRAP:"hole",(03,06)
+TRAP:"hole",(08,06)
+TRAP:"hole",(04,07)
+TRAP:"hole",(08,07)
+TRAP:"hole",(05,08)
+TRAP:"hole",(05,09)
+TRAP:"hole",(05,10)
+TRAP:"hole",(06,10)
+TRAP:"hole",(07,10)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
 ### Third level ###
 MAZE:"soko2-1",' '
 FLAGS:noteleport
@@ -1286,7 +1352,7 @@ OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
 
-# Either Way It's All Good
+# "Either Way, It's All Good"
 MAZE: "soko2-6",' '
 FLAGS:noteleport
 GEOMETRY:center,center
@@ -1384,7 +1450,7 @@ OBJECT:'=',random,(16,07)
 OBJECT:'/',random,(09,09)
 
 
-# Vanilla Nightmare
+# "Vanilla Nightmare"
 # The infamous "soko2a" (nethackwiki) / "Sokoban 2 B" (steelypips):
 MAZE:"soko2-7",' '
 FLAGS:noteleport
@@ -1454,7 +1520,7 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-# Sneak Preview
+# "Sneak Preview"
 MAZE: "soko2-8",' '
 FLAGS:noteleport
 GEOMETRY:center,center
@@ -1528,6 +1594,7 @@ OBJECT:'/',random,random
 
 
 ### Top (last) level of Sokoban ###
+# "Sokobag / Bagoban"
 MAZE:"soko1-1",' '
 FLAGS:noteleport
 GEOMETRY:center,center
@@ -1620,6 +1687,7 @@ OBJECT:'(',"bag of holding",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 
 
+# "Reflectoban"
 MAZE:"soko1-2",' '
 FLAGS:noteleport
 GEOMETRY:center,center
@@ -1996,7 +2064,7 @@ OBJECT:'"',"amulet of reflection",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 
 
-# Running Rings Around
+# "Running Rings Around"
 MAZE: "soko1-6",' '
 FLAGS:noteleport
 GEOMETRY:center,center
@@ -2087,6 +2155,97 @@ OBJECT:'=',"teleport control",contained
 OBJECT:'=',random,contained
 ENGRAVING:place[0],burn,"Elbereth"
 
+
+# "Back At Ya"
+MAZE: "soko1-7",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789
+MAP
+   ----- ---------     -------
+----...--|..|-...---- --.....|
+|........|..|.......---.....--
+|...........................| 
+|.---|.|-----.....---......-- 
+|.|  |.|    --....| --.....|  
+|.|  |.|--   ------  |-----|  
+|.---|...|           |.....|--
+|........|           |.....+.|
+|...|...-------------|.....|-|
+----|................+..(..+.|
+    -----------------|.....|-|
+                     |.....+.|
+                     |.....|--
+                     -------  
+ENDMAP
+RANDOM_PLACES:(28,08),(28,10),(28,12)
+STAIR:(09,03),down
+DOOR:locked,(27,08)
+DOOR:locked,(21,10)
+DOOR:locked,(27,10)
+DOOR:locked,(27,12)
+REGION:(00,00,29,14),lit,"ordinary"
+NON_DIGGABLE:(00,00,29,14)
+NON_PASSWALL:(00,00,29,14)
+
+# Boulders
+OBJECT:'`',"boulder",(02,02)
+OBJECT:'`',"boulder",(05,02)
+OBJECT:'`',"boulder",(10,02)
+OBJECT:'`',"boulder",(14,02)
+OBJECT:'`',"boulder",(17,02)
+OBJECT:'`',"boulder",(26,02)
+OBJECT:'`',"boulder",(10,03)
+OBJECT:'`',"boulder",(15,03)
+OBJECT:'`',"boulder",(16,03)
+OBJECT:'`',"boulder",(19,03)
+OBJECT:'`',"boulder",(23,03)
+OBJECT:'`',"boulder",(26,03)
+OBJECT:'`',"boulder",(14,04)
+OBJECT:'`',"boulder",(23,04)
+OBJECT:'`',"boulder",(25,04)
+OBJECT:'`',"boulder",(26,04)
+OBJECT:'`',"boulder",(02,08)
+OBJECT:'`',"boulder",(04,08)
+OBJECT:'`',"boulder",(07,08)
+
+# Traps
+TRAP:"hole",(06,02)
+TRAP:"hole",(06,03)
+TRAP:"hole",(06,04)
+TRAP:"hole",(06,05)
+TRAP:"hole",(06,06)
+TRAP:"hole",(06,07)
+TRAP:"hole",(08,10)
+TRAP:"hole",(09,10)
+TRAP:"hole",(10,10)
+TRAP:"hole",(11,10)
+TRAP:"hole",(12,10)
+TRAP:"hole",(13,10)
+TRAP:"hole",(14,10)
+TRAP:"hole",(15,10)
+TRAP:"hole",(16,10)
+TRAP:"hole",(17,10)
+TRAP:"hole",(18,10)
+TRAP:"hole",(19,10)
+
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+# A pun on the name of the level:
+OBJECT:')',"ya",random
+
+# Rewards
+REGION:(22,07,26,13),lit,"zoo",filled,true
+OBJECT:'"',"amulet of reflection",place[0]
+ENGRAVING:place[0],burn,"Elbereth"
 
 
 

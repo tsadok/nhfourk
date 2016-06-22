@@ -61,6 +61,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * More new Sokoban levels have been added.  Note, however, that
+   solutions are now available for most of Fourk's sokoban levels
+   in the NetHack Fourk spoilers:
+   http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/
+
  * Combining potions of healing and speed now results in potions of
    full healing.  (You can still get potions of extra healing by
    combining potions of healing with gain energy or gain level.)
