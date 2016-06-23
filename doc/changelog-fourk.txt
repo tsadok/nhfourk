@@ -70,8 +70,8 @@ Changes in 4.3.0.4:
    http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/
 
  * More new Sokoban levels have been added.  Note, however, that
-   solutions are now available for most of Fourk's sokoban levels
-   in the NetHack Fourk spoilers:
+   solutions are now available for Fourk's sokoban levels in the
+   NetHack Fourk spoilers:
    http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/
 
  * Combining potions of healing and speed now results in potions of
@@ -90,7 +90,7 @@ Changes in 4.3.0.4:
    healing, only from extra healing.
 
  * The use of fountains and sinks and the drinking of magical potions
-   are now tracked as conducts.  The avert excessive spamminess, these
+   are now tracked as conducts.  To avert excessive spamminess, these
    conducts are only mentioned if you've kept them.
 
  * Some spell levels have changed, for balance reasons.  This is not
