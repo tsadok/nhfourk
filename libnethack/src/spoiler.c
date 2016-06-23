@@ -147,8 +147,8 @@ spoilversus(struct artifact *art)
         return pm->mname;
         // TODO
     } else if (art->spfx & SPFX_DCLAS) {
-        return msgprintf("%c", (char) def_monsyms[(int) art->mtype]);
-        // TODO
+        return msgprintf("%c - %s", ((char) def_monsyms[(int) art->mtype]),
+                         monexplain[(int) art->mtype]);
     } else if (art->spfx & SPFX_DFLAG1) {
         return spoilmonflagone(art->mtype);
     } else if (art->spfx & SPFX_DFLAG2) {
