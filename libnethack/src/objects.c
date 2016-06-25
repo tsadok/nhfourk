@@ -804,6 +804,15 @@ const struct objclass const_objects[] = {
     SCROLL(NULL, "TEMOV", 1, 0, 100),
     SCROLL(NULL, "GARVEN DEH", 1, 0, 100),
     SCROLL(NULL, "READ ME", 1, 0, 100),
+    SCROLL(NULL, "ETAOIN SHRDLU", 1, 0, 100),
+    SCROLL(NULL, "LOREM IPSUM SIT AMET", 1, 0, 100),
+    SCROLL(NULL, "ABRA KA DABRA", 1, 0, 100),
+    SCROLL(NULL, "HAPAX LEGOMENON", 1, 0, 100),
+    SCROLL(NULL, "XYZZY", 1, 0, 100),
+    SCROLL(NULL, "EDEVESH HANAGASH", 1, 0, 100),
+    SCROLL(NULL, "EIGOWA KIRAIDES", 1, 0, 100),
+    SCROLL(NULL, "FROBOZZ MAGIC SCROLL CO", 1, 0, 100),
+    SCROLL(NULL, "PATENT PENDING", 1, 0, 100),
     /* these must come last because they have special descriptions */
     SCROLL("blank paper", "unlabeled", 0, 28, 60),
 #undef SCROLL
