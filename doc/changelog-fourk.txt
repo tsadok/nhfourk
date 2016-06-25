@@ -117,6 +117,18 @@ Changes in 4.3.0.4:
    .......XXXXX.......  ...................  ...................
    ...................  ...................  ...................
 
+ * A number of race-specific and role-specific criteria have been
+   added for altering your alignment record.
+   + Barbarians get alignment points for killing monsters, in much
+     the same way as all players in 3.4.3 (except you can only get
+     at most one point per monster -- in practice this should still
+     be plenty to make Barbarian the easiest role by a wide margin
+     from an alignment record perspective).
+   + Knights can get alignment by slaying hostile (adult) dragons.
+   + Priests can gain alignment by killing hostile undead monsters.
+   + Dwarves can gain (and Elves can lose) alignment points by
+     chopping down trees.
+
  * Stinking clouds now block light and vision (like boulders).
 
  * Introduced a new kind of monster, the jitterbug.  This critter

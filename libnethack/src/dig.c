@@ -386,6 +386,8 @@ dig(void)
             }
             if (IS_TREE(loc->typ)) {
                 digtxt = "You cut down the tree.";
+                /* Note: we test for this exact string later, to decide if a
+                   tree was cut down for alignment-record purposes. */
                 loc->typ = ROOM;
                 /* Don't bother with a custom RNG for this: it would desync
                    between kicked fruits and cut-down fruits. (And if you think
@@ -434,8 +436,16 @@ dig(void)
             feel_location(dpx, dpy);
         else
             newsym(dpx, dpy);
-        if (digtxt)
+        if (digtxt) {
             pline(msgc_actionok, "%s", digtxt);      /* after newsym */
+            if (0 == strncmpi(digtxt, "You cut down the tree.",
+                               strlen("You cut down the tree."))) {
+                if (Race_if(PM_DWARF))
+                    adjalign(1);
+                else if (Race_if(PM_ELF))
+                    adjalign(-1);
+            }
+        }
         if (dmgtxt)
             pay_for_damage(dmgtxt, FALSE);
 

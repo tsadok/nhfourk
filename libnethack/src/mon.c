@@ -2269,14 +2269,18 @@ cleanup:
         adjalign(-1);
 
     /* malign was already adjusted for u.ualign.type and randomization */
-    /* NetHack Fourk Balance Adjustment:  No alignment points for everyday
-       monster killing.  That completely defeats the purpose of even bothering
-       to keep track of player alignment record.  So no.  We still have an
-       alignment penalty for killing always-peacefuls, however, and lawfuls
+    /* NetHack Fourk Balance Adjustment:  Most player characters get no
+       alignment points for everyday monster killing (Barbarians being the
+       exception, since they are intended to be the easy role for new players;
+       but even Barbarians can only get one point per monster, which is much
+       less than 3.4.3's unboundedly unbalanced heaps of points).  We still have
+       an alignment penalty for killing always-peacefuls, however, and lawfuls
        have a penalty for killing generated-peacefuls as well. */
-    if (mtmp->malign < 0) {
+    if ((mtmp->malign < 0) || Role_if(PM_BARBARIAN)) {
         if (always_peaceful(mtmp->data))
             adjalign(-3);
+        else if (Role_if(PM_BARBARIAN))
+            adjalign(sgn(mtmp->malign));
         else if (u.ualign.type == A_LAWFUL)
             adjalign(-1);
     }
@@ -2290,6 +2294,13 @@ cleanup:
     /* Lawful characters gain alignment for killing hostile chaotic demons. */
     else if (u.ualign.type == A_LAWFUL && is_demon(mtmp->data) &&
              mtmp->data->maligntyp < 0)
+        adjalign(1);
+    /* Knights gain alignment for killing hostile (adult) dragons. */
+    else if (Role_if(PM_KNIGHT) && (monsndx(mtmp->data) >= PM_GRAY_DRAGON) &&
+             (monsndx(mtmp->data) <= PM_GREAT_YELLOW_DRAGON))
+        adjalign(1);
+    /* Priests gain alignment for killing undead monsters. */
+    else if (Role_if(PM_PRIEST) && is_undead(mtmp->data))
         adjalign(1);
 }
 
