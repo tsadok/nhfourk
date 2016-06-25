@@ -78,7 +78,9 @@ static const struct trobj Cave_man[] = {
 };
 
 static const struct trobj Healer[] = {
-#define H_LEAF  9
+#define H_LEAF   9
+#define H_SPRIG 10
+#define H_CLOVE 11
     {SCALPEL, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {LEATHER_GLOVES, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
     {STETHOSCOPE, 0, TOOL_CLASS, 1, 0},
@@ -89,7 +91,9 @@ static const struct trobj Healer[] = {
     {SPE_HEALING, 0, SPBOOK_CLASS, 1, 1},
     {SPE_EXTRA_HEALING, 0, SPBOOK_CLASS, 1, 1},
     {SPE_STONE_TO_FLESH, 0, SPBOOK_CLASS, 1, 1},
-    {EUCALYPTUS_LEAF, 0, FOOD_CLASS, 6, 1},
+    {EUCALYPTUS_LEAF, 0, FOOD_CLASS, 4, 1},
+    {SPRIG_OF_WOLFSBANE, 0, FOOD_CLASS, 4, 1},
+    {CLOVE_OF_GARLIC, 0, FOOD_CLASS, 4, 1},
     {APPLE, 0, FOOD_CLASS, 5, 0},
     {0, 0, 0, 0, 0}
 };
@@ -735,7 +739,9 @@ u_init_inv_skills(void)
     case PM_HEALER:
         u.umoney0 = 1001 + rolern2(1000);
         trobj_list = copy_trobj_list(Healer);
-        trobj_list[H_LEAF].trquan = 6 + rolern2(6);
+        trobj_list[H_LEAF].trquan  = 4 + rolern2(3);
+        trobj_list[H_SPRIG].trquan = 1 + rolern2(3);
+        trobj_list[H_CLOVE].trquan = 1 + rolern2(3);
         role_ini_inv(trobj_list, nclist);
         knows_object(POT_FULL_HEALING);
         skill_init(Skill_H);

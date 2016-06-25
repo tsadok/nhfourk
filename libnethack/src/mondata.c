@@ -260,7 +260,7 @@ can_track(const struct permonst * ptr)
 
 /* creature will slide out of armor */
 boolean
-sliparm(const struct permonst * ptr, struct objclass *oc)
+sliparm(const struct permonst * ptr, const struct objclass *oc)
 {
     return ((boolean)
             (is_whirly(ptr) || ptr->msize <= oc->a_minsize ||
@@ -269,7 +269,7 @@ sliparm(const struct permonst * ptr, struct objclass *oc)
 
 /* creature will break out of armor */
 boolean
-breakarm(const struct permonst * ptr, struct objclass *oc)
+breakarm(const struct permonst * ptr, const struct objclass *oc)
 {
     if (!ptr) {
         impossible("breakarm called with invalid permonst pointer");
