@@ -917,13 +917,17 @@ peffects(struct obj *otmp)
             else
                 pline(msgc_statusheal,
                       "Magical energies course through your body.");
-            num = rnd(5) + 5 * otmp->blessed + 1;
+            num = rnd(3) + 3 * otmp->blessed + 1;
             u.uenmax += (otmp->cursed) ? -num : num;
-            u.uen += (otmp->cursed) ? -num : num;
+            num = (u.uenmax <= 20) ? rnd(1 + u.uenmax * 2 / 3) :
+                (abs(num) * rnd(1 + u.uenmax / 10));
+            u.uen += (otmp->cursed) ? (1 + num / 2) : num;
             if (u.uenmax <= 0)
                 u.uenmax = 0;
             if (u.uen <= 0)
                 u.uen = 0;
+            if (u.uen > u.uenmax)
+                u.uen = u.uenmax;
         }
         break;
     case POT_OIL:      /* P. Winner */
@@ -1477,6 +1481,7 @@ mixtype(struct obj *o1, struct obj *o2)
     case POT_FULL_HEALING:
         switch (o2->otyp) {
         case POT_GAIN_LEVEL:
+            return POT_GAIN_ENERGY;
         case POT_GAIN_ENERGY:
             return POT_GAIN_ABILITY;
         }
@@ -1495,6 +1500,9 @@ mixtype(struct obj *o1, struct obj *o2)
             return POT_FRUIT_JUICE;
         break;
     case POT_GAIN_LEVEL:
+        if (o2->otyp == POT_FULL_HEALING)
+            return POT_GAIN_ENERGY;
+        /* else fall through */
     case POT_GAIN_ENERGY:
         switch (o2->otyp) {
         case POT_CONFUSION:

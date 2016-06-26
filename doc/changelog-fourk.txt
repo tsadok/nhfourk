@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Potions of gain energy are now significantly more useful for
+   refilling your Pw when it is well below maximum (and slightly less
+   effective at increasing your maximum Pw level).
+
  * The skill bonus for martial arts has changed; advancing the skill
    is now somewhat more worthwhile, in terms of damage you do.
 
@@ -83,6 +87,9 @@ Changes in 4.3.0.4:
  * Combining potions of healing and speed now results in potions of
    full healing.  (You can still get potions of extra healing by
    combining potions of healing with gain energy or gain level.)
+   Combining potions of full healing and gain level results in
+   potions of gain energy.  (You can still get potions of gain
+   ability by combining full healing and gain energy.)
 
  * The extra healing that you get (above and beyond your maximum
    health, which increases your maximum) from potions of extra healing
