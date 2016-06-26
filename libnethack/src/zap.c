@@ -3352,7 +3352,7 @@ zap_hit_mon(struct monst *mon, int type, int nd, struct obj **ootmp, int rayleve
         break;
     case ZT_SLEEP:
         tmp = 0;
-        sleep_monst(mon, dice(nd, 25),
+        sleep_monst(mon, dice(nd, 6),
                     type == ZT_WAND(ZT_SLEEP) ? WAND_CLASS : '\0');
         break;
     case ZT_DEATH:     /* death/disintegration */
