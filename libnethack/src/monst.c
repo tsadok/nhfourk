@@ -1917,7 +1917,7 @@ const struct permonst mons[] = {
  * Jabberwocks, and other dangerous large chimeric mythical birdies.
  */
     MON("baby gryphon", S_JABBERWOCK,
-        LVL(7, 18, 0, 25, 5), G_GENO,
+        LVL(7, 13, 18, 0, 25, 5), G_GENO,
         A(ATTK(AT_BITE, AD_PHYS, 1, 14),
           ATTK(AT_CLAW, AD_PHYS, 1, 6), ATTK(AT_CLAW, AD_PHYS, 1, 6),
           NO_ATTK, NO_ATTK, NO_ATTK),
@@ -1926,7 +1926,7 @@ const struct permonst mons[] = {
         M2_HOSTILE | M2_STRONG | M2_NASTY | M2_STALK | M2_MAGIC,
         M3_INFRAVISIBLE | M3_INFRAVISION | M3_SCENT, 0, CLR_BROWN),
     MON("gryphon", S_JABBERWOCK,
-        LVL(12, 22, 0, 50, 10), (G_GENO | 2),
+        LVL(12, 16, 22, 0, 50, 10), (G_GENO | 2),
         A(ATTK(AT_BITE, AD_PHYS, 1, 18),
           ATTK(AT_CLAW, AD_PHYS, 1, 10), ATTK(AT_CLAW, AD_PHYS, 1, 10),
           NO_ATTK, NO_ATTK, NO_ATTK),
