@@ -1695,7 +1695,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         struct rm *l = NULL;
         if (isok(x,y))
             l = &(level->locations[x][y]);
-        while (moving && (stunned(&youmonst) || confused(&youmonst)) &&
+        while (moving && (Stunned || Confusion) &&
                (!isok(x, y) || ((l && l->mem_bg >= S_stone &&
                                  l->mem_bg <= S_trwall &&
                                  (!tunnels(URACEDATA) ||
