@@ -359,9 +359,10 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     coord pos[ROWNO * COLNO];
     int babypm, adultpm, greatpm,
         gemone, gemtwo, glass,
-        itemone, itemtwo, itemthree;
+        itemone, itemtwo, itemthree, itemfour;
     int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
     int color = rn2_on_rng(6, rng);
+    const char *ifourdesc = "nosuchitem";
     struct monst *mon;
     imax = 0;
     switch (color) {
@@ -375,6 +376,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone   = RIN_SHOCK_RESISTANCE;
         itemtwo   = CORNUTHAUM;
         itemthree = WAN_LIGHTNING;
+        ifourdesc = "sapphire";
         break;
     case 2: /* green */
         babypm    = harder ? PM_YOUNG_GREEN_DRAGON : PM_BABY_GREEN_DRAGON;
@@ -386,6 +388,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone   = RIN_POISON_RESISTANCE;
         itemtwo   = POT_SICKNESS;
         itemthree = AMULET_VERSUS_POISON;
+        ifourdesc = "emerald";
         break;
     case 3: /* white */
         babypm    = harder ? PM_YOUNG_WHITE_DRAGON : PM_BABY_WHITE_DRAGON;
@@ -397,6 +400,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone   = RIN_COLD_RESISTANCE;
         itemtwo   = ICE_BOX;
         itemthree = WAN_COLD;
+        ifourdesc = "diamond";
         break;
     case 4: /* orange */
         babypm    = harder ? PM_YOUNG_ORANGE_DRAGON : PM_BABY_ORANGE_DRAGON;
@@ -408,6 +412,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone   = AMULET_OF_RESTFUL_SLEEP;
         itemtwo   = ORANGE;
         itemthree = WAN_SLEEP;
+        ifourdesc = "agate";
         break;
     default: /* red */
         babypm    = harder ? PM_YOUNG_RED_DRAGON : PM_BABY_RED_DRAGON;
@@ -419,7 +424,14 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemone   = RIN_FIRE_RESISTANCE;
         itemtwo   = SCR_FIRE;
         itemthree = WAN_FIRE;
+        ifourdesc = "ruby";
         break;
+    }
+    itemfour = itemone;
+    for (i = RIN_ADORNMENT; i <= RIN_PROTECTION_FROM_SHAPE_CHANGERS; i++) {
+        const char *s;
+        if ((s = OBJ_DESCR(objects[i])) != 0 && !strcmp(s, ifourdesc))
+            itemfour = i;
     }
     i = 0;
     /* Add all the viable floor positions in the room to a list: */
@@ -463,7 +475,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
             break;
         }
         /* dragons hoard things they like */
-        switch(rn2_on_rng(10, rng)) {
+        switch(rn2_on_rng(12, rng)) {
         case 1:
             mksobj_at(itemthree, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
             break;
@@ -474,6 +486,14 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         case 4:
         case 5:
             mksobj_at(itemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 6:
+        case 7:
+        case 8:
+            mksobj_at(itemfour, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 9:
+            mkobj_at(RING_CLASS, lev, pos[i].x, pos[i].y, FALSE, rng);
             break;
         default:
             mksobj_at(itemone, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
