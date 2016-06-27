@@ -1592,13 +1592,13 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     uia = resolve_uim(uim, !!Engulfed,
                       Engulfed ? u.ux : u.ux + turnstate.intended_dx,
                       Engulfed ? u.uy : u.uy + turnstate.intended_dy);
+    boolean moving = FALSE; /* true if we are performing a move */
 
     switch (uia) {
     case uia_move_nopickup:
-        break;
     case uia_move_pickup:
-        break;
     case uia_displace:
+        moving = TRUE;
         break;
     case uia_attack:
         break;
@@ -1627,7 +1627,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     if (((wtcap = near_capacity()) >= OVERLOADED ||
          (wtcap > SLT_ENCUMBER && (Upolyd ? (u.mh < 5 && u.mh != u.mhmax)
                                    : (u.uhp < 10 && u.uhp != u.uhpmax))))
-        && !Is_airlevel(&u.uz)) {
+        && !Is_airlevel(&u.uz) && (moving || wtcap >= OVERLOADED)) {
         if (wtcap < OVERLOADED) {
             pline(msgc_cancelled1, "You don't have enough stamina to move.");
             exercise(A_CON, FALSE);
@@ -1682,8 +1682,8 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         if (!on_ice && (HFumbling & FROMOUTSIDE))
             HFumbling &= ~FROMOUTSIDE;
 
-        /* Ensure the move is to a valid direction. If not stunned or confused,
-           abort invalid moves. Otherwise, re-randomize them.
+        /* Ensure that if we're stunned/confused, the random move was valid.
+           If not, re-randomize.
 
            Note that this is a bugfix from 4.3-beta2, which effectively rolled
            the randomization chance on confusion twice (once here, once in
@@ -1692,9 +1692,16 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
         x = u.ux + turnstate.move.dx;
         y = u.uy + turnstate.move.dy;
         int tries = 0;
-        while ((!isok(x, y) || bad_rock(URACEDATA, x, y)) &&
-               (uia != uia_attack) && (!uwep || !is_pick(uwep))) {
-            if (tries++ > 50 || (!Stunned && !Confusion)) {
+        struct rm *l = NULL;
+        if (isok(x,y))
+            l = &(level->locations[x][y]);
+        while (moving && (stunned(&youmonst) || confused(&youmonst)) &&
+               (!isok(x, y) || ((l && l->mem_bg >= S_stone &&
+                                 l->mem_bg <= S_trwall &&
+                                 (!tunnels(URACEDATA) ||
+                                 (needspick(URACEDATA) &&
+                                  (!uwep || !is_pick(uwep)))))))) {
+            if (tries++ > 50) {
                 action_completed();
                 if (isok(x, y)) {
                     feel_location(x, y);
@@ -1705,6 +1712,9 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
             confdir(&turnstate.move.dx, &turnstate.move.dy);
             x = u.ux + turnstate.move.dx;
             y = u.uy + turnstate.move.dy;
+            l = NULL;
+            if (isok(x, y))
+                l = &(level->locations[x][y]);
         }
 
         /* In water, turbulence might alter your actual destination. */
