@@ -2248,4 +2248,120 @@ OBJECT:'"',"amulet of reflection",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 
 
+# "The Dragon of Bactria"
+MAZE: "soko1-8",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#123456789012345678901234567890
+MAP
+ -----   ----                  
+ |...----|..---       -------  
+ |............|   ----|.....|--
+--.......|....|   |...+.....+.|
+|........|....|   |.--|.....|-|
+|........|....|   |.| |..(..+.|
+|---.------.----  |.| |.....|-|
+|.......|......|  |.| |.....+.|
+|.......|......|  |.| |.....|--
+|..............|  |.| -------  
+|.......|.....--  |.|          
+|.......|.....|   |.|          
+|-.--------...|   |.|          
+|-.|      -----   |.|          
+|..----------------.|          
+|...................|          
+------------------..|          
+                 ----          
+ENDMAP
+RANDOM_PLACES:(29,03),(29,05),(29,07)
+STAIR:(02,12),down
+DOOR:locked,(22,03)
+DOOR:locked,(28,03)
+DOOR:locked,(28,05)
+DOOR:locked,(28,07)
+REGION:(00,00,30,17),lit,"ordinary"
+NON_DIGGABLE:(00,00,30,17)
+NON_PASSWALL:(00,00,30,17)
+
+# Boulders
+OBJECT:'`',"boulder",(02,02)
+OBJECT:'`',"boulder",(03,02)
+OBJECT:'`',"boulder",(05,02)
+OBJECT:'`',"boulder",(08,02)
+OBJECT:'`',"boulder",(04,03)
+OBJECT:'`',"boulder",(06,03)
+OBJECT:'`',"boulder",(05,04)
+OBJECT:'`',"boulder",(08,04)
+OBJECT:'`',"boulder",(02,05)
+OBJECT:'`',"boulder",(06,05)
+OBJECT:'`',"boulder",(02,07)
+OBJECT:'`',"boulder",(04,07)
+OBJECT:'`',"boulder",(05,07)
+OBJECT:'`',"boulder",(10,07)
+OBJECT:'`',"boulder",(12,07)
+OBJECT:'`',"boulder",(03,08)
+OBJECT:'`',"boulder",(05,08)
+OBJECT:'`',"boulder",(10,08)
+OBJECT:'`',"boulder",(12,08)
+OBJECT:'`',"boulder",(02,09)
+OBJECT:'`',"boulder",(05,09)
+OBJECT:'`',"boulder",(07,09)
+OBJECT:'`',"boulder",(11,09)
+OBJECT:'`',"boulder",(13,09)
+OBJECT:'`',"boulder",(03,10)
+OBJECT:'`',"boulder",(06,10)
+OBJECT:'`',"boulder",(07,10)
+OBJECT:'`',"boulder",(10,10)
+OBJECT:'`',"boulder",(12,10)
+OBJECT:'`',"boulder",(02,11)
+OBJECT:'`',"boulder",(03,11)
+OBJECT:'`',"boulder",(11,11)
+
+# Traps
+TRAP:"hole",(19,04)
+TRAP:"hole",(19,05)
+TRAP:"hole",(19,06)
+TRAP:"hole",(19,07)
+TRAP:"hole",(19,08)
+TRAP:"hole",(19,09)
+TRAP:"hole",(19,10)
+TRAP:"hole",(19,11)
+TRAP:"hole",(19,12)
+TRAP:"hole",(02,13)
+TRAP:"hole",(19,13)
+TRAP:"hole",(02,14)
+TRAP:"hole",(19,14)
+TRAP:"hole",(03,15)
+TRAP:"hole",(04,15)
+TRAP:"hole",(05,15)
+TRAP:"hole",(06,15)
+TRAP:"hole",(07,15)
+TRAP:"hole",(08,15)
+TRAP:"hole",(09,15)
+TRAP:"hole",(10,15)
+TRAP:"hole",(11,15)
+TRAP:"hole",(12,15)
+TRAP:"hole",(13,15)
+TRAP:"hole",(14,15)
+TRAP:"hole",(15,15)
+TRAP:"hole",(16,15)
+TRAP:"hole",(17,15)
+
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'m',"giant mimic", random, m_object "boulder"
+MONSTER:'D',"green dragon",place[1]
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# Rewards
+REGION:(23,02,27,08),lit,"zoo",filled,true
+OBJECT:'(',"bag of holding",place[0]
+ENGRAVING:place[0],burn,"Elbereth"
 
