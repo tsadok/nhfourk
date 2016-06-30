@@ -17,7 +17,6 @@ cost(struct obj *otmp)
     switch (otmp->otyp) {
     case SCR_LIGHT:
     case SCR_GOLD_DETECTION:
-    case SCR_FOOD_DETECTION:
     case SCR_MAGIC_MAPPING:
     case SCR_WATER:
     case SCR_FIRE:
@@ -49,6 +48,9 @@ cost(struct obj *otmp)
 /*      break; */
     case SCR_GENOCIDE:
         return 30;
+/*      break; */
+    case SCR_CONSECRATION:
+        return 45;
 /*      break; */
     case SCR_WISHING:
         /* Yeah, sure, wish for a marker, write a scroll of wishing, recharge... */

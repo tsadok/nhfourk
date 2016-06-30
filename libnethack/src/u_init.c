@@ -697,6 +697,7 @@ u_init_inv_skills(void)
         { STRANGE_OBJECT, STRANGE_OBJECT, STRANGE_OBJECT, STRANGE_OBJECT };
 
         /*** Role-specific initializations ***/
+    augment_magic_chest_contents(SCR_CONSECRATION, 0, 1);
     switch (Role_switch) {
     case PM_ARCHEOLOGIST:
         role_ini_inv(Archeologist, nclist);

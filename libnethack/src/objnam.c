@@ -1895,9 +1895,7 @@ static const struct alt_spellings {
     {"meat", HUGE_CHUNK_OF_MEAT},
     {"wand of teleport", WAN_TELEPORTATION},
     {"scroll of teleport", SCR_TELEPORTATION},
-    {"scroll of detect food", SCR_FOOD_DETECTION},
     {"scroll of detect gold", SCR_GOLD_DETECTION},
-    {"detect food", SCR_FOOD_DETECTION},
     {"detect gold", SCR_GOLD_DETECTION},
     {NULL, 0}};
 

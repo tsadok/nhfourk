@@ -1180,7 +1180,6 @@ seffects(struct obj *sobj, boolean *known)
             return trap_detect(sobj);
         else
             return gold_detect(sobj, known);
-    case SCR_FOOD_DETECTION:
     case SPE_DETECT_FOOD:
         if (food_detect(sobj, known))
             return 1;   /* nothing detected */
@@ -1288,6 +1287,27 @@ seffects(struct obj *sobj, boolean *known)
                   "Unfortunately, you can't grasp the details.");
         }
         break;
+    case SCR_CONSECRATION:
+    {
+        int typ = level->locations[u.ux][u.uy].typ;
+        int newtype = confused ? MAGIC_CHEST : ALTAR;
+        int aalign  = (sobj->cursed || In_hell(&u.uz)) ? A_NONE :
+            (sobj->blessed || In_quest(&u.uz)) ? u.ualignbase[A_ORIGINAL] :
+            (u.ualign.type == A_NEUTRAL) ? A_LAWFUL : A_NEUTRAL;
+        /* the altar can be made chaotic via same-race sacrifice */
+        if (In_endgame(&u.uz) || t_at(level, u.ux, u.uy) ||
+            !ACCESSIBLE(typ) || IS_DOOR(typ) || IS_FURNITURE(typ) ||
+            (typ >= ICE)) { /* ROOM is intended, but corridor for example is
+                               also permitted. */
+            pline(msgc_yafm, "Nothing happens.");
+            break;
+        }
+        *known = TRUE;
+        level->locations[u.ux][u.uy].typ = newtype;
+        if (newtype == ALTAR)
+            level->locations[u.ux][u.uy].altarmask = Align2amask(aalign);
+        break;
+    }
     case SCR_WATER:
         *known = TRUE;
         if (Is_airlevel(&u.uz) || Is_earthlevel(&u.uz) || Is_firelevel(&u.uz) ||

@@ -61,6 +61,20 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Scrolls of consecration have been implemented.  Reading one of
+   these will create an altar (or, if confused, a magic chest) at your
+   feet (provided you are standing on untrapped floor of a room or
+   corridor).  These are not randomly generated, but there's always
+   one in the magic chest.  It is possible to write them, but they
+   cost a lot of ink.  You can also wish for them.  The altar will be
+   to Moloch if you are in Gehennom or the scroll is cursed, or
+   otherwise will be of your starting alignment if the scroll is
+   blessed or if you are in the quest.
+
+ * The scroll of food detection has been removed from the game.
+   The frequencies of some other scrolls have been increased to
+   compensate.
+
  * Potions of gain energy are now significantly more useful for
    refilling your Pw when it is well below maximum (and slightly less
    effective at increasing your maximum Pw level).
