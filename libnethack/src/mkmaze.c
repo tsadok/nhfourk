@@ -270,7 +270,9 @@ place_lregion(struct level *lev, xchar lx, xchar ly, xchar hx, xchar hy,
                 (lev, x, y, nlx, nly, nhx, nhy, rtype, oneshot, dest_lvl))
                 return;
 
-    impossible("Couldn't place lregion type %d!", rtype);
+    impossible("Couldn't place lregion type %d in region (%d,%d,%d,%d) "
+               "but not in (%d,%d,%d,%d)!",
+               rtype, lx, ly, hx, hy, nlx, nly, nhx, nhy);
 }
 
 static boolean
