@@ -1291,7 +1291,7 @@ seffects(struct obj *sobj, boolean *known)
     {
         int typ = level->locations[u.ux][u.uy].typ;
         int newtype = confused ? MAGIC_CHEST : ALTAR;
-        int aalign  = (sobj->cursed || In_hell(&u.uz)) ? A_NONE :
+        aligntyp aalign  = (sobj->cursed || In_hell(&u.uz)) ? A_NONE :
             (sobj->blessed || In_quest(&u.uz)) ? u.ualignbase[A_ORIGINAL] :
             (u.ualign.type == A_NEUTRAL) ? A_LAWFUL : A_NEUTRAL;
         /* the altar can be made chaotic via same-race sacrifice */
@@ -1303,9 +1303,18 @@ seffects(struct obj *sobj, boolean *known)
             break;
         }
         *known = TRUE;
-        level->locations[u.ux][u.uy].typ = newtype;
-        if (newtype == ALTAR)
+        if (newtype == ALTAR) {
             level->locations[u.ux][u.uy].altarmask = Align2amask(aalign);
+            if (!Blind || !(Levitation || Flying))
+                pline(msgc_actionok, "The %s beneath your %s rises.",
+                      surface(u.ux, u.uy), makeplural(body_part(FOOT)));
+            pline(msgc_actionok, "You feel a surge of the power of %s.",
+                  align_gname(aalign));
+        } else if (!Blind || !(Levitation || Flying)) {
+            pline(msgc_actionok, "A great chest rises from the %s.",
+                  surface(u.ux, u.uy));
+        }
+        level->locations[u.ux][u.uy].typ = newtype;
         break;
     }
     case SCR_WATER:
