@@ -165,7 +165,7 @@ mortal_or_creature(const struct permonst *data, boolean allow_creature)
         return "creature";
     else if (!nonliving(data) && !is_demon(data))
         return "mortal";
-    else if (is_demon(data) || monsndx(data) == PM_MANES)
+    else if (is_demon(data))
         return "demon";
     else if (nonliving(data) && !is_undead(data))
         return "construct"; /* golems and vortices */

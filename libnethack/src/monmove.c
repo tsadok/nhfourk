@@ -179,7 +179,8 @@ disturb(struct monst *mtmp)
         alertness++;
     if (mtmp->data == &mons[PM_ETTIN])
         alertness += 2; /* Ettins are hard to surprise, having two heads */
-    if ((mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN) ||
+    if ((mtmp->data->mlet == S_DOG || mtmp->data->mlet == S_HUMAN ||
+         mtmp->data->mlet == S_QUENDI) ||
         (!rn2(7) && mtmp->m_ap_type != M_AP_FURNITURE &&
          mtmp->m_ap_type != M_AP_OBJECT))
         alertness++;

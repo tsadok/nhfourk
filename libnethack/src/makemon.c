@@ -250,6 +250,44 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             mongets(mtmp, (rn2_on_rng(3, rng) ? ROCK : FLINT), rng);
         }
         break;
+    case S_QUENDI:
+        if (rn2_on_rng(2, rng))
+            mongets(mtmp, rn2_on_rng(2, rng) ?
+                    ELVEN_MITHRIL_COAT : ELVEN_CLOAK, rng);
+        if (rn2_on_rng(2, rng))
+            mongets(mtmp, ELVEN_LEATHER_HELM, rng);
+        else if (!rn2_on_rng(4, rng))
+            mongets(mtmp, ELVEN_BOOTS, rng);
+        if (rn2_on_rng(2, rng))
+            mongets(mtmp, ELVEN_DAGGER, rng);
+        switch (rn2_on_rng(3, rng)) {
+        case 0:
+            if (!rn2_on_rng(4, rng))
+                mongets(mtmp, ELVEN_SHIELD, rng);
+            if (rn2_on_rng(3, rng))
+                mongets(mtmp, ELVEN_SHORT_SWORD, rng);
+            mongets(mtmp, ELVEN_BOW, rng);
+            m_initthrow(mtmp, ELVEN_ARROW, 12, rng);
+            break;
+        case 1:
+            mongets(mtmp, ELVEN_BROADSWORD, rng);
+            if (rn2_on_rng(2, rng))
+                mongets(mtmp, ELVEN_SHIELD, rng);
+            break;
+        case 2:
+            if (rn2_on_rng(2, rng)) {
+                mongets(mtmp, ELVEN_SPEAR, rng);
+                mongets(mtmp, ELVEN_SHIELD, rng);
+            }
+            break;
+        }
+        if (mm == PM_ELVENKING) {
+            if (rn2_on_rng(3, rng) || (in_mklev && Is_earthlevel(&u.uz)))
+                mongets(mtmp, PICK_AXE, rng);
+            if (!rn2_on_rng(50, rng))
+                mongets(mtmp, CRYSTAL_BALL, rng);
+        }
+        break;
     case S_HUMAN:
         if (mtmp->iswiz) {
             mongets(mtmp, rodneyitem(rng), rng);
@@ -292,43 +330,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 w2 = KNIFE;
             if (w2)
                 mongets(mtmp, w2, rng);
-        } else if (is_elf(ptr)) {
-            if (rn2_on_rng(2, rng))
-                mongets(mtmp, rn2_on_rng(2, rng) ?
-                        ELVEN_MITHRIL_COAT : ELVEN_CLOAK, rng);
-            if (rn2_on_rng(2, rng))
-                mongets(mtmp, ELVEN_LEATHER_HELM, rng);
-            else if (!rn2_on_rng(4, rng))
-                mongets(mtmp, ELVEN_BOOTS, rng);
-            if (rn2_on_rng(2, rng))
-                mongets(mtmp, ELVEN_DAGGER, rng);
-            switch (rn2_on_rng(3, rng)) {
-            case 0:
-                if (!rn2_on_rng(4, rng))
-                    mongets(mtmp, ELVEN_SHIELD, rng);
-                if (rn2_on_rng(3, rng))
-                    mongets(mtmp, ELVEN_SHORT_SWORD, rng);
-                mongets(mtmp, ELVEN_BOW, rng);
-                m_initthrow(mtmp, ELVEN_ARROW, 12, rng);
-                break;
-            case 1:
-                mongets(mtmp, ELVEN_BROADSWORD, rng);
-                if (rn2_on_rng(2, rng))
-                    mongets(mtmp, ELVEN_SHIELD, rng);
-                break;
-            case 2:
-                if (rn2_on_rng(2, rng)) {
-                    mongets(mtmp, ELVEN_SPEAR, rng);
-                    mongets(mtmp, ELVEN_SHIELD, rng);
-                }
-                break;
-            }
-            if (mm == PM_ELVENKING) {
-                if (rn2_on_rng(3, rng) || (in_mklev && Is_earthlevel(&u.uz)))
-                    mongets(mtmp, PICK_AXE, rng);
-                if (!rn2_on_rng(50, rng))
-                    mongets(mtmp, CRYSTAL_BALL, rng);
-            }
         } else if (mm == PM_NINJA || mm == PM_ROSHI) {
             m_initthrow(mtmp, SHURIKEN, 8, rng);
         } else if (ptr->msound == MS_PRIEST ||
