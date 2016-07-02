@@ -779,7 +779,7 @@ MAP
 |.....|.....................................................|
 |............---------......---------......---------........|
 |.....|......|...|...|......|...|...|......|...|...|........|
-|....K|\.....+...|...+......+...|...+......+...|...+........|
+|....K|\.....+...|...+......+...|...+......+...|...+...(....|
 |.....|......|...|...|......|...|...|......|...|...|........|
 |............---------......---------......---------........|
 |.....|.....................................................|
@@ -832,7 +832,7 @@ OBJECT:'!',random,(41,16)
 OBJECT:'!',random,(55,16)
 OBJECT:'(',"tinning kit",random
 OBJECT:'(',"tinning kit",random
-OBJECT:'(',"tinning kit",random
+#OBJECT:'(',"tinning kit",random
 
 # Bunsen Burners:
 TRAP:"fire",(12,03)
@@ -946,6 +946,7 @@ OBJECT:'[',"leather gloves",place[2]
 OBJECT:'(',"mirror",place[2]
 
 # Cabinet Four:
+OBJECT:'(',"large box",place[3]
 OBJECT:'(',"ice box",place[3]
 OBJECT:'[',"high boots",place[3]
 OBJECT:'[',"Hawaiian shirt",place[3]
@@ -960,13 +961,13 @@ OBJECT:'/',"polymorph",place[3]
 
 # Cabinet Five:
 OBJECT:'[',"alchemy smock",place[4]
-OBJECT:'(',"large box",place[4]
 OBJECT:'(',"stethoscope",place[4]
 OBJECT:'(',"expensive camera",place[4]
 CONTAINER:'(',"chest",place[4]
 OBJECT:'+',random,contained
 OBJECT[50%]:'+',random,contained
 OBJECT[50%]:'+',random,contained
+OBJECT:'?',"wishing",contained
 OBJECT:'(',random,contained
 OBJECT:'(',random,contained
 OBJECT:'(',"magic marker",contained
@@ -975,6 +976,7 @@ OBJECT:'%',"clove of garlic",place[4]
 OBJECT:random,random,place[4]
 
 # Cabinet Six:
+OBJECT:'(',"large box",place[5]
 OBJECT:'[',"alchemy smock",place[5],random,4
 OBJECT:'(',"towel",place[5]
 OBJECT:'+',random,place[5]
@@ -997,7 +999,6 @@ OBJECT:'(',"tin opener",place[5]
 
 # Cabinet Seven:
 OBJECT:'[',"alchemy smock",place[6]
-OBJECT:'(',"large box",place[6]
 OBJECT:'(',"stethoscope",place[6]
 OBJECT:'(',"expensive camera",place[6]
 CONTAINER:'(',"chest",place[6]
@@ -1006,6 +1007,7 @@ OBJECT[50%]:'+',random,contained
 OBJECT[50%]:'+',random,contained
 OBJECT:'(',random,contained
 OBJECT:'(',random,contained
+OBJECT:'?',"wishing",contained
 OBJECT:'(',"wooden flute",place[6]
 OBJECT:'[',"gauntlets of dexterity",place[6]
 OBJECT:random,random,place[6]
