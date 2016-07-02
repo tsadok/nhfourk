@@ -246,6 +246,9 @@ nameshk(struct monst *shk, const char *const *nlp, struct level *lev)
     int name_wanted;
     s_level *sptr;
 
+    if (nlp == shkfoods && In_sokoban(&lev->z)) {
+        shname = "Shumar";
+    } else
     if (nlp == shklight && In_mines(&lev->z)
         && (sptr = Is_special(&lev->z)) != 0 && sptr->flags.town) {
         /* special-case minetown lighting shk */

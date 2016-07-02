@@ -1591,14 +1591,75 @@ OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
 
+# "Daedalus Delicatessen"
+MAZE:"soko2-9",' '
+FLAGS:noteleport
+GEOMETRY:center,center
+#12345678901234567890123456789012345
+MAP
+       -------              ------- 
+    ---|.....|---           |.....| 
+  ---..|.....|..---        --.....--
+ --.(..|.....+....--  -----|.......|
+ |.....|.....|.....|  |....|.......|
+------+---------+------....|.......|
+|........................--|.......|
+--.....|......---..----|.| |.......|
+ |.........--..--..|   |.| -------+|
+ --....|...--.....--   |.|       |.|
+  ---..|........---    |.---------.|
+    -----...-----      |...........|
+       -------         -------------
+ENDMAP
+STAIR:(01,06),down
+STAIR:(31,04),up
+DOOR:closed,(13,03)
+DOOR:random,(06,05)
+DOOR:locked,(16,05)
+DOOR:locked,(34,08)
+REGION:(00,00,35,12),lit,"ordinary"
+NON_DIGGABLE:(00,00,35,12)
+NON_PASSWALL:(00,00,35,12)
 
+# Boulders
+OBJECT:'`',"boulder",(05,06)
+OBJECT:'`',"boulder",(09,06)
+OBJECT:'`',"boulder",(13,06)
+OBJECT:'`',"boulder",(06,07)
+OBJECT:'`',"boulder",(10,07)
+OBJECT:'`',"boulder",(11,07)
+OBJECT:'`',"boulder",(07,08)
+OBJECT:'`',"boulder",(04,09)
+OBJECT:'`',"boulder",(08,09)
+OBJECT:'`',"boulder",(09,10)
+OBJECT:'`',"boulder",(13,10)
+
+# Traps
+TRAP:"hole",(19,06)
+TRAP:"hole",(20,06)
+TRAP:"hole",(21,06)
+TRAP:"hole",(22,06)
+TRAP:"hole",(23,06)
+TRAP:"hole",(24,06)
+TRAP:"hole",(24,07)
+TRAP:"hole",(24,08)
+TRAP:"hole",(24,09)
+TRAP:"hole",(24,10)
+
+# Random objects
+# No free food here, but you can buy some from the deli.
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# The delicatessen:
+REGION:(08,01,12,04),lit,"food shop"
 
 ### Top (last) level of Sokoban ###
 # "Sokobag / Bagoban"
 MAZE:"soko1-1",' '
 FLAGS:noteleport
 GEOMETRY:center,center
-#12345678901234567890123456789012345678901234567890
+#1234567890123456789012345
 MAP
 --------------------------
 |........................|
