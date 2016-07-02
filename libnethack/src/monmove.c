@@ -888,7 +888,8 @@ not_special:
 
     /* monsters with limited control of their actions */
     if (((monsndx(ptr) == PM_STALKER || ptr->mlet == S_BAT ||
-          ptr->mlet == S_LIGHT) && !rn2(3)))
+          (monsndx(ptr) == PM_YELLOW_LIGHT ||
+           monsndx(ptr) == PM_BLACK_LIGHT)) && !rn2(3)))
         appr = 0;
 
     if ((!mtmp->mpeaceful || !rn2(10)) && (!Is_rogue_level(&u.uz))) {

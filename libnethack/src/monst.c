@@ -304,6 +304,27 @@ const struct permonst mons[] = {
         SIZ(10, 10, 0, MS_SILENT, MZ_SMALL), 0, 0, MRACE_NONE,
         M1_FLY | M1_AMPHIBIOUS | M1_NOLIMBS | M1_NOHEAD | M1_NOTAKE,
         M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE, 0, CLR_BLUE),
+    MON("yellow light", S_EYE,
+        LVL(3, 6, 15, 0, 0, 0), (G_NOCORPSE | G_GENO | 4),
+        A(ATTK(AT_EXPL, AD_BLND, 10, 20),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(0, 0, 0, MS_SILENT, MZ_SMALL),
+        MR_FIRE | MR_COLD | MR_ELEC | MR_DISINT | MR_SLEEP | MR_POISON |
+        MR_ACID | MR_STONE, 0, MRACE_NONE,
+        M1_FLY | M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS |
+        M1_NOHEAD | M1_MINDLESS | M1_UNSOLID | M1_NOTAKE,
+        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE | M3_EMITSLIGHT,
+        0, CLR_YELLOW),
+    MON("black light", S_EYE,
+        LVL(5, 8, 15, 0, 0, 0), (G_NOCORPSE | G_GENO | 2),
+        A(ATTK(AT_EXPL, AD_HALU, 10, 12),
+          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(0, 0, 0, MS_SILENT, MZ_SMALL),
+        MR_FIRE | MR_COLD | MR_ELEC | MR_DISINT | MR_SLEEP | MR_POISON |
+        MR_ACID | MR_STONE, 0, MRACE_NONE,
+        M1_FLY | M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS |
+        M1_NOHEAD | M1_MINDLESS | M1_UNSOLID | M1_SEE_INVIS | M1_NOTAKE,
+        M2_HOSTILE | M2_NEUTER, M3_SEEINDARK | M3_EMITSLIGHT, 0, CLR_BLACK),
     MON("freezing sphere", S_EYE,
         LVL(6, 8, 13, 4, 0, 0), (G_NOCORPSE | G_NOHELL | G_GENO | 2),
         A(ATTK(AT_EXPL, AD_COLD, 4, 6),
@@ -319,7 +340,7 @@ const struct permonst mons[] = {
         SIZ(10, 10, 0, MS_SILENT, MZ_SMALL), MR_FIRE, MR_FIRE,
         MRACE_NONE, M1_FLY | M1_BREATHLESS | M1_NOLIMBS | M1_NOHEAD |
         M1_MINDLESS | M1_NOTAKE,
-        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE, 0, CLR_RED),
+        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE | M3_EMITSLIGHT, 0, CLR_RED),
     MON("shocking sphere", S_EYE,
         LVL(6, 8, 13, 4, 0, 0), (G_NOCORPSE | G_GENO | 2),
         A(ATTK(AT_EXPL, AD_ELEC, 4, 6), NO_ATTK, NO_ATTK,
@@ -327,7 +348,7 @@ const struct permonst mons[] = {
         SIZ(10, 10, 0, MS_SILENT, MZ_SMALL), MR_ELEC, MR_ELEC,
         MRACE_NONE, M1_FLY | M1_BREATHLESS | M1_NOLIMBS | M1_NOHEAD |
         M1_MINDLESS | M1_NOTAKE,
-        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE, 0, HI_ZAP),
+        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE | M3_EMITSLIGHT, 0, HI_ZAP),
 /*
  * felines
  */
@@ -1085,8 +1106,8 @@ const struct permonst mons[] = {
         SIZ(0, 0, 0, MS_SILENT, MZ_HUGE),
         MR_FIRE | MR_SLEEP | MR_POISON | MR_STONE, 0,
         MRACE_NONE, M1_FLY | M1_BREATHLESS | M1_NOEYES | M1_NOLIMBS |
-        M1_NOHEAD | M1_MINDLESS | M1_UNSOLID,
-        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE, 0, CLR_YELLOW),
+        M1_NOHEAD | M1_MINDLESS | M1_UNSOLID, M2_HOSTILE | M2_NEUTER,
+        M3_INFRAVISIBLE | M3_EMITSLIGHT, 0, CLR_YELLOW),
 /*
  * worms
  */
@@ -1136,28 +1157,8 @@ const struct permonst mons[] = {
         MRACE_NONE, M1_FLY | M1_ANIMAL | M1_NOHANDS | M1_POIS, M2_HOSTILE,
         M3_INFRAVISIBLE, 0, CLR_RED),
 /*
- * lights
+ * y - formerly lights, now available
  */
-    MON("yellow light", S_LIGHT,
-        LVL(3, 6, 15, 0, 0, 0), (G_NOCORPSE | G_GENO | 4),
-        A(ATTK(AT_EXPL, AD_BLND, 10, 20),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(0, 0, 0, MS_SILENT, MZ_SMALL),
-        MR_FIRE | MR_COLD | MR_ELEC | MR_DISINT | MR_SLEEP | MR_POISON |
-        MR_ACID | MR_STONE, 0, MRACE_NONE,
-        M1_FLY | M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS |
-        M1_NOHEAD | M1_MINDLESS | M1_UNSOLID | M1_NOTAKE,
-        M2_HOSTILE | M2_NEUTER, M3_INFRAVISIBLE, 0, CLR_YELLOW),
-    MON("black light", S_LIGHT,
-        LVL(5, 8, 15, 0, 0, 0), (G_NOCORPSE | G_GENO | 2),
-        A(ATTK(AT_EXPL, AD_HALU, 10, 12),
-          NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
-        SIZ(0, 0, 0, MS_SILENT, MZ_SMALL),
-        MR_FIRE | MR_COLD | MR_ELEC | MR_DISINT | MR_SLEEP | MR_POISON |
-        MR_ACID | MR_STONE, 0, MRACE_NONE,
-        M1_FLY | M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS |
-        M1_NOHEAD | M1_MINDLESS | M1_UNSOLID | M1_SEE_INVIS | M1_NOTAKE,
-        M2_HOSTILE | M2_NEUTER, M3_SEEINDARK, 0, CLR_BLACK),
 /*
  * Angels and other lawful minions
  */
@@ -1739,8 +1740,8 @@ const struct permonst mons[] = {
         SIZ(0, 0, 0, MS_SILENT, MZ_HUGE),
         MR_FIRE | MR_POISON | MR_STONE, 0, MRACE_FAIRY,
         M1_NOEYES | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS | M1_UNSOLID | M1_FLY |
-        M1_NOTAKE,
-        M2_STRONG | M2_NEUTER, M3_INFRAVISIBLE, 0, CLR_YELLOW),
+        M1_NOTAKE, M2_STRONG | M2_NEUTER, M3_INFRAVISIBLE | M3_EMITSLIGHT,
+        0, CLR_YELLOW),
     MON("earth elemental", S_ELEMENTAL,
         LVL(8, 10, 6, 2, 30, 0), (G_NOCORPSE | 1),
         A(ATTK(AT_CLAW, AD_PHYS, 4, 6),

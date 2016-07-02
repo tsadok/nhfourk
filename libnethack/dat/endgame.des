@@ -187,9 +187,9 @@ MONSTER:'e',"floating eye",random,hostile
 MONSTER:'e',"floating eye",random,hostile
 MONSTER:'e',"floating eye",random,hostile
 
-MONSTER:'y',"yellow light",random,hostile
-MONSTER:'y',"yellow light",random,hostile
-MONSTER:'y',"yellow light",random,hostile
+MONSTER:'e',"yellow light",random,hostile
+MONSTER:'e',"yellow light",random,hostile
+MONSTER:'e',"yellow light",random,hostile
 
 MONSTER:'A',"couatl",random
 

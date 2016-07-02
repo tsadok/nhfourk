@@ -165,12 +165,14 @@
 
 /* this returns the light's range, or 0 if none; if we add more light emitting
    monsters, we'll likely have to add a new light range field to mons[] */
-# define emits_light(ptr)       (((ptr)->mlet == S_LIGHT || \
-                                  (ptr) == &mons[PM_FLAMING_SPHERE] || \
-                                  (ptr) == &mons[PM_SHOCKING_SPHERE] || \
-                                  (ptr) == &mons[PM_FIRE_VORTEX]) ? 1 : \
-                                 ((ptr) == &mons[PM_FIRE_ELEMENTAL]) ? 1 : 0)
+# define emits_light(ptr)       (((ptr) == &mons[PM_YELLOW_LIGHT]) ? 4 : \
+                                 ((ptr)->mflags2 & M3_EMITSLIGHT) ? 1 : 0)
 /*      [note: the light ranges above were reduced to 1 for performance...] */
+/*      In fact, light ranges other than 1 or 0 never made it into a public
+        release, and this performance note dates to NetHack 3.2.0.  I'm
+        at this point willing to test if modern systems can handle a bit
+        more than the computers of that day, so I'm going to try out
+        yellow lights at 2 and see how that goes. */
 # define likes_lava(ptr)        (ptr == &mons[PM_FIRE_ELEMENTAL] || \
                                  ptr == &mons[PM_SALAMANDER])
 # define pm_invisible(ptr)      ((ptr) == &mons[PM_STALKER] || \
@@ -198,15 +200,16 @@
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
 /* Maybe someday this could be in mflags... */
-# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||            \
-                                 (ptr)->mlet == S_FUNGUS ||           \
-                                 (ptr)->mlet == S_VORTEX ||           \
-                                 (ptr)->mlet == S_LIGHT ||            \
-                                ((ptr)->mlet == S_ELEMENTAL &&        \
-                                 (ptr) != &mons[PM_STALKER]) ||       \
-                                ((ptr)->mlet == S_GOLEM &&            \
-                                 (ptr) != &mons[PM_FLESH_GOLEM] &&    \
-                                 (ptr) != &mons[PM_LEATHER_GOLEM]) || \
+# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||              \
+                                 (ptr)->mlet == S_FUNGUS ||             \
+                                 (ptr)->mlet == S_VORTEX ||             \
+                                 ((ptr)->mlet == S_EYE &&               \
+                                  ((ptr) != &mons[PM_FLOATING_EYE])) || \
+                                 ((ptr)->mlet == S_ELEMENTAL &&         \
+                                  (ptr) != &mons[PM_STALKER]) ||        \
+                                 ((ptr)->mlet == S_GOLEM &&             \
+                                  (ptr) != &mons[PM_FLESH_GOLEM] &&     \
+                                  (ptr) != &mons[PM_LEATHER_GOLEM]) ||  \
                                  noncorporeal(ptr))
 # define vegetarian(ptr)        (vegan(ptr) || \
                                 ((ptr)->mlet == S_PUDDING &&         \

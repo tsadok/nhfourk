@@ -1202,7 +1202,7 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         if (hides_under(ptr) && OBJ_AT_LEV(lev, x, y))
             mtmp->mundetected = TRUE;
         break;
-    case S_LIGHT:
+    case S_EYE:
     case S_ELEMENTAL:
         if (mndx == PM_STALKER || mndx == PM_BLACK_LIGHT) {
             mtmp->perminvis = TRUE;

@@ -178,6 +178,7 @@
 # define M3_VANDMGRDUC   0x2000 /* damage reduction as in 3.4.3
                                    (i.e., ac_threshhold is always 0) */
 # define M3_SEEINDARK    0x4000 /* does not require light to see */
+# define M3_EMITSLIGHT   0x8000 /* emits light */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */

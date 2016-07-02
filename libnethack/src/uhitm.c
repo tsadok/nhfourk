@@ -2984,7 +2984,8 @@ flash_hits_mon(struct monst *mtmp, struct obj *otmp)
             pline(msgc_consequence, "The flash awakens %s.", mon_nam(mtmp));
             res = 1;
         }
-    } else if (mtmp->data->mlet != S_LIGHT) {
+    } else if ((monsndx(mtmp->data) != PM_YELLOW_LIGHT) &&
+               (monsndx(mtmp->data) != PM_BLACK_LIGHT)) {
         if (!resists_blnd(mtmp)) {
             tmp = dist2(otmp->ox, otmp->oy, mtmp->mx, mtmp->my);
             if (useeit) {

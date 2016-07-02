@@ -201,7 +201,7 @@ MONSTER:''',"stone golem",(65,09),asleep
 MONSTER:'S',"cobra",(64,10),asleep
 MONSTER:'S',"cobra",(65,10),asleep
 MONSTER:'A',random,(72,08)
-MONSTER:'y',"yellow light",(72,11),asleep
+MONSTER:'e',"yellow light",(72,11),asleep
 MONSTER:random,random,(17,07)
 MONSTER:random,random,(28,11)
 MONSTER:random,random,(32,13)

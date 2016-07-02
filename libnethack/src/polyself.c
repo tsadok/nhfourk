@@ -1546,7 +1546,8 @@ mbodypart(struct monst *mon, int part)
     if (mptr->mlet == S_CENTAUR || mptr->mlet == S_UNICORN ||
         (mptr == &mons[PM_ROTHE] && part != HAIR))
         return horse_parts[part];
-    if (mptr->mlet == S_LIGHT) {
+    if ((mptr == &mons[PM_YELLOW_LIGHT]) ||
+        (mptr == &mons[PM_BLACK_LIGHT])) {
         if (part == HANDED)
             return "rayed";
         else if (part == ARM || part == FINGER || part == FINGERTIP ||

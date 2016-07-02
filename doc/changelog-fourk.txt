@@ -61,6 +61,16 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Yellow lights now emit light with a larger radius.  (Monsters
+   emitting different ranges of light was going to be implemented
+   in NetHack 3.2.0, but it was deferred for performance reasons.
+   That was in roughly the 486 era, so I'm trying it again now.)
+
+ * Lights are now on symbol e, eye or sphere or light.
+
+ * Instead of the Castle, it is now possible to get the Palace, the
+   Library, or the Laboratory.
+
  * Scrolls of consecration have been implemented.  Reading one of
    these will create an altar (or, if confused, a magic chest) at your
    feet (provided you are standing on untrapped floor of a room or
