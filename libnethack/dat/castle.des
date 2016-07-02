@@ -16,6 +16,7 @@
 # To motivate the player : there are 4 storerooms (armors, weapons, food and
 # gems) and a wand of wishing in one of the 4 towers...
 
+# Castle of Yendor, the Castle level from 3.x
 MAZE:"castle-1",random
 FLAGS: noteleport
 GEOMETRY:center,center
@@ -243,12 +244,883 @@ REGION:(39,08,55,08),unlit,"ordinary"
 REGION:(47,05,47,06),unlit,"ordinary"
 REGION:(47,10,47,11),unlit,"ordinary"
 
+# Aladdin's Palace
+MAZE:"castle-2",' '
+FLAGS: noteleport
+GEOMETRY: center, center
+#0000000001111111111222222222233333333334444444444555555555566666666667777777
+#1234567890123456789012345678901234567890123456789012345678901234567890123456
+MAP
+.......}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}.......
+......}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}.....
+...}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}..
+.}}}}}}}}}}}}}}-------}}}}}-------}}}}}}}-------}}}}}-------}}}}}}}}}}}}}}}
+}}}}}}}}}}}}}}--.....--}}---.....---}}}---.....---}}--.....--}}}}}}}}}}}}}}
+}}}}}}---}}}}}|.......S}--.........--}--.........--}S.......|}}}}}---}}}}}}
+}}}}---.---}}}--.....--}|...........S.S...........|}--.....--}}}---.---}}}}
+}}}--.....--}-----+-----------+-------------+-----------+-----}--.....--}}}
+}---.......--|..........|............(............|..........|--.......---}
+}|...........+..........+............\............+..........+...........|}
+}---.......--|..........|.........................|..........|--.......---}
+}}}--.....--}-----+------.........................------+-----}--.....--}}}
+}}}}---.---}}}--.....--}-----.................-----}--.....--}}}---.---}}}}
+.}}}}}---}}}}}|.......|}}}}}-----.........-----}}}}}|.......|}}}}}---}}}}}}
+.}}}}}}}}}}}}}--.....--}}}}}}}}}-----------}}}}}}}}}--.....--}}}}}}}}}}}}}}
+..}}}}}}}}}}}}}-------}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}-------}}}}}}}}}}}}}}.
+.....}}}}}}}}}}}}}}}}}}}}}}}}}}}}}.......}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}....
+.........}}}}}}}}}}}}}}}}}}}}}....T......T...}}}}}}}}}}}}}}}}}}}}}.........
+...........}}}}}}}}}}}}}}}}......................}}}}}}}}}}}}}}}...........
+ENDMAP
+RANDOM_OBJECTS:'+','!','(','['
+RANDOM_PLACES:(07,06),(07,12),(02,09),(72,09),(67,06),(67,12)
+RANDOM_MONSTERS:'L','N','E','V','R','T','X','g','@'
+
+TELEPORT_REGION:(34,16,40,17),(01,03,73,15),down
+TELEPORT_REGION:(14,08,60,10),(24,07,50,11),up
+
+STAIR:(30,17,44,18),(01,01,73,14),up
+DRAWBRIDGE:(37,15),north,closed
+
+# Secret Back Doors:
+DOOR:locked,(22,05)
+DOOR:locked,(36,06)
+DOOR:locked,(38,06)
+DOOR:locked,(52,05)
+# Interior Doors:
+DOOR:locked,(13,09)
+DOOR:locked,(18,07)
+DOOR:locked,(18,11)
+DOOR:random,(24,09)
+DOOR:closed,(30,07)
+DOOR:closed,(44,07)
+DOOR:random,(50,09)
+DOOR:locked,(56,07)
+DOOR:locked,(56,11)
+DOOR:locked,(61,09)
+# What would a palace be without fountains?
+FOUNTAIN:(07,09)
+FOUNTAIN:(67,09)
+
+# The Genie (on the throne):
+MONSTER:'&',"djinni",(37,09),hostile
+# The Palace Guard:
+MONSTER:'@',"captain",(34,08),hostile
+MONSTER:'@',"captain",(40,08),hostile
+MONSTER:'@',"captain",(35,13),hostile
+MONSTER:'@',"captain",(39,13),hostile
+MONSTER:'@',"lieutenant",(26,08),hostile
+MONSTER:'@',"lieutenant",(48,08),hostile
+MONSTER:'@',"lieutenant",(26,11),hostile
+MONSTER:'@',"lieutenant",(48,11),hostile
+# Dragons around back:
+MONSTER:'D',"black dragon",(09,03),hostile
+MONSTER:'D',"silver dragon",(24,02),hostile
+MONSTER:'D',"gray dragon",(50,02),hostile
+MONSTER:'D',"white dragon",(63,03),hostile
+MONSTER:'J',random,(09,03),hostile
+# Throne room monsters:
+REGION:(30,10,44,12),lit,"throne",filled
+# Movie references:
+MONSTER:'Y',"monkey",(36,09),hostile
+MONSTER:'q',"mumak",(38,09),hostile
+# Barracks:
+REGION:(28,04,32,06),lit,"barracks"
+REGION:(42,04,46,06),lit,"barracks"
+# Xorns or whatever:
+MONSTER:'X',"xorn",(22,08)
+MONSTER:'X',random,(16,10)
+MONSTER:'X',random,(52,08)
+MONSTER:'X',"xorn",(58,10)
+# Moat Monsters (back):
+MONSTER:';',random,(05,03)
+MONSTER:';',random,(18,02)
+MONSTER:';',random,(30,01)
+MONSTER:';',random,(44,02)
+MONSTER:';',random,(58,01)
+MONSTER:';',random,(69,03)
+# Moat Monsters (front):
+MONSTER:';',random,(10,15)
+MONSTER:';',random,(21,16)
+MONSTER:';',random,(29,14)
+MONSTER:';',random,(44,14)
+MONSTER:';',random,(54,17)
+MONSTER:';',random,(64,14)
+MONSTER:';',random,random
+MONSTER:';',random,random
+MONSTER:';',random,random
+
+# Northwest Storeroom
+OBJECT:object[0],random,(15,05)
+OBJECT:object[0],random,(16,04)
+OBJECT:object[0],random,(16,05)
+OBJECT:object[0],random,(16,06)
+OBJECT:object[0],random,(17,04)
+OBJECT:object[0],random,(17,05)
+OBJECT:object[0],random,(17,06)
+OBJECT:object[0],random,(18,04)
+OBJECT:object[0],random,(18,05)
+OBJECT:object[0],random,(18,06)
+OBJECT:object[0],random,(19,04)
+OBJECT:object[0],random,(19,05)
+OBJECT:object[0],random,(19,06)
+OBJECT:object[0],random,(20,04)
+OBJECT:object[0],random,(20,05)
+OBJECT:object[0],random,(20,06)
+OBJECT:object[0],random,(21,05)
+# Northeast Storeroom
+OBJECT:object[1],random,(53,05)
+OBJECT:object[1],random,(54,04)
+OBJECT:object[1],random,(54,05)
+OBJECT:object[1],random,(54,06)
+OBJECT:object[1],random,(55,04)
+OBJECT:object[1],random,(55,05)
+OBJECT:object[1],random,(55,06)
+OBJECT:object[1],random,(56,04)
+OBJECT:object[1],random,(56,05)
+OBJECT:object[1],random,(56,06)
+OBJECT:object[1],random,(57,04)
+OBJECT:object[1],random,(57,05)
+OBJECT:object[1],random,(57,06)
+OBJECT:object[1],random,(58,04)
+OBJECT:object[1],random,(58,05)
+OBJECT:object[1],random,(58,06)
+OBJECT:object[1],random,(59,05)
+# Southwest Storeroom
+OBJECT:object[2],random,(15,13)
+OBJECT:object[2],random,(16,12)
+OBJECT:object[2],random,(16,13)
+OBJECT:object[2],random,(16,14)
+OBJECT:object[2],random,(17,12)
+OBJECT:object[2],random,(17,13)
+OBJECT:object[2],random,(17,14)
+OBJECT:object[2],random,(18,12)
+OBJECT:object[2],random,(18,13)
+OBJECT:object[2],random,(18,14)
+OBJECT:object[2],random,(19,12)
+OBJECT:object[2],random,(19,13)
+OBJECT:object[2],random,(19,14)
+OBJECT:object[2],random,(20,12)
+OBJECT:object[2],random,(20,13)
+OBJECT:object[2],random,(20,14)
+OBJECT:object[2],random,(21,13)
+# Southeast Storeroom
+OBJECT:object[3],random,(53,13)
+OBJECT:object[3],random,(54,12)
+OBJECT:object[3],random,(54,13)
+OBJECT:object[3],random,(54,14)
+OBJECT:object[3],random,(55,12)
+OBJECT:object[3],random,(55,13)
+OBJECT:object[3],random,(55,14)
+OBJECT:object[3],random,(56,12)
+OBJECT:object[3],random,(56,13)
+OBJECT:object[3],random,(56,14)
+OBJECT:object[3],random,(57,12)
+OBJECT:object[3],random,(57,13)
+OBJECT:object[3],random,(57,14)
+OBJECT:object[3],random,(58,12)
+OBJECT:object[3],random,(58,13)
+OBJECT:object[3],random,(58,14)
+OBJECT:object[3],random,(59,13)
+
+# The treasure:
+CONTAINER:'(',"chest",place[0]
+OBJECT:'(',"magic lamp",contained
+OBJECT:'$',"gold piece",contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+OBJECT:'*',random,contained
+#OBJECT:'!',"smoky",contained
+#OBJECT:'!',"smoky",contained
+OBJECT:'"',"amulet of life saving",contained
+# TODO: if .des file format supported it, I'd want these to be rustproof.
+OBJECT:')',"scimitar",contained,random,7
+OBJECT:')',"scimitar",contained,random,7
+OBJECT:'/',random,contained
+OBJECT:'/',random,contained
+OBJECT:'?',random,contained
+OBJECT:'?',random,contained
+OBJECT:'?',random,contained
+OBJECT[50%]:'?',random,contained
+OBJECT[50%]:'?',random,contained
+OBJECT[50%]:'?',random,contained
+OBJECT[50%]:'?',random,contained
+OBJECT[50%]:'?',random,contained
+OBJECT[50%]:'?',random,contained
+OBJECT:random,random,contained
+OBJECT:random,random,contained
+OBJECT:random,random,contained
+ENGRAVING:place[0],burn,"Elbereth"
+# Decoy Treasures:
+OBJECT:'(',"chest",place[1]
+OBJECT:'(',"chest",place[2]
+OBJECT:'(',"chest",place[3]
+OBJECT:'(',"chest",place[4]
+CONTAINER:'(',"chest",place[5]
+
+# West Wing Hazards:
+REGION:(14,08,23,10),unlit,"ordinary",unfilled
+TRAP:"trap door",random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+
+# East Wing Hazards:
+REGION:(51,08,60,10),unlit,"ordinary",unfilled
+TRAP:"trap door",random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+
+# The Kenneth Arnold Memorial Library:
+MAZE:"castle-3",' '
+FLAGS: noteleport
+GEOMETRY: center,center
+#00000000011111111112222222222333333333344444444445555555555666666666677777
+#12345678901234567890123456789012345678901234567890123456789012345678901234
+MAP
+.................T.........................................................
+........................-------F---FF---FF---FF---F--.........T............
+....................T...|K.+.|...|....|....|....|...F......................
+....---FF----FF----FF---|K.--|...|....|....|....|...|----------.......T....
+....|...................|K.+.|...|....|....|....|...|.........FFFFF........
+....F...................|..---...|....|....|....|.................FFFF.....
+....F..................--+--.....|....|....|....|....................FFF...
+..--|..................|.........|....|....|....|......................FF..
+..|.|..................|........---..---..---..---......................F..
+..+.+..................+................................................F..
+..+.+..................+................................................F..
+..|.|..................|........---..---..---..---......................F..
+..--|..................|.........|....|....|....|......................FF..
+....F..................--+--.....|....|....|....|....................FFF...
+....F...................|..---...|....|....|....|.................FFFF.....
+....|...................|K.+.|...|....|....|....|...|.........FFFFF........
+....---FF----FF----FF---|K.--|...|....|....|....|...|----------............
+...............T........|K.+.|...|....|....|....|..(F................T.....
+........................-------F---FF---FF---FF---F--....T.................
+....................T......................................................
+ENDMAP
+#RANDOM_OBJECTS:'+','!','(','['
+RANDOM_PLACES:(71,08),(71,09),(71,10),(71,11)
+#RANDOM_MONSTERS:"'",'R','Z','e','l','j','g','@','j','P','t'
+
+STAIR:(00,00,22,19),(03,03,22,16),up
+
+# Doors:
+DOOR:closed,(02,09)
+DOOR:closed,(02,10)
+DOOR:closed,(04,09)
+DOOR:closed,(04,10)
+DOOR:closed,(23,09)
+DOOR:closed,(23,10)
+DOOR:closed,(25,06)
+DOOR:closed,(25,13)
+DOOR:random,(27,02)
+DOOR:random,(27,04)
+DOOR:random,(27,15)
+DOOR:random,(27,17)
+
+# Lovely Fountains in the foyer area:
+FOUNTAIN:(14,08)
+FOUNTAIN:(17,09)
+FOUNTAIN:(12,10)
+FOUNTAIN:(15,11)
+
+# "Periodicals"
+OBJECT:'?',random,(05,04)
+#OBJECT:'?',random,(06,04)
+OBJECT:'?',random,(07,04)
+#OBJECT:'?',random,(08,04)
+OBJECT:'?',random,(09,04)
+#OBJECT:'?',random,(10,04)
+OBJECT:'?',random,(11,04)
+#OBJECT:'?',random,(12,04)
+OBJECT:'?',random,(13,04)
+#OBJECT:'?',random,(14,04)
+OBJECT:'?',random,(15,04)
+#OBJECT:'?',random,(16,04)
+OBJECT:'?',random,(17,04)
+#OBJECT:'?',random,(18,04)
+OBJECT:'?',random,(19,04)
+#OBJECT:'?',random,(20,04)
+OBJECT:'?',random,(21,04)
+#OBJECT:'?',random,(22,04)
+OBJECT:'?',random,(23,04)
+
+#OBJECT:'?',random,(05,15)
+OBJECT:'?',random,(06,15)
+#OBJECT:'?',random,(07,15)
+OBJECT:'?',random,(08,15)
+#OBJECT:'?',random,(09,15)
+OBJECT:'?',random,(10,15)
+#OBJECT:'?',random,(11,15)
+OBJECT:'?',random,(12,15)
+#OBJECT:'?',random,(13,15)
+OBJECT:'?',random,(14,15)
+#OBJECT:'?',random,(15,15)
+OBJECT:'?',random,(16,15)
+#OBJECT:'?',random,(17,15)
+OBJECT:'?',random,(18,15)
+#OBJECT:'?',random,(19,15)
+OBJECT:'?',random,(20,15)
+#OBJECT:'?',random,(21,15)
+OBJECT:'?',random,(22,15)
+#OBJECT:'?',random,(23,15)
+
+# Books
+OBJECT[80%]:'+',random,(32,02)
+OBJECT[80%]:'+',random,(32,03)
+OBJECT[80%]:'+',random,(32,04)
+OBJECT[80%]:'+',random,(32,05)
+OBJECT[80%]:'+',random,(32,06)
+OBJECT[80%]:'+',random,(32,07)
+OBJECT[80%]:'+',random,(34,02)
+OBJECT[80%]:'+',random,(34,03)
+OBJECT[80%]:'+',random,(34,04)
+OBJECT[80%]:'+',random,(34,05)
+OBJECT[80%]:'+',random,(34,06)
+OBJECT[80%]:'+',random,(34,07)
+OBJECT[80%]:'+',random,(37,02)
+OBJECT[80%]:'+',random,(37,03)
+OBJECT[80%]:'+',random,(37,04)
+OBJECT[80%]:'+',random,(37,05)
+OBJECT[80%]:'+',random,(37,06)
+OBJECT[80%]:'+',random,(37,07)
+OBJECT[80%]:'+',random,(39,02)
+OBJECT[80%]:'+',random,(39,03)
+OBJECT[80%]:'+',random,(39,04)
+OBJECT[80%]:'+',random,(39,05)
+OBJECT[80%]:'+',random,(39,06)
+OBJECT[80%]:'+',random,(39,07)
+OBJECT[80%]:'+',random,(42,02)
+OBJECT[80%]:'+',random,(42,03)
+OBJECT[80%]:'+',random,(42,04)
+OBJECT[80%]:'+',random,(42,05)
+OBJECT[80%]:'+',random,(42,06)
+OBJECT[80%]:'+',random,(42,07)
+OBJECT[80%]:'+',random,(44,02)
+OBJECT[80%]:'+',random,(44,03)
+OBJECT[80%]:'+',random,(44,04)
+OBJECT[80%]:'+',random,(44,05)
+OBJECT[80%]:'+',random,(44,06)
+OBJECT[80%]:'+',random,(44,07)
+OBJECT[80%]:'+',random,(47,02)
+OBJECT[80%]:'+',random,(47,03)
+OBJECT[80%]:'+',random,(47,04)
+OBJECT[80%]:'+',random,(47,05)
+OBJECT[80%]:'+',random,(47,06)
+OBJECT[80%]:'+',random,(47,07)
+OBJECT[80%]:'+',random,(49,02)
+OBJECT[80%]:'+',random,(49,03)
+OBJECT[80%]:'+',random,(49,04)
+OBJECT[80%]:'+',random,(49,05)
+OBJECT[80%]:'+',random,(49,06)
+OBJECT[80%]:'+',random,(49,07)
+OBJECT[80%]:'+',random,(32,12)
+OBJECT[80%]:'+',random,(32,13)
+OBJECT[80%]:'+',random,(32,14)
+OBJECT[80%]:'+',random,(32,15)
+OBJECT[80%]:'+',random,(32,16)
+OBJECT[80%]:'+',random,(32,17)
+OBJECT[80%]:'+',random,(34,12)
+OBJECT[80%]:'+',random,(34,13)
+OBJECT[80%]:'+',random,(34,14)
+OBJECT[80%]:'+',random,(34,15)
+OBJECT[80%]:'+',random,(34,16)
+OBJECT[80%]:'+',random,(34,17)
+OBJECT[80%]:'+',random,(37,12)
+OBJECT[80%]:'+',random,(37,13)
+OBJECT[80%]:'+',random,(37,14)
+OBJECT[80%]:'+',random,(37,15)
+OBJECT[80%]:'+',random,(37,16)
+OBJECT[80%]:'+',random,(37,17)
+OBJECT[80%]:'+',random,(39,12)
+OBJECT[80%]:'+',random,(39,13)
+OBJECT[80%]:'+',random,(39,14)
+OBJECT[80%]:'+',random,(39,15)
+OBJECT[80%]:'+',random,(39,16)
+OBJECT[80%]:'+',random,(39,17)
+OBJECT[80%]:'+',random,(42,12)
+OBJECT[80%]:'+',random,(42,13)
+OBJECT[80%]:'+',random,(42,14)
+OBJECT[80%]:'+',random,(42,15)
+OBJECT[80%]:'+',random,(42,16)
+OBJECT[80%]:'+',random,(42,17)
+OBJECT[80%]:'+',random,(44,12)
+OBJECT[80%]:'+',random,(44,13)
+OBJECT[80%]:'+',random,(44,14)
+OBJECT[80%]:'+',random,(44,15)
+OBJECT[80%]:'+',random,(44,16)
+OBJECT[80%]:'+',random,(44,17)
+OBJECT[80%]:'+',random,(47,12)
+OBJECT[80%]:'+',random,(47,13)
+OBJECT[80%]:'+',random,(47,14)
+OBJECT[80%]:'+',random,(47,15)
+OBJECT[80%]:'+',random,(47,16)
+OBJECT[80%]:'+',random,(47,17)
+OBJECT[80%]:'+',random,(49,12)
+OBJECT[80%]:'+',random,(49,13)
+OBJECT[80%]:'+',random,(49,14)
+OBJECT[80%]:'+',random,(49,15)
+OBJECT[80%]:'+',random,(49,16)
+OBJECT[80%]:'+',random,(49,17)
+
+# More scrolls line the atrium:
+#OBJECT:'?',random,(53,04)
+#OBJECT:'?',random,(54,04)
+#OBJECT:'?',random,(55,04)
+#OBJECT:'?',random,(56,04)
+#OBJECT:'?',random,(57,04)
+#OBJECT:'?',random,(58,04)
+#OBJECT:'?',random,(59,04)
+#OBJECT:'?',random,(60,04)
+#OBJECT:'?',random,(61,04)
+#OBJECT:'?',random,(53,15)
+#OBJECT:'?',random,(54,15)
+#OBJECT:'?',random,(55,15)
+#OBJECT:'?',random,(56,15)
+#OBJECT:'?',random,(57,15)
+#OBJECT:'?',random,(58,15)
+#OBJECT:'?',random,(59,15)
+#OBJECT:'?',random,(60,15)
+#OBJECT:'?',random,(61,15)
+OBJECT:'?',"charging",place[0]
+OBJECT:'?',"genocide",place[1]
+OBJECT:'?',"punishment",place[2]
+OBJECT:'?',"stinking cloud",place[3]
+
+# Bathroom facilities:
+TRAP:"hole",(28,02)
+TRAP:"hole",(28,04)
+TRAP:"hole",(28,15)
+TRAP:"hole",(28,17)
+# How can a poor adventurer tell which is which?
+# We must provide a clue:
+MONSTER:'&',"incubus",(26,03)
+MONSTER:'&',"succubus",(26,15)
+MONSTER:'&',"succubus",(26,16)
+MONSTER:'&',"succubus",(26,17)
+
+# Traps:
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+
+# Monsters:
+MONSTER:'D',random,(06,01)
+MONSTER:'D',random,(22,01)
+MONSTER:'D',random,(66,02)
+MONSTER:'D',random,(05,18)
+MONSTER:'D',random,(22,18)
+MONSTER:'D',random,(66,17)
+MONSTER:'@',"librarian",(07,06)
+MONSTER:'@',"librarian",(07,13)
+MONSTER:'@',"librarian",(26,08)
+MONSTER:'@',"librarian",(26,11)
+MONSTER:'@',"librarian",(53,06)
+MONSTER:'@',"librarian",(53,13)
+MONSTER:'@',"librarian",(69,09)
+MONSTER:'H',"titan",random
+MONSTER:'H',"titan",random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'N',"golden naga",random
+MONSTER:'N',"golden naga",random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'W',"barrow wight",random
+MONSTER:'W',"barrow wight",random
+MONSTER:'@',random,random
+MONSTER:'@',random,random
+MONSTER:'@',random,random
+
+CONTAINER:'(',"chest",(51,02)
+OBJECT:'(',"lenses",contained
+OBJECT:'(',"magic marker",contained
+OBJECT:'(',"magic marker",contained
+OBJECT[50%]:'(',"magic marker",contained
+OBJECT:')',"athame",contained
+OBJECT:'?',"wishing",contained
+
+REGION:(00,00,74,19),lit,"ordinary"
+NON_DIGGABLE:(00,00,62,16)
+
+# Doctor Jeckyl's Laboratory:
+MAZE:"castle-4",' '
+FLAGS: noteleport
+GEOMETRY: center,center
+#000000000111111111122222222223333333333444444444455555555556
+#123456789012345678901234567890123456789012345678901234567890
+MAP
+-------------------------------------------------------------
+|....|..|...................................................|
+|....|..+...................................................|
+|....|..|....\......\......K......\......\......K......\....|
+|--.-----..-----..-----..-----..-----..-----..-----..-----..|
+|.....|......\......\......K......\......\......K......\....|
+|....K|\....................................................|
+|.....|.....................................................|
+|............---------......---------......---------........|
+|.....|......|...|...|......|...|...|......|...|...|........|
+|....K|\.....+...|...+......+...|...+......+...|...+........|
+|.....|......|...|...|......|...|...|......|...|...|........|
+|............---------......---------......---------........|
+|.....|.....................................................|
+|....K|\.....\......\......K......\......\......K......\....|
+|.....|....-----..-----..-----..-----..-----..-----..-----..|
+|............\......\......K......\......\......K......\....|
+|--+--|.....................................................|
+|.....|.....................................................|
+-------------------------------------------------------------
+ENDMAP
+#RANDOM_OBJECTS:'+','!','(','['
+RANDOM_PLACES:(03,18),(07,02),(15,10),(19,10),(30,10),(34,10),(45,10),(49,10)
+RANDOM_MONSTERS:'\'','R','Z','e','l','j','g','@','j','P'
+
+STAIR:(02,02),up
+
+# Doors:
+DOOR:random,(08,02)
+DOOR:random,(03,17)
+DOOR:random,(13,10)
+DOOR:random,(21,10)
+DOOR:random,(28,10)
+DOOR:random,(36,10)
+DOOR:random,(43,10)
+DOOR:random,(51,10)
+
+# Potions on the lab benches:
+OBJECT:'!',random,(07,06)
+OBJECT:'!',random,(07,10)
+OBJECT:'!',random,(07,14)
+OBJECT:'!',"acid",(13,03),random,0,"aqua regia"
+OBJECT:'!',random,(20,03)
+OBJECT:'!',random,(34,03)
+OBJECT:'!',random,(41,03)
+OBJECT:'!',random,(55,03)
+OBJECT:'!',random,(13,05)
+OBJECT:'!',random,(20,05)
+OBJECT:'!',random,(34,05)
+OBJECT:'!',random,(41,05)
+OBJECT:'!',random,(55,05)
+OBJECT:'!',random,(13,14)
+OBJECT:'!',random,(20,14)
+OBJECT:'!',random,(34,14)
+OBJECT:'!',random,(41,14)
+OBJECT:'!',random,(55,14)
+OBJECT:'!',random,(13,16)
+OBJECT:'!',random,(20,16)
+OBJECT:'!',random,(34,16)
+OBJECT:'!',random,(41,16)
+OBJECT:'!',random,(55,16)
+OBJECT:'(',"tinning kit",random
+OBJECT:'(',"tinning kit",random
+OBJECT:'(',"tinning kit",random
+
+# Bunsen Burners:
+TRAP:"fire",(12,03)
+TRAP:"fire",(14,03)
+TRAP:"fire",(19,03)
+TRAP:"fire",(21,03)
+TRAP:"fire",(33,03)
+TRAP:"fire",(35,03)
+TRAP:"fire",(40,03)
+TRAP:"fire",(42,03)
+TRAP:"fire",(54,03)
+TRAP:"fire",(56,03)
+TRAP:"fire",(12,05)
+TRAP:"fire",(14,05)
+TRAP:"fire",(19,05)
+TRAP:"fire",(21,05)
+TRAP:"fire",(33,05)
+TRAP:"fire",(35,05)
+TRAP:"fire",(40,05)
+TRAP:"fire",(42,05)
+TRAP:"fire",(54,05)
+TRAP:"fire",(56,05)
+TRAP:"fire",(12,14)
+TRAP:"fire",(14,14)
+TRAP:"fire",(19,14)
+TRAP:"fire",(21,14)
+TRAP:"fire",(33,14)
+TRAP:"fire",(35,14)
+TRAP:"fire",(40,14)
+TRAP:"fire",(42,14)
+TRAP:"fire",(54,14)
+TRAP:"fire",(56,14)
+TRAP:"fire",(12,16)
+TRAP:"fire",(14,16)
+TRAP:"fire",(19,16)
+TRAP:"fire",(21,16)
+TRAP:"fire",(33,16)
+TRAP:"fire",(35,16)
+TRAP:"fire",(40,16)
+TRAP:"fire",(42,16)
+TRAP:"fire",(54,16)
+TRAP:"fire",(56,16)
+
+# Other Traps:
+TRAP:"magic",random
+TRAP:"magic",random
+TRAP:"magic",random
+TRAP:"magic",random
+TRAP:"magic",random
+TRAP:"magic",random
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"sleep gas",random
+TRAP:"sleep gas",random
+TRAP:"sleep gas",random
+TRAP:"sleep gas",random
+TRAP:"board",random
+TRAP:"board",random
+TRAP:"board",random
+TRAP:"board",random
+TRAP:"teleport",random
+TRAP:"teleport",random
+TRAP:"trap door",random
+TRAP:"trap door",random
+TRAP:"trap door",random
+TRAP:"trap door",random
+
+# Cabinet One:
+OBJECT:'[',"alchemy smock",place[0]
+OBJECT:'[',"alchemy smock",place[0]
+OBJECT:'(',"can of grease",place[0]
+#OBJECT:'[',"mud boots",place[0]
+#OBJECT:'[',"buckled boots",place[0]
+OBJECT:'[',"leather gloves",place[0]
+OBJECT:random,random,place[0]
+OBJECT:random,random,place[0]
+
+# Cabinet Two:
+#OBJECT:'[',"piece of cloth",place[1]
+#OBJECT:'[',"piece of cloth",place[1]
+OBJECT:'(',"can of grease",place[1],cursed,13
+OBJECT:'(',"lenses",place[1]
+OBJECT:'(',"brass lantern",place[1]
+#OBJECT:'[',"riding boots",place[1]
+OBJECT:random,random,place[1]
+
+# Cabinet Three:
+OBJECT:'[',"alchemy smock",place[2],blessed,3
+OBJECT:'(',"towel",place[2]
+OBJECT:'+',random,place[2]
+OBJECT[50%]:'+',random,place[2]
+OBJECT[50%]:'+',random,place[2]
+OBJECT:'?',random,place[2]
+OBJECT:'?',random,place[2]
+OBJECT:'/',random,place[2]
+OBJECT:'(',"oilskin sack",place[2]
+OBJECT:'[',"oilskin cloak",place[2]
+OBJECT:'(',"wax candle",place[2]
+OBJECT:random,random,place[2]
+OBJECT:random,random,place[2]
+OBJECT:random,random,place[2]
+OBJECT:random,random,place[2]
+OBJECT:random,random,place[2]
+OBJECT:random,random,place[2]
+OBJECT:'[',"leather gloves",place[2]
+OBJECT:'[',"leather gloves",place[2]
+OBJECT:'(',"mirror",place[2]
+
+# Cabinet Four:
+OBJECT:'(',"ice box",place[3]
+OBJECT:'[',"high boots",place[3]
+OBJECT:'[',"Hawaiian shirt",place[3]
+OBJECT:'(',"tallow candle",place[3]
+OBJECT:'?',random,place[3]
+OBJECT:'?',random,place[3]
+OBJECT:'%',"slime mold",place[3]
+OBJECT:random,random,place[3]
+OBJECT:random,random,place[3]
+OBJECT:'/',"polymorph",place[3]
+#OBJECT:'[',"jungle boots",place[3]
+
+# Cabinet Five:
+OBJECT:'[',"alchemy smock",place[4]
+OBJECT:'(',"large box",place[4]
+OBJECT:'(',"stethoscope",place[4]
+OBJECT:'(',"expensive camera",place[4]
+CONTAINER:'(',"chest",place[4]
+OBJECT:'+',random,contained
+OBJECT[50%]:'+',random,contained
+OBJECT[50%]:'+',random,contained
+OBJECT:'(',random,contained
+OBJECT:'(',random,contained
+OBJECT:'(',"magic marker",contained
+OBJECT:'(',"beartrap",place[4]
+OBJECT:'%',"clove of garlic",place[4]
+OBJECT:random,random,place[4]
+
+# Cabinet Six:
+OBJECT:'[',"alchemy smock",place[5],random,4
+OBJECT:'(',"towel",place[5]
+OBJECT:'+',random,place[5]
+OBJECT[50%]:'+',random,place[5]
+OBJECT[50%]:'+',random,place[5]
+OBJECT:'?',random,place[5]
+OBJECT:'?',random,place[5]
+OBJECT:'/',random,place[5]
+OBJECT:'(',"oilskin sack",place[5]
+OBJECT:'[',"oilskin cloak",place[5]
+OBJECT:'(',"tallow candle",place[5]
+OBJECT:random,random,place[5]
+OBJECT:random,random,place[5]
+OBJECT:random,random,place[5]
+OBJECT:random,random,place[5]
+OBJECT:random,random,place[5]
+OBJECT:random,random,place[5]
+#OBJECT:'[',"hiking boots",place[5]
+OBJECT:'(',"tin opener",place[5]
+
+# Cabinet Seven:
+OBJECT:'[',"alchemy smock",place[6]
+OBJECT:'(',"large box",place[6]
+OBJECT:'(',"stethoscope",place[6]
+OBJECT:'(',"expensive camera",place[6]
+CONTAINER:'(',"chest",place[6]
+OBJECT:'+',random,contained
+OBJECT[50%]:'+',random,contained
+OBJECT[50%]:'+',random,contained
+OBJECT:'(',random,contained
+OBJECT:'(',random,contained
+OBJECT:'(',"wooden flute",place[6]
+OBJECT:'[',"gauntlets of dexterity",place[6]
+OBJECT:random,random,place[6]
+
+# Cabinet Eight:
+OBJECT:'(',"ice box",place[7]
+OBJECT:'[',"low boots",place[7]
+OBJECT:'[',"T-shirt",place[7]
+OBJECT:'(',"wax candle",place[7]
+OBJECT:'?',random,place[7]
+OBJECT:'?',random,place[7]
+OBJECT:'%',"slime mold",place[7]
+OBJECT:random,random,place[7]
+OBJECT:random,random,place[7]
+OBJECT:'/',"death",place[7]
+OBJECT:'%',"orange",place[7]
+
+# Monsters:
+MONSTER:'h',"mind flayer",random
+MONSTER:'h',"mind flayer",random
+MONSTER:'R',random,random
+MONSTER:'R',"disenchanter",random
+MONSTER:'@',"werewolf",random
+MONSTER:'d',"werewolf",random
+MONSTER:'@',"werewolf",random
+MONSTER:'d',"werewolf",random
+MONSTER:'\'',"glass golem",random
+MONSTER:'\'',"glass golem",random
+MONSTER:'\'',"flesh golem",random
+MONSTER:'\'',random,random
+MONSTER:'\'',random,random
+MONSTER:'\'',random,random
+MONSTER:'\'',random,random
+MONSTER:'\'',random,random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'Z',"skeleton",random
+MONSTER:'e',random,random
+MONSTER:'e',random,random
+MONSTER:'e',random,random
+MONSTER:'e',random,random
+MONSTER:'e',random,random
+MONSTER:'e',random,random
+MONSTER:'g',random,random
+MONSTER:'g',"gargoyle",random
+MONSTER:'g',"winged gargoyle",random
+MONSTER:'@',"doppelganger",random
+MONSTER:'@',"doppelganger",random
+MONSTER:'l',"salamander",random
+MONSTER:'l',"chameleon",random
+MONSTER:'l',"lizard",random
+MONSTER:'l',"lizard",random
+MONSTER:'l',"newt",random
+MONSTER:'l',"newt",random
+MONSTER:'l',"newt",random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+#MONSTER:'@',"field worker",random
+#MONSTER:'@',"physician",random
+#MONSTER:'@',"thief",random
+MONSTER:'@',"wizard",random
+MONSTER:'@',"human",random
+MONSTER:'@',"human",random
+MONSTER:'@',"human",random
+MONSTER:'@',"human",random
+MONSTER:'B',random,random
+MONSTER:'B',random,random
+MONSTER:'B',random,random
+MONSTER:'B',random,random
+MONSTER:'j',random,random
+MONSTER:'j',random,random
+MONSTER:'j',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'P',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'h',"quantum mechanic",random
+MONSTER:'h',"quantum mechanic",random
+MONSTER:'s',"scorpion",random
+MONSTER:'x',"xan",random
+MONSTER:'x',"xan",random
+MONSTER:'x',"xan",random
+MONSTER:'E',"stalker",random
+MONSTER:'E',"stalker",random
+MONSTER:'t',"trapper",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'r',"giant rat",random
+MONSTER:'d',"dog",random,"Einstein"
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
+
 #
 # The thick walls on the corners of the armouries and the dragon pens
 # are a kludge to prevent the walls showing up through the iron bars from
 # outside the castle.
 #
-MAZE:"castle-2",' '
+MAZE:"castle-6",' '
 FLAGS: noteleport
 GEOMETRY: center, center
 #000000000111111111122222222223333333333444444444455555555556666666666777777
@@ -466,7 +1338,7 @@ MONSTER:'C',random,(36,12)
 MONSTER:'C',random,(37,13)
 
 
-MAZE:"castle-3",' '
+MAZE:"castle-5",' '
 FLAGS: noteleport
 GEOMETRY: center, center
 #000000000111111111122222222223333333333444444444455555555556666666666777777
