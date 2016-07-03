@@ -2833,6 +2833,24 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
                   "You are jolted with electricity!");
             mdamageu(mon, tmp);
             break;
+        case AD_DISP:
+        {
+            const char *nambuf = Monnam(mon);
+            xchar tx = mon->mx, ty = mon->my;
+            mon->mtrapped = 0;
+            remove_monster(level, tx, ty);
+            u.ux0 = u.ux; u.uy0 = u.uy;
+            u.ux = tx;    u.uy = ty;
+            if (u.usteed) {
+                u.usteed->mx = u.ux; u.usteed->my = u.uy; }
+            /* TODO: handle you getting displaced into trap. */
+            place_monster(mon, u.ux0, u.uy0);
+            newsym(u.ux, u.uy);
+            newsym(mon->mx, mon->my);
+            pline_once(combat_msgc(mon, &youmonst, cr_hit),
+                       "%s displaces you!", nambuf);
+            break;
+        }
         case AD_SCLD:
             pline(msgc_levelsound, "%s %s oozes a foul stench.",
                   s_suffix(Monnam(mon)), mbodypart(mon, SKIN));

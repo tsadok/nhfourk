@@ -83,7 +83,8 @@
 # define AD_SCLD 44     /* creates a stinking cloud */
 # define AD_PITS 45     /* creates pits */
 # define AD_ICEB 46     /* embeds in block of ice */
-# define AD_WEBS 47     /* traps in a web; this also causes temp slowness */
+# define AD_DISP 47     /* displaces the target */
+# define AD_WEBS 48     /* traps in a web; this also causes temp slowness */
 # define AD_OTHER 60    /* Numbers starting here can be used for non-damage
                          * constants stored in a damage type field, such as the
                          * field in the artilist that governs what an artifact

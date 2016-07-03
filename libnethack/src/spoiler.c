@@ -1445,6 +1445,7 @@ makepinobotyaml(void)
                 case AD_PITS: fprintf(f, ", %s", "AdPits"); break;
                 case AD_ICEB: fprintf(f, ", %s", "AdIceBlock"); break;
                 case AD_WEBS: fprintf(f, ", %s", "AdWebs"); break;
+                case AD_DISP: fprintf(f, ", %s", "AdDisplace"); break;
                 case AD_CLRC: fprintf(f, ", %s", "AdClerical"); break;
                 case AD_SPEL: fprintf(f, ", %s", "AdSpell"); break;
                 case AD_RBRE: fprintf(f, ", %s", "AdRandomBreath"); break;

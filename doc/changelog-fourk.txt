@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Introduced a new kind of monster, the jitterbug.  This critter
+   is weak but fast, and it has the ability, after you hit it, to
+   swap positions with you.
+
  * Yellow lights now emit light with a larger radius.  (Monsters
    emitting different ranges of light was going to be implemented
    in NetHack 3.2.0, but it was deferred for performance reasons.
