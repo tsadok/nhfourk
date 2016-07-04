@@ -339,6 +339,7 @@ static const struct inv_sub {
     /* { PM_DWARF, PICK_AXE, DWARVISH_MATTOCK }, */
     {PM_GNOME, BOW, CROSSBOW},
     {PM_GNOME, ARROW, CROSSBOW_BOLT},
+    {PM_GNOME, FEDORA, LEATHER_GLOVES},
     /* for weight reasons, don't give scurriers heavy items */
     {PM_SCURRIER, FOOD_RATION, SLIME_MOLD},
     {PM_SCURRIER, CRAM_RATION, SLIME_MOLD},
@@ -346,12 +347,13 @@ static const struct inv_sub {
     {PM_SCURRIER, DAGGER, DART},
     {PM_SCURRIER, BOW, DART},
     {PM_SCURRIER, ARROW, DART},
-    /* Giants can't use body armor */
-    {PM_GIANT, RING_MAIL, HELMET},             /* Bar Gia */
-    {PM_GIANT, LEATHER_ARMOR, FLINT},          /* Cav Gia */
-    {PM_GIANT, BOW, SLING},                    /* Ran Gia */
-    {PM_GIANT, ARROW, FLINT},                  /*  ditto */
-    {PM_GIANT, CLOAK_OF_DISPLACEMENT, HELMET}, /*  ditto */
+    {PM_SCURRIER, FEDORA, LEATHER_GLOVES},
+    /* Giants are too large for a lot of armor */
+    {PM_GIANT, RING_MAIL, HELMET},                 /* Bar Gia */
+    {PM_GIANT, LEATHER_ARMOR, FLINT},              /* Cav Gia */
+    {PM_GIANT, BOW, SLING},                        /* Ran Gia */
+    {PM_GIANT, ARROW, FLINT},                      /*  ditto */
+    {PM_GIANT, CLOAK_OF_DISPLACEMENT, DENTED_POT}, /*  ditto */
     {NON_PM, STRANGE_OBJECT, STRANGE_OBJECT}
 };
 
