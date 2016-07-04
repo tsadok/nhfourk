@@ -72,11 +72,14 @@ static const char * spoilquestart(int i);
 static void makehtmlspoilers(void);
 static void makepinobotyaml(void);
 
-const char *at[17] =
+#define ATSIZE 18
+const char *at[ATSIZE] =
         {"passive", "claw", "bite", "kick", "butt", "touch",
          "sting", "hug", "AT_8", "AT_9", "spit", "engulf", "breath",
-         "actively explode", "passively explode", "gaze", "tentacles"};
-const char *ad[47] =
+         "actively explode", "passively explode", "gaze", "tentacles",
+         "spin"};
+#define ADSIZE 49
+const char *ad[ADSIZE] =
         {"physical", "magic missile", "fire", "cold", "sleep", "disint",
          "shock", "strength drain", "acid", "special1", "special2",
          "blinding", "stun", "slow", "paralysis", "level drain",
@@ -87,7 +90,7 @@ const char *ad[47] =
          "intelligence drain", "disease", "rotting", "seduction",
          "hallucination", "death", "pestilence", "famine", "sliming",
          "disenchantment", "corrosion", "vicarous suffering",
-         "stinking cloud", "pits", "iceblock"};
+         "stinking cloud", "pits", "iceblock", "displace", "web"};
 
 /* NOTE: the order of these words exactly corresponds to the
    order of oc_material values #define'd in objclass.h.  I
@@ -285,14 +288,14 @@ spoiloneattack(const struct attack *attk)
                      attk->damn, attk->damd,
                      ((attk->aatyp == AT_WEAP) ? "weapon" :
                       (attk->aatyp == AT_MAGC) ? "spellcasting" :
-                      (attk->aatyp < 17 /* && attk->aatyp >= 0 */) ?
+                      (attk->aatyp < ATSIZE  /* && attk->aatyp >= 0 */) ?
                       at[attk->aatyp] : "mysterious"),
                      ((attk->adtyp == AD_CLRC) ? "clerical spellcasting" :
                       (attk->adtyp == AD_SPEL) ? "arcane spellcasting" :
                       (attk->adtyp == AD_RBRE) ? "random breath weapon" :
                       (attk->adtyp == AD_SAMU) ? "amulet stealing" :
                       (attk->adtyp == AD_CURS) ? "intrinsic stealing" :
-                      (attk->adtyp < 47 /* && attk->adtyp >= 0 */) ?
+                      (attk->adtyp < ADSIZE /* && attk->adtyp >= 0 */) ?
                       ad[attk->adtyp] : "unknown damage"));
 }
 
