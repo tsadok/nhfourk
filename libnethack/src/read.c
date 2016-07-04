@@ -72,6 +72,10 @@ doread(const struct nh_cmd_arg *arg)
             "Don't Panic",      /* HHGTTG */
             "Furinkan High School Athletic Dept.",      /* Ranma 1/2 */
             "Hel-LOOO, Nurse!", /* Animaniacs */
+            "Sredni Vashtar went forth.  " /* Saki short story */
+                "His thoughts were red and his teeth were white.",
+            "Keep calm and explore the dungeon.",
+            "One does not simply kill the Wizard of Yendor.",
         };
         const char *buf;
         int erosion;

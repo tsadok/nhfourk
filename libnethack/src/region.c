@@ -235,6 +235,8 @@ add_region(struct level *lev, struct region *reg)
             /* Some lev->regions can cross the level boundaries */
             if (!isok(i, j))
                 continue;
+            if (inside_region(reg, i, j))
+                block_point(i, j);
             if (MON_AT(level, i, j) && inside_region(reg, i, j))
                 add_mon_to_reg(reg, level->monsters[i][j]);
             if (reg->visible && cansee(i, j))
@@ -687,6 +689,7 @@ boolean
 expire_gas_cloud(void *p1, void *p2)
 {
     struct region *reg;
+    int x, y;
     int damage;
 
     reg = (struct region *)p1;
@@ -698,6 +701,26 @@ expire_gas_cloud(void *p1, void *p2)
         reg->arg = damage;
         reg->ttl = 2;   /* Here's the trick : reset ttl */
         return FALSE;   /* THEN return FALSE, means "still there" */
+    }
+    /* So the cloud no longer blocks vision now. */
+    for (x = reg->bounding_box.lx; x <= reg->bounding_box.hx; x++) {
+        for (y = reg->bounding_box.ly; y <= reg->bounding_box.hy; y++) {
+            if (inside_region(reg, x, y)) {
+                if (isok(x,y) && !IS_ROCK(level->locations[x][y].typ)) {
+                    /* check for obstructions */
+                    boolean isblocked = FALSE;
+                    struct obj *otmp;
+                    for (otmp = level->objects[x][y]; otmp;
+                         otmp = otmp->nexthere) {
+                        if (otmp->otyp == BOULDER) {
+                            isblocked = TRUE;
+                        }
+                    }
+                    if (!isblocked)
+                        unblock_point(x, y);
+                }
+            }
+        }
     }
     return TRUE;        /* OK, it's gone, you can free it! */
 }
@@ -791,6 +814,7 @@ create_gas_cloud(struct level *lev, xchar x, xchar y, int radius, int damage)
     cloud->visible = TRUE;
     cloud->effect_id = dbuf_effect(E_MISC, E_gascloud);
     add_region(lev, cloud);
+    flush_screen();
     return cloud;
 }
 

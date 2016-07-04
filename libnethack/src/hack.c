@@ -2431,12 +2431,12 @@ wounds_message(struct monst *mon)
 const char *
 mon_wounds(struct monst *mon)
 {
-    boolean wounded = ((!nonliving(mon->data) || 
+    boolean wounded = ((!nonliving(mon->data) ||
                         /* Zombies and mummies (but not skeletons) have flesh */
                         ((mon->data->mlet == S_ZOMBIE && mon->data != &mons[PM_SKELETON])
                          || mon->data->mlet == S_MUMMY || mon->data->mlet == S_VAMPIRE
                          || mon->data == &mons[PM_FLESH_GOLEM]))
-                       && !vegetarian(mon->data));   
+                       && !vegetarian(mon->data));
 
     /* Able to detect wounds? */
     if (!(canseemon(mon) || (u.ustuck == mon && u.uswallow && !Blind))
