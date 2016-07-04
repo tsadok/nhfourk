@@ -111,8 +111,11 @@ htmlheader(const char * spoilername)
     const char *copyright   = "<!-- HTML Markup by Nathan Eady is public domain or CC0 at your option -->";
     const char *csslink     = "<link rel=\"stylesheet\" type=\"text/css\" href=\"spoilers.css\" />";
     return msgprintf("<html><head><title>%s %s Spoiler</title>\n%s\n%s\n%s\n</head><body>"
-                     "<p>This spoiler pertains to %s version %s.</p>",
-                     variantname, spoilername, createdby, copyright, csslink, variantname, version);
+                     "<p>This spoiler pertains to <span class=\"variant\">%s</span> "
+                     "   <span class=\"nhversion\">version <span class=\"versionnumber\">%s</span>.\n"
+                     "   <span class=\"generated\">Generated <span class=\"gendate\">%ld</span>.</span></p>",
+                     variantname, spoilername, createdby, copyright, csslink, variantname, version,
+                     yyyymmdd(utc_time()));
 }
 
 const char *
