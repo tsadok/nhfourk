@@ -1530,6 +1530,7 @@ seffects(struct obj *sobj, boolean *known)
         break;
     case SCR_STINKING_CLOUD:{
             coord cc;
+            int range = sobj->cursed ? 37 : sobj->blessed ? 70 : 50;
 
             pline(msgc_hint, "You have found a scroll of stinking cloud!");
             *known = TRUE;
@@ -1541,7 +1542,7 @@ seffects(struct obj *sobj, boolean *known)
                 pline(msgc_cancelled, "Never mind.");
                 return 0;
             }
-            if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) >= 32) {
+            if (!cansee(cc.x, cc.y) || distu(cc.x, cc.y) > range) {
                 pline(msgc_yafm, "You smell %s.", Hallucination ? "breakfast" :
                       "rotten eggs");
                 return 0;
