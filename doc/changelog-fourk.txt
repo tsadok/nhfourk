@@ -124,10 +124,10 @@ Changes in 4.3.0.4:
      at most one point per monster -- in practice this should still
      be plenty to make Barbarian the easiest role by a wide margin
      from an alignment record perspective).
-   + Knights can get alignment by slaying hostile (adult) dragons.
-   + Priests can gain alignment by killing hostile undead monsters.
-   + Dwarves can gain (and Elves can lose) alignment points by
-     chopping down trees.
+   + Knights gain alignment by slaying hostile (adult) dragons.
+   + Priests gain alignment by killing hostile undead monsters.
+   + Monks improve their alignment by fasting.
+   + Dwarves gain (and Elves lose) alignment by chopping down trees.
 
  * Stinking clouds now block light and vision (like boulders).
 

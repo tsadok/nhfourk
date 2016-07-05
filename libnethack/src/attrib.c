@@ -469,8 +469,9 @@ exerper(void)
             break;
         case WEAK:
             exercise(A_STR, FALSE);
-            if (Role_if(PM_MONK))       /* fasting */
-                exercise(A_WIS, TRUE);
+            if (Role_if(PM_MONK) &&      /* fasting */
+                !rn2_on_rng(50, rng_role_alignment))
+                adjalign(1);
             break;
         case FAINTING:
         case FAINTED:

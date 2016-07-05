@@ -1491,7 +1491,7 @@ assign_level(d_level * dest, const d_level * src)
     dest->dlevel = src->dlevel;
 }
 
-/* dest = src + rn1(range) */
+/* dest = src + rn1(range)
 void
 assign_rnd_level(d_level * dest, const d_level * src, int range)
 {
@@ -1507,7 +1507,7 @@ assign_rnd_level(d_level * dest, const d_level * src, int range)
     else if (dest->dlevel < 1)
         dest->dlevel = 1;
 }
-
+*/
 
 int
 induced_align(const d_level * dlev, int pct, enum rng rng)
