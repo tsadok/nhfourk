@@ -3548,7 +3548,7 @@ zap_hit_u(int type, int nd, const char *fltxt, xchar sx, xchar sy, int raylevel)
             shieldeff(u.ux, u.uy);
             pline(msgc_playerimmune, "You don't feel sleepy.");
         } else {
-            helpless(dice(nd, 25), hr_asleep, "sleeping", NULL);
+            helpless(dice(nd, 6), hr_asleep, "sleeping", NULL);
         }
         break;
     case ZT_DEATH:
