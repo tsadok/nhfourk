@@ -54,6 +54,7 @@
                                            the above */
 # define MS_WERE         38             /* lycanthrope in human form */
 # define MS_BOAST        39             /* giants */
+# define MS_LIBR         40             /* librarians */
 
 
 # define MR_FIRE         0x01           /* resists fire */

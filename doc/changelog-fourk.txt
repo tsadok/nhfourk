@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The sleep spell doesn't put things to sleep for as long.
+
  * The hints window ("extrawin") can now be turned off in the
    options.  Any space it would have taken up will be given to
    the message area instead.  If you do this from within a game,

@@ -7,6 +7,7 @@
 #include "edog.h"
 
 static int domonnoise(struct monst *);
+static const char * librarian_chat(struct monst *libr);
 static int mon_in_room(struct monst *, int);
 
 /* this easily could be a macro, but it might overtax dumb compilers */
@@ -498,6 +499,9 @@ domonnoise(struct monst *mtmp)
     case MS_SELL:      /* pitch, pay, total */
         shk_chat(mtmp);
         break;
+    case MS_LIBR:
+        verbl_msg = librarian_chat(mtmp);
+        break;
     case MS_VAMPIRE:
         {
             /* vampire messages are varied by tameness, peacefulness, and time
@@ -863,6 +867,33 @@ domonnoise(struct monst *mtmp)
     return 1;
 }
 
+static const char *
+librarian_chat(struct monst *libr)
+{
+    if (!libr->mpeaceful)
+        return "You are banned!  What are you doing on Library property?";
+    switch (rn2(10)) {
+    case 1:
+    case 2:
+        return "Have you checked out any good books lately?";
+    case 3:
+    case 4:
+        return "Is there something I can help you find?";
+    case 5:
+        return "Periodicals are shelved in the vestibule and in the atrium.";
+    case 6:
+        return "We have the largest spell collection of any library in Yendor.";
+    case 7:
+        return "With our magical checkout system, renewals are automatic.";
+    default:
+        /* What good is realism if it doesn't match Hollywood misconceptions? */
+        return msgprintf("Shh%s%s%s%s",
+                         (rn2(3) ? "" : "h"),
+                         (rn2(4) ? "" : "hh"),
+                         (rn2(5) ? "" : "hhhhh"),
+                         (rn2(4) ? "!" : "."));
+    }
+}
 
 int
 dotalk(const struct nh_cmd_arg *arg)
