@@ -298,6 +298,7 @@ struct settings {
     nh_bool dungeoncolor;       /* respect level display modes */
     nh_bool visible_rock;       /* render solid rock unlike unexplored */
     nh_bool extmenu;    /* extended commands use menu interface */
+    nh_bool extrawin;   /* show the hints window */
     nh_bool hilite_pet; /* hilight pets */
     nh_bool showexp;    /* show experience points */
     nh_bool use_inverse;        /* use inverse video for some things */

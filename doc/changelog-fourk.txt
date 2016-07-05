@@ -61,6 +61,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The hints window ("extrawin") can now be turned off in the
+   options.  Any space it would have taken up will be given to
+   the message area instead.  If you do this from within a game,
+   the display may not change until you leave ("save") the game
+   and re-enter ("load") it again.
+
  * The target range for scrolls of stinking cloud has increased,
    and the beatitute of the scroll matters.  In the diagram below,
    standing on the location marked @, you can target any of the

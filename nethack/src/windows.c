@@ -798,10 +798,11 @@ layout_game_windows(void)
     }
 
     /* Any remaining vertical space is used for the extra window, if we could
-       make it at least 2 lines high. Otherwise, it's given to the message area,
-       because it has to go /somewhere/, even if this makes the message area
-       taller than the user wanted. */
-    if (y_remaining >= (ui_flags.draw_horizontal_frame_lines ? 3 : 2)) {
+       make it at least 2 lines high, provided the user hasn't disabled it.
+       Otherwise, the space is given to the message area, because it has to go
+       /somewhere/, even if this makes the message area taller than required. */
+    if (settings.extrawin &&
+        (y_remaining >= (ui_flags.draw_horizontal_frame_lines ? 3 : 2))) {
         if (ui_flags.draw_horizontal_frame_lines)
             y_remaining--;
         ui_flags.extraheight = y_remaining;
