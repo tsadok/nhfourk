@@ -127,22 +127,23 @@ spoilversus(struct artifact *art)
     const struct permonst *pm;
     /* Other Relevant SPFX_ things: DBONUS */
     if (!(art->spfx & (SPFX_DBONUS | SPFX_ATTK))) {
-        return (art->attk.adtyp == AD_PHYS) ? "all" : "none";
+        return (art->attk.adtyp == AD_PHYS) ? "vs all" : "vs none";
     } else if (art->spfx & SPFX_DMONS) {
         pm = &mons[(int)art->mtype];
-        return pm->mname;
-        // TODO
+        return msgprintf("vs %s", pm->mname);
+        // TODO: improve on this
     } else if (art->spfx & SPFX_DCLAS) {
-        return msgprintf("%c", (char) def_monsyms[(int) art->mtype]);
-        // TODO
+        return msgprintf("vs %c - %s",
+                         ((char) def_monsyms[(int) art->mtype]),
+                         monexplain[(int) art->mtype]);
     } else if (art->spfx & SPFX_DFLAG1) {
-        return spoilmonflagone(art->mtype);
+        return msgprintf("vs %s", spoilmonflagone(art->mtype));
     } else if (art->spfx & SPFX_DFLAG2) {
-        return spoilmonflagtwo(art->mtype, TRUE);
+        return msgprintf("vs %s", spoilmonflagtwo(art->mtype, TRUE));
     } else if (art->spfx & SPFX_DALIGN) {
-        return "cross-aligned";
+        return "vs cross-aligned";
     } else if (art->spfx & SPFX_ATTK) {
-        return "non-resistant";
+        return "vs non-resistant";
     }
     return "N/A";
 }
@@ -692,7 +693,7 @@ makehtmlspoilers(void)
                 "<th class=\"damage ldam\">ldam</th>"
                 "<th class=\"numeric weight\">wt</th>"
                 "<th class=\"numeric price\">zm</th>"
-                "<th class=\"versus\">bonus vs</th>"
+                "<th class=\"notes wpnnotes\">notes</th>"
                 "</tr>\n</thead><tbody>\n");
         for (i = 0; !i || objects[i].oc_class != ILLOBJ_CLASS; i++) {
             if (objects[i].oc_class != WEAPON_CLASS &&
@@ -707,11 +708,15 @@ makehtmlspoilers(void)
                     "<td class=\"damage ldam\">%s</td>"
                     "<td class=\"numeric weight\">%d</td>"
                     "<td class=\"numeric price\">%d</td>"
+                    "<td class=\"notes wpnnotes\">%s</td>"
                     "</tr>\n",
                     spoiloname(i), spoilweapskill(i),
                     material[objects[i].oc_material], spoiltohit(i, NULL),
                     spoildamage(i, SDAM, NULL), spoildamage(i, LDAM, NULL),
-                    objects[i].oc_weight, objects[i].oc_cost);
+                    objects[i].oc_weight, objects[i].oc_cost,
+                    (objects[i].oc_bimanual ?
+                     "<span class=\"bimanual\" title=\"two-handed\">2H</span>"
+                     : ""));
             /* Now check for artifacts with this base item */
             for (art = artilist + 1; art->otyp; art++) {
                 if (art->otyp == i) {
@@ -726,12 +731,17 @@ makehtmlspoilers(void)
                             "<td class=\"damage ldam\">%s</td>"
                             "<td class=\"numeric weight\">%d</td>"
                             "<td class=\"numeric price\">%d</td>"
-                            "<td class=\"versus\">%s</td>"
+                            "<td class=\"notes wpnnotes artinotes\">%s"
+                            " <span class=\"versus\">%s</span></td>"
                             "</tr>", art->name, spoilweapskill(i),
                             material[objects[i].oc_material],
                             spoiltohit(i, art), spoildamage(i, SDAM, art),
                             spoildamage(i, LDAM, art), objects[i].oc_weight,
-                            objects[i].oc_cost, spoilversus(art));
+                            objects[i].oc_cost,
+                            (objects[i].oc_bimanual ?
+                             "<span class=\"bimanual\" title=\"two-handed\">"
+                             "2H</span>" : ""),
+                            spoilversus(art));
                 }
             }
         }
