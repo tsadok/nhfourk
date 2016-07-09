@@ -60,10 +60,10 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
                 m_useup(mon, obj);
                 mtmp = makemon(&mons[PM_GHOST], level, cc.x, cc.y, NO_MM_FLAGS);
                 if (!mtmp) {
-                    if (vis)
+                    if (vis && See_invisible)
                         pline(msgc_noconsequence, "%s", empty);
                 } else {
-                    if (vis) {
+                    if (vis && See_invisible) {
                         if (Hallucination) {
                             int idx = rndmonidx();
 

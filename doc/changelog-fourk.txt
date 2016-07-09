@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Ghosts are invisible.  You can only see them if you can see
+   invisible or have some other means of detecting them (such as
+   warning, monster detection, etc.)
+
  * The sleep spell doesn't put things to sleep for as long.
 
  * The hints window ("extrawin") can now be turned off in the

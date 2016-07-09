@@ -302,7 +302,7 @@ ghost_from_bottle(void)
         pline(msgc_failrandom, "This bottle turns out to be empty.");
         return;
     }
-    if (Blind) {
+    if (Blind || !See_invisible) {
         pline(msgc_substitute, "As you open the bottle, something emerges.");
         return;
     }

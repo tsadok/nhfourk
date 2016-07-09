@@ -453,7 +453,7 @@ intemple(int roomno)
                 if (!((mtmp = makemon(&mons[PM_GHOST], level, 
                                       u.ux, u.uy, NO_MM_FLAGS))))
                     return;
-                if (!Blind || sensemon(mtmp))
+                if ((!Blind && See_invisible) || sensemon(mtmp))
                     pline(msgc_statusbad,
                           "An enormous ghost appears next to you!");
                 else
