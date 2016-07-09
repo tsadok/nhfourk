@@ -133,7 +133,7 @@ static const struct innate sylph_abil[] = {
        certain conditions, and with hunger implications so that's
        special-cased elsewhere. */
     {5,  &(HInfravision), "perceptive", "half blind"},
-    {7,  &(HDisplacement), "elusive", "exposed"},
+    {7,  &(HDisplaced), "elusive", "exposed"},
     {16, &(HDetect_monsters), "perceptive", "dull"},
     {0, 0, 0, 0}
 };
@@ -664,8 +664,11 @@ postadjabil(unsigned int *ability)
 {
     if (!ability)
         return;
-    if (ability == &(HWarning) || ability == &(HSee_invisible))
+    if (ability == &(HWarning) || ability == &(HSee_invisible) ||
+        ability == &(HDetect_monsters))
         see_monsters(FALSE);
+    if (ability == &(HFire_resistance))
+        spoteffects(FALSE);
 }
 
 void

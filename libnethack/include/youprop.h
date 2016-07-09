@@ -112,8 +112,6 @@
 # define Detect_monsters        u_any_property(DETECT_MONSTERS)
 # define HProt_shapechangers    u.uintrinsic[PROT_FROM_SHAPE_CHANGERS]
 # define Prot_shapechangers     u_any_property(PROT_FROM_SHAPE_CHANGERS)
-# define HDisplacement          u.uintrinsic[DISPLACED]
-# define Displacement           u_any_property(DISPLACED)
 
 /*** Appearance and behavior ***/
 # define Adornment              worn_extrinsic(ADORNED)
@@ -122,7 +120,9 @@
 # define Invis                  u_any_property(INVIS)
 # define BInvis                 worn_blocked(INVIS)
 # define Invisible              (Invis && !See_invisible)
-# define Displaced              worn_extrinsic(DISPLACED)
+# define Displaced              u_any_property(DISPLACED)
+# define HDisplaced             u.uintrinsic[DISPLACED]
+
 /* u_any_property(STEALTH) should no longer be checked directly.
    Use get_stealth() instead.
 # define HStealth               u.uintrinsic[STEALTH]

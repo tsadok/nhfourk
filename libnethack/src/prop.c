@@ -249,10 +249,10 @@ msensem(const struct monst *viewer, const struct monst *viewee)
     boolean target_lit = distance <= 2 || (lev == level && templit(tx, ty)) ||
         lev->locations[tx][ty].lit;
 
-    /* TODO: Maybe infravision (and perhaps even infravisibility) should be
-       properties? */
-    boolean infravision_ok = infravision(viewer->data) &&
-        infravisible(viewee->data);
+    /* TODO: Maybe infravision should be a property? */
+    boolean infravision_ok = infravisible(viewee->data) &&
+        (infravision(viewer->data) ||
+         m_has_property(viewer, INFRAVISION, ANY_PROPERTY, 0));
 
     boolean blinded = !!m_has_property(viewer, BLINDED, ANY_PROPERTY, 0);
     boolean see_invisible =
