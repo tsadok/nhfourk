@@ -275,6 +275,7 @@ enum player_conduct {
     conduct_conflict,                    /* generated conflict */
     conduct_invisible,                   /* were invisible */
     conduct_displacement,                /* were displaced */
+    conduct_reflection,                  /* had reflection */
     num_conducts,
 };
 

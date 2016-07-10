@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The game now tracks, as a conduct, whether you have ever had
+   each of the following properties:  conflict, displacement,
+   invisibility, and reflection.  To avoid leaking information
+   about unidentified equipment, displacement is the only one
+   of these that is reported in the conducts screen during the
+   game; the others only show up in the dumplog.
+
  * Ghosts are invisible.  You can only see them if you can see
    invisible or have some other means of detecting them (such as
    warning, monster detection, etc.)

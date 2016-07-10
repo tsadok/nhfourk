@@ -973,6 +973,14 @@ show_conduct(int final)
     /* Similarly, it's possible to be invisible and not know (if blind). */
     if (final && !u.uconduct[conduct_invisible])
         enl_msg(&menu, You_, "have not been", "were not", " invisible");
+    /* And it's possible to wear an unidentified amulet of reflection. */
+    if (final && !u.uconduct[conduct_reflection])
+        enl_msg(&menu, You_, "have not had", "did not have", " reflection");
+    else if (final && (u.uconduct_time[conduct_reflection] >
+                       (((moves > 20000) ? 10000 : 0) + (moves / 2))))
+        enl_msg(&menu, You_, "have not had", "did not have",
+                msgprintf(" reflection until turn %d",
+                          u.uconduct_time[conduct_reflection]));
     /* But displacement auto-identifies. */
     if (!u.uconduct[conduct_displacement])
         enl_msg(&menu, You_, "have not been", "were not", " displaced");

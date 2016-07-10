@@ -1056,6 +1056,8 @@ you_moved(void)
                 break_conduct(conduct_displacement);
             if (Invisible)
                 break_conduct(conduct_invisible);
+            if (Reflecting)
+                break_conduct(conduct_reflection);
 
             if (Searching && !u_helpless(hm_all))
                 dosearch0(1);
