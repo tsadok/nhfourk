@@ -1536,6 +1536,9 @@ dopayobj(struct monst *shkp, struct bill_x *bp, struct obj **obj_p,
     }
 
     pay(ltmp, shkp);
+    if (Role_if(PM_TOURIST) && !(obj->o_id % 4))
+        /* Overpaying for shop merchandise is a very Touristy thing to do. */
+        adjalign(1);
     shk_names_obj(shkp, obj,
                   consumed ? "You paid for %s at a cost of %ld gold piece%s.%s"
                   : "You bought %s for %ld gold piece%s.%s", ltmp, "");

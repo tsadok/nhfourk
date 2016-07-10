@@ -126,6 +126,8 @@ Changes in 4.3.0.4:
      from an alignment record perspective).
    + Knights gain alignment by slaying hostile (adult) dragons.
    + Priests gain alignment by killing hostile undead monsters.
+   + Tourists gain alignment when they are overcharged for a
+     particular item in a shop.  (The "shirt bonus" doesn't count.)
    + Monks improve their alignment by fasting.
    + Dwarves gain (and Elves lose) alignment by chopping down trees.
 
