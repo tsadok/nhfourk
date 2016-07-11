@@ -173,11 +173,13 @@ dosit(const struct nh_cmd_arg *arg)
         pline(msgc_yafm, sit_message, "drawbridge");
 
     } else if (IS_THRONE(typ)) {
+        int vanishnum = 3;
 
         pline(msgc_actionok, sit_message, defexplain[S_throne]);
         if (!rn2_on_rng(3, rng_throne_result)) {
             switch (1 + rn2_on_rng(13, rng_throne_result)) {
             case 1:
+                vanishnum = 10;
                 attrib = rn2_on_rng(A_MAX, rng_throne_result);
                 adjattrib(attrib, -rn1(4, 3), FALSE);
                 losehp(rnd(10), killer_msg(DIED, "a cursed throne"));
@@ -186,6 +188,7 @@ dosit(const struct nh_cmd_arg *arg)
                 adjattrib(rn2_on_rng(A_MAX, rng_throne_result), 1, FALSE);
                 break;
             case 3:
+                vanishnum = 10;
                 pline(Shock_resistance ? msgc_notresisted : msgc_nonmonbad,
                       "A%s electric shock shoots through your %s!",
                       ((Shock_resistance) ? "n" : " massive"),
@@ -196,17 +199,19 @@ dosit(const struct nh_cmd_arg *arg)
                 break;
             case 4:
                 if (Upolyd) {
-                    if (u.mh >= (u.mhmax - 5))
+                    if (u.mh >= (u.mhmax - 5)) {
+                        pline(msgc_intrgain, "You feel much better now!");
                         u.mhmax += 4;
+                    } else
+                        pline(msgc_statusheal, "You feel better!");
                     u.mh = u.mhmax;
-                }
-                /* TODO: Different wording in these two cases, not just
-                   different channel */
-                if (u.uhp >= (u.uhpmax - 5)) {
-                    pline(msgc_intrgain, "You feel much, much better!");
-                    u.uhpmax += 4;
                 } else {
-                    pline(msgc_statusheal, "You feel much, much better!");
+                    if (u.uhp >= (u.uhpmax - 5)) {
+                        pline(msgc_intrgain, "You feel ever so much better!");
+                        u.uhpmax += 4;
+                    } else {
+                        pline(msgc_statusheal, "You feel much, much better!");
+                    }
                 }
                 u.uhp = u.uhpmax;
                 make_blinded(0L, TRUE);
@@ -215,9 +220,11 @@ dosit(const struct nh_cmd_arg *arg)
                     heal_legs(Wounded_leg_side);
                 break;
             case 5:
+                vanishnum = 10;
                 take_gold();
                 break;
             case 6:
+                vanishnum = 1;
                 /* TODO: Set this up on the throne RNG? */
                 if (u.uluck + rn2(5) < 0) {
                     pline(msgc_statusheal, "You feel your luck is changing.");
@@ -229,6 +236,7 @@ dosit(const struct nh_cmd_arg *arg)
             {
                 int cnt = rn2_on_rng(10, rng_throne_result);
                 struct monst *mtmp;
+                vanishnum = 7;
                 
                 pline(msgc_npcvoice, "A voice echoes:");
                 verbalize(msgc_levelwarning,
@@ -249,6 +257,7 @@ dosit(const struct nh_cmd_arg *arg)
                 do_genocide(5); /* REALLY|ONTHRONE, see do_genocide() */
                 break;
             case 9:
+                vanishnum = 10;
                 pline(msgc_npcvoice, "A voice echoes:");
                 verbalize(Luck > 0 ? msgc_statusbad : msgc_itemloss,
                           "A curse upon thee for sitting upon this most holy "
@@ -261,6 +270,7 @@ dosit(const struct nh_cmd_arg *arg)
             case 10:
                 if (Luck < 0 || (HSee_invisible & INTRINSIC)) {
                     if (level->flags.nommap) {
+                        vanishnum = 10;
                         pline(msgc_statusbad,
                               "A terrible drone fills your head!");
                         make_confused(HConfusion + rnd(30), FALSE);
@@ -275,6 +285,7 @@ dosit(const struct nh_cmd_arg *arg)
                 }
                 break;
             case 11:
+                vanishnum = 10;
                 if (Luck < 0) {
                     pline(msgc_statusbad, "You feel threatened.");
                     aggravate();
@@ -292,6 +303,7 @@ dosit(const struct nh_cmd_arg *arg)
                     rn2_on_rng(5, rng_throne_result); /* to match */
                 break;
             case 13:
+                vanishnum = 10;
                 pline(msgc_statusbad, "Your mind turns into a pretzel!");
                 make_confused(HConfusion + rn1(7, 16), FALSE);
                 break;
@@ -300,13 +312,14 @@ dosit(const struct nh_cmd_arg *arg)
                 break;
             }
         } else {
+            vanishnum = 20;
             if (is_prince(youmonst.data))
                 pline(msgc_failrandom, "You feel very comfortable here.");
             else
                 pline(msgc_failrandom, "You feel somehow out of place...");
         }
 
-        if (!rn2_on_rng(3, rng_throne_result) &&
+        if ((!rn2_on_rng(vanishnum, rng_throne_result) || challengemode) &&
             IS_THRONE(level->locations[u.ux][u.uy].typ)) {
             /* may have teleported */
             level->locations[u.ux][u.uy].typ = ROOM;

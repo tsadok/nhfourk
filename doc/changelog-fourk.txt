@@ -61,6 +61,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When sitting on a throne, the odds that it vanishes in a puff
+   of logic have changed, as follows:
+   + if you are playing in challenge mode, it always vanishes.
+   + if you get a wish, it always vanishes.
+   + if you get a positive result but not a wish (and are not
+     in challenge mode), the odds are one in three, same as before.
+   + if you get a negative result (and are not playing in challenge
+     mode), there's a 10% chance that the throne vanishes
+   + if you get the non-result (feel out of place), and are
+     not in challenge mode, there's still a 5% chance it vanishes.
+
  * The game now tracks, as a conduct, whether you have ever had
    each of the following properties:  conflict, displacement,
    invisibility, and reflection.  To avoid leaking information
