@@ -61,6 +61,25 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Introduced three new types of shops:
+   + Music stores sell mostly musical instruments, and occasionally
+     other tools.  They are a bit less common than jewelers.
+   + Gift shops sell T-shirts, cameras, plastic amulets, luckstones,
+     loadstones, bags of tricks, crystal balls, looking glasses,
+     candy bars, fortune cookies, meat sticks, and worthless glass.
+     Gift shops are uncommon (1% of all shops).
+   + Rare goods showrooms sell random amulets, boomerangs, athames,
+     silver daggers, grappling hooks, fedoras, dunce caps,
+     cornuthaums, oilskin cloaks, oilskin sacks, lenses, saddles,
+     magic markers, magic lamps, stethoscopes, and wands of
+     nothing, enlightenment, probing, cancellation, or polymorph.
+     Rare goods showrooms occur when a small delicatessen would
+     have been generated below dungeon level 16.
+
+ * Delicatessens are no longer generated below dungeon level 16.
+   If the deli would have been small, it is converted to a rare
+   goods showroom, otherwise to a general store.
+
  * Corridors are very slightly less predictable than before
    (cherry-picked from 3.6).
 

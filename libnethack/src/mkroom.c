@@ -139,10 +139,13 @@ mkshop(struct level *lev)
         for (styp = 0; (j -= shtypes[styp].prob) > 0; styp++)
             continue;
 
-        /* big rooms cannot be wand or book shops, so make them general stores
-           */
+        /* past a certain point, a deli ceases to be interesting */
+        if ((shtypes[styp].symb == FOOD_CLASS) && (depth(&lev->z) > 12))
+            styp = ((depth(&lev->z) > 16) ? RARESHOP : SHOPBASE) - SHOPBASE;
+        /* big rooms cannot be wand or book shops: make them general stores */
         if (isbig(sroom) &&
             (shtypes[styp].symb == WAND_CLASS ||
+             shtypes[styp].symb == CHAIN_CLASS || /* rare item shop */
              shtypes[styp].symb == SPBOOK_CLASS))
             styp = 0;
     }

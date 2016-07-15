@@ -113,6 +113,7 @@ static const char *const shktools[] = {
     "Rewuorb", "Rellenk", "Yad", "Cire Htims", "Y-crad", "Nenilukah",
     "Corsh", "Aned", "Kivenhoug", "Rebrol-nek", "Niknar", "Lapu",
     "Shimt", "Rathel", "Thusenna", "Linnalek", "Yakdreer",
+    "Eltaup Cirrelm", "Dijrfernd Kaghull",
 #ifdef WIN32
     "Lechaim", "Lexa", "Niod",
 #endif
@@ -129,6 +130,51 @@ static const char *const shklight[] = {
     "Pernik", "Lom", "Haskovo", "Dobrinishte", "Varvara", "Oryahovo",
     "Troyan", "Lovech", "Sliven",
     0
+};
+
+static const char *const shkmusic[] = {
+    /* Algonquin */
+    "Chogan", "Chepi", "Kanti", "Kitchi", "Wematin", "Wikimak",
+    /* Cherokee */
+    "Sequoyah", "Atsila", "Inola", "Tsiyi", "Onacona", "Unega",
+    /* Creek */
+    "Chiggilli", "Cocheta", "Emistesigo", "Eyota", "Hasse Ola",
+    "Hothlepoya", "Lamochattee", "Menewa", "Onawa", "Osceola",
+    "Scenanki", "Talisa", "Tchikilli",
+    /* Sioux */
+    "Shappa", "Otaktay", "Mato", "Mika", "Mina", "Ehawee",
+    0
+};
+
+static const char *const shkgifts[] = {
+    /* Germanic */
+    "Achterberg", "Adlersflugel", "Baasch", "Baumgartner", "Beckenbauer",
+    "Bergfalk", "Beyersdorf", "Blmenthal", "Breisacher", "Dahl", "Diefenbach",
+    "Drechsler", "Dusediekerbaum", "Eberhardt", "Eisenaugle", "Faerber",
+    "Falkenrath", "Fenstermacher", "Foerstner", "Freudenberger", "Fromm",
+    "Gaertner", "Gehring", "Geiszler", "Gensch", "Gentschenfelde", "Haase",
+    "Hasenkamp", "Haupt", "Herzog", "Hirsch", "Holzknecht", "Horowicz",
+    "Ingersleben", "Jollenbeck", "Kalbfleisch", "Koenigsmann", "Lieberkatzen",
+    "Oppenheimer", "Paternoster", "Pfenning", "Rademacher", "Regenbogen",
+    "Rosenberger", "Salzwedel", "Scheinberg", "Schlender", "Schoettmer",
+    "Schuchardt", "Schuhmacher", "Schultheiss", "Seelenfreund", "Sponaugle",
+    "Stoppelbein", "Strohkirch", "Unruh", "Ursler", "Vieth", "Voigt",
+    "Waldfogel", "Wechsler", "Weigand", "Wildgrube", "Wirnheir",
+    "Zilberschlag",
+    0
+};
+
+static const char *const shkrare[] = {
+    /* Korea */
+    "Bhang", "Bih", "Bihn", "Bohng", "Chegal", "Choon", "Chun", "Dham",
+    "Dokko", "Dongpang", "Eokeum", "Gangjun", "Garl", "Guhn", "Guem",
+    "Gyoh", "Haam", "Hah", "Hahg", "Howan", "Hwangpo", "Hyeung", "Hyoun",
+    "Jahng", "Kahng","Koung", "Kwoong", "Kym", "Maing", "Mangjuhl", "Mio",
+    "Myung", "Namgung", "Ohnn", "Oung", "Pahk", "Phan", "Pyoun", "Ryang",
+    "Ryuk", "Sagoung", "Sahng", "Shin", "Sheem", "Sihp", "Sonwou",
+    "Sohpong", "Sohn", "Suhmoon", "Tahn", "Than", "Ugeum", "Vong",
+    "Wuhn", "Yeoun", "Yeh", "Yub",
+    0,
 };
 
 static const char *const shkgeneral[] = {
@@ -156,10 +202,12 @@ static const char *const shkgeneral[] = {
 };
 
 /*
- * To add new shop types, all that is necessary is to edit the shtypes[] array.
- * See mkroom.h for the structure definition.  Typically, you'll have to lower
- * some or all of the probability fields in old entries to free up some
- * percentage for the new type.
+ * To add new shop types, all that is necessary is to edit the shtypes[] array,
+ * the constants in mkroom.h (which file also see for the structure definition
+ * of the list below), the room_types[] array in lev_main.c, and the shopnames[]
+ * array in dungeon.c.  Typically, you'll have to lower some or all of the
+ * probability fields in old entries below to free up some percentage for the
+ * new type.
  *
  * The placement type field is not yet used but will be in the near future.
  *
@@ -172,9 +220,9 @@ static const char *const shkgeneral[] = {
  */
 
 const struct shclass shtypes[] = {
-    {"general store", RANDOM_CLASS, 44,
+    {"general store", RANDOM_CLASS, 42,
      D_SHOP, {{100, RANDOM_CLASS}, {0, 0}, {0, 0}}, shkgeneral},
-    {"used armor dealership", ARMOR_CLASS, 14,
+    {"used armor dealership", ARMOR_CLASS, 13,
      D_SHOP, {{90, ARMOR_CLASS}, {10, WEAPON_CLASS}, {0, 0}},
      shkarmors},
     {"second-hand bookstore", SCROLL_CLASS, 10, D_SHOP,
@@ -198,6 +246,35 @@ const struct shclass shtypes[] = {
        implementor name (along with candle shops having random shopkeepers) */
     {"rare books", SPBOOK_CLASS, 3, D_SHOP,
      {{90, SPBOOK_CLASS}, {10, SCROLL_CLASS}, {0, 0}}, shkbooks},
+    {"gift shop", GEM_CLASS, 1, D_SHOP,
+     {{20, -T_SHIRT}, {15, -CANDY_BAR}, {8, -EXPENSIVE_CAMERA},
+      {7, -FAKE_AMULET_OF_YENDOR}, {6, -LUCKSTONE}, {6, -LOADSTONE},
+      {6, -BAG_OF_TRICKS}, {6, -CRYSTAL_BALL}, {6, -MIRROR},
+      {5, -FORTUNE_COOKIE}, {5, -MEAT_STICK},
+      {2, -WORTHLESS_PIECE_OF_WHITE_GLASS},
+      {1, -WORTHLESS_PIECE_OF_RED_GLASS},
+      {1, -WORTHLESS_PIECE_OF_ORANGE_GLASS},
+      {1, -WORTHLESS_PIECE_OF_GREEN_GLASS},
+      {1, -WORTHLESS_PIECE_OF_YELLOW_GLASS},
+      {1, -WORTHLESS_PIECE_OF_BLUE_GLASS},
+      {1, -WORTHLESS_PIECE_OF_BLACK_GLASS},
+      {1, -WORTHLESS_PIECE_OF_VIOLET_GLASS},
+      {1, -WORTHLESS_PIECE_OF_YELLOWISH_BROWN_GLASS},
+      {0, 0}}, shkgifts},
+    {"music store", TOOL_CLASS, 2, D_SHOP,
+    {{5, -BUGLE}, {10, -FIRE_HORN}, {10, -FROST_HORN}, {10, -TOOLED_HORN},
+     {10, -WOODEN_FLUTE}, {10, -WOODEN_HARP}, {10, -LEATHER_DRUM},
+     {5, -MAGIC_FLUTE}, {5, -MAGIC_HARP}, {5, -DRUM_OF_EARTHQUAKE},
+     {5, -BELL}, {5, -TIN_WHISTLE}, {5, -MAGIC_WHISTLE}, {5, TOOL_CLASS},
+     {0, 0}}, shkmusic},
+    {"rare goods showroom", CHAIN_CLASS, 0, D_SHOP,
+    {{25, AMULET_CLASS}, {10, -BOOMERANG}, {10, -ATHAME}, {5, -SILVER_DAGGER},
+     {5, -GRAPPLING_HOOK}, {5, -FEDORA}, {5, -DUNCE_CAP}, {5, -CORNUTHAUM},
+     {5, -OILSKIN_CLOAK}, {5, -OILSKIN_SACK}, {3, -LENSES}, {3, -SADDLE},
+     {3, -MAGIC_MARKER}, {3, -MAGIC_LAMP}, {3, -STETHOSCOPE},
+     {1, -WAN_NOTHING}, {1, -WAN_ENLIGHTENMENT}, {1, -WAN_PROBING},
+     {1, -WAN_CANCELLATION}, {1, -WAN_POLYMORPH},
+     {0, 0}}, shkrare},
     /* Shops below this point are "unique".  That is they must all have a
        probability of zero.  They are only created via the special level
        loader. */

@@ -34,7 +34,7 @@ struct shclass {
     struct itp {
         int iprob;      /* probability of an item type */
         int itype;      /* item type: if >=0 a class, if < 0 a specific item */
-    } iprobs[5];
+    } iprobs[25];
     const char *const *shknms;  /* list of shopkeeper names for this type */
 };
 
@@ -63,7 +63,7 @@ extern const struct shclass shtypes[];
 # define ANTHOLE        13      /* ants (Tom Proudfoot) */
 # define DRAGONHALL     14      /* here be dragons */
 # define CHESTROOM      15      /* ugly kludge for .des support */
-# define SHOPBASE       16      /* everything above this is a shop */
+# define SHOPBASE       16      /* everything from here on is a shop */
 # define ARMORSHOP      17      /* specific shop defines for level compiler */
 # define SCROLLSHOP     18
 # define POTIONSHOP     19
@@ -73,9 +73,12 @@ extern const struct shclass shtypes[];
 # define WANDSHOP       23
 # define TOOLSHOP       24
 # define BOOKSHOP       25
-# define UNIQUESHOP     26      /* shops here & above not randomly gen'd. */
-# define CANDLESHOP     26
-# define MAXRTYPE       26      /* maximum valid room type */
+# define GIFTSHOP       26
+# define MUSICSHOP      27
+# define UNIQUESHOP     28      /* shops from here on not randomly gen'd. */
+# define RARESHOP       28      /* deep in dungeon only */
+# define CANDLESHOP     29      /* Minetown */
+# define MAXRTYPE       29      /* maximum valid room type */
 
 /* Special type for search_special() */
 # define ANY_TYPE       (-1)

@@ -632,14 +632,16 @@ MONSTER:'n',random,random
 DOOR: false, closed, south, random
 DOOR: true, locked, east, random
 
-SUBROOM: "ordinary", random, (14,2), (4,2), "town"
+SUBROOM: "gift shop", random, (14,2), (4,2), "town"
+CHANCE: 5
 DOOR: false, closed, south, 0
 MONSTER: 'n', random, random
 
 SUBROOM: "chestroom", random, (16,5), (2,2), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", unlit, (19,2), (2,2), "town"
+SUBROOM: "music shop", unlit, (19,2), (2,2), "town"
+CHANCE: 10
 DOOR: false, locked, east, random
 MONSTER: 'G',"gnome king",random
 
