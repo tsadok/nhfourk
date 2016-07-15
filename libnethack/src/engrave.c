@@ -303,11 +303,13 @@ wipe_engr_at(struct level *lev, xchar x, xchar y, xchar cnt)
             if (ep->engr_type != DUST && ep->engr_type != ENGR_BLOOD) {
                 cnt = rn2(1 + 50 / (cnt + 1)) ? 0 : 1;
             }
-            wipeout_text(ep->engr_txt, (int)cnt, 0);
-            while (ep->engr_txt[0] == ' ')
-                ep->engr_txt++;
-            if (!ep->engr_txt[0])
-                del_engr(ep, lev);
+            if (cnt > 0) {
+                wipeout_text(ep->engr_txt, (int)cnt, 0);
+                while (ep->engr_txt[0] == ' ')
+                    ep->engr_txt++;
+                if (!ep->engr_txt[0])
+                    del_engr(ep, lev);
+            }
         }
     }
 }
