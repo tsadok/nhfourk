@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Corridors are very slightly less predictable than before
+   (cherry-picked from 3.6).
+
  * Some colors of dragon hall are now more likely than others, and
    certain colors are possible that previously weren't implemented.
    (Gray and silver dragon halls are still not implemented.)
