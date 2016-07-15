@@ -206,7 +206,7 @@ const struct nh_symdef defsyms[] = {
        {'#', "sink", CLR_GRAY},
        {'{', "fountain", CLR_BLUE},
        {'(', "magic chest", CLR_BRIGHT_MAGENTA},
-/*40*/ {'}', "shallow water", CLR_BRIGHT_CYAN},
+/*40*/ {'}', "shallow water", CLR_CYAN},
        {'#', "vodbridge", CLR_BROWN},
        {'#', "hodbridge", CLR_BROWN},
        {'+', "vcdbridge", CLR_YELLOW},

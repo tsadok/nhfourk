@@ -965,12 +965,20 @@ you_moved(void)
                 }
             } else if (Race_if(PM_SYLPH) && (u.uhp < (u.uhpmax / 2)) &&
                        !(moves % 4) && !challengemode) {
+                schar floortype = level->locations[u.ux][u.uy].typ;
                 if (!Inhell)
-                    if (!can_feel_ground(&youmonst))
+                    if (floortype == ALTAR || floortype == ICE ||
+                        floortype == LAVAPOOL || floortype == MAGIC_CHEST ||
+                        floortype == DRAWBRIDGE_DOWN || floortype == AIR)
                         pline(msgc_hint,
                               "You try to draw healing from your surroundings, "
-                              "but your toes cannot even feel the %s.",
+                              "but you cannot feel the ground through the %s.",
                               surface(u.ux, u.uy));
+                    else if (!can_feel_ground(&youmonst))
+                        pline(msgc_hint,
+                              "You try to draw healing from your surroundings, "
+                              "but your %s cannot even feel the %s.",
+                              makeplural(body_part(TOE)), surface(u.ux, u.uy));
                     else if (u.uhs >= WEAK)
                         pline(msgc_hint, "You try to draw healing from your "
                               "surroundings, but you are too weak.");
