@@ -172,6 +172,10 @@ dosit(const struct nh_cmd_arg *arg)
 
         pline(msgc_yafm, sit_message, "drawbridge");
 
+    } else if (IS_BENCH(typ) && (u.uhp < u.uhpmax)) {
+        u.uhp++;
+        pline_once(msgc_statusheal,
+                   "You sit on the bench and rest for a moment.");
     } else if (IS_THRONE(typ)) {
         int vanishnum = 3;
 

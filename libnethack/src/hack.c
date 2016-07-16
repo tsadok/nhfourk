@@ -2330,8 +2330,8 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
          */
         mem_bg = tmpr->mem_bg;
         if (tmpr->mem_stepped == 0 &&
-            (mem_bg == S_altar || mem_bg == S_throne || mem_bg == S_sink ||
-             mem_bg == S_fountain || mem_bg == S_dnstair ||
+            (mem_bg == S_altar || mem_bg == S_bench || mem_bg == S_throne ||
+             mem_bg == S_sink ||  mem_bg == S_fountain || mem_bg == S_dnstair ||
              mem_bg == S_upstair || mem_bg == S_dnsstair ||
              mem_bg == S_upsstair || mem_bg == S_dnladder ||
              mem_bg == S_upladder))

@@ -252,6 +252,10 @@ do_earthquake(int force)
                         pline(msgc_consequence,
                               "The headstone topples into a chasm.");
                     goto do_pit;
+                case BENCH:
+                    if (cansee(x, y))
+                        pline(msgc_consequence,
+                              "The bench plummets into a chasm.");
                 case THRONE:
                     if (cansee(x, y))
                         pline(msgc_consequence,

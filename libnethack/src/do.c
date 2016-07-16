@@ -1615,6 +1615,10 @@ revive_mon(void *arg, long timeout)
 int
 donull(const struct nh_cmd_arg *arg)
 {
+    if ((u.uhp < u.uhpmax) && IS_BENCH(level->locations[u.ux][u.uy].typ)) {
+        u.uhp++;
+        pline_once(msgc_statusheal, "You rest on the bench.");
+    }
     limited_turns(arg, occ_wait);
     return 1;   /* Do nothing, but let other things happen */
 }

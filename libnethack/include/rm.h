@@ -66,16 +66,17 @@
 # define STAIRS          25
 # define LADDER          26
 # define FOUNTAIN        27
-# define THRONE          28
-# define SINK            29
-# define GRAVE           30
-# define ALTAR           31
-# define MAGIC_CHEST     32
-# define ICE             33
-# define PUDDLE          34 /* L */
-# define DRAWBRIDGE_DOWN 35
-# define AIR             36
-# define CLOUD           37
+# define BENCH           28
+# define THRONE          29
+# define SINK            30
+# define GRAVE           31
+# define ALTAR           32
+# define MAGIC_CHEST     33
+# define ICE             34
+# define PUDDLE          35 /* L */
+# define DRAWBRIDGE_DOWN 36
+# define AIR             37
+# define CLOUD           38
 
 # define MAX_TYPE        (CLOUD+1)
 # define INVALID_TYPE    127
@@ -96,6 +97,7 @@
 # define ZAP_POS(typ)       ((typ) >= POOL)
 # define SPACE_POS(typ)     ((typ) > DOOR)
 # define IS_POOL(typ)       ((typ) >= POOL && (typ) <= DRAWBRIDGE_UP)
+# define IS_BENCH(typ)      ((typ) == BENCH)
 # define IS_THRONE(typ)     ((typ) == THRONE)
 # define IS_FOUNTAIN(typ)   ((typ) == FOUNTAIN)
 # define IS_SINK(typ)       ((typ) == SINK)
@@ -154,11 +156,12 @@ enum dungeon_symbols {
     S_dnsstair,
     S_altar,
     S_grave,
+    S_bench,
     S_throne,
     S_sink,
     S_fountain,
-    S_magic_chest,
-/*40*/ S_puddle,
+/*40*/ S_magic_chest,
+    S_puddle,
     S_vodbridge,
     S_hodbridge,
     S_vcdbridge,        /* closed drawbridge, vertical wall */

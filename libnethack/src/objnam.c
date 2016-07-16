@@ -2537,6 +2537,12 @@ srch:
             newsym(u.ux, u.uy);
             return &zeroobj;
         }
+        if (!BSTRCMP(bp, p - 5, "bench")) {
+            level->locations[u.ux][u.uy].typ = BENCH;
+            pline(msgc_info, "A bench.");
+            newsym(u.ux, u.uy);
+            return &zeroobj;
+        }
         if (!BSTRCMP(bp, p - 6, "throne")) {
             level->locations[u.ux][u.uy].typ = THRONE;
             pline(msgc_info, "A throne.");

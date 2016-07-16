@@ -1690,6 +1690,9 @@ back_to_cmap(struct level *lev, xchar x, xchar y)
     case GRAVE:
         idx = S_grave;
         break;
+    case BENCH:
+        idx = S_bench;
+        break;
     case THRONE:
         idx = S_throne;
         break;

@@ -121,11 +121,12 @@ const char *const defexplain[] = {
              "long staircase down", /* dnsstair */
              "altar",               /* altar */
              "grave",               /* grave */
+             "bench",               /* bench */
              "opulent throne",      /* throne */
              "sink",                /* sink */
              "fountain",            /* fountain */
-             "magic chest",         /* magic chest */
-    /* 40 */ "shallow water",       /* puddle */
+    /* 40 */ "magic chest",         /* magic chest */
+             "shallow water",       /* puddle */
              "lowered drawbridge",  /* vodbridge */
              "lowered drawbridge",  /* hodbridge */
              "raised drawbridge",   /* vcdbridge */
@@ -202,6 +203,7 @@ const struct nh_symdef defsyms[] = {
        {'>', "dnsstair", CLR_YELLOW | HI_ULINE},
        {'_', "altar", CLR_GRAY},
        {'|', "grave", CLR_BLACK},
+       {'\\', "bench", CLR_GRAY},
        {'\\', "throne", HI_GOLD},
        {'#', "sink", CLR_GRAY},
        {'{', "fountain", CLR_BLUE},

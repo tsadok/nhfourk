@@ -1862,7 +1862,7 @@ overview_is_interesting(const struct level *lev, const struct overview_info *oi)
     /* if overview_scan found _anything_ the level is also interesting */
     if (oi->fountains || oi->magic_chests || oi->sinks || oi->thrones ||
         oi->trees || oi->temples || oi->altars || oi->shopcount ||
-        oi->branch || oi->portal)
+        oi->branch || oi->portal || oi->benches)
         return TRUE;
 
     /* "boring" describes this level very well */
@@ -1912,6 +1912,10 @@ overview_scan(const struct level *lev, struct overview_info *oi)
 
             case S_sink:
                 oi->sinks++;
+                break;
+
+            case S_bench:
+                oi->benches++;
                 break;
 
             case S_throne:
@@ -2153,6 +2157,7 @@ overview_print_info(const struct overview_info *oi)
     ADDNTOBUF("magic chest", oi->magic_chests);
     ADDNTOBUF("fountain", oi->fountains);
     ADDNTOBUF("sink", oi->sinks);
+    ADDNTOBUF("bench", oi->benches);
     ADDNTOBUF("throne", oi->thrones);
     ADDNTOBUF("tree", oi->trees);
 

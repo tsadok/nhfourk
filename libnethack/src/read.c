@@ -763,6 +763,7 @@ do_scroll_water(int cx, int cy, int radius, schar newterrain)
                 break;
         case DOOR:
         case SINK:
+        case BENCH:
         case THRONE:
         case GRAVE:
             pline(msgc_consequence, "The %s is %s away by the %s.",

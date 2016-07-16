@@ -652,6 +652,8 @@ kickstr(struct obj *kickobj)
         what = "a wall";
     else if (IS_ROCK(maploc->typ))
         what = "a rock";
+    else if (IS_BENCH(maploc->typ))
+        what = "a bench";
     else if (IS_THRONE(maploc->typ))
         what = "a throne";
     else if (IS_FOUNTAIN(maploc->typ))

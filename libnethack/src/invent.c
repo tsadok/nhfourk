@@ -1769,6 +1769,8 @@ dfeature_at(int x, int y)
             dfeature = "open drawbridge portcullis", cmap = -1;
     } else if (IS_FOUNTAIN(ltyp))
         cmap = S_fountain;      /* "fountain" */
+    else if (IS_BENCH(ltyp))
+        cmap = S_bench;
     else if (IS_THRONE(ltyp))
         cmap = S_throne;        /* "opulent throne" */
     else if (IS_MAGIC_CHEST(ltyp))
