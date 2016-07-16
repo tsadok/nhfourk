@@ -329,6 +329,93 @@ realloc_obj(struct obj *obj, int oextra_size, void *oextra_src, int oname_size,
 }
 
 struct obj *
+oname_random_weapon(struct obj *wpn, enum rng rng)
+{
+    int skill = weapon_type(wpn);
+    const char *basename = msgupcasefirst(
+        (skill == P_SABER) ? "Sabre" :
+        (wpn->otyp == TWO_HANDED_SWORD) ? "Claymore" :
+        is_sword(wpn) ? "Sword" :
+        (wpn->otyp == LUCERN_HAMMER) ? "Lucern Hammer" :
+        (wpn->otyp == MORNING_STAR) ? "Morning Star" :
+        (wpn->otyp == RUBBER_HOSE) ? "Hose" :
+        ((skill == P_POLEARMS) || (skill == P_KNIFE) ||
+         (wpn->otyp == ATHAME)) ? OBJ_NAME(objects[wpn->otyp]) :
+        weapon_descr(wpn));
+    /* Don't randomly name stacks. */
+    if (wpn->quan > 1)
+        return wpn;
+    switch(rn2_on_rng(35, rng)) {
+    case 1:
+        return oname(wpn, msgprintf("%s of Justice", basename));
+    case 2:
+        return oname(wpn, msgprintf("%s of Honor", basename));
+    case 3:
+        return oname(wpn, msgprintf("%s of Glory", basename));
+    case 4:
+        return oname(wpn, msgprintf("%s of Revenge", basename));
+    case 5:
+        return oname(wpn, msgprintf("%s of Sorrow", basename));
+    case 6:
+        return oname(wpn, msgprintf("%s of Yendor", basename));
+    case 7:
+        return oname(wpn, msgprintf("%s of Victory", basename));
+    case 8:
+        return oname(wpn, msgprintf("%s of Carnage", basename));
+    case 9:
+        return oname(wpn, msgprintf("%s of Serenity", basename));
+    case 10:
+        return oname(wpn, msgprintf("%s of Fable", basename));
+    case 11:
+        return oname(wpn, msgprintf("%s of Legend", basename));
+    case 12:
+        return oname(wpn, msgprintf("%s of Integrity", basename));
+    case 13:
+        return oname(wpn, msgprintf("%s of Redress", basename));
+    case 14:
+        return oname(wpn, msgprintf("Righteous %s", basename));
+    case 15:
+        return oname(wpn, msgprintf("Mighty %s", basename));
+    case 16:
+        return oname(wpn, msgprintf("Death %s", basename));
+    case 17:
+        return oname(wpn, msgprintf("%s of Fate", basename));
+    case 18:
+        return oname(wpn, msgprintf("%s of Punition", basename));
+    case 19:
+        return oname(wpn, msgprintf("%s of Truth", basename));
+    case 20:
+        return oname(wpn, msgprintf("%s of Omen", basename));
+    case 21:
+        return oname(wpn, msgprintf("%s of Reckoning", basename));
+    case 22:
+        return oname(wpn, msgprintf("%s of Virtue", basename));
+    case 23:
+        return oname(wpn, msgprintf("%s of Bloodlust", basename));
+    case 24:
+        return oname(wpn, msgprintf("%s of Disaster", basename));
+    case 25:
+        return oname(wpn, msgprintf("%s of Torment", basename));
+    case 26:
+        return oname(wpn, "Due Process");
+    case 27:
+        return oname(wpn, "Puddingbane");
+    case 28:
+        return oname(wpn, "Vladsbane");
+    case 29:
+        return oname(wpn, "Newtsbane");
+    case 30:
+        return oname(wpn, "Monster Slayer");
+    case 31:
+        return oname(wpn, "Aggressive Negotiation");
+    case 32:
+        return oname(wpn, "Orphan Maker");
+    default:
+        return wpn;
+    }
+}
+
+struct obj *
 oname(struct obj *obj, const char *name)
 {
     int lth;
