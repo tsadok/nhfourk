@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Teleport control is disrupted by a mysterious force when you
+   are carrying the Amulet of Yendor.
+
  * When sitting on a throne, the odds that it vanishes in a puff
    of logic have changed, as follows:
    + if you are playing in challenge mode, it always vanishes.

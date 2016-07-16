@@ -434,6 +434,9 @@ tele_impl(boolean wizard_tele, boolean run_next_to_u)
         if (u_helpless(hm_unconscious)) {
             pline(msgc_notresisted,
                   "Being unconscious, you cannot control your teleport.");
+        } else if (Uhave_amulet) {
+            pline(msgc_notresisted,
+                  "A mysterious force disrupts your control.");
         } else {
             pline(msgc_uiprompt,
                   "To what position do you%s want to be teleported?",
