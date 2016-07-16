@@ -17,7 +17,7 @@
 
 # include <jansson.h>
 
-# define DEFAULT_PORT 53440
+# define DEFAULT_PORT 53405
 
 extern struct nh_window_procs client_windowprocs;
 extern int current_game;
