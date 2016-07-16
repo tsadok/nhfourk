@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When a randomly generated weapon is positively enchanted and
+   not cursed, it may be assigned a name, like "Sword of Virtue",
+   "Mace of Justice", "Staff of Yendor", etc.
+
  * Sokoban levels now announce their titles when you enter them.
 
  * A new special level, the Garden of Temptation, has been added
