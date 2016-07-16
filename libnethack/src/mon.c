@@ -3117,48 +3117,48 @@ int egg_type_from_parent(int mnum,      /* parent monster; caller must handle
     /* All egg-laying dragons of a given color lay the same kind of egg,
        regardless of the parent dragon's age: */
     case PM_YOUNG_GRAY_DRAGON:
-    case PM_GRAY_ELDER_DRAGON:
-    case PM_GREAT_GRAY_DRAGON:
+    case PM_ELDER_GRAY_DRAGON:
+    case PM_ANCIENT_GRAY_DRAGON:
         mnum = PM_GRAY_DRAGON;
         break;
     case PM_YOUNG_SILVER_DRAGON:
-    case PM_SILVER_ELDER_DRAGON:
-    case PM_GREAT_SILVER_DRAGON:
+    case PM_ELDER_SILVER_DRAGON:
+    case PM_ANCIENT_SILVER_DRAGON:
         mnum = PM_SILVER_DRAGON;
         break;
     case PM_YOUNG_RED_DRAGON:
-    case PM_RED_ELDER_DRAGON:
-    case PM_GREAT_RED_DRAGON:
+    case PM_ELDER_RED_DRAGON:
+    case PM_ANCIENT_RED_DRAGON:
         mnum = PM_RED_DRAGON;
         break;
     case PM_YOUNG_WHITE_DRAGON:
-    case PM_WHITE_ELDER_DRAGON:
-    case PM_GREAT_WHITE_DRAGON:
+    case PM_ELDER_WHITE_DRAGON:
+    case PM_ANCIENT_WHITE_DRAGON:
         mnum = PM_WHITE_DRAGON;
         break;
     case PM_YOUNG_ORANGE_DRAGON:
-    case PM_ORANGE_ELDER_DRAGON:
-    case PM_GREAT_ORANGE_DRAGON:
+    case PM_ELDER_ORANGE_DRAGON:
+    case PM_ANCIENT_ORANGE_DRAGON:
         mnum = PM_ORANGE_DRAGON;
         break;
     case PM_YOUNG_BLACK_DRAGON:
-    case PM_BLACK_ELDER_DRAGON:
-    case PM_GREAT_BLACK_DRAGON:
+    case PM_ELDER_BLACK_DRAGON:
+    case PM_ANCIENT_BLACK_DRAGON:
         mnum = PM_BLACK_DRAGON;
         break;
     case PM_YOUNG_BLUE_DRAGON:
-    case PM_BLUE_ELDER_DRAGON:
-    case PM_GREAT_BLUE_DRAGON:
+    case PM_ELDER_BLUE_DRAGON:
+    case PM_ANCIENT_BLUE_DRAGON:
         mnum = PM_BLUE_DRAGON;
         break;
     case PM_YOUNG_GREEN_DRAGON:
-    case PM_GREEN_ELDER_DRAGON:
-    case PM_GREAT_GREEN_DRAGON:
+    case PM_ELDER_GREEN_DRAGON:
+    case PM_ANCIENT_GREEN_DRAGON:
         mnum = PM_GREEN_DRAGON;
         break;
     case PM_YOUNG_YELLOW_DRAGON:
-    case PM_YELLOW_ELDER_DRAGON:
-    case PM_GREAT_YELLOW_DRAGON:
+    case PM_ELDER_YELLOW_DRAGON:
+    case PM_ANCIENT_YELLOW_DRAGON:
         mnum = PM_YELLOW_DRAGON;
         break;
     }

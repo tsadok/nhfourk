@@ -736,7 +736,7 @@ $ = (71, 108, 108)
   MMMMMNHAAMMHHAAM
   MMMMMMMMMMMHAAMM
 }
-# tile 1029 (gray elder dragon)
+# tile 1029 (elder gray dragon)
 {
   MMMMMMBBBPAMMMMM
   MMMMMNPNPPPAMMMM
@@ -755,7 +755,7 @@ $ = (71, 108, 108)
   MMMMBPAAMMMPPMAM
   MMMMMMMMPPPPMAMM
 }
-# tile 1030 (silver elder dragon)
+# tile 1030 (elder silver dragon)
 {
   MMMMMMPPPBAMMMMM
   MMMMMOBOBBBAMMMM
@@ -774,7 +774,7 @@ $ = (71, 108, 108)
   MMMMPBAAMMMBBMAM
   MMMMMMMMBBBBMAMM
 }
-# tile 1031 (shimmering elder dragon)
+# tile 1031 (elder shimmering dragon)
 {
   MIMBFMBBBPAFBMMM
   MMBFMNPNPPPAFBMI
@@ -793,7 +793,7 @@ $ = (71, 108, 108)
   MMMMBPAAMMMPPMAB
   MMMMMMMMPPPPMABM
 }
-# tile 1032 (deep elder dragon)
+# tile 1032 (elder deep dragon)
 {
   MMMMMMOOONAMMMMM
   MMMMMDNDNNNAMMMM
@@ -812,7 +812,7 @@ $ = (71, 108, 108)
   MMMMONAAMMMNNJAM
   MMMMMMMMNNNNJAMM
 }
-# tile 1033 (red elder dragon)
+# tile 1033 (elder red dragon)
 {
   MMMMMMIIIDAMMMMM
   MMMMMNDNDDDAMMMM
@@ -831,7 +831,7 @@ $ = (71, 108, 108)
   MMMMIDAAJJJDDJAM
   MMMMMMMMDDDDJAMM
 }
-# tile 1034 (white elder dragon)
+# tile 1034 (elder white dragon)
 {
   MMMMMMNNNOAMMMMM
   MMMMMIOIOOOAMMMM
@@ -850,7 +850,7 @@ $ = (71, 108, 108)
   MMMMNOAAMMMOOJAM
   MMMMMMMMOOOOJAMM
 }
-# tile 1035 (orange elder dragon)
+# tile 1035 (elder orange dragon)
 {
   MMMMMMLLLCAMMMMM
   MMMMMNCNCCCAMMMM
@@ -869,7 +869,7 @@ $ = (71, 108, 108)
   MMMMLCAAMKKCCJAM
   MMMMMMMMCCCCJAMM
 }
-# tile 1036 (black elder dragon)
+# tile 1036 (elder black dragon)
 {
   MMMMMMAAAAMMMMMM
   MMMMMNANAAAMMMMM
@@ -888,7 +888,7 @@ $ = (71, 108, 108)
   MMMMAAPPMMMAAAPM
   MMMMMMMMAAAAAMMM
 }
-# tile 1037 (blue elder dragon)
+# tile 1037 (elder blue dragon)
 {
   MMMMMMBBBEAMMMMM
   MMMMMNENEEEAMMMM
@@ -907,7 +907,7 @@ $ = (71, 108, 108)
   MMMMBEAAMMMEEJAM
   MMMPMMMMEEEEJAMM
 }
-# tile 1038 (green elder dragon)
+# tile 1038 (elder green dragon)
 {
   MMMMMMGGGFAMMMMM
   MMMMMNFNFFFAMMMM
@@ -926,7 +926,7 @@ $ = (71, 108, 108)
   MMMMGFAAMMMFFJAM
   MMMMMMMMFFFFJAMM
 }
-# tile 1039 (yellow elder dragon)
+# tile 1039 (elder yellow dragon)
 {
   MMMMMMNNNHAMMMMM
   MMMMMDHDHHHAMMMM
@@ -945,7 +945,7 @@ $ = (71, 108, 108)
   MMMMNHAAJJJHHJAM
   MMMMMMMMHHHHJAMM
 }
-# tile 1040 (great gray dragon)
+# tile 1040 (ancient gray dragon)
 {
   MMMMMMBBBPAMMMMM
   MMMMMNPNPPPAMMMM
@@ -964,7 +964,7 @@ $ = (71, 108, 108)
   MMMMBPAAMMMPPMAM
   MMMMMMMMPPPPMAMM
 }
-# tile 1041 (great silver dragon)
+# tile 1041 (ancient silver dragon)
 {
   MMMMMMPPPBAMMMMM
   MMMMMOBOBBBAMMMM
@@ -983,7 +983,7 @@ $ = (71, 108, 108)
   MMMMPBAAMMMBBMAM
   MMMMMMMMBBBBMAMM
 }
-# tile 1042 (great shimmering dragon)
+# tile 1042 (Ancient shimmering dragon)
 {
   MIMBFMBBBPAFBMMM
   MMBFMNPNPPPAFBMI
@@ -1002,7 +1002,7 @@ $ = (71, 108, 108)
   MMMMBPAAMMMPPMAB
   MMMMMMMMPPPPMABM
 }
-# tile 1043 (great deep dragon)
+# tile 1043 (ancient deep dragon)
 {
   MMMMMMOOONAMMMMM
   MMMMMDNDNNNAMMMM
@@ -1021,7 +1021,7 @@ $ = (71, 108, 108)
   MMMMONAAMMMNNJAM
   MMMMMMMMNNNNJAMM
 }
-# tile 1044 (great red dragon)
+# tile 1044 (ancient red dragon)
 {
   MMMMMMIIIDAMMMMM
   MMMMMNDNDDDAMMMM
@@ -1040,7 +1040,7 @@ $ = (71, 108, 108)
   MMMMIDAAJJJDDJAM
   MMMMMMMMDDDDJAMM
 }
-# tile 1045 (great white dragon)
+# tile 1045 (ancient white dragon)
 {
   MMMMMMNNNOAMMMMM
   MMMMMIOIOOOAMMMM
@@ -1059,7 +1059,7 @@ $ = (71, 108, 108)
   MMMMNOAAMMMOOJAM
   MMMMMMMMOOOOJAMM
 }
-# tile 1046 (great orange dragon)
+# tile 1046 (ancient orange dragon)
 {
   MMMMMMLLLCAMMMMM
   MMMMMNCNCCCAMMMM
@@ -1078,7 +1078,7 @@ $ = (71, 108, 108)
   MMMMLCAAMKKCCJAM
   MMMMMMMMCCCCJAMM
 }
-# tile 1047 (great black dragon)
+# tile 1047 (ancient black dragon)
 {
   MMMMMMAAAAMMMMMM
   MMMMMNANAAAMMMMM
@@ -1097,7 +1097,7 @@ $ = (71, 108, 108)
   MMMMAAPPMMMAAAPM
   MMMMMMMMAAAAAMMM
 }
-# tile 1048 (great blue dragon)
+# tile 1048 (ancient blue dragon)
 {
   MMMMMMBBBEAMMMMM
   MMMMMNENEEEAMMMM
@@ -1116,7 +1116,7 @@ $ = (71, 108, 108)
   MMMMBEAAMMMEEJAM
   MMMPMMMMEEEEJAMM
 }
-# tile 1049 (great green dragon)
+# tile 1049 (ancient green dragon)
 {
   MMMMMMGGGFAMMMMM
   MMMMMNFNFFFAMMMM
@@ -1135,7 +1135,7 @@ $ = (71, 108, 108)
   MMMMGFAAMMMFFJAM
   MMMMMMMMFFFFJAMM
 }
-# tile 1050 (great yellow dragon)
+# tile 1050 (ancient yellow dragon)
 {
   MMMMMMNNNHAMMMMM
   MMMMMDHDHHHAMMMM

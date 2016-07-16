@@ -357,7 +357,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     int px, py, i, imax, cutoffone, cutofftwo, cutoffthree;
     /* int rmno = (sroom - lev->rooms) + ROOMOFFSET; */
     coord pos[ROWNO * COLNO];
-    int babypm, adultpm, greatpm,
+    int babypm, adultpm, ancientpm,
         gemone, gemtwo, glass,
         itemone, itemtwo, itemthree;
     int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
@@ -368,7 +368,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     case 1: /* blue */
         babypm    = harder ? PM_YOUNG_BLUE_DRAGON : PM_BABY_BLUE_DRAGON;
         adultpm   = PM_BLUE_DRAGON;
-        greatpm   = harder ? PM_GREAT_BLUE_DRAGON : PM_BLUE_ELDER_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_BLUE_DRAGON : PM_ELDER_BLUE_DRAGON;
         gemone    = SAPPHIRE;
         gemtwo    = AQUAMARINE;
         glass     = WORTHLESS_PIECE_OF_BLUE_GLASS;
@@ -379,7 +379,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     case 2: /* green */
         babypm    = harder ? PM_YOUNG_GREEN_DRAGON : PM_BABY_GREEN_DRAGON;
         adultpm   = PM_GREEN_DRAGON;
-        greatpm   = harder ? PM_GREAT_GREEN_DRAGON : PM_GREEN_ELDER_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_GREEN_DRAGON : PM_ELDER_GREEN_DRAGON;
         gemone    = EMERALD;
         gemtwo    = JADE;
         glass     = WORTHLESS_PIECE_OF_GREEN_GLASS;
@@ -390,7 +390,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     case 3: /* white */
         babypm    = harder ? PM_YOUNG_WHITE_DRAGON : PM_BABY_WHITE_DRAGON;
         adultpm   = PM_WHITE_DRAGON;
-        greatpm   = harder ? PM_GREAT_WHITE_DRAGON : PM_WHITE_ELDER_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_WHITE_DRAGON : PM_ELDER_WHITE_DRAGON;
         gemone    = DIAMOND;
         gemtwo    = OPAL;
         glass     = WORTHLESS_PIECE_OF_WHITE_GLASS;
@@ -401,7 +401,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     case 4: /* orange */
         babypm    = harder ? PM_YOUNG_ORANGE_DRAGON : PM_BABY_ORANGE_DRAGON;
         adultpm   = PM_ORANGE_DRAGON;
-        greatpm   = harder ? PM_GREAT_ORANGE_DRAGON : PM_ORANGE_ELDER_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_ORANGE_DRAGON : PM_ELDER_ORANGE_DRAGON;
         gemone    = JACINTH;
         gemtwo    = AGATE;
         glass     = WORTHLESS_PIECE_OF_ORANGE_GLASS;
@@ -412,7 +412,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     default: /* red */
         babypm    = harder ? PM_YOUNG_RED_DRAGON : PM_BABY_RED_DRAGON;
         adultpm   = PM_RED_DRAGON;
-        greatpm   = harder ? PM_GREAT_RED_DRAGON : PM_RED_ELDER_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_RED_DRAGON : PM_ELDER_RED_DRAGON;
         gemone    = RUBY;
         gemtwo    = GARNET;
         glass     = WORTHLESS_PIECE_OF_RED_GLASS;
@@ -481,7 +481,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         }
         /* here be dragons */
         if (i <= cutoffone) {
-            mon = makemon(&mons[greatpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+            mon = makemon(&mons[ancientpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutofftwo) {
             mon = makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutoffthree) {

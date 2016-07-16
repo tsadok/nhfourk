@@ -246,7 +246,7 @@ S = (219, 215, 93)
   JAAQBQBBBBBBHHHN
   AAAAAAAAAAAAAAAA
 }
-# tile 1251 (gray elder dragon)
+# tile 1251 (elder gray dragon)
 {
   AAAAQQQQQBBAAAAA
   AAAQHHHHHBDBBAAA
@@ -265,7 +265,7 @@ S = (219, 215, 93)
   AQAAQMQFIMMIFBNB
   AAAANBNBBBBBBAAA
 }
-# tile 1252 (great gray dragon)
+# tile 1252 (ancient gray dragon)
 {
   AAAAQQQQQBBAAAAA
   AAAQHHHHHBDBBAAA
@@ -303,7 +303,7 @@ S = (219, 215, 93)
   AAAQBQBBBBBBAAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1254 (green elder dragon)
+# tile 1254 (elder green dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAACCCCAAAAAA
@@ -322,7 +322,7 @@ S = (219, 215, 93)
   AAAAQHQFDHHDFBBA
   AAAAOBOBBBBBBAAA
 }
-# tile 1255 (great green dragon)
+# tile 1255 (ancient green dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAACCCCAAAAAA
@@ -360,7 +360,7 @@ S = (219, 215, 93)
   AAAQBQBBBBBBBAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1257 (orange elder dragon)
+# tile 1257 (elder orange dragon)
 {
   AAAAACCCCBAAAAAA
   AJACCGKQQGBAAAAA
@@ -379,7 +379,7 @@ S = (219, 215, 93)
   AAAAQKQFGKKGFBBA
   AAAAPBPBBBBBBAAA
 }
-# tile 1258 (great orange dragon)
+# tile 1258 (ancient orange dragon)
 {
   AAAAACCCCBAAAAAA
   AJACCGKQQGBAAAAA
@@ -417,7 +417,7 @@ S = (219, 215, 93)
   AAAAQCQCCCCCCAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1260 (yellow elder dragon)
+# tile 1260 (elder yellow dragon)
 {
   AAAAAAAACCCCAAAA
   AAAAGGGGGCILCAAA
@@ -436,7 +436,7 @@ S = (219, 215, 93)
   AAAAQOQKPOOPKCCA
   AAAAQCQCCCCCCAAA
 }
-# tile 1261 (great yellow dragon)
+# tile 1261 (ancient yellow dragon)
 {
   AAAAAAAACCCCAAAA
   AAAAGGGGGCILCAAA
@@ -474,7 +474,7 @@ S = (219, 215, 93)
   AAAABBBBBBBBAAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1263 (blue elder dragon)
+# tile 1263 (elder blue dragon)
 {
   AAAAAACCBAAAAAAA
   AAAACCLFBAAAAAAA
@@ -493,7 +493,7 @@ S = (219, 215, 93)
   AACLFLFLFIFIBBAA
   AAABBBBBBBBBAAAA
 }
-# tile 1264 (great blue dragon)
+# tile 1264 (ancient blue dragon)
 {
   AAAAAACCBAAAAAAA
   AAAACCLFBAAAAAAA
@@ -531,7 +531,7 @@ S = (219, 215, 93)
   AAAAAABMBMBAAAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1266 (black elder dragon)
+# tile 1266 (elder black dragon)
 {
   AAAAAAAABBAAAAAA
   AAAABBBBBEBAAAAA
@@ -550,7 +550,7 @@ S = (219, 215, 93)
   AABMBBBBQIQBAAAA
   AAAAAAABMBMBAAAA
 }
-# tile 1267 (great black dragon)
+# tile 1267 (ancient black dragon)
 {
   AAAAAAAABBAAAAAA
   AAAABBBBBEBAAAAA
@@ -588,7 +588,7 @@ S = (219, 215, 93)
   AAANENEEEEEENAAA
   AAAAANQQQQNAAAAA
 }
-# tile 1269 (white elder dragon)
+# tile 1269 (elder white dragon)
 {
   AAAAANQQQEEEAAAA
   GAANQQFFFFLLEAAA
@@ -607,7 +607,7 @@ S = (219, 215, 93)
   AAANNQNFNQQNFEEA
   AAAANENEEEEEEAAA
 }
-# tile 1270 (great white dragon)
+# tile 1270 (ancient white dragon)
 {
   AAAAANQQQEEEAAAA
   GAANQQFFFFLLEAAA
@@ -645,7 +645,7 @@ S = (219, 215, 93)
   JAAQBQBBBBBBAAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1272 (red elder dragon)
+# tile 1272 (elder red dragon)
 {
   AAAAAAAAABBAAAAA
   JAAAAAAAABFBBAAA
@@ -664,7 +664,7 @@ S = (219, 215, 93)
   AAAAQJQFGJJGFBAB
   AAAAPBPBBBBBBAAA
 }
-# tile 1273 (great red dragon)
+# tile 1273 (ancient red dragon)
 {
   AAAAAAAAABBAAAAA
   JAAAAAAAABFBBAAA
@@ -702,7 +702,7 @@ S = (219, 215, 93)
   AAAAQBQBBBBBBAAA
   AAAAAAAAAAAAAAAA
 }
-# tile 1275 (silver elder dragon)
+# tile 1275 (elder silver dragon)
 {
   AAAACCCCCAABBAAA
   ACCCLNJJFCABIBAA
@@ -721,7 +721,7 @@ S = (219, 215, 93)
   AAAAQNQFLNNLFBAA
   AAAAQBQBBBBBBAAA
 }
-# tile 1276 (great silver dragon)
+# tile 1276 (ancient silver dragon)
 {
   AAAACCCCCAABBAAA
   ACCCLNJJFCABIBAA

@@ -345,10 +345,10 @@ Changes in 4.3.0.4:
 
  * The life cycle for D has been extended.  They now start life as
    a [color] dragon egg, hatch into a baby [color] dragon, then grow
-   progressively into a young [color] dragon, a [color] dragon, a
-   [color] elder dragon, and finally into a great [color] dragon.
+   progressively into a young [color] dragon, a [color] dragon, an
+   elder [color] dragon, and finally into an ancient [color] dragon.
    The more they advance, the more dangerous they become.  The
-   top two levels, elder and great, are not generated randomly.
+   top two levels, elder and ancient, are not generated randomly.
    Any age of dragon that lays eggs lays the same type of dragon
    egg, in its respective color, which will hatch into a baby.
 
