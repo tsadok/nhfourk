@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Pet hunger fixes have been cherry-picked from FIQHack, so
+   pets will now only eat when hungry, but when they do eat, it
+   takes time, like in 3.4.3.
+
  * Teleport control is disrupted by a mysterious force when you
    are carrying the Amulet of Yendor.
 
