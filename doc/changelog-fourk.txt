@@ -136,6 +136,8 @@ Changes in 4.3.0.4:
      gems, giants for carried gold, archeologists for carried
      artifacts and unique items, and Samurai for a wielded katana,
      yumi, or tsurugi.
+   + Valkyries who throw Mjollnir (and catch it) will occasionally
+     gain an alignment record point.
 
  * Stinking clouds now block light and vision (like boulders).
 

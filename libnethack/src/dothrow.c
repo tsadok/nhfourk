@@ -1097,6 +1097,8 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             if (rn2_on_rng(100, rng_mjollnir_return) && !impaired) {
                 pline(msgc_actionok, "%s to your %s!",
                       Tobjnam(obj, "return"), body_part(HAND));
+                if (Role_if(PM_VALKYRIE) && !rn2_on_rng(50, rng_role_alignment))
+                    adjalign(1);
                 obj = addinv(obj);
                 encumber_msg();
                 setuwep(obj);
