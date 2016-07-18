@@ -2019,18 +2019,18 @@ peace_minded(const struct permonst *ptr)
 
     /* minions are hostile to players that have strayed at all */
     if (is_minion(ptr))
-        return u.ualign.record >= 0;
+        return UALIGNREC >= 0;
 
     /* balance fix for 4.3-beta2: titan hostility has a major balance effect,
        so make it deterministic on the player alignment */
     if (monsndx(ptr) == PM_TITAN)
-        return u.ualign.record >= 8;
+        return UALIGNREC >= 8;
 
     /* Last case: a chance of a co-aligned monster being hostile.  This chance
-       is greater if the player has strayed (u.ualign.record negative) or the
+       is greater if the player has strayed (UALIGNREC negative) or the
        monster is not strongly aligned. */
     return ((boolean)
-            (rn2(16 + (u.ualign.record < -15 ? -15 : u.ualign.record)) &&
+            (rn2(16 + (UALIGNREC < -15 ? -15 : UALIGNREC)) &&
              rn2(2 + abs(mal))));
 }
 

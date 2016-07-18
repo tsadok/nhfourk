@@ -425,7 +425,7 @@ intemple(int roomno)
             if (!sanctum) {
                 /* !tended -> !shrined */
                 if (!shrined || !p_coaligned(priest) ||
-                    u.ualign.record <= ALGN_SINNED)
+                    UALIGNREC <= ALGN_SINNED)
                     pline_implied(msgc_levelsound,
                                   "You have a%s forbidding feeling...",
                                   (!shrined) ? "" : " strange");
@@ -472,7 +472,7 @@ void
 priest_talk(struct monst *priest)
 {
     boolean coaligned = p_coaligned(priest);
-    boolean strayed = (u.ualign.record < 0);
+    boolean strayed = (UALIGNREC < 0);
 
     /* KMH, conduct */
     break_conduct(conduct_gnostic);
@@ -546,7 +546,7 @@ priest_talk(struct monst *priest)
         } else if (offer < (u.ulevel * 400)) {
             verbalize(msgc_aligngood, "Thou art indeed a pious individual.");
             if (money_cnt(invent) < (offer * 2L)) {
-                if (coaligned && u.ualign.record <= ALGN_SINNED)
+                if (coaligned && UALIGNREC <= ALGN_SINNED)
                     adjalign(1);
                 verbalize(msgc_statusgood, "I bestow upon thee a blessing.");
                 incr_itimeout(&HClairvoyant, rn1(500, 500));
@@ -629,7 +629,7 @@ in_your_sanctuary(struct monst *mon,    /* if non-null, <mx,my> overrides <x,y>
             return FALSE;
         x = mon->mx, y = mon->my;
     }
-    if (u.ualign.record <= ALGN_SINNED) /* sinned or worse */
+    if (UALIGNREC <= ALGN_SINNED) /* sinned or worse */
         return FALSE;
     if ((roomno = temple_occupied(u.urooms)) == 0 ||
         roomno != *in_rooms(level, x, y, TEMPLE))

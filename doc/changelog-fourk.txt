@@ -130,6 +130,12 @@ Changes in 4.3.0.4:
      particular item in a shop.  (The "shirt bonus" doesn't count.)
    + Monks improve their alignment by fasting.
    + Dwarves gain (and Elves lose) alignment by chopping down trees.
+   + Several races get a temporary alignment bonus for having racially
+     aligned armor or weapons equipped; this goes away as soon as you
+     unequip the item(s).  Similarly, gnomes get a bonus for carried
+     gems, giants for carried gold, archeologists for carried
+     artifacts and unique items, and Samurai for a wielded katana,
+     yumi, or tsurugi.
 
  * Stinking clouds now block light and vision (like boulders).
 

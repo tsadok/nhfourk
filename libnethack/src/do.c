@@ -1353,7 +1353,7 @@ final_level(void)
                           FALSE, i == angel_count ? MM_ALLLEVRNG : NO_MM_FLAGS);
         }
 
-    } else if (u.ualign.record > 8) {   /* fervent */
+    } else if (UALIGNREC > 8) {   /* fervent */
         /* worthy: generate one angel on astral_rng and buff it using the main
            RNG (except for m_lev which is relevant to balance), no others */
         pline(msgc_statusgood,

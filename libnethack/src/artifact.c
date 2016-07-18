@@ -540,7 +540,7 @@ touch_artifact(struct obj *obj, const struct monst *mon)
             ((oart->role != NON_PM && !Role_if(oart->role)) ||
              (oart->race != NON_PM && !Race_if(oart->race)));
         badalign = (oart->spfx & SPFX_RESTR) && oart->alignment != A_NONE &&
-            (oart->alignment != u.ualign.type || u.ualign.record < 0);
+            (oart->alignment != u.ualign.type || UALIGNREC < 0);
     } else if (!is_covetous(mon->data) && !is_mplayer(mon->data)) {
         badclass = self_willed && oart->role != NON_PM &&
             oart != &artilist[ART_EXCALIBUR];

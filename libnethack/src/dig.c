@@ -878,7 +878,7 @@ dig_up_grave(void)
     } else if (Role_if(PM_SAMURAI)) {
         adjalign(-sgn(u.ualign.type));
         pline(msgc_alignchaos, "You disturb the honorable dead!");
-    } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > -10)) {
+    } else if ((u.ualign.type == A_LAWFUL) && (UALIGNREC > -10)) {
         adjalign(-sgn(u.ualign.type));
         pline(msgc_alignbad, "You have violated the sanctity of this grave!");
     }

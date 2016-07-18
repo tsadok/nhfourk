@@ -460,23 +460,23 @@ enlightenment(int final)
     }
 
     /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
-    if (u.ualign.record >= PIOUS)
+    if (UALIGNREC >= PIOUS)
         you_are(&menu, "piously aligned");
-    else if (u.ualign.record >= DEVOUT)
+    else if (UALIGNREC >= DEVOUT)
         you_are(&menu, "devoutly aligned");
-    else if (u.ualign.record >= FERVENT)
+    else if (UALIGNREC >= FERVENT)
         you_are(&menu, "fervently aligned");
-    else if (u.ualign.record >= STRIDENT)
+    else if (UALIGNREC >= STRIDENT)
         you_are(&menu, "stridently aligned");
-    else if (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE)
+    else if (UALIGNREC >= ALIGNED_WITHOUT_ADJECTIVE)
         you_are(&menu, "aligned");
-    else if (u.ualign.record >= HALTINGLY)
+    else if (UALIGNREC >= HALTINGLY)
         you_are(&menu, "haltingly aligned");
-    else if (u.ualign.record >= NOMINALLY)
+    else if (UALIGNREC >= NOMINALLY)
         you_are(&menu, "nominally aligned");
-    else if (u.ualign.record >= STRAYED)
+    else if (UALIGNREC >= STRAYED)
         you_have(&menu, "strayed");
-    else if (u.ualign.record >= SINNED)
+    else if (UALIGNREC >= SINNED)
         you_have(&menu, "sinned");
     else
         you_have(&menu, "transgressed");
@@ -484,7 +484,7 @@ enlightenment(int final)
         const char *buf = msgprintf(" %d", u.uhunger);
         enl_msg(&menu, "Hunger level ", "is", "was", buf);
 
-        buf = msgprintf(" %d / %ld", u.ualign.record, ALIGNLIM);
+        buf = msgprintf(" %d / %ld", UALIGNREC, ALIGNLIM);
         enl_msg(&menu, "Your alignment ", "is", "was", buf);
 
         buf = msgprintf(" MC level %d", magic_negation(&youmonst));

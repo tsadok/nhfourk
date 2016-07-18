@@ -2286,9 +2286,9 @@ cleanup:
     }
     /* Chaotics now get a point for killing hostiles of their own race. */
     else if (u.ualign.type == A_CHAOTIC && your_race(mtmp->data)) {
-        int oldalign = u.ualign.record;
+        int oldalign = UALIGNREC;
         adjalign(1);
-        if (u.ualign.record > oldalign)
+        if (UALIGNREC > oldalign)
             pline(msgc_aligngood, "You feel more chaotic.");
     }
     /* Lawful characters gain alignment for killing hostile chaotic demons. */

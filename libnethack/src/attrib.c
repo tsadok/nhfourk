@@ -1039,20 +1039,19 @@ adjalign(int n)
                 break_conduct(conduct_lostalign);
             }
             u.ualign.record = newalign;
-            if (u.ualign.record < SEARED_CONSCIENCE) {
+            if (UALIGNREC < SEARED_CONSCIENCE) {
                 /* No warning -- your conscience no longer works. */
-            } else if (u.ualign.record < SINNED) {
+            } else if (UALIGNREC < SINNED) {
                 pline(msgc_alignbad,
                       "You have stopped listening to your conscience.");
-            } else if (u.ualign.record < STRAYED) {
-                pline(msgc_alignbad,
-                      "You ignore your conscience.");
-            } else if (u.ualign.record < HALTINGLY) {
+            } else if (UALIGNREC < STRAYED) {
+                pline(msgc_alignbad, "You ignore your conscience.");
+            } else if (UALIGNREC < HALTINGLY) {
                 pline(msgc_alignbad,
                       "Your conscience bothers you, but you dismiss it.");
-            } else if (u.ualign.record < FERVENT) {
+            } else if (UALIGNREC < FERVENT) {
                 pline(msgc_alignbad, "Your conscience bothers you.");
-            } else if (u.ualign.record < PIOUS) {
+            } else if (UALIGNREC < PIOUS) {
                 pline(msgc_alignbad,
                    "You hesitate for a moment, bothered by your conscience.");
             } else {
@@ -1064,21 +1063,21 @@ adjalign(int n)
                                 INIT_ALIGNREC((aligns[u.initalign]).value)))) {
         u.ualign.record = newalign;
         if (u.uconduct[conduct_lostalign]) {
-            if (u.ualign.record < SINNED) {
+            if (UALIGNREC < SINNED) {
                 ; /* No message -- let 'em sweat a bit. */
-            } else if (u.ualign.record < NOMINALLY) {
+            } else if (UALIGNREC < NOMINALLY) {
                 pline(msgc_aligngood,
                       "Your conscience bothers you just a little less.");
-            } else if (u.ualign.record < PIOUS) {
+            } else if (UALIGNREC < PIOUS) {
                 pline(msgc_aligngood,
                       "Your conscience bothers you a little less.");
-            } else if (u.ualign.record == PIOUS) {
+            } else if (UALIGNREC == PIOUS) {
                 pline(msgc_aligngood, "Your conscience is assuaged.");
             }
         }
     } else if (!(u.ualign.record == newalign)) {
         u.ualign.record = newalign;
-        if (u.ualign.record == PIOUS) {
+        if (UALIGNREC == PIOUS) {
             pline(msgc_aligngood, "Your conscience is clear.");
         }
     }

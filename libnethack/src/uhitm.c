@@ -35,7 +35,7 @@ check_caitiff(struct monst *mtmp)
 {
     if (Role_if(PM_KNIGHT) && u.ualign.type == A_LAWFUL &&
         (!mtmp->mcanmove || mtmp->msleeping || (mtmp->mflee && !mtmp->mavenge))
-        && u.ualign.record > -10) {
+        && UALIGNREC > -10) {
         pline(msgc_alignbad, "You caitiff!");
         adjalign(-1);
     }
@@ -139,7 +139,7 @@ find_roll_to_hit(struct monst *mtmp)
     check_caitiff(mtmp);
 
     /* attacking peaceful creatures is bad for the samurai's giri */
-    if (Role_if(PM_SAMURAI) && mtmp->mpeaceful && u.ualign.record > -10) {
+    if (Role_if(PM_SAMURAI) && mtmp->mpeaceful && UALIGNREC > -10) {
         pline(msgc_alignbad, "You dishonorably attack the innocent!");
         adjalign(-1);
     }
@@ -963,7 +963,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
             pline(msgc_alignchaos,
                   "You dishonorably use a poisoned weapon!");
             adjalign(-sgn(u.ualign.type));
-        } else if ((u.ualign.type == A_LAWFUL) && (u.ualign.record > 0)) {
+        } else if ((u.ualign.type == A_LAWFUL) && (UALIGNREC > 0)) {
             pline(msgc_alignbad,
                   "You feel like an evil coward for using a poisoned weapon.");
             adjalign(-1);
@@ -1004,7 +1004,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         pline(msgc_combatalert, "You joust %s%s", mon_nam(mon),
               canseemon(mon) ? exclam(tmp) : ".");
         if ((jousting < 0) &&
-            !(Role_if(PM_KNIGHT) && u.ualign.record >= DEVOUT)) {
+            !(Role_if(PM_KNIGHT) && UALIGNREC >= DEVOUT)) {
             pline(msgc_itemloss, "Your %s shatters on impact!", xname(obj));
             /* (must be either primary or secondary weapon to get here) */
             u.twoweap = FALSE;  /* untwoweapon() is too verbose here */

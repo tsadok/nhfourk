@@ -69,7 +69,7 @@ This could get as bizarre as noting surrounding opponents, (or hostile dogs),
 but that's really hard.
  */
 
-#define ugod_is_angry() (u.ualign.record < 0)
+#define ugod_is_angry() (UALIGNREC < 0)
 #define on_altar()      (IS_ALTAR(level->locations[u.ux][u.uy].typ) && \
                          !Engulfed)
 #define on_shrine()     ((level->locations[u.ux][u.uy].altarmask & AM_SHRINE) \
@@ -536,11 +536,11 @@ angrygods(aligntyp resp_god)
     /* changed from tmp = u.ugangr + abs (u.uluck) -- rph */
     /* added test for alignment diff -dlc */
     if (resp_god != u.ualign.type)
-        maxanger = u.ualign.record / 2 + (Luck > 0 ? -Luck / 3 : -Luck);
+        maxanger = UALIGNREC / 2 + (Luck > 0 ? -Luck / 3 : -Luck);
     else
         maxanger =
             3 * u.ugangr +
-            ((Luck > 0 || u.ualign.record >= STRIDENT) ? -Luck / 3 : -Luck);
+            ((Luck > 0 || UALIGNREC >= STRIDENT) ? -Luck / 3 : -Luck);
     if (maxanger < 1)
         maxanger = 1;   /* possible if bad align & good luck */
     else if (maxanger > 15)
@@ -794,9 +794,9 @@ pleased(aligntyp g_align)
     int pat_on_head = 0, kick_on_butt;
 
     pline(msgc_aligngood, "You feel that %s is %s.", align_gname(g_align),
-          u.ualign.record >= DEVOUT ?
+          UALIGNREC >= DEVOUT ?
           (Hallucination ? "pleased as punch" : "well-pleased") :
-          u.ualign.record >= STRIDENT ?
+          UALIGNREC >= STRIDENT ?
           (Hallucination ? "ticklish" : "pleased") :
           (Hallucination ? "full" : "satisfied"));
 
@@ -804,12 +804,12 @@ pleased(aligntyp g_align)
     if (on_altar() && turnstate.pray.align != u.ualign.type) {
         adjalign(-1);
         return;
-    } else if (u.ualign.record < 2 && trouble <= 0)
+    } else if (UALIGNREC < 2 && trouble <= 0)
         adjalign(1);
     else if (trouble <= 0 && u.ualign.type == A_NEUTRAL) {
-        int oldalign = u.ualign.record;
+        int oldalign = UALIGNREC;
         adjalign(1);
-        if (u.ualign.record > oldalign)
+        if (UALIGNREC > oldalign)
             pline(msgc_aligngood, "You feel more balanced.");
     }
 
@@ -828,7 +828,7 @@ pleased(aligntyp g_align)
      * worst major problem.
      */
 
-    if (trouble == ptr_invalid && u.ualign.record >= DEVOUT) {
+    if (trouble == ptr_invalid && UALIGNREC >= DEVOUT) {
         /* if hero was in trouble, but got better, no special favor */
         if (turnstate.pray.trouble == ptr_invalid)
             pat_on_head = 1;
@@ -840,8 +840,8 @@ pleased(aligntyp g_align)
 
         if (!on_altar())
             action = min(action, 3);
-        if (u.ualign.record < STRIDENT)
-            action = (u.ualign.record > 0 || !rnl(2)) ? 1 : 0;
+        if (UALIGNREC < STRIDENT)
+            action = (UALIGNREC > 0 || !rnl(2)) ? 1 : 0;
 
         switch (min(action, 5)) {
         case 5:
@@ -1032,7 +1032,7 @@ pleased(aligntyp g_align)
         case 8:
         case 9:        /* KMH -- can occur during full moons */
             if (flags.elbereth_enabled)
-                if (u.ualign.record >= PIOUS && !u.uevent.uhand_of_elbereth) {
+                if (UALIGNREC >= PIOUS && !u.uevent.uhand_of_elbereth) {
                     gcrownu();
                     break;
                 }       /* else FALLTHRU */
@@ -1616,7 +1616,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
             } else if (u.ualign.type == altaralign) {
                 /* If different from altar, and altar is same as yours, */
                 /* it's a very good action */
-                if (u.ualign.record < ALIGNLIM)
+                if (UALIGNREC < ALIGNLIM)
                     pline(msgc_aligngood, "You feel appropriately %s.",
                           align_str(u.ualign.type));
                 else
@@ -1805,8 +1805,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
                             hcolor(u.ualign.type == A_LAWFUL ? "white" :
                                    u.ualign.type ? "black" : "gray"));
 
-                    if (rnl(u.ulevel) > 6 && u.ualign.record > 0 &&
-                        rnd(u.ualign.record) > (3 * ALIGNLIM) / 4)
+                    if (rnl(u.ulevel) > 6 && UALIGNREC > 0 &&
+                        rnd(UALIGNREC) > (3 * ALIGNLIM) / 4)
                         summon_minion(altaralign, TRUE);
                     /* anger priest; test handles bones files */
                     if ((pri = findpriest(temple_occupied(u.urooms))) &&
@@ -1818,8 +1818,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
                           u_gname());
                     change_luck(-1);
                     exercise(A_WIS, FALSE);
-                    if (rnl(u.ulevel) > 6 && u.ualign.record > 0 &&
-                        rnd(u.ualign.record) > (7 * ALIGNLIM) / 8)
+                    if (rnl(u.ulevel) > 6 && UALIGNREC > 0 &&
+                        rnd(UALIGNREC) > (7 * ALIGNLIM) / 8)
                         summon_minion(altaralign, TRUE);
                 }
                 return 1;
@@ -1857,8 +1857,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
         } else if (ugod_is_angry()) {
             if (value > MAXVALUE)
                 value = MAXVALUE;
-            if (value > -u.ualign.record)
-                value = -u.ualign.record;
+            if (value > -UALIGNREC)
+                value = -UALIGNREC;
             adjalign(value);
             pline(msgc_aligngood, "You feel partially absolved.");
         } else if (u.ublesscnt > 0) {
@@ -1963,11 +1963,11 @@ can_pray(boolean praying)
         pline(msgc_occstart, "You begin praying to %s.", align_gname(align));
 
     if (u.ualign.type && u.ualign.type == -align)
-        alignment = -u.ualign.record;   /* Opposite alignment altar */
+        alignment = -UALIGNREC;   /* Opposite alignment altar */
     else if (u.ualign.type != align)
-        alignment = u.ualign.record / 2;        /* Different alignment altar */
+        alignment = UALIGNREC / 2;        /* Different alignment altar */
     else
-        alignment = u.ualign.record;
+        alignment = UALIGNREC;
 
     if ((trouble >= ptr_first_major && trouble <= ptr_last_major)
           ? (u.ublesscnt > 200) : /* big trouble */
@@ -2057,7 +2057,7 @@ prayer_done(void)
               "Since you are in Gehennom, %s won't help you.",
               align_gname(alignment));
         /* haltingly aligned is least likely to anger */
-        if (u.ualign.record <= 0 || rnl(u.ualign.record))
+        if (UALIGNREC <= 0 || rnl(UALIGNREC))
             angrygods(u.ualign.type);
     } else if (turnstate.pray.type == pty_too_soon) {
         if (on_altar() && u.ualign.type != alignment)

@@ -424,7 +424,7 @@ cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
     }
     case MGC_RND_ALIGN:
         if (mtmp->iswiz) {
-            if (u.ualign.record >= PIOUS)
+            if (UALIGNREC >= PIOUS)
                 verbalize(msgc_playerimmune, /* or msgc_npcvoice ? */
                           "Bah! Pious are thou? What shall it avail thee?");
             else {

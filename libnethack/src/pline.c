@@ -377,13 +377,13 @@ ustatusline(void)
 
     pline(msgc_info, "Status of %s (%s%s):  Level %d  HP %d(%d)  Def %d%s.",
           u.uplname,
-          (u.ualign.record >= PIOUS) ? "piously " :
-          (u.ualign.record >= DEVOUT) ? "devoutly " :
-          (u.ualign.record >= FERVENT) ? "fervently " :
-          (u.ualign.record >= STRIDENT) ? "stridently " :
-          (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE) ? "" :
-          (u.ualign.record >= HALTINGLY) ? "haltingly " :
-          (u.ualign.record >= NOMINALLY) ? "nominally " : "insufficiently ",
+          (UALIGNREC >= PIOUS) ? "piously " :
+          (UALIGNREC >= DEVOUT) ? "devoutly " :
+          (UALIGNREC >= FERVENT) ? "fervently " :
+          (UALIGNREC >= STRIDENT) ? "stridently " :
+          (UALIGNREC >= ALIGNED_WITHOUT_ADJECTIVE) ? "" :
+          (UALIGNREC >= HALTINGLY) ? "haltingly " :
+          (UALIGNREC >= NOMINALLY) ? "nominally " : "insufficiently ",
           align_str(u.ualign.type), Upolyd ? mons[u.umonnum].mlevel : u.ulevel,
           Upolyd ? u.mh : u.uhp, Upolyd ? u.mhmax : u.uhpmax,
           10 - get_player_ac(), info);
