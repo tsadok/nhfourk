@@ -448,6 +448,8 @@ rob_shop(struct monst *shkp)
           "You stole %ld %s worth of merchandise.", total, currency(total));
     if (!Role_if(PM_ROGUE))     /* stealing is unlawful */
         adjalign(-sgn(u.ualign.type));
+    else if (u.ualign.type != A_LAWFUL)
+        adjalign(1);
 
     hot_pursuit(shkp);
     return TRUE;
