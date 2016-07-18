@@ -2297,7 +2297,7 @@ cleanup:
         adjalign(1);
     /* Knights gain alignment for killing hostile (adult) dragons. */
     else if (Role_if(PM_KNIGHT) && (monsndx(mtmp->data) >= PM_GRAY_DRAGON) &&
-             (monsndx(mtmp->data) <= PM_GREAT_YELLOW_DRAGON))
+             (monsndx(mtmp->data) <= PM_ANCIENT_YELLOW_DRAGON))
         adjalign(1);
     /* Priests gain alignment for killing undead monsters. */
     else if (Role_if(PM_PRIEST) && is_undead(mtmp->data))
