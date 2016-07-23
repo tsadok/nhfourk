@@ -72,8 +72,10 @@ nhlib_string_to_optvalue(const struct nh_option_desc *option, char *str)
 
     case OPTTYPE_ENUM:
         for (i = 0; i < option->e.numchoices; i++)
-            if (!strcmp(str, option->e.choices[i].caption))
+            if (!strcmp(str, option->e.choices[i].caption)) {
                 value.e = option->e.choices[i].id;
+                break;
+            }
         break;
 
     case OPTTYPE_STRING:

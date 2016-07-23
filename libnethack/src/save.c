@@ -181,6 +181,12 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.occupation);
     mwrite8(mf, flags.permablind);
     mwrite8(mf, flags.permahallu);
+    mwrite8(mf, flags.permaconf);
+    mwrite8(mf, flags.permastun);
+    mwrite8(mf, flags.permaglib);
+    mwrite8(mf, flags.permafumble);
+    mwrite8(mf, flags.permalame);
+    mwrite8(mf, flags.permabadluck);
     mwrite8(mf, flags.pickup);
     mwrite8(mf, flags.pickup_thrown);
     mwrite8(mf, flags.prayconfirm);

@@ -15,6 +15,10 @@ struct plselect_listitem {
     char *caption;
 };
 
+/* Compiler will not allow boolean here, because C is horrible. */
+extern int is_unlocked_role(int);
+extern int is_unlocked_race(int);
+
 static int
 is_valid_character(const struct nh_roles_info *ri, int rolenum, int racenum,
                    int gendnum, int alignnum)
@@ -92,6 +96,9 @@ get_valid_races(const struct nh_roles_info *ri, int rolenum, int gendnum,
     int count = 0;
 
     for (i = 0; i < ri->num_races; i++) {
+        if (!is_unlocked_race(i))
+            continue;
+
         if (!is_valid_character(ri, rolenum, i, gendnum, alignnum))
             continue;
 
@@ -225,7 +232,7 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
                  int randomall)
 {
     struct nh_menulist menu;
-    int i, k, listlen, id;
+    int i, j, k, listlen, id, randrole;
     char pick4u = 'n', thisch, lastch = 0;
     char pbuf[QBUFSZ], plbuf[QBUFSZ];
     struct plselect_listitem list[LISTSZ];    /* need enough space for lists of roles
@@ -334,26 +341,44 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
             return FALSE;
         }
 
+        /* Select what the random role will be, if chosen: */
+        j = 0;
+        /* Count unlocked roles */
+        for (i = 0; i < listlen; i++)
+            if (is_unlocked_role(i))
+                j++;
+        /* Pick one of those at random */
+        k = rand() % j;
+        j = 0;
+        for (i = 0; i < listlen; i++) {
+            if (is_unlocked_role(i)) {
+                if (j == k)
+                    randrole = list[i].id;
+                j++;
+            }
+        }
+
         /* Process the choice */
         if (pick4u == 'y' || role == ROLE_RANDOM || randomall) {
-            /* Pick a random role */
-            role = list[rand() % listlen].id;
+            role = randrole;
         } else {
             /* Prompt for a role */
 
             init_menulist(&menu);
 
             for (i = 0; i < listlen; i++) {
-                id = list[i].id + 1;    /* list[i].id starts at 0 */
-                thisch = tolower(*list[i].caption);
-                if (thisch == lastch)
-                    thisch = toupper(thisch);
-                add_menu_item(&menu, id, list[i].caption, thisch,
-                              0);
-                lastch = thisch;
+                if (is_unlocked_role(i)) {
+                    id = list[i].id + 1;    /* list[i].id starts at 0 */
+                    thisch = tolower(*list[i].caption);
+                    if (thisch == lastch)
+                        thisch = toupper(thisch);
+                    add_menu_item(&menu, id, list[i].caption, thisch,
+                                  0);
+                    lastch = thisch;
+                }
             }
             pick_list[0] = id = list[rand() % listlen].id + 1;
-            add_menu_item(&menu, id, "Random", '*', 0);
+            add_menu_item(&menu, randrole + 1, "Random", '*', 0);
             add_menu_item(&menu, -1, "Quit", 'q', 0);
 
             snprintf(pbuf, ARRAY_SIZE(pbuf), "Pick a role for your %s", plbuf);

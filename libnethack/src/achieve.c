@@ -16,6 +16,7 @@ unsigned long achievement_field[UNLOCK_FIELD_MAX + 1];
 
 static void achievement_unlock(enum achievement ach, int fieldidx,
                                unsigned long fieldbit);
+static void unlock_playable_race(enum achievement ach, unsigned long racebit);
 static const char * explain_unlockable(int fieldidx, unsigned long fieldbit);
 static const char * explain_unlockable_role(unsigned long fieldbit);
 static const char * explain_unlockable_race(unsigned long fieldbit);
@@ -26,12 +27,84 @@ static void read_achievements(void);
 static void write_achievements(void);
 
 boolean
+is_unlocked_role(int i)
+{
+    boolean answer = is_unlocked_feature(UNLOCK_FIELD_ROLE, roles[i].unlocked);
+#ifdef DEBUG_ACHIEVEMENTS
+    paniclog("Debug: ", msgprintf("Role %d: %s", i,
+                                  (answer ? "Unlocked" : "LOCKED")));
+#endif
+    return answer;
+}
+
+boolean
+is_unlocked_race(int i)
+{
+    return is_unlocked_feature(UNLOCK_FIELD_RACE, races[i].unlockedrace);
+}
+
+boolean
+is_unlocked_option(struct nh_option_desc *option)
+{
+    unsigned long unlbit = UNLOCKFEAT_ALWAYSUNLOCKED;
+    if (option->lockstate != nh_lockopt_locked)
+        /* If the option doesn't need to be unlocked, it's available. */
+        return TRUE;
+    else if (strncmp(option->name, "permablind", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMABLIND;
+    else if (strncmp(option->name, "permahallu", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMAHALLU;
+    else if (strncmp(option->name, "permaconf", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMACONF;
+    else if (strncmp(option->name, "permastun", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMASTUN;
+    else if (strncmp(option->name, "permaglib", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMAGLIB;
+    else if (strncmp(option->name, "permafumble", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMAFUMBLE;
+    else if (strncmp(option->name, "permalame", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMALAME;
+    else if (strncmp(option->name, "permabadluck", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_PERMABADLUCK;
+    else if (strncmp(option->name, "autowear", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_AUTOWEAR;
+    /* UNLOCKFEAT_OPT_CHALLENGE is a mode, so that must be handled specially */
+    else if (strncmp(option->name, "polyinit", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_POLYINIT;
+    /* UNLOCKFEAT_OPT_ONEHP is a mode, so that must be handled specially */
+    else if (strncmp(option->name, "fruit", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_FRUITNAME;
+    else if (strncmp(option->name, "race", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_RACE;
+    else if (strncmp(option->name, "showrace", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_SHOWRACE;
+    else if (strncmp(option->name, "horsename", strlen(option->name)) == 0)
+        unlbit = UNLOCKFEAT_OPT_HORSENAME;
+    else {
+        paniclog("Error: ",
+                 msgprintf("is_unlocked_option() "
+                           "does not know how to check %s", option->name));
+    }
+    if (is_unlocked_feature(UNLOCK_FIELD_OPT, unlbit))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+boolean
 is_unlocked_feature(int fieldidx, unsigned long fieldbit)
 {
+    read_achievements();
     if (fieldidx > UNLOCK_FIELD_MAX)
         panic("Out-of-bounds unlockable-feature field number, %d",
               fieldidx);
-    read_achievements();
+#ifdef DEBUG_ACHIEVEMENTS
+    paniclog("Debug: ", msgprintf("is_unlocked_feature(%d,%ld): %s (%ld)",
+                                  fieldidx, fieldbit,
+                                  ((achievement_field[fieldidx] & fieldbit) ?
+                                   "True" : "False"),
+                                  achievement_field[fieldidx]));
+#endif
     if (achievement_field[fieldidx] & fieldbit)
         return TRUE;
     else
@@ -50,10 +123,12 @@ achievement(enum achievement ach)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_RANGER);
     else if (ach == achieve_stairs_branch)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_ROGUE);
+    else if (ach == achieve_eat_slimemold)
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_FRUITNAME);
     else if (ach == achieve_mines_temple)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_MONK);
     else if (ach == achieve_mines_end)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_DWARF);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_DWARF);
     else if (ach == achieve_altar_buctest)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_PRIEST);
     else if (ach == achieve_altar_sacrifice)
@@ -61,33 +136,37 @@ achievement(enum achievement ach)
     else if (ach == achieve_altar_convert)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_VALKYRIE);
     else if (ach == achieve_soko_stairs)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_ELF);
-    else if (ach == achieve_soko_complete)
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_ELF);
+    else if (ach == achieve_soko_complete) {
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_KNIGHT);
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_HORSENAME);
+    }
     else if (ach == achieve_dig)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_CAVEMAN);
     else if (ach == achieve_vault_gold)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_ROGUE);
-    else if (ach == achieve_sproom_zoo)
+    else if (ach == achieve_sproom_zoo) {
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_KNIGHT);
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_HORSENAME);
+    }
     else if (ach == achieve_sproom_throne)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_ORC);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_ORC);
     else if (ach == achieve_sproom_lephall)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_ROGUE);
     else if (ach == achieve_sproom_dragons)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_GNOME);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_GNOME);
     else if (ach == achieve_portal)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_GNOME);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_GNOME);
     else if (ach == achieve_kill_medusa)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_HEALER);
     else if (ach == achieve_kill_nemesis)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_SYLPH);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_SYLPH);
     else if (ach == achieve_kill_rodney)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_ELF);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_ELF);
     else if (ach == achieve_passtune)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_SYLPH);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_SYLPH);
     else if (ach == achieve_valley_stairs)
-        ;/* Currently this doesn't unlock anything. */
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_AUTOWEAR);
     else if (ach == achieve_holy_water)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_HEALER);
     else if (ach == achieve_invocation)
@@ -125,7 +204,7 @@ achievement(enum achievement ach)
         }
     }
     else if (ach == achieve_ascend_conduct)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_OGRE);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_GIANT);
     else if (ach == achieve_ascend_conduct_med)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_POLYINIT);
     else if (ach == achieve_ascend_challenge)
@@ -139,14 +218,14 @@ achievement(enum achievement ach)
     else if (ach == achieve_ascend_speedrun)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_ONEHP);
     else if (ach == achieve_ascend_allroles)
-        ;/* TODO */
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMASTUN);
     else if (ach == achieve_ascend_allraces)
-        ;/* TODO */
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMACONF);
 
     else if (ach == achieve_quest_barb)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_SAMURAI);
     else if (ach == achieve_quest_wizard)
-        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_SCURRIER);
+        unlock_playable_race(ach, UNLOCKFEAT_RACE_SCURRIER);
     else if (ach == achieve_quest_ranger)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_DRUID);
     else if (ach == achieve_quest_monk)
@@ -166,7 +245,7 @@ achievement(enum achievement ach)
     else if (ach == achieve_quest_samurai)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMAGLIB);
     else if (ach == achieve_quest_archeologist)
-        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMACONF);
+        achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_AUTOWEAR);
     else if (ach == achieve_quest_tourist)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_CHALLENGE);
     else if (ach == achieve_quest_convict)
@@ -177,6 +256,14 @@ achievement(enum achievement ach)
     else {
         pline(msgc_debug, "Unhandled achievement: %d", ach);
     }
+}
+
+static void
+unlock_playable_race(enum achievement ach, unsigned long racebit)
+{
+    achievement_unlock(ach, UNLOCK_FIELD_RACE, racebit);
+    achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_RACE);
+    achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_SHOWRACE);
 }
 
 static void
@@ -283,6 +370,8 @@ explain_unlockable_option(unsigned long fieldbit)
         return "the permanent-hallucination option";
     else if (fieldbit == UNLOCKFEAT_OPT_PERMACONF)
         return "the permanent-confusion option";
+    else if (fieldbit == UNLOCKFEAT_OPT_PERMASTUN)
+        return "the permanent-stun option";
     else if (fieldbit == UNLOCKFEAT_OPT_PERMAGLIB)
         return "the permanent-greasy-fingers option";
     else if (fieldbit == UNLOCKFEAT_OPT_PERMAFUMBLE)
@@ -296,8 +385,18 @@ explain_unlockable_option(unsigned long fieldbit)
     else if (fieldbit == UNLOCKFEAT_OPT_POLYINIT)
         return "the non-scoring polyinit mode";
     else if (fieldbit == UNLOCKFEAT_OPT_ONEHP)
-        return "the single-hitpoint challenge option";
-    
+        return "the single-hitpoint mode";
+    else if (fieldbit == UNLOCKFEAT_OPT_FRUITNAME)
+        return "the fruit name option";
+    else if (fieldbit == UNLOCKFEAT_OPT_RACE)
+        return "the race option";
+    else if (fieldbit == UNLOCKFEAT_OPT_SHOWRACE)
+        return "the showrace option";
+    else if (fieldbit == UNLOCKFEAT_OPT_HORSENAME)
+        return "the horse name option";
+    else if (fieldbit == UNLOCKFEAT_OPT_AUTOWEAR)
+        return "the auto-wear option";
+
     impossible("explain_unlockable_option fell through");
     return "an option";
 }
@@ -309,6 +408,8 @@ explain_achievement(enum achievement ach)
         return "using stairs";
     else if (ach == achieve_stairs_branch)
         return "using long stairs";
+    else if (ach == achieve_eat_slimemold)
+        return "eating a melon";
     else if (ach == achieve_mines_temple)
         return "entering the Minetown temple";
     else if (ach == achieve_mines_end)
@@ -407,8 +508,15 @@ explain_achievement(enum achievement ach)
 const char *
 achievements_filename(void)
 {
+    const char *uname;
+    uname = nh_getenv("NH4SERVERUSER");
+    if (!uname)
+        uname = nh_getenv("USER");
+    if (!uname)
+        uname = msgprintf("%d", getuid());
+
     return msgprintf("%sachievements_%s.dat",
-                     fqn_prefix[SCOREPREFIX], u.uplname);
+                     fqn_prefix[SCOREPREFIX], uname);
 }
 
 void
@@ -419,14 +527,29 @@ read_achievements(void)
     int i;
 
     achfile = fopen(achfilename, "r");
+#ifdef DEBUG_ACHIEVEMENTS
+    if (!achfile)
+        /* This is normal the first time any given user plays. */
+        paniclog("Warning: ", msgprintf(
+                     "Failed to read achievements file (%s)",
+                     achfilename));
+#endif
 
     for (i = 0; i <= UNLOCK_FIELD_MAX; i++) {
         if (achfile) {
-            achievement_field[i] = (unsigned long)
-                fgetc(achfile) +
-                (fgetc(achfile) << 8) +
-                (fgetc(achfile) << 16) +
-                (fgetc(achfile) << 24);
+            unsigned long byteone   = fgetc(achfile);
+            unsigned long bytetwo   = fgetc(achfile);
+            unsigned long bytethree = fgetc(achfile);
+            unsigned long bytefour  = fgetc(achfile);
+            achievement_field[i] =
+                byteone + (bytetwo << 8) +
+                (bytethree << 16) + (bytefour << 24);
+#ifdef DEBUG_ACHIEVEMENTS
+            paniclog("Debug: ", msgprintf(
+                         "Reading achievement %d: %ld %ld %ld %ld => %ld",
+                         i, byteone, bytetwo, bytethree, bytefour,
+                         achievement_field[i]));
+#endif
         } else
             achievement_field[i] = 0;
         achievement_field[i] |= UNLOCKFEAT_ALWAYSUNLOCKED;

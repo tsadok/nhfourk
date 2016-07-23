@@ -336,6 +336,12 @@ struct flag {
     boolean bones_enabled;      /* allow loading bones levels */
     boolean permablind;         /* stay permanently blind */
     boolean permahallu;         /* stay permanently hallucinating */
+    boolean permaconf;          /* stay permanently confused */
+    boolean permastun;          /* stay permanently stunned */
+    boolean permaglib;          /* have permanently greasy fingers */
+    boolean permafumble;        /* have permanent fumbling */
+    boolean permalame;          /* have permanently wounded legs */
+    boolean permabadluck;       /* have permanent bad luck */
 };
 
 

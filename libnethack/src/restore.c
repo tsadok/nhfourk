@@ -800,6 +800,12 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->occupation = mread8(mf);
     f->permablind = mread8(mf);
     f->permahallu = mread8(mf);
+    f->permaconf = mread8(mf);
+    f->permastun = mread8(mf);
+    f->permaglib = mread8(mf);
+    f->permafumble = mread8(mf);
+    f->permalame = mread8(mf);
+    f->permabadluck = mread8(mf);
     f->pickup = mread8(mf);
     f->pickup_thrown = mread8(mf);
     f->prayconfirm = mread8(mf);

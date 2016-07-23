@@ -488,12 +488,19 @@ enum nh_optbirth {
     nh_birth_creation = 2, /* game creation option; no effect from turn 1 on */
 };
 
+enum nh_lockopt {
+    nh_lockopt_always_available = 0, /* does not have to be unlocked */
+    nh_lockopt_unlocked = 1,         /* unlocked and thus available */
+    nh_lockopt_locked = 2,           /* unlockable, but not unlocked */
+};
+
 /* This structure and all its contents should always be dynamically allocated
    so that they can safely be freed with nhlib_free_optlist. */
 struct nh_option_desc {
     const char *name;
     const char *group;
     const char *helptxt;
+    enum nh_lockopt lockstate;
     enum nh_optbirth birth_option;
     enum nh_opttype type;
     union nh_optvalue value;

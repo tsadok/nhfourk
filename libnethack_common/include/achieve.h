@@ -12,7 +12,7 @@
 #define UNLOCK_FIELD_OPT       3
 #define UNLOCK_FIELD_ASCROLES  4
 #define UNLOCK_FIELD_ASCRACES  5
-#define UNLOCK_FIELD_MAX   UNLOCK_FIELD_OPT
+#define UNLOCK_FIELD_MAX   UNLOCK_FIELD_ASCRACES
 
 /* Unlockable features.  By performing various achievements, the
    player can unlock access to various features:  races, roles,
@@ -60,7 +60,7 @@
 #define UNLOCKFEAT_RACE_ORC          0x00000010UL
 #define UNLOCKFEAT_RACE_GNOME        0x00000020UL
 #define UNLOCKFEAT_RACE_SYLPH        0x00000040UL
-#define UNLOCKFEAT_RACE_OGRE         0x00000080UL
+#define UNLOCKFEAT_RACE_GIANT        0x00000080UL
 #define UNLOCKFEAT_RACE_SCURRIER     0x00000100UL
 /* When adding to this list:
  * 1. implement the playable race
@@ -72,19 +72,26 @@
 #define UNLOCKFEAT_OPT_PERMABLIND    0x00000002UL
 #define UNLOCKFEAT_OPT_PERMAHALLU    0x00000004UL
 #define UNLOCKFEAT_OPT_PERMACONF     0x00000008UL
-#define UNLOCKFEAT_OPT_PERMAGLIB     0x00000010UL
-#define UNLOCKFEAT_OPT_PERMAFUMBLE   0x00000020UL
-#define UNLOCKFEAT_OPT_PERMALAME     0x00000040UL
-#define UNLOCKFEAT_OPT_PERMABADLUCK  0x00000080UL
+#define UNLOCKFEAT_OPT_PERMASTUN     0x00000010UL
+#define UNLOCKFEAT_OPT_PERMAGLIB     0x00000020UL
+#define UNLOCKFEAT_OPT_PERMAFUMBLE   0x00000040UL
+#define UNLOCKFEAT_OPT_PERMALAME     0x00000080UL
+#define UNLOCKFEAT_OPT_PERMABADLUCK  0x00000100UL
 #define UNLOCKFEAT_OPT_CHALLENGE     0x00001000UL
 #define UNLOCKFEAT_OPT_POLYINIT      0x00002000UL
-#define UNLOCKFEAT_OPT_ONEHP         0x00010000UL
+#define UNLOCKFEAT_OPT_ONEHP         0x00004000UL
+#define UNLOCKFEAT_OPT_FRUITNAME     0x00010000UL
+#define UNLOCKFEAT_OPT_RACE          0x00020000UL
+#define UNLOCKFEAT_OPT_SHOWRACE      0x00040000UL
+#define UNLOCKFEAT_OPT_HORSENAME     0x00080000UL
+#define UNLOCKFEAT_OPT_AUTOWEAR      0x00100000UL
 /* When adding to this list:
  * 1. update explain_unlockable_option
- * 2. add support to options.c (TODO: how?)
+ * 2. update is_unlocked_option
  * 3. update UNLOCKFEAT_OPT_MAX, below.
+ * 4. remember to include a way to unlock it.
  */
-#define UNLOCKFEAT_OPT_MAX           UNLOCKFEAT_OPT_ONEHP
+#define UNLOCKFEAT_OPT_MAX           UNLOCKFEAT_OPT_AUTOWEAR
 
 
 /* Achievements:  feats that can be performed in order to unlock the
@@ -98,6 +105,7 @@ enum achievement {
        and add the calls to achievement() where appropriate. */
     achieve_stairs_normal,   /* use normal stairs to go up or down */
     achieve_stairs_branch,   /* use branch stairs to enter/leave */
+    achieve_eat_slimemold,   /* eat a customizable fruit */
     achieve_mines_temple,    /* enter the Minetown temple */
     achieve_mines_end,       /* reach the bottom of the Mines */
     achieve_altar_buctest,   /* identify an item's beatitude on an altar */

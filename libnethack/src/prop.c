@@ -39,6 +39,17 @@ m_has_property(const struct monst *mon, enum youprop property,
             rv |= W_MASK(os_birthopt);
         if (property == HALLUC && flags.permahallu)
             rv |= W_MASK(os_birthopt);
+        if (property == CONFUSION && flags.permaconf)
+            rv |= W_MASK(os_birthopt);
+        if (property == STUNNED && flags.permastun)
+            rv |= W_MASK(os_birthopt);
+        if (property == GLIB && flags.permaglib)
+            rv |= W_MASK(os_birthopt);
+        if (property == FUMBLING && flags.permafumble)
+            rv |= W_MASK(os_birthopt);
+        if ((property == LWOUNDED_LEGS || property == RWOUNDED_LEGS) &&
+            flags.permalame)
+            rv |= W_MASK(os_birthopt);
         if (property == UNCHANGING && flags.polyinit_mnum != -1)
             rv |= W_MASK(os_birthopt);
 
@@ -1152,6 +1163,18 @@ show_conduct(int final)
         enl_msg(&menu, You_, "are ", "were", "permanently hallucinating");
     if (flags.permablind)
         enl_msg(&menu, You_, "are ", "were ", "permanently blind");
+    if (flags.permaconf)
+        enl_msg(&menu, You_, "are ", "were ", "permanently confused");
+    if (flags.permastun)
+        enl_msg(&menu, You_, "are ", "were ", "permanently stunned");
+    if (flags.permaglib)
+        enl_msg(&menu, You_, "have ", "had ", "permanently greasy fingers");
+    if (flags.permafumble)
+        enl_msg(&menu, You_, "are ", "were ", "permanently fumbling");
+    if (flags.permalame)
+        enl_msg(&menu, You_, "have ", "had ", "permanently wounded legs");
+    if (flags.permabadluck)
+        enl_msg(&menu, You_, "have ", "had ", "permanent bad luck");
 
     /* Pop up the window and wait for a key */
     display_menu(&menu, "Voluntary challenges:", PICK_NONE,

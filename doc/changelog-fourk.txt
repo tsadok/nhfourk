@@ -61,6 +61,68 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Achievement-unlockable features have been implemented.
+
+   ROLES:
+   + Barbarian:    (always unlocked)
+   + Wizard:       (always unlocked)
+   + Ranger:       use normal stairs
+   + Rogue:        use branch stairs, steal gold from a vault,
+                   or enter a leprechaun hall
+   + Monk:         enter the Minetown temple
+   + Priest:       use an altar to identify an item's beatitude
+   + Valkyrie:     convert an altar, or perform the invocation
+   + Knight:       enter a treasure zoo (the one in Sokoban counts)
+   + Healer:       kill Medusa, or make holy water via prayer
+   + Caveman:      dig with a pick-axe
+   + Samurai:      embark on the Barbarian quest
+   + Tourist:      embark on the monk or rogue quest
+   + Archeologist: ascend
+   + Convict [deferred]: embark on the priest or caveman quest
+   + Druid   [deferred]: embark on the ranger or knight quest
+
+   RACES:
+   + Human:        (always unlocked)
+   + Elf:          use stairs within Sokoban, or kill the Wizard of Yendor
+   + Dwarf:        reach the bottom level of the Gnomish Mines
+   + Orc:          enter a throne room
+   + Gnome:        enter a dragon hall, or use a magic portal
+   + Sylph:        kill your quest nemesis, or use the passtune
+   + Scurrier:     embark on the wizard quest
+   + Giant:        ascend with a conduct intact
+
+   OPTIONS:
+   + Fruit: eat a melon (i.e., a custom-nameable fruit)
+   + Horsename: unlock the knight role
+   + Autowear: embark on the archeologist quest
+   + Permablind: embark on the healer quest
+   + Permahallu: embark on the valkyrie quest
+   + Permanconfused: ascend all races
+   + Permastunned: ascend all roles
+   + Permaglib (greasy fingers): embark on the Samurai quest
+   + Permafumbling: ascend in challenge mode
+   + Permalame: ascend with a perma-impairment
+   + Permabadluck: ascend with a perma-impariment
+
+   MODES:
+   + Challenge mode:  embark on the tourist or convict quest
+   + Polyinit mode:   ascend with a non-easy conduct
+                      Alternately, embark on the druid quest.
+   + One-Hitpoint [deferred]: ascend with a hard conduct combo
+     (foodless atheist, foodless pacifist, illiterate pacifist,
+      nude atheist, pacifist in under 10k turns, or any three
+      non-easy conducts) or just ascend in under 10k turns.
+
+   The "easy" conducts are vegetarian, vegan, weaponless, polyitemless,
+   polyselfless, wishless, artiwishless, genoless, elberethless,
+   pudding-splitless, alignment-lossless, sokoguiltless, conflictless,
+   displacementless, invisibilityless.  The others are non-easy.
+
+ * Additional challenge options have been implemented: you can now
+   (subject to unlocking) play a character who is permanently confused,
+   stunned, fumbling, or has permanent greasy fingers, wounded legs,
+   or terrible luck.
+
  * Pet hunger fixes have been cherry-picked from FIQHack, so
    pets will now only eat when hungry, but when they do eat, it
    takes time, like in 3.4.3.

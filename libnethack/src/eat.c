@@ -351,6 +351,9 @@ done_eating(boolean message)
     if (message)
         pline(msgc_actionok, "You finish eating %s.", food_xname(otmp, TRUE));
 
+    if (otmp->otyp == SLIME_MOLD)
+        achievement(achieve_eat_slimemold);
+
     if (otmp->otyp == CORPSE)
         cpostfx(otmp->corpsenm);
     else

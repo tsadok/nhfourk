@@ -186,9 +186,20 @@ encode_birthoptions(void)
         c |= 0x0010UL;
     if (flags.permahallu)
         c |= 0x0020UL;
-    /* leaving bits open here for permaconf and one other impairment */
+    if (flags.permaconf)
+        c |= 0x0040UL;
+    if (flags.permastun)
+        c |= 0x0080UL;
     if (flags.polyinit_mnum != -1)
         c |= 0x0100UL;
+    if (flags.permaglib)
+        c |= 0x0200UL;
+    if (flags.permafumble)
+        c |= 0x0400UL;
+    if (flags.permalame)
+        c |= 0x0800UL;
+    if (flags.permabadluck)
+        c |= 0x1000UL;
 
     return c;
 }

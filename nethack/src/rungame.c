@@ -493,6 +493,9 @@ rungame(nh_bool net)
             curses_raw_print("Could not create the logfile.");
             goto cleanup;
         }
+#ifdef DEBUG_GAME_CREATION
+        curses_raw_print(filename);
+#endif
     }
 
     create_game_windows();
@@ -507,11 +510,25 @@ rungame(nh_bool net)
     ret = ERR_CREATE_FAILED;
     if (net) {
         fd = nhnet_create_game(new_opts);
+#ifdef DEBUG_GAME_CREATION
+        curses_raw_print("Aleph");
+#endif
         if (fd >= 0)
             ret = playgame(fd, FM_PLAY);
+#ifdef DEBUG_GAME_CREATION
+        else
+            curses_raw_print("Beth");
+#endif
     } else {
+#ifdef DEBUG_GAME_CREATION
+        curses_raw_print("Gimmel");
+#endif
         if (nh_create_game(fd, new_opts) == NHCREATE_OK)
             ret = playgame(fd, FM_PLAY);
+#ifdef DEBUG_GAME_CREATION
+        else
+            curses_raw_print("Daleth");
+#endif
     }
 
     close(fd);

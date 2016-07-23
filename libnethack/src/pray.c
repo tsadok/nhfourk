@@ -1710,8 +1710,9 @@ dosacrifice(const struct nh_cmd_arg *arg)
                 if (challengemode) {
                     achievement(achieve_ascend_challenge);
                 }
-                if (flags.permablind || flags.permahallu) {
-                    /* TODO: support other permanent impairments */
+                if (flags.permablind || flags.permahallu || flags.permaconf ||
+                    flags.permastun  || flags.permaglib  || flags.permafumble ||
+                    flags.permalame  || flags.permabadluck) {
                     achievement(achieve_ascend_impaired);
                 }
                 if ((hardconducts > 3) || (numconducts > 10) ||

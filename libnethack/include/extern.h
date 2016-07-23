@@ -63,6 +63,9 @@ struct you;
 
 /* ### achieve.c ### */
 extern void achievement(enum achievement ach);
+extern boolean is_unlocked_role(int i);
+extern boolean is_unlocked_race(int i);
+extern boolean is_unlocked_option(struct nh_option_desc *option);
 extern boolean is_unlocked_feature(int fieldidx, unsigned long fieldbit);
 
 /* ### allmain.c ### */

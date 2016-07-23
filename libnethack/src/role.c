@@ -409,7 +409,8 @@ const struct Race races[] = {
      {STR18(100), 18, 18, 18, 18, 18},
      /* Init Lower Higher */
      {2, 0, 0, 2, 1, 0},        /* Hit points */
-     {1, 0, 2, 0, 2, 0} /* Energy */
+     {1, 0, 2, 0, 2, 0},        /* Energy */
+     UNLOCKFEAT_RACE_HUMAN, UNLOCKFEAT_ALLRACES_HUMAN
      },
     {"elf", "elven", "elvenkind", "Elf",
      {0, 0},
@@ -422,7 +423,8 @@ const struct Race races[] = {
      {18, 20, 20, 18, 16, 18},
      /* Init Lower Higher */
      {1, 0, 0, 1, 1, 0},        /* Hit points */
-     {2, 0, 3, 0, 3, 0} /* Energy */
+     {2, 0, 3, 0, 3, 0},        /* Energy */
+     UNLOCKFEAT_RACE_ELF, UNLOCKFEAT_RACE_ELF,
      },
     {"dwarf", "dwarven", "dwarvenkind", "Dwa",
      {0, 0},
@@ -435,7 +437,8 @@ const struct Race races[] = {
      {STR18(100), 16, 16, 20, 20, 16},
      /* Init Lower Higher */
      {4, 0, 0, 3, 2, 0},        /* Hit points */
-     {0, 0, 0, 0, 0, 0} /* Energy */
+     {0, 0, 0, 0, 0, 0},        /* Energy */
+     UNLOCKFEAT_RACE_DWARF, UNLOCKFEAT_RACE_DWARF,
      },
     {"gnome", "gnomish", "gnomehood", "Gno",
      {0, 0},
@@ -448,7 +451,8 @@ const struct Race races[] = {
      {STR18(50), 19, 18, 18, 18, 18},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
-     {2, 0, 2, 0, 2, 0} /* Energy */
+     {2, 0, 2, 0, 2, 0},        /* Energy */
+     UNLOCKFEAT_RACE_GNOME, UNLOCKFEAT_RACE_GNOME,
      },
     {"giant", "giant", "giantdom", "Gia",
      {"giant", "giantess"},
@@ -461,7 +465,8 @@ const struct Race races[] = {
      {STR18(100), 15, 15, 18, 20, 16},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
-     {1, 0, 1, 0, 1, 0} /* Energy */
+     {1, 0, 1, 0, 1, 0},        /* Energy */
+     UNLOCKFEAT_RACE_GIANT, UNLOCKFEAT_RACE_GIANT,
      },
     {"orc", "orcish", "orcdom", "Orc",
      {0, 0},
@@ -474,7 +479,8 @@ const struct Race races[] = {
      {STR18(50), 16, 16, 18, 18, 16},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
-     {1, 0, 1, 0, 1, 0} /* Energy */
+     {1, 0, 1, 0, 1, 0},        /* Energy */
+     UNLOCKFEAT_RACE_ORC, UNLOCKFEAT_RACE_ORC,
      },
     {"sylph", "sylph", "sylphood", "Syl",
      {0,0},
@@ -486,7 +492,8 @@ const struct Race races[] = {
      {3, 3, 3, 3, 3, 3},
      {16, 18, 19, 19, 17, 20},
      {2, 0, 1, 1, 1, 1},        /* Hit points */
-     {2, 0, 3, 0, 2, 2} /* Energy */
+     {2, 0, 3, 0, 2, 2},        /* Energy */
+     UNLOCKFEAT_RACE_SYLPH, UNLOCKFEAT_RACE_SYLPH,
     },
     {"scurrier", "scurrid", "scurridae", "Scu",
      /* Yes, I am aware that "scurrier" and "sciurid" are etymologically
@@ -504,7 +511,8 @@ const struct Race races[] = {
      {16, 16, 18, 22, 15, 22},
      /* Init Lower Higher */
      {1, 0, 0, 1, 1, 0},        /* Hit points */
-     {1, 0, 2, 0, 2, 0} /* Energy */
+     {1, 0, 2, 0, 2, 0},        /* Energy */
+     UNLOCKFEAT_RACE_SCURRIER, UNLOCKFEAT_RACE_SCURRIER,
      },
 /* Array terminator */
     {0, 0, 0, 0}

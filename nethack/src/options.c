@@ -29,8 +29,9 @@ enum extra_opttypes {
     OPTTYPE_KEYMAP = 1000
 };
 
+/* int because compiler does not permit boolean here (because C is dumb) */
+extern int is_unlocked_option(struct nh_option_desc *option);
 static void show_autopickup_menu(struct nh_option_desc *opt);
-
 
 
 /*----------------------------------------------------------------------------*/
@@ -129,105 +130,139 @@ static const char *const bucnames[] =
 static struct nh_option_desc curses_options[] = {
     {"alt_is_esc", "Terminal and Rendering",
      "interpret Alt-letter as ESC letter",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"animation", "Commands and Confirmations",
      "how to animate multi-turn actions and events",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = ANIM_ALL}},
     {"border", "Screen Layout",
      "what to draw borders around",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = FRAME_ALL}},
     {"comment", "Online and Tournaments",
      "no game effect, used to prove your ID in tournaments",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_STRING, {.s = NULL}},
     {"darkgray", "Terminal and Rendering",
      "try to show 'black' as dark gray instead of dark blue",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"draw_branch", "Map Display",
      "use different renderings for different branches",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"draw_detected", "Map Display",
      "mark detected monsters",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"draw_rock", "Map Display",
      "make the walls of corridors visible",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"draw_stepped", "Map Display",
      "mark squares you have walked on",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"draw_tame", "Map Display",
      "mark tame and peaceful monsters",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"draw_terrain", "Map Display",
      "mark concealed traps and stairs",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"extmenu", "Commands and Confirmations",
      "use a menu for selecting extended commands (#)",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"hintswindow", "Screen Layout",
      "show the hints window (\"extrawin\")",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"invweight", "Messages and Menus",
      "show item weights in the inventory",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"keymap", "Commands and Confirmations",
      "alter the key to command mapping",
+     nh_lockopt_always_available,
      nh_birth_ingame, (enum nh_opttype)OPTTYPE_KEYMAP, {0}},
     {"menu_headings", "Messages and Menus",
      "display style for menu headings",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = A_REVERSE}},
     {"mouse", "Terminal and Rendering",
      "accept mouse input (where supported)",
-     nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
+     nh_lockopt_always_available,
+     nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"menupaging", "Messages and Menus",
      "scrolling behaviour of menus",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = MP_LINES}},
     {"msgheight", "Screen Layout",
      "message window height",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_INT, {.i = 8}},
     {"msghistory", "Messages and Menus",
      "number of messages lines viewable via prevmsg",
-     nh_birth_ingame, OPTTYPE_INT, {.i = 256}},
+     nh_lockopt_always_available,
+     nh_birth_ingame, OPTTYPE_INT, {.i = 512}},
     {"msg_window", "Messages and Menus",
      "behaviour of the 'previous message' command",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = PREVMSG_FULL}},
     {"msgnomerge", "Messages and Menus",
      "messages always start on new lines",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"networkmotd", "Online and Tournaments",
      "get tips and announcements from the Internet",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = MOTD_ASK}},
     {"optstyle", "Messages and Menus",
      "option menu display style",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = OPTSTYLE_FULL}},
     {"palette", "Terminal and Rendering",
      "color palette used for text",
+     nh_lockopt_always_available,
 #ifdef WIN32
-     nh_birth_ingame, OPTTYPE_ENUM, {.e = PALETTE_DEFAULT}},
+     nh_birth_ingame, OPTTYPE_ENUM, {.e = PALETTE_DEFAULT}
 #else
-     nh_birth_ingame, OPTTYPE_ENUM, {.e = PALETTE_NONE}},
+     nh_birth_ingame, OPTTYPE_ENUM, {.e = PALETTE_NONE}
 #endif
+    },
     {"prompt_inline", "Messages and Menus",
      "place prompts in the message window",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"scores_own", "Endgame Sequence",
       "show all your own scores in the list",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"scores_top", "Endgame Sequence",
       "how many top scores to show",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_INT, {.i = 3}},
     {"scores_around", "Endgame Sequence",
       "the number of scores shown around your score",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_INT, {.i = 2}},
     {"sidebar", "Screen Layout",
      "when to draw the inventory sidebar",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_ENUM, {.e = AB_AUTO}},
     {"status3", "Screen Layout",
      "3 line status display",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"tileset", "Terminal and Rendering",
      "text or graphics for map drawing",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_STRING, {.s = NULL}},
-    {NULL, NULL, NULL, nh_birth_ingame, OPTTYPE_BOOL, {NULL}}};
+    {NULL, NULL, NULL, nh_lockopt_always_available, nh_birth_ingame,
+     OPTTYPE_BOOL, {NULL}}};
 
 static struct nhlib_boolopt_map boolopt_map[] = {
     {"alt_is_esc", &settings.alt_is_esc},
@@ -549,6 +584,12 @@ menu_add_options(struct nh_menulist *menu, int listid,
         id = (listid << 10) | i;
         if (options[i].birth_option != birth)
             continue;
+        if ((options[i].lockstate == nh_lockopt_locked) &&
+            !(is_unlocked_option(&options[i]))) {
+            /* Don't put it on the menu; just leave it at the default value,
+               which is set in set_option in libnethack/src/options.c */
+            continue;
+        }
 
         if (strcmp(last_group, options[i].group) != 0) {
             last_group = options[i].group;

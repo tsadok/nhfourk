@@ -147,7 +147,7 @@ struct you {
     aligntyp ualignbase[CONVERT];       /* for ualign conversion record */
     int upantheon;
     schar uluck, moreluck;      /* luck and luck bonus */
-# define Luck   (u.uluck + u.moreluck)
+# define Luck   (flags.permabadluck ? -10 : (u.uluck + u.moreluck))
 # define LUCKADD        3
     /* added value when carrying luck stone */
 # define LUCKMAX        10
