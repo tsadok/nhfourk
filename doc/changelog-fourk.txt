@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When you swing your axe in a wide (or tremendous) arc and
+   hit multiple monsters, all of them now get a chance to use
+   their passive attacks, if applicable.
+
  * Pet hunger fixes have been cherry-picked from FIQHack, so
    pets will now only eat when hungry, but when they do eat, it
    takes time, like in 3.4.3.
