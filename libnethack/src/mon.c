@@ -370,7 +370,8 @@ minliquid(struct monst *mtmp)
     /* Gremlin multiplying won't go on forever since the hit points keep going
        down, and when it gets to 1 hit point the clone function will fail. */
     if (mtmp->data == &mons[PM_GREMLIN] &&
-        (inpool || infountain || inshallow) && rn2(3)) {
+        (inpool || infountain || inshallow) &&
+        (mtmp->mtame || !mtmp->mpeaceful) && rn2(3)) {
         if (split_mon(mtmp, NULL))
             dryup(mtmp->mx, mtmp->my, FALSE);
         if (inpool)
