@@ -291,7 +291,7 @@ const struct objclass const_objects[] = {
     HELM("dunce cap", "conical hat",
          0, 1, 0, 3, 1, 4, 1, 10, 0, MZ_SMALL, MZ_HUGE, CLOTH, CLR_BLUE),
     HELM("dented pot", NULL,
-         1, 0, 0, 2, 0, 10, 8, 9, 0, MZ_SMALL, MZ_LARGE, IRON, CLR_BLACK),
+         1, 0, 0, 2, 0, 10, 8, 9, 0, MZ_MEDIUM, MZ_HUGE, IRON, CLR_BLACK),
 /* With shuffled appearances... */
     HELM("helmet", "plumed helmet",
          0, 0, 0, 10, 1, 30, 10, 9, 0, MZ_SMALL, MZ_LARGE, IRON, HI_METAL),
