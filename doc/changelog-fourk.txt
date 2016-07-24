@@ -61,11 +61,24 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Peaceful gremlins refrain from using water to split themselves.
+   They can still be split by a rust trap or if hit by a potion of
+   water, and possibly some other ways; but they will not fill up
+   entire levels with peaceful gremlins if one happens to generate
+   on a level with water (e.g., Medusa's, Juiblex', Castle).
+
  * When you swing your axe in a wide (or tremendous) arc and
    hit multiple monsters, all of them now get a chance to use
    their passive attacks, if applicable.
 
- * Achievement-unlockable features have been implemented.
+ * Achievement-unlockable features have been implemented.  You can now
+   unlock certain game features by achieving certain things within the
+   game.  Once a feature is unlocked, it stays unlocked after your
+   game ends (and, in fact, most of them are features you use when
+   starting a game, such as birth options).
+
+   (Note that "deferred" means the feature itself isn't implemented
+   yet, but I went ahead and put it on the unlockable list for later.)
 
    ROLES:
    + Barbarian:    (always unlocked)
