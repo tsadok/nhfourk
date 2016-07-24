@@ -1146,7 +1146,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                              rng_cramps) < u.ucramps) ||
             (Blind && !rn2(11)) || (Confusion && !rn2(7)) ||
             (Stunned && !rn2(4)) || (Hallucination && !rn2(2))) {
-            if (ABASE(A_CON) <= 3)
+            if ((ABASE(A_CON) <= 3) || Fixed_abil)
                 *sp = ' ' + rnd(96 - 2);
                 /* ASCII '!' thru '~' (excludes ' ' and DEL) */
             cramps++;
@@ -1168,7 +1168,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     else if (cramps > 0)
         pline(msgc_yafm, "Your writing %s is beginning to cramp.",
               body_part(HAND));
-    if (cramps && (ABASE(A_CON) > 3)) {
+    if (cramps && (ABASE(A_CON) > 3) && !Fixed_abil) {
         ABASE(A_CON)--;
         u.amax.a[A_CON]--;
         pline(msgc_intrloss, "You manage to get your message written, "
