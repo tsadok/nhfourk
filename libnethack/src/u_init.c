@@ -349,7 +349,7 @@ static const struct inv_sub {
     {PM_SCURRIER, ARROW, DART},
     {PM_SCURRIER, FEDORA, LEATHER_GLOVES},
     /* Giants are too large for a lot of armor */
-    {PM_GIANT, RING_MAIL, HELMET},                 /* Bar Gia */
+    {PM_GIANT, RING_MAIL, DENTED_POT},             /* Bar Gia */
     {PM_GIANT, LEATHER_ARMOR, FLINT},              /* Cav Gia */
     {PM_GIANT, BOW, SLING},                        /* Ran Gia */
     {PM_GIANT, ARROW, FLINT},                      /*  ditto */
