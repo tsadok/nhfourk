@@ -1070,7 +1070,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         && obj && obj == uwep && objects[obj->otyp].oc_material == IRON &&
         mon->mhp >= 2 && !thrown && !mon->mcan
         /* && !destroyed -- guaranteed by mhp >= 2 */ ) {
-        if ((mon->mhp > 60) && !(mdat == &mons[PM_BLOOD_PUDDING])) {
+        if ((mon->mhpmax > (6 * mon->m_lev)) &&
+            !(mdat == &mons[PM_BLOOD_PUDDING])) {
             coord mm;
             struct monst *bpud;
             mm.x = mon->mx; mm.y = mon->my;
@@ -1097,9 +1098,11 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         } else {
             struct monst *newpudding = clone_mon(mon, 0, 0);
             if (newpudding) {
+                pline(msgc_debug, "mphmax %d, m_lev %d, 6x=%d",
+                      mon->mhpmax, mon->m_lev, 6 * mon->m_lev);
                 pline(msgc_consequence, "%s divides as you hit it!", Monnam(mon));
-                newpudding->mhpmax = newpudding->mhpmax * 4 / 3;
-                mon->mhpmax        = mon->mhpmax        * 3 / 4;
+                newpudding->mhpmax = newpudding->mhpmax * 5 / 3;
+                mon->mhpmax        = mon->mhpmax        * 3 / 5;
                 if (mon->mhp > mon->mhpmax) {
                     mon->mhp = mon->mhpmax;
                     newpudding->mhp = newpudding->mhpmax;
