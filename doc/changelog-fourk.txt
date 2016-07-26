@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * A new special level, the Garden of Temptation, has been added
+   near the top of Gehennom.  The Garden contains trees, benches,
+   fountains, statues, a nice lake with a picturesque island,
+   delicious fruit, foocubi, nymphs, and other delights.  The lake
+   contains a submerged magic lamp.  The locked garden shed contains
+   an altar to moloch and a magic chest.  There are two versions.
+
  * Peaceful gremlins refrain from using water to split themselves.
    They can still be split by a rust trap or if hit by a potion of
    water, and possibly some other ways; but they will not fill up
