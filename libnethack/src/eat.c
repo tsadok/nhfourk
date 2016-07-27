@@ -377,6 +377,11 @@ maybe_cannibal(int pm, boolean allowmsg)
         HAggravate_monster |= FROMOUTSIDE;
         change_luck(-rn1(4, 2));        /* -5..-2 */
         return TRUE;
+    } else if (Role_if(PM_CAVEMAN) && your_race(&mons[pm])) {
+        pline(msgc_aligngood, "You honor the dead.");
+        if (!rn2_on_rng(1 + abs(u.ualign.record), rng_role_alignment))
+            adjalign(1);
+        return FALSE;
     }
     return FALSE;
 }
@@ -1206,7 +1211,7 @@ eatcorpse(void)
               "Ulch!  That %s was tainted%s!",
               mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
               !vegetarian(&mons[mnum]) ? "meat" : "protoplasm",
-              cannibal ? "; you cannibal" : "");
+              cannibal ? ", you cannibal" : "");
         if (Sick_resistance) {
             pline(msgc_playerimmune,
                   "It doesn't seem at all sickening, though...");
