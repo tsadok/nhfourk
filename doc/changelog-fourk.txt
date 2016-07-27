@@ -158,6 +158,7 @@ Changes in 4.3.0.4:
      yumi, or tsurugi.
    + Valkyries who throw Mjollnir (and catch it) will occasionally
      gain an alignment record point.
+   + Wizards get points for learning new spells, level 3 or higher.
    + Non-lawful rogues gain alignment for stealing from shops
      (directly, not via pets).
 
