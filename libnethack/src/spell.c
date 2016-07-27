@@ -480,6 +480,8 @@ learn(void)
         u.utracked[tos_book]->spestudied++;
         pline(msgc_actionok, known_spells > 0 ?
               "You add %s to your repertoire." : "You learn %s.", splname);
+        if (Role_if(PM_WIZARD) && objects[booktype].oc_level >= 3)
+            adjalign(1);
         makeknown((int)booktype);
     }
 
