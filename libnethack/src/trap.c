@@ -1913,6 +1913,13 @@ mintrap(struct monst *mtmp)
         } else {
             mtmp->mtrapseen |= (1 << (tt - 1));
         }
+
+        /* Rangers get points for trapping hostiles; Cavemen if it's a pit. */
+        if (trap->madeby_u && (!mtmp->mpeaceful) &&
+            ((Role_if(PM_CAVEMAN) && (tt == PIT)) || Role_if(PM_RANGER)) &&
+            !rn2_on_rng(1 + abs(u.ualign.record), rng_role_alignment))
+            adjalign(1);
+        else
         /* Monster is aggravated by being trapped by you. Recognizing who made
            the trap isn't completely unreasonable; everybody has their own
            style. */
