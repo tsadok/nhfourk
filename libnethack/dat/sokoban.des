@@ -34,6 +34,7 @@
 ### Bottom (first) level of Sokoban ###
 MAZE:"soko4-1",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"Untitled 1a"
 GEOMETRY:center,center
 #1234567890123
 MAP
@@ -97,6 +98,7 @@ OBJECT:'/',random,random
 
 MAZE:"soko4-2",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"Untitled 1b"
 GEOMETRY:center,center
 #12345678901234
 MAP
@@ -162,6 +164,7 @@ OBJECT:'/',random,random
 # "Boomerang Boulders"
 MAZE:"soko4-3",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"Boomerang Boulders"
 GEOMETRY:center,center
 #1234567890123456
 MAP
@@ -228,6 +231,7 @@ OBJECT:'/',random,random
 # "Easy Peasey"
 MAZE:"soko4-4",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"Easy Peasey"
 GEOMETRY:center,center
 #123456789012345
 MAP
@@ -294,6 +298,7 @@ OBJECT:'/',random,random
 # "First Things First"
 MAZE:"soko4-5",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"First Things First"
 GEOMETRY:center,center
 #12345678901234
 MAP
@@ -359,6 +364,7 @@ OBJECT:'/',random,random
 # "Open the Door"
 MAZE: "soko4-6",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"Open the Door"
 GEOMETRY:center,center
 #123456789012345678
 MAP
@@ -421,6 +427,7 @@ OBJECT:'/',random,random
 # "Picking out the Seeds"
 MAZE: "soko4-7",' '
 FLAGS:noteleport,hardfloor
+MESSAGE:"Picking out the Seeds"
 GEOMETRY:center,center
 #12345678901234
 MAP
@@ -486,12 +493,12 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
-
 ### Second level ###
 
 # "Squared Off" (a Vanilla level)
 MAZE:"soko3-1",' '
 FLAGS:noteleport
+MESSAGE:"Squared Off"
 GEOMETRY:center,center
 #1234567890123456789012345678
 MAP
@@ -569,6 +576,7 @@ OBJECT:'/',random,random
 # "Fly on the Wall"
 MAZE:"soko3-2",' '
 FLAGS:noteleport
+MESSAGE:"Fly on the Wall"
 GEOMETRY:center,center
 #12345678901234567890123456
 MAP
@@ -646,6 +654,7 @@ OBJECT:'/',random,random
 # "Boulder Halls of Zim"
 MAZE:"soko3-3",' '
 FLAGS:noteleport
+MESSAGE:"Boulder Halls of Zim"
 GEOMETRY:center,center
 #12345678901234567890123456
 MAP
@@ -717,6 +726,7 @@ OBJECT:'/',random,random
 # "Two-Phase"
 MAZE:"soko3-4",' '
 FLAGS:noteleport
+MESSAGE:"Two-Phase"
 GEOMETRY:center,center
 #1234567890123456789012345
 MAP
@@ -801,6 +811,7 @@ MONSTER:'m',random,(04,10),m_object "boulder"
 # (Adapted from Slash'em.)
 MAZE:"soko3-5",' '
 FLAGS:noteleport
+MESSAGE:"The Snake"
 GEOMETRY:center,center
 #123456789012345678901234567
 MAP
@@ -870,6 +881,7 @@ OBJECT:'/',random,random
 # (Adapted from Slash'em)
 MAZE: "soko3-6",' '
 FLAGS:noteleport
+MESSAGE:"Into the Middle"
 GEOMETRY:center,center
 #         1
 #12345678901234567
@@ -930,6 +942,7 @@ OBJECT:'/',random,random
 # "Count Carefully"
 MAZE: "soko3-7",' '
 FLAGS:noteleport
+MESSAGE:"Count Carefully"
 GEOMETRY:center,center
 #12345678901234567
 MAP
@@ -993,9 +1006,62 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# The following level is adapted from sample sokogen output.
+# "You Only Need Six"
+MAZE: "soko3-8",' '
+FLAGS:noteleport
+MESSAGE:"You Only Need Six"
+GEOMETRY:center,center
+#         1         2
+#123456789012345678901234
+MAP
+  -----         ---------
+  |...|         |.+.....|
+  |.|.|-----    |.|.....|
+---...--...---  |.|.....|
+|........|...----.|.....|
+|.....|...........|.....|
+|....||..|...---..|------
+-------------- ----      
+ENDMAP
+STAIR:(13,05),down
+STAIR:(21,03),up
+DOOR:locked,(18,01)
+REGION:(00,00,24,07),lit,"ordinary"
+NON_DIGGABLE:(00,00,24,07)
+NON_PASSWALL:(00,00,24,07)
+
+# Boulders
+OBJECT:'`',"boulder",(05,02)
+OBJECT:'`',"boulder",(04,03)
+OBJECT:'`',"boulder",(04,04)
+OBJECT:'`',"boulder",(07,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(10,05)
+OBJECT:'`',"boulder",(11,05)
+
+# Traps
+TRAP:"hole",(17,02)
+TRAP:"hole",(17,03)
+TRAP:"hole",(17,04)
+TRAP:"hole",(14,05)
+TRAP:"hole",(15,05)
+TRAP:"hole",(16,05)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+
 ### Third level ###
 MAZE:"soko2-1",' '
 FLAGS:noteleport
+MESSAGE:"Untitled 3b"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1059,8 +1125,10 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# "Nooks and Cubbyholes"
 MAZE:"soko2-2",' '
 FLAGS:noteleport
+MESSAGE:"Nooks and Cubbyholes"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1128,6 +1196,7 @@ OBJECT:'/',random,random
 # "Bring 'em on Down"
 MAZE:"soko2-3",' '
 FLAGS:noteleport
+MESSAGE:"Bring 'em on Down"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1209,6 +1278,7 @@ OBJECT:'/',random,random
 # "Slot Machine"
 MAZE:"soko2-4",' '
 FLAGS:noteleport
+MESSAGE:"Slot Machine"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1278,6 +1348,7 @@ OBJECT:'/',random,random
 # "Through the Cracks"
 MAZE:"soko2-5",' '
 FLAGS:noteleport
+MESSAGE:"Through the Cracks"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1355,6 +1426,7 @@ OBJECT:'/',random,random
 # "Either Way, It's All Good"
 MAZE: "soko2-6",' '
 FLAGS:noteleport
+MESSAGE:"Either Way, It's All Good"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1454,6 +1526,7 @@ OBJECT:'/',random,(09,09)
 # The infamous "soko2a" (nethackwiki) / "Sokoban 2 B" (steelypips):
 MAZE:"soko2-7",' '
 FLAGS:noteleport
+MESSAGE:"Vanilla Nightmare"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1523,6 +1596,7 @@ OBJECT:'/',random,random
 # "Sneak Preview"
 MAZE: "soko2-8",' '
 FLAGS:noteleport
+MESSAGE:"Sneak Preview"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1594,6 +1668,7 @@ OBJECT:'/',random,random
 # "Daedalus Delicatessen"
 MAZE:"soko2-9",' '
 FLAGS:noteleport
+MESSAGE:"Daedalus Delicatessen"
 GEOMETRY:center,center
 #12345678901234567890123456789012345
 MAP
@@ -1658,6 +1733,7 @@ REGION:(08,01,12,04),lit,"food shop"
 # "Sokobag / Bagoban"
 MAZE:"soko1-1",' '
 FLAGS:noteleport
+MESSAGE:"Sokobag"
 GEOMETRY:center,center
 #1234567890123456789012345
 MAP
@@ -1751,6 +1827,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "Reflectoban"
 MAZE:"soko1-2",' '
 FLAGS:noteleport
+MESSAGE:"Reflectoban"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1846,6 +1923,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "Ringing Endorsement"
 MAZE:"soko1-3",' '
 FLAGS:noteleport
+MESSAGE:"Ringing Endorsement"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1930,6 +2008,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "Open at the Top"
 MAZE:"soko1-4",' '
 FLAGS:noteleport
+MESSAGE:"Open at the Top"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -2029,6 +2108,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "Collecting Marbles"
 MAZE:"soko1-5",' '
 FLAGS:noteleport
+MESSAGE:"Collecting Marbles"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -2128,6 +2208,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "Running Rings Around"
 MAZE: "soko1-6",' '
 FLAGS:noteleport
+MESSAGE:"Running Rings Around"
 GEOMETRY:center,center
 #123456789012345678
 MAP
@@ -2220,6 +2301,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "Back At Ya"
 MAZE: "soko1-7",' '
 FLAGS:noteleport
+MESSAGE:"Back At Ya"
 GEOMETRY:center,center
 #12345678901234567890123456789
 MAP
@@ -2312,6 +2394,7 @@ ENGRAVING:place[0],burn,"Elbereth"
 # "The Dragon of Bactria"
 MAZE: "soko1-8",' '
 FLAGS:noteleport
+MESSAGE:"The Dragon of Bactria"
 GEOMETRY:center,center
 #123456789012345678901234567890
 MAP
