@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Sokoban levels now announce their titles when you enter them.
+
  * A new special level, the Garden of Temptation, has been added
    near the top of Gehennom.  The Garden contains trees, benches,
    fountains, statues, a nice lake with a picturesque island,
