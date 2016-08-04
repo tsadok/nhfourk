@@ -546,32 +546,34 @@ toofar:
         mtmp->mlstmv != moves) {
         struct monst *mtmp2 = mfind_target(mtmp, FALSE);
 
-        int tx = mtmp2->mx, ty = mtmp2->my;
-        if (mtmp2 == &youmonst) {
-            /* use muxy */
-            tx = mtmp->mux;
-            ty = mtmp->muy;
-        }
+        if (mtmp2) {
+            int tx = mtmp2->mx, ty = mtmp2->my;
+            if (mtmp2 == &youmonst) {
+                /* use muxy */
+                tx = mtmp->mux;
+                ty = mtmp->muy;
+            }
 
-        /* Don't fight melee targets here. Doing so might have issues like
-           ignoring Elbereth/etc */
-        if (mtmp2 && !monnear(mtmp, tx, ty)) {
-            int ret = 0;
+            /* Don't fight melee targets here. Doing so might have issues like
+               ignoring Elbereth, etc. */
+            if (mtmp2 && !monnear(mtmp, tx, ty)) {
+                int ret = 0;
 
-            /* Check for musable first */
-            if (musable.has_offense)
-                ret = use_offensive(mtmp, &musable);
-            if (ret == 1)
-                return 1; /* Oops. */
+                /* Check for musable first */
+                if (musable.has_offense)
+                    ret = use_offensive(mtmp, &musable);
+                if (ret == 1)
+                    return 1; /* Oops. */
 
-            /* Check for ranged attack */
-            if (!ret && !musable.has_offense)
-                ret = mattackq(mtmp, tx, ty);
+                /* Check for ranged attack */
+                if (!ret && !musable.has_offense)
+                    ret = mattackq(mtmp, tx, ty);
 
-            if (ret & MM_AGR_DIED)
-                return 1; /* Oops. */
+                if (ret & MM_AGR_DIED)
+                    return 1; /* Oops. */
 
-            return 0; /* that was our move for the round */
+                return 0; /* that was our move for the round */
+            }
         }
     }
 
