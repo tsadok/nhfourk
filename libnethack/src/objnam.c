@@ -614,11 +614,8 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
         if (!dknown) {
             buf = dump ? bracketize_of(obj->otyp) : tname;
         } else if (nn) {
-            if (GemStone(typ)) {
-                buf = msgcat_many(buf, " ", tname, NULL);
-                break;
-            }
-            if (dn && (typ != SPE_BOOK_OF_THE_DEAD))
+            if (dn && (typ != SPE_BOOK_OF_THE_DEAD) &&
+                (obj->oclass != GEM_CLASS))
                 buf = msgcat_many(buf, tname, " of ", NULL);
             buf = msgcat(buf, actualn);
         } else if (un) {
