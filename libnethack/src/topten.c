@@ -128,6 +128,8 @@ encode_uevent(void)
         c |= 0x4000UL;  /* defeated Rodney */
     if (mvitals[PM_HIGH_PRIEST].died)
         c |= 0x8000UL;  /* defeated a high priest */
+    if (mvitals[PM_DEMOGORGON].died)
+        c |= 0xF000UL;  /* defeated Demogorgon */
 
     /* notable other events */
     if (u.uevent.uhand_of_elbereth)
