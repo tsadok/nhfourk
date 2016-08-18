@@ -1207,6 +1207,21 @@ is_worn(const struct obj * otmp)
  * Object identification routines:
  */
 
+/* The player character discovers that they can walk on water.
+
+   For the time being, water walking boots are the only extrinsic source of this
+   and cannot be worn by anything that can water walk intrinsically, so we can
+   pretty much unconditionally ID them.
+*/
+void identify_ww_source(void)
+{
+    /* Let's be slightly paranoid about this, just in case: */
+    if (uarmf && uarmf->otyp == WATER_WALKING_BOOTS &&
+        !objects[uarmf->otyp].oc_name_known) {
+        makeknown(uarmf->otyp);
+    }
+}
+
 /* make an object actually be identified; no display updating */
 void
 fully_identify_obj(struct obj *otmp)

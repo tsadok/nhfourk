@@ -791,6 +791,8 @@ dighole(boolean pit_only, boolean instant)
                 lava_effects();
             else if (!Wwalking)
                 drown();
+            else
+                identify_ww_source();
         }
         return TRUE;
 

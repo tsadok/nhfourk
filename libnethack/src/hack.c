@@ -179,6 +179,10 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
 
         if (!Levitation && !Flying && !is_clinger(youmonst.data) &&
             (lava || (pool && !HSwimming)) &&
+            !(Wwalking && uarmf && uarmf->otyp == WATER_WALKING_BOOTS &&
+              objects[uarmf->otyp].oc_name_known &&
+              (!lava || (uarmf->rknown && uarmf->oerodeproof &&
+                         Fire_resistance))) &&
             !is_pool(level, u.ux, u.uy) && !is_lava(level, u.ux, u.uy)) {
 
             if (cansee(x, y))
@@ -2370,8 +2374,10 @@ spoteffects(boolean pick)
             pline(msgc_consequence, "You pop out of the water like a cork!");
         else if (Flying)
             pline(msgc_consequence, "You fly out of the water.");
-        else if (Wwalking)
+        else if (Wwalking) {
             pline(msgc_consequence, "You slowly rise above the surface.");
+            identify_ww_source();
+        }
         else
             goto stillinwater;
         was_underwater = Underwater && !Is_waterlevel(&u.uz);
@@ -2395,8 +2401,12 @@ stillinwater:
             } else if (is_lava(level, u.ux, u.uy)) {
                 if (lava_effects())
                     return;
-            } else if (!Wwalking && drown())
-                return;
+            } else if (!Wwalking) {
+                if (drown())
+                    return;
+            } else {
+                identify_ww_source();
+            }
         }
     }
     check_special_room(FALSE);
