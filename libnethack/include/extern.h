@@ -727,6 +727,7 @@ extern struct obj *mkgoldobj(long);
 extern struct obj *getobj(const char *let, const char *word, boolean isarg);
 extern boolean validate_object(struct obj *obj, const char *lets,
                                const char *word);
+extern void identify_ww_source(void);
 extern void fully_identify_obj(struct obj *);
 extern void identify_pack(int);
 extern void prinv(const char *, struct obj *, long);
