@@ -660,8 +660,10 @@ enlightenment(int final)
         you_are(&menu, "levitating");   /* without control */
     else if (Flying)
         you_can(&menu, "fly");
-    if (Wwalking)
+    if (Wwalking) {
+        identify_ww_source();
         you_can(&menu, "walk on water");
+    }
     if (Swimming)
         you_can(&menu, "swim");
     if (Breathless)
