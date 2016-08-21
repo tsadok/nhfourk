@@ -492,6 +492,323 @@ OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
 
+# "Three-Room Monte"
+MAZE: "soko4-8",' '
+FLAGS:noteleport,hardfloor
+MESSAGE:"Three-Room Monte"
+GEOMETRY:center,center
+#12345678901234
+MAP
+--------   ----
+|......-----..|
+|.............|
+|......------.|
+|......|(...|.|
+|--..---....|.|
+|...........|.|
+|......|....|.|
+----...|....|.|
+   ------------
+ENDMAP
+BRANCH:(03,02,03,02),levregion()
+STAIR:(13,08),up
+REGION:(00,00,14,09),lit,"ordinary"
+NON_DIGGABLE:(00,00,14,09)
+NON_PASSWALL:(00,00,14,09)
+
+# Boulders
+OBJECT:'`',"boulder",(02,03)
+OBJECT:'`',"boulder",(05,03)
+OBJECT:'`',"boulder",(03,04)
+OBJECT:'`',"boulder",(05,04)
+OBJECT:'`',"boulder",(03,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(03,06)
+OBJECT:'`',"boulder",(05,06)
+OBJECT:'`',"boulder",(07,06)
+OBJECT:'`',"boulder",(10,06)
+OBJECT:'`',"boulder",(08,07)
+OBJECT:'`',"boulder",(10,07)
+
+# Traps
+TRAP:"pit",(07,02)
+TRAP:"pit",(08,02)
+TRAP:"pit",(09,02)
+TRAP:"pit",(10,02)
+TRAP:"pit",(11,02)
+TRAP:"pit",(13,03)
+TRAP:"pit",(13,04)
+TRAP:"pit",(13,05)
+TRAP:"pit",(13,06)
+TRAP:"pit",(13,07)
+
+# A little help
+OBJECT:'?',"earth",(12,01)
+OBJECT:'?',"earth",(13,01)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+# "Column B"
+MAZE: "soko4-9",' '
+# This level is designed to be the FIRST level in the Sokoban branch
+FLAGS:noteleport,hardfloor
+MESSAGE:"Column B"
+GEOMETRY:center,center
+#1234567890123
+MAP
+------ ------ 
+|....---....| 
+|.....|.....| 
+---.......|.| 
+  |...--..|.| 
+  |---|(..|.| 
+ --...|...|.| 
+ |........|.| 
+ |....|...|.--
+ |...------..|
+ |...|.......|
+ -------------
+ENDMAP
+BRANCH:(04,10,04,10),levregion()
+STAIR:(06,10),up
+REGION:(00,00,13,11),lit,"ordinary"
+NON_DIGGABLE:(00,00,13,11)
+NON_PASSWALL:(00,00,13,11)
+
+# Boulders
+OBJECT:'`',"boulder",(02,02)
+OBJECT:'`',"boulder",(04,02)
+OBJECT:'`',"boulder",(08,02)
+OBJECT:'`',"boulder",(08,03)
+OBJECT:'`',"boulder",(08,04)
+OBJECT:'`',"boulder",(08,05)
+OBJECT:'`',"boulder",(08,06)
+OBJECT:'`',"boulder",(04,07)
+OBJECT:'`',"boulder",(05,07)
+OBJECT:'`',"boulder",(03,08)
+OBJECT:'`',"boulder",(04,09)
+
+# Traps
+TRAP:"pit",(11,03)
+TRAP:"pit",(11,04)
+TRAP:"pit",(11,05)
+TRAP:"pit",(11,06)
+TRAP:"pit",(11,07)
+TRAP:"pit",(11,08)
+TRAP:"pit",(07,10)
+TRAP:"pit",(08,10)
+TRAP:"pit",(09,10)
+TRAP:"pit",(10,10)
+
+# A little help
+OBJECT:'?',"earth",(12,09)
+OBJECT:'?',"earth",(12,10)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+# "One Weird Trick"
+MAZE: "soko4-10",' '
+# This level is designed to be the FIRST level in the Sokoban branch
+FLAGS:noteleport,hardfloor
+MESSAGE:"One Weird Trick"
+GEOMETRY:center,center
+#123456789012345678
+MAP
+----   ----   ---- 
+|..-----.(|----..| 
+|...--....--.....| 
+--............--.| 
+ |.....--.....||.| 
+ |......|...---|.| 
+ ---..|.|.---  |.| 
+   |..|...|    |.| 
+   |..--.--    |.--
+   --....|  ----..|
+    |..---  |.....|
+    ----    -------
+ENDMAP
+BRANCH:(01,01,01,01),levregion()
+STAIR:(13,10),up
+REGION:(00,00,18,11),lit,"ordinary"
+NON_DIGGABLE:(00,00,18,11)
+NON_PASSWALL:(00,00,18,11)
+
+# Boulders
+OBJECT:'`',"boulder",(07,02)
+OBJECT:'`',"boulder",(03,03)
+OBJECT:'`',"boulder",(08,03)
+OBJECT:'`',"boulder",(10,03)
+OBJECT:'`',"boulder",(03,04)
+OBJECT:'`',"boulder",(04,04)
+OBJECT:'`',"boulder",(09,04)
+OBJECT:'`',"boulder",(11,04)
+OBJECT:'`',"boulder",(05,05)
+OBJECT:'`',"boulder",(05,07)
+OBJECT:'`',"boulder",(05,09)
+
+# Traps
+TRAP:"pit",(14,02)
+TRAP:"pit",(15,02)
+TRAP:"pit",(16,03)
+TRAP:"pit",(16,04)
+TRAP:"pit",(16,05)
+TRAP:"pit",(16,06)
+TRAP:"pit",(16,07)
+TRAP:"pit",(16,08)
+TRAP:"pit",(14,10)
+TRAP:"pit",(15,10)
+
+# A little help
+OBJECT:'?',"earth",(15,01)
+OBJECT:'?',"earth",(16,01)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+# "To the Top"
+MAZE: "soko4-11",' '
+# This level is designed to be the FIRST level in the Sokoban branch
+FLAGS:noteleport,hardfloor
+MESSAGE:"To the Top"
+GEOMETRY:center,center
+#12345678901234
+MAP
+---------------
+|.............|
+|(.------------
+--.....|.....| 
+ |.....|.....| 
+ |.....|.....| 
+ |--.-------.--
+ |....|..|....|
+ |....|.......|
+ |............|
+ |....---------
+ ------        
+ENDMAP
+STAIR:(13,01),up
+BRANCH:(08,03,08,03),levregion()
+REGION:(00,00,14,11),lit,"ordinary"
+NON_DIGGABLE:(00,00,14,11)
+NON_PASSWALL:(00,00,14,11)
+
+# Boulders
+OBJECT:'`',"boulder",(04,03)
+OBJECT:'`',"boulder",(04,04)
+OBJECT:'`',"boulder",(05,04)
+OBJECT:'`',"boulder",(10,04)
+OBJECT:'`',"boulder",(12,04)
+OBJECT:'`',"boulder",(03,05)
+OBJECT:'`',"boulder",(09,05)
+OBJECT:'`',"boulder",(11,05)
+OBJECT:'`',"boulder",(03,08)
+OBJECT:'`',"boulder",(11,08)
+OBJECT:'`',"boulder",(03,09)
+OBJECT:'`',"boulder",(12,09)
+
+# Traps
+TRAP:"pit",(03,01)
+TRAP:"pit",(04,01)
+TRAP:"pit",(05,01)
+TRAP:"pit",(06,01)
+TRAP:"pit",(07,01)
+TRAP:"pit",(08,01)
+TRAP:"pit",(09,01)
+TRAP:"pit",(10,01)
+TRAP:"pit",(11,01)
+TRAP:"pit",(12,01)
+
+# A little help
+OBJECT:'?',"earth",(07,07)
+OBJECT:'?',"earth",(08,07)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
+# "A Hug and a Kiss"
+MAZE: "soko4-12",' '
+# This level is designed to be the FIRST level in the Sokoban branch
+FLAGS:noteleport,hardfloor
+MESSAGE:"A Hug and a Kiss"
+GEOMETRY:center,center
+#123456789012
+MAP
+----   ----- 
+|..-----...| 
+|..........| 
+|.|------..| 
+|.|........| 
+|.|........--
+|.|........(|
+|.|------...|
+---     -----
+ENDMAP
+BRANCH:(03,04,03,04),levregion()
+STAIR:(01,07),up
+REGION:(00,00,12,08),lit,"ordinary"
+NON_DIGGABLE:(00,00,12,08)
+NON_PASSWALL:(00,00,12,08)
+
+# Boulders
+OBJECT:'`',"boulder",(09,02)
+OBJECT:'`',"boulder",(04,04)
+OBJECT:'`',"boulder",(06,04)
+OBJECT:'`',"boulder",(09,04)
+OBJECT:'`',"boulder",(05,05)
+OBJECT:'`',"boulder",(08,05)
+OBJECT:'`',"boulder",(10,05)
+OBJECT:'`',"boulder",(04,06)
+OBJECT:'`',"boulder",(06,06)
+OBJECT:'`',"boulder",(09,06)
+
+# Traps
+TRAP:"pit",(03,02)
+TRAP:"pit",(04,02)
+TRAP:"pit",(05,02)
+TRAP:"pit",(06,02)
+TRAP:"pit",(07,02)
+TRAP:"pit",(01,03)
+TRAP:"pit",(01,04)
+TRAP:"pit",(01,05)
+TRAP:"pit",(01,06)
+
+# A little help
+OBJECT:'?',"earth",(01,01)
+OBJECT:'?',"earth",(02,01)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
 
 ### Second level ###
 
