@@ -1373,6 +1373,83 @@ OBJECT:'%',random,random
 OBJECT:'=',random,random
 OBJECT:'/',random,random
 
+# "Four Wings"
+MAZE: "soko3-9",' '
+FLAGS:noteleport
+MESSAGE:"Four Wings"
+GEOMETRY:center,center
+#1234567890123456789012345
+MAP
+           ----           
+          --..--          
+         --....--         
+         |......|         
+      ---|......----      
+      |..|..-----..|      
+   ---|.....|......|---   
+ ---..|.---.|..---.|..--- 
+--....|.| |.--.| |.|....--
+|.....|.| |..|.| |.|.....|
+|.....|.--|..|.| |.|.....|
+--....|..||..|.| |.|....--
+ ---.....--..|.--|.+..--- 
+   ----..........------   
+      |............|      
+      ----......----      
+         |-.....|         
+         --....--         
+          ------          
+ENDMAP
+STAIR:(12,09),down
+STAIR:(22,09),up
+DOOR:locked,(19,12)
+REGION:(00,00,25,18),lit,"ordinary"
+NON_DIGGABLE:(00,00,25,18)
+NON_PASSWALL:(00,00,25,18)
+
+# Boulders
+OBJECT:'`',"boulder",(12,03)
+OBJECT:'`',"boulder",(12,04)
+OBJECT:'`',"boulder",(09,06)
+OBJECT:'`',"boulder",(05,08)
+OBJECT:'`',"boulder",(03,10)
+OBJECT:'`',"boulder",(04,10)
+OBJECT:'`',"boulder",(05,10)
+OBJECT:'`',"boulder",(11,10)
+OBJECT:'`',"boulder",(03,11)
+OBJECT:'`',"boulder",(12,11)
+OBJECT:'`',"boulder",(11,12)
+OBJECT:'`',"boulder",(15,13)
+OBJECT:'`',"boulder",(09,14)
+OBJECT:'`',"boulder",(10,14)
+OBJECT:'`',"boulder",(11,14)
+OBJECT:'`',"boulder",(11,16)
+OBJECT:'`',"boulder",(12,16)
+
+# Traps
+TRAP:"hole",(15,06)
+TRAP:"hole",(16,06)
+TRAP:"hole",(17,06)
+TRAP:"hole",(14,07)
+TRAP:"hole",(18,07)
+TRAP:"hole",(14,08)
+TRAP:"hole",(18,08)
+TRAP:"hole",(14,09)
+TRAP:"hole",(18,09)
+TRAP:"hole",(14,10)
+TRAP:"hole",(18,10)
+TRAP:"hole",(14,11)
+TRAP:"hole",(18,11)
+TRAP:"hole",(14,12)
+TRAP:"hole",(18,12)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
 
 
 ### Third level ###
