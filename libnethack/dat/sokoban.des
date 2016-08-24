@@ -2123,6 +2123,72 @@ OBJECT:'/',random,random
 # The delicatessen:
 REGION:(08,01,12,04),lit,"food shop"
 
+# "Stacked Dozen"
+# Map created by karadoc
+MAZE: "soko2-10",' '
+FLAGS:noteleport
+MESSAGE:"Stacked Dozen"
+GEOMETRY:center,center
+#123456789012345678901234
+MAP
+---------         ------ 
+|.......|     ----|....--
+|.......|    --..--.....|
+|.......|  ---......-.|.|
+|.......|  |..........|.|
+|.......|  |.....-......|
+|+------------.....--...|
+|...............|.......|
+-------------------------
+ENDMAP
+STAIR:(04,03),up
+STAIR:(17,07),down
+DOOR:locked,(01,06)
+REGION:(00,00,24,08),lit,"ordinary"
+NON_DIGGABLE:(00,00,24,08)
+NON_PASSWALL:(00,00,24,08)
+
+# Boulders
+# Spoiler: positions to aim for are as follows:
+# (19,02),(21,02),(16,03),(17,03),(13,04),(17,04),(20,04),
+# (21,04),(16,05),(22,05),(21,06), and the last stands at (14,05).
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+OBJECT:'`',"boulder",(14,05)
+ENGRAVING:(17,07),burn,"How did they all end up on top of each other?"
+
+# Traps
+TRAP:"hole",(02,07)
+TRAP:"hole",(03,07)
+TRAP:"hole",(04,07)
+TRAP:"hole",(05,07)
+TRAP:"hole",(06,07)
+TRAP:"hole",(07,07)
+TRAP:"hole",(08,07)
+TRAP:"hole",(09,07)
+TRAP:"hole",(10,07)
+TRAP:"hole",(11,07)
+TRAP:"hole",(12,07)
+
+# Random objects
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'%',random,random
+OBJECT:'=',random,random
+OBJECT:'/',random,random
+
+
 ### Top (last) level of Sokoban ###
 # "Sokobag / Bagoban"
 MAZE:"soko1-1",' '
