@@ -167,6 +167,6 @@ Character Counts:
   sprintf " %4d  '$_'", $count{$_}
 } sort { $count{$b} <=> $count{$a} } keys %count) . "\n\n";
 
-if ($count{"?"} ne ($first ? 2 : 0)) {
+if (($count{"?"} || 0) ne ($first ? 2 : 0)) {
   warn "Incorrect number of scrolls of earth.\n";
 }
