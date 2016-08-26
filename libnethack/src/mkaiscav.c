@@ -257,8 +257,8 @@ void mkaisvs(struct level *lev, int x, int y)
 {
     /* The suggested x and y coordinates may not be suitable for this.
        We'll be checking and possibly replacing them with a fresh spot. */
-    int xmargin = 4;
-    int ymargin = 3;
+    int xmargin = 6;
+    int ymargin = 4;
     int mindist = 11;
     int tries = 0;
     coord cc;
