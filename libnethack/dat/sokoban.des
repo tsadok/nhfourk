@@ -32,9 +32,11 @@
 
 
 ### Bottom (first) level of Sokoban ###
+# NetHack Wiki "1b", Steelypips "Level 1 Version A"
+# "Kick It On Over"
 MAZE:"soko4-1",' '
 FLAGS:noteleport,hardfloor
-MESSAGE:"Untitled 1a"
+MESSAGE:"Kick It On Over"
 GEOMETRY:center,center
 #1234567890123
 MAP
@@ -96,9 +98,11 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# NetHack Wiki "1a", Steelypips "Level 1 Version B"
+# "Setting That Aside"
 MAZE:"soko4-2",' '
 FLAGS:noteleport,hardfloor
-MESSAGE:"Untitled 1b"
+MESSAGE:"Setting That Aside"
 GEOMETRY:center,center
 #12345678901234
 MAP
@@ -812,6 +816,7 @@ OBJECT:'/',random,random
 
 ### Second level ###
 
+# NetHack Wiki "2b", Steelypips "Level 2 Version A"
 # "Squared Off" (a Vanilla level)
 MAZE:"soko3-1",' '
 FLAGS:noteleport
@@ -1453,9 +1458,11 @@ OBJECT:'/',random,random
 
 
 ### Third level ###
+# NetHack Wiki "3b", Steelypips "Level 3 Version A"
+# "Squeeze Me In"
 MAZE:"soko2-1",' '
 FLAGS:noteleport
-MESSAGE:"Untitled 3b"
+MESSAGE:"Squeeze Me In"
 GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890
 MAP
@@ -1519,6 +1526,7 @@ OBJECT:'=',random,random
 OBJECT:'/',random,random
 
 
+# NetHack Wiki "3a", Steelypips "Level 3 version B"
 # "Nooks and Cubbyholes"
 MAZE:"soko2-2",' '
 FLAGS:noteleport
@@ -2190,10 +2198,12 @@ OBJECT:'/',random,random
 
 
 ### Top (last) level of Sokoban ###
-# "Sokobag / Bagoban"
+# NetHack wiki "4a", Steelypips "Level 4, version A"
+# "Left Holding the Bag" aka "sokobag", aka "bagoban",
+# aka "sokholdingbang" (I wish I were making that up.)
 MAZE:"soko1-1",' '
 FLAGS:noteleport
-MESSAGE:"Sokobag"
+MESSAGE:"Left Holding the Bag"
 GEOMETRY:center,center
 #1234567890123456789012345
 MAP
@@ -2284,7 +2294,8 @@ OBJECT:'(',"bag of holding",place[0]
 ENGRAVING:place[0],burn,"Elbereth"
 
 
-# "Reflectoban"
+# NetHack Wiki "4b", Steelypips "Level 4, version B"
+# "Upon Further Reflection", aka "Reflectoban"
 MAZE:"soko1-2",' '
 FLAGS:noteleport
 MESSAGE:"Reflectoban"
