@@ -61,12 +61,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+Changes in 4.3.0.4:
+-------------------
+
  * When a randomly generated weapon is positively enchanted and
    not cursed, it may be assigned a name, like "Sword of Virtue",
    "Mace of Justice", "Staff of Yendor", etc.
-
-Changes in 4.3.0.4:
--------------------
 
  * When a randomly generated weapon is positively enchanted and
    not cursed, it may be assigned a name, like "Sword of Virtue",
