@@ -791,6 +791,7 @@ makehtmlspoilers(void)
                            O_CREAT | O_WRONLY, SPOILPREFIX);
     int i;
     struct artifact *art;
+    char *headrow = "";
     
     /* ######################## Weapons ######################## */
 
@@ -1026,23 +1027,25 @@ makehtmlspoilers(void)
             }
         fprintf(outfile, "</div>");
         /* then the actual monster table */
+        lastmlet = mons[0].mlet;
+        headrow = "<tr><th class=\"mlet\"></th>"
+            "<th class=\"monster\">monster</th>"
+            "<th class=\"numeric level\">lvl</th>"
+            "<th class=\"numeric monstr\">mon<br />str</th>"
+            "<th class=\"numeric speed\">mov</th>"
+            "<th class=\"numeric ac\">def</th>"
+            "<th class=\"numeric monmr\">mr</th>"
+            "<th class=\"align\">aln</th>"
+            "<th class=\"attacks\">attacks</th>"
+            "<th class=\"resistances\">resists</th>"
+            "<th class=\"resgranted\">grants</th>"
+            "<th class=\"numeric nutrition\">nutr</th>"
+            "<th class=\"numeric weight\">wt</th>"
+            "<th class=\"size\">sz</th>"
+            "<th class=\"flags\">flags</th>"
+            "</tr>\n";
         fprintf(outfile, "\n<table id=\"monsters\"><thead>\n  "
-                "<tr><th class=\"mlet\"></th>"
-                "<th class=\"monster\">monster</th>"
-                "<th class=\"numeric level\">lvl</th>"
-                "<th class=\"numeric monstr\">mon<br />str</th>"
-                "<th class=\"numeric speed\">mov</th>"
-                "<th class=\"numeric ac\">def</th>"
-                "<th class=\"numeric monmr\">mr</th>"
-                "<th class=\"align\">aln</th>"
-                "<th class=\"attacks\">attacks</th>"
-                "<th class=\"resistances\">resists</th>"
-                "<th class=\"resgranted\">grants</th>"
-                "<th class=\"numeric nutrition\">nutr</th>"
-                "<th class=\"numeric weight\">wt</th>"
-                "<th class=\"size\">sz</th>"
-                "<th class=\"flags\">flags</th>"
-                "</tr>\n</thead><tbody>\n");
+                "%s</thead><tbody>\n", headrow);
 
         for (i = 0; mons[i].mlet; i++) {
             const boolean ul = mons[i].mcolor & HI_ULINE ? TRUE : FALSE;
@@ -1057,6 +1060,13 @@ makehtmlspoilers(void)
                                          (ul ? "<u>" : ""),
                                          (def_monsyms[(int)mons[i].mlet]),
                                          (ul ? "</u>" : ""));
+            if (i && !(i % 17)) { /* 17 plus the 1 we're adding makes 18 table
+                                     rows, a multiple of three, so the headrows
+                                     all get the same highlighting if we use the
+                                     CSS to backlight every third row. */
+                fprintf(outfile, "%s", headrow);
+                lastmlet = mons[i].mlet;
+            }
             fprintf(outfile, "<tr><td id=\"monst%d\" class=\"mlet\">%s</td>"
                     "<td class=\"monster\">%s</td>"
                     "<td class=\"numeric level\">%d</td>"
