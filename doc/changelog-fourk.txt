@@ -61,36 +61,6 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
-Changes in 4.3.0.4:
--------------------
-
- * When a randomly generated weapon is positively enchanted and
-   not cursed, it may be assigned a name, like "Sword of Virtue",
-   "Mace of Justice", "Staff of Yendor", etc.
-
- * When a randomly generated weapon is positively enchanted and
-   not cursed, it may be assigned a name, like "Sword of Virtue",
-   "Mace of Justice", "Staff of Yendor", etc.
-
- * Sokoban levels now announce their titles when you enter them.
-
- * A new special level, the Garden of Temptation, has been added
-   near the top of Gehennom.  The Garden contains trees, benches,
-   fountains, statues, a nice lake with a picturesque island,
-   delicious fruit, foocubi, nymphs, and other delights.  The lake
-   contains a submerged magic lamp.  The locked garden shed contains
-   an altar to moloch and a magic chest.  There are two versions.
-
- * Peaceful gremlins refrain from using water to split themselves.
-   They can still be split by a rust trap or if hit by a potion of
-   water, and possibly some other ways; but they will not fill up
-   entire levels with peaceful gremlins if one happens to generate
-   on a level with water (e.g., Medusa's, Juiblex', Castle).
-
- * When you swing your axe in a wide (or tremendous) arc and
-   hit multiple monsters, all of them now get a chance to use
-   their passive attacks, if applicable.
-
  * Achievement-unlockable features have been implemented.  You can now
    unlock certain game features by achieving certain things within the
    game.  Once a feature is unlocked, it stays unlocked after your
@@ -159,6 +129,37 @@ Changes in 4.3.0.4:
    (subject to unlocking) play a character who is permanently confused,
    stunned, fumbling, or has permanent greasy fingers, wounded legs,
    or terrible luck.
+
+
+Changes in 4.3.0.4:
+-------------------
+
+ * When a randomly generated weapon is positively enchanted and
+   not cursed, it may be assigned a name, like "Sword of Virtue",
+   "Mace of Justice", "Staff of Yendor", etc.
+
+ * When a randomly generated weapon is positively enchanted and
+   not cursed, it may be assigned a name, like "Sword of Virtue",
+   "Mace of Justice", "Staff of Yendor", etc.
+
+ * Sokoban levels now announce their titles when you enter them.
+
+ * A new special level, the Garden of Temptation, has been added
+   near the top of Gehennom.  The Garden contains trees, benches,
+   fountains, statues, a nice lake with a picturesque island,
+   delicious fruit, foocubi, nymphs, and other delights.  The lake
+   contains a submerged magic lamp.  The locked garden shed contains
+   an altar to moloch and a magic chest.  There are two versions.
+
+ * Peaceful gremlins refrain from using water to split themselves.
+   They can still be split by a rust trap or if hit by a potion of
+   water, and possibly some other ways; but they will not fill up
+   entire levels with peaceful gremlins if one happens to generate
+   on a level with water (e.g., Medusa's, Juiblex', Castle).
+
+ * When you swing your axe in a wide (or tremendous) arc and
+   hit multiple monsters, all of them now get a chance to use
+   their passive attacks, if applicable.
 
  * Pet hunger fixes have been cherry-picked from FIQHack, so
    pets will now only eat when hungry, but when they do eat, it
