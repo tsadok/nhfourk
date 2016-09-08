@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2016-01-24 */
+/* Last modified by Alex Smith, 2016-06-14 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -7,8 +7,8 @@
 #include "eshk.h"
 #include "epri.h"
 
-static boolean tele_jump_ok(int, int, int, int, struct level *);
-static boolean teleok(int, int, boolean, boolean wizard_tele);
+static boolean tele_jump_ok(struct level *, int, int, int, int);
+static boolean u_teleok(int, int, boolean, boolean wizard_tele);
 static void vault_tele(void);
 static boolean rloc_pos_ok(int, int, struct monst *, struct level *);
 static coord polartorect(int, int);
@@ -195,49 +195,49 @@ full:
  * only for explicitly chosen destinations.)
  */
 static boolean
-tele_jump_ok(int x1, int y1, int x2, int y2, struct level *lev)
+tele_jump_ok(struct level *mdl, int x1, int y1, int x2, int y2)
 {
-    if (lev->dndest.nlx != COLNO) {
+    if (mdl->dndest.nlx != COLNO) {
         /* if inside a restricted region, can't teleport outside */
         if (within_bounded_area
-            (x1, y1, lev->dndest.nlx, lev->dndest.nly, lev->dndest.nhx,
-             lev->dndest.nhy) &&
-            !within_bounded_area(x2, y2, lev->dndest.nlx, lev->dndest.nly,
-                                 lev->dndest.nhx, lev->dndest.nhy))
+            (x1, y1, mdl->dndest.nlx, mdl->dndest.nly, mdl->dndest.nhx,
+             mdl->dndest.nhy) &&
+            !within_bounded_area(x2, y2, mdl->dndest.nlx, mdl->dndest.nly,
+                                 mdl->dndest.nhx, mdl->dndest.nhy))
             return FALSE;
         /* and if outside, can't teleport inside */
         if (!within_bounded_area
-            (x1, y1, lev->dndest.nlx, lev->dndest.nly, lev->dndest.nhx,
-             lev->dndest.nhy) &&
-            within_bounded_area(x2, y2, lev->dndest.nlx, lev->dndest.nly,
-                                lev->dndest.nhx, lev->dndest.nhy))
+            (x1, y1, mdl->dndest.nlx, mdl->dndest.nly, mdl->dndest.nhx,
+             mdl->dndest.nhy) &&
+            within_bounded_area(x2, y2, mdl->dndest.nlx, mdl->dndest.nly,
+                                mdl->dndest.nhx, mdl->dndest.nhy))
             return FALSE;
     }
-    if (lev->updest.nlx != COLNO) {        /* ditto */
+    if (mdl->updest.nlx != COLNO) {        /* ditto */
         if (within_bounded_area
-            (x1, y1, lev->updest.nlx, lev->updest.nly, lev->updest.nhx,
-             lev->updest.nhy) &&
-            !within_bounded_area(x2, y2, lev->updest.nlx, lev->updest.nly,
-                                 lev->updest.nhx, lev->updest.nhy))
+            (x1, y1, mdl->updest.nlx, mdl->updest.nly, mdl->updest.nhx,
+             mdl->updest.nhy) &&
+            !within_bounded_area(x2, y2, mdl->updest.nlx, mdl->updest.nly,
+                                 mdl->updest.nhx, mdl->updest.nhy))
             return FALSE;
         if (!within_bounded_area
-            (x1, y1, lev->updest.nlx, lev->updest.nly, lev->updest.nhx,
-             lev->updest.nhy) &&
-            within_bounded_area(x2, y2, lev->updest.nlx, lev->updest.nly,
-                                lev->updest.nhx, lev->updest.nhy))
+            (x1, y1, mdl->updest.nlx, mdl->updest.nly, mdl->updest.nhx,
+             mdl->updest.nhy) &&
+            within_bounded_area(x2, y2, mdl->updest.nlx, mdl->updest.nly,
+                                mdl->updest.nhx, mdl->updest.nhy))
             return FALSE;
     }
     return TRUE;
 }
 
 static boolean
-teleok(int x, int y, boolean trapok, boolean wizard_tele)
+u_teleok(int x, int y, boolean trapok, boolean wizard_tele)
 {
     if (!trapok && t_at(level, x, y))
         return FALSE;
     if (!goodpos(level, x, y, &youmonst, 0))
         return FALSE;
-    if (!wizard_tele && !tele_jump_ok(u.ux, u.uy, x, y, level))
+    if (!wizard_tele && !tele_jump_ok(level, u.ux, u.uy, x, y))
         return FALSE;
     if (!in_out_region(level, x, y))
         return FALSE;
@@ -351,7 +351,8 @@ safe_teleds(boolean allow_drag)
     do {
         nux = rn2(COLNO);
         nuy = rn2(ROWNO);
-    } while (!teleok(nux, nuy, (boolean) (tcnt > 200), FALSE) && ++tcnt <= 400);
+    } while (!u_teleok(nux, nuy,
+                       (boolean) (tcnt > 200), FALSE) && ++tcnt <= 400);
 
     if (tcnt <= 400) {
         teleds(nux, nuy, allow_drag);
@@ -367,7 +368,7 @@ vault_tele(void)
     coord c;
 
     if (croom && somexy(level, croom, &c, rng_main) &&
-        teleok(c.x, c.y, FALSE, FALSE)) {
+        u_teleok(c.x, c.y, FALSE, FALSE)) {
         teleds(c.x, c.y, FALSE);
         return;
     }
@@ -456,7 +457,7 @@ tele_impl(boolean wizard_tele, boolean run_next_to_u)
 
             /* possible extensions: introduce a small error if magic power is
                low; allow transfer to solid rock */
-            if (teleok(cc.x, cc.y, FALSE, wizard_tele)) {
+            if (u_teleok(cc.x, cc.y, FALSE, wizard_tele)) {
                 teleds(cc.x, cc.y, FALSE);
                 return 1;
             }
@@ -856,8 +857,9 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
             struct monst *mtmp, struct level *lev)
 {
     int xx, yy;
+    struct level *mdl = mtmp->dlevel;
 
-    if (!goodpos(lev, x, y, mtmp, 0))
+    if (!goodpos(mdl, x, y, mtmp, 0))
         return FALSE;
     /*
      * Check for restricted areas present in some special levels.
@@ -870,38 +872,29 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
     yy = mtmp->my;
     if (!xx) {
         /* no current location (migrating monster arrival) */
-        if (lev->dndest.nlx && On_W_tower_level(&u.uz))
+        if (mdl->dndest.nlx && On_W_tower_level(m_mz(mtmp)))
             return ((yy & 2) != 0) ^    /* inside xor not within */
-                !within_bounded_area(x, y, lev->dndest.nlx, lev->dndest.nly,
-                                     lev->dndest.nhx, lev->dndest.nhy);
-        if (lev->updest.lx && (yy & 1) != COLNO)  /* moving up */
+                !within_bounded_area(x, y, mdl->dndest.nlx, mdl->dndest.nly,
+                                     mdl->dndest.nhx, mdl->dndest.nhy);
+        if (mdl->updest.lx && (yy & 1) != COLNO)  /* moving up */
             return (within_bounded_area
-                    (x, y, lev->updest.lx, lev->updest.ly,
-                     lev->updest.hx, lev->updest.hy) &&
-                    (!lev->updest.nlx ||
+                    (x, y, mdl->updest.lx, mdl->updest.ly,
+                     mdl->updest.hx, mdl->updest.hy) &&
+                    (!mdl->updest.nlx ||
                      !within_bounded_area(
-                       x, y, lev->updest.nlx, lev->updest.nly,
-                       lev->updest.nhx, lev->updest.nhy)));
-        if (lev->dndest.lx && (yy & 1) == COLNO)  /* moving down */
+                       x, y, mdl->updest.nlx, mdl->updest.nly,
+                       mdl->updest.nhx, mdl->updest.nhy)));
+        if (mdl->dndest.lx && (yy & 1) == COLNO)  /* moving down */
             return (within_bounded_area
-                    (x, y, lev->dndest.lx, lev->dndest.ly,
-                     lev->dndest.hx, lev->dndest.hy) &&
-                    (!lev->dndest.nlx ||
+                    (x, y, mdl->dndest.lx, mdl->dndest.ly,
+                     mdl->dndest.hx, mdl->dndest.hy) &&
+                    (!mdl->dndest.nlx ||
                      !within_bounded_area(
-                         x, y, lev->dndest.nlx, lev->dndest.nly,
-                         lev->dndest.nhx, lev->dndest.nhy)));
-    } else { /* [try to] prevent a shopkeeper or temple priest from being
-                sent out of his room (caller might resort to goodpos() if
-                we report failure here, so this isn't full prevention) */
-        if (mtmp->isshk && inhishop(mtmp)) {
-            if (lev->locations[x][y].roomno != ESHK(mtmp)->shoproom)
-                return FALSE;
-        } else if (mtmp->ispriest && inhistemple(mtmp)) {
-            if (lev->locations[x][y].roomno != EPRI(mtmp)->shroom)
-                return FALSE;
-        }
+                         x, y, mdl->dndest.nlx, mdl->dndest.nly,
+                         mdl->dndest.nhx, mdl->dndest.nhy)));
+    } else {
         /* current location is <xx,yy> */
-        if (!tele_jump_ok(xx, yy, x, y, lev))
+        if (!tele_jump_ok(mdl, xx, yy, x, y))
             return FALSE;
     }
     /* <x,y> is ok */
@@ -956,9 +949,6 @@ rloc_to(struct monst *mtmp, int x, int y, struct level *lev)
     if (lev == level) {
         newsym(x, y);       /* update new location */
         set_apparxy(mtmp);  /* orient monster */
-    } else {
-        mtmp->mux = COLNO;
-        mtmp->muy = ROWNO;
     }
 
     /* In some cases involving migration, the player and monster are currently
@@ -1011,17 +1001,23 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
         return TRUE;
     }
 
-    if (mtmp->iswiz && mtmp->mx != COLNO) {      /* Wizard, not just arriving */
+    if (!(mtmp->dlevel))
+        panic("trying to teleport monster onto which level?");
+
+    struct level *mdl = mtmp->dlevel;
+
+    if (mtmp->iswiz && mtmp->mx != COLNO &&
+        mdl == level) {      /* Wizard, not just arriving */
         if (!In_W_tower(u.ux, u.uy, &u.uz))
-            x = lev->upstair.sx, y = lev->upstair.sy;
-        else if (!isok(lev->dnladder.sx, lev->dnladder.sy))
-            x = lev->upladder.sx, y = lev->upladder.sy;/* bottom of tower */
+            x = mdl->upstair.sx, y = mdl->upstair.sy;
+        else if (!isok(mdl->dnladder.sx, mdl->dnladder.sy))
+            x = mdl->upladder.sx, y = mdl->upladder.sy;/* bottom of tower */
         else
-            x = lev->dnladder.sx, y = lev->dnladder.sy;
+            x = mdl->dnladder.sx, y = mdl->dnladder.sy;
         /* if the wiz teleports away to heal, try the up staircase, to block
            the player's escaping before he's healed (deliberately use `goodpos'
            rather than `rloc_pos_ok' here) */
-        if (goodpos(lev, x, y, mtmp, 0))
+        if (goodpos(mdl, x, y, mtmp, 0))
             goto found_xy;
     }
 
@@ -1095,15 +1091,15 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
         do {
             x = rn2(COLNO);
             y = rn2(ROWNO);
-            if ((trycount < 500) ? rloc_pos_ok(x, y, mtmp, lev)
-                : goodpos(lev, x, y, mtmp, gpflags))
+            if ((trycount < 500) ? rloc_pos_ok(x, y, mtmp, mdl)
+                : goodpos(mdl, x, y, mtmp, gpflags))
                 goto found_xy;
         } while (++trycount < 1000);
 
-        /* try every square on the level as a fallback */
+        /* try every square on the mdl as a fallback */
         for (x = 0; x < COLNO; x++)
             for (y = 0; y < ROWNO; y++)
-                if (goodpos(lev, x, y, mtmp, gpflags))
+                if (goodpos(mdl, x, y, mtmp, gpflags))
                     goto found_xy;
     }
 

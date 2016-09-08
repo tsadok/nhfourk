@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-13 */
+/* Last modified by Alex Smith, 2016-06-14 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -537,17 +537,41 @@ toofar:
     }
 
     /* Look for other monsters to fight (at a distance) */
-    if ((attacktype(mtmp->data, AT_BREA) || attacktype(mtmp->data, AT_GAZE) ||
-         attacktype(mtmp->data, AT_SPIT) ||
-         (attacktype(mtmp->data, AT_WEAP) && select_rwep(mtmp) != 0)) &&
+    musable.has_offense = 0;
+    if (((!mtmp->mspec_used &&
+          (attacktype(mtmp->data, AT_BREA) || attacktype(mtmp->data, AT_GAZE) ||
+           attacktype(mtmp->data, AT_SPIT))) ||
+         (attacktype(mtmp->data, AT_WEAP) && select_rwep(mtmp) != 0) ||
+         find_offensive(mtmp, &musable)) &&
         mtmp->mlstmv != moves) {
         struct monst *mtmp2 = mfind_target(mtmp, FALSE);
 
-        if (mtmp2 && mtmp2 != &youmonst) {
-            if (mattackm(mtmp, mtmp2) & MM_AGR_DIED)
-                return 1;       /* Oops. */
+        int tx = mtmp2->mx, ty = mtmp2->my;
+        if (mtmp2 == &youmonst) {
+            /* use muxy */
+            tx = mtmp->mux;
+            ty = mtmp->muy;
+        }
 
-            return 0;   /* that was our move for the round */
+        /* Don't fight melee targets here. Doing so might have issues like
+           ignoring Elbereth/etc */
+        if (mtmp2 && !monnear(mtmp, tx, ty)) {
+            int ret = 0;
+
+            /* Check for musable first */
+            if (musable.has_offense)
+                ret = use_offensive(mtmp, &musable);
+            if (ret == 1)
+                return 1; /* Oops. */
+
+            /* Check for ranged attack */
+            if (!ret && !musable.has_offense)
+                ret = mattackq(mtmp, tx, ty);
+
+            if (ret & MM_AGR_DIED)
+                return 1; /* Oops. */
+
+            return 0; /* that was our move for the round */
         }
     }
 
@@ -611,10 +635,7 @@ toofar:
             /* Maybe it stepped on a trap and fell asleep... */
             if (mtmp->msleeping || !mtmp->mcanmove)
                 return 0;
-            if (!nearby &&
-                (ranged_attk(mdat) || find_offensive(mtmp, &musable)))
-                break;
-            else if (Engulfed && mtmp == u.ustuck) {
+            if (Engulfed && mtmp == u.ustuck) {
                 /* a monster that's digesting you can move at the same time
                    -dlc */
                 return mattacku(mtmp);
@@ -1308,6 +1329,14 @@ void
 set_apparxy(struct monst *mtmp)
 {
     int disp;
+
+    /* if you aren't on the level, then the monster can't sense you */
+    if (mtmp->dlevel != level) {
+        mtmp->mux = COLNO;
+        mtmp->muy = ROWNO;
+        return;
+    }
+
     boolean actually_adjacent = distmin(mtmp->mx, mtmp->my, u.ux, u.uy) <= 1;
     boolean loe = couldsee(mtmp->mx, mtmp->my);
     unsigned msense_status;
