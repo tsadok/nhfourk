@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-22 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -104,7 +104,7 @@ inven_inuse(boolean quietly)
         otmp2 = otmp->nobj;
         if (otmp->in_use) {
             if (!quietly)
-                pline("Finishing off %s...", xname(otmp));
+                pline(msgc_noidea, "Finishing off %s...", xname(otmp));
             useup(otmp);
         }
     }
@@ -560,6 +560,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->ulycn = mread32(mf);
     y->utrap = save_decode_32(mread32(mf), -moves, -moves);
     y->utraptype = mread32(mf);
+    y->ucramps = mread32(mf);
     y->uhunger = save_decode_32(mread32(mf), -moves, -moves);
     y->uhs = mread32(mf);
     y->oldcap = mread32(mf);
@@ -805,6 +806,7 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->pushweapon = mread8(mf);
     f->rogue_enabled = mread8(mf);
     f->seduce_enabled = mread8(mf);
+    f->servermail = mread8(mf);
     f->showrace = mread8(mf);
     f->show_uncursed = mread8(mf);
     f->sortpack = mread8(mf);
@@ -823,9 +825,10 @@ restore_flags(struct memfile *mf, struct flag *f)
 
     f->actions = mread8(mf);
     f->save_encoding = mread8(mf);
+    f->hide_implied = mread8(mf);
 
     /* Ignore the padding added in save.c */
-    for (i = 0; i < 110; i++)
+    for (i = 0; i < 109; i++)
         (void) mread8(mf);
 
     mread(mf, f->setseed, sizeof (f->setseed));
@@ -936,10 +939,10 @@ dorecover(struct memfile *mf)
 void
 trickery(const char *reason)
 {
-    pline("Strange, this map is not as I remember it.");
-    pline("Somebody is trying some trickery here...");
-    pline("This game is void.");
-    pline("%s", reason);
+    pline(msgc_saveload, "Strange, this map is not as I remember it.");
+    pline(msgc_saveload, "Somebody is trying some trickery here...");
+    pline(msgc_saveload, "This game is void.");
+    pline(msgc_saveload, "%s", reason);
     done(TRICKED, NULL);
 }
 

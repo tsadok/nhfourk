@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-21 */
+/* Last modified by Alex Smith, 2015-11-13 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -11,8 +11,6 @@
 #include "hack.h"
 #include "qtext.h"
 #include "epri.h"
-
-extern const int monstr[];
 
 static short which_arti(int);
 static boolean mon_has_arti(const struct monst *, short);
@@ -60,11 +58,11 @@ amulet(void)
                 int du = distu(ttmp->tx, ttmp->ty);
 
                 if (du <= 9)
-                    pline("%s hot!", Tobjnam(amu, "feel"));
+                    pline(msgc_hint, "%s hot!", Tobjnam(amu, "feel"));
                 else if (du <= 64)
-                    pline("%s very warm.", Tobjnam(amu, "feel"));
+                    pline(msgc_hint, "%s very warm.", Tobjnam(amu, "feel"));
                 else if (du <= 144)
-                    pline("%s warm.", Tobjnam(amu, "feel"));
+                    pline(msgc_hint, "%s warm.", Tobjnam(amu, "feel"));
                 /* else, the amulet feels normal */
                 break;
             }
@@ -78,8 +76,8 @@ amulet(void)
         if (!DEADMONSTER(mtmp) && mtmp->iswiz && mtmp->msleeping && !rn2(40)) {
             mtmp->msleeping = 0;
             if (distu(mtmp->mx, mtmp->my) > 2)
-                pline("You get the creepy feeling that somebody noticed "
-                      "you taking the Amulet.");
+                pline(msgc_levelwarning, "You get the creepy feeling that "
+                      "somebody noticed you taking the Amulet.");
             return;
         }
 }
@@ -284,6 +282,8 @@ void
 strategy(struct monst *mtmp, boolean magical_target)
 {
     boolean chases_player = !mtmp->mpeaceful || mtmp->isshk || mtmp->mtame;
+    if (Stormprone)
+        chases_player = TRUE;
 
     set_apparxy(mtmp);
 
@@ -567,7 +567,7 @@ tactics(struct monst *mtmp)
             (mtmp->iswiz && isok(level->upstair.sx, level->upstair.sy) &&
              !mon_has_amulet(mtmp))) {
             if (!rn2(3 + mtmp->mhp / 10))
-                rloc(mtmp, TRUE);
+                rloc(mtmp, TRUE, mtmp->dlevel);
         } else if (isok(level->upstair.sx, level->upstair.sy) &&
                    (mtmp->mx != level->upstair.sx ||
                     mtmp->my != level->upstair.sy)) {
@@ -616,11 +616,12 @@ tactics(struct monst *mtmp)
                 if (!MON_AT(level, tx, ty) ||
                     (mtmp->mx == tx && mtmp->my == ty)) {
                     /* teleport to it and pick it up */
-                    rloc_to(mtmp, tx, ty);      /* clean old pos */
+                    rloc_to(mtmp, tx, ty, level);      /* clean old pos */
 
                     if ((otmp = on_ground(which_arti(targ))) != 0) {
                         if (cansee(mtmp->mx, mtmp->my))
-                            pline("%s picks up %s.", Monnam(mtmp),
+                            pline(msgc_monneutral, "%s picks up %s.",
+                                  Monnam(mtmp),
                                   (distu(mtmp->mx, mtmp->my) <= 5) ?
                                   doname(otmp) : distant_name(otmp, doname));
                         obj_extract_self(otmp);
@@ -740,7 +741,7 @@ nasty(struct monst *mcast)
                 makeindex = pick_nasty();
                 j++;
             } while (((mcast && attacktype(&mons[makeindex], AT_MAGC) &&
-                       monstr[makeindex] >= monstr[monsndx(mcast->data)]) ||
+                       MONSTR(makeindex) >= MONSTR(monsndx(mcast->data))) ||
                       (mons[makeindex].maligntyp &&
                        sgn(mons[makeindex].maligntyp) == -sgn(castalign)) ||
                       (mvitals[makeindex].mvflags & G_GENOD)) && j < 20);
@@ -764,9 +765,11 @@ nasty(struct monst *mcast)
         }
         if (count > 1) {
             if (mvitals[PM_WIZARD_OF_YENDOR].died && !mcast)
-                pline("\"%s\"", nastymessage[rn2(SIZE(nastymessage))]);
+                pline(msgc_npcvoice, "\"%s\"",
+                      nastymessage[rn2(SIZE(nastymessage))]);
             else
-                pline("Monsters suddenly arrive from nowhere!");
+                pline(msgc_youdiscover,
+                      "Monsters suddenly arrive from nowhere!");
             win_pause_output(P_MESSAGE);    /* --More-- */
         }
     }
@@ -818,8 +821,9 @@ resurrect(void)
     if (mtmp) {
         mtmp->msleeping = 0;
         msethostility(mtmp, TRUE, TRUE);
-        pline("A voice booms out...");
-        verbalize("So thou thought thou couldst %s me, fool.", verb);
+        pline(msgc_npcvoice, "A voice booms out...");
+        verbalize(msgc_npcanger,
+                  "So thou thought thou couldst %s me, fool.", verb);
     }
 
 }
@@ -836,11 +840,12 @@ intervene(void)
     switch (which) {
     case 0:
     case 1:
-        pline("You feel vaguely nervous.");
+        pline(msgc_levelsound, "You feel vaguely nervous.");
         break;
     case 2:
         if (!Blind)
-            pline("You notice a %s glow surrounding you.", hcolor("black"));
+            pline(msgc_itemloss, "You notice a %s glow surrounding you.",
+                  hcolor("black"));
         rndcurse();
         break;
     case 3:
@@ -916,25 +921,28 @@ cuss(struct monst *mtmp)
 {
     if (mtmp->iswiz) {
         if (!rn2(5))    /* typical bad guy action */
-            pline("%s laughs fiendishly.", Monnam(mtmp));
+            pline(msgc_npcvoice, "%s laughs fiendishly.", Monnam(mtmp));
         else if (Uhave_amulet && !rn2(SIZE(random_insult)))
-            verbalize("Relinquish the amulet, %s!",
+            verbalize(msgc_npcvoice, "Relinquish the amulet, %s!",
                       random_insult[rn2(SIZE(random_insult))]);
         else if (u.uhp < 5 && !rn2(2))  /* Panic */
-            verbalize(rn2(2) ? "Even now thy life force ebbs, %s!" :
+            verbalize(msgc_npcvoice, rn2(2) ?
+                      "Even now thy life force ebbs, %s!" :
                       "Savor thy breath, %s, it be thy last!",
                       random_insult[rn2(SIZE(random_insult))]);
         else if (mtmp->mhp < 5 && !rn2(2))      /* Parthian shot */
-            verbalize(rn2(2) ? "I shall return." : "I'll be back.");
+            verbalize(msgc_npcvoice,
+                      rn2(2) ? "I shall return." : "I'll be back.");
         else
-            verbalize("%s %s!",
+            verbalize(msgc_npcvoice, "%s %s!",
                       random_malediction[rn2(SIZE(random_malediction))],
                       random_insult[rn2(SIZE(random_insult))]);
     } else if (is_lminion(mtmp)) {
         com_pager(rn2(QTN_ANGELIC - 1 + (Hallucination ? 1 : 0)) + QT_ANGELIC);
     } else {
         if (!rn2(5))
-            pline("%s casts aspersions on your ancestry.", Monnam(mtmp));
+            pline(msgc_npcvoice, "%s casts aspersions on your ancestry.",
+                  Monnam(mtmp));
         else
             com_pager(rn2(QTN_DEMONIC) + QT_DEMONIC);
     }

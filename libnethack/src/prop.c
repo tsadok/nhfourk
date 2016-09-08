@@ -460,23 +460,23 @@ enlightenment(int final)
     }
 
     /* note: piousness 20 matches MIN_QUEST_ALIGN (quest.h) */
-    if (u.ualign.record >= PIOUS)
+    if (UALIGNREC >= PIOUS)
         you_are(&menu, "piously aligned");
-    else if (u.ualign.record >= DEVOUT)
+    else if (UALIGNREC >= DEVOUT)
         you_are(&menu, "devoutly aligned");
-    else if (u.ualign.record >= FERVENT)
+    else if (UALIGNREC >= FERVENT)
         you_are(&menu, "fervently aligned");
-    else if (u.ualign.record >= STRIDENT)
+    else if (UALIGNREC >= STRIDENT)
         you_are(&menu, "stridently aligned");
-    else if (u.ualign.record >= ALIGNED_WITHOUT_ADJECTIVE)
+    else if (UALIGNREC >= ALIGNED_WITHOUT_ADJECTIVE)
         you_are(&menu, "aligned");
-    else if (u.ualign.record >= HALTINGLY)
+    else if (UALIGNREC >= HALTINGLY)
         you_are(&menu, "haltingly aligned");
-    else if (u.ualign.record >= NOMINALLY)
+    else if (UALIGNREC >= NOMINALLY)
         you_are(&menu, "nominally aligned");
-    else if (u.ualign.record >= STRAYED)
+    else if (UALIGNREC >= STRAYED)
         you_have(&menu, "strayed");
-    else if (u.ualign.record >= SINNED)
+    else if (UALIGNREC >= SINNED)
         you_have(&menu, "sinned");
     else
         you_have(&menu, "transgressed");
@@ -484,8 +484,11 @@ enlightenment(int final)
         const char *buf = msgprintf(" %d", u.uhunger);
         enl_msg(&menu, "Hunger level ", "is", "was", buf);
 
-        buf = msgprintf(" %d / %ld", u.ualign.record, ALIGNLIM);
+        buf = msgprintf(" %d / %ld", UALIGNREC, ALIGNLIM);
         enl_msg(&menu, "Your alignment ", "is", "was", buf);
+
+        buf = msgprintf(" MC level %d", magic_negation(&youmonst));
+        enl_msg(&menu, "You ", "have", "had", buf);
     }
 
         /*** Resistances to troubles ***/
@@ -558,6 +561,19 @@ enlightenment(int final)
         enl_msg(&menu, "You ", "fall", "fell", " asleep");
     if (Hunger)
         enl_msg(&menu, "You hunger", "", "ed", " rapidly");
+    if (u.ucramps > 0) {
+        enl_msg(&menu, msgprintf("Your writing %s ", body_part(HAND)),
+                "is", "was",
+                (u.ucramps > 1536) ? " injured entirely beyond use" :
+                (u.ucramps > 512)  ? " injured severely from excessive use" :
+                (u.ucramps > 128)  ? " injured through excessive use" :
+                (u.ucramps > 32)   ? " thoroughly cramped from overuse" :
+                (u.ucramps > 16)   ? " cramped from overuse" :
+                (u.ucramps >  8)   ? " a little cramped from use" : " ok");
+        if (wizard)
+            enl_msg(&menu, "(Cramp level ", "is", "was",
+                    msgprintf(" %d)", u.ucramps));
+    }
 
         /*** Vision and senses ***/
     if (See_invisible)
@@ -611,8 +627,21 @@ enlightenment(int final)
         you_are(&menu, "visible");
     if (Displaced)
         you_are(&menu, "displaced");
-    if (Stealth)
+    switch(get_stealth(&youmonst)) {
+    case 0:
+        break; /* no message if you aren't stealthy at all */
+    case 1:
+    case 2:
+        you_are(&menu, "somewhat stealthy");
+        break;
+    case 3:
+    case 4:
         you_are(&menu, "stealthy");
+        break;
+    case 5:
+    default: /* more than 5 is possible */
+        you_are(&menu, "very stealthy");
+    }
     if (Aggravate_monster)
         enl_msg(&menu, "You aggravate", "", "d", " monsters");
     if (Conflict)
@@ -631,8 +660,10 @@ enlightenment(int final)
         you_are(&menu, "levitating");   /* without control */
     else if (Flying)
         you_can(&menu, "fly");
-    if (Wwalking)
+    if (Wwalking) {
+        identify_ww_source();
         you_can(&menu, "walk on water");
+    }
     if (Swimming)
         you_can(&menu, "swim");
     if (Breathless)
@@ -649,7 +680,7 @@ enlightenment(int final)
         you_are(&menu, msgcat("swallowed by ", a_monnam(u.ustuck)));
     else if (u.ustuck) {
         const char *buf = msgprintf(
-            "%s %s", (Upolyd && sticks(youmonst.data)) ? "holding" : "held by",
+            "%s %s", (sticks(URACEDATA)) ? "holding" : "held by",
             a_monnam(u.ustuck));
         you_are(&menu, buf);
     }
@@ -858,8 +889,6 @@ unspoilered_intrinsics(void)
         add_menutext(&menu, "You are invisible.");
     if (HInvis && !Invisible)
         add_menutext(&menu, "You are invisible to others.");
-    if (HStealth)
-        add_menutext(&menu, "You are stealthy.");
     if (HAggravate_monster)
         add_menutext(&menu, "You aggravte monsters.");
     if (HConflict)
@@ -911,7 +940,7 @@ show_conduct(int final)
     if (u.uconduct_time[conduct_food] > 1800) {
         buf = msgprintf("did not eat until turn %d",
                         u.uconduct_time[conduct_food]);
-        enl_msg(&menu, You_, "", "had ", buf);
+        enl_msg(&menu, You_, "", "", buf);
     }
     if (u.uconduct_time[conduct_vegan] > 1800) {
         buf = msgprintf("followed a strict vegan diet until turn %d",
@@ -936,6 +965,27 @@ show_conduct(int final)
     else if (!u.uconduct[conduct_clothing])
         enl_msg(&menu, You_, "have not worn", "did not wear",
                 " any clothing or armor");
+
+    /* Conflict message only at game end for now, because otherwise #conduct
+       would provide trivial identification for the ring of conflict.  We may
+       ultimately decide to just auto-ID it when worn, but that would be a
+       separate decision.  (If so, then we could remove final && here.) */
+    if (final && !u.uconduct[conduct_conflict])
+        enl_msg(&menu, You_, "have not caused", "did not cause", " conflict");
+    /* Similarly, it's possible to be invisible and not know (if blind). */
+    if (final && !u.uconduct[conduct_invisible])
+        enl_msg(&menu, You_, "have not been", "were not", " invisible");
+    /* And it's possible to wear an unidentified amulet of reflection. */
+    if (final && !u.uconduct[conduct_reflection])
+        enl_msg(&menu, You_, "have not had", "did not have", " reflection");
+    else if (final && (u.uconduct_time[conduct_reflection] >
+                       (((moves > 20000) ? 10000 : 0) + (moves / 2))))
+        enl_msg(&menu, You_, "have not had", "did not have",
+                msgprintf(" reflection until turn %d",
+                          u.uconduct_time[conduct_reflection]));
+    /* But displacement auto-identifies. */
+    if (!u.uconduct[conduct_displacement])
+        enl_msg(&menu, You_, "have not been", "were not", " displaced");
 
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
@@ -975,6 +1025,16 @@ show_conduct(int final)
             enl_msg(&menu, You_, "have not applied", "did not apply",
                     " a unicorn horn");
     }
+    if (!u.uconduct[conduct_fountains]) {
+        enl_msg(&menu, You_, "have not used", "did not use",
+                u.uconduct[conduct_sinks] ? " fountains" :
+                " plumbed fixtures");
+    } else if (!u.uconduct[conduct_sinks]) {
+        enl_msg(&menu, You_, "have not used", "did not use", " sinks");
+    }
+    if (!u.uconduct[conduct_potions])
+        enl_msg(&menu, You_, "have not drunk", "did not drink",
+                " any magical draughts");
 
     if (!u.uconduct[conduct_illiterate])
         you_have_been(&menu, "illiterate");

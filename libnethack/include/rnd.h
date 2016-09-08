@@ -64,7 +64,7 @@ enum rng {
     rng_crystal_ball,    /* crystal ball results */
     rng_boulder_bridge,  /* boulders forming a bridge over water */
     rng_unfix_crysknife, /* crysknives reverting */
-    rng_mysterious_force,/* what happens when you go upwards in Gehennom */
+    rng_role_alignment,  /* role-specific alignment record handling */
     rng_helm_alignment,  /* helm of opposite alignment effect on a neutral */
     rng_u_create_monster,/* "create monster" effects used by player */
     rng_m_create_monster,/* "create monster" effects used by a monster */
@@ -135,6 +135,7 @@ enum rng {
     rng_levport_results, /* distance to get level-teleported */
     rng_trapdoor_result, /* distance to get trapdoored */
     rng_superior_item,   /* upgrade some items in Gehennom */
+    rng_cramps,          /* hand cramps from excessive engraving */
     first_level_rng
 };
 

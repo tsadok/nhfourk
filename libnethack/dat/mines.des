@@ -630,6 +630,7 @@ MONSTER:'Y',"monkey",random
 MONSTER:'Y',"monkey",random
 MONSTER:'n',random,random
 DOOR: false, closed, south, random
+DOOR: true, locked, east, random
 
 SUBROOM: "ordinary", random, (14,2), (4,2), "town"
 DOOR: false, closed, south, 0
@@ -669,7 +670,8 @@ DOOR: false, closed, north, random
 
 SUBROOM: "ordinary", random, (22,11), (2,2), "town"
 DOOR: false, closed, south, random
-SINK: (00,00)
+DOOR: true, locked, north, random
+SINK: (01,00)
 
 SUBROOM: "food shop", lit, (25,11), (3,2), "town"
 CHANCE: 50
@@ -679,7 +681,7 @@ SUBROOM: "tool shop", lit, (25,2), (3,3), "town"
 CHANCE: 30
 DOOR: false, closed, west, random
 
-SUBROOM: "temple", lit, (24,6), (4,4), "town"
+SUBROOM: "temple", lit, (24,8), (4,2), "town"
 DOOR: false, closed, west, random
 ALTAR:(02,01),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
@@ -703,6 +705,159 @@ MONSTER: 'G', "gnome", random
 
 RANDOM_CORRIDORS
   
+# "Creek Town" by L.
+# No fountains in this town, for obvious reasons.
+#
+MAZE: "minetn-8",' '
+INIT_MAP:'.','-',true,true,lit,true
+GEOMETRY:left,bottom
+#         1         2         3
+#123456789012345678901234567890
+MAP
+-----..----..-------...........
+|...+..----..|.....|---........
+|...|....|...+.....|..|.-------
+|...|........|.....|..|.|..|..|
+|---|........-------+--.|F+-F+|
+|  |....................|.....|
+| --...........-+-----+-|.....|
+---...---+---..|..|..|..|.....|
+--....|.....|..|..|..|..--+----
+......|(....|..----+-----......
+.T....|.....|..................
+......|.....|...------.........
+-..T..--------..+....|.....----
+--.........-----|....|.....+..|
+--.----.....----------.....|..|
+...---.....................----
+ENDMAP
+REGION:(00,00,30,15),lit,"ordinary"
+REGION:(1,1,3,3),lit,"candle shop"
+REGION:(14,1,18,3),lit,"shop"
+REGION:(7,8,11,11),lit,"temple"
+ALTAR:(9,10),align[0],shrine
+# Protect the watch-house walls
+NON_DIGGABLE:(24,2,30,8)
+# Doors
+DOOR:closed,(4,1)
+DOOR:closed,(13,2)
+DOOR:closed,(9,7)
+DOOR:locked,(16,6)
+DOOR:locked,(19,9)
+DOOR:locked,(20,4)
+DOOR:locked,(22,6)
+DOOR:locked,(16,12)
+DOOR:locked,(29,4)
+DOOR:locked,(26,4)
+DOOR:open,(26,8)
+DOOR:locked,(27,13)
+# Loose floorboard
+TRAP:"board",random
+# Furniture
+OBJECT:'(',"chest",(17,8)
+OBJECT:'(',"chest",(19,7)
+OBJECT:'(',"chest",(20,12)
+OBJECT:'`',"statue",(7,4),"gnome king",1
+# Guards
+MONSTER:'@',"watchman",(26,6),peaceful
+MONSTER:'@',"watchman",(7,4),peaceful
+MONSTER:'@',"watchman",(24,11),peaceful
+# Watchdog
+MONSTER:'d',"large dog",(29,5),peaceful,asleep
+# Citizens
+MONSTER:'G',"gnome",(16,7),hostile
+MONSTER:'G',"gnome king",(19,13),hostile
+MONSTER:'G',"gnome",random
+MONSTER:'G',"gnome",random
+MONSTER:'G',"gnome lord",random
+MONSTER:'G',"gnome lord",random
+MONSTER:'G',"gnome lord",random
+MONSTER:'h',"dwarf lord",random
+MONSTER:'h',"quantum mechanic",random
+MONSTER:'h',"quantum mechanic",random
+# The creek
+GEOMETRY:center,center
+#123456789012345
+MAP
+--         |www|
+.-----  ----www|
+.....-- |..www--
+......---.www--|
+..........ww.| |
+---+-....w.w.---
+|...|....ww.....
+|...|...wwww....
+|---|..wwPww....
+|...|.wwPPww....
+|...|.wwPPw.....
+|...|..wPPww....
+|...|.wwwPPww...
+-+---.wwwwPww-+-
+.....ww..wPww|..
+-...ww..wwPw.|..
+|..w.w..wwww.---
+|.www....www....
+|www.....www.---
+www.---.wwww.| |
+ww--- ---wwww| |
+ENDMAP
+REGION:(00,00,15,20),lit,"ordinary"
+REGION:(1,9,3,12),lit,"scroll shop"
+# Stairs
+STAIR:levregion(59,12,75,19),(0,0,15,20),up
+STAIR:levregion(59,03,75,11),(0,0,15,20),down
+# Doors
+DOOR:locked,(3,5)
+DOOR:closed,(1,13)
+DOOR:locked,(14,13)
+# Furniture
+OBJECT: '(',"chest",(14,15)
+# Monsters
+MONSTER: '@',"watch captain",random,peaceful
+MONSTER: 'G',random,(14,14)
+# River feeders
+MONSTER[75%]:';',"jellyfish",random
+MONSTER[75%]:';',"jellyfish",random
+MONSTER[75%]:';',"jellyfish",random
+MONSTER[75%]:';',"jellyfish",random
+MONSTER[75%]:';',"jellyfish",random
+MONSTER[25%]:';',"piranha",random
+MONSTER[25%]:';',"piranha",random
+MONSTER[25%]:';',"piranha",random
+MONSTER[25%]:';',"piranha",random
+MONSTER[25%]:';',"piranha",random
+# Junk
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Near side of the creek
+GEOMETRY:half-right,center
+MAP
+.............
+.--------+--.
+.|.....|...|.
+.|.....|...|.
+.|.....|---|.
+.--+---|...|.
+.......|...|.
+.......--+--.
+--+-.........
+|..|.........
+|..|....----.
+----...--..--
+............|
+ENDMAP
+REGION:(00,00,12,12),lit,"ordinary"
+REGION:(02,02,06,04),lit,"food shop"
+DOOR:closed,(3,5)
+DOOR:closed,(2,8)
+DOOR:locked,(9,1)
+DOOR:locked,(9,7)
+MONSTER:'h',"hobbit",random
+MONSTER:'h',"bugbear",random
+MONSTER:'h',"bugbear",random
+MONSTER:'h',"dwarf",random
+MONSTER:'@',"watchman",(1,10),peaceful
 
 # Mine end level variant 2
 # "Gnome King's Wine Cellar"
@@ -1057,5 +1212,14 @@ DOOR:locked,(62,6)
 DOOR:closed,(30,13)
 DOOR:closed,(37,13)
 DOOR:closed,(48,13)
+# Wake the shamans if anyone tries to take the figurine:
+TRAP:"board",(69,04)
+TRAP:"board",(69,05)
+TRAP:"board",(69,06)
+TRAP:"board",(70,04)
+TRAP:"board",(70,06)
+TRAP:"board",(71,04)
+TRAP:"board",(71,05)
+TRAP:"board",(71,06)
 
 # end mines.des

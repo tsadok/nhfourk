@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-19 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) 1996 by Jean-Christophe Collet  */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -235,6 +235,8 @@ add_region(struct level *lev, struct region *reg)
             /* Some lev->regions can cross the level boundaries */
             if (!isok(i, j))
                 continue;
+            if (inside_region(reg, i, j))
+                block_point(i, j);
             if (MON_AT(level, i, j) && inside_region(reg, i, j))
                 add_mon_to_reg(reg, level->monsters[i][j]);
             if (reg->visible && cansee(i, j))
@@ -326,7 +328,7 @@ run_regions(struct level *lev)
                 struct monst *mtmp =
                     find_mid(lev, lev->regions[i]->monsters[j], FM_FMON);
 
-                if (!mtmp || mtmp->mhp <= 0 ||
+                if (!mtmp || DEADMONSTER(mtmp) ||
                     (*callbacks[f_indx]) (lev->regions[i], mtmp)) {
                     /* The monster died, remove it from list */
                     k = (lev->regions[i]->n_monst -= 1);
@@ -370,7 +372,7 @@ in_out_region(struct level *lev, xchar x, xchar y)
             !inside_region(lev->regions[i], x, y)) {
             clear_hero_inside(lev->regions[i]);
             if (lev->regions[i]->leave_msg != NULL)
-                pline("%s", lev->regions[i]->leave_msg);
+                pline(msgc_noidea, "%s", lev->regions[i]->leave_msg);
             if ((f_indx = lev->regions[i]->leave_f) != NO_CALLBACK)
                 (void)(*callbacks[f_indx]) (lev->regions[i], 0);
         }
@@ -381,7 +383,7 @@ in_out_region(struct level *lev, xchar x, xchar y)
             inside_region(lev->regions[i], x, y)) {
             set_hero_inside(lev->regions[i]);
             if (lev->regions[i]->enter_msg != NULL)
-                pline("%s", lev->regions[i]->enter_msg);
+                pline(msgc_noidea, "%s", lev->regions[i]->enter_msg);
             if ((f_indx = lev->regions[i]->enter_f) != NO_CALLBACK)
                 (void)(*callbacks[f_indx]) (lev->regions[i], 0);
         }
@@ -687,6 +689,7 @@ boolean
 expire_gas_cloud(void *p1, void *p2)
 {
     struct region *reg;
+    int x, y;
     int damage;
 
     reg = (struct region *)p1;
@@ -698,6 +701,26 @@ expire_gas_cloud(void *p1, void *p2)
         reg->arg = damage;
         reg->ttl = 2;   /* Here's the trick : reset ttl */
         return FALSE;   /* THEN return FALSE, means "still there" */
+    }
+    /* So the cloud no longer blocks vision now. */
+    for (x = reg->bounding_box.lx; x <= reg->bounding_box.hx; x++) {
+        for (y = reg->bounding_box.ly; y <= reg->bounding_box.hy; y++) {
+            if (inside_region(reg, x, y)) {
+                if (isok(x,y) && !IS_ROCK(level->locations[x][y].typ)) {
+                    /* check for obstructions */
+                    boolean isblocked = FALSE;
+                    struct obj *otmp;
+                    for (otmp = level->objects[x][y]; otmp;
+                         otmp = otmp->nexthere) {
+                        if (otmp->otyp == BOULDER) {
+                            isblocked = TRUE;
+                        }
+                    }
+                    if (!isblocked)
+                        unblock_point(x, y);
+                }
+            }
+        }
     }
     return TRUE;        /* OK, it's gone, you can free it! */
 }
@@ -715,19 +738,20 @@ inside_gas_cloud(void *p1, void *p2)
         if (nonliving(youmonst.data) || u.uinvulnerable)
             return FALSE;
         /* If you will unblind next turn, extend the blindness so that you do
-         * not get a "You can see again!" message immediately before being
-         * blinded again. */
+           not get a "You can see again!" message immediately before being
+           blinded again. */
         if (!Blind || Blinded == 1)
             make_blinded(2L, FALSE);
         if (Breathless)
             return FALSE;
         if (!Poison_resistance) {
-            pline("Something is burning your %s!", makeplural(body_part(LUNG)));
-            pline("You cough and spit blood!");
+            pline(msgc_statusbad, "Something is burning your %s!",
+                  makeplural(body_part(LUNG)));
+            pline_implied(msgc_statusbad, "You cough and spit blood!");
             losehp(rnd(dam) + 5, killer_msg(DIED, "a gas cloud"));
             return FALSE;
         } else {
-            pline("You cough!");
+            pline(msgc_playerimmune, "You cough!");
             return FALSE;
         }
     } else {    /* A monster is inside the cloud */
@@ -736,7 +760,9 @@ inside_gas_cloud(void *p1, void *p2)
         /* Non living and non breathing monsters are not concerned */
         if (!nonliving(mtmp->data) && !breathless(mtmp->data)) {
             if (cansee(mtmp->mx, mtmp->my))
-                pline("%s coughs!", Monnam(mtmp));
+                pline(mtmp->mtame ? msgc_petfatal : msgc_levelsound,
+                      "%s coughs!", Monnam(mtmp));
+            /* TODO: conditionalise on heros_fault? */
             setmangry(mtmp);
             if (haseyes(mtmp->data) && mtmp->mcansee) {
                 mtmp->mblinded = 1;
@@ -749,8 +775,8 @@ inside_gas_cloud(void *p1, void *p2)
                 if (heros_fault(reg))
                     killed(mtmp);
                 else
-                    monkilled(mtmp, "gas cloud", AD_DRST);
-                if (mtmp->mhp <= 0) {   /* not lifesaved */
+                    monkilled(NULL, mtmp, "gas cloud", AD_DRST);
+                if (DEADMONSTER(mtmp)) {   /* not lifesaved */
                     return TRUE;
                 }
             }
@@ -788,6 +814,7 @@ create_gas_cloud(struct level *lev, xchar x, xchar y, int radius, int damage)
     cloud->visible = TRUE;
     cloud->effect_id = dbuf_effect(E_MISC, E_gascloud);
     add_region(lev, cloud);
+    flush_screen();
     return cloud;
 }
 

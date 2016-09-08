@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-23 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -109,7 +109,7 @@ mkshop(struct level *lev)
         if (sroom->hx < 0)
             return;
         if (sroom - lev->rooms >= lev->nroom) {
-            pline("lev->rooms not closed by -1?");
+            impossible("lev->rooms not closed by -1?");
             return;
         }
         if (sroom->rtype != OROOM)
@@ -281,7 +281,7 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
                           (type == ANTHOLE) ? antholemon(&lev->z) :
                           NULL, lev, sx, sy,
                           rng == rng_main ? NO_MM_FLAGS : MM_ALLLEVRNG);
-            if (mon) {
+            if (mon && !resists_sleep(mon)) {
                 mon->msleeping = 1;
                 if (type == COURT && mon->mpeaceful)
                     msethostility(mon, TRUE, TRUE);
@@ -357,16 +357,18 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     int px, py, i, imax, cutoffone, cutofftwo, cutoffthree;
     /* int rmno = (sroom - lev->rooms) + ROOMOFFSET; */
     coord pos[ROWNO * COLNO];
-    int babypm, adultpm, greatpm,
+    int babypm, adultpm, ancientpm,
         gemone, gemtwo, glass,
         itemone, itemtwo, itemthree;
+    int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
     int color = rn2_on_rng(6, rng);
+    struct monst *mon;
     imax = 0;
     switch (color) {
     case 1: /* blue */
-        babypm    = PM_BABY_BLUE_DRAGON;
+        babypm    = harder ? PM_YOUNG_BLUE_DRAGON : PM_BABY_BLUE_DRAGON;
         adultpm   = PM_BLUE_DRAGON;
-        greatpm   = adultpm; /* TODO */
+        ancientpm = harder ? PM_ANCIENT_BLUE_DRAGON : PM_ELDER_BLUE_DRAGON;
         gemone    = SAPPHIRE;
         gemtwo    = AQUAMARINE;
         glass     = WORTHLESS_PIECE_OF_BLUE_GLASS;
@@ -375,9 +377,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemthree = WAN_LIGHTNING;
         break;
     case 2: /* green */
-        babypm    = PM_BABY_GREEN_DRAGON;
+        babypm    = harder ? PM_YOUNG_GREEN_DRAGON : PM_BABY_GREEN_DRAGON;
         adultpm   = PM_GREEN_DRAGON;
-        greatpm   = adultpm; /* TODO */
+        ancientpm = harder ? PM_ANCIENT_GREEN_DRAGON : PM_ELDER_GREEN_DRAGON;
         gemone    = EMERALD;
         gemtwo    = JADE;
         glass     = WORTHLESS_PIECE_OF_GREEN_GLASS;
@@ -386,9 +388,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemthree = AMULET_VERSUS_POISON;
         break;
     case 3: /* white */
-        babypm    = PM_BABY_WHITE_DRAGON;
+        babypm    = harder ? PM_YOUNG_WHITE_DRAGON : PM_BABY_WHITE_DRAGON;
         adultpm   = PM_WHITE_DRAGON;
-        greatpm   = adultpm; /* TODO */
+        ancientpm = harder ? PM_ANCIENT_WHITE_DRAGON : PM_ELDER_WHITE_DRAGON;
         gemone    = DIAMOND;
         gemtwo    = OPAL;
         glass     = WORTHLESS_PIECE_OF_WHITE_GLASS;
@@ -397,9 +399,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemthree = WAN_COLD;
         break;
     case 4: /* orange */
-        babypm    = PM_BABY_ORANGE_DRAGON;
+        babypm    = harder ? PM_YOUNG_ORANGE_DRAGON : PM_BABY_ORANGE_DRAGON;
         adultpm   = PM_ORANGE_DRAGON;
-        greatpm   = adultpm; /* TODO */
+        ancientpm = harder ? PM_ANCIENT_ORANGE_DRAGON : PM_ELDER_ORANGE_DRAGON;
         gemone    = JACINTH;
         gemtwo    = AGATE;
         glass     = WORTHLESS_PIECE_OF_ORANGE_GLASS;
@@ -408,9 +410,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemthree = WAN_SLEEP;
         break;
     default: /* red */
-        babypm    = PM_BABY_RED_DRAGON;
+        babypm    = harder ? PM_YOUNG_RED_DRAGON : PM_BABY_RED_DRAGON;
         adultpm   = PM_RED_DRAGON;
-        greatpm   = adultpm; /* TODO */
+        ancientpm = harder ? PM_ANCIENT_RED_DRAGON : PM_ELDER_RED_DRAGON;
         gemone    = RUBY;
         gemtwo    = GARNET;
         glass     = WORTHLESS_PIECE_OF_RED_GLASS;
@@ -479,12 +481,16 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         }
         /* here be dragons */
         if (i <= cutoffone) {
-            makemon(&mons[greatpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+            mon = makemon(&mons[ancientpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutofftwo) {
-            makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+            mon = makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutoffthree) {
-            makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
+            mon = makemon(&mons[babypm], lev, pos[i].x, pos[i].y, 0);
+        } else {
+            mon = NULL;
         }
+        if (mon && !resists_sleep(mon))
+            mon->msleeping = 1;
     }
 }
 
@@ -579,9 +585,12 @@ mkswamp(struct level *lev)
                                     MM_ALLLEVRNG);
                             eelct++;
                         }
-                    } else if (!rn2_on_rng(4, rng)) /* swamps tend to be moldy */
-                        makemon(mkclass(&lev->z, S_FUNGUS, 0, rng),
-                                lev, sx, sy, MM_ALLLEVRNG);
+                    } else {
+                        lev->locations[sx][sy].typ = PUDDLE;
+                        if (!rn2_on_rng(4, rng)) /* swamps tend to be moldy */
+                            makemon(mkclass(&lev->z, S_FUNGUS, 0, rng),
+                                    lev, sx, sy, MM_ALLLEVRNG);
+                    }
                 }
     }
 }

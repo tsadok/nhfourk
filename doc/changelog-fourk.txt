@@ -28,31 +28,447 @@ categories:
 
  * Balance adjustments.  Various formulae have been revised, to
    improve the overall balance and difficulty curve of the game.
-   Things like death-drop probability, engraving success rate,
-   alignment record, etc. have had the shape of their curve adjusted,
-   and some game features have been buffed or gently nerfed so that
-   they fit better into the overall scheme of the game's balance.
+   Things like engraving success rate, alignment record, to-hit
+   calculations, etc. have had the shape of their curve adjusted, and
+   some game features have been buffed or gently nerfed so that they
+   fit better into the overall scheme of the game's balance.
    
  * Monster/class reorganization.  Some classes with very few monsters
    have been combined and thus freed up, so that in a subsequent
    version some heavily overloaded monster classes can be split,
-   without running out of letters.  I tried to be conservative about
-   this, and for now I tried to avoid having any monster look exactly
-   the same as another monster used to look, when it can be avoided.
+   without running out of letters.  Some monsters have switched from
+   one symbol/letter class to another one where they fit better.
+   Additionally, some monsters that were formerly represented by
+   punctuation marks are now represented by actual letters.  I have
+   tried to be conservative about all of this, and for now I tried to
+   avoid having any monster look exactly the same as another monster
+   used to look, when it can be avoided.
    
  * Differentiation (aka improved variety).  Some monsters, items, or
    special levels that were practically identical have been tweaked
    slightly so that they are no longer quite so closely the same.
-   Some special levels may get new versions, as well.
+   Some special levels have entirely new versions, as well.
 
  * Consolidation.  Some meaningless things that didn't really add to
    the game have been removed or combined with others.  Monsters,
-   objects, skills, etc.
+   objects, skills, etc.  You won't miss them.
 
 
 Chronological Changelog (most recent at top):
 =============================================
 =============================================
+
+Changes in 4.3.0.4:
+-------------------
+
+ * When a randomly generated weapon is positively enchanted and
+   not cursed, it may be assigned a name, like "Sword of Virtue",
+   "Mace of Justice", "Staff of Yendor", etc.
+
+ * Sokoban levels now announce their titles when you enter them.
+
+ * A new special level, the Garden of Temptation, has been added
+   near the top of Gehennom.  The Garden contains trees, benches,
+   fountains, statues, a nice lake with a picturesque island,
+   delicious fruit, foocubi, nymphs, and other delights.  The lake
+   contains a submerged magic lamp.  The locked garden shed contains
+   an altar to moloch and a magic chest.  There are two versions.
+
+ * Peaceful gremlins refrain from using water to split themselves.
+   They can still be split by a rust trap or if hit by a potion of
+   water, and possibly some other ways; but they will not fill up
+   entire levels with peaceful gremlins if one happens to generate
+   on a level with water (e.g., Medusa's, Juiblex', Castle).
+
+ * When you swing your axe in a wide (or tremendous) arc and
+   hit multiple monsters, all of them now get a chance to use
+   their passive attacks, if applicable.
+
+ * Pet hunger fixes have been cherry-picked from FIQHack, so
+   pets will now only eat when hungry, but when they do eat, it
+   takes time, like in 3.4.3.
+
+ * Teleport control is disrupted by a mysterious force when you
+   are carrying the Amulet of Yendor.
+
+ * Added a new type of furniture terrain, benches.  Sitting or
+   resting on a bench heals 1 hp per turn.
+
+ * When sitting on a throne, the odds that it vanishes in a puff
+   of logic have changed, as follows:
+   + if you are playing in challenge mode, it always vanishes.
+   + if you get a wish, it always vanishes.
+   + if you get a positive result but not a wish (and are not
+     in challenge mode), the odds are one in three, same as before.
+   + if you get a negative result (and are not playing in challenge
+     mode), there's a 10% chance that the throne vanishes
+   + if you get the non-result (feel out of place), and are
+     not in challenge mode, there's still a 5% chance it vanishes.
+
+ * The game now tracks, as a conduct, whether you have ever had
+   each of the following properties:  conflict, displacement,
+   invisibility, and reflection.  To avoid leaking information
+   about unidentified equipment, displacement is the only one
+   of these that is reported in the conducts screen during the
+   game; the others only show up in the dumplog.
+
+ * Ghosts are invisible.  You can only see them if you can see
+   invisible or have some other means of detecting them (such as
+   warning, monster detection, etc.)
+
+ * The sleep spell doesn't put things to sleep for as long.
+
+ * The hints window ("extrawin") can now be turned off in the
+   options.  Any space it would have taken up will be given to
+   the message area instead.  If you do this from within a game,
+   the display may not change until you leave ("save") the game
+   and re-enter ("load") it again.
+
+ * The target range for scrolls of stinking cloud has increased,
+   and the beatitute of the scroll matters.  In the diagram below,
+   standing on the location marked @, you can target any of the
+   spaces marked with an X (assuming you can see there):
+         blessed              uncursed             cursed 
+   .XXXXXXXX@XXXXXXXX.  ..XXXXXXX@XXXXXXX..  ...XXXXXX@XXXXXX...
+   .XXXXXXXXXXXXXXXXX.  ..XXXXXXXXXXXXXXX..  ...XXXXXXXXXXXXX...
+   .XXXXXXXXXXXXXXXXX.  ...XXXXXXXXXXXXX...  ....XXXXXXXXXXX....
+   ..XXXXXXXXXXXXXXX..  ...XXXXXXXXXXXXX...  ....XXXXXXXXXXX....
+   ..XXXXXXXXXXXXXXX..  ....XXXXXXXXXXX....  .....XXXXXXXXX.....
+   ...XXXXXXXXXXXXX...  .....XXXXXXXXX.....  ......XXXXXXX......
+   ....XXXXXXXXXXX....  ......XXXXXXX......  ........XXX........
+   .....XXXXXXXXX.....  ........XXX........  ...................
+   .......XXXXX.......  ...................  ...................
+   ...................  ...................  ...................
+
+ * A number of race-specific and role-specific criteria have been
+   added for altering your alignment record.
+   + Barbarians get alignment points for killing monsters, in much
+     the same way as all players in 3.4.3 (except you can only get
+     at most one point per monster -- in practice this should still
+     be plenty to make Barbarian the easiest role by a wide margin
+     from an alignment record perspective).
+   + Knights gain alignment by slaying hostile (adult) dragons.
+   + Priests gain alignment by killing hostile undead monsters.
+   + Tourists gain alignment when they are overcharged for a
+     particular item in a shop.  (The "shirt bonus" doesn't count.)
+   + Monks improve their alignment by fasting.
+   + Rangers sometimes get points for catching hostiles in traps.
+   + Cavemen sometimes get points for catching hostiles in pit traps,
+     or for honoring the dead (i.e., eating same-race corpses).
+   + Dwarves gain (and Elves lose) alignment by chopping down trees.
+   + Several races get a temporary alignment bonus for having racially
+     aligned armor or weapons equipped; this goes away as soon as you
+     unequip the item(s).  Similarly, gnomes get a bonus for carried
+     gems, giants for carried gold, archeologists for carried
+     artifacts and unique items, and Samurai for a wielded katana,
+     yumi, or tsurugi.
+   + Valkyries who throw Mjollnir (and catch it) will occasionally
+     gain an alignment record point.
+   + Wizards get points for learning new spells, level 3 or higher.
+   + Non-lawful rogues gain alignment for stealing from shops
+     (directly, not via pets).
+
+ * Stinking clouds now block light and vision (like boulders).
+
+ * Introduced a new kind of monster, the jitterbug.  This critter
+   is weak but fast, and it has the ability, after you hit it, to
+   swap positions with you.
+
+ * Yellow lights now emit light with a larger radius.  (Monsters
+   emitting different ranges of light was going to be implemented
+   in NetHack 3.2.0, but it was deferred for performance reasons.
+   That was in roughly the 486 era, so I'm trying it again now.)
+
+ * Lights are now on symbol e, eye or sphere or light.
+
+ * Instead of the Castle, it is now possible to get the Palace, the
+   Library, or the Laboratory.
+
+ * Scrolls of consecration have been implemented.  Reading one of
+   these will create an altar (or, if confused, a magic chest) at your
+   feet (provided you are standing on untrapped floor of a room or
+   corridor).  These are not randomly generated, but there's always
+   one in the magic chest.  It is possible to write them, but they
+   cost a lot of ink.  You can also wish for them.  The altar will be
+   to Moloch if you are in Gehennom or the scroll is cursed, or
+   otherwise will be of your starting alignment if the scroll is
+   blessed or if you are in the quest.
+
+ * The scroll of food detection has been removed from the game.
+   The frequencies of some other scrolls have been increased to
+   compensate.
+
+ * Potions of gain energy are now significantly more useful for
+   refilling your Pw when it is well below maximum (and slightly less
+   effective at increasing your maximum Pw level).
+
+ * The skill bonus for martial arts has changed; advancing the skill
+   is now somewhat more worthwhile, in terms of damage you do.
+
+ * Healers now start with a collection of healing herbs (eucalyptus,
+   wolfsbane, garlic).
+
+ * Individual pieces of armor now have minimum and maximum sizes for
+   whether they will fit, depending on your body size.  Check the
+   automatically-generated spoilers for the fit sizes of each piece of
+   armor and the body size of each monster.  (Your racial monster is
+   the one checked, e.g., Gnome if you are a Gnome, unless of course
+   you are polymorphed, in which case it's your polymorph form.) See
+   http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/
+
+ * More new Sokoban levels have been added.  Note, however, that
+   solutions are now available for Fourk's sokoban levels in the
+   NetHack Fourk spoilers:
+   http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/
+
+ * Combining potions of healing and speed now results in potions of
+   full healing.  (You can still get potions of extra healing by
+   combining potions of healing with gain energy or gain level.)
+   Combining potions of full healing and gain level results in
+   potions of gain energy.  (You can still get potions of gain
+   ability by combining full healing and gain energy.)
+
+ * The extra healing that you get (above and beyond your maximum
+   health, which increases your maximum) from potions of extra healing
+   now diminishes asymptotically toward zero as your maximum health
+   approaches 250.  Also, potions of extra healing are now the only
+   potions that grant this extra healing (hence, in full retcon mode,
+   their name).  Regular potions of healing cannot take you above your
+   maximum health, and potions of full healing raise you to your max
+   health or 250, whichever is less.  Monsters also no longer get the
+   extra above-maximum healing from potions of healing and full
+   healing, only from extra healing.
+
+ * The use of fountains and sinks and the drinking of magical potions
+   are now tracked as conducts.  To avert excessive spamminess, these
+   conducts are only mentioned if you've kept them.
+
+ * Some spell levels have changed, for balance reasons.  This is not
+   as comprehensive as the full spell inventory review that I want to
+   do, but it's a start.  Some spells are now easier to cast (e.g.,
+   digging) and others are harder (e.g., charm monster).  See the
+   spellbook section of the auto-generated spoiler for details.
+
+ * In Sokoban, monsters that would ordinarly generate peaceful for
+   your character because of alignment or race will instead generate
+   hostile, unless they have the M2_NASTY flag (in which case they
+   have their usual chance of being peaceful).  In practice, this
+   means no more peaceful garter snakes, gnomes, orcs, etc. clogging
+   up the boulder paths in Sokoban.
+
+ * Kicking open secret doors and secret corridors is easier than
+   before.
+
+ * When you throw Mjollnir, if it fails to return to your hand, it now
+   always lands safely at your feet, not dealing any damage to you.
+   The 1% chance of harming yourself and more importantly your
+   inventory may have been interesting flavor, but in practice it just
+   meant Mjollnir was a worse choice for Valkyries than other artifact
+   weapons, such as Excalibur or Frostbane or Grayswandir.  Mjollnir
+   still has downsides (some monsters are shock-resistant, leaving you
+   with the terrible base item damage; and the shock damage against
+   your enemies can still destroy vulnerable items they may be holding
+   in their inventories, such as rings); that's as may be, but you no
+   longer risk hitting yourself with it.
+
+ * If hand cramping, blindness, confusion, hallucination, or being
+   stunned would have caused your hand to slip while writing,
+   distorting the message, but your base constitution (without any
+   bonus from rings, etc.) is more than 3, the engraving will be
+   completed successfully, at the cost of one point of constitution.
+
+ * Hand cramping (due to excessive engraving) has been made more
+   consistent.  It no longer matters as much what you've written, but
+   it matters much more how recently you've written it.  In addition
+   to gradually healing naturally over time, cramps can also be
+   reduced by drinking blessed potions of healing, extra healing, and
+   full healing; and enlightenment can tell you how cramped your
+   writing hand is.
+
+ * When chargeable rings are generated, the game now tries even
+   harder than before to avoid +0 ones.
+
+ * The Priest quest artifact is now the Sceptre of Might.  Its #invoke
+   power is an energy boost, similar to the one the Mitre (which is
+   now removed from the game) had, but buffed somewhat:  it can boost
+   your Pw by up to 240 now, and the limit on taking you to maximum
+   has been bumped up as well.  Meanwhile, the Caveman quest artifact,
+   Big Stick, was given the conflict #invoke effect.
+
+ * Added giants as a playable race.  Giants can be barbarians,
+   cavemen, or (for the time being at least) rangers.
+
+ * The name of Elbereth only scares monsters if it is the only thing
+   engraved there (although you can also use the more complete form
+   of the name that Frodo used at Weathertop).
+
+ * Levitation no longer places you at maximum carry capacity.
+
+ * The odds of failure when wishing for an artifact are now higher
+   if the artifact is cross-aligned than if it is co-aligned.
+
+ * The xlog and livelog field separators now default to a horizontal
+   tab character but can be customized at compile time by defining
+   XLOGFILE_FIELD_SEPARATOR and LIVELOG_FIELD_SEPARATOR
+
+ * Most creatures that are not afraid of Elbereth can still be
+   frightened by a scroll of scare monster.  Exceptions are Rodney,
+   lawful minions, Angels (specifically, not all A), and Riders.
+
+ * The name Elbereth now works to frighten most humans (with notable
+   exceptions being the shopkeepers, vault guards, the Minetown Watch,
+   and of course the Wizard of Yendor).  Elves, of course, still don't
+   fear the name of this Vala of light (because they revere her).
+
+ * Your quest nemesis is not afraid of Elbereth.
+
+ * Added a new random-appearance cloak, the cloak of endurance.  It
+   does not provide MC but does grant half physical damage.
+
+ * More special levels have been updated or changed, e.g., the Wizard
+   quest locate level.
+
+ * When skilled in wand use, the player may learn the number of
+   remaining charges when zaping a wand.
+
+ * Prayer is now shown in the history.
+
+ * Wielding a quarterstaff now improves spell success rates.  This can
+   help compensate (partially) both for armor penalties and also for
+   the spell being too hard for your level or attributes.  When spell
+   success rates are low (but not zero), enchanting the staff will
+   generally improve them further.  However, quarterstaves now do less
+   damage in melee than before.
+
+ * Quest guardians may now be displaced.
+
+ * Knights may now reach Expert in shield skill.  Barbarians may not.
+
+ * Certain of the more pointless and/or redundant artifact weapons
+   have been removed from the list.  Perhaps the most notable of these
+   was Sunsword, which has been superceded by the improved Trollsbane.
+
+ * Monsters now regenerate hitpoints somewhat faster than before.
+
+ * Giant spiders now have a web-spinning attack, which causes
+   temporary slowness (which times out), as well as causing you to be
+   stuck in the web (same as stepping in one).  Spiders are immune.
+
+ * Merged the DYWYPISI patch, by Jafet.  This causes end-of-game item
+   identification to place information the player character did not
+   know in brackets, so that you can tell (e.g. in the dumplog)
+   whether an item was identified or not.  I expect players to find
+   a few bugs in my adaptation of this patch; it's a bit complex,
+   and I had to make some changes to the patch due to code divergence.
+
+ * Dwarves in the Gnomish Mines now sometimes carry candles
+   (monster starting inventory).  Gnomes do not.
+
+ * Quantum mechanics are now considered humanoid (h).
+
+ * Gnomes, due to their small size, cannot wear body armor.
+   (Neither can scurriers.)  However, Gnomes can now see in the dark.
+
+ * Added a new playable race, scurriers.  Scurriers are bipedal
+   humanoid rodents -- something like a cross between a rabbit, a
+   squirrel, and a human.  They are small, fast, and stealthy and have
+   a natural digging ability, all of which makes them very well suited
+   to avoiding combat rather than engaging in it.  They can be
+   archeologists, rangers, or tourists.
+
+ * The formula for how many moves you get per turn has changed.  Five
+   factors contribute more or less independently:  your "base speed",
+   which is based on your race; whether you are intrinsically "fast"
+   or not; whether you have extrinsic speed (e.g., from speed boots);
+   whether you are temporarily hasted (as from a spell of haste self
+   or a potion of speed); and whether you are temporarily slowed
+   (e.g., by a spider's web attack).  These all stack; but
+   individually some of them don't do as much as before.
+
+ * Wielding Stormbringer now causes peaceful and tame monsters to
+   attack you.  It also stops conflict from working in your favor.
+   However, the interface problems it creates in 3.4.3 (wherein you
+   attack things you don't intend to attack) are not present:  you
+   have the normal amount of control over your actions, can displace
+   your pets as usual, chat with shopkeepers, etc.  (If you actually
+   want to attack peaceful and tame monsters, you can of course do so
+   using the Fight command as usual, with the usual caveats.)
+
+ * The life cycle for D has been extended.  They now start life as
+   a [color] dragon egg, hatch into a baby [color] dragon, then grow
+   progressively into a young [color] dragon, a [color] dragon, an
+   elder [color] dragon, and finally into an ancient [color] dragon.
+   The more they advance, the more dangerous they become.  The
+   top two levels, elder and ancient, are not generated randomly.
+   Any age of dragon that lays eggs lays the same type of dragon
+   egg, in its respective color, which will hatch into a baby.
+
+ * Support has been added for receiving dgamelaunch SimpleMail
+   messages, when playing on a dgamelaunch-based public server,
+   provided the server admin has set an environment variable to
+   tell the game where to find the player's inbox.
+
+ * The shallow water portion of the L terrain patch has been merged.
+   This changes a number of existing special levels and also adds
+   a new version of Minetown.
+
+ * Stealth is no longer binary (all or nothing); there are degrees
+   now:  you can be more or less stealthy.  Examples of things that
+   are good for your stealth include:  being a elf (this is especially
+   good), a sylph, or a gnome; wearing an elven cloak; wearing elven
+   boots; wearing a +1 or better ring of steath; having basic or
+   better skill in stealth; using sufficiently light equipment that
+   you would still be unburdened even if its weight were doubled.
+   Going the other way, being burdened or worse hurts your stealth.
+   Being more stealthy decreases the odds that sleaping monsters will
+   wake up when you are around (via normal actions, such as walking;
+   things like exploding a gas spore still wake stuff up anyway).
+
+ * Monsters are now generated asleep in a wider variety of situations,
+   especially at level generation time.
+
+ * Protection from rings of protection, the spell of protection, and
+   cloak of protection now add into your magic cancellation level, in
+   addition to the base MC from your worn armor.  From armor alone you
+   can reach MC3 and with protection up to MC5.  The odds of magic
+   cancellation completely canceling an attack (of a type that MC can
+   cancel) are now 22%, 44%, 65%, 87%, or 98% for levels 1-5.  Even if
+   the attack is not completely canceled, the "worst effects" may
+   still be blocked.  For example, in the case of a fire, cold, or
+   lightning attack, the odds of your inventory being protected from
+   destruction are 61% at MC1, 86% at MC2, 94% at MC3, 98% at MC4,
+   100% at MC5.  A sleep or paralysis attack that isn't blocked
+   completely does have its duration shortened -- higher MC shortens
+   it more.  Brain eating attacks, which could not be blocked by MC at
+   all in vanilla, can now have their worst effects nerfed, though
+   this is not totally guaranteed even at MC5.  At MC4 or better,
+   drain attacks cannot take your last three experience levels and
+   xans cannot wound your legs.  Higher MC may give you extra turns
+   when subject to delayed instadeath (illness, some sources of
+   stoning) or protect you from attribute loss or deadly poison
+   (sometimes) or your armor from rusting or corrosion.  MC3 or higher
+   may delay drowning attacks (no guarantees) and protect you from
+   attribute loss due to seduction.  This list is not exhaustive.
+
+ * Cornuthaums now improve your wisdom and intelligence by their
+   enchantment, as a helm of brilliance does.  Their other effects
+   are unchanged.
+
+ * For public-server installations, dgamelaunch simple mail is
+   now supported.
+
+ * Some object weights have been adjusted to match the 3.6.0 values.
+
+ * Monster starting inventory has been further adjusted, for
+   flavor and balance.
+
+ * Lances now get the same "kebab" bonus as spears.
+
+ * Dragonbane is now a lance.  Knights can get it by crowning.
+
+ * Gryphons have been added to the game; they may be useful as
+   steeds in the midgame, since they can fly but are rather
+   faster than dragons, easier to get than jabberwocks.
 
 Changes in 4.3.0.3:
 -------------------
@@ -96,7 +512,8 @@ Changes in 4.3.0.3:
    foreground color.
 
  * Weaponless characters can get items other than weapons as
-   sacrifice gifts.
+   sacrifice gifts.  Notably, weaponless spellcasters can get
+   spellbooks.  Armor and rings are also possible.
 
  * Some special levels have been changed, or new versions have
    been introduced.  Notable examples include Mine's End, the

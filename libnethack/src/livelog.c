@@ -15,12 +15,23 @@ static void munge_llstring(char *, const char *, int);
 
 #define ENTRYSIZE 99
 
+#ifdef LIVELOG_FIELD_SEPARATOR
+#define SEP LIVELOG_FIELD_SEPARATOR
+#else
+#ifdef XLOGFILE_FIELD_SEPARATOR
+#define SEP XLOGFILE_FIELD_SEPARATOR
+#else
+#define SEP "\t"
+#endif
+#endif
+#define SEPC (SEP[0])
+
 static void
 munge_llstring(char *dest, const char *src, int n)
 {
     int i;
     for (i = 0; i < (n - 1) && src[i] != '\0'; i++) {
-        if (src[i] == ':' || src[i] == '\n')
+        if (src[i] == SEPC || src[i] == '\n')
             dest[i] = '_';
         else
             dest[i] = src[i];
@@ -65,14 +76,15 @@ livelog_write_event(const char *buffer) {
     if (!uname)
         uname = "";
     munge_llstring(buf, uname, ENTRYSIZE + 1);
-    livelog_write_string(msgprintf("version=%d.%d.%d:variant=Fourk:"
-                                   "player=%s:charname=%s:"
-                                   "turns=%1d:depth=%1d:%s:eventdate=%ld:"
-                                   "uid=%d:role=%s:race=%s:gender=%s:"
-                                   "align=%s:birthdate=%ld:"
-                                   "starttime=%" PRIdLEAST64 ":"
-                                   "eventtime=%" PRIdLEAST64 ":"
-                                   "xplevel=%1d:mode=%s",
+    livelog_write_string(msgprintf("version=%d.%d.%d" SEP "variant=Fourk" SEP
+                                   "player=%s" SEP "charname=%s" SEP
+                                   "turns=%1d" SEP "depth=%1d" SEP "%s" SEP
+                                   "eventdate=%ld" SEP "uid=%d" SEP
+                                   "role=%s" SEP "race=%s" SEP "gender=%s" SEP
+                                   "align=%s" SEP "birthdate=%ld" SEP
+                                   "starttime=%" PRIdLEAST64 SEP
+                                   "eventtime=%" PRIdLEAST64 SEP
+                                   "xplevel=%1d" SEP "mode=%s",
                                    VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL,
                                    buf, u.uplname, moves, depth(&u.uz), buffer,
                                    yyyymmdd(utc_time()), getuid(),
@@ -96,7 +108,7 @@ livelog_wish(const char *wishstring)
 {
     char buf[ENTRYSIZE + 1];
     munge_llstring(buf, wishstring, ENTRYSIZE + 1);
-    livelog_write_event(msgprintf("type=wish:wish_count=%d:wish=%s",
+    livelog_write_event(msgprintf("type=wish" SEP "wish_count=%d" SEP "wish=%s",
                                   (u.uconduct[conduct_wish] + 1), wishstring));
 }
 
@@ -104,7 +116,8 @@ void livelog_flubbed_wish(const char *wishstring, const struct obj *result)
 {
     char buf[ENTRYSIZE + 1];
     munge_llstring(buf, wishstring, ENTRYSIZE + 1);
-    livelog_write_event(msgprintf("type=flubbedwish:wish_count=%d:wish=%s:result=%s",
+    livelog_write_event(msgprintf("type=flubbedwish" SEP "wish_count=%d" SEP
+                                  "wish=%s" SEP "result=%s",
                                   (u.uconduct[conduct_wish] + 1), wishstring,
                                   aobjnam(result, NULL)));
 }
@@ -142,9 +155,9 @@ livelog_unique_monster(const struct monst *mon) {
         frace         = (fplayer % 256) / 32;
         frole         = roles[(fplayer - frace) / 256];
 
-        livelog_write_event(msgprintf("bones_killed=%s:bones_align=%s:"
-                                      "bones_race=%s:bones_gender=%s:"
-                                      "bones_role=%s:bones_monst=%s",
+        livelog_write_event(msgprintf("bones_killed=%s" SEP "bones_align=%s" SEP
+                                      "bones_race=%s" SEP "bones_gender=%s" SEP
+                                      "bones_role=%s" SEP "bones_monst=%s",
                                       name, aligns[falign].adj,
                                       races[frace].adj, genders[fgend].adj,
                                       (genders[fgend].allow == ROLE_FEMALE

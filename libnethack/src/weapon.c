@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by FIQ, 2015-08-23 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -17,17 +17,18 @@
 #define PN_SHIELD            (-3)
 #define PN_WANDS             (-4)
 #define PN_RIDING            (-5)
-#define PN_POLEARMS          (-6)
-#define PN_SABER             (-7)
-#define PN_HAMMER            (-8)
-#define PN_WHIP              (-9)
-#define PN_ATTACK_SPELL      (-10)
-#define PN_HEALING_SPELL     (-11)
-#define PN_DIVINATION_SPELL  (-12)
-#define PN_ENCHANTMENT_SPELL (-13)
-#define PN_CLERIC_SPELL      (-14)
-#define PN_ESCAPE_SPELL      (-15)
-#define PN_MATTER_SPELL      (-16)
+#define PN_STEALTH           (-6)
+#define PN_POLEARMS          (-8)
+#define PN_SABER             (-8)
+#define PN_HAMMER            (-9)
+#define PN_WHIP              (-10)
+#define PN_ATTACK_SPELL      (-11)
+#define PN_HEALING_SPELL     (-12)
+#define PN_DIVINATION_SPELL  (-13)
+#define PN_ENCHANTMENT_SPELL (-14)
+#define PN_CLERIC_SPELL      (-15)
+#define PN_ESCAPE_SPELL      (-16)
+#define PN_MATTER_SPELL      (-17)
 
 static void give_may_advance_msg(int);
 
@@ -44,8 +45,8 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
     PN_DIVINATION_SPELL, PN_ENCHANTMENT_SPELL,
     PN_CLERIC_SPELL, PN_ESCAPE_SPELL,
     PN_MATTER_SPELL,
-    PN_BARE_HANDED, PN_TWO_WEAPONS, PN_SHIELD,
-    PN_RIDING, PN_WANDS
+    PN_BARE_HANDED, PN_TWO_WEAPONS,
+    PN_SHIELD, PN_WANDS, PN_RIDING, PN_STEALTH
 };
 
 /* note: entry [0] isn't used */
@@ -54,8 +55,9 @@ static const char *const odd_skill_names[] = {
     "bare hands",       /* use barehands_or_martial[] instead */
     "two weapon combat",
     "shield",
-    "riding",
     "wands",
+    "riding",
+    "stealth",
     "polearms",
     "saber",
     "hammer",
@@ -77,7 +79,7 @@ static const char *const barehands_or_martial[] = {
 static void
 give_may_advance_msg(int skill)
 {
-    pline("You feel more confident in your %sskills.",
+    pline(msgc_intrgain, "You feel more confident in your %sskills.",
           skill == P_NONE ? "" : skill <= P_LAST_WEAPON ? "weapon " : skill <=
           P_LAST_SPELL ? "spell casting " : "fighting ");
 }
@@ -179,7 +181,8 @@ hitval(struct obj *otmp, struct monst *mon)
     if (Is_weapon && otmp->blessed && (is_demon(ptr) || is_undead(ptr)))
         tmp += 2;
 
-    if (is_spear(otmp) && strchr(kebabable, ptr->mlet))
+    if ((is_spear(otmp) || (otmp->otyp == LANCE)) &&
+        strchr(kebabable, ptr->mlet))
         tmp += 2;
 
     /* trident is highly effective against swimmers */
@@ -698,7 +701,8 @@ possibly_unwield(struct monst *mon, boolean polyspot)
         mon->weapon_check = NO_WEAPON_WANTED;
         obj_extract_self(obj);
         if (lev == level && cansee(mon->mx, mon->my)) {
-            pline("%s drops %s.", Monnam(mon), distant_name(obj, doname));
+            pline(mon->mtame ? msgc_monneutral : msgc_petneutral,
+                  "%s drops %s.", Monnam(mon), distant_name(obj, doname));
             newsym(mon->mx, mon->my);
         }
         /* might be dropping object into water or lava */
@@ -794,14 +798,16 @@ mon_wield_item(struct monst *mon)
                     mhis(mon), mon_hand);
 
                 if (obj->otyp == PICK_AXE) {
-                    pline("Since %s weapon%s %s,", s_suffix(mon_nam(mon)),
+                    pline(msgc_monneutral, "Since %s weapon%s %s,",
+                          s_suffix(mon_nam(mon)),
                           plur(mw_tmp->quan), welded_buf);
-                    pline("%s cannot wield that %s.", mon_nam(mon), xname(obj));
+                    pline(msgc_monneutral, "%s cannot wield that %s.",
+                          mon_nam(mon), xname(obj));
                 } else {
-                    pline("%s tries to wield %s.", Monnam(mon),
-                          singular(obj, doname));
-                    pline("%s %s %s!", s_suffix(Monnam(mon)), xname(mw_tmp),
-                          welded_buf);
+                    pline(msgc_monneutral, "%s tries to wield %s.",
+                          Monnam(mon), singular(obj, doname));
+                    pline(msgc_monneutral, "%s %s %s!", s_suffix(Monnam(mon)),
+                          xname(mw_tmp), welded_buf);
                 }
                 mw_tmp->bknown = 1;
             }
@@ -812,15 +818,14 @@ mon_wield_item(struct monst *mon)
         setmnotwielded(mon, mw_tmp);
         mon->weapon_check = NEED_WEAPON;
         if (mon_visible(mon)) {
-            pline("%s wields %s%s", Monnam(mon), singular(obj, doname),
-                  mon->mtame ? "." : "!");
+            pline(msgc_monneutral, "%s wields %s%s", Monnam(mon),
+                  singular(obj, doname), mon->mtame ? "." : "!");
             if (mwelded(mon, obj)) {
-                pline("%s %s %sto %s %s!",
-                      Tobjnam(obj, (objects[obj->otyp].oc_material == WOOD) ?
-                              "grow" : "weld"),
-                      is_plural(obj) ? "themselves" : "itself",
-                      (objects[obj->otyp].oc_material == WOOD) ?
-                                                           "right in" : "",
+                boolean iswood = (objects[obj->otyp].oc_material == WOOD);
+                pline(msgc_monneutral, "%s %sto %s %s!",
+                      Tobjnam(obj, iswood ? "grow" : "weld"),
+                      (iswood ? "roots right in " :
+                       is_plural(obj) ? "themselves " : "itself "),
                       s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
                 obj->bknown = 1;
             }
@@ -828,8 +833,9 @@ mon_wield_item(struct monst *mon)
         if (artifact_light(obj) && !obj->lamplit) {
             begin_burn(obj, FALSE);
             if (mon_visible(mon))
-                pline("%s brilliantly in %s %s!", Tobjnam(obj, "glow"),
-                      s_suffix(mon_nam(mon)), mbodypart(mon, HAND));
+                pline(msgc_monneutral, "%s brilliantly in %s %s!",
+                      Tobjnam(obj, "glow"), s_suffix(mon_nam(mon)),
+                      mbodypart(mon, HAND));
         }
         obj->owornmask = W_MASK(os_wep);
         return 1;
@@ -1010,7 +1016,7 @@ skill_advance(int skill)
     P_SKILL(skill)++;
     u.skill_record[u.skills_advanced++] = skill;
     /* subtly change the advance message to indicate no more advancement */
-    pline("You are now %s skilled in %s.",
+    pline(msgc_intrgain, "You are now %s skilled in %s.",
           P_SKILL(skill) >= P_MAX_SKILL(skill) ? "most" : "more",
           P_NAME(skill));
 }
@@ -1143,7 +1149,8 @@ enhance_weapon_skill(const struct nh_cmd_arg *arg)
             for (n = i = 0; i < P_NUM_SKILLS; i++) {
                 if (can_advance(i, speedy)) {
                     if (!speedy)
-                        pline("You feel you could be more dangerous!");
+                        pline(msgc_intrgain,
+                              "You feel you could be more dangerous!");
                     n++;
                     break;
                 }
@@ -1278,7 +1285,7 @@ drain_weapon_skill(int n)
             /* drain a random proportion of skill training */
             if (P_ADVANCE(skill))
                 P_ADVANCE(skill) = rn2(P_ADVANCE(skill));
-            pline("You forget %syour training in %s.",
+            pline(msgc_intrloss, "You forget %syour training in %s.",
                   P_SKILL(skill) >= P_BASIC ? "some of " : "", P_NAME(skill));
         }
     }
@@ -1611,7 +1618,7 @@ setmnotwielded(struct monst *mon, struct obj *obj)
     if (artifact_light(obj) && obj->lamplit) {
         end_burn(obj, FALSE);
         if (mon_visible(mon))
-            pline("%s in %s %s %s glowing.", The(xname(obj)),
+            pline(msgc_monneutral, "%s in %s %s %s glowing.", The(xname(obj)),
                   s_suffix(mon_nam(mon)), mbodypart(mon, HAND),
                   otense(obj, "stop"));
     }

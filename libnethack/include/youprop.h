@@ -122,12 +122,18 @@
 # define Invisible              (Invis && !See_invisible)
 # define Displaced              u_any_property(DISPLACED)
 # define HDisplaced             u.uintrinsic[DISPLACED]
+
+/* u_any_property(STEALTH) should no longer be checked directly.
+   Use get_stealth() instead.
 # define HStealth               u.uintrinsic[STEALTH]
 # define Stealth                u_any_property(STEALTH)
+*/
 # define HAggravate_monster     u.uintrinsic[AGGRAVATE_MONSTER]
 # define Aggravate_monster      u_any_property(AGGRAVATE_MONSTER)
+# define HStormprone            u.uintrinsic[STORMPRONE]
+# define Stormprone             u_any_property(STORMPRONE)
 # define HConflict              u.uintrinsic[CONFLICT]
-# define Conflict               u_any_property(CONFLICT)
+# define Conflict               (u_any_property(CONFLICT) && !Stormprone)
 
 /*** Transportation ***/
 # define Lev_at_will                                                    \
@@ -263,6 +269,13 @@ enum player_conduct {
     conduct_unihorns,                    /* applied a unicorn horn */
     conduct_containers,                  /* applied or looted containers */
     conduct_tools,                       /* applied or looted any tools */
+    conduct_fountains,                   /* messed with fountains */
+    conduct_sinks,                       /* messed with sinks */
+    conduct_potions,                     /* drank potions */
+    conduct_conflict,                    /* generated conflict */
+    conduct_invisible,                   /* were invisible */
+    conduct_displacement,                /* were displaced */
+    conduct_reflection,                  /* had reflection */
     num_conducts,
 };
 

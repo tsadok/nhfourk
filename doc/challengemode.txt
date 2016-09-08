@@ -29,7 +29,11 @@ been maintaining one until that point, but now I am:
  * Scrolls of identify will identify fewer objects on average.
  * A blessed scroll of charging will sometimes work as uncursed.
  * The minimum luck needed to be guaranteed a wish is higher.
+ * Odds of failure are higher wishing for cross-aligned artifacts.
  * Charged rings in starting inventory are more likely to be +1
+   (rather than a higher enchantment).
+ * Charged rings generated at random are slightly more likely to be
+   negatively, rather than positively, enchanted.
  * The gift that the Advent Calendar level unlocks on December 24th
    cannot be a scroll of wishing, a magic lamp, a bag of holding, a
    horn of plenty, a magic harp, or an amulet of flying; instead it

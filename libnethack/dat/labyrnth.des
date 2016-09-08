@@ -29,7 +29,7 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 #RANDOM_PLACES
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE:(31,07,41,13)
 FOUNTAIN:random
 FOUNTAIN:random
 REGION:(01,01,75,19),lit,"ordinary"
@@ -103,7 +103,7 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 #RANDOM_PLACES
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE:(31,07,41,13)
 FOUNTAIN:random
 FOUNTAIN:random
 REGION:(01,01,75,19),lit,"ordinary"
@@ -178,7 +178,7 @@ MAP
 ----------------------------------------------------------------------------
 ENDMAP
 #RANDOM_PLACES
-NON_DIGGABLE:(00,00,75,19)
+NON_DIGGABLE:(31,07,41,13)
 FOUNTAIN:random
 FOUNTAIN:random
 REGION:(01,01,75,19),lit,"ordinary"

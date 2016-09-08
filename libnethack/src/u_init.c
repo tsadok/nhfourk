@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "mkobj.h"
 #include <stdint.h>
 
 struct trobj {
@@ -50,7 +51,6 @@ static const struct trobj Archeologist[] = {
     {FOOD_RATION, 0, FOOD_CLASS, 3, 0},
     {PICK_AXE, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {WAN_LIGHT, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
-    {TINNING_KIT, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {TOUCHSTONE, 0, GEM_CLASS, 1, 0},
     {SACK, 0, TOOL_CLASS, 1, 0},
     {TIN_OPENER, 0, TOOL_CLASS, 1, 0},
@@ -78,7 +78,9 @@ static const struct trobj Cave_man[] = {
 };
 
 static const struct trobj Healer[] = {
-#define H_LEAF  9
+#define H_LEAF   9
+#define H_SPRIG 10
+#define H_CLOVE 11
     {SCALPEL, 0, WEAPON_CLASS, 1, UNDEF_BLESS},
     {LEATHER_GLOVES, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
     {STETHOSCOPE, 0, TOOL_CLASS, 1, 0},
@@ -89,7 +91,9 @@ static const struct trobj Healer[] = {
     {SPE_HEALING, 0, SPBOOK_CLASS, 1, 1},
     {SPE_EXTRA_HEALING, 0, SPBOOK_CLASS, 1, 1},
     {SPE_STONE_TO_FLESH, 0, SPBOOK_CLASS, 1, 1},
-    {EUCALYPTUS_LEAF, 0, FOOD_CLASS, 6, 1},
+    {EUCALYPTUS_LEAF, 0, FOOD_CLASS, 4, 1},
+    {SPRIG_OF_WOLFSBANE, 0, FOOD_CLASS, 4, 1},
+    {CLOVE_OF_GARLIC, 0, FOOD_CLASS, 4, 1},
     {APPLE, 0, FOOD_CLASS, 5, 0},
     {0, 0, 0, 0, 0}
 };
@@ -137,6 +141,7 @@ static const struct trobj Priest[] = {
 };
 
 static const struct trobj Ranger[] = {
+#define RAN_DAGGER      0
 #define RAN_BOW         1
 #define RAN_TWO_ARROWS  2
 #define RAN_ZERO_ARROWS 3
@@ -224,6 +229,11 @@ static const struct trobj Tinopener[] = {
 static const struct trobj GnomeStuff[] = {
     {AKLYS, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     /*  {CROSSBOW_BOLT, 2, WEAPON_CLASS, 12, UNDEF_BLESS}, */
+    {0, 0, 0, 0, 0}
+};
+
+static const struct trobj GiantStuff[] = {
+    {BOULDER, 0, ROCK_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -329,6 +339,21 @@ static const struct inv_sub {
     /* { PM_DWARF, PICK_AXE, DWARVISH_MATTOCK }, */
     {PM_GNOME, BOW, CROSSBOW},
     {PM_GNOME, ARROW, CROSSBOW_BOLT},
+    {PM_GNOME, FEDORA, LEATHER_GLOVES},
+    /* for weight reasons, don't give scurriers heavy items */
+    {PM_SCURRIER, FOOD_RATION, SLIME_MOLD},
+    {PM_SCURRIER, CRAM_RATION, SLIME_MOLD},
+    {PM_SCURRIER, PICK_AXE, LENSES},
+    {PM_SCURRIER, DAGGER, DART},
+    {PM_SCURRIER, BOW, DART},
+    {PM_SCURRIER, ARROW, DART},
+    {PM_SCURRIER, FEDORA, LEATHER_GLOVES},
+    /* Giants are too large for a lot of armor */
+    {PM_GIANT, RING_MAIL, DENTED_POT},             /* Bar Gia */
+    {PM_GIANT, LEATHER_ARMOR, FLINT},              /* Cav Gia */
+    {PM_GIANT, BOW, SLING},                        /* Ran Gia */
+    {PM_GIANT, ARROW, FLINT},                      /*  ditto */
+    {PM_GIANT, CLOAK_OF_DISPLACEMENT, DENTED_POT}, /*  ditto */
     {NON_PM, STRANGE_OBJECT, STRANGE_OBJECT}
 };
 
@@ -342,7 +367,7 @@ static const struct def_skill Skill_A[] = {
     {P_UNICORN_HORN, P_SKILLED},
     {P_ATTACK_SPELL, P_BASIC}, {P_HEALING_SPELL, P_BASIC},
     {P_DIVINATION_SPELL, P_EXPERT}, {P_MATTER_SPELL, P_BASIC},
-    {P_RIDING, P_BASIC},
+    {P_RIDING, P_BASIC}, {P_STEALTH, P_EXPERT},
     {P_TWO_WEAPON_COMBAT, P_BASIC}, {P_SHIELD, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
     {P_WANDS, P_SKILLED},
@@ -360,7 +385,7 @@ static const struct def_skill Skill_B[] = {
     {P_QUARTERSTAFF, P_BASIC}, {P_SPEAR, P_SKILLED},
     {P_TRIDENT, P_SKILLED}, {P_BOW, P_BASIC},
     {P_RIDING, P_BASIC},
-    {P_TWO_WEAPON_COMBAT, P_EXPERT},  {P_SHIELD, P_EXPERT},
+    {P_TWO_WEAPON_COMBAT, P_EXPERT},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_MASTER},
     {P_NONE, 0}
 };
@@ -376,7 +401,7 @@ static const struct def_skill Skill_C[] = {
     {P_BOW, P_BASIC}, {P_SLING, P_EXPERT},
     {P_BOOMERANG, P_EXPERT}, {P_UNICORN_HORN, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_MASTER},
-    {P_SHIELD, P_BASIC}, {P_WANDS, P_BASIC},
+    {P_STEALTH, P_SKILLED}, {P_SHIELD, P_BASIC}, {P_WANDS, P_BASIC},
     {P_NONE, 0}
 };
 
@@ -391,7 +416,7 @@ static const struct def_skill Skill_H[] = {
     {P_SHURIKEN, P_SKILLED}, {P_UNICORN_HORN, P_EXPERT},
     {P_HEALING_SPELL, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_BASIC},
-    {P_SHIELD, P_BASIC}, {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_BASIC}, {P_SHIELD, P_BASIC}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -408,7 +433,7 @@ static const struct def_skill Skill_K[] = {
     {P_TRIDENT, P_BASIC}, {P_BOW, P_BASIC}, {P_CROSSBOW, P_EXPERT},
     {P_ATTACK_SPELL, P_SKILLED}, {P_HEALING_SPELL, P_SKILLED},
     {P_CLERIC_SPELL, P_SKILLED}, {P_RIDING, P_EXPERT},
-    {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
+    {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
     {P_WANDS, P_SKILLED},
     {P_NONE, 0}
@@ -422,8 +447,8 @@ static const struct def_skill Skill_Mon[] = {
     {P_DIVINATION_SPELL, P_BASIC}, {P_ENCHANTMENT_SPELL, P_BASIC},
     {P_CLERIC_SPELL, P_SKILLED}, {P_ESCAPE_SPELL, P_BASIC},
     {P_MATTER_SPELL, P_BASIC},
-    {P_MARTIAL_ARTS, P_GRAND_MASTER}, {P_SHIELD, P_SKILLED},
-    {P_WANDS, P_EXPERT},
+    {P_MARTIAL_ARTS, P_GRAND_MASTER}, {P_SHIELD, P_BASIC},
+    {P_STEALTH, P_SKILLED}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -439,7 +464,7 @@ static const struct def_skill Skill_P[] = {
     {P_HEALING_SPELL, P_EXPERT}, {P_DIVINATION_SPELL, P_EXPERT},
     {P_CLERIC_SPELL, P_EXPERT},
     {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_EXPERT},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_EXPERT}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -458,7 +483,7 @@ static const struct def_skill Skill_R[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_BASIC},
-    {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_MASTER}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -470,7 +495,7 @@ static const struct def_skill Skill_Ran[] = {
     {P_QUARTERSTAFF, P_BASIC}, {P_POLEARMS, P_SKILLED},
     {P_SPEAR, P_SKILLED}, {P_JAVELIN, P_EXPERT},
     {P_TRIDENT, P_BASIC}, {P_BOW, P_EXPERT},
-    {P_SLING, P_EXPERT}, {P_CROSSBOW, P_EXPERT},
+    {P_SLING, P_SKILLED}, {P_CROSSBOW, P_EXPERT},
     {P_DART, P_EXPERT}, {P_SHURIKEN, P_SKILLED},
     {P_BOOMERANG, P_EXPERT}, {P_WHIP, P_BASIC},
     {P_HEALING_SPELL, P_BASIC},
@@ -478,7 +503,7 @@ static const struct def_skill Skill_Ran[] = {
     {P_ESCAPE_SPELL, P_BASIC},
     {P_RIDING, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_BASIC},
-    {P_SHIELD, P_SKILLED}, {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_EXPERT}, {P_SHIELD, P_SKILLED}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -494,7 +519,7 @@ static const struct def_skill Skill_S[] = {
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},
     {P_MARTIAL_ARTS, P_MASTER},  {P_SHIELD, P_SKILLED},
-    {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_BASIC}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -517,7 +542,7 @@ static const struct def_skill Skill_T[] = {
     {P_RIDING, P_BASIC},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_SKILLED},
     {P_BARE_HANDED_COMBAT, P_SKILLED},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_SKILLED}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -534,7 +559,7 @@ static const struct def_skill Skill_V[] = {
     {P_RIDING, P_SKILLED},
     {P_TWO_WEAPON_COMBAT, P_SKILLED},  {P_SHIELD, P_MASTER},
     {P_BARE_HANDED_COMBAT, P_EXPERT},
-    {P_WANDS, P_SKILLED},
+    {P_STEALTH, P_BASIC}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
 };
 
@@ -552,7 +577,7 @@ static const struct def_skill Skill_W[] = {
     {P_MATTER_SPELL, P_EXPERT},
     {P_RIDING, P_BASIC},
     {P_BARE_HANDED_COMBAT, P_BASIC},  {P_SHIELD, P_SKILLED},
-    {P_WANDS, P_EXPERT},
+    {P_STEALTH, P_SKILLED}, {P_WANDS, P_EXPERT},
     {P_NONE, 0}
 };
 
@@ -674,6 +699,7 @@ u_init_inv_skills(void)
         { STRANGE_OBJECT, STRANGE_OBJECT, STRANGE_OBJECT, STRANGE_OBJECT };
 
         /*** Role-specific initializations ***/
+    augment_magic_chest_contents(SCR_CONSECRATION, 0, 1);
     switch (Role_switch) {
     case PM_ARCHEOLOGIST:
         role_ini_inv(Archeologist, nclist);
@@ -684,6 +710,8 @@ u_init_inv_skills(void)
         knows_object(SACK);
         knows_object(TOUCHSTONE);
         skill_init(Skill_A);
+        /* TODO:  confer basic skill in P_STEALTH */
+        augment_magic_chest_contents(TINNING_KIT, 0, 1);
         augment_magic_chest_contents(0, RING_CLASS, 3);
         augment_magic_chest_contents(0, GEM_CLASS, 7);
         break;
@@ -709,12 +737,14 @@ u_init_inv_skills(void)
         skill_init(Skill_C);
         augment_magic_chest_contents(SLING, 0, 1);
         augment_magic_chest_contents(FLINT, 0, 15);
-        augment_magic_chest_contents(SILVER_NUGGET, 0, 1);
+        augment_magic_chest_contents(SILVER_NUGGET, 0, 5);
         break;
     case PM_HEALER:
         u.umoney0 = 1001 + rolern2(1000);
         trobj_list = copy_trobj_list(Healer);
-        trobj_list[H_LEAF].trquan = 6 + rolern2(6);
+        trobj_list[H_LEAF].trquan  = 4 + rolern2(3);
+        trobj_list[H_SPRIG].trquan = 1 + rolern2(3);
+        trobj_list[H_CLOVE].trquan = 1 + rolern2(3);
         role_ini_inv(trobj_list, nclist);
         knows_object(POT_FULL_HEALING);
         skill_init(Skill_H);
@@ -732,22 +762,13 @@ u_init_inv_skills(void)
         HJumping |= FROMOUTSIDE;
         skill_init(Skill_K);
         augment_magic_chest_contents(LONG_SWORD, 0, 1);
-        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
+        augment_magic_chest_contents(CROSSBOW_BOLT, 0, 10);
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         break;
-    case PM_MONK:
+    case PM_MONK: {
+        static short M_spell[] = { SPE_HEALING, SPE_PROTECTION, SPE_SLEEP };
         trobj_list = copy_trobj_list(Monk);
-        switch (rolern2(3)) {
-        case 0:
-            trobj_list[M_BOOK].trotyp = SPE_HEALING;
-            break;
-        case 1:
-            trobj_list[M_BOOK].trotyp = SPE_PROTECTION;
-            break;
-        case 2:
-            trobj_list[M_BOOK].trotyp = SPE_SLEEP;
-            break;
-        }
+        trobj_list[M_BOOK].trotyp = M_spell[rolern2(3)];
         role_ini_inv(trobj_list, nclist);
         if (!rolern2(5))
             role_ini_inv(Magicmarker, nclist);
@@ -756,12 +777,15 @@ u_init_inv_skills(void)
             role_ini_inv(Shuri, nclist);
         }
         knows_class(ARMOR_CLASS);
+        /* sufficiently martial-arts oriented item to ignore language issue: */
+        knows_object(SHURIKEN);
         skill_init(Skill_Mon);
         augment_magic_chest_contents(0, FOOD_CLASS, 5);
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
         augment_magic_chest_contents(0, SPBOOK_CLASS, 3);
         augment_magic_chest_contents(SPE_BLANK_PAPER, 0, 1);
         break;
+    }
     case PM_PRIEST:
         role_ini_inv(Priest, nclist);
         if (!rolern2(5))
@@ -783,8 +807,25 @@ u_init_inv_skills(void)
         break;
     case PM_RANGER:
         trobj_list = copy_trobj_list(Ranger);
-        trobj_list[RAN_TWO_ARROWS].trquan = 50 + rolern2(10);
-        trobj_list[RAN_ZERO_ARROWS].trquan = 30 + rolern2(10);
+        if (Race_if(PM_SCURRIER)) {
+            /* darts */
+            trobj_list[RAN_TWO_ARROWS].trquan = 25 + rolern2(10);
+            trobj_list[RAN_ZERO_ARROWS].trquan = 15 + rolern2(5);
+        } else if (Race_if(PM_GIANT)) {
+            /* sling ammo */
+            trobj_list[RAN_DAGGER].trotyp = FLINT;
+            trobj_list[RAN_DAGGER].trspe = 0;       /* no +2 flint */
+            trobj_list[RAN_TWO_ARROWS].trquan = 15; /* i.e., 15 stacks */
+            trobj_list[RAN_TWO_ARROWS].trspe = 0;   /* no +2 flint */
+            trobj_list[RAN_ZERO_ARROWS].trquan = 3; /* i.e., 3 stacks */
+            trobj_list[RAN_ZERO_ARROWS].trotyp = ROCK;
+            augment_magic_chest_contents(SLING, 0, 2);
+            augment_magic_chest_contents(FLINT, 0, 5);
+            augment_magic_chest_contents(SILVER_NUGGET, 0, 3);
+        } else {
+            trobj_list[RAN_TWO_ARROWS].trquan = 50 + rolern2(10);
+            trobj_list[RAN_ZERO_ARROWS].trquan = 30 + rolern2(10);
+        }
         role_ini_inv(trobj_list, nclist);
         augment_magic_chest_contents(SADDLE, 0, 1);
         augment_magic_chest_contents(DAGGER, 0, 3);
@@ -799,6 +840,7 @@ u_init_inv_skills(void)
         role_ini_inv(trobj_list, nclist);
         knows_object(SACK);
         skill_init(Skill_R);
+        /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(DAGGER, 0, 3);
         augment_magic_chest_contents(WAN_SLEEP, 0, 1);
         augment_magic_chest_contents(BAG_OF_HOLDING, 0, 1);
@@ -869,9 +911,11 @@ u_init_inv_skills(void)
         knows_class(ARMOR_CLASS);
         skill_init(Skill_V);
         augment_magic_chest_contents(0, ARMOR_CLASS, 20);
+        augment_magic_chest_contents(WAR_HAMMER, 0, 1);
         augment_magic_chest_contents(WAN_COLD, 0, 1);
         augment_magic_chest_contents(BROADSWORD, 0, 2);
         augment_magic_chest_contents(JAVELIN, 0, 10);
+        augment_magic_chest_contents(SPEAR, 0, 5);
         break;
     }        
     case PM_WIZARD:
@@ -881,7 +925,6 @@ u_init_inv_skills(void)
         augment_magic_chest_contents(SPBOOK_CLASS, 0, 5);
         augment_magic_chest_contents(POT_GAIN_ENERGY, 0, 3);
         augment_magic_chest_contents(SPE_MAGIC_MISSILE, 0, 1);
-        augment_magic_chest_contents(MAGIC_MARKER, 0, 1);
         break;
 
     default:   /* impossible */
@@ -908,9 +951,11 @@ u_init_inv_skills(void)
         static const int trotyp[] = {
             WOODEN_FLUTE, TOOLED_HORN, WOODEN_HARP, LEATHER_DRUM
         };
-        augment_magic_chest_contents(LEMBAS_WAFER, 0, 5);
+        augment_magic_chest_contents(LEMBAS_WAFER, 0, 3);
         augment_magic_chest_contents(ELVEN_SHIELD, 0, 1);
-        augment_magic_chest_contents(ELVEN_BOOTS, 0, 5);
+        augment_magic_chest_contents(ELVEN_BOOTS, 0, 1);
+        augment_skill_cap(P_STEALTH, 1, P_SKILLED, P_EXPERT);
+
         if (Role_if(PM_PRIEST) || Role_if(PM_WIZARD)) {
             trobj_list = copy_trobj_list(Instrument);
             trobj_list[0].trotyp = trotyp[rn2(SIZE(trotyp))];
@@ -953,9 +998,15 @@ u_init_inv_skills(void)
         ini_inv(GnomeStuff, nclist, rng_main);
         augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
+        augment_skill_cap(P_STEALTH, 1, P_BASIC, P_EXPERT);
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
-        augment_magic_chest_contents(TALLOW_CANDLE, 0, 5);
-        augment_magic_chest_contents(WAX_CANDLE, 0, 5);
+        break;
+
+    case PM_GIANT:
+        ini_inv(GiantStuff, nclist, rng_main);
+        augment_skill_cap(P_TWO_HANDED_SWORD, 2, P_SKILLED, P_MASTER);
+        augment_skill_cap(P_SLING, 2, P_BASIC, P_EXPERT);
+        augment_magic_chest_contents(TWO_HANDED_SWORD, 0, 1);
         break;
 
     case PM_ORC:
@@ -976,6 +1027,7 @@ u_init_inv_skills(void)
         knows_object(ORCISH_CLOAK);
         augment_skill_cap(P_SCIMITAR, 2, P_SKILLED, P_MASTER);
         augment_skill_cap(P_SHIELD, 1, P_BASIC, P_MASTER);
+        augment_skill_cap(P_STEALTH, 1, P_BASIC, P_SKILLED);
         augment_magic_chest_contents(0, ARMOR_CLASS, 12);
         break;
 
@@ -984,9 +1036,18 @@ u_init_inv_skills(void)
         if (Role_if(PM_HEALER)) {
             trobj_list[SYL_HEALINGPOT].trotyp = MAGIC_HARP;
         }
-        augment_skill_cap(P_HEALING_SPELL, 1, P_BASIC, P_SKILLED);
+        augment_skill_cap(P_STEALTH, 1, P_BASIC, P_MASTER);
+        augment_skill_cap(P_HEALING_SPELL, 1, P_SKILLED, P_SKILLED);
         augment_magic_chest_contents(0, FOOD_CLASS, 3);
         ini_inv(trobj_list, nclist, rng_main);
+        break;
+
+    case PM_SCURRIER:
+        augment_skill_cap(P_STEALTH, 2, P_EXPERT, P_MASTER);
+        augment_skill_cap(P_DART, 2, P_EXPERT, P_MASTER);
+        augment_magic_chest_contents(0, FOOD_CLASS, 5);
+        augment_magic_chest_contents(DART, 0, 5);
+        augment_magic_chest_contents(POT_SICKNESS, 0, 1);
         break;
 
     default:   /* impossible */
@@ -1029,14 +1090,52 @@ u_init_inv_skills(void)
     return;
 }
 
+static const struct icp magicchestprobs[] = {
+    {10, WEAPON_CLASS},
+    {10, ARMOR_CLASS},
+    {15, FOOD_CLASS},
+    {10, TOOL_CLASS},
+    {10, GEM_CLASS},
+    {15, POTION_CLASS},
+    {15, SCROLL_CLASS},
+    {5, SPBOOK_CLASS},
+    {5, WAND_CLASS},
+    {3, RING_CLASS},
+    {2, AMULET_CLASS}
+};
+
 static void
 augment_magic_chest_contents(int otyp, int oclass, int count)
 {
-    int i;
+    int class = oclass;
+    int i, tprob;
     struct obj *otmp;
     for (i = 1; i <= count; i++) {
-        otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
-                        mkobj(level, oclass, FALSE, rng_main);
+        if (oclass == RANDOM_CLASS) {
+            const struct icp *iprobs = magicchestprobs;
+            for (tprob = rn2_on_rng(100, rng_main) + 1;
+                 (tprob -= iprobs->iprob) > 0; iprobs++)
+                ;
+            class = iprobs->iclass;
+        }
+        if ((class == TOOL_CLASS) && !otyp) {
+            int typ = 0;
+            int i, p;
+            while (!typ) {
+                i    = bases[(int)class];
+                p = 1 + rn2_on_rng(1000, rng_main); /* reroll as necessary */
+                while ((p -= objects[i].oc_prob) > 0) {
+                    i++;
+                }
+                if ((i != LARGE_BOX) && (i != CHEST) && (i != ICE_BOX)) {
+                    typ = i;
+                    otmp = mksobj(level, typ, TRUE, FALSE, rng_main);
+                }
+            }
+        } else {
+            otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
+                            mkobj(level, class, FALSE, rng_main);
+        }
         obj_extract_self(otmp);
         add_to_magic_chest(otmp);
     }
@@ -1226,7 +1325,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
                        obj->otyp != FLINT) {
                 obj->quan = 1L;
             }
-            if (trop->trspe != UNDEF_SPE)
+            if ((trop->trspe != UNDEF_SPE) && (obj->otyp != SLIME_MOLD))
                 obj->spe = trop->trspe;
             if (trop->trbless != UNDEF_BLESS)
                 obj->blessed = trop->trbless;

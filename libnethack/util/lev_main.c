@@ -355,6 +355,8 @@ what_map_char(char c)
         return SCORR;
     case '{':
         return FOUNTAIN;
+    case 'b':
+        return BENCH;
     case '\\':
         return THRONE;
     case '(':
@@ -371,6 +373,8 @@ what_map_char(char c)
         return ICE;
     case 'W':
         return WATER;
+    case 'w':
+        return PUDDLE;
     case 'T':
         return TREE;
     case 'F':

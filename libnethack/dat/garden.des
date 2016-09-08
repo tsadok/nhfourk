@@ -1,0 +1,265 @@
+# Last modified by Nathan Eady, 2016-07-25
+
+# This file (this specific file, garden.des) is in the public domain,
+# having been released by its author.  At your option, you may also
+# choose to treat it as CC0 or under the terms of the NetHack license.
+# The author reserves none of the exclusivity rights that copyright
+# law allows him to reserve.
+
+MAZE: "garden-1", 'T'
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#1234567890123456789012345678901234567890123456789012345678901234567890123
+MAP
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTT.TTT..TT....TTTT....TT..T.TT...TTTT..........TTTTTT...TT.TT..T..TTT
+TTTT.T.....T....T....TTTT..............T..b...........TTT...TT...TT...T.TT
+TTT.....T......T......T......T...............................TTT........TT
+TT..T.......T...........TT................................TTT.T........TTT
+T......T.T.....b.........TT...TT.........................T.TT.TTT........T
+T....T...................T..............................T.....TT.........T
+T...........T........b.....T.........T...............T....T..............T
+T.T.....TT..........T...PPPPP.......................b...T.....T..T...T...T
+T..T..T.....T....T....PPPPPPPP..........T.............T....T......TT....TT
+T.......T.T..........PPPPPPPPPP......................T....T..T.......T..TT
+T.T..........T....T..PPPPPPPPPPPPP..........T....T.....T..............T..T
+TT.....T.......T......PPPPPPPPPPPPPPPPPP..................T....T..-----..T
+T...T...............T..PPPPPPPPPPPPPPPPPPP....T....T........T.....|...|.TT
+T............T....T....PPPPPP..PPPPPPPPPPPP.............T.........|...|.TT
+T...............T.......}}...T.PPPPPPPPPPPP.......................+..(|.TT
+TT.................T..PPPPPP..PPPPPPPPPPPP...TT.T............T....|...|..T
+TTT...............PPPPPPPPPPPPPPPPPPPPPP....T.........TT..T.T.....-----..T
+TTTTT.....PPPPPPPPPPPPPPPPPPPPPPPPPPPP.....TTTT.....TTTTTT.....T........TT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+ENDMAP
+RANDOM_PLACES:(27,09),(24,10),(28,11),(24,13),(33,13),(39,14),(35,16),(23,17),(37,17)
+REGION:(00,00,73,19),lit,"ordinary"
+STAIR:(06,15),up
+STAIR:(68,03),down
+TELEPORT_REGION:(01,09,20,18),(0,0,0,0),up
+TELEPORT_REGION:(60,01,72,07),(0,0,0,0),down
+NON_DIGGABLE:(00,00,73,01)
+NON_DIGGABLE:(00,00,01,19)
+NON_DIGGABLE:(72,00,73,19)
+NON_DIGGABLE:(00,18,73,19)
+NON_DIGGABLE:(66,12,70,17)
+DOOR:locked,(66,15)
+ALTAR:(68,13),noalign,altar
+FOUNTAIN:(46,02)
+FOUNTAIN:(48,02)
+FOUNTAIN:(45,03)
+FOUNTAIN:(49,03)
+FOUNTAIN:(44,04)
+FOUNTAIN:(47,04)
+FOUNTAIN:(50,04)
+FOUNTAIN:(46,05)
+FOUNTAIN:(48,05)
+FOUNTAIN:(44,06)
+FOUNTAIN:(47,06)
+FOUNTAIN:(50,06)
+FOUNTAIN:(45,07)
+FOUNTAIN:(49,07)
+FOUNTAIN:(46,08)
+FOUNTAIN:(48,08)
+# Statues among the fountains:
+OBJECT:'`',"statue",(47,05),"island nymph",1,"Aphrodite"
+OBJECT:'`',"statue",(47,03),"wood nymph",0
+OBJECT:'`',"statue",(47,07),"water nymph",0
+OBJECT:'`',"statue",(45,05),"incubus",0
+OBJECT:'`',"statue",(49,05),"incubus",0
+# And in the lake...
+OBJECT:'(',"magic lamp",place[0]
+MONSTER:';',random,place[1]
+MONSTER:';',random,place[2]
+MONSTER:';',random,place[3]
+MONSTER:';',random,place[4]
+MONSTER:';',random,place[5]
+# On the island...
+# (Placing fruit on the tree produces warnings but is deliberate.)
+OBJECT:'%',"banana",(29,15)
+OBJECT[80%]:'%',"banana",(29,15)
+OBJECT[60%]:'%',"banana",(29,15)
+OBJECT[40%]:'%',"banana",(29,15)
+MONSTER:'Y',"monkey",(28,15)
+# The gardener and his helpers:
+MONSTER:'&',"barbed devil",(67,15)
+MONSTER:'@',"nurse",(67,13)
+MONSTER:'@',"nurse",(68,16)
+MONSTER:'&',random,(69,13)
+MONSTER:'&',random,(67,15)
+# Scattered monsters:
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',"water nymph",random
+MONSTER:'n',"water nymph",random
+MONSTER:'n',"wood nymph",random
+MONSTER:'n',"wood nymph",random
+MONSTER:'n',"mountain nymph",random
+MONSTER:'n',"mountain nymph",random
+MONSTER:'n',"island nymph",random
+MONSTER:'n',"island nymph",random
+MONSTER:'u',"black unicorn",random
+MONSTER:'u',"white unicorn",random
+MONSTER:'u',"gray unicorn",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'Y',"monkey",random
+MONSTER:'Y',"monkey",random
+MONSTER:'Y',"monkey",random
+# Scattered objects:
+OBJECT:'%',"banana",random
+OBJECT:'%',"orange",random
+OBJECT:'%',"apple",random
+OBJECT:'%',"pear",random
+OBJECT:'%',"slime mold",random
+OBJECT:'!',"booze",random
+OBJECT:'!',"booze",random
+OBJECT:'/',"sleep",random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',"adornment",random
+OBJECT:'=',"adornment",random
+OBJECT:'=',"adornment",random
+
+
+MAZE: "garden-2", 'T'
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#1234567890123456789012345678901234567890123456789012345678901234567890123
+MAP
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTPPPPPPPPPTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTTT.......T......T....TTT..T........PPPPPPPPPPP...T.....TTTT.......TTTTTT
+TT..........T........T..T.....T....PPPPPPPPPPPPP......T...T...........TTTT
+T.....T..TT...............TT....PPPPPPPPPPPPPPPPP....T......-----+-----.TT
+T.......T..T....T......T....PPPPPPPPPPPPPPPPPPPPP...........|.........|.TT
+T....T.TT................PPPPPPPPPPPPP..PPPPPPPPP...T.......|..(......|..T
+T..T................b...PPPPPPPPPPPPP....PPPPPPP............-----------..T
+TT...T...T.......T...T.PPPPPPPPPPPPPPP..PPPPPPPP.......T....T............T
+TTTT....T..T...........PPPPPPPPPPPPPPTPPPPPPPPP...T..........T.........T.T
+TTTTT...................PPPPPPPPPPPPPPPPPPPPPP....................T..T.T.T
+TTTTT....T...............PPPPPPPPPPPPPPPPPPPP.T.....................TT...T
+TTTT...T..T................PPPPPPPPPPPPPPP.......................T......TT
+TTT.T...T.......T....T..b.....PPPPPPPPP.....T......................T..T..T
+TT....TT....T....T..T..T....T....T................b.........b...T........T
+TT.........T.T................T....TT.....T...................T...T.....TT
+TT.........................T......TT.............................T.....T.T
+TT.............T...............T.....T.......T.................T....T....T
+TTT...T...T..TT.................TTTTTTT.......TT.T...........T...T......TT
+TTTTTT..TT..TTTTT...........TTTTTTTTTTTTT...TTTTTTT.....T..T....T....TTTTT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+ENDMAP
+RANDOM_PLACES:(39,01),(45,02),(36,03),(46,04),(29,05),(26,08),(44,06),(41,09),(37,10),(32,11)
+REGION:(00,00,73,19),lit,"ordinary"
+STAIR:(03,04),up
+STAIR:(68,15),down
+TELEPORT_REGION:(01,01,15,07),(0,0,0,0),up
+TELEPORT_REGION:(61,10,72,18),(0,0,0,0),down
+NON_DIGGABLE:(00,00,73,01)
+NON_DIGGABLE:(00,00,01,19)
+NON_DIGGABLE:(72,00,73,19)
+NON_DIGGABLE:(00,18,73,19)
+NON_DIGGABLE:(60,03,70,06)
+DOOR:locked,(65,03)
+ALTAR:(65,05),noalign,altar
+FOUNTAIN:(53,10)
+FOUNTAIN:(57,10)
+FOUNTAIN:(52,11)
+FOUNTAIN:(55,11)
+FOUNTAIN:(58,11)
+FOUNTAIN:(54,12)
+FOUNTAIN:(56,12)
+FOUNTAIN:(53,13)
+FOUNTAIN:(57,13)
+FOUNTAIN:(54,14)
+FOUNTAIN:(56,14)
+FOUNTAIN:(52,15)
+FOUNTAIN:(55,15)
+FOUNTAIN:(58,15)
+FOUNTAIN:(53,16)
+FOUNTAIN:(57,16)
+OBJECT:'`',"statue",(55,13),"island nymph",1,"Aphrodite"
+OBJECT:'`',"statue",(53,11),"wood nymph",0
+OBJECT:'`',"statue",(57,15),"water nymph",0
+OBJECT:'`',"statue",(57,11),"incubus",0
+OBJECT:'`',"statue",(53,15),"incubus",0
+# And in the lake...
+OBJECT:'(',"magic lamp",place[0]
+MONSTER:';',random,place[1]
+MONSTER:';',random,place[2]
+MONSTER:';',random,place[3]
+MONSTER:';',random,place[4]
+MONSTER:';',random,place[5]
+OBJECT:'%',"kelp frond",place[6]
+# On the island...
+CONTAINER:'`',"statue",(39,06),"monkey",0
+OBJECT:'%',"banana",contained
+OBJECT[80%]:'%',"banana",contained
+OBJECT[60%]:'%',"banana",contained
+OBJECT[40%]:'%',"banana",contained
+OBJECT:'%',"banana",(39,06)     
+MONSTER:'Y',"monkey",(39,06)
+# The gardener and his helpers:
+MONSTER:'&',"vrock",(65,04)
+MONSTER:'@',"nurse",(62,04)
+MONSTER:'@',"nurse",(68,05)
+MONSTER:'&',random,(62,05)
+MONSTER:'&',random,(68,04)
+# Scattered monsters:
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',random,random
+MONSTER:'n',"water nymph",random
+MONSTER:'n',"water nymph",random
+MONSTER:'n',"wood nymph",random
+MONSTER:'n',"wood nymph",random
+MONSTER:'n',"mountain nymph",random
+MONSTER:'n',"mountain nymph",random
+MONSTER:'n',"island nymph",random
+MONSTER:'n',"island nymph",random
+MONSTER:'u',"black unicorn",random
+MONSTER:'u',"white unicorn",random
+MONSTER:'u',"gray unicorn",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"incubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'&',"succubus",random
+MONSTER:'Y',"monkey",random
+MONSTER:'Y',"monkey",random
+MONSTER:'Y',"monkey",random
+# Scattered objects:
+OBJECT:'%',"banana",random
+OBJECT:'%',"orange",random
+OBJECT:'%',"apple",random
+OBJECT:'%',"pear",random
+OBJECT:'%',"slime mold",random
+OBJECT:'!',"booze",random
+OBJECT:'!',"booze",random
+OBJECT:'!',"booze",random
+OBJECT:'!',"sleeping",random
+OBJECT:'!',"sleeping",random
+OBJECT:'!',"sleeping",random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',"adornment",random
+OBJECT:'=',"adornment",random
+OBJECT:'=',"adornment",random

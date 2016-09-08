@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-15 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
@@ -17,7 +17,6 @@ cost(struct obj *otmp)
     switch (otmp->otyp) {
     case SCR_LIGHT:
     case SCR_GOLD_DETECTION:
-    case SCR_FOOD_DETECTION:
     case SCR_MAGIC_MAPPING:
     case SCR_WATER:
     case SCR_FIRE:
@@ -50,6 +49,9 @@ cost(struct obj *otmp)
     case SCR_GENOCIDE:
         return 30;
 /*      break; */
+    case SCR_CONSECRATION:
+        return 45;
+/*      break; */
     case SCR_WISHING:
         /* Yeah, sure, wish for a marker, write a scroll of wishing, recharge... */
         return 999;
@@ -76,10 +78,10 @@ dowrite(struct obj *pen, const struct nh_cmd_arg *arg)
     const char *typeword;
 
     if (nohands(youmonst.data)) {
-        pline("You need hands to be able to write!");
+        pline(msgc_cancelled, "You need hands to be able to write!");
         return 0;
     } else if (Glib) {
-        pline("%s from your %s.", Tobjnam(pen, "slip"),
+        pline(msgc_badidea, "%s from your %s.", Tobjnam(pen, "slip"),
               makeplural(body_part(FINGER)));
         unwield_silently(pen);
         dropx(pen);
@@ -93,12 +95,13 @@ dowrite(struct obj *pen, const struct nh_cmd_arg *arg)
 
     typeword = (paper->oclass == SPBOOK_CLASS) ? "spellbook" : "scroll";
     if (Blind && !paper->dknown) {
-        pline("You don't know if that %s is blank or not!", typeword);
+        pline(msgc_cancelled1,
+              "You don't know if that %s is blank or not!", typeword);
         return 1;
     }
     paper->dknown = 1;
     if (paper->otyp != SCR_BLANK_PAPER && paper->otyp != SPE_BLANK_PAPER) {
-        pline("That %s is not blank!", typeword);
+        pline(msgc_cancelled1, "That %s is not blank!", typeword);
         exercise(A_WIS, FALSE);
         return 1;
     }
@@ -140,21 +143,22 @@ dowrite(struct obj *pen, const struct nh_cmd_arg *arg)
         }
     }
 
-    pline("There is no such %s!", typeword);
+    pline(msgc_cancelled1, "There is no such %s!", typeword);
     return 1;
 found:
 
     if (i == SCR_BLANK_PAPER || i == SPE_BLANK_PAPER) {
-        pline("You can't write that!");
-        pline("It's obscene!");
+        pline(msgc_cancelled1, "You can't write that!");
+        pline(msgc_cancelled1, "It's obscene!");
         return 1;
     } else if (i == SPE_BOOK_OF_THE_DEAD) {
-        pline("No mere dungeon adventurer could write that.");
+        pline(msgc_cancelled1, "No mere dungeon adventurer could write that.");
         return 1;
     } else if ((by_descr || by_name) && paper->oclass == SPBOOK_CLASS &&
                !objects[i].oc_name_known) {
         /* can't write unknown spellbooks by description */
-        pline("Unfortunately you don't have enough information to go on.");
+        pline(msgc_cancelled1,
+              "Unfortunately you don't have enough information to go on.");
         return 1;
     }
 
@@ -170,7 +174,7 @@ found:
     /* see if there's enough ink */
     basecost = cost(new_obj);
     if (pen->spe < basecost / 2) {
-        pline("Your marker is too dry to write that!");
+        pline(msgc_failcurse, "Your marker is too dry to write that!");
         obfree(new_obj, NULL);
         return 1;
     }
@@ -183,13 +187,14 @@ found:
     /* dry out marker */
     if (pen->spe < actualcost) {
         pen->spe = 0;
-        pline("Your marker dries out!");
+        pline(msgc_itemloss, "Your marker dries out!");
         /* scrolls disappear, spellbooks don't */
         if (paper->oclass == SPBOOK_CLASS) {
-            pline("The spellbook is left unfinished and your writing fades.");
+            pline(msgc_failcurse,
+                  "The spellbook is left unfinished and your writing fades.");
             update_inventory(); /* pen charges */
         } else {
-            pline("The scroll is now useless and disappears!");
+            pline(msgc_failcurse, "The scroll is now useless and disappears!");
             useup(paper);
         }
         obfree(new_obj, NULL);
@@ -200,11 +205,13 @@ found:
     /* can't write if we don't know it - unless we're lucky */
     if (!(objects[new_obj->otyp].oc_name_known) &&
         (rnl(Role_if(PM_WIZARD) ? 3 : 15))) {
-        pline("You %s to write that!", by_descr ? "fail" : "don't know how");
+        pline(msgc_failrandom, "You %s to write that!",
+              by_descr ? "fail" : "don't know how");
         /* scrolls disappear, spellbooks don't */
         if (paper->oclass == SPBOOK_CLASS) {
-            pline("You write in your best handwriting:  "
-                  "\"My Diary\", but it quickly fades.");
+            pline_implied(msgc_failrandom,
+                          "You write in your best handwriting:  "
+                          "\"My Diary\", but it quickly fades.");
             update_inventory(); /* pen charges */
         } else {
             const char *written;
@@ -214,7 +221,9 @@ found:
                                       (6 + MAXULEV - u.ulevel) / 6, 0);
             } else
                 written = msgprintf("%s was here!", u.uplname);
-            pline("You write \"%s\" and the scroll disappears.", written);
+            pline_implied(msgc_failrandom,
+                          "You write \"%s\" and the scroll disappears.",
+                          written);
             useup(paper);
         }
         obfree(new_obj, NULL);
@@ -227,7 +236,7 @@ found:
     /* success */
     if (new_obj->oclass == SPBOOK_CLASS) {
         /* acknowledge the change in the object's description... */
-        pline("The spellbook warps strangely, then turns %s.",
+        pline(msgc_actionok, "The spellbook warps strangely, then turns %s.",
               OBJ_DESCR(objects[new_obj->otyp]));
     }
     new_obj->blessed = (curseval > 0);

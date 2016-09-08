@@ -49,7 +49,7 @@ PORTAL:(0,0,75,19),(65,13,75,19),"air"
 #  Some helpful monsters.  Making sure a
 #  pick axe and at least one wand of digging
 #  are available.
-MONSTER:'@',"Elvenking",(67,16)
+MONSTER:'Q',"Elvenking",(67,16)
 MONSTER:'H',"minotaur",(67,14)
 #  An assortment of earth-appropriate nasties
 #  in each cavern.
@@ -187,9 +187,9 @@ MONSTER:'e',"floating eye",random,hostile
 MONSTER:'e',"floating eye",random,hostile
 MONSTER:'e',"floating eye",random,hostile
 
-MONSTER:'y',"yellow light",random,hostile
-MONSTER:'y',"yellow light",random,hostile
-MONSTER:'y',"yellow light",random,hostile
+MONSTER:'e',"yellow light",random,hostile
+MONSTER:'e',"yellow light",random,hostile
+MONSTER:'e',"yellow light",random,hostile
 
 MONSTER:'A',"couatl",random
 

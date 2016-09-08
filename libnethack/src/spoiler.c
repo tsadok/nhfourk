@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Nathan Eady, 2015-05-19 */
+/* Last modified by Nathan Eady, 2016-06-01 */
 /* File opening code based on the xlogfile code. */
 /* Object-looping code based on makedefs.c */
 /* Concept based on Autospoil, by Cristan Szmajda
@@ -36,11 +36,11 @@ static const char * spoiloneattack(const struct attack *attk);
 static const char * spoilattacks(int i);
 static const char * spoilmonskills(int i);
 static const char * spoilresistances(uchar res, boolean convey, int i);
-static const char * spoilmonsize(int i);
+static const char * spoilmonsize(uchar s);
 static const char * spoilmrace(int i);
-static const char * spoilmonflagone(unsigned long flags);
-static const char * spoilmonflagtwo(unsigned long flags, boolean dorace);
-static const char * spoilmonflagthree(unsigned long flags);
+static const char * spoilmonflagone(unsigned long mflags);
+static const char * spoilmonflagtwo(unsigned long mflags, boolean dorace);
+static const char * spoilmonflagthree(unsigned long mflags);
 static const char * spoilmonflags(int i);
 static void spoilobjclass(FILE *file, const char *hrname, const char *aname,
                           int classone, int classtwo);
@@ -51,14 +51,35 @@ static const char * spoilarteffects(struct artifact *art,
                                     unsigned long spfx, struct attack attk);
 static const char * spoilartinvoke(struct artifact *art);
 static const char * spoilartotherinfo(struct artifact *art);
+static const char * spoilgenders(short allow);
+static const char * spoilaligns(short allow);
+static const char * spoilraceroles(short allow);
+static const char * spoilroleraces(short allow);
+static const char * attrlabel(int i);
+static const char * spoilattributes(const char *labelone, const xchar *attrone,
+                                    const char *labeltwo, const xchar *attrtwo,
+                                    const char *labelthr, const xchar *attrthr);
+static const char * spoiladvancerow(const char *label,
+                                    const struct RoleAdvance *adv);
+static const char * spoiladvance(const char *labelone,
+                                 const struct RoleAdvance *advone,
+                                 const char *labeltwo,
+                                 const struct RoleAdvance *advtwo, int cutoff);
+static const char * spoilspellpenalty(const char *class, const char *label,
+                                      int p);
+static const char * spoilrolespellcasting(int i);
+static const char * spoilquestart(int i);
 static void makehtmlspoilers(void);
 static void makepinobotyaml(void);
 
-const char *at[17] =
+#define ATSIZE 18
+const char *at[ATSIZE] =
         {"passive", "claw", "bite", "kick", "butt", "touch",
          "sting", "hug", "AT_8", "AT_9", "spit", "engulf", "breath",
-         "actively explode", "passively explode", "gaze", "tentacles"};
-const char *ad[47] =
+         "actively explode", "passively explode", "gaze", "tentacles",
+         "spin"};
+#define ADSIZE 49
+const char *ad[ADSIZE] =
         {"physical", "magic missile", "fire", "cold", "sleep", "disint",
          "shock", "strength drain", "acid", "special1", "special2",
          "blinding", "stun", "slow", "paralysis", "level drain",
@@ -69,7 +90,7 @@ const char *ad[47] =
          "intelligence drain", "disease", "rotting", "seduction",
          "hallucination", "death", "pestilence", "famine", "sliming",
          "disenchantment", "corrosion", "vicarous suffering",
-         "stinking cloud", "pits", "iceblock"};
+         "stinking cloud", "pits", "iceblock", "displace", "web"};
 
 /* NOTE: the order of these words exactly corresponds to the
    order of oc_material values #define'd in objclass.h.  I
@@ -90,8 +111,11 @@ htmlheader(const char * spoilername)
     const char *copyright   = "<!-- HTML Markup by Nathan Eady is public domain or CC0 at your option -->";
     const char *csslink     = "<link rel=\"stylesheet\" type=\"text/css\" href=\"spoilers.css\" />";
     return msgprintf("<html><head><title>%s %s Spoiler</title>\n%s\n%s\n%s\n</head><body>"
-                     "<p>This spoiler pertains to %s version %s.</p>",
-                     variantname, spoilername, createdby, copyright, csslink, variantname, version);
+                     "<p>This spoiler pertains to <span class=\"variant\">%s</span> "
+                     "   <span class=\"nhversion\">version <span class=\"versionnumber\">%s</span>.\n"
+                     "   <span class=\"generated\">Generated <span class=\"gendate\">%ld</span>.</span></p>",
+                     variantname, spoilername, createdby, copyright, csslink, variantname, version,
+                     yyyymmdd(utc_time()));
 }
 
 const char *
@@ -211,6 +235,19 @@ oslotname(enum objslot os)
 }
 
 static const char *
+spoilarmorsize(struct objclass *oc)
+{
+    uchar minsize = (uchar) abs(oc->a_minsize);
+    uchar maxsize = (uchar) abs(oc->a_maxsize);
+    if (maxsize > minsize) {
+        return msgprintf("<span class=\"range\">%s&nbsp;&mdash; %s</span>",
+                         spoilmonsize(minsize), spoilmonsize(maxsize));
+    } else {
+        return spoilmonsize(maxsize);
+    }
+}
+
+static const char *
 semicolonjoin(const char *a, const char *b)
 {
     if (b[0])
@@ -255,14 +292,14 @@ spoiloneattack(const struct attack *attk)
                      attk->damn, attk->damd,
                      ((attk->aatyp == AT_WEAP) ? "weapon" :
                       (attk->aatyp == AT_MAGC) ? "spellcasting" :
-                      (attk->aatyp < 17 /* && attk->aatyp >= 0 */) ?
+                      (attk->aatyp < ATSIZE  /* && attk->aatyp >= 0 */) ?
                       at[attk->aatyp] : "mysterious"),
                      ((attk->adtyp == AD_CLRC) ? "clerical spellcasting" :
                       (attk->adtyp == AD_SPEL) ? "arcane spellcasting" :
                       (attk->adtyp == AD_RBRE) ? "random breath weapon" :
                       (attk->adtyp == AD_SAMU) ? "amulet stealing" :
                       (attk->adtyp == AD_CURS) ? "intrinsic stealing" :
-                      (attk->adtyp < 47 /* && attk->adtyp >= 0 */) ?
+                      (attk->adtyp < ADSIZE /* && attk->adtyp >= 0 */) ?
                       ad[attk->adtyp] : "unknown damage"));
 }
 
@@ -326,14 +363,14 @@ spoilresistances(uchar res, boolean convey, int i)
 }
 
 static const char *
-spoilmonsize(int i)
+spoilmonsize(uchar s)
 {
-    uchar s = mons[i].msize;
     const char * size[8] =
         { "<span class=\"sizetiny\">tiny</span>",
           "<span class=\"sizesmall\">small</span>",
           "<span class=\"sizemedium\">medium</span>",
           "<span class=\"sizelarge\">large</span>",
+          "<span class=\"huge\">huge</span>",
           "<span class=\"error unknownsize\">size 5</span>",
           "<span class=\"error unknownsize\">size 6</span>",
           "<span class=\"sizegigantic\">gigantic</span>"};
@@ -565,7 +602,7 @@ spoilartalign(struct artifact *art)
 static const char *
 spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s",
+    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
                      ((spfx & SPFX_SEEK) ?
                       /* TODO: currently, the code checks SPFX_SEARCH for both
                          auto-searching and the +n search bonus and never
@@ -605,6 +642,8 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
                       "<span class=\"spfx spfxxray\">xray</span> " : ""),
                      ((spfx & SPFX_REFLECT) ?
                       "<span class=\"spfx spfxreflect\">reflect</span> " : ""),
+                     ((spfx & SPFX_STRM) ?
+                      "<span class=\"spfx spfxstrm\">storm</span>" : ""),
                      msgprintf("<span class=\"artattk\">%s</span>",
                                /* TODO: handle attk.damn and attk.damd */
                                (attk.adtyp && attk.adtyp == AD_MAGM) ? "MR" :
@@ -664,6 +703,170 @@ spoilartotherinfo(struct artifact *art)
                       "<span class=\"artother artspeak\">speaks</span> " : ""));
 }
 
+const char *
+spoilgenders(short allow)
+{
+    short g = (allow & ROLE_GENDMASK);
+    return msgprintf("<span class=\"genders\">%s %s %s</span>",
+     ((g & ROLE_MALE)   ?
+     "<span class=\"flgmale\"><abbr title=\"male\">Mal</abbr></span>"   : ""),
+     ((g & ROLE_FEMALE) ?
+     "<span class=\"flgfemale\"><abbr title=\"female\">Fem<abbr></span>": ""),
+     ((g & ROLE_NEUTER) ?
+     "<span class=\"flgneuter\"><abbr title=\"neuter\">Neut</abbr></span>"
+                                                                        : ""));
+}
+
+const char *
+spoilaligns(short allow) {
+    short a = (allow & ROLE_ALIGNMASK);
+    return msgprintf("<span class=\"aligns\">%s %s %s</span>",
+                     ((a & ROLE_LAWFUL)  ? spoilaligntyp(A_LAWFUL)  : ""),
+                     ((a & ROLE_NEUTRAL) ? spoilaligntyp(A_NEUTRAL) : ""),
+                     ((a & ROLE_CHAOTIC) ? spoilaligntyp(A_CHAOTIC) : ""));
+}
+
+const char *
+spoilroleraces(short allow) {
+    const char *thelist = "";
+    int i, j = 0;
+    for (i = 0; races[i].filecode; i++) {
+        if ((races[i].selfmask) & allow) {
+            thelist = msgprintf("%s%s<span class=\"race%s\">"
+                                "<abbr title=\"%s\">%s</abbr></span>",
+                                thelist, ((j++ > 0) ? ", " : ""),
+                                races[i].filecode, races[i].noun,
+                                races[i].filecode);
+        }
+    }
+    return msgprintf("<span class=\"races\">%s</span>", thelist);
+}
+
+const char *
+spoilraceroles (short selfmask) {
+    const char *thelist = "";
+    int i, j = 0;
+    for (i = 0; roles[i].filecode; i++) {
+        short thisrole = (roles[i].allow & ROLE_RACEMASK);
+        if (thisrole & selfmask) {
+            thelist = msgprintf("%s%s<span class=\"role%s\">"
+                                "<abbr title=\"%s\">%s</abbr></span>",
+                                thelist, ((j++ > 0) ? ", " : ""),
+                                roles[i].name.m, roles[i].name.m,
+                                roles[i].filecode);
+        }
+    }
+    return msgprintf("<span class=\"roles\">%s</span>", thelist);
+}
+
+const char *
+attrlabel (int i) {
+    if      (i == A_STR) { return "Str"; }
+    else if (i == A_INT) { return "Int"; }
+    else if (i == A_WIS) { return "Wis"; }
+    else if (i == A_DEX) { return "Dex"; }
+    else if (i == A_CON) { return "Con"; }
+    else if (i == A_CHA) { return "Cha"; }
+    else return msgprintf("%d??", i);
+}
+
+const char *
+spoilattributes(const char *labelone, const xchar *attone,
+                const char *labeltwo, const xchar *attrtwo,
+                const char *labelthr, const xchar *attrthr) {
+    int i;
+    const char *headers = "<th></th>";
+    const char *rowone  = msgprintf("<th>%s:</th>", labelone);
+    const char *rowtwo  = msgprintf("<th>%s:</th>", labeltwo);
+    const char *rowthr  = attrthr ? msgprintf("<th>%s:</th>", labelthr) : "";
+    for (i = 0; i < A_MAX; i++) {
+        headers = msgprintf("%s<th>%s</th>", headers, attrlabel(i));
+        rowone  = msgprintf("%s<td class=\"numeric attr%s\">%d</td>",
+                            rowone, attrlabel(i), attone[i]);
+        rowtwo  = msgprintf("%s<td class=\"numeric attr%s\">%d</td>",
+                            rowtwo, attrlabel(i), attrtwo[i]);
+        if (attrthr)
+            rowthr = msgprintf("%s<td class=\"numeric attr%s\">%s%d</td>",
+                               rowthr, attrlabel(i),
+                               ((attrthr[i] > 0) ? "+" : ""),  attrthr[i] - 1);
+    }
+    return msgprintf("<table class=\"attributes\"><thead>\n"
+                     "  <tr>%s</tr>\n"
+                     "</thead><tbody>\n"
+                     "  <tr class=\"attrow%s\">%s</tr>\n"
+                     "  <tr class=\"attrow%s\">%s</tr>\n"
+                     "%s"
+                     "</tbody></table>",
+                     headers, labelone, rowone, labeltwo, rowtwo,
+                     (attrthr ? msgprintf("  <tr class=\"attrow%s\">%s</tr>\n",
+                                          labelthr, rowthr) : ""));
+}
+
+const char *
+spoiladvancerow(const char *label, const struct RoleAdvance *adv) {
+    return msgprintf("<tr class=\"adv%s\"><th class=\"label\">%s:</th>"
+                     "<td class=\"numeric advin\">"
+                     "    <span class=\"advfix advinfix\">%d</span>"
+                     "    <span class=\"advrnd advinrnd\">+d%d</span></td>"
+                     "<td class=\"numeric advlo\">"
+                     "    <span class=\"advfix advlofix\">%d</span>"
+                     "    <span class=\"advrnd advlornd\">+d%d</span></td>"
+                     "<td class=\"numeric advhi\">"
+                     "    <span class=\"advfix advhifix\">%d</span>"
+                     "    <span class=\"advrnd advhirnd\">+d%d</span></td>"
+                     "</tr>", label, label, adv->infix, adv->inrnd,
+                     adv->lofix, adv->lornd, adv->hifix, adv->hirnd);
+}
+const char *
+spoiladvance(const char *labelone, const struct RoleAdvance *advone,
+             const char *labeltwo, const struct RoleAdvance *advtwo,
+             int cutoff)
+{
+    return msgprintf("<table><thead>"
+                     "  <tr><th></th>"
+                     "      <th class=\"label\">init</th>"
+                     "      <th class=\"label\">early gain</th>"
+                     "      <th class=\"label\">%s</th>"
+                     "  </tr>"
+                     "</thead><tbody>"
+                     "   %s"
+                     "   %s"
+                     "</tbody></table>\n",
+                     (cutoff ? msgprintf("gain &gt;XL%d", cutoff) :
+                      "late gain"),
+                     spoiladvancerow(labelone, advone),
+                     spoiladvancerow(labeltwo, advtwo));
+}
+
+const char *
+spoilspellpenalty(const char *class, const char *label, int p)
+{
+    if (p == 0) { return ""; }
+    const char *sign = (p < 0) ? "<span class=\"penaltyminus\">-</span>" :
+                                 "<span class=\"penaltyplus\">+</span>";
+    const char *signclass = (p < 0) ? " bonus" : (p > 0) ? " malus" : "nil";
+    return msgprintf("<span class=\"%s%s\">%s: "
+                     "%s<span class=\"number\">%d</span></span>",
+                     class, signclass, label, sign, abs(p));
+}
+
+const char *
+spoilrolespellcasting(int i)
+{
+    return msgprintf("<span class=\"rolespellcasting\">%s %s %s %s</span>",
+                     spoilspellpenalty("base", "Base", roles[i].spelbase),
+                     spoilspellpenalty("armr", "Armor",  roles[i].spelarmr),
+                     spoilspellpenalty("shld", "Shield", roles[i].spelshld),
+                     spoilspellpenalty("heal", "Heal", roles[i].spelheal));
+}
+
+const char *
+spoilquestart(int i)
+{
+    const struct artifact *art = &artilist[roles[i].questarti];
+    return art->name;
+}
+
 void
 makehtmlspoilers(void)
 {
@@ -677,7 +880,7 @@ makehtmlspoilers(void)
     /* ######################## Weapons ######################## */
 
     if (fd < 0) {
-        pline("Failed to write weapon spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write weapon spoiler.  Is it writable?");
         return;
     }
 
@@ -756,7 +959,7 @@ makehtmlspoilers(void)
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write armor spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write armor spoiler.  Is it writable?");
         return;
     }
     
@@ -769,6 +972,7 @@ makehtmlspoilers(void)
                 "<th class=\"numeric mc\">MC</th>"
                 "<th class=\"numeric ac\">def</th>"
                 "<th class=\"material\">mat</th>"
+                "<th class=\"size\">fits</th>"
                 "<th class=\"numeric weight\">wt</th>"
                 "<th class=\"numeric price\">zm</th>"
                 "</tr>\n</thead><tbody>\n");
@@ -781,6 +985,7 @@ makehtmlspoilers(void)
                     "<td class=\"numeric mc\">%s</td>"
                     "<td class=\"numeric ac\">%d</td>"
                     "<td class=\"material\">%s</td>"
+                    "<td class=\"armorsize\">%s</td>"
                     "<td class=\"numeric weight\">%d</td>"
                     "<td class=\"numeric price\">%d</td>"
                     "</tr>\n",
@@ -788,6 +993,7 @@ makehtmlspoilers(void)
                     (objects[i].a_can ?
                      msgprintf("MC%d", objects[i].a_can) : ""),
                     objects[i].a_ac, material[objects[i].oc_material],
+                    spoilarmorsize(&objects[i]),
                     objects[i].oc_weight, objects[i].oc_cost);
         }
 
@@ -801,7 +1007,8 @@ makehtmlspoilers(void)
     fd = open_datafile("artifact-spoiler.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     if (fd < 0) {
-        pline("Failed to write artifact spoiler.  Is it writable?");
+        pline(msgc_debug,
+              "Failed to write artifact spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -853,7 +1060,7 @@ makehtmlspoilers(void)
     fd = open_datafile("objects-spoiler.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     if (fd < 0) {
-        pline("Failed to write object spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write object spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -891,7 +1098,7 @@ makehtmlspoilers(void)
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write monster spoiler.  Is it writable?");
+        pline(msgc_debug, "Failed to write monster spoiler.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -910,23 +1117,23 @@ makehtmlspoilers(void)
         /* then the actual monster table */
         lastmlet = mons[0].mlet;
         headrow = "<tr><th class=\"mlet\"></th>"
-                "<th class=\"monster\">monster</th>"
-                "<th class=\"numeric level\">lvl</th>"
-                "<th class=\"numeric monstr\">mon<br />str</th>"
-                "<th class=\"numeric speed\">mov</th>"
-                "<th class=\"numeric ac\">def</th>"
-                "<th class=\"numeric monmr\">mr</th>"
-                "<th class=\"align\">aln</th>"
-                "<th><span class=\"skills\">skills</span>"
-                "    <span class=\"attacks\">attacks</span></th>"
-                "<th class=\"resistances\">resists</th>"
-                "<th class=\"resgranted\">grants</th>"
-                "<th class=\"numeric nutrition\">nutr</th>"
-                "<th class=\"numeric weight\">wt</th>"
-                "<th class=\"size\">sz</th>"
-                "<th class=\"mrace\">race</th>"
-                "<th class=\"flags\">flags</th>"
-                "</tr>\n";
+            "<th class=\"monster\">monster</th>"
+            "<th class=\"numeric level\">lv</th>"
+            "<th class=\"numeric monstr\">mon<br />str</th>"
+            "<th class=\"numeric speed\">mov</th>"
+            "<th class=\"numeric ac\">def</th>"
+            "<th class=\"numeric monmr\">mr</th>"
+            "<th class=\"align\">aln</th>"
+            "<th><span class=\"skills\">skills</span>"
+            "    <span class=\"attacks\">attacks</span></th>"
+            "<th class=\"resistances\">resists</th>"
+            "<th class=\"resgranted\">grants</th>"
+            "<th class=\"numeric nutrition\">nut</th>"
+            "<th class=\"numeric weight\">wt</th>"
+            "<th class=\"size\">sz</th>"
+            "<th class=\"mrace\">race</th>"
+            "<th class=\"flags\">flags</th>"
+            "</tr>\n";
         fprintf(outfile, "\n<table id=\"monsters\"><thead>\n  "
                 "%s</thead><tbody>\n", headrow);
 
@@ -968,12 +1175,12 @@ makehtmlspoilers(void)
                     "<td class=\"mrace\">%s</td>"
                     "<td class=\"flags\">%s</td>"
                     "</tr>\n", i, mlet, mons[i].mname, mons[i].mlevel,
-                    monstr[i], mons[i].mmove, (10 - mons[i].ac),
+                    MONSTR(i), mons[i].mmove, (10 - mons[i].ac),
                     mons[i].mr, spoilmaligntyp(i),
                     spoilmonskills(i), spoilattacks(i),
                     spoilresistances(mons[i].mresists, FALSE, i),
                     spoilresistances(mons[i].mconveys, TRUE, i),
-                    mons[i].cnutrit, mons[i].cwt, spoilmonsize(i),
+                    mons[i].cnutrit, mons[i].cwt, spoilmonsize(mons[i].msize),
                     spoilmrace(i), spoilmonflags(i));
         }
         fprintf(outfile, "\n</tbody></table>\n</html>\n");
@@ -982,14 +1189,106 @@ makehtmlspoilers(void)
         fclose(outfile);     
     }
     /* ####################### Role / Race ####################### */
-    // TODO
+    fd = open_datafile("players.html",
+                       O_CREAT | O_WRONLY, SPOILPREFIX);
+    if (fd < 0) {
+        pline(msgc_debug, "Failed to write players spoiler.  Is it writable?");
+        return;
+    }
+    if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        outfile = fdopen(fd, "w");
+        fprintf(outfile, htmlheader("Playable Characters"));
+
+        fprintf(outfile, "<ul>"
+                "   <li><a href=\"#race\">Race</a></li>"
+                "   <li><a href=\"#role\">Role</a> (Profession/Class)</li>"
+                "</ul><hr />\n");
+
+        fprintf(outfile, "<h1><a name=\"race\">Playable Races</h1>\n");
+        fprintf(outfile, "<table class=\"races\"><thead>\n"
+                "  <tr><th rowspan=\"2\" class=\"filecode\">TLA</th>\n"
+                "      <th class=\"player race\">Race</th>"
+                "      <th class=\"size\">Size</th>"
+                "      <th class=\"numeric speed\">speed</th>\n"
+                "      <th class=\"gender\">Gender</th>\n"
+                "      <th rowspan=\"2\" class=\"attr\">Attributes</th>\n"
+                "      <th rowspan=\"2\" class=\"advance\">Advance</th></tr>\n"
+                "  <tr><th class=\"player roles\" colspan=\"3\">Roles</th>\n"
+                "      <th class=\"align\">Aligns</th></tr>\n"
+                "</thead><tbody>\n");
+
+        for (i = 0; races[i].filecode; i++) {
+            fprintf(outfile, "<tr class=\"newsection\">"
+                    "    <th rowspan=\"2\" class=\"filecode\">%s</th>"
+                    "    <td class=\"player race\">%s</td>"
+                    "    <td class=\"size\">%s</td>"
+                    "    <td class=\"numeric speed\">%d</td>\n"
+                    "    <td class=\"gender\">%s</td>\n"
+                    "    <td class=\"attr\" rowspan=\"2\">%s</td>\n"
+                    "    <td class=\"advance\" rowspan=\"2\">%s</td></tr>\n"
+                    "<tr><td class=\"player roles\" colspan=\"3\">%s</td>\n"
+                    "    <td class=\"align\">%s</td></tr>\n",
+                    races[i].filecode, races[i].noun,
+                    spoilmonsize(mons[(races[i].malenum ? races[i].malenum :
+                                       races[i].femalenum)].msize),
+                    races[i].basespeed, spoilgenders(races[i].allow),
+                    spoilattributes("min", races[i].attrmin,
+                                    "max", races[i].attrmax, "", NULL),
+                    spoiladvance("HP", &races[i].hpadv, "Pw", &races[i].enadv, 0),
+                    spoilraceroles(races[i].selfmask), spoilaligns(races[i].allow));
+        }
+        fprintf(outfile, "</tbody></table>\n");
+
+        fprintf(outfile, "<h1><a name=\"role\">Player Roles</h1>\n");
+        fprintf(outfile, "<table class=\"roles\"><thead>\n"
+                "  <tr><th rowspan=\"3\" class=\"filecode\">TLA</th>\n"
+                "      <th class=\"player role\">Role</th>\n"
+                "      <th class=\"gender\">Gender</th>\n"
+                "      <th rowspan=\"3\" class=\"attr\">Attributes</th>\n"
+                "      <th rowspan=\"3\" class=\"advance\">Advance</th>\n"
+                "  </tr>\n"
+                "  <tr><th class=\"race\">Races</th>\n"
+                "      <th class=\"align\">Aligns</th></tr>\n"
+                "  <tr><th class=\"spellcasting\">Spell Penalties</th>\n"
+                "      <th class=\"questart\">Artifact</th></tr>"
+                "</thead><tbody>");
+        for (i = 0; roles[i].filecode; i++) {
+            fprintf(outfile, "  <tr class=\"newsection\">"
+                    "      <th rowspan=\"3\" class=\"filecode\">%s</th>\n"
+                    "      <td class=\"player role\">%s%s%s</td>\n"
+                    "      <td class=\"gender\">%s</td>\n"
+                    "      <td rowspan=\"3\" class=\"attr\">%s</td>\n"
+                    "      <td rowspan=\"3\" class=\"advance\">%s</td>\n"
+                    "  </tr>\n"
+                    "  <tr><td class=\"races\">%s</td>\n"
+                    "      <td class=\"align\">%s</td></tr>\n"
+                    "  <tr><td class=\"spellcasting\">%s</td>\n"
+                    "      <td class=\"questart\">%s</td></tr>",
+                    roles[i].filecode,
+                    roles[i].name.m, (roles[i].name.f ? "/" : ""),
+                                    (roles[i].name.f ? roles[i].name.f : ""),
+                    spoilgenders(roles[i].allow),
+                    spoilattributes("base", roles[i].attrbase,
+                                    "dist", roles[i].attrdist,
+                                    "max",  roles[i].attrmaxm),
+                    spoiladvance("HP", &roles[i].hpadv, "Pw", &roles[i].enadv,
+                                 roles[i].xlev),
+                    spoilroleraces(roles[i].allow),
+                    spoilaligns(roles[i].allow),
+                    spoilrolespellcasting(i), spoilquestart(i));
+        }
+        fprintf(outfile, "</tbody></table>\n");
+
+        change_fd_lock(fd, FALSE, LT_NONE, 0);
+        fclose(outfile);
+    }
 
     /* ######################### Index ########################### */
     fd = open_datafile("index.html",
                        O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write spoiler index.  Is it writable?");
+        pline(msgc_debug, "Failed to write spoiler index.  Is it writable?");
         return;
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
@@ -1011,6 +1310,10 @@ makehtmlspoilers(void)
                 "   </ul></li>"
                 "   <li><a href=\"artifact-spoiler.html\">Artifacts</a></li>"
                 "   <li><a href=\"monster-spoiler.html\">Monsters</a></li>"
+                "   <li><a href=\"players.html\">Players</a><ul>"
+                "          <li><a href=\"players.html#race\">Races</a></li>"
+                "          <li><a href=\"players.html#role\">Roles</a></li>"
+                "       </ul></li>"
                 "</ul>\n");
 
         fprintf(outfile, "\n</html>\n");
@@ -1018,7 +1321,7 @@ makehtmlspoilers(void)
         fclose(outfile);             
     }
     
-    pline("Spoiler HTML files generated.");
+    pline(msgc_debug, "Spoiler HTML files generated.");
 }
 
 void
@@ -1033,7 +1336,8 @@ makepinobotyaml(void)
     int fd = open_datafile(filename, O_CREAT | O_WRONLY, SPOILPREFIX);
     
     if (fd < 0) {
-        pline("Failed to write monster .yaml for Pinobot.  Is it writeable?");
+        pline(msgc_debug,
+              "Failed to write monster .yaml for Pinobot.  Is it writeable?");
         return;
     }
 
@@ -1058,7 +1362,7 @@ makepinobotyaml(void)
             fprintf(f, " - name: \"%s\"\n", pm->mname);
             fprintf(f, "   symbol: \"%c\"\n", def_monsyms[(int)pm->mlet]);
             fprintf(f, "   base-level: %d\n", pm->mlevel);
-            fprintf(f, "   difficulty: %d\n", monstr[i]);
+            fprintf(f, "   difficulty: %d\n", MONSTR(i));
             fprintf(f, "   speed: %d\n", pm->mmove);
             fprintf(f, "   ac: %d\n", pm->ac);
             fprintf(f, "   mr: %d\n", pm->mr);
@@ -1108,10 +1412,11 @@ makepinobotyaml(void)
                 case AT_BOOM: fprintf(f, "%s", "AtSuicideExplode"); break;
                 case AT_GAZE: fprintf(f, "%s", "AtGaze"); break;
                 case AT_TENT: fprintf(f, "%s", "AtTentacle"); break;
+                case AT_SPIN: fprintf(f, "%s", "AtSpin"); break;
                 case AT_WEAP: fprintf(f, "%s", "AtWeapon"); break;
                 case AT_MAGC: fprintf(f, "%s", "AtCast"); break;
                 default:      fprintf(f, "%s", "AtUnknown");
-                    pline("Error: Unknown attack type: %d",
+                    pline(msgc_debug, "Error: Unknown attack type: %d",
                           pm->mattk[j].aatyp);
                     break;
                 }
@@ -1126,9 +1431,9 @@ makepinobotyaml(void)
                 case AD_DRST: fprintf(f, ", %s", "AdStrDrain"); break;
                 case AD_ACID: fprintf(f, ", %s", "AdAcid"); break;
                 case AD_SPC1: fprintf(f, ", %s", "AdSpc1");
-                    pline("Warning: AD_SPC1 used directly"); break;
+                    pline(msgc_debug, "Warning: AD_SPC1 used directly"); break;
                 case AD_SPC2: fprintf(f, ", %s", "AdSpc2");
-                    pline("Warning: AD_SPC2 used directly"); break;
+                    pline(msgc_debug, "Warning: AD_SPC2 used directly"); break;
                 case AD_BLND: fprintf(f, ", %s", "AdBlind"); break;
                 case AD_STUN: fprintf(f, ", %s", "AdStun"); break;
                 case AD_SLOW: fprintf(f, ", %s", "AdSlow"); break;
@@ -1165,13 +1470,15 @@ makepinobotyaml(void)
                 case AD_SCLD: fprintf(f, ", %s", "AdStinkingCloud"); break;
                 case AD_PITS: fprintf(f, ", %s", "AdPits"); break;
                 case AD_ICEB: fprintf(f, ", %s", "AdIceBlock"); break;
+                case AD_WEBS: fprintf(f, ", %s", "AdWebs"); break;
+                case AD_DISP: fprintf(f, ", %s", "AdDisplace"); break;
                 case AD_CLRC: fprintf(f, ", %s", "AdClerical"); break;
                 case AD_SPEL: fprintf(f, ", %s", "AdSpell"); break;
                 case AD_RBRE: fprintf(f, ", %s", "AdRandomBreath"); break;
                 case AD_SAMU: fprintf(f, ", %s", "AdAmuletSteal"); break;
                 case AD_CURS: fprintf(f, ", %s", "AdCurse"); break;
                 default:      fprintf(f, ", %s", "AdUnknown");
-                    pline("Error: Unknown damage type: %d",
+                    pline(msgc_debug, "Error: Unknown damage type: %d",
                           pm->mattk[j].adtyp);
                     break;
                 }
@@ -1203,7 +1510,7 @@ makepinobotyaml(void)
             else if (pm->msize == MZ_GIGANTIC) fprintf(f, "gigantic\n");
             else {
                 fprintf(f, "unknownsize\n");
-                pline("Error: Unknown size: %d", pm->msize);
+                pline(msgc_debug, "Error: Unknown size: %d", pm->msize);
             }
 
             fprintf(f, "   resistances:\n");
@@ -1359,7 +1666,8 @@ makepinobotyaml(void)
             case CLR_BRIGHT_MAGENTA: fprintf(f, "BrightMagenta"); break;
             case CLR_YELLOW: fprintf(f, "Yellow"); break;
             case CLR_WHITE: fprintf(f, "White"); break;
-            default: pline("Error: I don't know what color %d is.\n", clr);
+            default: pline(msgc_debug,
+                           "Error: I don't know what color %d is.\n", clr);
                 fprintf(f, "UnknownColor"); break;
             }
             fprintf(f, "\n");
@@ -1377,7 +1685,7 @@ makepinobotyaml(void)
 
         change_fd_lock(fd, FALSE, LT_NONE, 0);
         fclose(f);
-        pline("YAML for Pinobot generated: %s", filename);
+        pline(msgc_debug, "YAML for Pinobot generated: %s", filename);
     }
 }
 

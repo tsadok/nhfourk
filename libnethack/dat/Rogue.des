@@ -271,7 +271,7 @@ TRAP:random,random
 MONSTER:'@',"soldier",place[0],hostile
 MONSTER:'@',random,place[1],hostile
 MONSTER:'@',random,place[2],hostile
-MONSTER:'@',"Woodland-elf",place[3],hostile
+MONSTER:'Q',"Woodland-elf",place[3],hostile
 MONSTER:'@',"soldier",place[4],hostile
 MONSTER:'@',"soldier",place[5],hostile
 MONSTER:'@',random,place[6],hostile

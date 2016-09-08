@@ -213,7 +213,7 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
                     map[stairx][stairy] = AIS_STAIR;
                     /*
                     if (wizard)
-                        pline("Chose %s stair location (%d,%d)"
+                        pline(msgc_debug, "Chose %s stair location (%d,%d)"
                               " at prob %d (starting from %d)"
                               " having considered %d positions.",
                               which, stairx, stairy, prob, baseprob, poscount);
@@ -226,9 +226,8 @@ aisstairloc(int baseprob, int edge, int dir, const char *which)
         prob++;
     }
     if (wizard)
-        pline("Failed to find %s stair location"
-              " at prob %d (starting from %d)"
-              " having considered %d positions",
+        pline(msgc_debug, "Failed to find %s stair location at prob %d "
+              "(starting from %d) having considered %d positions",
               which, prob, baseprob, poscount);
     sloc.x = 0; /* signal retry */
     return sloc;
@@ -258,8 +257,8 @@ void mkaisvs(struct level *lev, int x, int y)
 {
     /* The suggested x and y coordinates may not be suitable for this.
        We'll be checking and possibly replacing them with a fresh spot. */
-    int xmargin = 4;
-    int ymargin = 3;
+    int xmargin = 6;
+    int ymargin = 4;
     int mindist = 11;
     int tries = 0;
     coord cc;
@@ -789,8 +788,11 @@ mkaiscav(struct level *lev)
     /* Place random monsters: */
     for (i = (5 + ( RNGSAFEDEPTH / 25) +
               mrn2(1 + ( RNGSAFEDEPTH / 30))); i > 0; i--) {
+        struct monst *mtmp;
         spot = aisplace();
-        makemon(NULL, lev, spot.x, spot.y, 0);
+        mtmp = makemon(NULL, lev, spot.x, spot.y, 0);
+        if (mtmp && (aisdepth < mrn2(150)) && !resists_sleep(mtmp))
+            mtmp->msleeping = 1;
     }
     
     /* Place random objects: */

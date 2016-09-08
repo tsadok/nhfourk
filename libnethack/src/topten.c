@@ -63,7 +63,11 @@ static char end_killer[DTHSZ + 1] = {0};
 
 /* xlogfile writing. Based on the xlogfile patch by Aardvark Joe. */
 
-#define SEP ":"
+#ifdef XLOGFILE_FIELD_SEPARATOR
+#define SEP XLOGFILE_FIELD_SEPARATOR
+#else
+#define SEP "\t"
+#endif
 #define SEPC (SEP[0])
 
 static void
@@ -124,6 +128,8 @@ encode_uevent(void)
         c |= 0x4000UL;  /* defeated Rodney */
     if (mvitals[PM_HIGH_PRIEST].died)
         c |= 0x8000UL;  /* defeated a high priest */
+    if (mvitals[PM_DEMOGORGON].died)
+        c |= 0xF000UL;  /* defeated Demogorgon */
 
     /* notable other events */
     if (u.uevent.uhand_of_elbereth)
@@ -138,6 +144,8 @@ encode_uevent(void)
         c |= 0x00080000UL;
     if (historysearch("reached the Astral Plane", TRUE))
         c |= 0x000F0000UL;
+    if (historysearch("entered the Rogue tribute level", TRUE))
+        c |= 0x00100000UL;
     return c;
 }
 

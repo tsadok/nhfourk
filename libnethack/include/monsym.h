@@ -12,7 +12,7 @@
  * NULL character.
  */
 # define S_ANT          1
-# define S_B_UNUSED     2 /* Currently unused */
+# define S_UNUSED_B     2 /* Available */
 # define S_COCKATRICE   3
 # define S_DOG          4
 # define S_EYE          5
@@ -26,7 +26,7 @@
 # define S_MIMIC        13
 # define S_NYMPH        14
 # define S_ORC          15
-# define S_PLANT        16 /* Currently unused */
+# define S_PLANT        16 /* pending */
 # define S_QUADRUPED    17
 # define S_RODENT       18
 # define S_SPIDER       19
@@ -35,49 +35,52 @@
 # define S_VORTEX       22
 # define S_WORM         23
 # define S_XAN          24
-# define S_LIGHT        25
-# define S_ANGEL        26
-# define S_BAT          27
-# define S_CENTAUR      28
-# define S_DRAGON       29
-# define S_ELEMENTAL    30
-# define S_FUNGUS       31
-# define S_GNOME        32
-# define S_GIANT        33
+# define S_UNUSED_LIGHT 25 /* Available */
+# define S_ZEAMONSTER   26 /* pending */
+# define S_ANGEL        27
+# define S_BAT          28
+# define S_CENTAUR      29
+# define S_DRAGON       30
+# define S_ELEMENTAL    31
+# define S_FUNGUS       32
+# define S_GNOME        33
+# define S_GIANT        34
 
-# define S_JABBERWOCK   35
-# define S_KOP          36
-# define S_LICH         37
-# define S_MUMMY        38
-# define S_NAGA         39
-# define S_OGRE         40
-# define S_PUDDING      41
-# define S_QUANTMECH    42
-# define S_RUSTMONST    43
-# define S_SNAKE        44
-# define S_TROLL        45
-# define S_UMBER        46 /* currently unused */
-# define S_VAMPIRE      47
-# define S_WRAITH       48
-# define S_XORN         49
-# define S_YETI         50
-# define S_ZOMBIE       51
-# define S_HUMAN        52
-# define S_GOLEM        53
-# define S_DEMON        54
-# define S_EEL          55
+# define S_JABBERWOCK   36
+# define S_KOP          37
+# define S_LICH         38
+# define S_MUMMY        39
+# define S_NAGA         40
+# define S_OGRE         41
+# define S_PUDDING      42
+# define S_QUENDI       43
+# define S_RUSTMONST    44
+# define S_SNAKE        45
+# define S_TROLL        46
+# define S_BEAR         47 /* pending */
+# define S_VAMPIRE      48
+# define S_WRAITH       49
+# define S_XORN         50
+# define S_YETI         51
+# define S_ZOMBIE       52
+# define S_HUMAN        53
+# define S_GOLEM        54
+# define S_DEMON        55
+# define S_EEL          56
 
-# define S_WORM_TAIL    56
-# define S_MIMIC_DEF    57
+# define S_WORM_TAIL    57
+# define S_MIMIC_DEF    58
 
-# define MAXMCLASSES 58 /* number of monster classes */
+# define MAXMCLASSES 59 /* number of monster classes */
+/* Note that MAXMCLASSES must be one larger than the last class, even though
+   S_ANT is 1 not 0.  Relatedly, def_monsyms has a null entry before DEF_ANT. */
 
 /*
  * Default characters for monsters.  These correspond to the monster classes
  * above.
  */
 # define DEF_ANT        'a'
-# define DEF_BLOB       'b' /* Currently unused */
+# define DEF_UNUSED_B   'b' /* Available */
 # define DEF_COCKATRICE 'c'
 # define DEF_DOG        'd'
 # define DEF_EYE        'e'
@@ -91,7 +94,7 @@
 # define DEF_MIMIC      'm'
 # define DEF_NYMPH      'n'
 # define DEF_ORC        'o'
-# define DEF_PIERCER    'p' /* Currently unused */
+# define DEF_PLANT      'p' /* pending */
 # define DEF_QUADRUPED  'q'
 # define DEF_RODENT     'r'
 # define DEF_SPIDER     's'
@@ -100,7 +103,8 @@
 # define DEF_VORTEX     'v'
 # define DEF_WORM       'w'
 # define DEF_XAN        'x'
-# define DEF_LIGHT      'y'
+# define DEF_UNUSED_LIGHT 'y'
+# define DEF_ZEAMONSTER 'z' /* pending */
 # define DEF_ANGEL      'A'
 # define DEF_BAT        'B'
 # define DEF_CENTAUR    'C'
@@ -116,11 +120,11 @@
 # define DEF_NAGA       'N'
 # define DEF_OGRE       'O'
 # define DEF_PUDDING    'P'
-# define DEF_QUANTMECH  'Q'
+# define DEF_QUENDI     'Q' /* pending */
 # define DEF_RUSTMONST  'R'
 # define DEF_SNAKE      'S'
 # define DEF_TROLL      'T'
-# define DEF_UMBER      'U'
+# define DEF_URSINE     'U' /* pending */
 # define DEF_VAMPIRE    'V'
 # define DEF_WRAITH     'W'
 # define DEF_XORN       'X'

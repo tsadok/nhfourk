@@ -38,7 +38,7 @@ jackal
 fox
 coyote
 werejackal
-little dog
+puppy
 dog
 large dog
 dingo
@@ -156,26 +156,26 @@ vampire bat
 plains centaur
 forest centaur
 mountain centaur
-baby gray dragon
-baby silver dragon
-baby shimmering dragon
-baby red dragon
-baby white dragon
-baby orange dragon
-baby black dragon
-baby blue dragon
-baby green dragon
-baby yellow dragon
-gray dragon
-silver dragon
-shimmering dragon
-red dragon
-white dragon
-orange dragon
-black dragon
-blue dragon
-green dragon
-yellow dragon
+baby gray dragon;young gray dragon
+baby silver dragon;young silver dragon
+baby shimmering dragon;young shimmering dragon
+baby red dragon;young red dragon
+baby white dragon;young white dragon
+baby orange dragon;young orange dragon
+baby black dragon;young black dragon
+baby blue dragon;young blue dragon
+baby green dragon;young green dragon
+baby yellow dragon;young yellow dragon
+gray dragon;elder gray dragon;ancient gray dragon
+silver dragon;elder silver dragon;ancient silver dragon
+shimmering dragon;elder shimmering dragon;ancient shimmering dragon
+red dragon;elder red dragon;ancient red dragon
+white dragon;elder white dragon;ancient white dragon
+orange dragon;elder orange dragon;ancient orange dragon
+black dragon;elder black dragon;ancient black dragon
+blue dragon;elder blue dragon;ancient blue dragon
+green dragon;elder green dragon;ancient green dragon
+yellow dragon;elder yellow dragon;ancient yellow dragon
 stalker
 air elemental
 fire elemental
@@ -1082,6 +1082,28 @@ sub sokoban walls 10
 
 ! NetHack Fourk additions:
 RATSANOPU
+ETAOIN SHRDLU
+LOREM IPSUM SIT AMET
+ABRA KA DABRA
+HAPAX LEGOMENON
+XYZZY
+EDEVESH HANAGASH
+EIGOWA KIRAIDES
+FROBOZZ MAGIC SCROLL CO
+PATENT PENDING
+TLASFO SENIL
+RW NW PRT M HRW
+KO BATE
+ASHPD SODALG
+ZLORFIK
+GNIK SISI VLE
+EIRIS SAZUN IDISI
+PHOL ENDE WODAN
+GHOTI
+MAPIRO MAHAMA DIROMAT
+VAS CORP BET MANI
+XOR OTA
+STRC PRST SKRZ KRK
 sylph
 island nymph
 shiny gem
@@ -1090,7 +1112,15 @@ magic chest
 splash of blood
 convex amulet
 blood pudding
+baby gryphon
+gryphon
+librarian
 stinking cloud trap
+shallow water
+scurrier
+dirty rag
+jitterbug
+bench
 
 ! NH4 requirements:
 remembered as locked
@@ -1101,5 +1131,6 @@ monster is peaceful
 monster is detected
 monster is ridden
 gas cloud
+
 ! This one's just an aid for the tiles artist:
 tile size measuring spacer

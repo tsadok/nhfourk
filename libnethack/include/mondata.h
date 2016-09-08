@@ -37,6 +37,7 @@
                                 (!(breathless(ptr) && \
                                    (ptr->msound == MS_SILENT || \
                                     ptr->msound == MS_BONES)))
+# define can_see_in_dark(ptr)   ((ptr)->mflags3 & M3_SEEINDARK)
 # define amphibious(ptr) \
     (((ptr)->mflags1 & (M1_AMPHIBIOUS | M1_BREATHLESS)) != 0L)
 # define passes_walls(ptr)      (((ptr)->mflags1 & M1_WALLWALK) != 0L)
@@ -97,11 +98,14 @@
 # define is_bat(ptr)            ((ptr) == &mons[PM_BAT] || \
                                  (ptr) == &mons[PM_GIANT_BAT] || \
                                  (ptr) == &mons[PM_VAMPIRE_BAT])
-# define is_bird(ptr)           ((ptr)->mlet == S_BAT && !is_bat(ptr))
-/* TODO: consider whether Jabberwocks and/or Gryphons are birds. */
-# define has_beak(ptr)          (is_bird(ptr) ||            \
-                                (ptr) == &mons[PM_TENGU] || \
-                                (ptr) == &mons[PM_VROCK])
+# define is_bird(ptr)           (((ptr)->mlet == S_BAT && !is_bat(ptr)) || \
+                                 ((ptr)->mlet == S_JABBERWOCK))
+/* Jabberwocks are a weird case; half bird, half dragon, more or less.
+   Gryphons also have a non-bird (lion) component but are also fully bird. */
+# define has_beak(ptr)          ((is_bird(ptr) &&           \
+                                  !((ptr) == &mons[PM_JABBERWOCK])) ||  \
+                                 (ptr) == &mons[PM_TENGU] ||            \
+                                 (ptr) == &mons[PM_VROCK])
 # define is_giant(ptr)          (((ptr)->mflags2 & M2_GIANT) != 0L)
 # define is_golem(ptr)          ((ptr)->mlet == S_GOLEM)
 # define is_domestic(ptr)       (((ptr)->mflags2 & M2_DOMESTIC) != 0L)
@@ -120,7 +124,7 @@
 # define can_breathe(ptr)       attacktype(ptr, AT_BREA)
 # define cantwield(ptr)         (nohands(ptr) || verysmall(ptr))
 # define could_twoweap(ptr)     ((ptr)->mattk[1].aatyp == AT_WEAP)
-# define cantweararm(ptr)       (breakarm(ptr) || sliparm(ptr))
+# define cantweararm(ptr,oc)    (breakarm(ptr,oc) || sliparm(ptr,oc))
 # define throws_rocks(ptr)      (((ptr)->mflags2 & M2_ROCKTHROW) != 0L)
 # define type_is_pname(ptr)     (((ptr)->mflags2 & M2_PNAME) != 0L)
 # define is_lord(ptr)           (((ptr)->mflags2 & M2_LORD) != 0L)
@@ -161,12 +165,14 @@
 
 /* this returns the light's range, or 0 if none; if we add more light emitting
    monsters, we'll likely have to add a new light range field to mons[] */
-# define emits_light(ptr)       (((ptr)->mlet == S_LIGHT || \
-                                  (ptr) == &mons[PM_FLAMING_SPHERE] || \
-                                  (ptr) == &mons[PM_SHOCKING_SPHERE] || \
-                                  (ptr) == &mons[PM_FIRE_VORTEX]) ? 1 : \
-                                 ((ptr) == &mons[PM_FIRE_ELEMENTAL]) ? 1 : 0)
+# define emits_light(ptr)       (((ptr) == &mons[PM_YELLOW_LIGHT]) ? 4 : \
+                                 ((ptr)->mflags2 & M3_EMITSLIGHT) ? 1 : 0)
 /*      [note: the light ranges above were reduced to 1 for performance...] */
+/*      In fact, light ranges other than 1 or 0 never made it into a public
+        release, and this performance note dates to NetHack 3.2.0.  I'm
+        at this point willing to test if modern systems can handle a bit
+        more than the computers of that day, so I'm going to try out
+        yellow lights at 2 and see how that goes. */
 # define likes_lava(ptr)        (ptr == &mons[PM_FIRE_ELEMENTAL] || \
                                  ptr == &mons[PM_SALAMANDER])
 # define pm_invisible(ptr)      ((ptr) == &mons[PM_STALKER] || \
@@ -194,15 +200,16 @@
 /* Used for conduct with corpses, tins, and digestion attacks */
 /* G_NOCORPSE monsters might still be swallowed as a purple worm */
 /* Maybe someday this could be in mflags... */
-# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||            \
-                                 (ptr)->mlet == S_FUNGUS ||           \
-                                 (ptr)->mlet == S_VORTEX ||           \
-                                 (ptr)->mlet == S_LIGHT ||            \
-                                ((ptr)->mlet == S_ELEMENTAL &&        \
-                                 (ptr) != &mons[PM_STALKER]) ||       \
-                                ((ptr)->mlet == S_GOLEM &&            \
-                                 (ptr) != &mons[PM_FLESH_GOLEM] &&    \
-                                 (ptr) != &mons[PM_LEATHER_GOLEM]) || \
+# define vegan(ptr)             ((ptr)->mlet == S_JELLY ||              \
+                                 (ptr)->mlet == S_FUNGUS ||             \
+                                 (ptr)->mlet == S_VORTEX ||             \
+                                 ((ptr)->mlet == S_EYE &&               \
+                                  ((ptr) != &mons[PM_FLOATING_EYE])) || \
+                                 ((ptr)->mlet == S_ELEMENTAL &&         \
+                                  (ptr) != &mons[PM_STALKER]) ||        \
+                                 ((ptr)->mlet == S_GOLEM &&             \
+                                  (ptr) != &mons[PM_FLESH_GOLEM] &&     \
+                                  (ptr) != &mons[PM_LEATHER_GOLEM]) ||  \
                                  noncorporeal(ptr))
 # define vegetarian(ptr)        (vegan(ptr) || \
                                 ((ptr)->mlet == S_PUDDING &&         \
@@ -212,8 +219,8 @@
 # define befriend_with_obj(ptr, obj) ((obj)->oclass == FOOD_CLASS && \
                                       is_domestic(ptr))
 
-/* Generated in readonly.c */
-extern const int monstr[];
+#define MONSTR(x)    (mons[(x)].difficulty)
+
 /* Dummy address */
 extern struct monst zeromonst;
 

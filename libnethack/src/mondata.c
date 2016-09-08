@@ -260,20 +260,30 @@ can_track(const struct permonst * ptr)
 
 /* creature will slide out of armor */
 boolean
-sliparm(const struct permonst * ptr)
+sliparm(const struct permonst * ptr, const struct objclass *oc)
 {
     return ((boolean)
-            (is_whirly(ptr) || ptr->msize <= MZ_SMALL || noncorporeal(ptr)));
+            (is_whirly(ptr) || ptr->msize <= oc->a_minsize ||
+             noncorporeal(ptr)));
 }
 
 /* creature will break out of armor */
 boolean
-breakarm(const struct permonst * ptr)
+breakarm(const struct permonst * ptr, const struct objclass *oc)
 {
-    return ((bigmonst(ptr) || (ptr->msize > MZ_SMALL && !humanoid(ptr)) ||
-             /* special cases of humanoids that cannot wear body armor */
-             ptr == &mons[PM_MARILITH] || ptr == &mons[PM_WINGED_GARGOYLE])
-            && !sliparm(ptr));
+    if (!ptr) {
+        impossible("breakarm called with invalid permonst pointer");
+        return FALSE;
+    }
+    if (!oc) {
+        impossible("breakarm called with invalid object class pointer");
+        return FALSE;
+    }
+    return ((ptr->msize > oc->a_maxsize) ||
+            (ptr->msize > MZ_SMALL && !humanoid(ptr)) ||
+            /* special cases of humanoids that cannot wear body armor */
+            (ptr == &mons[PM_MARILITH] || ptr == &mons[PM_WINGED_GARGOYLE]))
+        && !sliparm(ptr, oc);
 }
 
 /* creature sticks other creatures it hits */
@@ -441,7 +451,10 @@ name_to_mon(const char *in_str)
             short pm_val;
         } names[] = {
             /* Alternate spellings */
+            { "ancient grey dragon", PM_ANCIENT_GRAY_DRAGON },
+            { "elder grey dragon", PM_ELDER_GRAY_DRAGON },
             { "grey dragon", PM_GRAY_DRAGON },
+            { "young grey dragon", PM_YOUNG_GRAY_DRAGON },
             { "baby grey dragon", PM_BABY_GRAY_DRAGON },
             { "grey unicorn", PM_GRAY_UNICORN },
             { "grey ooze", PM_GRAY_OOZE },
@@ -550,7 +563,7 @@ levl_follower(struct monst *mtmp)
 
 static const short grownups[][2] = {
     {PM_CHICKATRICE, PM_COCKATRICE},
-    {PM_LITTLE_DOG, PM_DOG}, {PM_DOG, PM_LARGE_DOG},
+    {PM_PUPPY, PM_DOG}, {PM_DOG, PM_LARGE_DOG},
     {PM_HELL_HOUND_PUP, PM_HELL_HOUND},
     {PM_WINTER_WOLF_CUB, PM_WINTER_WOLF},
     {PM_KITTEN, PM_HOUSECAT}, {PM_HOUSECAT, PM_LARGE_CAT},
@@ -570,15 +583,42 @@ static const short grownups[][2] = {
     {PM_LICH, PM_DEMILICH}, {PM_DEMILICH, PM_MASTER_LICH},
     {PM_MASTER_LICH, PM_ARCH_LICH},
     {PM_VAMPIRE, PM_VAMPIRE_LORD}, {PM_BAT, PM_GIANT_BAT},
-    {PM_BABY_GRAY_DRAGON, PM_GRAY_DRAGON},
-    {PM_BABY_SILVER_DRAGON, PM_SILVER_DRAGON},
-    {PM_BABY_RED_DRAGON, PM_RED_DRAGON},
-    {PM_BABY_WHITE_DRAGON, PM_WHITE_DRAGON},
-    {PM_BABY_ORANGE_DRAGON, PM_ORANGE_DRAGON},
-    {PM_BABY_BLACK_DRAGON, PM_BLACK_DRAGON},
-    {PM_BABY_BLUE_DRAGON, PM_BLUE_DRAGON},
-    {PM_BABY_GREEN_DRAGON, PM_GREEN_DRAGON},
-    {PM_BABY_YELLOW_DRAGON, PM_YELLOW_DRAGON},
+    {PM_BABY_GRAY_DRAGON, PM_YOUNG_GRAY_DRAGON},
+    {PM_BABY_SILVER_DRAGON, PM_YOUNG_SILVER_DRAGON},
+    {PM_BABY_RED_DRAGON, PM_YOUNG_RED_DRAGON},
+    {PM_BABY_WHITE_DRAGON, PM_YOUNG_WHITE_DRAGON},
+    {PM_BABY_ORANGE_DRAGON, PM_YOUNG_ORANGE_DRAGON},
+    {PM_BABY_BLACK_DRAGON, PM_YOUNG_BLACK_DRAGON},
+    {PM_BABY_BLUE_DRAGON, PM_YOUNG_BLUE_DRAGON},
+    {PM_BABY_GREEN_DRAGON, PM_YOUNG_GREEN_DRAGON},
+    {PM_BABY_YELLOW_DRAGON, PM_YOUNG_YELLOW_DRAGON},
+    {PM_YOUNG_GRAY_DRAGON, PM_GRAY_DRAGON},
+    {PM_YOUNG_SILVER_DRAGON, PM_SILVER_DRAGON},
+    {PM_YOUNG_RED_DRAGON, PM_RED_DRAGON},
+    {PM_YOUNG_WHITE_DRAGON, PM_WHITE_DRAGON},
+    {PM_YOUNG_ORANGE_DRAGON, PM_ORANGE_DRAGON},
+    {PM_YOUNG_BLACK_DRAGON, PM_BLACK_DRAGON},
+    {PM_YOUNG_BLUE_DRAGON, PM_BLUE_DRAGON},
+    {PM_YOUNG_GREEN_DRAGON, PM_GREEN_DRAGON},
+    {PM_YOUNG_YELLOW_DRAGON, PM_YELLOW_DRAGON},
+    {PM_GRAY_DRAGON, PM_ELDER_GRAY_DRAGON},
+    {PM_SILVER_DRAGON, PM_ELDER_SILVER_DRAGON},
+    {PM_RED_DRAGON, PM_ELDER_RED_DRAGON},
+    {PM_WHITE_DRAGON, PM_ELDER_WHITE_DRAGON},
+    {PM_ORANGE_DRAGON, PM_ELDER_ORANGE_DRAGON},
+    {PM_BLACK_DRAGON, PM_ELDER_BLACK_DRAGON},
+    {PM_BLUE_DRAGON, PM_ELDER_BLUE_DRAGON},
+    {PM_GREEN_DRAGON, PM_ELDER_GREEN_DRAGON},
+    {PM_YELLOW_DRAGON, PM_ELDER_YELLOW_DRAGON},
+    {PM_ELDER_GRAY_DRAGON, PM_ANCIENT_GRAY_DRAGON},
+    {PM_ELDER_SILVER_DRAGON, PM_ANCIENT_SILVER_DRAGON},
+    {PM_ELDER_RED_DRAGON, PM_ANCIENT_RED_DRAGON},
+    {PM_ELDER_WHITE_DRAGON, PM_ANCIENT_WHITE_DRAGON},
+    {PM_ELDER_ORANGE_DRAGON, PM_ANCIENT_ORANGE_DRAGON},
+    {PM_ELDER_BLACK_DRAGON, PM_ANCIENT_BLACK_DRAGON},
+    {PM_ELDER_BLUE_DRAGON, PM_ANCIENT_BLUE_DRAGON},
+    {PM_ELDER_GREEN_DRAGON, PM_ANCIENT_GREEN_DRAGON},
+    {PM_ELDER_YELLOW_DRAGON, PM_ANCIENT_YELLOW_DRAGON},
     {PM_RED_NAGA_HATCHLING, PM_RED_NAGA},
     {PM_BLACK_NAGA_HATCHLING, PM_BLACK_NAGA},
     {PM_GOLDEN_NAGA_HATCHLING, PM_GOLDEN_NAGA},
@@ -618,12 +658,17 @@ little_to_big(int montype)
 int
 big_to_little(int montype)
 {
-    int i;
-
-    for (i = 0; grownups[i][0] >= LOW_PM; i++)
-        if (montype == grownups[i][1])
-            return grownups[i][0];
-    return montype;
+    int i, k = montype;
+    boolean done = FALSE;
+    while (!done) {
+        done = TRUE;
+        for (i = 0; grownups[i][0] >= LOW_PM; i++)
+            if (k == grownups[i][1]) {
+                k = grownups[i][0];
+                done = FALSE;
+            }
+    }
+    return k;
 }
 
 /*

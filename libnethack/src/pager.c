@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -28,22 +28,23 @@ static int do_look(boolean, const struct nh_cmd_arg *);
  */
 const char *const monexplain[MAXMCLASSES] = {
     0,
-    "ant or other insect", "[unused]", "cockatrice",
-    "dog or other canine", "eye or sphere", "feline",
-    "gremlin", "humanoid", "impish spirit",
+    "ant or other insect", "[unused - b]", "cockatrice",
+    "dog or other canine", "eye, sphere, or light", "feline",
+    "gremlin or gargoyle", "humanoid", "impish spirit",
     "jelly or blob", "kobold", "lizard, reptile, or amphibian",
-    "mimic", "nymph", "orc", "[unused]", "quadruped", "rodent",
+    "mimic", "nymph", "orc", "plant", "quadruped", "rodent",
     "arachnid or centipede", "trapper, piercer, or lurker above",
     "unicorn or horse", "vortex", "worm",
-    "xan or other fantastic insect", "light",
+    "xan or other fantastic insect", "[unused - y]",
+    "sea monster",
 
     "angelic being", "bat or bird", "centaur",
     "dragon", "elemental", "fungus or mold",
     "gnome", "giant humanoid", 0,
-    "jabberwock", "Keystone Kop", "lich",
-    "mummy", "naga", "ogre",
-    "pudding or ooze", "quantum mechanic", "rust monster or disenchanter",
-    "snake", "troll", "[unused]",
+    "jabberwock, gryphon, or large dangerous bird",
+    "Keystone Kop", "lich", "mummy", "naga", "ogre",
+    "pudding or ooze", "elf", "rust monster or disenchanter",
+    "snake", "troll", "bear",
     "vampire", "wraith or ghost",
     "xorn, umber hulk, or other large deep-rock dweller",
     "apelike creature", "zombie",
@@ -226,6 +227,9 @@ describe_object(int x, int y, int votyp, char *buf, int known_embed,
     } else if (closed_door(level, x, y)) {
         strcat(buf, " embedded in a door");
         *feature_described = TRUE;
+    } else if (is_puddle(level, x, y)) {
+        strcat(buf, " in shallow water");
+        *feature_described = TRUE;
     } else if (is_pool(level, x, y)) {
         strcat(buf, " in water");
         *feature_described = TRUE;
@@ -354,7 +358,9 @@ describe_mon(int x, int y, int monnum, char *buf)
         if (mtmp->mleashed)
             strcat(buf, ", leashed to you");
 
-        if (mtmp->mtrapped && cansee(mtmp->mx, mtmp->my)) {
+        if (mtmp->miceblk) {
+            sprintf(buf + strlen(buf), ", frozen in ice");
+        } else if (mtmp->mtrapped && cansee(mtmp->mx, mtmp->my)) {
             struct trap *t = t_at(level, mtmp->mx, mtmp->my);
             int tt = t ? t->ttyp : NO_TRAP;
 
@@ -362,9 +368,6 @@ describe_mon(int x, int y, int monnum, char *buf)
             if (tt == BEAR_TRAP || is_pit_trap(tt) || tt == WEB)
                 sprintf(buf + strlen(buf),
                         ", trapped in %s", an(trapexplain[tt - 1]));
-            if (!t)
-                /* If a monster is trapped without a trap, it's in ice. */
-                sprintf(buf + strlen(buf), ", frozen in ice");
         }
 
 #ifdef DEBUG_STRATEGY
@@ -469,7 +472,7 @@ checkfile(const char *inp, struct permonst *pm, boolean user_typed_name,
 
     fp = dlb_fopen(DATAFILE, "r");
     if (!fp) {
-        pline("Cannot open data file!");
+        pline(msgc_saveload, "Cannot open data file!");
         return;
     }
 
@@ -592,7 +595,7 @@ checkfile(const char *inp, struct permonst *pm, boolean user_typed_name,
             struct nh_menulist menu;
 
             if (dlb_fseek(fp, txt_offset + entry_offset, SEEK_SET) < 0) {
-                pline("? Seek error on 'data' file!");
+                pline(msgc_saveload, "? Seek error on 'data' file!");
                 dlb_fclose(fp);
                 return;
             }
@@ -613,7 +616,7 @@ checkfile(const char *inp, struct permonst *pm, boolean user_typed_name,
                          NULL);
         }
     } else if (user_typed_name)
-        pline("I don't have any information on those things.");
+        pline(msgc_info, "I don't have any information on those things.");
 
     dlb_fclose(fp);
 }
@@ -630,7 +633,6 @@ do_look(boolean quick, const struct nh_cmd_arg *arg)
     const char *firstmatch;
     int i, ans = 0, objplur = 0, is_in;
     coord cc;   /* screen pos of unknown glyph */
-    boolean save_verbose;       /* saved value of flags.verbose */
     boolean from_screen;        /* question from the screen */
     struct nh_desc_buf descbuf;
     struct obj *otmp;
@@ -666,9 +668,6 @@ do_look(boolean quick, const struct nh_cmd_arg *arg)
         checkfile(out_str, NULL, !(arg->argtype & CMD_ARG_OBJ), TRUE);
         return 0;
     }
-    /* Save the verbose flag, we change it later. */
-    save_verbose = flags.verbose;
-    flags.verbose = flags.verbose && !quick;
 
     /* 
      * we're identifying from the screen.
@@ -678,19 +677,14 @@ do_look(boolean quick, const struct nh_cmd_arg *arg)
         firstmatch = NULL;
         objplur = 0;
 
-        if (flags.verbose)
-            pline("Please move the cursor to %s.", what_is_an_unknown_object);
-        else
-            pline("Pick an object.");
+        pline(msgc_uiprompt, "Please move the cursor to %s.",
+              what_is_an_unknown_object);
 
         ans = getargpos(arg, &cc, FALSE, what_is_an_unknown_object);
         if (ans == NHCR_CLIENT_CANCEL || cc.x < 0) {
-            flags.verbose = save_verbose;
-            if (flags.verbose)
-                pline(quick ? "Never mind." : "Done.");
+            pline(msgc_cancelled, quick ? "Never mind." : "Done.");
             return 0;   /* done */
         }
-        flags.verbose = FALSE;  /* only print long question once */
 
         nh_describe_pos(cc.x, cc.y, &descbuf, &is_in);
 
@@ -728,7 +722,7 @@ do_look(boolean quick, const struct nh_cmd_arg *arg)
 
         /* Finally, print out our explanation. */
         if (firstmatch) {
-            pline("%s.", msgupcasefirst(out_str));
+            pline(msgc_info, "%s.", msgupcasefirst(out_str));
             /* check the data file for information about this thing */
             if (firstmatch && ans != NHCR_CONTINUE &&
                 (ans == NHCR_MOREINFO ||
@@ -738,13 +732,12 @@ do_look(boolean quick, const struct nh_cmd_arg *arg)
                           ans == NHCR_MOREINFO_CONTINUE);
             }
         } else {
-            pline("I've never heard of such things.");
+            pline(msgc_info, "I've never heard of such things.");
         }
     } while (ans == NHCR_CONTINUE || ans == NHCR_MOREINFO_CONTINUE);
 
-    flags.verbose = save_verbose;
-    if (!quick && flags.verbose)
-        pline("Done.");
+    if (!quick)
+        pline(msgc_cancelled, "Done.");
 
     return 0;
 }
@@ -786,7 +779,7 @@ doidtrap(const struct nh_cmd_arg *arg)
             }
             /* This command is CMD_NOTIME, pick the RNG accordingly */
             tt = what_trap(tt, x, y, rn2_on_display_rng);
-            pline("That is %s%s%s.", an(trapexplain[tt - 1]),
+            pline(msgc_info, "That is %s%s%s.", an(trapexplain[tt - 1]),
                   !trap->madeby_u ? "" : (tt == WEB) ? " woven" :
                   /* trap doors & spiked pits can't be made by player, and
                      should be considered at least as much "set" as "dug"
@@ -796,7 +789,7 @@ doidtrap(const struct nh_cmd_arg *arg)
                   !trap->madeby_u ? "" : " by you");
             return 0;
         }
-    pline("I can't see a trap there.");
+    pline(msgc_info, "I can't see a trap there.");
     return 0;
 }
 

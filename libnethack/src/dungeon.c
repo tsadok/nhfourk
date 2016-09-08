@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1491,7 +1491,7 @@ assign_level(d_level * dest, const d_level * src)
     dest->dlevel = src->dlevel;
 }
 
-/* dest = src + rn1(range) */
+/* dest = src + rn1(range)
 void
 assign_rnd_level(d_level * dest, const d_level * src, int range)
 {
@@ -1507,7 +1507,7 @@ assign_rnd_level(d_level * dest, const d_level * src, int range)
     else if (dest->dlevel < 1)
         dest->dlevel = 1;
 }
-
+*/
 
 int
 induced_align(const d_level * dlev, int pct, enum rng rng)
@@ -1862,7 +1862,7 @@ overview_is_interesting(const struct level *lev, const struct overview_info *oi)
     /* if overview_scan found _anything_ the level is also interesting */
     if (oi->fountains || oi->magic_chests || oi->sinks || oi->thrones ||
         oi->trees || oi->temples || oi->altars || oi->shopcount ||
-        oi->branch || oi->portal)
+        oi->branch || oi->portal || oi->benches)
         return TRUE;
 
     /* "boring" describes this level very well */
@@ -1912,6 +1912,10 @@ overview_scan(const struct level *lev, struct overview_info *oi)
 
             case S_sink:
                 oi->sinks++;
+                break;
+
+            case S_bench:
+                oi->benches++;
                 break;
 
             case S_throne:
@@ -2153,6 +2157,7 @@ overview_print_info(const struct overview_info *oi)
     ADDNTOBUF("magic chest", oi->magic_chests);
     ADDNTOBUF("fountain", oi->fountains);
     ADDNTOBUF("sink", oi->sinks);
+    ADDNTOBUF("bench", oi->benches);
     ADDNTOBUF("throne", oi->thrones);
     ADDNTOBUF("tree", oi->trees);
 
@@ -2257,7 +2262,7 @@ dooverview(const struct nh_cmd_arg *arg)
             dbuf_set_memory(lev, x, y);
 
     buf = overview_print_lev(lev);
-    pline("Now viewing %s%s.  Press any key to return.",
+    pline(msgc_controlhelp, "Now viewing %s%s.  Press any key to return.",
           Is_astralevel(&lev->z) ? "the " : "", buf);
     notify_levelchange(&lev->z);
     flush_screen_nopos();

@@ -2,11 +2,12 @@
 # NetHack may be freely redistributed.  See license for details.
 -----
 If thy wand hath run out of charges, thou mayst zap it again and again; though
-naught will happen at first, verily, thy persistence shall be rewarded, as
+naught may happen at first, verily, thy persistence shall be rewarded, as
 one last charge may yet be wrested from it!
 -----
 Though the shopkeepers be wary, thieves have nevertheless stolen much by using
-their digging wands to hasten exits through the pavement.
+their digging wands to hasten exits through the pavement, or by training up
+an animal to act as an accomplice.
 -----
 If thou hast had trouble with rust on thine armor or weapons, thou shouldst
 know that thou canst prevent this by, while in a confused state, reading the
@@ -54,7 +55,9 @@ The boor may expect unprofitable transactions.
 The cliche of the kitchen sink swallowing any unfortunate rings that contact
 its pernicious surface reflecteth greater truth than many homilies, yet
 even so, few have developed the skill to identify enchanted rings by the
-transfigurations effected upon the voracious device's frame.
+transfigurations effected upon the voracious device's frame.  Fewer still
+have learned the workman's skills needed to dismantle said plumbing and
+recover the lost jewelry.
 -----
 The meat of enchanted creatures ofttimes conveyeth magical properties
 unto the consumer.  A fresh corpse of floating eye doth fetch a high
@@ -97,7 +100,7 @@ should they be prepared to circumambulate the castle to the postern.
 The name of Elbereth may strike fear into the hearts of thine enemies, if
 thou dost write it upon the ground at thy feet.  If thou maintainest the
 utmost calm, thy safety will be aided greatly, but beware lest thy clumsy
-feet scuff the inscription, cancelling its potence.
+feet scuff the inscription in the heat of battle, cancelling its potence.
 -----
 There are many creatures in these dungeons whose attacks, in addition
 to causing thee injury, may also subject thee, and sometimes also thy
@@ -105,7 +108,9 @@ possessions, to various afflictions. Some may even kill thee.  The
 likelihood of such misfortunes can be greatly reduced by wearing a
 garment that covers not only thy torso but also a larger portion of
 thy body, covering thy body and arms fully and extending downward to
-the tops of thy boots.
+the tops of thy boots.  Additionally, a magical spell may provide the
+same sort of protection, or perhaps a ring.  It is said that these
+protections may even be combined, providing even greater immunity.
 -----
 It is said that the great hero Jason, when he passed through this very
 dungeon, was wont to master even the most devastating whims of fate

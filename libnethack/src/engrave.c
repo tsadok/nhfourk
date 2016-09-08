@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Fredrik Ljungdahl, 2015-10-05 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -11,6 +11,7 @@
 static const char *const random_mesg[] = {
     "Elbereth", "ElberethElbereth", "ElberethElberethElbereth",
     "ElberetnElherethLlberethElbcrethElbere?hElbercthFlbereth",
+    "A Elbereth Gilthoniel",
     /* trap engravings */
     "Vlad was here", "ad aerarium",
     /* other NetHack-specific references */
@@ -208,7 +209,7 @@ surface(int x, int y)
         return "maw";
     else if (IS_AIR(loc->typ) && Is_airlevel(&u.uz))
         return "air";
-    else if (is_pool(level, x, y))
+    else if (is_damp_terrain(level, x, y))
         return (Underwater && !Is_waterlevel(&u.uz)) ? "bottom" : "water";
     else if (is_ice(level, x, y))
         return "ice";
@@ -319,7 +320,7 @@ read_engr_at(int x, int y)
 {
     struct engr *ep = engr_at(level, x, y);
     int sensed = 0;
-
+    
     /* Sensing an engraving does not require sight, nor does it necessarily
        imply comprehension (literacy). */
     if (ep && ep->engr_txt[0] &&
@@ -329,7 +330,7 @@ read_engr_at(int x, int y)
         case DUST:
             if (!Blind) {
                 sensed = 1;
-                pline("Something is written here in the %s.",
+                pline(msgc_info, "Something is written here in the %s.",
                       is_ice(level, x, y) ? "frost" : "dust");
             }
             break;
@@ -337,20 +338,22 @@ read_engr_at(int x, int y)
         case HEADSTONE:
             if (!Blind || can_reach_floor()) {
                 sensed = 1;
-                pline("Something is engraved here on the %s.", surface(x, y));
+                pline(msgc_info, "Something is engraved here on the %s.",
+                      surface(x, y));
             }
             break;
         case BURN:
             if (!Blind || can_reach_floor()) {
                 sensed = 1;
-                pline("Some text has been %s into the %s here.",
+                pline(msgc_info, "Some text has been %s into the %s here.",
                       is_ice(level, x, y) ? "melted" : "burned", surface(x, y));
             }
             break;
         case MARK:
             if (!Blind) {
                 sensed = 1;
-                pline("There's some graffiti on the %s here.", surface(x, y));
+                pline(msgc_info, "There's some graffiti on the %s here.",
+                      surface(x, y));
             }
             break;
         case ENGR_BLOOD:
@@ -358,13 +361,13 @@ read_engr_at(int x, int y)
                says... `See you next Wednesday.'" -- Thriller */
             if (!Blind) {
                 sensed = 1;
-                pline("You see a message scrawled in blood here.");
+                pline(msgc_info, "You see a message scrawled in blood here.");
             }
             break;
         case ENGR_LIGHTS:
             if (!Blind) {
                 sensed = 1;
-                pline("Colored lights spell out a message.");
+                pline(msgc_info, "Colored lights spell out a message.");
             }
             break;
         default:
@@ -375,9 +378,12 @@ read_engr_at(int x, int y)
             /* AIS: Bounds check removed, because pline can now handle
                arbitrary-length strings */
             char *et = ep->engr_txt;
-            pline("You %s: \"%s\".", (Blind) ? "feel the words" : "read", et);
-            /* TODO: For now, engravings stop farmove, autoexplore, and
-               travel. This can get quite spammy, though. */
+            pline(msgc_info, "You %s: \"%s\".",
+                  (Blind) ? "feel the words" : "read", et);
+            /* TODO: this comment previously said "For now, engravings stop
+               farmove, autoexplore, and travel. This can get quite spammy,
+               though.", but maybe doesn't match reality any more; check to see
+               if this code still makes sense */
             if (flags.occupation == occ_move ||
                 flags.occupation == occ_travel ||
                 flags.occupation == occ_autoexplore)
@@ -527,43 +533,46 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
 
     if (Engulfed) {
         if (is_animal(u.ustuck->data)) {
-            pline("What would you write?  \"Jonah was here\"?");
+            pline(msgc_cancelled, "What would you write?  \"Jonah was here\"?");
             return 0;
         } else if (is_whirly(u.ustuck->data)) {
-            pline("You can't reach the %s.", surface(u.ux, u.uy));
+            pline(msgc_cancelled, "You can't reach the %s.",
+                  surface(u.ux, u.uy));
             return 0;
         } else
             jello = TRUE;
     } else if (is_lava(level, u.ux, u.uy)) {
-        pline("You can't write on the lava!");
+        pline(msgc_cancelled, "You can't write on the lava!");
         return 0;
     } else if (Underwater) {
-        pline("You can't write underwater!");
+        pline(msgc_cancelled, "You can't write underwater!");
         return 0;
-    } else if (is_pool(level, u.ux, u.uy) ||
+    } else if (is_damp_terrain(level, u.ux, u.uy) ||
                IS_FOUNTAIN(level->locations[u.ux][u.uy].typ)) {
-        pline("You can't write on the water!");
+        pline(msgc_cancelled, "You can't write on the water!");
         return 0;
     }
     if (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz) /* in bubble */ ) {
-        pline("You can't write in thin air!");
+        pline(msgc_cancelled, "You can't write in thin air!");
         return 0;
     } else if (u.utrap && u.utraptype == TT_INFLOOR) {
-        pline ("You can't write on the %s while embedded therein.",
+        pline (msgc_cancelled,
+               "You can't write on the %s while embedded therein.",
                surface(u.ux, u.uy));
         return 0;
     } else if (u.utrap && u.utraptype == TT_ICEBLOCK) {
-        pline("You cannot write on the %s while embedded in a block of %s.",
+        pline(msgc_cancelled,
+              "You cannot write on the %s while embedded in a block of %s.",
               surface(u.ux,u.uy),
               (level->locations[u.ux][u.uy].typ == ICE) ? "it" : "ice");
         return 0;
     } else if (!accessible(level, u.ux, u.uy)) {
         /* stone, tree, wall, secret corridor, pool, lava, bars */
-        pline("You can't write here.");
+        pline(msgc_cancelled, "You can't write here.");
         return 0;
     }
     if (cantwield(youmonst.data)) {
-        pline("You can't even hold anything!");
+        pline(msgc_cancelled, "You can't even hold anything!");
         return 0;
     }
     if (check_capacity(NULL))
@@ -584,31 +593,39 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     /* There's no reason you should be able to write with a wand while both
        your hands are tied up. */
     if (!freehand() && otmp != uwep && !otmp->owornmask) {
-        pline("You have no free %s to write with!", body_part(HAND));
+        pline(msgc_cancelled, "You have no free %s to write with!",
+              body_part(HAND));
         return 0;
     }
 
     if (jello) {
-        pline("You tickle %s with your %s.", mon_nam(u.ustuck), writer);
-        pline("Your message dissolves...");
+        /* TODO: The flavour text here implies that it's a msgc_cancelled1 or
+           perhaps msgc_yafm situation. But it's actually a zero time cancel. */
+        pline(msgc_cancelled, "You tickle %s with your %s.", mon_nam(u.ustuck),
+              writer);
+        pline(msgc_cancelled, "Your message dissolves...");
         return 0;
     }
     if (otmp->oclass != WAND_CLASS && !can_reach_floor()) {
-        pline("You can't reach the %s!", surface(u.ux, u.uy));
+        pline(msgc_cancelled, "You can't reach the %s!", surface(u.ux, u.uy));
         return 0;
     }
     if (IS_ALTAR(level->locations[u.ux][u.uy].typ)) {
-        pline("You make a motion towards the altar with your %s.", writer);
+        /* TODO: This takes zero time but has game effects (sort-of the reverse
+           of msgc_cancelled1). */
+        pline(msgc_badidea, "You make a motion towards the altar with your %s.",
+              writer);
         altar_wrath(u.ux, u.uy);
         return 0;
     }
     if (IS_GRAVE(level->locations[u.ux][u.uy].typ)) {
         if (otmp == &zeroobj) { /* using only finger */
-            pline("You would only make a small smudge on the %s.",
+            pline(msgc_cancelled,
+                  "You would only make a small smudge on the %s.",
                   surface(u.ux, u.uy));
             return 0;
         } else if (!level->locations[u.ux][u.uy].disturbed) {
-            pline("You disturb the undead!");
+            pline(msgc_badidea, "You disturb the undead!");
             level->locations[u.ux][u.uy].disturbed = 1;
             makemon(&mons[PM_GHOUL], level, u.ux, u.uy, NO_MM_FLAGS);
             return 1;
@@ -644,7 +661,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         /* Objects too large to engrave with */
     case BALL_CLASS:
     case ROCK_CLASS:
-        pline("You can't engrave with such a large object!");
+        /* also msgc_cancelled1 */
+        pline(msgc_mispaste, "You can't engrave with such a large object!");
         ptext = FALSE;
         break;
 
@@ -652,7 +670,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     case FOOD_CLASS:
     case SCROLL_CLASS:
     case SPBOOK_CLASS:
-        pline("Your %s would get %s.", xname(otmp),
+        /* also msgc_cancelled1 */
+        pline(msgc_mispaste, "Your %s would get %s.", xname(otmp),
               is_ice(level, u.ux, u.uy) ? "all frosty" : "too dirty");
         ptext = FALSE;
         break;
@@ -757,7 +776,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             case WAN_MAKE_INVISIBLE:
                 if (oep && oep->engr_type != HEADSTONE) {
                     if (!Blind)
-                        pline("The engraving on the %s vanishes!",
+                        pline(msgc_info, "The engraving on the %s vanishes!",
                               surface(u.ux, u.uy));
                     dengr = TRUE;
                 }
@@ -765,7 +784,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             case WAN_TELEPORTATION:
                 if (oep && oep->engr_type != HEADSTONE) {
                     if (!Blind)
-                        pline("The engraving on the %s vanishes!",
+                        pline(msgc_info, "The engraving on the %s vanishes!",
                               surface(u.ux, u.uy));
                     teleengr = TRUE;
                 }
@@ -776,8 +795,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 ptext = TRUE;
                 type = ENGRAVE;
                 if (!objects[otmp->otyp].oc_name_known) {
-                    if (flags.verbose)
-                        pline("This %s is a wand of digging!", xname(otmp));
+                    pline_implied(msgc_info, "This %s is a wand of digging!",
+                                  xname(otmp));
                     doknown = TRUE;
                 }
                 if (!Blind) {
@@ -799,8 +818,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 ptext = TRUE;
                 type = BURN;
                 if (!objects[otmp->otyp].oc_name_known) {
-                    if (flags.verbose)
-                        pline("This %s is a wand of fire!", xname(otmp));
+                    pline_implied(msgc_info, "This %s is a wand of fire!",
+                                  xname(otmp));
                     doknown = TRUE;
                 }
                 post_engr_text = Blind ?
@@ -811,8 +830,9 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 ptext = TRUE;
                 type = BURN;
                 if (!objects[otmp->otyp].oc_name_known) {
-                    if (flags.verbose)
-                        pline("This %s is a wand of lightning!", xname(otmp));
+                    pline_implied(msgc_info,
+                                  "This %s is a wand of lightning!",
+                                  xname(otmp));
                     doknown = TRUE;
                 }
                 if (!Blind) {
@@ -825,35 +845,45 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 /* type = MARK wands */
                 /* type = ENGR_BLOOD wands */
             }
-        } else /* end if zappable */ if (!can_reach_floor()) {
-                pline("You can't reach the %s!", surface(u.ux, u.uy));
+        } else { /* i.e. not zappable */
+            if (!can_reach_floor()) {
+                pline(wrestable(otmp) ? msgc_failrandom : msgc_cancelled,
+                      "You can't reach the %s!", surface(u.ux, u.uy));
                 /* If it's a wrestable wand, the player wasted a turn trying. */
                 if (wrestable(otmp))
                     return 1;
                 else
                     return 0;
             }
+        }
         break;
     
     case WEAPON_CLASS:
         if (is_blade(otmp)) {
             if ((int)otmp->spe > -3)
                 type = ENGRAVE;
-            else
-                pline("Your %s too dull for engraving.", aobjnam(otmp, "are"));
+            else {
+                pline(otmp->known ? msgc_cancelled1 : msgc_failcurse,
+                      "Your %s too dull for engraving.",
+                      aobjnam(otmp, "are"));
+                otmp->known = TRUE;
+            }
         }
         break;
 
     case TOOL_CLASS:
         if (otmp == ublindf) {
-            pline("That is a bit difficult to engrave with, don't you think?");
+            pline(msgc_mispaste,
+                  "That is a bit difficult to engrave with, don't you think?");
             return 0;
         }
         switch (otmp->otyp) {
         case MAGIC_MARKER:
-            if (otmp->spe <= 0)
-                pline("Your marker has dried out.");
-            else
+            if (otmp->spe <= 0) {
+                pline(otmp->known ? msgc_cancelled1 : msgc_failcurse,
+                      "Your marker has dried out.");
+                otmp->known = TRUE;
+            } else
                 type = MARK;
             break;
         case TOWEL:
@@ -863,17 +893,19 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 if ((oep->engr_type == DUST) || (oep->engr_type == ENGR_BLOOD)
                     || (oep->engr_type == MARK)) {
                     if (!Blind)
-                        pline("You wipe out the message here.");
+                        pline(msgc_actionok, "You wipe out the message here.");
                     else
-                        pline("Your %s %s %s.", xname(otmp),
+                        pline(msgc_yafm, "Your %s %s %s.", xname(otmp),
                               otense(otmp, "get"),
                               is_ice(level, u.ux, u.uy) ? "frosty" : "dusty");
                     dengr = TRUE;
                 } else
-                    pline("Your %s can't wipe out this engraving.",
+                    pline(msgc_cancelled1,
+                          "Your %s can't wipe out this engraving.",
                           xname(otmp));
             else
-                pline("Your %s %s %s.", xname(otmp), otense(otmp, "get"),
+                pline(msgc_yafm, "Your %s %s %s.", xname(otmp),
+                      otense(otmp, "get"),
                       is_ice(level, u.ux, u.uy) ? "frosty" : "dusty");
             break;
         default:
@@ -927,15 +959,16 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     /* Something has changed the engraving here */
     if (*buf) {
         make_engr_at(level, u.ux, u.uy, buf, moves, type);
-        pline("The engraving now reads: \"%s\".", buf);
+        pline(msgc_info, "The engraving now reads: \"%s\".", buf);
         ptext = FALSE;
     }
 
     if (zapwand && (otmp->spe < 0)) {
-        pline("%s %sturns to dust.", The(xname(otmp)),
+        pline(msgc_itemloss, "%s %sturns to dust.", The(xname(otmp)),
               Blind ? "" : "glows violently, then ");
         if (!IS_GRAVE(level->locations[u.ux][u.uy].typ))
-            pline("You are not going to get anywhere trying to write in the "
+            pline(msgc_yafm,
+                  "You are not going to get anywhere trying to write in the "
                   "%s with your dust.",
                   is_ice(level, u.ux, u.uy) ? "frost" : "dust");
         useup(otmp);
@@ -944,7 +977,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
 
     if (!ptext) {       /* Early exit for some implements. */
         if (otmp->oclass == WAND_CLASS && !can_reach_floor())
-            pline("You can't reach the %s!", surface(u.ux, u.uy));
+            pline(msgc_cancelled1, "You can't reach the %s!",
+                  surface(u.ux, u.uy));
         return 1;
     }
 
@@ -969,7 +1003,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 c = yn_function("Do you want to add to the current engraving?",
                                 ynqchars, 'y');
             if (c == 'q') {
-                pline("Never mind.");
+                pline(msgc_cancelled, "Never mind.");
                 return 0;
             }
         }
@@ -979,19 +1013,21 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             if ((oep->engr_type == DUST) || (oep->engr_type == ENGR_BLOOD) ||
                 (oep->engr_type == MARK)) {
                 if (!Blind) {
-                    pline("You wipe out the message that was %s here.",
+                    pline(msgc_actionok,
+                          "You wipe out the message that was %s here.",
                           ((oep->engr_type == DUST) ? "written in the dust" :
                            ((oep->engr_type == ENGR_BLOOD) ?
                             "scrawled in blood" : "written")));
                     del_engr(oep, level);
                     oep = NULL;
                 } else
-                    /* Don't delete engr until after we *know* we're engraving
-                       */
+                    /* Don't delete engr until after we *know* we're
+                       engraving */
                     eow = TRUE;
             } else if ((type == DUST) || (type == MARK) ||
                        (type == ENGR_BLOOD)) {
-                pline("You cannot wipe out the message that is %s the %s here.",
+                pline(msgc_cancelled1,
+                      "You cannot wipe out the message that is %s the %s here.",
                       oep->engr_type == BURN ? (is_ice(level, u.ux, u.uy) ?
                                                 "melted into" : "burned into") :
                       "engraved in",
@@ -999,16 +1035,18 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 return 1;
             } else if (oep->engr_type == ENGR_LIGHTS) {
                 if (type == BURN) {
-                    pline("The colored lights short out and go dark.");
+                    pline(msgc_actionok,
+                          "The colored lights short out and go dark.");
                     eow = TRUE;
                 } else {
-                    pline("The colored lights distract you, and nothing "
-                          "really gets written.");
+                    pline(msgc_cancelled1, "The colored lights distract you, "
+                          "and nothing really gets written.");
                     return 1;
                 }
             } else if ((type != oep->engr_type) || (c == 'n')) {
                 if (!Blind || can_reach_floor())
-                    pline("You will overwrite the current message.");
+                    pline_implied(msgc_hint,
+                                  "You will overwrite the current message.");
                 eow = TRUE;
             }
         }
@@ -1051,9 +1089,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
 
     /* Tell adventurer what is going on */
     if (otmp != &zeroobj)
-        pline("You %s the %s with %s.", everb, eloc, doname(otmp));
+        pline(msgc_occstart, "You %s the %s with %s.", everb, eloc,
+              doname(otmp));
     else
-        pline("You %s the %s with your %s.", everb, eloc,
+        pline(msgc_occstart, "You %s the %s with your %s.", everb, eloc,
               makeplural(body_part(FINGER)));
 
     /* Prompt for engraving! */
@@ -1072,15 +1111,17 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     if (len == 0 || strchr(ebuf, '\033')) {
         if (zapwand) {
             if (!Blind)
-                pline("%s, then %s.", Tobjnam(otmp, "glow"),
+                pline(msgc_yafm, "%s, then %s.", Tobjnam(otmp, "glow"),
                       otense(otmp, "fade"));
             return 1;
         } else {
-            pline("Never mind.");
-            if (otmp && otmp->oclass == WAND_CLASS && wrestable(otmp))
+            if (otmp && otmp->oclass == WAND_CLASS && wrestable(otmp)) {
+                pline(msgc_yafm, "Never mind.");
                 return 1;       /* disallow zero turn wrest */
-            else
+            } else {
+                pline(msgc_cancelled, "Never mind.");
                 return 0;
+            }
         }
     }
 
@@ -1100,28 +1141,41 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             continue;
         /* NetHack Fourk balance adjustment:  writing Elbereth a whole lot of
          * times makes it harder to continue writing anything successfully.  */
-        if (!rn2((((type == DUST || type == ENGR_BLOOD)) ? 150
-                  : (type == ENGRAVE) ? 350 : 1500)
-                 * u.ulevel / (1 + u.uconduct[conduct_elbereth])) ||
+        u.ucramps++;
+        if ((16 + rn2_on_rng((((type == DUST || type == ENGR_BLOOD)) ? 150
+                              : (type == ENGRAVE) ? 350 : 1500)
+                             * u.ulevel / (1 + u.uconduct[conduct_elbereth]) + 1,
+                             rng_cramps) < u.ucramps) ||
             (Blind && !rn2(11)) || (Confusion && !rn2(7)) ||
             (Stunned && !rn2(4)) || (Hallucination && !rn2(2))) {
-            *sp = ' ' + rnd(96 - 2);    /* ASCII '!' thru '~' (excludes ' ' and 
-                                           DEL) */
+            if ((ABASE(A_CON) <= 3) || Fixed_abil)
+                *sp = ' ' + rnd(96 - 2);
+                /* ASCII '!' thru '~' (excludes ' ' and DEL) */
             cramps++;
         }
     }
     if ((Blind || Confusion || Hallucination || Stunned) && (cramps > 0))
-        pline("You have difficulty writing in your present condition.");
+        pline(msgc_yafm,
+              "You have difficulty writing in your present condition.");
     else if (cramps > 6)
-        pline("Your entire %s is cramping up.  You simply cannot write any more right now.", body_part(ARM));
+        pline(msgc_yafm, "Your entire %s is cramping up.  "
+              "You simply cannot write any more right now.", body_part(ARM));
     else if (cramps > 4)
-        pline("Your %s is cramping up very severely.", body_part(HAND));
+        pline(msgc_yafm,
+              "Your %s is cramping up very severely.", body_part(HAND));
     else if (cramps > 2)
-        pline("Your %s is really cramping up.", body_part(HAND));
+        pline(msgc_yafm, "Your %s is really cramping up.", body_part(HAND));
     else if (cramps > 1)
-        pline("Your %s is cramping up.", body_part(HAND));
+        pline(msgc_yafm, "Your %s is cramping up.", body_part(HAND));
     else if (cramps > 0)
-        pline("Your writing %s is beginning to cramp.", body_part(HAND));
+        pline(msgc_yafm, "Your writing %s is beginning to cramp.",
+              body_part(HAND));
+    if (cramps && (ABASE(A_CON) > 3) && !Fixed_abil) {
+        ABASE(A_CON)--;
+        u.amax.a[A_CON]--;
+        pline(msgc_intrloss, "You manage to get your message written, "
+                             "but the effort is draining.");
+    }
 
     /* Previous engraving is overwritten */
     if (eow) {
@@ -1146,18 +1200,20 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             ((otmp->otyp != ATHAME) || otmp->cursed)) {
             helpless_time = len;
             maxelen = ((otmp->spe + 3) * 2) + 1;
-            /* -2 = 3, -1 = 5, 0 = 7, +1 = 9, +2 = 11 Note: this does not allow 
-               a +0 anything (except an athame) to engrave "Elbereth" all at
-               once.  However, you could now engrave "Elb", then "ere", then
-               "th". */
+            /*
+             * -2 = 3, -1 = 5, 0 = 7, +1 = 9, +2 = 11
+             * Note: this does not allow a +0 anything (except an athame) to
+             * engrave "Elbereth" all at once.  However, you could engrave
+             * "Elb", then "ere", then "th".
+             */
             if (otmp->quan > 1L)
                 otmp = splitobj(otmp, 1L);
-            pline("Your %s dull.", aobjnam(otmp, "get"));
+            pline(msgc_badidea, "Your %s dull.", aobjnam(otmp, "get"));
             if (otmp->unpaid) {
                 struct monst *shkp = shop_keeper(level, *u.ushops);
 
                 if (shkp) {
-                    pline("You damage it, you pay for it!");
+                    pline(msgc_unpaid, "You damage it, you pay for it!");
                     bill_dummy_object(otmp);
                 }
             }
@@ -1181,8 +1237,9 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         if ((otmp->oclass == TOOL_CLASS) && (otmp->otyp == MAGIC_MARKER)) {
             maxelen = (otmp->spe) * 2;  /* one charge / 2 letters */
             if (len > maxelen) {
-                pline("Your marker dries out.");
+                pline(msgc_failcurse, "Your marker dries out.");
                 otmp->spe = 0;
+                otmp->known = TRUE;
                 helpless_time = maxelen / 10;
             } else if (len > 1)
                 otmp->spe -= len >> 1;
@@ -1208,7 +1265,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         if (!maxelen && *sp) {
             *sp = (char)0;
             helpless_endmsg = "You cannot write any more.";
-            pline("You are only able to write \"%s\".", ebuf_copy);
+            pline(msgc_substitute,
+                  "You are only able to write \"%s\".", ebuf_copy);
         }
     }
 
@@ -1227,7 +1285,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     }
 
     if (post_engr_text[0])
-        pline("%s", post_engr_text);
+        pline(msgc_info, "%s", post_engr_text);
 
     if (doknown_after) {
         makeknown(otmp->otyp);
@@ -1235,10 +1293,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     }
 
     if (doblind && !resists_blnd(&youmonst)) {
-        pline("You are blinded by the flash!");
+        pline(msgc_statusbad, "You are blinded by the flash!");
         make_blinded((long)rnd(50), FALSE);
         if (!Blind)
-            pline("Your vision quickly clears.");
+            pline(msgc_statusheal, "Your vision quickly clears.");
     }
 
     return 1;

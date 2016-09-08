@@ -27,7 +27,7 @@ jackal
 fox
 coyote
 werejackal
-little dog
+puppy
 dog
 large dog
 dingo
@@ -145,26 +145,26 @@ vampire bat
 plains centaur
 forest centaur
 mountain centaur
-baby gray dragon
-baby silver dragon
-baby shimmering dragon
-baby red dragon
-baby white dragon
-baby orange dragon
-baby black dragon
-baby blue dragon
-baby green dragon
-baby yellow dragon
-gray dragon
-silver dragon
-shimmering dragon
-red dragon
-white dragon
-orange dragon
-black dragon
-blue dragon
-green dragon
-yellow dragon
+baby gray dragon;young gray dragon
+baby silver dragon;young silver dragon
+baby shimmering dragon;young shimmering dragon
+baby red dragon;young red dragon
+baby white dragon;young white dragon
+baby orange dragon;young orange dragon
+baby black dragon;young black dragon
+baby blue dragon;young blue dragon
+baby green dragon;young green dragon
+baby yellow dragon;young yellow dragon
+gray dragon;elder gray dragon;ancient gray dragon
+silver dragon;elder silver dragon;ancient silver dragon
+shimmering dragon;elder shimmering dragon;ancient shimmering dragon
+red dragon;elder red dragon;ancient red dragon
+white dragon;elder white dragon;ancient white dragon
+orange dragon;elder orange dragon;ancient orange dragon
+black dragon;elder black dragon;ancient black dragon
+blue dragon;elder blue dragon;ancient blue dragon
+green dragon;elder green dragon;ancient green dragon
+yellow dragon;elder yellow dragon;ancient yellow dragon
 stalker
 air elemental
 fire elemental
@@ -1458,7 +1458,7 @@ sub figurine gremlin; sub figurine gargoyle; sub figurine winged gargoyle; sub f
 ! Insect-like
 sub figurine * ant; sub figurine * bee; sub figurine giant beetle; sub figurine cave spider; sub figurine centipede; sub figurine giant spider; sub figurine scorpion; sub figurine grid bug; sub figurine xan
 ! Canines
-sub figurine jackal; sub figurine fox; sub figurine coyote; sub figurine werejackal; sub figurine little dog; sub figurine dog; sub figurine large dog; sub figurine dingo; sub figurine wolf; sub figurine werewolf; sub figurine warg; sub figurine winter wolf*; sub figurine hell hound*
+sub figurine jackal; sub figurine fox; sub figurine coyote; sub figurine werejackal; sub figurine puppy; sub figurine dog; sub figurine large dog; sub figurine dingo; sub figurine wolf; sub figurine werewolf; sub figurine warg; sub figurine winter wolf*; sub figurine hell hound*
 ! Felines
 sub figurine kitten; sub figurine housecat; sub figurine jaguar; sub figurine lynx; sub figurine panther; sub figurine large cat; sub figurine tiger
 ! Quadrupeds
@@ -1516,7 +1516,7 @@ sub statue jackal
 sub statue fox
 sub statue coyote
 sub statue werejackal
-sub statue little dog
+sub statue puppy
 sub statue dog
 sub statue large dog
 sub statue dingo
@@ -2039,6 +2039,29 @@ sub corpse lizard
 
 ! NetHack Fourk additions:
 RATSANOPU
+ETAOIN SHRDLU
+LOREM IPSUM SIT AMET
+ABRA KA DABRA
+HAPAX LEGOMENON
+XYZZY
+EDEVESH HANAGASH
+EIGOWA KIRAIDES
+FROBOZZ MAGIC SCROLL CO
+PATENT PENDING
+TLASFO SENIL
+RW NW PRT M HRW
+KO BATE
+ASHPD SODALG
+ZLORFIK
+GNIK SISI VLE
+EIRIS SAZUN IDISI
+PHOL ENDE WODAN
+GHOTI
+MAPIRO MAHAMA DIROMAT
+VAS CORP BET MANI
+XOR OTA
+STRC PRST SKRZ KRK
+UNUSEDSCROLL24
 sylph
 island nymph
 shiny gem
@@ -2048,3 +2071,11 @@ magic chest
 convex amulet
 blood pudding
 stinking cloud trap
+gryphon
+shallow water
+scurrier
+dirty rag
+baby gryphon
+librarian
+jitterbug
+bench

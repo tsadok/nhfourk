@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by FIQ, 2015-08-24 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -35,7 +35,7 @@ is_better_armor(const struct monst *mtmp, struct obj *otmp)
     if (mtmp->data == &mons[PM_KI_RIN] || mtmp->data == &mons[PM_COUATL])
         return FALSE;
 
-    if (cantweararm(mtmp->data) &&
+    if (cantweararm(mtmp->data, &objects[otmp->otyp]) &&
         !(is_cloak(otmp) && mtmp->data->msize == MZ_SMALL))
         return FALSE;
 
@@ -319,7 +319,7 @@ dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
 
     if (edog->hungrytime < moves)
         edog->hungrytime = moves;
-    nutrit = dog_nutrition_value(mtmp, obj, FALSE);
+    nutrit = dog_nutrition(mtmp, obj);
     poly = polyfodder(obj);
     grow = mlevelgain(obj);
     heal = mhealup(obj);
@@ -354,9 +354,10 @@ dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
         /* However, invisible monsters should still be "it" even though out of
            sight locations should not. */
         if (mon_visible(mtmp) && tunnels(mtmp->data) && was_starving)
-            pline("%s digs in!", Monnam(mtmp));
+            pline(msgc_petneutral, "%s digs in!", Monnam(mtmp));
         else
-            pline("%s %s %s.", mon_visible(mtmp) ? noit_Monnam(mtmp) : "It",
+            pline(msgc_petneutral, "%s %s %s.",
+                  mon_visible(mtmp) ? noit_Monnam(mtmp) : "It",
                   devour ? "devours" : "eats",
                   (obj->oclass == FOOD_CLASS) ?
                   singular(obj, doname) : doname(obj));
@@ -373,7 +374,7 @@ dog_eat(struct monst *mtmp, struct obj *obj, int x, int y, boolean devour)
         obj->oerodeproof = 0;
         mtmp->mstun = 1;
         if (canseemon(mtmp) && flags.verbose) {
-            pline("%s spits %s out in disgust!", Monnam(mtmp),
+            pline(msgc_petwarning, "%s spits %s out in disgust!", Monnam(mtmp),
                   distant_name(obj, doname));
         }
     } else if (obj == uball) {
@@ -445,20 +446,22 @@ dog_hunger(struct monst *mtmp, struct edog *edog)
             if (mtmp->mhp < 1)
                 goto dog_died;
             if (cansee(mtmp->mx, mtmp->my))
-                pline("%s is confused from hunger.", Monnam(mtmp));
+                pline(msgc_petfatal, "%s is confused from hunger.",
+                      Monnam(mtmp));
             else if (couldsee(mtmp->mx, mtmp->my))
                 beg(mtmp);
             else
-                pline("You feel worried about %s.", y_monnam(mtmp));
+                pline(msgc_petfatal, "You feel worried about %s.",
+                      y_monnam(mtmp));
             action_interrupted();
         } else if (moves > edog->hungrytime + 750 || mtmp->mhp < 1) {
         dog_died:
             if (mtmp->mleashed && mtmp != u.usteed)
-                pline("Your leash goes slack.");
+                pline(msgc_petfatal, "Your leash goes slack.");
             else if (cansee(mtmp->mx, mtmp->my))
-                pline("%s starves.", Monnam(mtmp));
+                pline(msgc_petfatal, "%s starves.", Monnam(mtmp));
             else
-                pline("You feel %s for a moment.",
+                pline(msgc_petfatal, "You feel %s for a moment.",
                       Hallucination ? "bummed" : "sad");
             mondied(mtmp);
             return TRUE;
@@ -505,7 +508,12 @@ dog_invent(struct monst *mtmp, struct edog *edog, int udist)
                             /* starving pet is more aggressive about eating */
                             (edog->mhpmax_penalty && edible == ACCFOOD)) &&
             could_reach_item(mtmp, obj->ox, obj->oy)) {
-            return dog_eat(mtmp, obj, omx, omy, FALSE);
+            if (edog->hungrytime < moves + DOG_SATIATED) {
+                /* if (levitates(mtmp) && levitates_at_will(mtmp, TRUE, FALSE))
+                    return mon_remove_levitation(mtmp, FALSE);
+                    else  if (!levitates(mtmp)) */
+                    return dog_eat(mtmp, obj, omx, omy, FALSE);
+            }
         }
 
         if (can_carry(mtmp, obj) && !obj->cursed &&
@@ -515,8 +523,8 @@ dog_invent(struct monst *mtmp, struct edog *edog, int udist)
             if (can_use || (!droppables && rn2(20) < edog->apport + 3)) {
                 if (can_use || rn2(udist) || !rn2(edog->apport)) {
                     if (cansee(omx, omy) && flags.verbose)
-                        pline("%s picks up %s.", Monnam(mtmp),
-                              distant_name(obj, doname));
+                        pline(msgc_petneutral, "%s picks up %s.",
+                              Monnam(mtmp), distant_name(obj, doname));
                     obj_extract_self(obj);
                     newsym(omx, omy);
                     mpickobj(mtmp, obj);
@@ -700,7 +708,7 @@ dog_move(struct monst *mtmp, int after)
     udist = distu(omx, omy);
     /* Let steeds eat and maybe throw rider during Conflict */
     if (mtmp == u.usteed) {
-        if (Conflict && !resist(mtmp, RING_CLASS, 0, 0)) {
+        if ((Conflict || Stormprone) && !resist(mtmp, RING_CLASS, 0, 0)) {
             dismount_steed(DISMOUNT_THROWN);
             return 1;
         }
@@ -744,8 +752,9 @@ dog_move(struct monst *mtmp, int after)
             /* Guardian angel refuses to be conflicted; rather, it disappears,
                angrily, and sends in some nasties */
             if (canspotmon(mtmp)) {
-                pline("%s rebukes you, saying:", Monnam(mtmp));
-                verbalize("Since you desire conflict, have some more!");
+                pline(msgc_npcvoice, "%s rebukes you, saying:", Monnam(mtmp));
+                verbalize(msgc_petfatal,
+                          "Since you desire conflict, have some more!");
             }
             mongone(mtmp);
             i = rnd(4);
@@ -764,7 +773,7 @@ dog_move(struct monst *mtmp, int after)
     if (!Conflict && !mtmp->mconf && mtmp == u.ustuck &&
         !sticks(youmonst.data)) {
         unstuck(mtmp);  // swallowed case handled above
-        pline("You get released!");
+        pline(msgc_petneutral, "You get released!");
     }
     */
 
@@ -908,7 +917,10 @@ dog_move(struct monst *mtmp, int after)
                 if (obj->cursed)
                     cursemsg[i] = TRUE;
                 else if ((otyp = dogfood(mtmp, obj)) < MANFOOD &&
-                         (otyp < ACCFOOD || edog->hungrytime <= moves)) {
+                         (otyp < ACCFOOD || edog->hungrytime <= moves) &&
+                         edog->hungrytime < moves + DOG_SATIATED /* &&
+                         (!levitates(mtmp) ||
+                         levitates_at_will(mtmp, TRUE, FALSE)) */) {
                     /* Note: our dog likes the food so much that he might eat
                        it even when it conceals a cursed object */
                     nix = nx;
@@ -944,7 +956,8 @@ newdogpos:
 
         if (info[chi] & ALLOW_MUXY) {
             if (mtmp->mleashed) {       /* play it safe */
-                pline("%s breaks loose of %s leash!", Monnam(mtmp), mhis(mtmp));
+                pline(msgc_petwarning, "%s breaks loose of %s leash!",
+                      Monnam(mtmp), mhis(mtmp));
                 m_unleash(mtmp, FALSE);
             }
             mattackq(mtmp, nix, niy);
@@ -973,11 +986,20 @@ newdogpos:
         remove_monster(level, omx, omy);
         place_monster(mtmp, nix, niy);
         if (cursemsg[chi] && (cansee(omx, omy) || cansee(nix, niy)))
-            pline("%s moves only reluctantly.", Monnam(mtmp));
+            pline(msgc_petneutral, "%s moves only reluctantly.", Monnam(mtmp));
         /* We have to know if the pet's gonna do a combined eat and move before
            moving it, but it can't eat until after being moved.  Thus the
            do_eat flag. */
         if (do_eat) {
+            /*if (levitates(mtmp)) {
+                if (levitates_at_will(mtmp, TRUE, FALSE)) {
+                    int cancel_levi = mon_remove_levitation(mtmp, FALSE);
+                    if (cancel_levi)
+                        return cancel_levi;
+                    else
+                        impossible("remove levitation performed no action?");
+                }
+                } else */
             if (dog_eat(mtmp, obj, omx, omy, FALSE) == 2)
                 return 2;
         }

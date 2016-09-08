@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-21 */
+/* Last modified by Alex Smith, 2015-10-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -99,6 +99,7 @@ struct monst {
 
     uchar mfrozen;
     uchar mblinded;     /* cansee 0, temp.blinded n, blind 0 */
+    uchar mslowed;      /* turns of temporary slowness */
 
     unsigned int mappearance;   /* for undetected mimics and the wiz */
 
@@ -121,6 +122,7 @@ struct monst {
 
     unsigned mcan:1;    /* has been cancelled */
     unsigned mburied:1; /* has been buried */
+    unsigned miceblk:1; /* has been encased in ice */
     unsigned mspeed:2;  /* current speed (MFAST or MSLOW) */
     unsigned permspeed:2;       /* intrinsic mspeed value */
     /* see also mnitro, further down */
@@ -145,9 +147,12 @@ struct monst {
     unsigned ispriest:1;        /* is a priest */
     unsigned iswiz:1;   /* is the Wizard of Yendor */
 
+    /* turnstate; doesn't count against bitfield bit count */
+    unsigned deadmonster:1;     /* always 0 at neutral turnstate */
+
     uchar mfleetim;     /* timeout for mflee */
     uchar wormno;       /* at most 31 worms on any level */
-# define MAX_NUM_WORMS  32      /* wormno could hold larger worm ids, but 32 is 
+# define MAX_NUM_WORMS  32      /* wormno could hold larger worm ids, but 32 is
                                    (still) fine */
     xchar weapon_check;
     int misc_worn_check;
@@ -185,7 +190,7 @@ struct monst {
 # define dealloc_monst(mon) free((mon))
 
 /* these are in mspeed */
-# define MSLOW 1/* slow monster */
+# define MSLOW 1/* slow monster - see also mslowed for temp/timeout slowness */
 # define MFAST 2/* speeded monster */
 
 # define NAME(mtmp)         (((const char *)(mtmp)->mextra) + (mtmp)->mxlth)
@@ -194,7 +199,7 @@ struct monst {
 # define MON_WEP(mon)     ((mon)->mw)
 # define MON_NOWEP(mon)   ((mon)->mw = NULL)
 
-# define DEADMONSTER(mon) ((mon)->mhp < 1)
+# define DEADMONSTER(mon) ((mon)->deadmonster)
 
 # define onmap(mon) (isok((mon)->mx, (mon)->my))
 

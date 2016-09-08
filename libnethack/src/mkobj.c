@@ -1,10 +1,11 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-10-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "prop.h"
+#include "mkobj.h"
 
 #include <limits.h>
 
@@ -17,12 +18,7 @@ static void extract_nexthere(struct obj *, struct obj **);
 
 /* #define DEBUG_EFFECTS *//* show some messages for debugging */
 
-struct icp {
-    int iprob;  /* probability of an item type */
-    char iclass;        /* item class */
-};
-
-
+/* See also magicchestprobs in u_init.c */
 static const struct icp mkobjprobs[] = {
     {10, WEAPON_CLASS},
     {10, ARMOR_CLASS},
@@ -534,6 +530,9 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
 
             if (artif && !rn2_on_rng(20, rng))
                 otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
+            else if ((otmp->spe > (1 + rn2_on_rng(5, rng))) && (!otmp->cursed))
+                otmp = oname_random_weapon(otmp, rng);
+
             break;
         case FOOD_CLASS:
             otmp->oeaten = 0;
@@ -590,6 +589,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                         (moves % 5)  ? fruitadd("sugar plum") :
                         (moves % 7)  ? fruitadd("cup of figgy pudding") :
                         fruitadd("slice of plum cake");
+                else if (Race_if(PM_SCURRIER))
+                    otmp->spe = fruitadd("chestnut");
                 else
                     otmp->spe = gamestate.fruits.current;
                 break;
@@ -759,9 +760,10 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                         otmp->spe = rn2_on_rng(2, rng) ?
                             rne_on_rng(3, rng) : -rne_on_rng(3, rng);
                 }
-                /* make useless +0 rings much less common */
+                /* make useless +0 rings MUCH less common */
                 if (otmp->spe == 0)
-                    otmp->spe = rn2_on_rng(4, rng) - rn2_on_rng(3, rng);
+                    otmp->spe = rne_on_rng(2, rng)
+                        * (rn2_on_rng(challengemode ? 2 : 3, rng) ? 1 : -1);
                 /* negative rings are usually cursed */
                 if (otmp->spe < 0 && rn2_on_rng(5, rng))
                     curse(otmp);
@@ -849,7 +851,7 @@ start_corpse_timeout(struct obj *body)
     when += (long)(rnz(rot_adjust) - rot_adjust);
 
     if (is_rider(&mons[body->corpsenm])) {
-        /* 
+        /*
          * Riders always revive.  They have a 1/3 chance per turn
          * of reviving after 12 turns.  Always revive by 500.
          */
@@ -986,7 +988,7 @@ weight(struct obj *obj)
 
         for (contents = obj->cobj; contents; contents = contents->nobj)
             cwt += weight(contents);
-        /* 
+        /*
          *  The weight of bags of holding is calculated as the weight
          *  of the bag plus the weight of the bag's contents modified
          *  as follows:
@@ -1165,6 +1167,10 @@ save_mtraits(struct obj *obj, struct monst *mtmp)
         mtmp2->nmon = NULL;
         mtmp2->data = NULL;
         mtmp2->minvent = NULL;
+
+        /* clear monster turnstate */
+        mtmp2->deadmonster = 0;
+
         otmp->oattached = OATTACHED_MONST;      /* mark it */
     }
     return otmp;
@@ -1294,6 +1300,12 @@ place_object(struct obj *otmp, struct level *lev, int x, int y)
 
     if (otmp->timed)
         obj_timer_checks(otmp, x, y, 0);
+
+    /* for objects initially created in water */
+/*
+    if (is_damp_terrain(lev, x, y))
+	water_damage(otmp, FALSE, FALSE);
+*/
 }
 
 #define ON_ICE(a) ((a)->recharged)
@@ -1436,7 +1448,7 @@ discard_minvent(struct monst *mtmp)
 
 /*
  * Free obj from whatever list it is on in preperation of deleting it or
- * moving it elsewhere. 
+ * moving it elsewhere.
  *
  * [The documentation here previously said "this will perform all high-level
  * consequences involved with removing the item.  E.g. if the object is in the
@@ -1654,7 +1666,7 @@ dealloc_obj(struct obj *obj)
     if (obj->timed)
         obj_stop_timers(obj);
 
-    /* 
+    /*
      * Free up any light sources attached to the object.
      *
      * We may want to just call del_light_source() without any
@@ -1839,4 +1851,3 @@ save_obj(struct memfile *mf, struct obj *obj)
 }
 
 /*mkobj.c*/
-

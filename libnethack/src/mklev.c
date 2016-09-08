@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Alex Smith, 2015-11-11 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -13,6 +13,7 @@ static void mkfount(struct level *lev, int, struct mkroom *);
 static void mksink(struct level *lev, struct mkroom *);
 static void mkaltar(struct level *lev, struct mkroom *);
 static void mkgrave(struct level *lev, struct mkroom *);
+static void mkpuddles(struct level *lev, struct mkroom *);
 static void makevtele(struct level *lev);
 static void makelevel(struct level *lev);
 static void mineralize(struct level *lev);
@@ -978,6 +979,8 @@ skip0:
 
         if (!mrn2(3)) {
             int tries = 20;
+            int ldiff = ilog2(level_difficulty(&lev->z) || 1) / 1600;
+            /* ldiff is thus 0 on DL1-2, 1 on DL3-8, 2 on DL9-25, then 3. */
             x = somex(croom, mrng());
             y = somey(croom, mrng());
             /* Try to put it on the floor. */
@@ -989,6 +992,8 @@ skip0:
             if (tmonst && tmonst->data == &mons[PM_GIANT_SPIDER] &&
                 !occupied(lev, x, y))
                 maketrap(lev, x, y, WEB, mrng());
+            if (tmonst && !mrn2(ldiff || 1) && !resists_sleep(tmonst))
+                tmonst->msleeping = 1;
         }
         /* put traps and mimics inside */
         x = 8 - (level_difficulty(&lev->z) / 6);
@@ -1009,12 +1014,19 @@ skip0:
         }
         if (Is_rogue_level(&lev->z))
             goto skip_nonrogue;
-        if (!mrn2(10))
-            mkfount(lev, 0, croom);
+        
+        /* greater chance of puddles if a water source is nearby */
+        x = 40;
+        if(!rn2(10)) {
+            mkfount(lev, 0,croom);
+            x = 20;
+        }
         if (!mrn2(60))
             mksink(lev, croom);
         if (!mrn2(60))
             mkaltar(lev, croom);
+        if (!rn2(x))
+            mkpuddles(lev, croom);
         x = 80 - (depth(&lev->z) * 2);
         if (x < 2)
             x = 2;
@@ -1357,6 +1369,52 @@ pos_to_room(struct level *lev, xchar x, xchar y)
     return NULL;
 }
 
+/* make connected spots of shallow water (or pools) and add sea monsters */
+void
+mkpuddles(struct level *lev, struct mkroom *croom)
+{
+    coord m;
+    int tryct = 0;
+    int puddles = 0; /* how many spaces have we altered? */
+    int fish = 0;
+    int rng = rng_for_level(&lev->z);
+	
+    do {
+        if (tryct++ > 200)
+            return;
+        if (!somexy(lev, croom, &m, rng))
+            return;
+    } while (occupied(lev, m.x, m.y));
+	
+    do {
+        if (!is_damp_terrain(lev, m.x, m.y)) {
+            puddles++;
+            lev->locations[m.x][m.y].typ =
+                (depth(&lev->z) > 3 + rn2_on_rng(35, rng)) ? POOL : PUDDLE;
+        }
+        if ((puddles > 4 + 2 * fish) && (rn2_on_rng(depth(&lev->z), rng) > 4)) {
+            (void)makemon(is_pool(lev, m.x, m.y) ?
+                          mkclass(&lev->z, S_EEL, 0, rng) : &mons[PM_PIRANHA],
+                          lev, m.x, m.y, NO_MM_FLAGS);
+            fish++;
+        }
+        tryct = 0;
+        do {
+            /* Always changing both coords by 1 (either increment or decrement)
+               ensures that we never place water orthogonally adjacent to
+               water, i.e., we confine the water to a checkerboard pattern;
+               thus the player is never required to cross water to traverse a
+               level as a result of this function.  (Special levels, such as
+               Medusa's Island, are another matter.) */
+            m.x += sgn(rn2(3)-1);
+            m.y += sgn(rn2(3)-1);
+        } while ((occupied(lev, m.x, m.y) ||
+                  m.x < croom->lx || m.x > croom->hx ||
+                  m.y < croom->ly || m.y > croom->hy)
+                 && (++tryct <= 27));
+    } while (tryct <= 27);
+}
+
 
 /* If given a branch, randomly place a special stair or portal. */
 void
@@ -1642,8 +1700,12 @@ mktrap(struct level *lev, int num, int mazeflag, struct mkroom *croom,
     }
 
     maketrap(lev, m.x, m.y, kind, mrng());
-    if (kind == WEB)
-        makemon(&mons[PM_GIANT_SPIDER], lev, m.x, m.y, MM_ALLLEVRNG);
+    if (kind == WEB) {
+        struct monst *spider = makemon(&mons[PM_GIANT_SPIDER],
+                                       lev, m.x, m.y, MM_ALLLEVRNG);
+        if (spider && !resists_sleep(spider))
+            spider->msleeping = 1;
+    }
 }
 
 
@@ -1810,11 +1872,13 @@ mkinvokearea(void)
     xchar ymin = gamestate.inv_pos.y, ymax = gamestate.inv_pos.y;
     xchar i;
 
-    pline("The floor shakes violently under you!");
+    pline(msgc_levelsound, "The floor shakes violently under you!");
     if (Blind)
-        pline("The entire dungeon seems to be tearing apart!");
+        pline_implied(msgc_levelsound,
+                      "The entire dungeon seems to be tearing apart!");
     else
-        pline("The walls around you begin to bend and crumble!");
+        pline_implied(msgc_levelsound,
+                      "The walls around you begin to bend and crumble!");
     win_pause_output(P_MESSAGE);
 
     mkinvpos(xmin, ymin, 0);    /* middle, before placing stairs */
@@ -1844,9 +1908,11 @@ mkinvokearea(void)
     }
 
     if (Blind)
-        pline("You feel the stones reassemble below you!");
+        pline(msgc_levelsound,
+              "You feel the stones reassemble below you!");
     else
-        pline("You are standing at the top of a stairwell leading down!");
+        pline(msgc_levelsound,
+              "You are standing at the top of a stairwell leading down!");
     mkstairs(level, u.ux, u.uy, 0, NULL);       /* down */
     newsym(u.ux, u.uy);
     turnstate.vision_full_recalc = TRUE;     /* everything changed */
@@ -2037,8 +2103,10 @@ mk_advcal_portal(struct level *lev)
     *source = u.uz;
     insert_branch(br, TRUE);
     
+    /*
     if (wizard)
-        pline("Made advent calendar portal.");
+        pline(msgc_debug, "Made advent calendar portal.");
+    */
     place_branch(lev, br, COLNO, ROWNO);
 
     return TRUE;
