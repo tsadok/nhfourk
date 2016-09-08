@@ -1400,10 +1400,10 @@ get_jump_coords(const struct nh_cmd_arg *arg, coord *cc, int magic)
                   (!LWounded_legs) ? "right " : "",
                   bp, (LWounded_legs && RWounded_legs) ? "are" : "is");
         return 0;
-    } else if (msgc_cancelled && u.usteed && u.utrap) {
+    } else if (u.usteed && u.utrap) {
         pline(msgc_cancelled, "%s is stuck in a trap.", Monnam(u.usteed));
         return 0;
-    } else if (msgc_cancelled && u.usteed && !u.usteed->mcanmove) {
+    } else if (u.usteed && !u.usteed->mcanmove) {
         pline(msgc_cancelled, "%s won't move sideways, much less upwards.",
               Monnam(u.usteed));
         return 0;
