@@ -66,6 +66,7 @@ static const struct nh_listitem mode_list[] = {
 static const struct nh_enum_option mode_spec = {
     mode_list, listlen(mode_list)
 };
+#if 0
 static const struct nh_listitem mode_list_nochallenge[] = {
     {MODE_NORMAL, "normal"},
     {MODE_EXPLORE, "explore"},
@@ -74,6 +75,7 @@ static const struct nh_listitem mode_list_nochallenge[] = {
 static const struct nh_enum_option mode_spec_nochallenge = {
     mode_list_nochallenge, listlen(mode_list_nochallenge)
 };
+#endif
 
 static const struct nh_listitem align_list[] = {
     {0, "lawful"},
@@ -421,9 +423,11 @@ new_opt_struct(void)
 
     nhlib_find_option(options, "name")->s.maxlen = PL_NSIZ;
     nhlib_find_option(options, "seed")->s.maxlen = RNG_SEED_SIZE_BASE64;
-    nhlib_find_option(options, "mode")->e =
+    nhlib_find_option(options, "mode")->e = mode_spec;
+#if 0
         is_unlocked_feature(UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_CHALLENGE) ?
         mode_spec : mode_spec_nochallenge;
+#endif
     nhlib_find_option(options, "timezone")->e = timezone_spec;
     nhlib_find_option(options, "polyinit")->e = polyinit_spec;
     nhlib_find_option(options, "align")->e = align_spec;
