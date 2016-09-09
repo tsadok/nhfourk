@@ -12,8 +12,8 @@
 #define INITALIGNREC_CHA 10
 #define INITALIGNREC_NEU  5
 #define INITALIGNREC_LAW  0
-#define INIT_ALIGNREC(alntyp) (alntyp == A_CHAOTIC) ? INITALIGNREC_CHA : \
-    (alntyp == A_NEUTRAL) ? INITALIGNREC_NEU : INITALIGNREC_LAW
+#define INIT_ALIGNREC(alntyp) ((alntyp == A_CHAOTIC) ? INITALIGNREC_CHA : \
+                   (alntyp == A_NEUTRAL) ? INITALIGNREC_NEU : INITALIGNREC_LAW)
 
 /* #define DEBUG *//* uncomment for debugging info */
 
