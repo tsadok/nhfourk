@@ -1119,6 +1119,7 @@ static struct {
         /* Notable console games */
     {"octorok", FALSE}, /* Zelda series */
     {"goomba", FALSE},  /* Mario series */
+    {"ramblin' evil mushroom", FALSE}, /* EarthBound */
         /* Wizardry */
     {"creeping coins", FALSE},
         /* Greek legend */
