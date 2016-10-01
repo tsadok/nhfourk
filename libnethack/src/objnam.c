@@ -623,7 +623,7 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
                               " called ", un, NULL);
         } else if (obj->oclass == SCROLL_CLASS && ocl->oc_magic) {
             buf = (dump ? bracketize_of(obj->otyp) :
-                   msgcat_many(buf, " labeled ", dn, NULL));
+                   msgcat_many(buf, "scroll labeled ", dn, NULL));
         } else {
             buf = dump ? bracketize_of(obj->otyp) :
                 msgcat_many(dn, " ", tname, NULL);
