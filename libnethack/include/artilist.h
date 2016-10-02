@@ -136,11 +136,11 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_INTEL | SPFX_DEFN | SPFX_ATTK ), 0, 0,
       SLEE(1,1), DFNS(AD_SLEE), NO_CARY, 0, A_CHAOTIC, PM_ROGUE, NON_PM, 700L),
 
-    A("Frost Brand", LONG_SWORD,
+    A("Frost Brand", SHORT_SWORD,
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       COLD(5, 0), COLD(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
 
-    A("Fire Brand", LONG_SWORD,
+    A("Fire Brand", SHORT_SWORD,
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       FIRE(5, 0), FIRE(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
 

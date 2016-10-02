@@ -510,7 +510,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                     if ((wtype = uwep_skill_type()) != P_NONE)
                         tmp += rnd(1 + (3 * P_SKILL(wtype) * P_SKILL(wtype) / 2));
                     hittxt = TRUE;
-                } else if (dieroll == 2 && obj == uwep &&
+                } else if (dieroll == 2 &&
+                           (obj == uwep || (obj == uswapwep && u.twoweap)) &&
                            obj->oclass == WEAPON_CLASS &&
                            (bimanual(obj) ||
                             (Role_if(PM_SAMURAI) && obj->otyp == KATANA &&

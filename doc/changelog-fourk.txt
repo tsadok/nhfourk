@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Fire Brand and Frost Brand are now artifact short swords.  As a
+   special case, the rule against two-weapon combat with an artifact
+   in the off-hand does not apply when one of the weapons you are
+   wielding is Fire Brand and the other is Frost Brand.  You can get
+   artifact damage against your foes from both of them.  However,
+   you only get resistance from the one in your first hand.
+
  * Achievement-unlockable features have been implemented.  You can now
    unlock certain game features by achieving certain things within the
    game.  Once a feature is unlocked, it stays unlocked after your

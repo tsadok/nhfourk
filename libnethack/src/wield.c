@@ -57,6 +57,7 @@
 #define will_weld(optr)    ((optr)->cursed  &&                          \
                             (sensible_wep(optr) || (optr)->otyp == TIN_OPENER))
 
+static boolean offhand_artifact_ok(struct obj *, struct obj *);
 
 /*** Functions that place a given item in a slot ***/
 /* Proper usage includes:
@@ -407,6 +408,27 @@ wield_tool(struct obj *obj, const char *occ_txt, enum occupation occupation)
     return 0;
 }
 
+/* Normally, the game will not permit the player to wield an
+   artifact in the off-hand, second to another weapon.  This
+   function specifies the exceptions to that rule. */
+boolean
+offhand_artifact_ok(struct obj *weapone, struct obj *weaptwo)
+{
+    if ((weapone->oartifact && (weapone->oartifact == ART_FIRE_BRAND) &&
+         weaptwo->oartifact && (weaptwo->oartifact == ART_FROST_BRAND)) ||
+        ((weapone->oartifact && (weapone->oartifact == ART_FROST_BRAND) &&
+          weaptwo->oartifact && (weaptwo->oartifact == ART_FIRE_BRAND)))) {
+        if (!historysearch("handled fire and ice together.", TRUE)) {
+            historic_event(FALSE, FALSE, "handled fire and ice together.");
+            pline(msgc_yafm,
+                  "You feel a warm camaraderie that edges into icy rivalry.");
+        }
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
 int
 can_twoweapon(void)
 {
@@ -439,7 +461,7 @@ can_twoweapon(void)
     } else if (uarms)
         pline(msgc_cancelled,
               "You can't use two weapons while wearing a shield.");
-    else if (uswapwep->oartifact)
+    else if (uswapwep->oartifact && ! offhand_artifact_ok(uwep, uswapwep))
         pline(msgc_cancelled, "%s %s being held second to another weapon!",
               Yname2(uswapwep), otense(uswapwep, "resist"));
     else if (!uarmg && !Stone_resistance &&
