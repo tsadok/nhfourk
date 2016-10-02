@@ -425,7 +425,9 @@ offhand_artifact_ok(struct obj *weapone, struct obj *weaptwo)
         }
         return TRUE;
     }
-    
+    if (weapone->oartifact && (weapone->oartifact == ART_ORCRIST) &&
+        weaptwo->oartifact && (weaptwo->oartifact == ART_STING))
+        return TRUE;
     return FALSE;
 }
 

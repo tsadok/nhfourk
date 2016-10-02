@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Sting can be held second to Orcrist, for two-weapon combat.
+
  * Fire Brand and Frost Brand are now artifact short swords.  As a
    special case, the rule against two-weapon combat with an artifact
    in the off-hand does not apply when one of the weapons you are
