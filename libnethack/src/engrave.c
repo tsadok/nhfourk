@@ -516,6 +516,7 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     const char *helpless_endmsg;/* Temporary for helpless end message */
     struct engr *oep = engr_at(level, u.ux, u.uy);
     struct obj *otmp;
+    boolean literate = FALSE;   /* Breaks illiterate conduct and causes cramping */
     int cramps = 0;             /* How much your hand is cramping up from writing */
 
     /* The current engraving */
@@ -1126,8 +1127,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
     }
 
     /* A single `x' is the traditional signature of an illiterate person */
-    if (len != 1 || (!strchr(ebuf, 'x') && !strchr(ebuf, 'X')))
+    if (len != 1 || (!strchr(ebuf, 'x') && !strchr(ebuf, 'X'))) {
+        literate = TRUE;
         break_conduct(conduct_illiterate);
+    }
 
     /* Degrade any existing text: */
     u_wipe_engr(rnd(3));
@@ -1151,7 +1154,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             if ((ABASE(A_CON) <= 3) || Fixed_abil)
                 *sp = ' ' + rnd(96 - 2);
                 /* ASCII '!' thru '~' (excludes ' ' and DEL) */
-            cramps++;
+            if (literate)
+                cramps++;
         }
     }
     if ((Blind || Confusion || Hallucination || Stunned) && (cramps > 0))
