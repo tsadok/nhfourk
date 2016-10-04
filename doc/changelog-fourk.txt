@@ -61,9 +61,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The statues at Medusa's Island (except for Perseus) now have the
+   usual chance to contain spellbooks, like any other random statue.
+
  * More special levels have been given more alternate versions.
    Special levels that have more distinct versions than before now
-   include the Valley of the Dead, Moloch's Sanctum, 
+   include the Valley of the Dead, Moloch's Sanctum, Medusa's Island.
 
  * Sting can be held second to Orcrist, for two-weapon combat.
 
