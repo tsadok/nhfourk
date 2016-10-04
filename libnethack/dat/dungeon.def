@@ -84,7 +84,7 @@ DESCRIPTION:	hellish
 ALIGNMENT:	noalign
 BRANCH:		"Vlad's Tower" @ (9, 7) up
 RNDLEVEL:	"valley" "V" @ (1, 0) 4
-LEVEL:		"sanctum" "none" @ (-1, 0)
+RNDLEVEL:	"sanctu" "none" @ (-1, 0) 4
 LEVEL:		"juiblex" "J" @ (7, 3)
 RNDLEVEL:	"yeedis" "B" @ (11, 3) 2
 RNDLEVEL:       "garden" "T" @ (3,2) 50 2
