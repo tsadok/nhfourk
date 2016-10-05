@@ -1562,7 +1562,8 @@ use_offensive(struct monst *mtmp, struct musable *m)
         }
         /* Wow, this is a twisty mess of ugly global variables. */
         if (!aware_of_u(mtmp))
-            panic("Monster throws potion while unaware!");
+            /* What will explode if we let the m_throw happen? */
+            impossible("Monster throws potion while unaware!");
         if (engulfing_u(mtmp))
             panic("Monster throws potion while engulfing you!");
         m_throw(mtmp, mtmp->mx, mtmp->my, sgn(tbx), sgn(tby),

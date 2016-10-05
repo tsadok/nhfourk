@@ -404,7 +404,6 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
     boolean silvermsg = FALSE, silverobj = FALSE;
     boolean valid_weapon_attack = FALSE;
     boolean unarmed = !uwep && (!uarm || uskin()) && !uarms;
-    boolean not_melee_weapon = FALSE;
     int jousting = 0;
     int wtype;
     struct obj *monwep;
@@ -454,7 +453,6 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                    /* or throw a missile without the proper bow... */
                    (is_ammo(obj) && !ammo_and_launcher(obj, uwep))) {
                 /* then do only 1-2 points of damage */
-                not_melee_weapon = TRUE;
                 if (mdat == &mons[PM_SHADE] && !shade_glare(obj))
                     tmp = 0;
                 else
@@ -1122,8 +1120,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
             pline(combat_msgc(&youmonst, mon, cr_hit), "You hit it.");
         else
             pline(combat_msgc(&youmonst, mon, cr_hit), "You %s %s%s",
-                  (!obj ? barehitmsg(&youmonst) : 
-                   not_melee_weapon ? "hit" : weaphitmsg(obj, &youmonst)),
+                  (!obj ? barehitmsg(&youmonst) : weaphitmsg(obj, &youmonst)),
                   mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
     }
 

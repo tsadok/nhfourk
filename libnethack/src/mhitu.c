@@ -97,6 +97,8 @@ weaphitmsg(struct obj *obj, struct monst *magr)
     boolean uhitm = (boolean) (magr == &youmonst);
     if (Hallucination)
         return halluhitverb(uhitm);
+    if (is_launcher(obj) || !is_wep(obj))
+        return uhitm ? "bash" : "bashes";
     if (objects[obj->otyp].oc_dir & WHACK &&
         (!(objects[obj->otyp].oc_dir & PIERCE) || rn2(2))) {
         if (objects[obj->otyp].oc_skill == P_CLUB)

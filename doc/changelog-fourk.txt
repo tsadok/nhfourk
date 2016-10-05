@@ -154,10 +154,6 @@ Changes in 4.3.0.4:
    not cursed, it may be assigned a name, like "Sword of Virtue",
    "Mace of Justice", "Staff of Yendor", etc.
 
- * When a randomly generated weapon is positively enchanted and
-   not cursed, it may be assigned a name, like "Sword of Virtue",
-   "Mace of Justice", "Staff of Yendor", etc.
-
  * Sokoban levels now announce their titles when you enter them.
 
  * A new special level, the Garden of Temptation, has been added
@@ -371,12 +367,13 @@ Changes in 4.3.0.4:
    completed successfully, at the cost of one point of constitution.
 
  * Hand cramping (due to excessive engraving) has been made more
-   consistent.  It no longer matters as much what you've written, but
-   it matters much more how recently you've written it.  In addition
-   to gradually healing naturally over time, cramps can also be
-   reduced by drinking blessed potions of healing, extra healing, and
-   full healing; and enlightenment can tell you how cramped your
-   writing hand is.
+   consistent.  It no longer matters as much what you've written
+   (exception: writing a single "x", to avoid breaking illiterate
+   conduct, also does not cause cramping), but it matters much more
+   how recently you've written it.  In addition to gradually healing
+   naturally over time, cramps can also be reduced by drinking blessed
+   potions of healing, extra healing, and full healing; and
+   enlightenment can tell you how cramped your writing hand is.
 
  * When chargeable rings are generated, the game now tries even
    harder than before to avoid +0 ones.

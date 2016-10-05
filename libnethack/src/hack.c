@@ -2137,6 +2137,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                    DO_MOVE, &cache)) {
         /* We can't move there... but maybe we can dig. */
         if (flags.autodig && uim != uim_nointeraction &&
+            (flags.occupation != occ_autoexplore) &&
             thismove != occ_move && ((uwep && is_pick(uwep)) ||
                                      (tunnels(URACEDATA) &&
                                       !needspick(URACEDATA)))) {

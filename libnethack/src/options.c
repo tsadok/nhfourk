@@ -66,6 +66,7 @@ static const struct nh_listitem mode_list[] = {
 static const struct nh_enum_option mode_spec = {
     mode_list, listlen(mode_list)
 };
+
 static const struct nh_listitem mode_list_nochallenge[] = {
     {MODE_NORMAL, "normal"},
     {MODE_EXPLORE, "explore"},

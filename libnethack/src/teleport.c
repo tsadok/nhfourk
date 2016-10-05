@@ -873,7 +873,7 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
     yy = mtmp->my;
     if (!xx) {
         /* no current location (migrating monster arrival) */
-        if (mdl->dndest.nlx && On_W_tower_level(&u.uz))
+        if (mdl->dndest.nlx && On_W_tower_level(m_mz(mtmp)))
             return ((yy & 2) != 0) ^    /* inside xor not within */
                 !within_bounded_area(x, y, mdl->dndest.nlx, mdl->dndest.nly,
                                      mdl->dndest.nhx, mdl->dndest.nhy);

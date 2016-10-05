@@ -1119,6 +1119,7 @@ static struct {
         /* Notable console games */
     {"octorok", FALSE}, /* Zelda series */
     {"goomba", FALSE},  /* Mario series */
+    {"ramblin' evil mushroom", FALSE}, /* EarthBound */
         /* Wizardry */
     {"creeping coins", FALSE},
         /* Greek legend */
@@ -1264,8 +1265,12 @@ roguename(void)
 
 static const char *const hcolors[] = {
     "ultraviolet", "infrared", "bluish-orange",
-    "reddish-green", "dark white", "light black", "sky blue-pink",
+    "reddish-green", "dark white", "light black",
+    "pinkish-cyan", "indigo-chartreuse", "excitingly dull",
     "salty", "sweet", "sour", "bitter",
+    "neon", "fluorescent", "phosphorescent", "translucent", "opaque",
+    "psychedelic", "iridescent", "rainbow-colored", "polychromatic",
+    "colorless", "colorless green", /* like furiously-sleeping ideas */
     "striped", "spiral", "swirly", "plaid", "checkered", "argyle",
     "paisley", "blotchy", "guernsey-spotted", "polka-dotted",
     "square", "round", "triangular",
