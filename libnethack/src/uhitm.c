@@ -1121,8 +1121,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
             pline(combat_msgc(&youmonst, mon, cr_hit), "You hit it.");
         else
             pline(combat_msgc(&youmonst, mon, cr_hit), "You %s %s%s",
-                  (!obj ? barehitmsg(&youmonst) : 
-                   not_melee_weapon ? "hit" : weaphitmsg(obj, &youmonst)),
+                  (!obj ? barehitmsg(&youmonst) : weaphitmsg(obj, &youmonst)),
                   mon_nam(mon), canseemon(mon) ? exclam(tmp) : ".");
     }
 
