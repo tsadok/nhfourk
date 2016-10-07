@@ -718,6 +718,77 @@ makecorridors(struct level *lev, int *smeq, enum levstyle style)
             }
         }
         break;
+
+    case LEVSTYLE_MINRAND:
+        /* Minimum number of random room-to-room connections needed to ensure
+           all rooms are directly or indirectly connected to one another. */
+        if (lev->nroom > 1) {
+            int tryct = 0, concount;
+            boolean connected[lev->nroom][lev->nroom];
+            boolean connectcount[lev->nroom];
+            boolean finished = FALSE;
+            boolean changedanything;
+            /* Initially, no rooms are connected to any other rooms, either
+               directly nor indirectly.  Start there: */
+            for (a = 0; a < lev->nroom; a++) {
+                connectcount[a] = 1; /* Just itself. */
+                for (b = 0; b < lev->nroom; b++) {
+                    connected[a][b] = (a == b) ? TRUE : FALSE;
+                }
+            }
+            while ((tryct++ < 9999) && !finished) {
+
+                /* Pick two rooms; if they're not yet connected, fix that */
+                a = mrn2(lev->nroom); /* start with a random pick, but... */
+                for (b = 0; b < lev->nroom; b++) {
+                    /* Maybe there's a room with fewer connections? */
+                    if (connectcount[b] < connectcount[a])
+                        a = b;
+                }
+                b = mrn2(lev->nroom);
+                if ((!connected[a][b] && !connected[b][a])) {
+                    join(lev, a, b, FALSE, smeq);
+                    connected[a][b] = TRUE;
+                }
+
+                /* Mark indirect connections: */
+                changedanything = TRUE;
+                while (changedanything) {
+                    changedanything = FALSE;
+                    for (a = 0; a < lev->nroom; a++) {
+                        concount = 0;
+                        for (b = 0; b < lev->nroom; b++) {
+                            if (connected[a][b])
+                                concount++;
+                            if (connected[a][b] && !(b == a)) {
+                                if (!connected[b][a]) {
+                                    connected[b][a] = TRUE;
+                                    changedanything = TRUE;
+                                }
+                                for (i = 0; i < lev->nroom; i++) {
+                                    if (connected[a][i] && !connected[b][i]) {
+                                        connected[b][i] = TRUE;
+                                        changedanything = TRUE;
+                                    }
+                                }
+                            }
+                        }
+                        connectcount[a] = concount;
+                    }
+                }
+
+                /* Now check to see if any rooms are not connected to any other
+                   rooms still. */
+                finished = TRUE;
+                for (a = 0; a < lev->nroom; a++) {
+                    for (b = 0; b < lev->nroom; b++) {
+                        if (!connected[a][b])
+                            finished = FALSE;
+                    }
+                }
+            }
+        }
+        break;
         /* More styles to come */
     }
 }

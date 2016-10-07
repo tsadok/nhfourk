@@ -207,6 +207,7 @@ enum levstyle {
     LEVSTYLE_STANDARD = 0,
     LEVSTYLE_RING,
     LEVSTYLE_HUB,
+    LEVSTYLE_MINRAND,
     /* more to come */
     LEVSTYLE_TYPES /* total number of different styles */
 };
