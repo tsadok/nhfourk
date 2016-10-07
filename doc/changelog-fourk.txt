@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Benches can (albeit rarely) be generated at random in rooms.
+
  * Cherry-picked two alternative room-and-corridor level topologies
    ("styles") from K-Mod, and added one of my own.  These are only
    used for non-special levels.  Seven-eighths of the time, the

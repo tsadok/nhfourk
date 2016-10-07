@@ -12,6 +12,7 @@
 static void mkfount(struct level *lev, int, struct mkroom *);
 static void mksink(struct level *lev, struct mkroom *);
 static void mkaltar(struct level *lev, struct mkroom *);
+static void mkbench(struct level *lev, struct mkroom *);
 static void mkgrave(struct level *lev, struct mkroom *);
 static void mkpuddles(struct level *lev, struct mkroom *);
 static void makevtele(struct level *lev);
@@ -1233,6 +1234,8 @@ skip0:
             mksink(lev, croom);
         if (!mrn2(60))
             mkaltar(lev, croom);
+        if (!mrn2(150))
+            mkbench(lev, croom);
         if (!rn2(x))
             mkpuddles(lev, croom);
         x = 80 - (depth(&lev->z) * 2);
@@ -2021,6 +2024,23 @@ mkaltar(struct level *lev, struct mkroom *croom)
     /* -1 - A_CHAOTIC, 0 - A_NEUTRAL, 1 - A_LAWFUL */
     al = mrn2((int)A_LAWFUL + 2) - 1;
     lev->locations[m.x][m.y].altarmask = Align2amask(al);
+}
+
+static void
+mkbench(struct level *lev, struct mkroom *croom)
+{
+    coord m;
+    int tryct = 0;
+
+    do {
+        if (++tryct > 20)
+            return;
+        if (!somexy(lev, croom, &m, mrng()))
+            return;
+    } while (occupied(lev, m.x, m.y) || bydoor(lev, m.x, m.y) ||
+             (tryct < 5 && !bywall(lev, m.x, m.y)));
+
+    lev->locations[m.x][m.y].typ = BENCH;
 }
 
 static void
