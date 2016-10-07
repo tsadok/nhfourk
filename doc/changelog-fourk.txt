@@ -82,7 +82,8 @@ Changes in 4.3.0.5:
 
  * More special levels have been given more alternate versions.
    Special levels that have more distinct versions than before now
-   include the Valley of the Dead, Moloch's Sanctum, Medusa's Island.
+   include Mine's End, the Valley of the Dead, Moloch's Sanctum,
+   and Medusa's Island.
 
  * Sting can be held second to Orcrist, for two-weapon combat.
 
