@@ -158,6 +158,8 @@ barehitmsg(struct monst *mtmp)
         return thirdperson ? "touches" : "touch";
     if (nohands(mtmp->data)) /* e.g. rothes shouldn't punch */
         return thirdperson ? "claws" : "claw";
+    if (mtmp->data == &mons[PM_QUANTUM_MECHANIC])
+        return thirdperson ? "interacts with" : "interact with";
     return thirdperson ? "punches" : "punch";
 }
 
