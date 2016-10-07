@@ -64,7 +64,7 @@ lx_comp(const void *vx, const void *vy)
     if (x->lx != y->lx)
         return x->lx - y->lx;
 
-    /* sort by ly if lx is equal The additional criterium is necessary to get
+    /* sort by ly if lx is equal The additional criterion is necessary to get
        consistent sorting across platforms with different qsort
        implementations. */
     return x->ly - y->ly;
@@ -91,26 +91,6 @@ angle_comp(const void *vx, const void *vy)
     ay/=ROWNO;
     by*=COLNO;
     by/=ROWNO;
-
-
-    /* I've decided (for various reasons) that it would be good
-       to swap the x and y for sorting purposes. *//*
-    ax^=ay;
-    ay^=ax;
-    ax^=ay;
-
-    bx^=by;
-    by^=bx;
-    bx^=by;
-    // While we're at it, we might as well flip the x axis.  This way, the angle
-    // we will be comparing is measured clockwise from the top of the screen.
-    ax*=-1;
-    bx*=-1;*/
-
-    // ar = sqrt(ax*ax + ay*ay);
-    // at = atan2(ay, ax);
-    // ...
-    // But rather than use those expensive functions, we can compare quadrants and the tangent directly.
 
     /* First, the quadrant check. */
     aquad = (ax >= 0)? ((ay >= 0) ? 0 : 3) :((ay >= 0)? 1 : 2);
@@ -150,18 +130,6 @@ finddpos(struct level *lev, coord * cc, xchar xl, xchar yl, xchar xh, xchar yh)
             }
         }
     }
-
-    /* Original code:
-    x = (xl == xh) ? xl : (xl + mrn2(xh - xl + 1));
-    y = (yl == yh) ? yl : (yl + mrn2(yh - yl + 1));
-    if (okdoor(lev, x, y))
-        goto gotit;
-
-    for (x = xl; x <= xh; x++)
-        for (y = yl; y <= yh; y++)
-            if (okdoor(lev, x, y))
-                goto gotit;
-        */
 
     for (x = xl; x <= xh; x++)
         for (y = yl; y <= yh; y++)
@@ -601,43 +569,6 @@ join(struct level *lev, int a, int b, boolean nxcor, int *smeq)
     xx = cc.x;
     yy = cc.y;
 
-    /*
-     * K-Mod
-     * when rooms were put next to each other, I was using this. but now this isn't required.
-     */
-/*
-	if (0 && (levl[xx][yy].roomno == SHARED || levl[tt.x][tt.y].roomno==SHARED))
-	{
-		// This could be done using lx, hx etc. but that might fail for irregular rooms.
-		boolean in_c = FALSE, in_t = FALSE;
-		char *r_list = in_rooms(xx, yy, 0);
-
-		while (*r_list)
-		{
-			if (&rooms[*r_list-ROOMOFFSET] == croom)
-				in_c = TRUE;
-			if (&rooms[*r_list-ROOMOFFSET] == troom)
-				in_t = TRUE;
-		}
-		if (in_c && in_t)
-		{
-			// the rooms are connected
-			if (okdoor(xx,yy) || !nxcor)
-			{
-				dodoor(xx,yy,croom);
-				add_door(xx, yy, troom); // dodoor only adds the door to one of the rooms.
-				if(smeq[a] < smeq[b])
-					smeq[b] = smeq[a];
-				else
-					smeq[a] = smeq[b];
-				// join complete
-				return;
-			}
-		}
-	}
-*/
-
-
     tx = tt.x - dx;
     ty = tt.y - dy;
     if (nxcor && lev->locations[xx + dx][yy + dy].typ)
@@ -1032,8 +963,6 @@ makelevel(struct level *lev)
 
     int smeq[MAXNROFROOMS + 1];
 
-    if (wizard) pline(msgc_debug, "Level style %d", style);
-    
     if (wiz1_level.dlevel == 0)
         init_dungeons();
 
