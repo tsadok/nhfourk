@@ -1493,6 +1493,8 @@ rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
     boolean hell = In_hell(dlev);
     boolean rogue = Is_rogue_level(dlev);
     boolean elem_plane = In_endgame(dlev) && !Is_astralevel(dlev);
+    boolean isdeep = Is_earthlevel(dlev) ||
+        ((depth(dlev) > 12) && (!Is_outdoors(dlev)));
 
     int geno = ptr ? ptr->geno & ~ignoreflags : 0;
 
@@ -1523,6 +1525,8 @@ rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
             ptr = NULL;                          /* elementals on wrong plane */
         if (ptr && ((hell && (geno & G_NOHELL)) || (!hell && (geno & G_HELL))))
             ptr = NULL;                       /* flagged to not generate here */
+        if (ptr && (!isdeep) && (ptr->mlet == S_XORN))
+            ptr = NULL;    /* deep rock dwellers don't randomly generate here */
 
         /* Hard player-based checks: stop the monster generating, but change to
            the main RNG if this happens in level generation */

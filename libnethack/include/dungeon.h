@@ -147,6 +147,21 @@ struct overview_info {
 # define In_sokoban(x)          ((x)->dnum == sokoban_dnum)
 # define Inhell                 In_hell(&u.uz)  /* now gehennom */
 # define In_endgame(x)          ((x)->dnum == astral_level.dnum)
+# define Is_outdoors(x)         ((In_endgame(x) && !Is_earthlevel(x)) || \
+                                 Is_knox(x) || Is_medusa_level(x) ||     \
+                                 Is_juiblex_level(x) ||                  \
+                                 (In_quest(x) && (Role_if(PM_BARBARIAN) || \
+                                                  Role_if(PM_HEALER)    || \
+                                                  Role_if(PM_KNIGHT)    || \
+                                                  Role_if(PM_PRIEST)    || \
+                                                  Role_if(PM_RANGER)    || \
+                                                  Role_if(PM_SAMURAI)   || \
+                                                  Role_if(PM_TOURIST)   || \
+                                                  Role_if(PM_WIZARD)))  || \
+                                 (Is_qstart(x) && (Role_if(PM_ARCHEOLOGIST) || \
+                                                   Role_if(PM_MONK) || \
+                                                   Role_if(PM_ROGUE) || \
+                                                   Role_if(PM_VALKYRIE))))
 
 # define within_bounded_area(X,Y,LX,LY,HX,HY)                   \
     ((X) >= (LX) && (X) <= (HX) && (Y) >= (LY) && (Y) <= (HY))
