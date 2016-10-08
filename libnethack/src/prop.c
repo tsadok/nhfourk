@@ -1157,8 +1157,10 @@ show_conduct(int final)
     }
 
     /* birth options */
-    if (!flags.bones_enabled)
+    if (flags.bones_enabled == bones_disabled)
         you_have_X(&menu, "disabled loading bones files");
+    else if (flags.bones_enabled == bones_anywhere)
+        you_have_X(&menu, "enabled loading special bones files");
     if (!flags.elbereth_enabled)        /* not the same as not /writing/ E */
         you_have_X(&menu, "abstained from Elbereth's help");
     if (flags.permahallu)

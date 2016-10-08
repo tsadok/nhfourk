@@ -424,7 +424,9 @@ getbones(d_level *levnum)
 
     /* save bones files for real games; also turn them off in set-seed play
        because they wouldn't be the same for different players */
-    if (discover || !flags.bones_enabled || *flags.setseed)
+    if (discover || (flags.bones_enabled == bones_disabled) ||
+        (flags.bones_enabled == bones_normal && Is_special(levnum)) ||
+        *flags.setseed)
         goto fail;
 
     /* note: this rn2 call has to be before we check to see if a bones file

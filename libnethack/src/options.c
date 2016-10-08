@@ -76,6 +76,15 @@ static const struct nh_enum_option mode_spec_nochallenge = {
     mode_list_nochallenge, listlen(mode_list_nochallenge)
 };
 
+static const struct nh_listitem bones_option_list[] = {
+    {bones_disabled, "disabled"},
+    {bones_normal,   "normal levels only"},
+    {bones_anywhere, "fully enabled"}
+};
+static const struct nh_enum_option bones_spec = {
+    bones_option_list, listlen(bones_option_list)
+};
+
 static const struct nh_listitem align_list[] = {
     {0, "lawful"},
     {1, "neutral"},
@@ -279,7 +288,7 @@ static const struct nh_option_desc const_options[] = {
     {"bones", "Online and Tournaments",
      "allow encountering levels from previous games",
      nh_lockopt_always_available,
-     nh_birth_lasting, OPTTYPE_BOOL, {.b = TRUE}},
+     nh_birth_lasting, OPTTYPE_ENUM, {.e = 1}},
     {"permablind", "Challenge Modes",
      "spend the whole game blind",
      nh_lockopt_locked,
@@ -390,7 +399,6 @@ static const struct nhlib_boolopt_map boolopt_map[] = {
     {"elbereth", &flags.elbereth_enabled},
     {"reincarnation", &flags.rogue_enabled},
     {"seduction", &flags.seduce_enabled},
-    {"bones", &flags.bones_enabled},
     {"permablind", &flags.permablind},
     {"permahallu", &flags.permahallu},
     {"permaconf", &flags.permaconf},
@@ -516,6 +524,7 @@ new_opt_struct(void)
         is_unlocked_feature(UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_CHALLENGE) ?
         mode_spec : mode_spec_nochallenge;
     nhlib_find_option(options, "timezone")->e = timezone_spec;
+    nhlib_find_option(options, "bones")->e = bones_spec;
     nhlib_find_option(options, "polyinit")->e = polyinit_spec;
     nhlib_find_option(options, "align")->e = align_spec;
     nhlib_find_option(options, "gender")->e = gender_spec;
@@ -663,6 +672,8 @@ set_option(const char *name, union nh_optvalue value,
         ngo->preferred_pet = (char)option->value.e;
     } else if (!strcmp("timezone", option->name)) {
         flags.timezone = option->value.e;
+    } else if (!strcmp("bones", option->name)) {
+        flags.bones_enabled = option->value.e;
     } else if (!strcmp("polyinit", option->name)) {
         flags.polyinit_mnum = option->value.e;
     }
@@ -767,6 +778,8 @@ nh_get_options(void)
                 flags.challenge ? MODE_CHALLENGE : MODE_NORMAL;
         } else if (!strcmp("timezone", option->name)) {
             option->value.e = flags.timezone;
+        } else if (!strcmp("bones", option->name)) {
+            option->value.e = flags.bones_enabled;
         } else if (!strcmp("polyinit", option->name)) {
             option->value.e = flags.polyinit_mnum;
         } else if (!strcmp("align", option->name)) {

@@ -182,7 +182,7 @@ encode_birthoptions(void)
         c |= 0x0002UL;
     if (flags.seduce_enabled)
         c |= 0x0004UL;
-    if (flags.bones_enabled)
+    if (flags.bones_enabled != bones_disabled)
         c |= 0x0008UL;
     if (flags.permablind)
         c |= 0x0010UL;
@@ -202,6 +202,8 @@ encode_birthoptions(void)
         c |= 0x0800UL;
     if (flags.permabadluck)
         c |= 0x1000UL;
+    if (flags.bones_enabled == bones_anywhere)
+        c |= 0x2000UL;
 
     return c;
 }

@@ -333,7 +333,11 @@ struct flag {
     boolean elbereth_enabled;   /* should the E-word repel monsters? */
     boolean rogue_enabled;      /* create a rogue level */
     boolean seduce_enabled;     /* succubus seduction */
-    boolean bones_enabled;      /* allow loading bones levels */
+    enum {
+        bones_disabled = 0,     /* do not load bones at all */
+        bones_normal = 1,       /* load bones only on non-special levels */
+        bones_anywhere = 2      /* load bones even on special levels */
+    } bones_enabled;
     boolean permablind;         /* stay permanently blind */
     boolean permahallu;         /* stay permanently hallucinating */
     boolean permaconf;          /* stay permanently confused */
