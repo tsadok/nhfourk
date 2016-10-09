@@ -21,25 +21,35 @@
 #  K   Fort Ludios (Fort Ludios) -- stands for Knox
 #  M   Gnomish Mines
 #  Q   Quest, and there is special treatment to ensure role continuity
+#  S   Sokoban
 #  T   Vlad's Tower
 #
 #    * Special-level within dungeon
 #    A Asmodeus/Baalzebub (Gehennom) -- used to always be Asmodeus in vanilla
+#    A Sokoban entry level (Sokoban)
+#    A Air Plane (Endgame)
 #    B Bigroom (Dungeons of Doom)
 #    B Yeenoghu/Dispater (Gehennom) -- used to be Baalzebub's Lair in vanilla
+#    B Sokoban second level from bottom (Sokoban)
+#    C Sokoban third level from bottom (Sokoban)
+#    D Sokoban prize level (Sokoban)
 #    E Mine's End (Gnomish Mines)
+#    E Earth Plane (Endgame)
 #    F Fakewiz1 (Gehennom)
+#    F Fire Plane (Endgame)
 #    G Fakewiz2 (Gehennom)
 #    J Juiblex' Swamp (Gehennom)
 #    K Fort Ludios (Fort Ludios) -- stands for Knox
 #    L Quest Locate (Quest)
 #    L Labyrinth (Dungeons of Doom)
+#    M Medusa's Island (Dungeons of Doom)
 #    O Oracle level / Delphi (Dungeons of Doom)
 #    O Orcus Town (Gehennom)
 #    R Rogue level (Dungeons of Doom)
 #    T Minetown (Gnomish Mines)
 #    T Temptation Garden (Gehennom)
 #    V Valley of the Dead (Gehennom)
+#    W Water Plane (Endgame)
 #    X Wiz Tower, middle -- Gehennom
 #    Y Wiz Tower, bottom -- Gehennom
 
@@ -54,7 +64,7 @@ CHAINBRANCH:	"Sokoban" "oracle" + (1, 0) up
 RNDLEVEL:	"bigrm" "B" @ (13, 3) 40 9
 CHAINBRANCH:	"The Quest" "oracle" + (6, 2) portal
 BRANCH:		"Fort Ludios" @ (18, 4) portal
-RNDLEVEL:	"medusa" "none" @ (-7, 2) 5
+RNDLEVEL:	"medusa" "M" @ (-7, 2) 5
 LEVALIGN:	chaotic
 RNDLEVEL:       "labyr" "L" @ (-2, 0) 40 3
 RNDLEVEL:	"castle" "none" @ (-1, 0) 6
@@ -122,14 +132,14 @@ LEVEL:	"x-goal" "none" @ (-1, 0)
 #
 # Sokoban
 #
-DUNGEON:		"Sokoban" "none" (4, 0)
+DUNGEON:		"Sokoban" "S" (4, 0)
 DESCRIPTION:    mazelike
 ALIGNMENT:      neutral
 ENTRY:          -1
-RNDLEVEL:		"soko1" "none" @ (1, 0) 8
-RNDLEVEL:		"soko2" "none" @ (2, 0) 10
-RNDLEVEL:		"soko3" "none" @ (3, 0) 9
-RNDLEVEL:		"soko4" "none" @ (4, 0) 12
+RNDLEVEL:		"soko1" "D" @ (1, 0) 8
+RNDLEVEL:		"soko2" "C" @ (2, 0) 10
+RNDLEVEL:		"soko3" "B" @ (3, 0) 9
+RNDLEVEL:		"soko4" "A" @ (4, 0) 12
 
 #
 #	The Central Vault of Croesus.
@@ -172,8 +182,8 @@ DESCRIPTION:	mazelike
 ALIGNMENT:	unaligned
 ENTRY:		-2
 LEVEL:		"astral" "none" @ (1, 0)
-LEVEL:		"water"  "none" @ (2, 0)
-LEVEL:		"fire"   "none" @ (3, 0)
-LEVEL:		"air"    "none" @ (4, 0)
-LEVEL:		"earth"  "none" @ (5, 0)
+LEVEL:		"water"  "W" @ (2, 0)
+LEVEL:		"fire"   "F" @ (3, 0)
+LEVEL:		"air"    "A" @ (4, 0)
+LEVEL:		"earth"  "E" @ (5, 0)
 LEVEL:		"dummy"  "none" @ (6, 0)

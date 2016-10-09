@@ -61,6 +61,19 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The bones option, instead of being boolean (on or off), now has
+   three possible values:  disabled, which causes bones not to be
+   loaded at all; normal, which is the default setting and allows
+   bones to be loaded on regular, non-special levels only; and fully
+   enabled, which allows bones to be loaded even on special levels.
+   Some levels (such as the Castle) are still completely exempt from
+   bones, but many formerly-exempt levels now allow bones files to
+   exist -- but they will only be loaded if the player has set the
+   option to fully enabled.  Players who do not change the option may
+   notice that they no longer get bones for Minetown or Delphi, which
+   allowed bones in vanilla but are special levels and so no longer
+   load bones by default.
+
  * Benches can (albeit rarely) be generated at random in rooms.
 
  * Cherry-picked two alternative room-and-corridor level topologies
