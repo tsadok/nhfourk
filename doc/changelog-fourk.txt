@@ -61,10 +61,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The relationship between experience points and experience levels
+   has been adjusted, starting at level 14, which you now reach at
+   sixty thousand XP (previously, eighty thousand were required).  The
+   new curve culminates at seven hundred thousand XP for level thirty,
+   which probably sounds like a lot if you don't know that the figure
+   for level thirty was a hundred million XP in vanilla NetHack.
+
  * Polymorphed spellbooks may turn blank or be too faint to read.
-   (This is a 3.6 bugfix, but one that I held off on doing until now
-   because it has significant balance implications, and I was waiting
-   until I was ready to rebalance spellbook availability.)
+   (This is a 3.6 bugfix, but one that I held off on until now because
+   it has significant balance implications, and I was waiting until I
+   was ready to rebalance spellbook availability.)
 
  * The bones option, instead of being boolean (on or off), now has
    three possible values:  disabled, which causes bones not to be

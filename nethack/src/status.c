@@ -174,10 +174,72 @@ draw_status(struct nh_player_info *pi, nh_bool threeline)
         /* keep this synced with newuexp in exper.c */
         long newuexp = 10L * (1L << pi->level);
 
-        if (pi->level >= 10)
-            newuexp = 10000L * (1L << (pi->level - 10));
-        if (pi->level >= 20)
-            newuexp = 10000000L * ((long)(pi->level - 19));
+        switch (pi->level) {
+        default:
+            if (pi->level >= 10)
+                newuexp = 10000L * (1L << (pi->level - 10));
+            break;
+        case 13:
+            newuexp =   60000L;
+            break;
+        case 14:
+            newuexp =   75000L;
+            break;
+        case 15:
+            newuexp =   90000L;
+            break;
+        case 16:
+            newuexp =  110000L;
+            break;
+        case 17:
+            newuexp =  130000L;
+            break;
+        case 18:
+            newuexp =  160000L;
+            break;
+        case 19:
+            newuexp =  190000L;
+            break;
+        case 20:
+            newuexp =  220000L;
+            break;
+        case 21:
+            newuexp =  260000L;
+            break;
+        case 22:
+            newuexp =  300000L;
+            break;
+        case 23:
+            newuexp =  340000L;
+            break;
+        case 24:
+            newuexp =  390000L;
+            break;
+        case 25:
+            newuexp =  440000L;
+            break;
+        case 26:
+            newuexp =  500000L;
+            break;
+        case 27:
+            newuexp =  560000L;
+            break;
+        case 28:
+            newuexp =  630000L;
+            break;
+        case 29:
+            newuexp =  700000L;
+            break;
+        case 30:
+            newuexp =  860000L;
+            break;
+        case 31:
+            newuexp =  940000L;
+            break;
+        case 32:
+            newuexp = 1000000L;
+            break;
+        }
         wprintw(statuswin, "(%ld)", newuexp - pi->xp);
     }
     wprintw(statuswin, " %s", pi->level_desc);

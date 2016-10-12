@@ -13,9 +13,53 @@ newuexp(int lev)
     /* keep this synced with the status-drawing code in the clients */
     if (lev < 10)
         return 10L * (1L << lev);
-    if (lev < 20)
+    if (lev < 13)
         return 10000L * (1L << (lev - 10));
-    return 10000000L * ((long)(lev - 19));
+    switch (lev) {
+    case 13:
+        return    60000L;
+    case 14:
+        return    75000L;
+    case 15:
+        return    90000L;
+    case 16:
+        return   110000L;
+    case 17:
+        return   130000L;
+    case 18:
+        return   160000L;
+    case 19:
+        return   190000L;
+    case 20:
+        return   220000L;
+    case 21:
+        return   260000L;
+    case 22:
+        return   300000L;
+    case 23:
+        return   340000L;
+    case 24:
+        return   390000L;
+    case 25:
+        return   440000L;
+    case 26:
+        return   500000L;
+    case 27:
+        return   560000L;
+    case 28:
+        return   630000L;
+    case 29:
+        return   700000L;
+    case 30:
+        return   860000L;
+    case 31:
+        return   940000L;
+    case 32:
+        return  1000000L;
+    default:
+        impossible("newuexp(%d)", lev);
+        return  2000000L;
+    }
 }
 
 static int
