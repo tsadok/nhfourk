@@ -127,9 +127,6 @@
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
-▒▒▒ * Didn't 3.6 add a feature where mazes sometimes get walls removed to form loops?
-▒▒▒   Consider cherry-picking that.
-▒▒▒
 ▒▒▒ * Fix mazewalk so the same map-relative coordinates work regardless of the values
 ▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
 ▒▒▒   and re-enable them.
@@ -246,7 +243,12 @@
 ▒▒▒
 ▒▒▒ * Make mvm and uvm poison instandeath work like mvp poison instadeath.
 ▒▒▒
-▒▒▒ * Give scurriers a movement point rebate when moving onto a tree tile.
+▒▒▒ * Rebalance the formula for when you can squeeze past or not.
+▒▒▒
+▒▒▒ * Allow elves to squeeze past trees, regardless of what they're carrying.
+▒▒▒
+▒▒▒ * Allow scurriers to outright move _onto_ a tree tile, and give them a movement
+▒▒▒   point discount/rebate (maybe NORMAL_SPEED * 2 / 3) when they do so.
 ▒▒▒
 ▒▒▒ * Perhaps randomly-generated spellbooks should be biased toward low
 ▒▒▒   spell levels if generated on a low dungeon level.
