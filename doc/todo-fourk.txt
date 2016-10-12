@@ -130,9 +130,6 @@ by its respective author.
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
-▒▒▒ * Didn't 3.6 add a feature where mazes sometimes get walls removed to form loops?
-▒▒▒   Consider cherry-picking that.
-▒▒▒
 ▒▒▒ * Fix mazewalk so the same map-relative coordinates work regardless of the values
 ▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
 ▒▒▒   and re-enable them.
