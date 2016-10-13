@@ -614,7 +614,7 @@ bag
 bag
 bag
 bag
-key
+skeleton key
 lock pick
 credit card
 candle
@@ -1121,6 +1121,12 @@ scurrier
 dirty rag
 jitterbug
 bench
+key
+key
+key
+brass key
+silver key
+bronze key
 
 ! NH4 requirements:
 remembered as locked
