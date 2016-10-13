@@ -3127,7 +3127,13 @@ doapply(const struct nh_cmd_arg *arg)
         break;
     case LOCK_PICK:
     case CREDIT_CARD:
+    case STURDY_KEY:
+    case IRON_KEY:
     case SKELETON_KEY:
+    case DOOR_KEY:
+    case BRONZE_KEY:
+    case SILVER_KEY:
+    case BRASS_KEY:
         break_conduct(conduct_tools);
         res = pick_lock(obj, arg);
         break;

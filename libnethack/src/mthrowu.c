@@ -1017,6 +1017,28 @@ lined_up(struct monst *mtmp)
     return linedup(mtmp->mux, mtmp->muy, mtmp->mx, mtmp->my);
 }
 
+struct obj *
+m_carrying_key(const struct monst *mtmp, boolean forchest)
+{
+    struct obj *key;
+    /* Three kinds of keys open both doors and chests: */
+    key = m_carrying(mtmp, STURDY_KEY);
+    if (key) return key;
+    key = m_carrying(mtmp, IRON_KEY);
+    if (key) return key;
+    key = m_carrying(mtmp, SKELETON_KEY);
+    if (key) return key;
+    if (!forchest) {
+        /* Two kinds of keys are for doors only: */
+        key = m_carrying(mtmp, DOOR_KEY);
+        return key ? key : m_carrying(mtmp, BRONZE_KEY);
+    } else {
+        /* Two kinds are for chests only: */
+        key = m_carrying(mtmp, SILVER_KEY);
+        return key ? key : m_carrying(mtmp, BRASS_KEY);
+    }
+}
+
 /* Check if a monster is carrying a particular item. */
 struct obj *
 m_carrying(const struct monst *mtmp, int type)
@@ -1057,6 +1079,9 @@ hits_bars(struct obj ** obj_p, /* *obj_p will be set to NULL if object breaks */
             break;
         case TOOL_CLASS:
             hits = (obj_type != SKELETON_KEY && obj_type != LOCK_PICK &&
+                    obj_type != STURDY_KEY && obj_type != IRON_KEY &&
+                    obj_type != DOOR_KEY && obj_type != BRONZE_KEY &&
+                    obj_type != SILVER_KEY && obj_type != BRASS_KEY &&
                     obj_type != CREDIT_CARD && obj_type != TALLOW_CANDLE &&
                     obj_type != WAX_CANDLE && obj_type != LENSES &&
                     obj_type != TIN_WHISTLE && obj_type != MAGIC_WHISTLE);

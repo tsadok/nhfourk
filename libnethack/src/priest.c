@@ -53,7 +53,7 @@ move_special(struct monst *mtmp, boolean in_his_shop, schar appr,
         allowflags |= ALLOW_DIG;
     if (!nohands(mtmp->data) && !verysmall(mtmp->data)) {
         allowflags |= OPENDOOR;
-        if (m_carrying(mtmp, SKELETON_KEY))
+        if (m_carrying_key(mtmp, FALSE))
             allowflags |= BUSTDOOR;
     }
     if (is_giant(mtmp->data))

@@ -1103,6 +1103,9 @@ nh_get_object_commands(int *count, char invlet)
     else if (obj->otyp == CAN_OF_GREASE)
         SET_OBJ_CMD('a', "apply", "Use %s to grease an item", 0);
     else if (obj->otyp == LOCK_PICK || obj->otyp == CREDIT_CARD ||
+             obj->otyp == IRON_KEY  || obj->otyp == STURDY_KEY ||
+             obj->otyp == DOOR_KEY  || obj->otyp == BRONZE_KEY ||
+             obj->otyp == BRASS_KEY || obj->otyp == SILVER_KEY ||
              obj->otyp == SKELETON_KEY)
         SET_OBJ_CMD('a', "apply", "Use %s to pick a lock", 0);
     else if (obj->otyp == TINNING_KIT)

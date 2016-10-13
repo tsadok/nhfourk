@@ -819,7 +819,7 @@ dog_move(struct monst *mtmp, int after)
 
     if (!nohands(mtmp->data) && !verysmall(mtmp->data)) {
         allowflags |= OPENDOOR;
-        if (m_carrying(mtmp, SKELETON_KEY))
+        if (m_carrying_key(mtmp, FALSE))
             allowflags |= BUSTDOOR;
     }
     if (is_giant(mtmp->data))

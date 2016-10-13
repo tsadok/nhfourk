@@ -9,8 +9,8 @@ static boolean uwep_can_force(void);
 static int reset_pick(void);
 static int picklock(void);
 static int forcelock(void);
-static struct obj *get_current_unlock_tool(void);
-static int get_unlock_chance(void);
+static struct obj *get_current_unlock_tool(boolean);
+static int get_unlock_chance(boolean);
 static const char *lock_action(void);
 static boolean obstructed(int, int, enum msg_channel);
 static void chest_shatter_msg(struct obj *);
@@ -43,12 +43,17 @@ reset_pick(void)
 
 /* Finds the current or most recently used unlocking tool. */
 static struct obj *
-get_current_unlock_tool(void) {
+get_current_unlock_tool(boolean forchest) {
     struct obj *bestpick, *otmp;
     bestpick = NULL;
 
     for (otmp = invent; otmp; otmp = otmp->nobj) {
         if (otmp->otyp == LOCK_PICK || otmp->otyp == CREDIT_CARD ||
+            (forchest && (otmp->otyp == SILVER_KEY ||
+                          otmp->otyp == BRASS_KEY)) ||
+            ((!forchest) && (otmp->otyp == DOOR_KEY ||
+                             otmp->otyp == BRONZE_KEY)) ||
+            otmp->otyp == STURDY_KEY || otmp->otyp == IRON_KEY ||
             otmp->otyp == SKELETON_KEY) {
             if (!bestpick || otmp->lastused > bestpick->lastused)
                 bestpick = otmp;
@@ -57,14 +62,21 @@ get_current_unlock_tool(void) {
     return bestpick;
 }
 
-/* Finds the probability per turn of succeeding in unlocking a lock. */
+/* Finds the probability per turn of succeeding in unlocking a lock.
+   The return value is compared to rn2(100), so meaningful range is 0-99. */
 static int
-get_unlock_chance(void) {
-    struct obj *pick = get_current_unlock_tool();
-    int factor;
+get_unlock_chance(boolean forchest) {
+    struct obj *pick = get_current_unlock_tool(forchest);
+    int factor, erosion;
 
     if (!pick)
         return 0;
+
+    if (pick->oeroded2 > pick->oeroded)
+        erosion = pick->oeroded2;
+    else
+        erosion = pick->oeroded;
+
     factor = pick->cursed ? 2 : 1;
 
     switch (pick->otyp) {
@@ -72,9 +84,20 @@ get_unlock_chance(void) {
         return (2 * ACURR(A_DEX) + 20 * Role_if(PM_ROGUE)) / factor;
 
     case LOCK_PICK:
+        factor *= (1 + (3 * erosion / 2));
         return (3 * ACURR(A_DEX) + 30 * Role_if(PM_ROGUE)) / factor;
 
+        /* some keys can corrode: */
+    case BRASS_KEY:
+    case BRONZE_KEY:
+    case DOOR_KEY:
+    case IRON_KEY:
+        factor *= (1 + (5 * erosion / 2));
+        /* fall through */
+        /* certain keys cannot corrode: */
+    case SILVER_KEY:
     case SKELETON_KEY:
+    case STURDY_KEY:
         return (70 + ACURR(A_DEX)) / factor;
 
     default:
@@ -89,7 +112,8 @@ lock_action(void)
 {
     struct rm *door = NULL;
     struct obj *box = u.utracked[tos_lock];
-    struct obj *pick = get_current_unlock_tool();
+    struct obj *pick = get_current_unlock_tool(
+        (box == &zeroobj || box == NULL) ? FALSE : TRUE);
 
     /* "unlocking"+2 == "locking" */
     static const char *const actions[] = {
@@ -127,7 +151,9 @@ lock_action(void)
 static int
 picklock(void)
 {
-    int chance = get_unlock_chance();
+    boolean ischest = (u.utracked[tos_lock] &&
+                       u.utracked[tos_lock] != &zeroobj) ? TRUE : FALSE;
+    int chance = get_unlock_chance(ischest);
     int x = u.utracked_location[tl_lock].x;
     int y = u.utracked_location[tl_lock].y;
 
@@ -368,6 +394,9 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
     }
 
     if ((picktyp != LOCK_PICK && picktyp != CREDIT_CARD &&
+         picktyp != BRASS_KEY && picktyp != SILVER_KEY &&
+         picktyp != BRONZE_KEY && picktyp != DOOR_KEY &&
+         picktyp != STURDY_KEY && picktyp != IRON_KEY &&
          picktyp != SKELETON_KEY)) {
         impossible("picking lock with object %d?", picktyp);
         return 0;
@@ -435,6 +464,19 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
                     pline(msgc_cancelled, "You can't do that with %s.",
                           doname(pick));
                     return 0;
+                } else if (picktyp == BRONZE_KEY || picktyp == DOOR_KEY) {
+                    pline(msgc_cancelled, "%s doesn't fit the lock on the %s.",
+                          Tobjnam(pick, NULL), xname(otmp));
+                    return 0;
+                }
+                if ((picktyp == SKELETON_KEY ||
+                     (picktyp == CREDIT_CARD && !Role_if(PM_TOURIST) &&
+                      !(pick->oartifact))) &&
+                    !rn2_on_rng((pick->blessed ? 250 : pick->cursed ? 20 : 50),
+                                rng_key_break)) {
+                    pline(msgc_itemloss, "Snap!");
+                    useup(pick);
+                    return 0;
                 }
 
                 u.utracked[tos_lock] = otmp;
@@ -492,12 +534,27 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
             pline(msgc_cancelled, "This door is broken.");
             return 0;
         default:
+            if (picktyp == BRASS_KEY || picktyp == SILVER_KEY) {
+                pline(msgc_cancelled, "%s doesn't fit the lock.",
+                      Tobjnam(pick, NULL));
+                return 0;
+            }
             /* credit cards are only good for unlocking */
             if (picktyp == CREDIT_CARD && !(door->doormask & D_LOCKED)) {
                 pline(msgc_cancelled,
                       "You can't lock a door with a credit card.");
                 return 0;
             }
+            if ((picktyp == SKELETON_KEY ||
+                 (picktyp == CREDIT_CARD && !Role_if(PM_TOURIST) &&
+                  !(pick->oartifact))) &&
+                !rn2_on_rng((pick->blessed ? 250 : pick->cursed ? 20 : 50),
+                            rng_key_break)) {
+                pline(msgc_itemloss, "Snap!");
+                useup(pick);
+                return 0;
+            }
+
 
             /* At this point, the player knows that the door is a door, and
                whether it's locked, but not whether it's trapped; to do this,
@@ -661,7 +718,7 @@ doopen(const struct nh_cmd_arg *arg)
 
                 /* With the "open" command given explicitly (rather than
                    implicitly via doorbumping), unlock the door. */
-                struct obj *bestpick = get_current_unlock_tool();
+                struct obj *bestpick = get_current_unlock_tool(FALSE);
                 struct nh_cmd_arg newarg;
 
                 arg_from_delta(dx, dy, dz, &newarg);

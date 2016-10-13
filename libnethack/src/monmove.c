@@ -802,7 +802,7 @@ m_move(struct monst *mtmp, int after)
     if (!Is_rogue_level(&u.uz))
         can_tunnel = tunnels(ptr);
     can_open = !(nohands(ptr) || verysmall(ptr));
-    can_unlock = ((can_open && m_carrying(mtmp, SKELETON_KEY)) || mtmp->iswiz ||
+    can_unlock = ((can_open && m_carrying_key(mtmp, FALSE)) || mtmp->iswiz ||
                   is_rider(ptr));
     doorbuster = is_giant(ptr);
     if (mtmp->wormno)
@@ -1522,6 +1522,8 @@ can_ooze(struct monst *mtmp)
 
             if (typ == STETHOSCOPE || typ == TIN_WHISTLE || typ == MAGIC_WHISTLE ||
                 typ == MAGIC_MARKER || typ == TIN_OPENER || typ == SKELETON_KEY ||
+                typ == STURDY_KEY || typ == IRON_KEY || typ == DOOR_KEY ||
+                typ == BRONZE_KEY || typ == SILVER_KEY || typ == BRASS_KEY ||
                 typ == LOCK_PICK || typ == CREDIT_CARD)
                 break;
 

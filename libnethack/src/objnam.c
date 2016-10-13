@@ -2740,6 +2740,12 @@ typfnd:
         otmp->spe = ftype;
         /* Fall through */
     case SKELETON_KEY:
+    case STURDY_KEY:
+    case IRON_KEY:
+    case DOOR_KEY:
+    case BRONZE_KEY:
+    case SILVER_KEY:
+    case BRASS_KEY:
     case CHEST:
     case LARGE_BOX:
     case HEAVY_IRON_BALL:

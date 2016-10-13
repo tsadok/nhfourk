@@ -615,7 +615,13 @@ const struct objclass const_objects[] = {
 #undef CONTAINER
 
 /* lock opening tools */
-    TOOL("skeleton key", "key", 0, 0, 0, 0, 80, 3, 10, IRON, HI_METAL),
+    TOOL("brass key", NULL, 0, 0, 0, 0, 15, 3, 20, COPPER, HI_COPPER),
+    TOOL("silver key", NULL, 0, 0, 0, 0, 10, 3, 40, SILVER, HI_SILVER),
+    TOOL("bronze key", NULL, 0, 0, 0, 0, 15, 4, 15, COPPER, HI_COPPER),
+    TOOL("door key", "key", 0, 0, 0, 0, 10, 3, 10, METAL, HI_METAL),
+    TOOL("skeleton key", NULL, 0, 0, 0, 0, 10, 2, 10, BONE, CLR_WHITE),
+    TOOL("iron key", "key", 0, 0, 0, 0, 15, 3, 10, IRON, HI_METAL),
+    TOOL("sturdy key", "key", 0, 0, 0, 0,  5, 2, 100, MITHRIL, HI_METAL),
     TOOL("lock pick", NULL, 1, 0, 0, 0, 60, 4, 20, IRON, HI_METAL),
     TOOL("credit card", NULL, 1, 0, 0, 0, 15, 1, 10, PLASTIC, CLR_WHITE),
 /* light sources */

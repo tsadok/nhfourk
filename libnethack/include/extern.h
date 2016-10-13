@@ -1236,6 +1236,7 @@ extern struct monst *mfind_target(struct monst *, boolean);
 extern boolean m_beam_ok(struct monst *, int, int, struct monst **, boolean);
 extern boolean linedup(xchar, xchar, xchar, xchar);
 extern boolean lined_up(struct monst *);
+extern struct obj *m_carrying_key(const struct monst *, boolean);
 extern struct obj *m_carrying(const struct monst *, int);
 extern void m_useup(struct monst *, struct obj *);
 extern void m_throw(struct monst *, int, int, int, int, int, struct obj *,
