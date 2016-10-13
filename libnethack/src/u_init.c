@@ -254,11 +254,6 @@ static const struct trobj Shuri[] = {
     {0, 0, 0, 0, 0}
 };
 
-static const struct trobj Coldwand[] = {
-    {WAN_COLD, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
-    {0, 0, 0, 0, 0}
-};
-
 static struct trobj PBook[] = {
     {SPE_LIGHT, 0, SPBOOK_CLASS, 1, UNDEF_BLESS},
     {0, 0, 0, 0, 0}

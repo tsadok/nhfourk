@@ -401,7 +401,7 @@ minliquid(struct monst *mtmp)
             }
         }
         if (inshallow)
-            water_damage(which_armor(mtmp, os_armf), FALSE, FALSE);
+            water_damage(which_armor(mtmp, os_armf), NULL, FALSE);
         else
             water_damage_chain(mtmp->minvent, FALSE);
         return 0;
