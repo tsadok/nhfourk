@@ -3,6 +3,8 @@ script:
     - mkdir build installdir
     - cd build
     - ../aimake -i ../installdir --without=gui
+compiler:
+    - clang
 notifications:
     irc:
         channels:
