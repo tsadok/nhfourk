@@ -886,7 +886,7 @@ makehtmlspoilers(void)
 
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader("Weapons"));
+        fprintf(outfile, "%s", htmlheader("Weapons"));
         fprintf(outfile, "\n<table id=\"weapons\"><thead>\n  "
                 "<tr><th class=\"object\">weapon</th>"
                 "<th class=\"artifact\">artifact</th>"
@@ -965,7 +965,7 @@ makehtmlspoilers(void)
     
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader("Armor"));
+        fprintf(outfile, "%s", htmlheader("Armor"));
         fprintf(outfile, "\n<table id=\"armor\"><thead>\n  "
                 "<tr><th class=\"slot\">slot</th>"
                 "<th class=\"object\">armor</th>"
@@ -1014,7 +1014,7 @@ makehtmlspoilers(void)
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         struct artifact *art;
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader("Artifacts"));
+        fprintf(outfile, "%s", htmlheader("Artifacts"));
         fprintf(outfile, "\n<p>For weapon artifacts, see also the "
                 "<a href=\"weapon-spoiler.html\">weapon spoiler</a></p>\n");
         fprintf(outfile, "\n<table id=\"artifacts\"><thead>\n  <tr>"
@@ -1065,7 +1065,7 @@ makehtmlspoilers(void)
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader("Objects"));
+        fprintf(outfile, "%s", htmlheader("Objects"));
 
         fprintf(outfile, "<p>Note: for random-appearance objects, "
                 "material follows appearance rather than function.</p>");
@@ -1104,7 +1104,7 @@ makehtmlspoilers(void)
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         char lastmlet = 0;
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader("Monsters"));
+        fprintf(outfile, "%s", htmlheader("Monsters"));
         /* navbar at top */
         fprintf(outfile, "<div class=\"nav\">Jump to: ");
         for (i = 0; mons[i].mlet; i++)
@@ -1197,7 +1197,7 @@ makehtmlspoilers(void)
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader("Playable Characters"));
+        fprintf(outfile, "%s", htmlheader("Playable Characters"));
 
         fprintf(outfile, "<ul>"
                 "   <li><a href=\"#race\">Race</a></li>"
@@ -1293,7 +1293,7 @@ makehtmlspoilers(void)
     }
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
         outfile = fdopen(fd, "w");
-        fprintf(outfile, htmlheader(""));
+        fprintf(outfile, "%s", htmlheader(""));
 
         fprintf(outfile, "<ul>\n"
                 "   <li><a href=\"objects-spoiler.html\">Objects</a><ul>"
