@@ -2189,7 +2189,8 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
     if (strncmpi(bp, "samurai sword", 13))      /* not the "samurai" monster! */
         if (strncmpi(bp, "wizard lock", 11))    /* not the "wizard" monster! */
             if (strncmpi(bp, "ninja-to", 8))    /* not the "ninja" rank */
-                if (strncmpi(bp, "master key", 10)) /* not the "master" rank */
+                if (strncmpi(bp, "master key", 10) &&/* not the "master" rank */
+                    (strncmpi(bp, "skeleton key", 12))) /* nor this monster */
                     if (strncmpi(bp, "magenta", 7)) /* not the "mage" rank */
                         if (mntmp < LOW_PM && strlen(bp) > 2 &&
                             (mntmp = name_to_mon(bp)) >= LOW_PM) {
