@@ -470,8 +470,8 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
                     return 0;
                 }
                 if ((picktyp == SKELETON_KEY ||
-                     (picktyp == CREDIT_CARD && !Role_if(PM_TOURIST) &&
-                      !(pick->oartifact))) &&
+                     (picktyp == CREDIT_CARD && !Role_if(PM_TOURIST))) &&
+                    !(pick->oartifact) &&
                     !rn2_on_rng((pick->blessed ? 250 : pick->cursed ? 20 : 50),
                                 rng_key_break)) {
                     pline(msgc_itemloss, "Snap!");
@@ -546,8 +546,8 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
                 return 0;
             }
             if ((picktyp == SKELETON_KEY ||
-                 (picktyp == CREDIT_CARD && !Role_if(PM_TOURIST) &&
-                  !(pick->oartifact))) &&
+                 (picktyp == CREDIT_CARD && !Role_if(PM_TOURIST))) &&
+                !(pick->oartifact) &&
                 !rn2_on_rng((pick->blessed ? 250 : pick->cursed ? 20 : 50),
                             rng_key_break)) {
                 pline(msgc_itemloss, "Snap!");

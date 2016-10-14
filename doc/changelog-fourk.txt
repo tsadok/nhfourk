@@ -61,6 +61,15 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * There are now several different kinds of keys.  Some keys open
+   boxes and chests; some open doors; some open both.  Some keys (and
+   lock picks) can corrode or rust, which can make them take longer to
+   open a lock.  Skeleton keys, which are made of bone, and credit
+   cards (unless you are a Tourist), can even break outright (except
+   for artifacts).  The very best type of (non-artifact) key to have
+   is a sturdy key, which is made of mithril (so it does not corrode)
+   and will open both doors and chests.
+
  * The relationship between experience points and experience levels
    has been adjusted, starting at level 14, which you now reach at
    sixty thousand XP (previously, eighty thousand were required).  The

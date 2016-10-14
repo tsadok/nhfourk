@@ -834,6 +834,9 @@ u_init_inv_skills(void)
         u.umoney0 = 0;
         role_ini_inv(trobj_list, nclist);
         knows_object(SACK);
+        knows_object(STURDY_KEY);
+        knows_object(DOOR_KEY);
+        knows_object(IRON_KEY);
         skill_init(Skill_R);
         /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(DAGGER, 0, 3);
