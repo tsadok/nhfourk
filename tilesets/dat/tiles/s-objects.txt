@@ -4653,7 +4653,7 @@ $ = (71, 108, 108)
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
 }
-# tile 244 (key / skeleton key)
+# tile 244 (skeleton key)
 {
   MMMMMMMMMMMMMMMM
   MMMMMMMMMMMMMMMM
