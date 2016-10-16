@@ -1117,6 +1117,7 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 
 
+# Based on an old Castle level design by Pasi Kallinen.
 # Hall of the Titan King
 # https://github.com/ComputerScienceHouse/bingehack4/wiki/Castle
 #
@@ -1352,6 +1353,7 @@ MONSTER:'C',random,(35,11)
 MONSTER:'C',random,(36,12)
 MONSTER:'C',random,(37,13)
 
+# Based on an old Castle level design by Pasi Kallinen.
 # The Troll King's Dungeons
 # https://github.com/ComputerScienceHouse/bingehack4/wiki/Castle
 MAZE:"castle-5",' '
