@@ -44,6 +44,7 @@
         int             nextprime       (int)
         int             distmin         (int, int, int, int)
         int             dist2           (int, int, int, int)
+        int             orchain_int     (int, ...)
         boolean         online2         (int, int)
         boolean         pmatch          (const char *, const char *)
         int             strncmpi        (const char *, const char *, int)
@@ -431,6 +432,19 @@ dist2(int x0, int y0, int x1, int y1)
     int dx = x0 - x1, dy = y0 - y1;
 
     return dx * dx + dy * dy;
+}
+
+/* Perl got me addicted to being able to just a = b || c || d || e. */
+int
+orchain_int(const int first, ...)
+{
+    va_list args;
+
+    va_start(args, first);
+    if (first)
+        return first;
+    va_end(args);
+    return 0;
 }
 
 /* are two points lined up (on a straight line)? */

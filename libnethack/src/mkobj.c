@@ -192,6 +192,20 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
     return mksobj(lev, i, TRUE, artif, rng);
 }
 
+/* Note that this function is expected to return 0 in the event that the
+   random appearance in question is not used this game. */
+extern int
+find_objnum_by_appearance(int oclass, const char *appearance)
+{
+    int i;
+    for (i = bases[oclass]; objects[i].oc_class == oclass; i++) {
+        const char *descr = OBJ_DESCR(objects[i]);
+        if (!strcmp(descr, appearance))
+            return i;
+    }
+    return 0;
+}
+
 static void
 mkbox_cnts(struct obj *box, enum rng rng)
 {

@@ -31,6 +31,7 @@ extern int popcount(unsigned long long);
 extern int nextprime(int);
 extern int dist2(int, int, int, int);
 extern int distmin(int, int, int, int);
+extern int orchain_int(const int first, ...);
 extern boolean online2(int, int, int, int);
 extern boolean pmatch(const char *, const char *);
 

@@ -1046,6 +1046,7 @@ extern struct obj *mksobj(struct level *, int, boolean, boolean, enum rng);
 extern struct obj *mktemp_sobj(struct level *, int);
 extern struct obj *mkobj(struct level *, char, boolean, enum rng);
 extern struct obj *mkobj_of_class(struct level *, char, boolean, enum rng);
+extern int find_objnum_by_appearance(int, const char *);
 extern int rndmonnum(const d_level *, enum rng);
 extern struct obj *splitobj(struct obj *, long);
 extern void replace_object(struct obj *, struct obj *);

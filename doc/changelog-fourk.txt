@@ -61,6 +61,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Some colors of dragon hall are now more likely than others, and
+   certain colors are possible that previously weren't implemented.
+   (Gray and silver dragon halls are still not implemented.)
+
+ * Dragon halls now contain a mix of items that are thematic by use
+   or nature and things that are thematic by appearance or color.
+   Also, they now contain dragon eggs.
+
  * There are now several different kinds of keys.  Some keys open
    boxes and chests; some open doors; some open both.  Some keys (and
    lock picks) can corrode or rust, which can make them take longer to

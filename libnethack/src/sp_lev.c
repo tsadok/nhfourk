@@ -1034,6 +1034,7 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
         /* assume we wouldn't be given an egg corpsenm unless it was hatchable
            */
         if (otmp->otyp == EGG && otmp->corpsenm != NON_PM) {
+            /* TODO: verify whether otmp->otyp is the correct argument here. */
             if (dead_species(otmp->otyp, TRUE))
                 kill_egg(otmp); /* make sure nothing hatches */
             else
