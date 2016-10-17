@@ -69,6 +69,11 @@ doread(const struct nh_cmd_arg *arg)
             "Hey, black dragon!  Disintegrate THIS!",
             "I'm With Stupid -->",
             "Don't blame me, I voted for Izchak!",
+            "Yendor Academy of Alchemy, Class of '47",
+            "Zombies aren't so tough. I'm more scared of an archon apocalypse.",
+            "Owlbears:  All they want is a hug.  Is that so bad?",
+            "Frobozz Magic Shirt Company", /* Quendor */
+            "It's All About the Flatheads", /* i.e., the zorkmids */
             "Don't Panic",      /* HHGTTG */
             "Furinkan High School Athletic Dept.",      /* Ranma 1/2 */
             "Hel-LOOO, Nurse!", /* Animaniacs */
