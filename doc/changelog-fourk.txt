@@ -108,9 +108,10 @@ Changes in 4.3.0.5:
    for level thirty was a hundred million XP in vanilla NetHack.
 
  * Polymorphed spellbooks may turn blank or be too faint to read.
-   (This is a 3.6 bugfix, but one that I held off on until now because
-   it has significant balance implications, and I was waiting until I
-   was ready to rebalance spellbook availability.)
+   (This is a 3.6 bugfix, from the 3.4.3 bug list, but one that I held
+   off on until now because it has significant balance implications,
+   and I was waiting until I was ready to rebalance spellbook
+   availability.)
 
  * The bones option, instead of being boolean (on or off), now has
    three possible values:  disabled, which causes bones not to be
@@ -147,7 +148,7 @@ Changes in 4.3.0.5:
  * More special levels have been given more alternate versions.
    Special levels that have more distinct versions than before now
    include Mine's End, the Valley of the Dead, Moloch's Sanctum,
-   and Medusa's Island.
+   Fort Ludios, and Medusa's Island.
 
  * Sting can be held second to Orcrist, for two-weapon combat.
 

@@ -112,7 +112,7 @@ static const char *const shktools[] = {
     "Yelpur", "Nosnehpets", "Stewe", "Renrut", "_Zlaw", "Nosalnef",
     "Rewuorb", "Rellenk", "Yad", "Cire Htims", "Y-crad", "Nenilukah",
     "Corsh", "Aned", "Kivenhoug", "Rebrol-nek", "Niknar", "Lapu",
-    "Shimt", "Rathel", "Thusenna", "Linnalek", "Yakdreer",
+    "Shimt", "Rathel", "Thusenna", "Elan Lapinski", "Yakdreer",
     "Eltaup Cirrelm", "Dijrfernd Kaghull",
 #ifdef WIN32
     "Lechaim", "Lexa", "Niod",

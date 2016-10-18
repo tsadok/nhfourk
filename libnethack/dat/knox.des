@@ -3,7 +3,8 @@
 #	Copyright (c) 1992 by Izchak Miller
 # NetHack may be freely redistributed.  See license for details.
 #
-MAZE:"knox",' '
+# Vanilla Fort Ludios
+MAZE:"knox-1",' '
 FLAGS: noteleport
 GEOMETRY:center,center
 MAP
@@ -111,3 +112,261 @@ OBJECT:'*',"ruby",(48,06)
 OBJECT:'*',"amethyst",(46,13)
 OBJECT:'*',"amethyst",(47,13)
 OBJECT:'*',"amethyst",(48,13)
+
+# Fort Ludios B: Barracks with Iron Bars
+MAZE:"knox-2",' '
+FLAGS: noteleport
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#12345678901234567890123456789012345678901234567890123456789012345678901234
+MAP
+---------------------------------------------------------------------------
+|.....+.......+.....S.}}|.|.....................|.|}}.S.....+.......+.....|
+|.....|.......|.....|.}}|.S.....................S.|}}.|.....|.......|.....|
+|FFFFF-F|...|F-FFFFF-.}}|.|.....................|.|}}.-FFFFF-F|...|F-FFFFF|
+|.......--+--.........}}-------------S-------------}}.........--+--.......|
+|.....................}}}}}|..|.....b(\.....|..|}}}}}.....................|
+|......................}}}}|..S.............S..|}}}}......................|
+|.......................}}}---|.............|---}}}.......................|
+|........................}}}}}-------+-------}}}}}........................|
+|...........................}}}}}}}}}}}}}}}}}}}...........................|
+|................................}}}}}}}}}................................|
+|.........................................................................|
+|--+-----.........................................................---+----|
+|.......|.........................................................|.......|
+|.......|----.................................................----|.......|
+|---+-..S...|.................................................|...|..---+-|
+|....|..|...--+---.......................................--+---...S..|....|
+|....---|........|.......................................|........|---....|
+|.......|........|.......................................|........|.......|
+---------------------------------------------------------------------------
+ENDMAP
+#RANDOM_PLACES:(03,01),(71,01),(07,18),(67,18),(63,15),(11,15)
+RANDOM_PLACES:(03,01),        (07,18),(67,18),(63,15),(11,15)
+# Non diggable walls
+NON_DIGGABLE:(00,00,74,19)
+#BRANCH:place[0]
+# What I _want_ is for the irrival location to be random; but the level
+# compiler doesn't support place[0] for the BRANCH location, so we'll
+# just pick a spot for now:
+BRANCH:(71,01,71,01),levregion()
+TELEPORT_REGION:(01,13,73,18),(0,0,0,0),up
+TELEPORT_REGION:(01,13,73,18),(0,0,0,0),down
+REGION:(31,05,43,07),lit,"throne"
+MONSTER:'@',"Croesus",(43,10),hostile
+# The vault uses an unfilled morgue for identification, see mkmaze.c
+REGION:(27,01,47,03),lit,"morgue",unfilled
+# Four gemsafes:
+REGION:(25,01,25,03),lit,"ordinary"
+REGION:(49,01,49,03),lit,"ordinary"
+REGION:(28,05,29,06),lit,"ordinary"
+REGION:(45,05,46,06),lit,"ordinary"
+# Monster Rooms (near the arrival areas):
+REGION:(07,01,13,02),lit,"barracks",filled,true
+REGION:(61,01,67,02),lit,"barracks",filled,true
+REGION:(15,01,19,02),lit,"barracks",filled,false
+REGION:(54,01,59,02),lit,"barracks",filled,false
+REGION:(01,13,07,14),lit,"zoo",filled,true
+REGION:(67,13,73,14),lit,"zoo",filled,true
+# Possible Arrival Rooms:
+REGION:(01,01,05,02),lit,"ordinary",unfilled,false
+REGION:(69,01,73,02),lit,"ordinary",unfilled,false
+REGION:(01,16,04,18),lit,"ordinary",unfilled,true
+REGION:(09,17,16,18),lit,"ordinary",unfilled,true
+REGION:(58,17,65,18),lit,"ordinary",unfilled,true
+REGION:(70,16,73,18),lit,"ordinary",unfilled,true
+# Doors:
+DOOR:locked,(06,01)
+DOOR:locked,(14,01)
+DOOR:locked,(20,01)
+DOOR:closed,(10,04)
+DOOR:locked,(68,01)
+DOOR:locked,(60,01)
+DOOR:locked,(54,01)
+DOOR:closed,(64,04)
+DOOR:locked,(26,02)
+DOOR:locked,(48,02)
+DOOR:locked,(37,04)
+DOOR:locked,(30,06)
+DOOR:locked,(44,06)
+DOOR:locked,(37,08)
+DOOR:random,(03,12)
+DOOR:random,(69,12)
+DOOR:closed,(04,15)
+DOOR:closed,(72,15)
+DOOR:locked,(08,15)
+DOOR:locked,(66,16)
+DOOR:closed,(14,16)
+DOOR:closed,(59,16)
+# Additional Soldiers:
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"soldier",random
+MONSTER:'@',"lieutenant",random
+MONSTER:'@',"captain",random
+# Possible boulder sources:
+MONSTER:'H',"giant",place[2]
+MONSTER:'H',"giant",place[3]
+MONSTER:'H',"giant",place[4]
+# Six dragons guarding the moat
+MONSTER:'D',random,(21,03)
+MONSTER:'D',random,(24,07)
+MONSTER:'D',random,(30,10)
+MONSTER:'D',random,(44,10)
+MONSTER:'D',random,(50,07)
+MONSTER:'D',random,(53,03)
+# Eels in the moat
+MONSTER:';',"electric eel",(33,09)
+MONSTER:';',"electric eel",(42,09)
+MONSTER:';',"giant eel",(25,05)
+MONSTER:';',"giant eel",(49,05)
+# Gems in the safes:
+OBJECT:'*',"diamond",(25,01)
+OBJECT:'*',"diamond",(25,02)
+OBJECT:'*',"diamond",(25,03)
+OBJECT:'*',"emerald",(28,05)
+OBJECT:'*',"emerald",(29,05)
+OBJECT:'*',"emerald",(28,06)
+OBJECT:'*',"emerald",(29,06)
+OBJECT:'*',"ruby",(49,01)
+OBJECT:'*',"ruby",(49,02)
+OBJECT:'*',"ruby",(49,03)
+OBJECT:'*',"amethyst",(45,05)
+OBJECT:'*',"amethyst",(45,06)
+OBJECT:'*',"amethyst",(46,05)
+OBJECT:'*',"amethyst",(46,06)
+
+# Fort Ludios C: Vault Within the Barracks
+MAZE:"knox-3",' '
+FLAGS: noteleport
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#1234567890123456789012345678901234567890123456789012345678901234567890123
+MAP
+--------------------------------------------------------------------------
+|.....|............................................................|.....|
+|.....|............................................................|.....|
+|--+--|.......}}}}}}}.................................}}}}}}}......|--+--|
+|.....|......}}----}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}----}}.....|.....|
+|.....|......}}|..|------------------S------------------|..|}}.....|.....|
+|.....|......}}|..S.....................................S..|}}.....|.....|
+|.....|......}}---|....-----------------------------....|---}}.....|.....|
+|.....|.......}}}}|....|..........S................|....|}}}}......|.....|
+|.....B.........}}|....+........\.|................|....|}}........B.....|
+|.....B.........}}|....+........(.|................|....|}}........B.....|
+|.....|.......}}}}|....|..........S................|....|}}}}......|.....|
+|.....|......}}---|....-----------------------------....|---}}.....|.....|
+|.....|......}}|..S.....................................S..|}}.....|.....|
+|.....|......}}|..|------------------S------------------|..|}}.....|.....|
+|.....|......}}----}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}----}}.....|.....|
+|--+--|.......}}}}}}}.................................}}}}}}}......|--+--|
+|.....|............................................................|.....|
+|.....|............................................................|.....|
+--------------------------------------------------------------------------
+ENDMAP
+# Non diggable walls
+NON_DIGGABLE:(00,00,73,19)
+# Portal arrival point
+BRANCH:(01,17,05,18),levregion()
+# accessible via ^V in wizard mode; arrive near the portal
+TELEPORT_REGION:(01,01,05,18),(0,0,0,0),up
+TELEPORT_REGION:(68,01,72,18),(0,0,0,0),down
+# Doors:
+DOOR:locked,(03,03)
+DOOR:locked,(70,03)
+DOOR:locked,(03,16)
+DOOR:locked,(70,16)
+DOOR:closed,(18,06)
+DOOR:closed,(56,06)
+DOOR:closed,(18,13)
+DOOR:closed,(56,13)
+DOOR:locked,(37,05)
+DOOR:locked,(37,14)
+DOOR:locked,(23,09)
+DOOR:locked,(23,10)
+DOOR:locked,(34,08)
+DOOR:locked,(34,11)
+# Croesus' Throne Room
+REGION:(24,08,33,11),lit,"throne"
+MONSTER:'@',"Croesus",(32,09),hostile
+# The vault uses an unfilled morgue for identification, see mkmaze.c
+REGION:(35,08,50,11),lit,"morgue",unfilled,false
+# Four gemsafes:
+REGION:(16,05,17,06),lit,"ordinary"
+OBJECT:'*',"diamond",(16,05)
+OBJECT:'*',"diamond",(16,06)
+OBJECT:'*',"diamond",(17,05)
+OBJECT:'*',"diamond",(17,06)
+REGION:(57,05,58,06),lit,"ordinary"
+OBJECT:'*',"emerald",(57,05)
+OBJECT:'*',"emerald",(58,05)
+OBJECT:'*',"emerald",(57,06)
+OBJECT:'*',"emerald",(58,06)
+REGION:(16,13,17,14),lit,"ordinary"
+OBJECT:'*',"ruby",(16,13)
+OBJECT:'*',"ruby",(16,14)
+OBJECT:'*',"ruby",(17,13)
+OBJECT:'*',"ruby",(17,14)
+REGION:(57,13,58,14),lit,"ordinary"
+OBJECT:'*',"amethyst",(57,13)
+OBJECT:'*',"amethyst",(58,13)
+OBJECT:'*',"amethyst",(57,14)
+OBJECT:'*',"amethyst",(58,14)
+# The barracks surrounding the throne room and vault:
+REGION:(19,06,22,13),lit,"barracks",filled,true
+# The east and west end zoos:
+REGION:(68,04,72,15),lit,"zoo",filled,true
+REGION:(01,04,05,15),lit,"zoo",filled,true
+# Corner Rooms:
+REGION:(01,01,05,02),lit,"ordinary",unfilled,false
+REGION:(68,01,72,02),lit,"ordinary",unfilled,false
+REGION:(01,17,05,18),lit,"ordinary",unfilled,false
+REGION:(68,17,72,18),lit,"ordinary",unfilled,false
+# The soldiers stationed outdoors:
+MONSTER:'@',"soldier",(10,05)
+MONSTER:'@',"soldier",(20,02)
+MONSTER:'@',"soldier",(28,03)
+MONSTER:'@',"soldier",(35,02)
+MONSTER:'@',"soldier",(41,02)
+MONSTER:'@',"soldier",(50,01)
+MONSTER:'@',"soldier",(62,02)
+MONSTER:'@',"soldier",(64,07)
+MONSTER:'@',"soldier",(64,12)
+MONSTER:'@',"soldier",(60,18)
+MONSTER:'@',"soldier",(52,17)
+MONSTER:'@',"soldier",(40,17)
+MONSTER:'@',"soldier",(30,16)
+MONSTER:'@',"soldier",(21,17)
+MONSTER:'@',"soldier",(11,17)
+MONSTER:'@',"sergeant",(10,10)
+MONSTER:'@',"lieutenant",(10,09)
+# Possible source of a boulder
+MONSTER:'H',"giant",(03,02)
+# The other two corner rooms have chests:
+OBJECT:'(',"chest",(70,01)
+OBJECT:'(',"chest",(70,18)
+# There are, of course, dragons:
+MONSTER:'D',random,random
+MONSTER:'D',random,random
+MONSTER:'D',random,random
+MONSTER:'D',random,random
+# Also there are eels in the moat:
+MONSTER:';',"giant eel",(14,05)
+MONSTER:';',"giant eel",(34,04)
+MONSTER:';',"giant eel",(37,04)
+MONSTER:';',"giant eel",(53,04)
+MONSTER:';',"giant eel",(61,07)
+MONSTER:';',"giant eel",(61,14)
+MONSTER:';',"giant eel",(51,15)
+MONSTER:';',"giant eel",(37,15)
+MONSTER:';',"giant eel",(20,16)
+MONSTER:';',"giant eel",(13,14)
