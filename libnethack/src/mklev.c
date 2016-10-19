@@ -798,6 +798,7 @@ makelevel(struct level *lev)
     int room_threshold;
 
     int smeq[MAXNROFROOMS + 1];
+    boolean anniv = ((wizard || (SQKY_BOARD==getmonth())) && !(getmday() & 30));
 
     if (wiz1_level.dlevel == 0)
         init_dungeons();
@@ -1131,16 +1132,43 @@ skip0:
         switch (mrn2(12)) {
         case 1:
         case 2:
-            mksobj_at(WAN_ENLIGHTENMENT, lev, x, y, TRUE, FALSE, mrng());
+            mksobj_at(anniv ? WAN_NOTHING : WAN_ENLIGHTENMENT,
+                      lev, x, y, TRUE, FALSE, mrng());
             break;
         case 3:
+            if (anniv) {
+                struct obj *otmp = mksobj(lev, DUNCE_CAP, FALSE, FALSE, mrng());
+                if (otmp) {
+                    otmp->spe = 5;
+                    place_object(otmp, lev, x, y);
+                }
+                break;
+            }
             mksobj_at(EUCALYPTUS_LEAF, lev, x, y, TRUE, FALSE, mrng());
             break;
         case 4:
         case 5:
+            if (anniv) {
+                struct obj *otmp = mksobj(lev, FUMBLE_BOOTS,
+                                          FALSE, FALSE, mrng());
+                if (otmp) {
+                    otmp->spe = 5;
+                    place_object(otmp, lev, x, y);
+                }
+                break;
+            }
             mksobj_at(SPRIG_OF_WOLFSBANE, lev, x, y, TRUE, FALSE, mrng());
             break;
         default:
+            if (anniv) {
+                struct obj *otmp = mkobj(lev, SPBOOK_CLASS, FALSE, mrng());
+                if (otmp) {
+                    bless(otmp);
+                    otmp->spestudied = 5;
+                    place_object(otmp, lev, x, y);
+                }
+                break;
+            }
             mksobj_at(SCR_SCARE_MONSTER, lev, x, y, TRUE, FALSE, mrng());
         }
     }

@@ -508,6 +508,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
     const char let = objects[otyp].oc_class;
 
     otmp = mksobj_basic(lev, otyp);
+    if (!otmp)
+        return NULL;
     otmp->o_id = next_ident();
 
     if (init) {
@@ -589,6 +591,23 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                         (moves % 5)  ? fruitadd("sugar plum") :
                         (moves % 7)  ? fruitadd("cup of figgy pudding") :
                         fruitadd("slice of plum cake");
+                else if ((getmonth() == 2) && (getmday() == 14)) /* Valentine */
+                    otmp->spe = fruitadd("box of chocolates");
+                else if ((getmonth() == 3) && (getmday() == 14)) /* White Day */
+                    otmp->spe = fruitadd("box of white chocolate");
+                else if ((getmonth() == 3) && (getmday() == 17)) /* St. Pat */
+                    otmp->spe = fruitadd("mint-flavored milkshake");
+                else if ((getmonth() == 4) && (getmday() == 1))  /* Apr Fool */
+                    otmp->spe = fruitadd("partly eaten chickatrice corpse");
+                else if ((getmonth() == 7) && (getmday() == 1))  /* Canada */
+                    otmp->spe = fruitadd("candied maple leaf");
+                else if ((getmonth() == 7) && (getmday() == 4))  /* Fourth */
+                    otmp->spe = fruitadd("red, white, and blue lollipop");
+                else if ((getmonth() == 10) && (getmday() == 31))/* H'ween */
+                    otmp->spe = fruitadd("piece of candy corn");
+                else if ((getmonth() == 11) && (getwday() == 4) &&
+                         (getmday() >= 22) && (getmday() <= 28)) /* Thanks */
+                    otmp->spe = fruitadd("roast turkey drumstick");
                 else if (Race_if(PM_SCURRIER))
                     otmp->spe = fruitadd("chestnut");
                 else

@@ -770,9 +770,10 @@ fruitadd(const char *str)
             (!strncmp(str, "tin of ", 7) &&
              (!strcmp(str + 7, "spinach") || name_to_mon(str + 7) >= LOW_PM)) ||
             !strcmp(str, "empty tin") ||
-            ((!strncmp(str + strlen(str) - 7, " corpse", 7) ||
-              !strncmp(str + strlen(str) - 4, " egg", 4)) &&
-             name_to_mon(str) >= LOW_PM)) {
+            (((!strncmp(str + strlen(str) - 7, " corpse", 7) ||
+               !strncmp(str + strlen(str) - 4, " egg", 4)) &&
+              name_to_mon(str) >= LOW_PM) &&
+             (getmonth() != 4 || getmday() > 1))) {
             strcpy(buf, gamestate.fruits.curname);
             strcpy(gamestate.fruits.curname, "candied ");
             strncat(gamestate.fruits.curname + 8, buf, PL_FSIZ - 8 - 1);

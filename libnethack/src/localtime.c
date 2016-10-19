@@ -94,6 +94,13 @@ getmday(void)
     return(getlt()->tm_mday);
 }
 
+/* Returns current day of week (0==Sunday through 6==Saturday) */
+int
+getwday(void)
+{
+    struct tm *lt = getlt();
+    return lt->tm_wday;
+}
 
 long
 yyyymmdd(microseconds date)
