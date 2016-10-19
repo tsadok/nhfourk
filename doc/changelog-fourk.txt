@@ -62,6 +62,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The "fake wizard towers" are now embedded in Gehennom-style
+   cavern levels (aiscav), rather than in mazes.
+
  * "Permanent" alignment conversion (using a cross-aligned altar)
    is no longer irreversible:  finding an altar of your original
    alignment and doing the same thing again can turn you back.
