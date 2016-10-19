@@ -972,6 +972,10 @@ makelevel(struct level *lev)
 
         /* check for special levels */
         if (slevnum && !Is_rogue_level(&lev->z)) {
+            if (In_hell(&lev->z) && can_aiscav_embed(slevnum->proto)) {
+                mkaiscav(lev, slevnum->proto);
+                return;
+            }
             makemaz(lev, slevnum->proto, smeq);
             return;
         } else if (find_dungeon(&lev->z).proto[0]) {
@@ -993,7 +997,7 @@ makelevel(struct level *lev)
             makemaz(lev, fillname, smeq);
             return;
         } else if (In_hell(&lev->z)) {
-            mkaiscav(lev);
+            mkaiscav(lev, "gehcav");
             return;
         } else if ((lev->z.dnum == medusa_level.dnum) &&
                    (depth(&lev->z) > depth(&medusa_level))) {

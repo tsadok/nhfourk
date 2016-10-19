@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The "fake wizard towers" are now embedded in Gehennom-style
+   cavern levels (aiscav), rather than in mazes.
+
  * Introduced three new types of shops:
    + Music stores sell mostly musical instruments, and occasionally
      other tools.  They are a bit less common than jewelers.

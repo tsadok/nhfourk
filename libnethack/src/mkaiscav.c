@@ -49,6 +49,7 @@
 #define AIS_UNDECIDED 2048
 
 int map[COLNO + 1][ROWNO + 1];
+boolean embedmask[COLNO + 1][ROWNO + 1];
 coord shuffledcoord[(COLNO - 1) * (ROWNO - 1)];
 coord upstair, dnstair;
 int aisdepth, liqcount;
@@ -88,6 +89,9 @@ static coord aisstairloc(int baseprob, int edge, int dir, const char *which);
 static void aisplacestairs(int trycount);
 static void mkaisvs(struct level *lev, int x, int y);
 static boolean xor(boolean conda, boolean condb);
+static int typ_from_mapchar(xchar c);
+static int aisconst_from_mapchar(xchar c);
+static void do_aiscav_embed(struct level *lev, char *proto);
 static void dopool(int cx, int cy, int radius, int jitter);
 static coord aisplace(void);
 
@@ -117,7 +121,9 @@ ais_block_pt(int x, int y, boolean check, boolean mark_corridors)
         return;
     if (check && (map[x][y] == AIS_SOLID))
         return;
-    
+    if (embedmask[x][y])
+        return;
+
     wallcount =
         ((map[x + 1][y] == AIS_SOLID) ? 1 : 0) +
         ((map[x][y + 1] == AIS_SOLID) ? 1 : 0) +
@@ -319,6 +325,7 @@ dopool(int cx, int cy, int radius, int jitter)
                     + sqrt(((x - cx) / stretch) * ((x - cx) / stretch) +
                            ((y - cy) * (y - cy)));
                 if ((dist <= radius) &&
+                    (!embedmask[x][y]) &&
                     !(map[x][y] & AIS_STAIR) &&
                     (!(map[x][y] & AIS_SOLID) &&
                      !(map[x][y] & AIS_CORRIDOR)))
@@ -328,8 +335,121 @@ dopool(int cx, int cy, int radius, int jitter)
     }
 }
 
+/* The following two functions, can_aiscav_embed and do_aiscav_embed, must be
+   kept in sync: what the former returns TRUE for, the latter must handle. */
+boolean
+can_aiscav_embed(char *proto) {
+    if (0 == strncmp(proto, "fakewiz", 7))
+        return TRUE;
+    return FALSE;
+}
+
+/* This function must handle whatever can_aiscav_embed returns TRUE for. */
 void
-mkaiscav(struct level *lev)
+do_aiscav_embed(struct level *lev, char *proto) {
+    enum rng rng = rng_for_level(&lev->z);
+    if (0 == strncmp(proto, "fakewiz", 7)) {
+        static const char *const embedmap[] = { ".........",
+                                                ".}}}}}}}.",
+                                                ".}}---}}.",
+                                                ".}--.--}.",
+                                                ".}|...|}.",
+                                                ".}--.--}.",
+                                                ".}}---}}.",
+                                                ".}}}}}}}." };
+        int embysize = (int) SIZE(embedmap);
+        int embxsize = (int) strlen(embedmap[0]);
+        int emby = (int) (ROWNO - embysize) / 2;
+        int embx = (int) (COLNO - embxsize) / 2;
+        int iy, ix;
+        struct monst *lich, *vamp, *kraken;
+        for (iy = 0; iy < embysize; iy++) {
+            for (ix = 0; ix < embxsize; ix++) {
+                int terrain = aisconst_from_mapchar(embedmap[iy][ix]);
+                map[embx + ix][emby + iy] = terrain;
+                if (terrain != AIS_UNDECIDED) {
+                    embedmask[embx + ix][emby + iy] = TRUE;
+                    lev->locations[embx + ix][emby + iy].typ =
+                        typ_from_mapchar(embedmap[iy][ix]);
+                }
+            }
+        }
+        lich = makemon(mkclass(&lev->z, S_LICH, 0, rng),
+                       lev, embx + 4, emby + 4, NO_MM_FLAGS);
+        vamp = makemon(mkclass(&lev->z, S_VAMPIRE, 0, rng),
+                       lev, embx + 3, emby + 4, NO_MM_FLAGS);
+        kraken = makemon(&mons[PM_KRAKEN], lev, embx + 6, emby + 6,
+                         NO_MM_FLAGS);
+        if (!lich || !vamp || !kraken)
+            pline(msgc_debug, "Failed to create special monster(s).");
+        maketrap(lev, embx + 4, emby + 3, SQKY_BOARD, rng);
+        maketrap(lev, embx + 4, emby + 5, SQKY_BOARD, rng);
+        maketrap(lev, embx + 3, emby + 4, SQKY_BOARD, rng);
+        maketrap(lev, embx + 5, emby + 4, SQKY_BOARD, rng);
+        if (0 == strncmp(proto, "fakewiz1", 8)) {
+            /* fakewiz1 is the "real fake tower", with the portal. */
+            d_level *dest = &dungeon_topology.d_wiz3_level;
+            mkportal(lev, embx + 4, emby + 4,
+                     dest->dnum, dest->dlevel);
+        } else {
+            mkobj_at(AMULET_CLASS, lev, embx + 4, emby + 4, FALSE, rng);
+        }
+        return;
+    }
+    /* Implementing the ability to embed the wizard's tower, demon lairs, and
+       other special content is deferred:  I want to implement those eventually,
+       but for now, while we emplement the embedding and verify it works as
+       intended, we'll just do the fakewiz towers, as they're simplest. */
+    impossible("Don't know how to embed special-level content for %s", proto);
+}
+
+/* These only have to be "close enough".  It's the aisconst_from_mapchar return
+   value that actually drives what the terrain will ultimately become.  However,
+   during the embedding phase (before the surrounding level is filled in), we
+   need to be close enough (solid vs liquid vs open) for things like portal
+   creation, monster placement, object placement, etc. to work reasonably. */
+int
+typ_from_mapchar(xchar c) {
+    if (c == ' ')
+        return STONE;
+    if (c == '#')
+        return CORR;
+    if (c == '-')
+        return HWALL;
+    if (c == '|')
+        return VWALL;
+    if (c == '}')
+        return MOAT;
+    if (c == 'L')
+        return LAVAPOOL;
+    return ROOM;
+}
+
+int
+aisconst_from_mapchar(xchar c) {
+    if (c == ' ')
+        return AIS_SOLID;
+    if (c == '#')
+        return AIS_CORRIDOR;
+    if (c == '.')
+        return AIS_FLOOR;
+    if (c == '-' || c == '|')
+        return AIS_SOLID;
+    if (c == '}')
+        return AIS_WATER;
+    if (c == 'L')
+        return AIS_LAVA;
+    /* STAIR is currently not supported for embedding via mapchar.
+    if (c == '<' or c == '>')
+        return AIS_STAIR;
+    */
+    if (c == '?')
+        return AIS_UNDECIDED;
+    impossible("No AIS_TERRAIN constant for map character '%c'", c);
+    return AIS_UNDECIDED;
+}
+void
+mkaiscav(struct level *lev, char *proto)
 {
     aisdepth = (depth(&lev->z) - 25) * 2;
     rng = rng_for_level(&lev->z);
@@ -353,8 +473,18 @@ mkaiscav(struct level *lev)
                 shuffledcoord[i] = cc;
                 i++;
             }
+            embedmask[x][y] = FALSE;
         }
     }
+
+    /* Do we have any special content to embed? */
+    if (can_aiscav_embed(proto)) {
+    /* This is the point in the process at which we insert the embedded content
+       (and mark it as special/embedded, so that the adjustment phase, later,
+       does not adjust it in undesirable ways). */
+        do_aiscav_embed(lev, proto);
+    }
+
     /* Shuffle the coordinates into a random order: */
     for (i = 0; i < num_of_shuffledcoord; i++) {
         int   swapi = mrn2(num_of_shuffledcoord);
@@ -362,16 +492,6 @@ mkaiscav(struct level *lev)
         shuffledcoord[i]     = shuffledcoord[swapi];
         shuffledcoord[swapi] = swapc;
     }
-    /* TODO: in principle, the algorithm supports embedding
-       special-level content.  This is roughly the point in the
-       process at which it would ought to be inserted (and marked
-       special, so that the adjustment phase, later, would not
-       adjust it in undesirable ways).  Implementing the ability
-       to embed e.g. the wizard's tower, fake towers, demon
-       lairs, or other special features is deferred:  I want
-       to implement it eventually, but for now, let's just get
-       the basic level generation part working.
-    */
     for (i = 0; i < num_of_shuffledcoord; i++) {
         x = shuffledcoord[i].x;
         y = shuffledcoord[i].y;
@@ -410,6 +530,7 @@ mkaiscav(struct level *lev)
                 (map[x - 1][y] != AIS_SOLID) &&
                 (map[x][y + 1] != AIS_SOLID) &&
                 (map[x][y - 1] != AIS_SOLID) &&
+                (!embedmask[x][y]) &&
                 (map[x][y] == AIS_SOLID))
                 map[x][y] = AIS_FLOOR;
         }
@@ -436,7 +557,8 @@ mkaiscav(struct level *lev)
                 y = shuffledcoord[i].y;
                 int orthocorridor = 0;
                 struct neighborhood hood = neighbors(x, y);
-                if ((map[x][y] != AIS_SOLID) &&
+                if ((!embedmask[x][y]) &&
+                    (map[x][y] != AIS_SOLID) &&
                     (map[x][y] != AIS_CORRIDOR)) {
                     for (nidx = 0; nidx <= 6; nidx += 2) {
                         if (hood.n[nidx] == AIS_CORRIDOR)
@@ -464,7 +586,7 @@ mkaiscav(struct level *lev)
        the effect is minor. */
     for (x = 1; x < COLNO - 1; x++) {
         for (y = 1; y < ROWNO - 1; y++) {
-            if (map[x][y] != AIS_CORRIDOR) {
+            if ((map[x][y] != AIS_CORRIDOR) && (!embedmask[x][y])) {
                 int da, db, di;
                 for (di = 0; di < 4; di++) {
                     switch (di) {
@@ -554,7 +676,7 @@ mkaiscav(struct level *lev)
                 if (hood.n[nidx] & AIS_CORRIDOR)
                     lonely = FALSE;
             }
-            if (lonely) {
+            if (lonely && (!embedmask[x][y])) {
                 map[x][y] |= AIS_SOLID;
                 if (((map[x][y] & AIS_NORTH) ||
                      (map[x][y] & AIS_SOUTH) ||

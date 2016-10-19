@@ -988,7 +988,8 @@ extern int lminion(void);
 
 /* mkaiscav.c */
 
-extern void mkaiscav(struct level *lev);
+extern boolean can_aiscav_embed(char *proto);
+extern void mkaiscav(struct level *lev, char *proto);
 
 /* ### mklev.c ### */
 
