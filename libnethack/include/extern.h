@@ -800,6 +800,7 @@ extern int wiz_light_sources(const struct nh_cmd_arg *);
 extern int getyear(void);
 extern int getmonth(void);
 extern int getmday(void);
+extern int getwday(void);
 extern long yyyymmdd(microseconds);
 extern int phase_of_the_moon(void);
 extern boolean friday_13th(void);
