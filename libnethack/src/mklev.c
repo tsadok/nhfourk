@@ -1335,7 +1335,7 @@ skip0:
         }
     }
     /* Supply small numbers of certain normally rare items early: */
-    if ((lev->z.dlevel > 1) && (lev->z.dlevel < 7) && (mrn2(8))) {
+    if ((lev->z.dlevel > 1) && (lev->z.dlevel < 8) && (mrn2(8))) {
         int tries = 20;
         croom = &lev->rooms[mrn2(lev->nroom - 1)];
         y = somey(croom, mrng());
@@ -1345,7 +1345,7 @@ skip0:
             x = somex(croom, mrng());
             y = somey(croom, mrng());
         }
-        switch (mrn2(12)) {
+        switch (mrn2(17)) {
         case 1:
         case 2:
             mksobj_at(anniv ? WAN_NOTHING : WAN_ENLIGHTENMENT,
@@ -1357,8 +1357,8 @@ skip0:
                 if (otmp) {
                     otmp->spe = 5;
                     place_object(otmp, lev, x, y);
+                    break;
                 }
-                break;
             }
             mksobj_at(EUCALYPTUS_LEAF, lev, x, y, TRUE, FALSE, mrng());
             break;
@@ -1370,10 +1370,24 @@ skip0:
                 if (otmp) {
                     otmp->spe = 5;
                     place_object(otmp, lev, x, y);
+                    break;
                 }
-                break;
             }
             mksobj_at(SPRIG_OF_WOLFSBANE, lev, x, y, TRUE, FALSE, mrng());
+            break;
+        case 6:
+        case 7:
+        case 8:
+            if (anniv) {
+                struct obj *otmp = mksobj(lev, GAUNTLETS_OF_FUMBLING,
+                                          FALSE, FALSE, mrng());
+                if (otmp) {
+                    otmp->spe = 5;
+                    place_object(otmp, lev, x, y);
+                    break;
+                }
+            }
+            mksobj_at(SACK, lev, x, y, TRUE, FALSE, mrng());
             break;
         default:
             if (anniv) {

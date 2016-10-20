@@ -61,6 +61,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Sacks have been added to the list of objects that may show up
+   in the first few levels of the dungeon (above and beyond their
+   ordinary generation probability as a random object), similar to
+   eucalyptus, wolfsbane, scare monster, and wands of enlightenment.
+
  * The rules for which containers protect their contents from water
    damage have changed:
    + Oilskin sacks work the same as before: guaranteed protection if
