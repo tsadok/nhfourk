@@ -3140,8 +3140,11 @@ water_damage(struct obj * obj, const char *ostr, boolean force)
         if (carried(obj))
             update_inventory();
         return 1;
-    } else if (Is_container(obj) && !Is_box(obj) &&
-                (obj->otyp != OILSKIN_SACK || (obj->cursed && !rn2(3)))) {
+    } else if (Is_container(obj) &&
+               (obj->otyp != ICE_BOX) &&
+               ((obj->otyp != BAG_OF_HOLDING && !Is_box(obj)) ||
+                ((!obj->blessed) && !rn2(obj->cursed ? 2 : 5))) &&
+               (obj->otyp != OILSKIN_SACK || (obj->cursed && !rn2(3)))) {
         water_damage_chain(obj->cobj, FALSE);
         return 0;
     } else if (!force && (Luck + 5) > rn2(20)) {

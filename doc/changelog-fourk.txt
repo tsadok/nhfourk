@@ -61,6 +61,16 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The rules for which containers protect their contents from water
+   damage have changed:
+   + Oilskin sacks work the same as before: guaranteed protection if
+     non-cursed, two-thirds chance of protection if cursed.
+   + Ice boxes now always protect their contents against wetting.
+   + Chests, large boxes, and bags of holding now offer guaranteed
+     protection of their contents from wetting if blessed, four-fifths
+     chance if uncursed, fifty-fifty chance if cursed.
+   + As before, sacks do not protect against wetting.
+
  * The "fake wizard towers" are now embedded in Gehennom-style
    cavern levels (aiscav), rather than in mazes.
 

@@ -294,9 +294,8 @@ nh_timeout(void)
                 done(POISONING, delayed_killer(POISONING));
                 break;
             case FAST:
-                if (!Very_fast)
-                    pline(msgc_statusend, "You feel yourself slowing down%s.",
-                          Fast ? " a bit" : "");
+                pline(msgc_statusend, "You feel yourself slowing down%s.",
+                      (Very_fast || Fast) ? " a bit" : "");
                 break;
             case CONFUSION:
                 HConfusion = 1; /* So make_confused works properly */
