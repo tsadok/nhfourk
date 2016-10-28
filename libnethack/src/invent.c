@@ -873,6 +873,7 @@ object_selection_checks(struct obj *otmp, const char *word)
     /* cblock controls whether we allow equip commands that require removing
        other items temporarily. */
     boolean cblock = flags.cblock;
+    const char *dscr;
 
     /* Check to see if equipping/unequipping is known to be unreasonable, either
        because the object is inappropriate or the slot is blocked by a cursed
@@ -931,7 +932,12 @@ object_selection_checks(struct obj *otmp, const char *word)
           (otmp->oclass == GEM_CLASS && !is_graystone(otmp)))) ||
         (!strcmp(word, "read") &&
          (otmp->oclass != SCROLL_CLASS && otmp->oclass != SPBOOK_CLASS &&
-          otyp != FORTUNE_COOKIE && otyp != T_SHIRT)) ||
+          otyp != FORTUNE_COOKIE && otyp != T_SHIRT &&
+          (otmp->oclass != RING_CLASS || (!(dscr = OBJ_DESCR(objects[otyp]))) ||
+                                         (strcmp(dscr, "mood") &&
+                                          strcmp(dscr, "signet") &&
+                                          strcmp(dscr, "intaglio") &&
+                                          strcmp(dscr, "class"))))) ||
         (!strcmp(word, "untrap with") &&
          (otmp->oclass == TOOL_CLASS && otyp != CAN_OF_GREASE)) ||
         (!strcmp(word, "charge") &&

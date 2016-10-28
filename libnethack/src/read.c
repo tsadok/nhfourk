@@ -99,6 +99,76 @@ doread(const struct nh_cmd_arg *arg)
                               scroll->o_id ^ (unsigned)u.ubirthday);
         pline(msgc_info, "\"%s\"", buf);
         return 1;
+    } else if (scroll->oclass == RING_CLASS) {
+        const char *dscr = OBJ_DESCR(objects[scroll->otyp]);
+        if (Blind) {
+            pline(msgc_cancelled, "Being blind, you cannot read the %s.",
+                  ((!strcmp(dscr, "mood")) ? "stone's color" :
+                   (!strcmp(dscr, "class")) ? "year" : "engraving"));
+            return 0;
+        }
+        if (!strcmp(dscr, "mood")) {
+            if (scroll != EQUIP(os_ringl) && scroll != EQUIP(os_ringr)) {
+                pline(msgc_actionboring, "The stone is %s.", hcolor("black"));
+            } else {
+                pline(msgc_info, "The stone is %s.", hcolor(
+                          scroll->cursed ? "purple" :
+                          u.ualign.record >= 14 ? "green"  :
+                          u.ualign.record >=  4 ? "yellow" :
+                          u.ualign.record >=  1 ? "orange" : "red"));
+            }
+            return 1;
+        } else if (!strcmp(dscr, "class")) {
+            break_conduct(conduct_illiterate);
+            pline(msgc_actionok, "Yendor Academy, Class of '%02d",
+                  (scroll->o_id % 100));
+            return 1;
+        } else if ((!strcmp(dscr, "intaglio")) ||
+                   (!strcmp(dscr, "signet"))) {
+            const char *const ring_engr[] = {
+                "the symbol of House Dyne", /* Jackson's Whole */
+                "the griffin of House Harkonnen", /* Dune */
+                "the personal sigil of Croesus", /* Fort Ludios */
+                "the Frobozz Magic Ring Company logo", /* Quendor / GUE */
+                "a heptagram", /* AceHack, dNetHack */
+                "the elemental symbol of earth",
+                "the elemental symbol of water",
+                "the elemental symbol of air",
+                "the elemental symbol of fire",
+                "the elemental symbol of aether",
+                "a likeness of the original owner",
+                "a likeness of the original owner's spouse",
+                "a likeness of the original owner's father",
+                "a likeness of the original owner's mother",
+                "the ring maker's mark",
+                "the ring makers' guild's seal of quality",
+                "a ward against nightmares",
+                "a ward against boils and bedsores",
+                "a ward against the destruction of the universe",
+                "a ward against bad morale",
+                msgprintf("an alchemical formula: %s + %s => %s",
+                          OBJ_DESCR(objects[POT_HEALING]),
+                          OBJ_DESCR(objects[POT_SPEED]),
+                          OBJ_DESCR(objects[POT_FULL_HEALING])),
+                msgprintf("an alchemical formula: %s + %s => %s",
+                          OBJ_DESCR(objects[POT_HEALING]),
+                          OBJ_DESCR(objects[POT_GAIN_LEVEL]),
+                          OBJ_DESCR(objects[POT_EXTRA_HEALING])),
+                msgprintf("an alchemical formula: %s + %s => %s",
+                          OBJ_DESCR(objects[POT_FULL_HEALING]),
+                          OBJ_DESCR(objects[POT_GAIN_ENERGY]),
+                          OBJ_DESCR(objects[POT_GAIN_ABILITY])),
+            };
+            break_conduct(conduct_illiterate);
+            pline(msgc_actionok, "The %s is engraved with %s.",
+                  (!strcmp(dscr, "intaglio") ?
+                   "underside of the stone" : "face of the ring"),
+                  ring_engr[scroll->o_id % SIZE(ring_engr)]);
+            return 1;
+        } else {
+            pline(msgc_cancelled, "This ring bears no inscription.");
+            return 0;
+        }
     } else if (scroll->oclass != SCROLL_CLASS &&
                scroll->oclass != SPBOOK_CLASS) {
         pline(msgc_cancelled, "That is a silly thing to read.");
