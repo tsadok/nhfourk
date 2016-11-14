@@ -270,7 +270,10 @@ touchfood(void)
         if ((!carried(*uttf) && costly_spot((*uttf)->ox, (*uttf)->oy) &&
              !(*uttf)->no_charge) || (*uttf)->unpaid) {
             /* create a dummy duplicate to put on bill */
-            verbalize(msgc_unpaid, "You bit it, you bought it!");
+            if (Deaf)
+                pline(msgc_unpaid, "Your meal is placed on your bill.");
+            else
+                verbalize(msgc_unpaid, "You bit it, you bought it!");
             bill_dummy_object(*uttf);
         }
         nutrition_calculations(*uttf, &((*uttf)->oeaten), NULL, NULL);
@@ -879,8 +882,11 @@ costly_tin(const char *verb /* if 0, the verb is "open" */ )
           costly_spot(u.utracked[tos_tin]->ox, u.utracked[tos_tin]->oy) &&
           !u.utracked[tos_tin]->no_charge)
          || u.utracked[tos_tin]->unpaid)) {
-        verbalize(msgc_unpaid, "You %s it, you bought it!",
-                  verb ? verb : "open");
+        if (Deaf)
+            pline(msgc_unpaid, "The cost of the tin is placed on your bill.");
+        else
+            verbalize(msgc_unpaid, "You %s it, you bought it!",
+                      verb ? verb : "open");
         if (u.utracked[tos_tin]->quan > 1L)
             u.utracked[tos_tin] = splitobj(u.utracked[tos_tin], 1L);
         bill_dummy_object(u.utracked[tos_tin]);

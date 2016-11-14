@@ -476,6 +476,14 @@ priest_talk(struct monst *priest)
     boolean coaligned = p_coaligned(priest);
     boolean strayed = (UALIGNREC < 0);
 
+    if (Deaf) {
+        if (!Blind)
+            pline(msgc_hint,
+                  "%s appears to be speaking, but you cannot hear %s.",
+                  Monnam(priest), mhim(priest));
+        return;
+    }
+
     /* KMH, conduct */
     break_conduct(conduct_gnostic);
 

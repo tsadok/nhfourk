@@ -1854,7 +1854,12 @@ dodip(const struct nh_cmd_arg *arg)
                     /* we know it's carried */
                     if (obj->unpaid) {
                         /* create a dummy duplicate to put on bill */
-                        verbalize(msgc_unpaid, "You burnt it, you bought it!");
+                        if (Deaf)
+                            pline(msgc_unpaid,
+                                  "The damage is placed on your bill.");
+                        else
+                            verbalize(msgc_unpaid,
+                                      "You burnt it, you bought it!");
                         bill_dummy_object(obj);
                     }
                     obj->oeroded++;
@@ -2001,10 +2006,13 @@ djinni_from_bottle(struct obj *obj)
     if (!Blind) {
         pline_implied(msgc_occstart, "In a cloud of smoke, %s emerges!",
               a_monnam(mtmp));
-        pline_implied(msgc_npcvoice, "%s speaks.", Monnam(mtmp));
+        pline_implied(msgc_npcvoice, "%s speaks%s.", Monnam(mtmp),
+                      Deaf ? msgprintf(", but you cannot hear%s",
+                                       mhim(mtmp)) : "");
     } else {
         pline_implied(msgc_occstart, "You smell acrid fumes.");
-        pline_implied(msgc_npcvoice, "Something speaks.");
+        if (!Deaf)
+            pline_implied(msgc_npcvoice, "Something speaks.");
     }
 
     int dieroll;
@@ -2014,7 +2022,18 @@ djinni_from_bottle(struct obj *obj)
        consistent if the only 80%/20%/5% wish sources so far were djinn */
     if (wish_available(obj->blessed ? 80 : obj->cursed ? 5 : 20, &dieroll)) {
         msethostility(mtmp, FALSE, TRUE); /* show as peaceful while wishing */
-        verbalize(msgc_intrgain, "I am in your debt.  I will grant one wish!");
+        if (!Deaf)
+            verbalize(msgc_intrgain,
+                      "I am in your debt.  I will grant one wish!");
+        else if (!Blind)
+            pline_implied(msgc_intrgain, "%s seems grateful!",
+                          Monnam(mtmp));
+        /* Even if you can't hear or see the genie, you still get the wish,
+           because thinking up Evil Patch Ideas is one thing, and actually
+           implementing them is something else.  How does the character know he
+           can wish for something in that case?  We're going to wave our hands
+           and mutter something vague about "magic" and let it go at that.
+           After all, what player would complain about getting a wish? */
         makewish(1);
         mongone(mtmp);
         return;
@@ -2028,20 +2047,34 @@ djinni_from_bottle(struct obj *obj)
     /* avoid failrandom here; that may have been spammed beforehand */
     switch (dieroll % 4) {
     case 0:
-        verbalize(msgc_substitute, "You disturbed me, fool!");
+        if (!Deaf)
+            verbalize(msgc_substitute, "You disturbed me, fool!");
+        else if (!Blind)
+            pline(msgc_substitute, "%s seems upset!",
+                  msgupcasefirst(mhe(mtmp)));
         msethostility(mtmp, TRUE, TRUE);
         break;
     case 1:
-        verbalize(msgc_actionok, "Thank you for freeing me!");
+        if (!Deaf)
+            verbalize(msgc_actionok, "Thank you for freeing me!");
+        else if (!Blind)
+            pline(msgc_actionok, "%s seems quite pleased.",
+                  msgupcasefirst(mhe(mtmp)));
         tamedog(mtmp, NULL);
         break;
     case 2:
-        verbalize(msgc_actionok, "You freed me!");
+        if (!Deaf)
+            verbalize(msgc_actionok, "You freed me!");
+        else if (!Blind)
+            pline(msgc_actionok, "%s seems pleased.",
+                  msgupcasefirst(mhe(mtmp)));
         msethostility(mtmp, FALSE, TRUE);
         break;
     case 3:
-        verbalize(msgc_actionok, "It is about time!");
-        pline(msgc_monneutral, "%s vanishes.", Monnam(mtmp));
+        if (!Deaf)
+            verbalize(msgc_actionok, "It is about time!");
+        if (canseemon(mtmp))
+            pline(msgc_monneutral, "%s vanishes.", Monnam(mtmp));
         mongone(mtmp);
         break;
     }

@@ -1444,8 +1444,8 @@ lootcont:
                             goto gotit; /* two level break */
             gotit:
                 if (coffers) {
-                    verbalize
-                        (msgc_npcvoice,
+                    if (!Deaf)
+                        verbalize(msgc_npcvoice,
                          "Thank you for your contribution to reduce the debt.");
                     add_to_container(coffers, goldob);
                     coffers->owt = weight(coffers);

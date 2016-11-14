@@ -351,7 +351,7 @@ invault(void)
                     if (!Blind) pline(msgc_monneutral,
                                       "%s waves goodbye.", noit_Monnam(guard));
                 } else {
-                verbalize(msgc_npcvoice,
+                    verbalize(msgc_npcvoice,
                           "Oh, yes, of course.  Sorry to have disturbed you.");
                 }
                 mongone(guard);
@@ -363,7 +363,7 @@ invault(void)
                               "%s mouths something and looks very angry!",
                               noit_Monnam(guard));
                 } else {
-                verbalize(msgc_npcanger,
+                    verbalize(msgc_npcanger,
                           "Back from the dead, are you?  I'll remedy that!");
                 }
                 /* don't want guard to waste next turn wielding a weapon */

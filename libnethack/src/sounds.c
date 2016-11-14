@@ -456,7 +456,12 @@ beg(struct monst *mtmp)
     else if (mtmp->data->msound >= MS_HUMANOID) {
         if (!canspotmon(mtmp))
             map_invisible(mtmp->mx, mtmp->my);
-        verbalize(msgc_petwarning, "I'm hungry.");
+        if (!Deaf)
+            verbalize(msgc_petwarning, "I'm hungry.");
+        else
+            pline(msgc_petwarning,
+                  "%s seems to be saying something, but you cannot hear.",
+                  Monnam(mtmp));
     }
 }
 

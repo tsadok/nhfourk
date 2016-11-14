@@ -751,7 +751,7 @@ dog_move(struct monst *mtmp, int after)
 
             /* Guardian angel refuses to be conflicted; rather, it disappears,
                angrily, and sends in some nasties */
-            if (canspotmon(mtmp)) {
+            if (canspotmon(mtmp) && !Deaf) {
                 pline(msgc_npcvoice, "%s rebukes you, saying:", Monnam(mtmp));
                 verbalize(msgc_petfatal,
                           "Since you desire conflict, have some more!");

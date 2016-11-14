@@ -268,8 +268,11 @@ recharge(struct obj *obj, int curse_bless)
          */
         n = (int)obj->recharged;
         if (obj->otyp == WAN_WISHING) { /* never recharge these */
-            verbalize(msgc_itemloss,
-                      "Ixnay on the wishing for more wishes.");
+            if (!Deaf)
+                verbalize(msgc_itemloss,
+                          "Ixnay on the wishing for more wishes.");
+            else
+                pline(msgc_itemloss, "Nothing seems to happen.");
             return;
         } else if ((n > 0) && (n * n * n > rn2(7 * 7 * 7))) {
             /* recharge_limit */

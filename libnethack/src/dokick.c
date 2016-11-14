@@ -323,10 +323,10 @@ ghitm(struct monst * mtmp, struct obj * gold)
                     pline(msgc_actionok, "You have %ld %s in credit.",
                           (long)ESHK(mtmp)->credit,
                           currency(ESHK(mtmp)->credit));
-                } else
+                } else if (!Deaf)
                     verbalize(msgc_badidea, "Thanks, scum!");
             }
-        } else if (mtmp->ispriest) {
+        } else if (mtmp->ispriest && !Deaf) {
             if (mtmp->mpeaceful)
                 verbalize(msgc_actionok, "Thank you for your contribution.");
             else
@@ -351,9 +351,9 @@ ghitm(struct monst * mtmp, struct obj * gold)
                         msethostility(mtmp, FALSE, FALSE);
                 }
             }
-            if (mtmp->mpeaceful)
+            if (mtmp->mpeaceful && !Deaf)
                 verbalize(msgc_actionok, "That should do.  Now beat it!");
-            else
+            else if (!Deaf)
                 verbalize(msgc_failrandom, "That's not enough, coward!");
         }
 

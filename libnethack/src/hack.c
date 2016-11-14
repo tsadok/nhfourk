@@ -2869,7 +2869,7 @@ check_special_room(boolean newlev)
             break;
         case DELPHI:
             if ((mtmp = monstinroom(&mons[PM_ORACLE], roomno)) &&
-                mtmp->mpeaceful) {
+                mtmp->mpeaceful && !Deaf) {
                 verbalize(msgc_npcvoice, "%s, %s, welcome to Delphi!",
                           Hello(NULL), u.uplname);
             }

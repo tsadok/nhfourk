@@ -1673,7 +1673,8 @@ arti_speak(struct obj *obj)
     */
     if (!*line)
         line = "NetHack rumors file closed for renovation.";
-    pline_implied(msgc_npcvoice, "%s:", Tobjnam(obj, "whisper"));
+    pline_implied(msgc_npcvoice, "%s%s:", Tobjnam(obj, "whisper"),
+                  (Deaf ? " in your mind" : ""));
     verbalize(msgc_rumor, "%s", line);
     return;
 }

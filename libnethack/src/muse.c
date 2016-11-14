@@ -113,10 +113,12 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
                 /* I suspect few players will be upset that monsters */
                 /* can't wish for wands of death here.... */
                 if (rn2(2)) {
-                    verbalize(msgc_monneutral, "You freed me!");
+                    if (!Deaf)
+                        verbalize(msgc_monneutral, "You freed me!");
                     msethostility(mtmp, FALSE, TRUE);
                 } else {
-                    verbalize(msgc_monneutral, "It is about time.");
+                    if (!Deaf)
+                        verbalize(msgc_monneutral, "It is about time.");
                     if (vis)
                         pline_implied(msgc_monneutral, "%s vanishes.",
                                       Monnam(mtmp));

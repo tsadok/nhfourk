@@ -318,7 +318,10 @@ forcelock(void)
             struct obj *cobjbak = box->cobj;
 
             box->cobj = (struct obj *)0;
-            verbalize(msgc_unpaid, "You damage it, you bought it!");
+            if (Deaf)
+                pline(msgc_unpaid, "The damaged item is placed on your bill.");
+            else
+                verbalize(msgc_unpaid, "You damage it, you bought it!");
             bill_dummy_object(box);
             box->cobj = cobjbak;
         }
@@ -500,7 +503,7 @@ pick_lock(struct obj *pick, const struct nh_cmd_arg *arg)
 
         door = &level->locations[cc.x][cc.y];
         if ((mtmp = m_at(level, cc.x, cc.y)) && canseemon(mtmp)) {
-            if (picktyp == CREDIT_CARD &&
+            if (picktyp == CREDIT_CARD && !Deaf &&
                 (mtmp->isshk || mtmp->data == &mons[PM_ORACLE]))
                 verbalize(msgc_npcvoice, "No checks, no credit, no problem.");
             else

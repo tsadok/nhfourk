@@ -2617,8 +2617,9 @@ doseduce(struct monst *mon)
         mayberem(uarmu, "shirt");
 
     if ((uarm && !uskin()) || uarmc) {
-        verbalize(msgc_npcvoice, "You're such a %s; I wish...",
-                  u.ufemale ? "sweet lady" : "nice guy");
+        if (canhear())
+            verbalize(msgc_npcvoice, "You're such a %s; I wish...",
+                      u.ufemale ? "sweet lady" : "nice guy");
         if (!tele_restrict(mon))
             rloc(mon, TRUE, level);
         return 1;
@@ -2753,7 +2754,7 @@ doseduce(struct monst *mon)
         }
         if (cost > umoney)
             cost = umoney;
-        if (!cost)
+        if (canhear() && !cost)
             verbalize(msgc_moncombatgood, "It's on the house!");
         else {
             pline(msgc_itemloss, "%s takes %ld %s for services rendered!",
@@ -2779,9 +2780,9 @@ mayberem(struct obj *obj, const char *str)
     if (rn2(20) < ACURR(A_CHA)) {
         qbuf = msgprintf("\"Shall I remove your %s, %s?\"", str,
                          (!rn2(2) ? "lover" : !rn2(2) ? "dear" : "sweetheart"));
-        if (yn(qbuf) == 'n')
+        if (canhear() && (yn(qbuf) == 'n'))
             return;
-    } else {
+    } else if (!Deaf) {
         const char *hairbuf;
 
         hairbuf = msgprintf("let me run my fingers through your %s",
