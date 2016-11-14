@@ -545,6 +545,12 @@ saleable(struct monst *shkp, struct obj *obj)
 
     if (shp->symb == RANDOM_CLASS)
         return TRUE;
+    /* Special case: Izchak is willing to buy the Candelabrum.  If the high
+       price he offers for it isn't enough of a clue that it's worth keeping,
+       perhaps you should consult the Oracle.  Or spoilers.  Or something. */
+    else if (obj->otyp == CANDELABRUM_OF_INVOCATION &&
+             (strcmp(shp->name, "lighting store") == 0))
+        return TRUE;
     else
         for (i = 0; i < SIZE(shtypes[0].iprobs) && shp->iprobs[i].iprob; i++)
             if (shp->iprobs[i].itype < 0 ? shp->iprobs[i].itype ==
