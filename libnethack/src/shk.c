@@ -576,24 +576,29 @@ u_entered_shop(char *enterstring)
                 while ((pick = pick->nobj) != 0)
                     if (pick->otyp == PICK_AXE)
                         ++cnt;
-            } else {    /* assert(mattock != 0) */
-                tool = "mattock";
+            } else {
+                if (!Deaf && !muteshk(shkp)) {
+                    tool = "mattock";
+                    /* [ALI] Shopkeeper identifies mattock(s) */
+                    if (!Blind)
+                        makeknown(DWARVISH_MATTOCK);
+                } else {    /* assert(mattock != 0) */
+                    tool = "pick";
+                }
                 while ((mattock = mattock->nobj) != 0)
                     if (mattock->otyp == DWARVISH_MATTOCK)
                         ++cnt;
-                /* [ALI] Shopkeeper identifies mattock(s) */
-                if (!Blind)
-                    makeknown(DWARVISH_MATTOCK);
             }
-            if (!Deaf && !muteshk(shkp))
+            if (!Deaf && !muteshk(shkp)) {
                 verbalize(msgc_hint, NOTANGRY(shkp) ?
                           "Will you please leave your %s%s outside?" :
                           "Leave the %s%s outside.", tool, plur(cnt));
-            else
+            } else {
                 pline(msgc_hint, "%s %s to let you in with %s%s%s.",
                       shkname(shkp),
                       NOTANGRY(shkp) ? "is hesitant" : "refuses",
                       ((cnt == 1) ? "" : "a "), tool, plur(cnt));
+            }
             should_block = TRUE;
         } else if (u.usteed) {
             if (!Deaf && !muteshk(shkp))

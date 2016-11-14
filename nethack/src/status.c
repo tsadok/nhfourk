@@ -138,6 +138,7 @@ static const struct {
       /* misc bad */
       { "Greasy", CLR_BRIGHT_BLUE, -1 },
       { "Blind", CLR_BRIGHT_BLUE, -1 },
+      { "Deaf", CLR_BRIGHT_BLUE, -1 },
       { "Conf", CLR_BRIGHT_BLUE, -1 },
       { "Lame", CLR_BRIGHT_BLUE, -1 },
       { "Stun", CLR_BRIGHT_BLUE, -1 },

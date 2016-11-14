@@ -296,13 +296,15 @@ make_player_info(struct nh_player_info *pi)
         strncpy(pi->statusitems[pi->nr_items++], "Petrify", ITEMLEN);
     if (u.ustuck && !Engulfed && !sticks(youmonst.data))      /* 12 */
         strncpy(pi->statusitems[pi->nr_items++], "Held", ITEMLEN);
-    if (enc_stat[cap])  /* 13 */
+    if (enc_stat[cap])  /* 13, encumbrance level */
         strncpy(pi->statusitems[pi->nr_items++], enc_stat[cap], ITEMLEN);
-    if (Levitation)     /* 14 */
+    if (Deaf) /* 14 */
+        strncpy(pi->statusitems[pi->nr_items++], "Deaf", ITEMLEN);
+    if (Levitation)     /* 15 */
         strncpy(pi->statusitems[pi->nr_items++], "Lev", ITEMLEN);
     else if (Flying)
         strncpy(pi->statusitems[pi->nr_items++], "Fly", ITEMLEN);
-    if (uwep && is_pick(uwep)) /* 15 (first case) */
+    if (uwep && is_pick(uwep)) /* 16 (first case) */
         strncpy(pi->statusitems[pi->nr_items++], "Dig", ITEMLEN);
     else if (uwep && is_launcher(uwep))
         strncpy(pi->statusitems[pi->nr_items++], "Ranged", ITEMLEN);
@@ -319,7 +321,7 @@ make_player_info(struct nh_player_info *pi)
     }
     if (youmonst.mslowed > 0)
         strncpy(pi->statusitems[pi->nr_items++], "Slow", ITEMLEN);
-    if (u.utrap)        /* 16 */
+    if (u.utrap)        /* 17 */
         strncpy(pi->statusitems[pi->nr_items++], trap_stat[u.utraptype],
                 ITEMLEN);
 
