@@ -1171,6 +1171,7 @@ rottenfood(struct obj *obj)
                 (u.usteed) ? "saddle" : surface(u.ux, u.uy);
         pline(msgc_statusbad, "The world spins and %s %s.", what, where);
         if (!Levitation && !Flying && !u.usteed &&
+            !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE) &&
             is_damp_terrain(level, u.ux, u.uy))
             water_damage_chain(invent, FALSE);
         helpless(rnd(10), hr_fainted, "unconscious from rotten food", NULL);

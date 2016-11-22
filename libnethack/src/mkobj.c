@@ -1278,7 +1278,8 @@ is_flammable(const struct obj * otmp)
     /* Candles can be burned, but it makes no sense for them to be fireproofed. */
     if (Is_candle(otmp))
         return FALSE;
-    if (objects[otyp].oc_oprop == FIRE_RES || otyp == WAN_FIRE)
+    if (objects[otyp].oc_oprop == FIRE_RES ||
+        objects[otyp].oc_oprop2 == FIRE_RES || otyp == WAN_FIRE)
         return FALSE;
 
     return (boolean) ((omat <= WOOD && omat != LIQUID) || omat == PLASTIC);

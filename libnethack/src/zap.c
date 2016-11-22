@@ -3907,6 +3907,7 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
 /* note: worn amulet of life saving must be preserved in order to operate */
 #define oresist_disintegration(obj) \
             (objects[obj->otyp].oc_oprop == DISINT_RES || \
+             objects[obj->otyp].oc_oprop2 == DISINT_RES || \
              obj_resists(obj, 5, 50) || is_quest_artifact(obj) || \
              obj == m_amulet)
 

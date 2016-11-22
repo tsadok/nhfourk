@@ -38,6 +38,8 @@ struct monst {
 # define OBJ(name,desc) name,desc
 # define OBJECT(obj,bits,prp,sym,prob,dly,wt,cost,sdam,ldam,oc1,oc2,nut,color) \
              {obj}
+# define OBJECT2(obj,bits,p1,p2,sym,prob,dly,wt,cost,sd,ld,oc1,oc2,nut,color) \
+             {obj}
 
 const struct objdescr obj_descr[] = {
 #else
@@ -46,8 +48,13 @@ const struct objdescr obj_descr[] = {
 # define BITS(nmkn,mrg,uskn,ctnr,mgc,chrg,uniq,nwsh,big,tuf,dir,sub,mtrl) \
         nmkn,mrg,uskn,0,mgc,chrg,uniq,nwsh,0,big,tuf,dir,mtrl,sub
 # define OBJECT(obj,bits,prp,sym,prob,dly,wt,cost,sdam,ldam,oc1,oc2,nut,color) \
-        {0, 0, NULL, bits, prp, sym, dly, COLOR_FIELD(color) \
+        {0, 0, NULL, bits, prp, 0, sym, dly, COLOR_FIELD(color) \
          prob, wt, cost, sdam, ldam, oc1, oc2, nut}
+/* OBJECT2 differs from OBJECT by having the second property field.
+   Currently, it is only used by certain kinds of armor. */
+# define OBJECT2(obj,bits,prp,pr2,sym,prob,dly,wt,cost,sd,ld,oc1,oc2,nut,clr) \
+        {0, 0, NULL, bits, prp, pr2, sym, dly, COLOR_FIELD(clr) \
+         prob, wt, cost, sd, ld, oc1, oc2, nut}
 # define HARDGEM(n) (n >= 8)
 
 struct objclass *objects;
@@ -255,7 +262,15 @@ const struct objclass const_objects[] = {
                 OBJ(name,desc), BITS(kn,0,1,0,mgc,1,0,0,blk,0,0,sub,metal), \
                 power, ARMOR_CLASS, prob, delay, wt, cost, minsz, maxsz, \
                 10 - ac, can, wt, c )
-#define HELM(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
+/* But some armor provides two extrinsics: */
+#define ARMORTWO(name,desc,kn,mgc,blk,pwr1,pwr2,prob,delay,wt,cost,ac,can, \
+                 minsz, maxsz, sub, metal, c)                           \
+        OBJECT2( \
+                OBJ(name,desc), BITS(kn,0,1,0,mgc,1,0,0,blk,0,0,sub,metal), \
+                pwr1, pwr2, ARMOR_CLASS, prob, delay, wt, cost, minsz, maxsz, \
+                10 - ac, can, wt, c )
+
+#define HELM(name,desc,kn,mgc,power,prob,delay,wt,cost,ac,can,minsz,maxsz, \
              metal,c)                                                   \
         ARMOR(name,desc,kn,mgc,0,power,prob,delay,wt,cost,ac,can,minsz,maxsz,\
               ARM_HELM,metal,c)
@@ -311,34 +326,48 @@ const struct objclass const_objects[] = {
  *      (2) That the order of the dragon scale mail and dragon scales is the
  *          the same defined in monst.c.
  */
-#define DRGN_ARMR(name,mgc,power,cost,ac,color) \
-    ARMOR(name,NULL,1,mgc,1,power,0,5,40,cost,ac,0,MZ_HUMAN,MZ_HUMAN,   \
-          ARM_SUIT,DRAGON_HIDE,color)
+#define DRGN_ARMR(name,mgc,powerone,powertwo,cost,ac,color)     \
+    ARMORTWO(name,NULL,1,mgc,1,powerone,powertwo,0,5,40,cost,ac,0, \
+          MZ_HUMAN,MZ_HUMAN,ARM_SUIT,DRAGON_HIDE,color)
 /* 3.4.1: dragon scale mail reclassified as "magic" since magic is
    needed to create them */
-    DRGN_ARMR("gray dragon scale mail", 1, ANTIMAGIC, 1200, 1, CLR_GRAY),
-    DRGN_ARMR("silver dragon scale mail", 1, REFLECTING, 1200, 1,
+    DRGN_ARMR("gray dragon scale mail", 1, ANTIMAGIC, 0, 1200, 1, CLR_GRAY),
+    DRGN_ARMR("silver dragon scale mail", 1, REFLECTING, 0, 1200, 1,
               DRAGON_SILVER),
-    DRGN_ARMR("red dragon scale mail", 1, FIRE_RES, 900, 1, CLR_RED),
-    DRGN_ARMR("white dragon scale mail", 1, COLD_RES, 900, 1, CLR_WHITE),
-    DRGN_ARMR("orange dragon scale mail", 1, SLEEP_RES, 900, 1, CLR_ORANGE),
-    DRGN_ARMR("black dragon scale mail", 1, DISINT_RES, 1200, 1, CLR_BLACK),
-    DRGN_ARMR("blue dragon scale mail", 1, SHOCK_RES, 900, 1, CLR_BLUE),
-    DRGN_ARMR("green dragon scale mail", 1, POISON_RES, 900, 1, CLR_GREEN),
-    DRGN_ARMR("yellow dragon scale mail", 1, ACID_RES, 900, 1, CLR_YELLOW),
+    DRGN_ARMR("red dragon scale mail", 1, FIRE_RES, INFRAVISION,
+              900, 1, CLR_RED),
+    /* Red and white, in addition to the listed properties, also
+       provide you with the corresponding breath attack. */
+    DRGN_ARMR("white dragon scale mail", 1, COLD_RES, PROT_WATERDMG,
+              900, 1, CLR_WHITE),
+    DRGN_ARMR("orange dragon scale mail", 1, SLEEP_RES, FREE_ACTION,
+              900, 1, CLR_ORANGE),
+    DRGN_ARMR("black dragon scale mail", 1, DISINT_RES, DRAIN_RES,
+              1200, 1, CLR_BLACK),
+    DRGN_ARMR("blue dragon scale mail", 1, SHOCK_RES, SEARCHING,
+              900, 1, CLR_BLUE),
+    DRGN_ARMR("green dragon scale mail", 1, POISON_RES, SICK_RES,
+              900, 1, CLR_GREEN),
+    DRGN_ARMR("yellow dragon scale mail", 1, ACID_RES, STONE_RES,
+              900, 1, CLR_YELLOW),
 
 /* For now, only dragons leave these. */
 /* 3.4.1: dragon scales left classified as "non-magic"; they confer
    magical properties but are produced "naturally" */
-    DRGN_ARMR("gray dragon scales", 0, ANTIMAGIC, 700, 7, CLR_GRAY),
-    DRGN_ARMR("silver dragon scales", 0, REFLECTING, 700, 7, DRAGON_SILVER),
-    DRGN_ARMR("red dragon scales", 0, FIRE_RES, 500, 7, CLR_RED),
-    DRGN_ARMR("white dragon scales", 0, COLD_RES, 500, 7, CLR_WHITE),
-    DRGN_ARMR("orange dragon scales", 0, SLEEP_RES, 500, 7, CLR_ORANGE),
-    DRGN_ARMR("black dragon scales", 0, DISINT_RES, 700, 7, CLR_BLACK),
-    DRGN_ARMR("blue dragon scales", 0, SHOCK_RES, 500, 7, CLR_BLUE),
-    DRGN_ARMR("green dragon scales", 0, POISON_RES, 500, 7, CLR_GREEN),
-    DRGN_ARMR("yellow dragon scales", 0, ACID_RES, 500, 7, CLR_YELLOW),
+    DRGN_ARMR("gray dragon scales", 0, ANTIMAGIC, 0, 700, 7, CLR_GRAY),
+    DRGN_ARMR("silver dragon scales", 0, REFLECTING, 0, 700, 7, DRAGON_SILVER),
+    DRGN_ARMR("red dragon scales", 0, FIRE_RES, INFRAVISION, 500, 7, CLR_RED),
+    DRGN_ARMR("white dragon scales", 0, COLD_RES, PROT_WATERDMG,
+              500, 7, CLR_WHITE),
+    DRGN_ARMR("orange dragon scales", 0, SLEEP_RES, FREE_ACTION,
+              500, 7, CLR_ORANGE),
+    DRGN_ARMR("black dragon scales", 0, DISINT_RES, DRAIN_RES,
+              700, 7, CLR_BLACK),
+    DRGN_ARMR("blue dragon scales", 0, SHOCK_RES, SEARCHING, 500, 7, CLR_BLUE),
+    DRGN_ARMR("green dragon scales", 0, POISON_RES, SICK_RES,
+              500, 7, CLR_GREEN),
+    DRGN_ARMR("yellow dragon scales", 0, ACID_RES, STONE_RES,
+              500, 7, CLR_YELLOW),
 #undef DRGN_ARMR
 
     /* The order in which armor is defined is relevant for sacrifice_gift()
@@ -414,9 +443,9 @@ const struct objclass const_objects[] = {
           0, 0, 0, 8, 0, 10, 50, 9, 3, MZ_HUMAN, MZ_HUMAN, CLOTH, HI_CLOTH),
     CLOAK("robe", NULL,
           1, 1, 0, 3, 0, 15, 50, 8, 3, MZ_SMALL, MZ_LARGE, CLOTH, CLR_RED),
-    CLOAK("alchemy smock", "apron",
-          0, 1, POISON_RES, 9, 0, 10, 50, 9, 1, MZ_TINY, MZ_HUGE,
-          CLOTH, CLR_WHITE),
+    /* Can't use the CLOAK macro for one that provides two properties: */
+    ARMORTWO("alchemy smock", "apron",0,1,0,POISON_RES,ACID_RES,
+             9,0,10,50,9,1,MZ_TINY,MZ_HUGE, ARM_CLOAK,CLOTH,CLR_WHITE),
     CLOAK("leather cloak", NULL,
           1, 0, 0, 8, 0, 15, 40, 9, 1, MZ_HUMAN, MZ_HUMAN, LEATHER, CLR_BROWN),
 /* With shuffled appearances... */
@@ -1141,6 +1170,7 @@ const struct objclass const_objects[] = {
 /* perform recursive compilation for second structure */
 # undef OBJ
 # undef OBJECT
+# undef OBJECT2
 # define OBJECTS_PASS_2_
 # include "objects.c"
 

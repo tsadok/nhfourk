@@ -374,7 +374,7 @@ minliquid(struct monst *mtmp)
         (mtmp->mtame || !mtmp->mpeaceful) && rn2(3)) {
         if (split_mon(mtmp, NULL))
             dryup(mtmp->mx, mtmp->my, FALSE);
-        if (inpool)
+        if (inpool && !m_has_property(mtmp, PROT_WATERDMG, ANY_PROPERTY, FALSE))
             water_damage_chain(mtmp->minvent, FALSE);
         return 0;
     } else if (mtmp->data == &mons[PM_IRON_GOLEM] &&
@@ -400,7 +400,9 @@ minliquid(struct monst *mtmp)
                 return 1;
             }
         }
-        if (inshallow)
+        if (m_has_property(mtmp, PROT_WATERDMG, ANY_PROPERTY, FALSE))
+            ;
+        else if (inshallow)
             water_damage(which_armor(mtmp, os_armf), NULL, FALSE);
         else
             water_damage_chain(mtmp->minvent, FALSE);
@@ -482,7 +484,8 @@ minliquid(struct monst *mtmp)
             mondead(mtmp);
             if (!DEADMONSTER(mtmp)) {
                 rloc(mtmp, TRUE, mtmp->dlevel);
-                water_damage_chain(mtmp->minvent, FALSE);
+                if (!m_has_property(mtmp, PROT_WATERDMG, ANY_PROPERTY, FALSE))
+                    water_damage_chain(mtmp->minvent, FALSE);
                 minliquid(mtmp);
                 return 0;
             }

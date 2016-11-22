@@ -529,6 +529,8 @@ enlightenment(int final)
         you_are(&menu, "invulnerable");
     if (u.uedibility)
         you_can(&menu, "recognize detrimental food");
+    if (u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
+        you_are(&menu, "protected from water damage");
 
         /*** Troubles ***/
     if (Halluc_resistance)

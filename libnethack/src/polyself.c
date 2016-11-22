@@ -20,6 +20,9 @@ static void uunstick(void);
 static int armor_to_dragon(int);
 static void newman(void);
 
+static boolean inventory_provides_polyform_ability(struct obj *,
+                                                   struct polyform_ability *,
+                                                   struct attack *);
 static int dobreathe(const struct nh_cmd_arg *);
 static int dospit(const struct nh_cmd_arg *);
 static int doremove(void);
@@ -390,6 +393,57 @@ doshriek(void)
     return 1;
 }
 
+/* Check to see if an object in inventory provides a #monster ability.
+   Currently the only things that do so are equipped red or white
+   dragon scales or scale mail.
+
+   Return TRUE if they do, FALSE if they don't. Additionally, return the
+   ability itself through the pointer given as argument, if it's non-NULL.
+
+   At present, this is only used for the player. */
+static boolean
+inventory_provides_polyform_ability(struct obj *ochain,
+                                    struct polyform_ability *pa,
+                                    struct attack *mattk)
+{
+    struct polyform_ability dummy;
+    struct attack madummy;
+    struct obj *otmp;
+
+    if (!pa)
+        pa = &dummy;
+    if (!mattk)
+        mattk = &madummy;
+
+    for (otmp = ochain; otmp; otmp = otmp->nobj) {
+        if ((otmp->otyp == RED_DRAGON_SCALES ||
+             otmp->otyp == RED_DRAGON_SCALE_MAIL) &&
+            (otmp->owornmask & W_ARMOR)) {
+            pa->description = "breathe fire";
+            pa->directed = TRUE;
+            pa->handler_directed = dobreathe;
+            mattk->aatyp = mons[PM_RED_DRAGON].mattk[0].aatyp;
+            mattk->adtyp = mons[PM_RED_DRAGON].mattk[0].adtyp;
+            mattk->damn  = mons[PM_RED_DRAGON].mattk[0].damn;
+            mattk->damd  = mons[PM_RED_DRAGON].mattk[0].damd;
+            return TRUE;
+        }
+        if ((otmp->otyp == WHITE_DRAGON_SCALES ||
+             otmp->otyp == WHITE_DRAGON_SCALE_MAIL) &&
+            (otmp->owornmask & W_ARMOR)) {
+            pa->description = "breathe cold";
+            pa->directed = TRUE;
+            pa->handler_directed = dobreathe;
+            mattk->aatyp = mons[PM_WHITE_DRAGON].mattk[0].aatyp;
+            mattk->adtyp = mons[PM_WHITE_DRAGON].mattk[0].adtyp;
+            mattk->damn  = mons[PM_WHITE_DRAGON].mattk[0].damn;
+            mattk->damd  = mons[PM_WHITE_DRAGON].mattk[0].damd;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 /* Check to see if the given permonst has a polyform (#monster) ability.
 
    Return TRUE if they do, FALSE if they don't. Additionally, return the
@@ -484,7 +538,13 @@ int
 domonability(const struct nh_cmd_arg *arg)
 {
     struct polyform_ability pa;
+    struct attack dummy;
     if (has_polyform_ability(URACEDATA, &pa)) {
+        if (pa.directed)
+            return pa.handler_directed(arg);
+        else
+            return pa.handler_undirected();
+    } else if (inventory_provides_polyform_ability(invent, &pa, &dummy)) {
         if (pa.directed)
             return pa.handler_directed(arg);
         else
@@ -990,6 +1050,7 @@ rehumanize(int how, const char *killer)
 static int
 dobreathe(const struct nh_cmd_arg *arg)
 {
+    struct attack ma;
     const struct attack *mattk;
     schar dx, dy, dz;
 
@@ -1007,6 +1068,11 @@ dobreathe(const struct nh_cmd_arg *arg)
         return 0;
 
     mattk = attacktype_fordmg(youmonst.data, AT_BREA, AD_ANY);
+    if (!mattk) {
+        if (inventory_provides_polyform_ability(invent, NULL, &ma)) {
+            mattk = &ma;
+        }
+    }
     if (!mattk)
         impossible("bad breath attack?");       /* mouthwash needed... */
     else

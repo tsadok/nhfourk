@@ -425,16 +425,13 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
        warned against. */
     if (objects[otmp->otyp].oc_oprop == extrinsic && extrinsic != WARN_OF_MON)
         return mask & W_EQUIP;
+    if (objects[otmp->otyp].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
+        return mask & W_EQUIP;
 
     /* Non-artifact item properties go here. At the present:
 
-       - alchemy smocks give two extrinsics, and so only one can be placed in
-         its item property field, with the other one being special-cased;
-
        - the Amulet of Yendor is not an artifact but grants clairvoyance when
          carried */
-    if (otmp->otyp == ALCHEMY_SMOCK && extrinsic == ACID_RES)
-        return mask & W_EQUIP;
     if (otmp->otyp == AMULET_OF_YENDOR && extrinsic == CLAIRVOYANT)
         return mask | W_MASK(os_carried);
 

@@ -61,6 +61,22 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Most colors of dragon scales (and scale mail) now grant two
+   propeties, as follows:
+   + red: fire resistance and infravision
+   + white: cold resistance and protection from water damage
+     (The protection from water extends to your inventory,
+      unless you deliberately #dip something into water.)
+   + orange: sleep resistance and free action
+   + black: disintegration resistance and drain resistance
+   + blue: shock resistance and searching
+   + green: poison resistance and sickness resistance
+   + yellow: acid resistance and petrification resistance
+
+ * Red and white dragon scales (and scale mail) also now grant fire
+   and cold breath, respectively (if you don't have another #monster
+   ability; polyform abilities override this).
+
  * Several spare random appearances have been added for spellbooks,
    potions, and rings, so that not every appearance for these
    classes of items appears in every game.

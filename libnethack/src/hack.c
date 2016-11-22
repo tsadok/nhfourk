@@ -2552,9 +2552,11 @@ stillinwater:
                 pline_implied(msgc_badidea, "The water burns your flesh!");
                 losehp(dam, killer_msg(DIED, "contact with water"));
             }
-            if (verysmall(URACEDATA))
+            if (verysmall(URACEDATA) &&
+                !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
                 water_damage_chain(invent, FALSE);
-            if (!u.usteed)
+            if (!u.usteed &&
+                !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
                 (void) water_damage(uarmf, "boots", TRUE);
         }
     }

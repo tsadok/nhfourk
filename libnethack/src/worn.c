@@ -8,6 +8,8 @@
 static long find_extrinsic(struct obj *, int, int *, boolean *);
 static void m_lose_armor(struct monst *, struct obj *);
 static void m_dowear_type(struct monst *, enum objslot, boolean, boolean);
+static void update_one_mon_intrinsic(struct monst *, struct obj *, int,
+                                     boolean, boolean);
 
 /* This only allows for one blocked property per item */
 #define w_blocks(o,m) \
@@ -184,7 +186,8 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
     }
 
     for (otmp = mon->minvent; otmp; otmp = otmp->nobj)
-        if (otmp->owornmask && objects[otmp->otyp].oc_oprop == FAST)
+        if (otmp->owornmask && (objects[otmp->otyp].oc_oprop == FAST ||
+                                objects[otmp->otyp].oc_oprop2 == FAST))
             break;
     if (otmp)   /* speed boots */
         mon->mspeed = MFAST;
@@ -222,19 +225,14 @@ mon_adjust_speed(struct monst *mon, int adjust, /* positive => increase speed,
     adjust_move_offset(mon, oldmoverate, mcalcmove(mon));
 }
 
-/* armor put on or taken off; might be magical variety */
-void
-update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
-                      boolean silently)
+/* This is a helper function for update_mon_intrinsics(), which calls it once
+   for each property the function in question may provide (oprop/oprop2). */
+static void
+update_one_mon_intrinsic(struct monst *mon, struct obj *obj, int which,
+                         boolean on, boolean silently)
 {
-    int unseen;
     uchar mask;
     struct obj *otmp;
-    int which = (int)objects[obj->otyp].oc_oprop;
-
-    unseen = silently || !canseemon(mon);
-    if (!which)
-        goto maybe_blocks;
 
     if (on) {
         switch (which) {
@@ -319,6 +317,24 @@ update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
             break;
         }
     }
+}
+
+/* armor put on or taken off; might be magical variety */
+void
+update_mon_intrinsics(struct monst *mon, struct obj *obj, boolean on,
+                      boolean silently)
+{
+    int which = (int)objects[obj->otyp].oc_oprop;
+    int unseen = silently || !canseemon(mon);
+
+    if (!which)
+        goto maybe_blocks; /* If no first prop, no second prop either. */
+    update_one_mon_intrinsic(mon, obj, which, on, silently);
+
+    which = (int)objects[obj->otyp].oc_oprop2;
+    if (!which)
+        goto maybe_blocks;
+    update_one_mon_intrinsic(mon, obj, which, on, silently);
 
 maybe_blocks:
     /* obj->owornmask has been cleared by this point, so we can't use it.

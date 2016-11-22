@@ -1391,6 +1391,7 @@ ucast_wizard_spell(struct monst *mattk, struct monst *mtmp, int dmg,
 
 #define oresist_disintegration(obj) \
             (objects[obj->otyp].oc_oprop == DISINT_RES || \
+             objects[obj->otyp].oc_oprop2 == DISINT_RES || \
              obj_resists(obj, 0, 90) || is_quest_artifact(obj))
 
             if (otmp && !oresist_disintegration(otmp)) {

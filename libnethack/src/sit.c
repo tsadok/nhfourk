@@ -123,10 +123,12 @@ dosit(const struct nh_cmd_arg *arg)
     } else if (is_damp_terrain(level, u.ux, u.uy)) {
     in_water:
         pline(msgc_badidea, "You sit in the water.");
-        if (!rn2(10) && uarm)
+        if (!rn2(10) && uarm &&
+            !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
             water_damage(uarm, "armor", TRUE);
-        if (!rn2(10) && uarmf && uarmf->otyp != WATER_WALKING_BOOTS)
-            water_damage(uarm, "armor", TRUE);
+        if (!rn2(10) && uarmf && uarmf->otyp != WATER_WALKING_BOOTS &&
+            !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
+            water_damage(uarmf, "boots", TRUE);
     } else if (IS_SINK(typ)) {
 
         pline(msgc_yafm, sit_message, defexplain[S_sink]);

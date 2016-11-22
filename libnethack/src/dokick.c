@@ -989,7 +989,8 @@ dokick(const struct nh_cmd_arg *arg)
             if (!rn2(3))
                 goto ouch;
             /* make metal boots rust */
-            if (uarmf && rn2(3))
+            if (uarmf && rn2(3) &&
+                !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
                 if (!water_damage(uarmf, "metal boots", TRUE)) {
                     pline(msgc_badidea, "Your boots get wet.");
                     /* could cause short-lived fumbling here */
