@@ -61,7 +61,30 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
- * Most colors of dragon scales (and scale mail) now grant two
+ * Dragon scales are now worn in the cloak slot and no longer
+   contributes to your Defense (AC).  Their use is to grant properties.
+
+ * Dragon scale mail no longer exists as a distinct type of armor in
+   the game.  Instead, any armor that can be worn in the body-armor
+   slot (mithril, crystal plate mail, splint mail, chain mail, or even
+   orcish ring mail, can be imbued with the magical properties of the
+   dragon scales (only one color per piece of armor, though).  The way
+   to do this is to wear the armor you want to enhance, with the
+   scales overtop like a cloak, and read a scroll of enchant armor
+   (while NOT confused).  When you do this, instead of altering any of
+   your armor's enchantment in the usual way, the scroll will instead
+   imbue the underlying body armor with the properties of the scales,
+   resulting in something along the lines of a black-scaled leather
+   jacket, white-scaled studded leather armor, red-scaled bronze plate
+   mail, blue-scaled dwarven mithril, etc.  The scales themselves are
+   used up in the process.
+
+ * When wishing, it is not possible to directly specify and receive
+   dragon-scaled body armor as such.  (You can still wish for the
+   scales, of course, or for the underlying armor itself, just not for
+   the combined item.)
+
+ * Most colors of dragon scales (and scaled armor) now grant two
    propeties, as follows:
    + red: fire resistance and infravision
    + white: cold resistance and protection from water damage
@@ -72,8 +95,9 @@ Changes in 4.3.0.5:
    + blue: shock resistance and searching
    + green: poison resistance and sickness resistance
    + yellow: acid resistance and petrification resistance
+   Silver and gray scales only grant the same properties as before.
 
- * Red and white dragon scales (and scale mail) also now grant fire
+ * Red and white dragon scales (and scaled armor) also now grant fire
    and cold breath, respectively (if you don't have another #monster
    ability; polyform abilities override this).
 

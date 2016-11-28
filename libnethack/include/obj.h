@@ -114,6 +114,7 @@ struct obj {
         int spestudied;         /* # of times a spellbook has been studied */
         int fromsink;           /* a potion from a sink */
         int lastused;           /* last time a tool was used */
+        int scalecolor;         /* body armor is dragon-scaled */
     };
     unsigned oeaten;            /* nutrition left in food, if partly eaten */
 
@@ -252,14 +253,13 @@ struct obj {
 /* dragon gear */
 # define Is_dragon_scales(obj)  ((obj)->otyp >= GRAY_DRAGON_SCALES && \
                                  (obj)->otyp <= YELLOW_DRAGON_SCALES)
-# define Is_dragon_mail(obj)    ((obj)->otyp >= GRAY_DRAGON_SCALE_MAIL && \
-                                 (obj)->otyp <= YELLOW_DRAGON_SCALE_MAIL)
+# define Is_dragon_mail(obj)    ((objects[(obj)->otyp].oc_armcat == os_arm) && \
+                                 ((obj)->scalecolor))
 # define Is_dragon_armor(obj)   (Is_dragon_scales(obj) || Is_dragon_mail(obj))
 # define Dragon_scales_to_pm(obj) &mons[PM_GRAY_DRAGON + (obj)->otyp \
                                        - GRAY_DRAGON_SCALES]
-# define Dragon_mail_to_pm(obj) &mons[PM_GRAY_DRAGON + (obj)->otyp \
-                                      - GRAY_DRAGON_SCALE_MAIL]
-# define Dragon_to_scales(pm)   (GRAY_DRAGON_SCALES + (pm - mons))
+# define Dragon_mail_to_pm(obj) &mons[PM_GRAY_DRAGON + (obj)->scalecolor \
+                                      - DRAGONCOLOR_GRAY]
 
 /* Elven gear */
 # define is_elven_weapon(otmp)  ((otmp)->otyp == ELVEN_ARROW\

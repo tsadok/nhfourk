@@ -2252,7 +2252,7 @@ mon_reflects(struct monst *mon, struct monst *magr,
         return TRUE;
     } else if ((orefl = which_armor(mon, os_arm)) &&
                (orefl->otyp == SILVER_DRAGON_SCALES ||
-                orefl->otyp == SILVER_DRAGON_SCALE_MAIL)) {
+                orefl->scalecolor == DRAGONCOLOR_SILVER)) {
         if (str)
             pline(combat_msgc(magr, mon, cr),
                   str, s_suffix(mon_nam(mon)), "armor");

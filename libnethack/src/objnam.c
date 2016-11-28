@@ -455,8 +455,7 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
         break;
 
     case ARMOR_CLASS:
-        /* depends on order of the dragon scales objects */
-        if (typ >= GRAY_DRAGON_SCALES && typ <= YELLOW_DRAGON_SCALES) {
+        if (typ >= FIRST_DRAGON_SCALES && typ <= LAST_DRAGON_SCALES) {
             buf = msgcat("set of ", actualn);
             break;
         }
@@ -684,7 +683,7 @@ add_erosion_words(const struct obj *obj, const char *prefix)
 {
     boolean iscrys = (obj->otyp == CRYSKNIFE);
 
-    if (!is_damageable(obj) && !iscrys)
+    if (!is_damageable(obj) && !iscrys && !(obj->scalecolor))
         return prefix;
 
     /* The only cases where any of these bits do double duty are for rotted
@@ -713,7 +712,9 @@ add_erosion_words(const struct obj *obj, const char *prefix)
     }
     if ((obj->rknown || turnstate.generating_dump) && obj->oerodeproof)
         return msgprintf("%s%s%s%s", prefix, (obj->rknown ? "" : "["),
-                         (iscrys ? "fixed" : is_rustprone(obj) ?
+                         (Is_dragon_mail(obj) ? (msgprintf("%s-scaled",
+                                          DRAGONCOLOR_NAME(obj->scalecolor))) :
+                          iscrys ? "fixed" : is_rustprone(obj) ?
                           "rustproof" :
                           /* Should we use "stainless" instead? */
                           is_corrodeable(obj) ? "corrodeproof" :
@@ -1682,10 +1683,7 @@ static const struct o_range o_ranges[] = {
     {"shoes", ARMOR_CLASS, LOW_BOOTS, IRON_SHOES},
     {"cloak", ARMOR_CLASS, MUMMY_WRAPPING, CLOAK_OF_DISPLACEMENT},
     {"shirt", ARMOR_CLASS, HAWAIIAN_SHIRT, T_SHIRT},
-    {"dragon scales",
-     ARMOR_CLASS, GRAY_DRAGON_SCALES, YELLOW_DRAGON_SCALES},
-    {"dragon scale mail",
-     ARMOR_CLASS, GRAY_DRAGON_SCALE_MAIL, YELLOW_DRAGON_SCALE_MAIL},
+    {"dragon scales", ARMOR_CLASS, FIRST_DRAGON_SCALES, LAST_DRAGON_SCALES},
     {"sword", WEAPON_CLASS, SHORT_SWORD, KATANA},
     {"gray stone", GEM_CLASS, LUCKSTONE, FLINT},
     {"grey stone", GEM_CLASS, LUCKSTONE, FLINT},
@@ -1864,7 +1862,6 @@ static const struct alt_spellings {
     {"saber", SILVER_SABER},
     {"silver sabre", SILVER_SABER},
     {"smooth shield", SHIELD_OF_REFLECTION},
-    {"grey dragon scale mail", GRAY_DRAGON_SCALE_MAIL},
     {"grey dragon scales", GRAY_DRAGON_SCALES},
     {"enchant armour", SCR_ENCHANT_ARMOR},
     {"destroy armour", SCR_DESTROY_ARMOR},
@@ -2822,11 +2819,6 @@ typfnd:
             if (Has_contents(otmp) && verysmall(&mons[mntmp]))
                 delete_contents(otmp);  /* no spellbook */
             otmp->spe = ishistoric ? STATUE_HISTORIC : 0;
-            break;
-        case SCALE_MAIL:
-            /* Dragon mail - depends on the order of objects & dragons. */
-            if (mntmp >= PM_GRAY_DRAGON && mntmp <= PM_YELLOW_DRAGON)
-                otmp->otyp = GRAY_DRAGON_SCALE_MAIL + mntmp - PM_GRAY_DRAGON;
             break;
         }
     }

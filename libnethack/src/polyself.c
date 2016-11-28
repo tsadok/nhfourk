@@ -17,7 +17,7 @@ static void polyman(const char *, const char *);
 static void break_armor(boolean);
 static void drop_weapon(int, boolean);
 static void uunstick(void);
-static int armor_to_dragon(int);
+static int armor_to_dragon(struct obj *, struct obj *);
 static void newman(void);
 
 static boolean inventory_provides_polyform_ability(struct obj *,
@@ -236,9 +236,10 @@ polyself(boolean forcecontrol)
     int old_light, new_light;
     int mntmp = NON_PM;
     int tries = 0;
-    boolean draconian = (uarm && !uskin() &&
-                         uarm->otyp >= GRAY_DRAGON_SCALE_MAIL &&
-                         uarm->otyp <= YELLOW_DRAGON_SCALES);
+    boolean draconian = ((uarmc && !uskin() &&
+                          ((uarmc->otyp >= GRAY_DRAGON_SCALES &&
+                            uarmc->otyp <= YELLOW_DRAGON_SCALES))) ||
+                         (uarm && !uskin() && uarm->scalecolor));
     boolean iswere = (u.ulycn >= LOW_PM || is_were(youmonst.data));
     boolean isvamp = (youmonst.data->mlet == S_VAMPIRE ||
                       u.umonnum == PM_VAMPIRE_BAT);
@@ -276,13 +277,13 @@ polyself(boolean forcecontrol)
         if (tries == 5)
             pline(msgc_yafm, "That's enough tries!");
         /* allow skin merging, even when polymorph is controlled */
-        if (draconian && (mntmp == armor_to_dragon(uarm->otyp) || tries == 5))
+        if (draconian && (mntmp == armor_to_dragon(uarmc, uarm) || tries == 5))
             goto do_merge;
     } else if (draconian || iswere || isvamp) {
         /* special changes that don't require polyok() */
         if (draconian) {
         do_merge:
-            mntmp = armor_to_dragon(uarm->otyp);
+            mntmp = armor_to_dragon(uarmc, uarm);
             if (!(mvitals[mntmp].mvflags & G_GENOD)) {
                 /* allow G_EXTINCT */
                 pline(msgc_statusbad, "You merge with your scaly armor.");
@@ -417,7 +418,7 @@ inventory_provides_polyform_ability(struct obj *ochain,
 
     for (otmp = ochain; otmp; otmp = otmp->nobj) {
         if ((otmp->otyp == RED_DRAGON_SCALES ||
-             otmp->otyp == RED_DRAGON_SCALE_MAIL) &&
+             otmp->scalecolor == DRAGONCOLOR_RED) &&
             (otmp->owornmask & W_ARMOR)) {
             pa->description = "breathe fire";
             pa->directed = TRUE;
@@ -429,7 +430,7 @@ inventory_provides_polyform_ability(struct obj *ochain,
             return TRUE;
         }
         if ((otmp->otyp == WHITE_DRAGON_SCALES ||
-             otmp->otyp == WHITE_DRAGON_SCALE_MAIL) &&
+             otmp->scalecolor == DRAGONCOLOR_WHITE) &&
             (otmp->owornmask & W_ARMOR)) {
             pa->description = "breathe cold";
             pa->directed = TRUE;
@@ -842,7 +843,7 @@ break_armor(boolean noisy)
             setequip(os_arm, NULL, em_silent);
             useup(otmp);
     }
-    if ( (((otmp = uarmc) != 0)) &&
+    if ( (((otmp = uarmc) != 0)) && (otmp != uskin()) &&
          (breakarm(youmonst.data, &objects[otmp->otyp]))) {
             if (otmp->oartifact) {
                 if (noisy)
@@ -874,7 +875,7 @@ break_armor(boolean noisy)
             dropx(otmp);
         }
     }
-    if ( (((otmp = uarmc) != 0)) &&
+    if ( (((otmp = uarmc) != 0)) && (otmp != uskin()) &&
          (sliparm(youmonst.data, &objects[otmp->otyp]))) {
             if (noisy) {
                 if (is_whirly(youmonst.data))
@@ -1469,14 +1470,18 @@ uunstick(void)
     u.ustuck = 0;
 }
 
-/* Returns uarm if it's embedded in your skin, otherwise NULL. */
+/* Returns whichever armor is embedded in your skin, otherwise NULL. */
 struct obj *
 uskin(void)
 {
-    if (!uarm) return NULL;
-    int mntmp = armor_to_dragon(uarm->otyp);
-    if (u.umonnum == mntmp)
+    if (!uarm && !uarmc)
+        return NULL;
+    int mntmp  = armor_to_dragon(uarmc, uarm);
+    int mntmpb = armor_to_dragon(NULL, uarm);
+    if ((u.umonnum == mntmp) && (mntmpb == mntmp))
         return uarm;
+    else if (u.umonnum == mntmp)
+        return uarmc;
     return NULL;
 }
 
@@ -1725,39 +1730,61 @@ ugolemeffects(int damtype, int dam)
 }
 
 static int
-armor_to_dragon(int atyp)
+armor_to_dragon(struct obj *scales, struct obj *mail)
 {
-    switch (atyp) {
-    case GRAY_DRAGON_SCALE_MAIL:
-    case GRAY_DRAGON_SCALES:
-        return PM_GRAY_DRAGON;
-    case SILVER_DRAGON_SCALE_MAIL:
-    case SILVER_DRAGON_SCALES:
-        return PM_SILVER_DRAGON;
-    case RED_DRAGON_SCALE_MAIL:
-    case RED_DRAGON_SCALES:
-        return PM_RED_DRAGON;
-    case ORANGE_DRAGON_SCALE_MAIL:
-    case ORANGE_DRAGON_SCALES:
-        return PM_ORANGE_DRAGON;
-    case WHITE_DRAGON_SCALE_MAIL:
-    case WHITE_DRAGON_SCALES:
-        return PM_WHITE_DRAGON;
-    case BLACK_DRAGON_SCALE_MAIL:
-    case BLACK_DRAGON_SCALES:
-        return PM_BLACK_DRAGON;
-    case BLUE_DRAGON_SCALE_MAIL:
-    case BLUE_DRAGON_SCALES:
-        return PM_BLUE_DRAGON;
-    case GREEN_DRAGON_SCALE_MAIL:
-    case GREEN_DRAGON_SCALES:
-        return PM_GREEN_DRAGON;
-    case YELLOW_DRAGON_SCALE_MAIL:
-    case YELLOW_DRAGON_SCALES:
-        return PM_YELLOW_DRAGON;
-    default:
-        return -1;
+    if (mail) {
+        switch (mail->scalecolor) {
+        case DRAGONCOLOR_GRAY:
+            return PM_GRAY_DRAGON;
+        case DRAGONCOLOR_SILVER:
+            return PM_SILVER_DRAGON;
+        case DRAGONCOLOR_RED:
+            return PM_RED_DRAGON;
+        case DRAGONCOLOR_WHITE:
+            return PM_WHITE_DRAGON;
+        case DRAGONCOLOR_ORANGE:
+            return PM_ORANGE_DRAGON;
+        case DRAGONCOLOR_BLACK:
+            return PM_BLACK_DRAGON;
+        case DRAGONCOLOR_BLUE:
+            return PM_BLUE_DRAGON;
+        case DRAGONCOLOR_GREEN:
+            return PM_GREEN_DRAGON;
+        case DRAGONCOLOR_YELLOW:
+            return PM_YELLOW_DRAGON;
+        default:
+            impossible("Unknown dragon scale color: %d", mail->scalecolor);
+            /* Fall Through */
+        case DRAGONCOLOR_NONE:
+            /* Don't return until we check the cloak slot for scales. */
+            break;
+        }
     }
+    if (scales) {
+        switch (scales->otyp) {
+        case GRAY_DRAGON_SCALES:
+            return PM_GRAY_DRAGON;
+        case SILVER_DRAGON_SCALES:
+            return PM_SILVER_DRAGON;
+        case RED_DRAGON_SCALES:
+            return PM_RED_DRAGON;
+        case ORANGE_DRAGON_SCALES:
+            return PM_ORANGE_DRAGON;
+        case WHITE_DRAGON_SCALES:
+            return PM_WHITE_DRAGON;
+        case BLACK_DRAGON_SCALES:
+            return PM_BLACK_DRAGON;
+        case BLUE_DRAGON_SCALES:
+            return PM_BLUE_DRAGON;
+        case GREEN_DRAGON_SCALES:
+            return PM_GREEN_DRAGON;
+        case YELLOW_DRAGON_SCALES:
+            return PM_YELLOW_DRAGON;
+        default:
+            return -1;
+        }
+    }
+    return -1;
 }
 
 /*polyself.c*/

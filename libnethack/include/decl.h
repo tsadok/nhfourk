@@ -323,6 +323,36 @@ enum target_location_units {
     TLU_EOF
 };
 
+/* These must be in the same order as the dragons themselves in monst.c and also
+   the dragon scales in objects.c.  Further, if any new colors are added,
+   armor_to_dragon() in polyself.c must be updated to cover them. */
+enum nh_dragon_color {
+    DRAGONCOLOR_NONE = 0,
+    DRAGONCOLOR_GRAY = 1,
+    DRAGONCOLOR_SILVER,
+    DRAGONCOLOR_RED,
+    DRAGONCOLOR_WHITE,
+    DRAGONCOLOR_ORANGE,
+    DRAGONCOLOR_BLACK,
+    DRAGONCOLOR_BLUE,
+    DRAGONCOLOR_GREEN,
+    DRAGONCOLOR_YELLOW
+};
+#define DRAGONCOLOR_FIRST DRAGONCOLOR_GRAY
+#define DRAGONCOLOR_LAST  DRAGONCOLOR_YELLOW
+#define FIRST_DRAGON_SCALES GRAY_DRAGON_SCALES
+#define LAST_DRAGON_SCALES YELLOW_DRAGON_SCALES
+
+#define DRAGONCOLOR_NAME(x) (((x == DRAGONCOLOR_GRAY)   ? "gray"   : \
+                              (x == DRAGONCOLOR_SILVER) ? "silver" : \
+                              (x == DRAGONCOLOR_RED)    ? "red"    : \
+                              (x == DRAGONCOLOR_WHITE)  ? "white"  : \
+                              (x == DRAGONCOLOR_ORANGE) ? "orange" : \
+                              (x == DRAGONCOLOR_BLACK)  ? "black"  : \
+                              (x == DRAGONCOLOR_BLUE)   ? "blue"   : \
+                              (x == DRAGONCOLOR_GREEN)  ? "green"  : \
+                              (x == DRAGONCOLOR_YELLOW) ? "yellow" : \
+                              "clear"))
 extern struct sinfo {
     int game_running;   /* ok to call nh_do_move */
     int gameover;       /* self explanatory? */

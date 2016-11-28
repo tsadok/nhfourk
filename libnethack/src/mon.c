@@ -194,6 +194,7 @@ make_corpse(struct monst *mtmp)
     int mndx = monsndx(mdat);
 
     switch (mndx) {
+        /* TODO: handle elder and great dragons similarly. */
     case PM_GRAY_DRAGON:
     case PM_SILVER_DRAGON:
     case PM_RED_DRAGON:

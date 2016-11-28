@@ -102,6 +102,18 @@ mk_mplayer_armor(struct monst *mon, short typ, enum rng rng)
         curse(obj);
     if (!rn2_on_rng(3, rng))
         bless(obj);
+    /* Players usually prefer dragon-scaled armor. */
+    if (obj && objects[obj->otyp].oc_armcat == os_arm && rn2_on_rng(6, rng)) {
+        /* Certain scale colors are particularly popular: */
+        if (rn2_on_rng(3,rng))
+            obj->scalecolor = DRAGONCOLOR_SILVER;
+        else if (rn2_on_rng(2,rng))
+            obj->scalecolor = DRAGONCOLOR_GRAY;
+        else
+            obj->scalecolor = DRAGONCOLOR_FIRST
+                + rn2_on_rng(DRAGONCOLOR_LAST + 1 - DRAGONCOLOR_FIRST, rng);
+    }
+        
     /* Most players who get to the endgame who have cursed equipment have it
        because the wizard or other monsters cursed it, so its chances of having
        plusses is the same as usual.... */
@@ -132,8 +144,10 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                         rng == rng_main ? NO_MM_FLAGS : MM_ALLLEVRNG)) != 0) {
         short weapon = rn2_on_rng(2, rng) ?
             LONG_SWORD : rnd_class(SPEAR, BULLWHIP, rng);
-        short armor =
-            rnd_class(GRAY_DRAGON_SCALE_MAIL, YELLOW_DRAGON_SCALE_MAIL, rng);
+        short armor = rn2_on_rng(5, rng) ?
+            rnd_class(ELVEN_MITHRIL_COAT, DWARVISH_MITHRIL_COAT, rng) :
+            rn2_on_rng(3, rng) ? CRYSTAL_PLATE_MAIL :
+            rnd_class(CHAIN_MAIL, CRYSTAL_PLATE_MAIL, rng);
         short cloak = !rn2_on_rng(8, rng) ? STRANGE_OBJECT :
             rnd_class(OILSKIN_CLOAK, CLOAK_OF_DISPLACEMENT, rng);
         short helm = !rn2_on_rng(8, rng) ? STRANGE_OBJECT :
@@ -159,6 +173,8 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
         case PM_ARCHEOLOGIST:
             if (rn2_on_rng(2, rng))
                 weapon = BULLWHIP;
+            if (!rn2_on_rng(7, rng))
+                armor = LEATHER_JACKET;
             break;
         case PM_BARBARIAN:
             if (rn2_on_rng(2, rng)) {
@@ -189,6 +205,10 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                     HELM_OF_BRILLIANCE : HELM_OF_TELEPATHY;
             if (rn2_on_rng(2, rng))
                 shield = STRANGE_OBJECT;
+            if (rn2_on_rng(2, rng))
+                armor = STUDDED_LEATHER_ARMOR;
+            else if (rn2_on_rng(2, rng))
+                armor = LEATHER_ARMOR;
             break;
         case PM_KNIGHT:
             if (rn2_on_rng(4, rng))
@@ -209,6 +229,10 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 weapon = MACE;
             if (rn2_on_rng(2, rng))
                 armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+            else if (rn2_on_rng(3, rng))
+                armor = STUDDED_LEATHER_ARMOR;
+            else if (rn2_on_rng(2, rng))
+                armor = LEATHER_ARMOR;
             if (rn2_on_rng(4, rng))
                 cloak = ROBE;
             if (rn2_on_rng(4, rng))
@@ -228,6 +252,8 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
         case PM_SAMURAI:
             if (rn2_on_rng(2, rng))
                 weapon = KATANA;
+            if (!rn2_on_rng(3, rng))
+                armor = SPLINT_MAIL;
             break;
         case PM_TOURIST:
             /* Defaults are just fine */
@@ -242,8 +268,8 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(4, rng))
                 weapon = rn2_on_rng(2, rng) ? QUARTERSTAFF : ATHAME;
             if (rn2_on_rng(2, rng)) {
-                armor = rn2_on_rng(2, rng) ?
-                    BLACK_DRAGON_SCALE_MAIL : SILVER_DRAGON_SCALE_MAIL;
+                armor = rn2_on_rng(3, rng) ?
+                    STUDDED_LEATHER_ARMOR : LEATHER_ARMOR;
                 cloak = CLOAK_OF_MAGIC_RESISTANCE;
             }
             if (rn2_on_rng(4, rng))

@@ -428,6 +428,15 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
     if (objects[otmp->otyp].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
         return mask & W_EQUIP;
 
+    /* Handle dragon-scaled armor: */
+    if ((objects[otmp->otyp].oc_armcat == os_arm) && (otmp->scalecolor)) {
+        int scale = FIRST_DRAGON_SCALES + otmp->scalecolor - DRAGONCOLOR_FIRST;
+        if (objects[scale].oc_oprop == extrinsic && extrinsic != WARN_OF_MON)
+            return mask & W_EQUIP;
+        if (objects[scale].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
+            return mask & W_EQUIP;
+    }
+
     /* Non-artifact item properties go here. At the present:
 
        - the Amulet of Yendor is not an artifact but grants clairvoyance when

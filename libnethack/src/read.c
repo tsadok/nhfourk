@@ -932,20 +932,69 @@ seffects(struct obj *sobj, boolean *known)
             special_armor = is_elven_armor(otmp) || (Role_if(PM_WIZARD) &&
                                                      otmp->otyp == CORNUTHAUM);
             if (sobj->cursed)
-                same_color = (otmp->otyp == BLACK_DRAGON_SCALE_MAIL ||
-                              otmp->otyp == BLACK_DRAGON_SCALES);
+                same_color = (otmp->otyp == BLACK_DRAGON_SCALES ||
+                              otmp->scalecolor == DRAGONCOLOR_BLACK);
             else
-                same_color = (otmp->otyp == SILVER_DRAGON_SCALE_MAIL ||
+                same_color = (otmp->scalecolor == DRAGONCOLOR_SILVER ||
                               otmp->otyp == SILVER_DRAGON_SCALES ||
                               otmp->otyp == SHIELD_OF_REFLECTION);
             if (Blind)
                 same_color = FALSE;
 
-            /* a custom RNG for this would only give marginal benefits:
-               intentional overenchantment attemps are rare */
-
             /* KMH -- catch underflow */
             s = sobj->cursed ? -otmp->spe : otmp->spe;
+
+            /* If you are wearing dragon scales over body armor, the armor
+               becomes scaled.  This overrides the random choice of which armor
+               to enchant.  The code for this makes some assumptions about the
+               order of the dragons, their scales, and the dragoncolor enum. */
+            if (uarmc && uarmc->otyp >= FIRST_DRAGON_SCALES &&
+                uarmc->otyp <= LAST_DRAGON_SCALES && uarm) {
+                int clr = DRAGONCOLOR_FIRST +
+                    (uarmc->otyp - FIRST_DRAGON_SCALES);
+                struct obj *armor  = uarm;
+                struct obj *scales = uarmc;
+                enum msg_channel msgc_scaleevap = msgc_consequence;
+                if (armor->scalecolor == clr) {
+                    msgc_scaleevap = msgc_itemloss;
+                    pline(msgc_itemrepair, /* for lack of a better channel */
+                          "The scaly sheen on your %s still seems %s.",
+                          xname(armor), hcolor(DRAGONCOLOR_NAME(clr)));
+                }
+                else if (uarm->scalecolor)
+                    pline(msgc_itemrepair, /* there's no itemneutral */
+                          "The scaly sheen on your %s changes from %s to %s.",
+                          xname(armor),
+                          hcolor(DRAGONCOLOR_NAME(armor->scalecolor)),
+                          hcolor(DRAGONCOLOR_NAME(clr)));
+                else
+                    pline(msgc_itemrepair,
+                          "Your %s acquires an interesting %s scaly sheen!",
+                          xname(uarm), hcolor(DRAGONCOLOR_NAME(clr)));
+                setworn(NULL, W_MASK(os_arm));
+                setworn(NULL, W_MASK(os_armc));
+                armor->scalecolor = clr;
+                armor->oerodeproof = 1; /* Dragon scales are impervious to fire
+                                           and other such forms of damage.
+                                           Armor surfaced with scales, too. */
+                armor->rknown = 1; /* The scales are quite obvious, both
+                                      visually and to tactile inspection. */
+                armor->cursed = 0;
+                if (sobj->blessed) {
+                    armor->oeroded = armor->oeroded2 = 0;
+                    armor->blessed = 1;
+                }
+                setworn(armor, W_MASK(os_arm));
+                *known = TRUE;
+                if (scales->unpaid && s > 0)
+                    adjust_bill_val(scales);
+                pline_implied(msgc_scaleevap, "The scales have been absorbed.");
+                useup(scales);
+                break;
+            }
+
+            /* a custom RNG for this would only give marginal benefits:
+               intentional overenchantment attemps are rare */
             if (s > (special_armor ? 5 : 3) && rn2(s)) {
                 pline(msgc_itemloss,
                       "Your %s violently %s%s%s for a while, then %s.",
@@ -973,25 +1022,12 @@ seffects(struct obj *sobj, boolean *known)
                 s = 4 + rn2_on_rng(2, rng_armor_ench_4_5) - otmp->spe;
             if (s < 0 && otmp->unpaid)
                 costly_damage_obj(otmp);
-            if (s >= 0 && otmp->otyp >= GRAY_DRAGON_SCALES &&
-                otmp->otyp <= YELLOW_DRAGON_SCALES) {
-                /* dragon scales get turned into dragon scale mail */
-                pline(msgc_itemrepair, "Your %s merges and hardens!",
-                      xname(otmp));
-                setworn(NULL, W_MASK(os_arm));
-                /* assumes same order */
-                otmp->otyp =
-                    GRAY_DRAGON_SCALE_MAIL + otmp->otyp - GRAY_DRAGON_SCALES;
-                otmp->cursed = 0;
-                if (sobj->blessed) {
-                    otmp->spe++;
-                    otmp->blessed = 1;
-                }
-                otmp->known = 1;
-                setworn(otmp, W_MASK(os_arm));
-                *known = TRUE;
-                if (otmp->unpaid && s > 0)
-                    adjust_bill_val(otmp);
+            if (s >= 0 && otmp->otyp >= FIRST_DRAGON_SCALES &&
+                otmp->otyp <= LAST_DRAGON_SCALES) {
+                /* If there were body armor under the scales, we'd have handled
+                   things up above.  Ergo, this is the other case, wherein the
+                   scales get applied to the wearer as a polymorph. */
+                polyself(FALSE);
                 break;
             }
             pline((otmp->known && s == 0) ? msgc_failrandom :

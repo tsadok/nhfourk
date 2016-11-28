@@ -149,11 +149,9 @@ on_msg(struct obj *otmp)
         if (otmp->otyp == TOWEL)
             how = msgprintf(" around your %s", body_part(HEAD));
 
-        pline(msgc_actionboring, "You are now %s %s%s.%s",
+        pline(msgc_actionboring, "You are now %s %s%s.",
               otmp->owornmask & W_MASK(os_arms) ? "holding" : "wearing",
-              obj_is_pname(otmp) ? the(xname(otmp)) : an(xname(otmp)), how,
-              Hallucination && otmp->otyp == BLACK_DRAGON_SCALE_MAIL
-                  ? " Kinky." : "");
+              obj_is_pname(otmp) ? the(xname(otmp)) : an(xname(otmp)), how);
     }
 }
 
@@ -608,6 +606,17 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
         turnstate.vision_full_recalc = TRUE; /* recalc vision limits */
         break;
 
+    case GRAY_DRAGON_SCALES:
+    case SILVER_DRAGON_SCALES:
+    case RED_DRAGON_SCALES:
+    case WHITE_DRAGON_SCALES:
+    case ORANGE_DRAGON_SCALES:
+    case BLACK_DRAGON_SCALES:
+    case BLUE_DRAGON_SCALES:
+    case GREEN_DRAGON_SCALES:
+    case YELLOW_DRAGON_SCALES:
+        /* These have never had a message; should they have? */
+        break;
         /* Shields, shirts, body armor: no special cases! */
     default:
         if (slot != os_arms && slot != os_armu && slot != os_arm) {

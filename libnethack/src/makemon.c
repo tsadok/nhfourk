@@ -1868,13 +1868,13 @@ superioritem(struct monst *mon, int original)
             superioritem = T_SHIRT;
             break;
         case 2:
-            superioritem = BLACK_DRAGON_SCALE_MAIL;
+            superioritem = ELVEN_MITHRIL_COAT;
             break;
         case 3:
-            superioritem = SILVER_DRAGON_SCALE_MAIL;
+            superioritem = PLATE_MAIL;
             break;
         case 4:
-            superioritem = GRAY_DRAGON_SCALE_MAIL;
+            superioritem = CRYSTAL_PLATE_MAIL;
             break;
         default:
             superioritem = T_SHIRT;
@@ -1903,6 +1903,11 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
             if ((otmp->oclass == WEAPON_CLASS) || 
                 (otmp->oclass == ARMOR_CLASS)) {
                 otmp->spe += rn2_on_rng(3, rng);
+            }
+            if ((otmp->oclass == ARMOR_CLASS) &&
+                (objects[otmp->otyp].oc_armcat == os_arm) &&
+                !rn2_on_rng(7, rng)) {
+                /* select and apply scale color */
             }
         }
         if (otmp->otyp == SPEAR || otmp->otyp == DWARVISH_SPEAR ||
