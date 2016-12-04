@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "runics.h"
 
 #define NOINVSYM        '#'
 #define CONTAINED_SYM   '>'     /* designator for inside a container */
@@ -938,8 +939,10 @@ object_selection_checks(struct obj *otmp, const char *word)
           (otmp->oclass == GEM_CLASS && !is_graystone(otmp)))) ||
         (!strcmp(word, "read") &&
          (otmp->oclass != SCROLL_CLASS && otmp->oclass != SPBOOK_CLASS &&
+          (runeslot(otmp) == os_invalid) &&
+          (!(dscr = OBJ_DESCR(objects[otyp])) || strncmpi("runed", dscr, 5)) &&
           otyp != FORTUNE_COOKIE && otyp != T_SHIRT &&
-          (otmp->oclass != RING_CLASS || (!(dscr = OBJ_DESCR(objects[otyp]))) ||
+          (otmp->oclass != RING_CLASS || (!dscr) ||
                                          (strcmp(dscr, "mood") &&
                                           strcmp(dscr, "signet") &&
                                           strcmp(dscr, "intaglio") &&

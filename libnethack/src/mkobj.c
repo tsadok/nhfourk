@@ -6,6 +6,8 @@
 #include "hack.h"
 #include "prop.h"
 #include "mkobj.h"
+#include "runes.h"
+#include "runics.h"
 
 #include <limits.h>
 
@@ -556,6 +558,12 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
 
             if (artif && !rn2_on_rng(20, rng))
                 otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
+            else if (artif && !rn2_on_rng(20, rng)) {
+                enum rune or = rn2_on_rng(RUNE_MAX + 1, rng);
+                if (rune_can_occur(or, runeslot(otmp))) {
+                    otmp->orune = or;
+                }
+            }
             else if ((otmp->spe > (1 + rn2_on_rng(5, rng))) && (!otmp->cursed))
                 otmp = oname_random_weapon(otmp, rng);
 
@@ -1805,6 +1813,7 @@ restore_obj(struct memfile *mf)
 
     otmp->otyp = mread16(mf);
 
+    otmp->orune = mread8(mf);
     otmp->ox = mread8(mf);
     otmp->oy = mread8(mf);
     otmp->spe = mread8(mf);
@@ -1897,6 +1906,7 @@ save_obj(struct memfile *mf, struct obj *obj)
 
     mwrite16(mf, obj->otyp);
 
+    mwrite8(mf, obj->orune);
     mwrite8(mf, obj->ox);
     mwrite8(mf, obj->oy);
     mwrite8(mf, obj->spe);

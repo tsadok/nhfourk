@@ -1315,6 +1315,7 @@ extern const char *distant_name(const struct obj *obj,
 extern const char *fruitname(boolean);
 extern void examine_object(struct obj *obj);
 extern const char *xname(const struct obj *);
+extern const char *xname_sansrunic(const struct obj *);
 extern const char *mshot_xname(const struct obj *);
 extern boolean the_unique_obj(const struct obj *obj);
 extern const char *doname(const struct obj *obj);

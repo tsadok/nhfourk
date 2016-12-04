@@ -682,6 +682,8 @@ void
 u_init(microseconds birthday)
 {
     int i;
+    enum rune r;
+    int rune_appearance_pool_size = 0;
 
     u.ufemale = u.initgend;
     flags.beginner = 1;
@@ -729,6 +731,40 @@ u_init(microseconds birthday)
     u.ulycn = NON_PM;
     
     u.ubirthday = birthday;
+
+    for (i = 0; rune_appearance_pool[i]; i++)
+        ;
+    rune_appearance_pool_size = i;
+    /* pline(msgc_debug, "Rune appearance pool size: %d", i); */
+    boolean rune_appearance_used[(rune_appearance_pool_size + 1)];
+    for (i = 0; i < rune_appearance_pool_size; i++)
+        rune_appearance_used[i] = FALSE;
+    for (r = RUNE_NONE; r <= RUNE_MAX; r++) {
+        int tries = 99;
+        int app = rn2(rune_appearance_pool_size);
+        while (rune_appearance_used[app] && tries--)
+            app = rn2(rune_appearance_pool_size);
+        /* On the off chance we run out of random tries,
+           revert to systematic selection. */
+        if (rune_appearance_used[app]) {
+            for (i = 0; i < rune_appearance_pool_size; i++)
+                if (!rune_appearance_used[i])
+                    app = i;
+        }
+        rune_appearance_used[app] = TRUE;
+        u.rune_appearance[r] = app;
+        u.rune_known[r] = ((r == RUNE_NONE) ||
+                           (Race_if(PM_DWARF) &&
+                            !strncmpi(rune_appearance_pool[app], "dwarv", 5)) ||
+                           (Race_if(PM_GNOME) &&
+                            !strncmpi(rune_appearance_pool[app], "gnom", 4)) ||
+                           !strncmpi(rune_appearance_pool[app], "familiar", 8)
+                           ) ? TRUE : FALSE;
+        /*
+        pline(msgc_debug, "Rune %d (%s) appearance = %d (%s)",
+              r, rune_name[r], app, rune_appearance_pool[app]);
+        */
+    }
     
     /* For now, everyone starts out with a night vision range of 1. */
     u.nv_range = 1;

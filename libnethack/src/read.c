@@ -35,6 +35,7 @@ doread(const struct nh_cmd_arg *arg)
 {
     boolean confused, known;
     struct obj *scroll;
+    const char *descr;
 
     known = FALSE;
     if (check_capacity(NULL))
@@ -226,6 +227,120 @@ doread(const struct nh_cmd_arg *arg)
             pline(msgc_cancelled, "This ring bears no inscription.");
             return 0;
         }
+    } else if (scroll->orune) {
+        break_conduct(conduct_illiterate);
+        if (Hallucination) {
+            pline(msgc_actionok, "That is one %s rune, %s.",
+                  ((!((moves + 0) % 7)) ? "totally gnarly" :
+                   (!((moves + 1) % 7)) ? "way groovy" :
+                   (!((moves + 2) % 7)) ? "psychedelic" :
+                   (!((moves + 3) % 7)) ? "mind-blowing" :
+                   (!((moves + 4) % 7)) ? msgprintf("seriously %s",
+                                                    hcolor(NULL)) :
+                   (!((moves + 5) % 7)) ? "majorly rad" : "trippy"),
+                  ((u.ufemale && !(moves % 3)) ? "dudette" : "dude"));
+        } else if (u.rune_known[scroll->orune]) {
+            if (Blind) {
+                pline(msgc_info, "You can feel a Rune of %s on the %s.",
+                      rune_name[scroll->orune],
+                      xname_sansrunic(scroll));
+            } else {
+                pline(msgc_info, "There is a Rune of %s on the %s.",
+                      rune_name[scroll->orune],
+                      xname_sansrunic(scroll));
+            }
+        } else {
+            if (Blind) {
+                pline(msgc_info, "You can feel a rune on the %s, "
+                      "but you cannot guess its meaning.",
+                      xname_sansrunic(scroll));
+            } else {
+                pline(msgc_info, "You do not know the meaning of the %s.",
+                      rune_appearance_pool[u.rune_appearance[scroll->orune]]);
+            }
+        }
+        return 1;
+    } else if ((descr = OBJ_DESCR(objects[scroll->otyp])) &&
+               !strncmpi("runed", descr, 5)) {
+        /* TODO: if (Hallucination) { ... ? */
+        if (Blind) {
+            pline(msgc_cancelled, "You cannot see the runes.");
+            return 0;
+        } else if (Race_if(PM_ELF)) {
+            /* Elvish runes, if you can read them, tell who made the item,
+               where, and when.  For practical reasons, we use the object ID.
+               This creates minor weirdness if anyone is paying very close
+               attention, particularly when joining and splitting stacks; this
+               is better than making items refuse to stack just because of
+               non-matching Elvish runes, which have no gameplay importance.
+               Note that the number of cities, the number of monarchs, the
+               number of makers, and the number of possible years numbers are
+               all relatively prime, so all combinations are possible.
+               Assigning specific monarchs and makers to specific cities
+               and years is the kind of world building Dwarf Fortress would
+               do, but that's too much hassle for our purposes here.  However,
+               some of these names do have actual meanings in Quenya. */
+            static const char *const elvish_city[] = { /* 11 of these */
+                "Aelanolir", "Arlembrond", "Brellin", "Cielerond",
+                "Citimeokal", "Erebrast", "Kalopele", "Mardiesse i Salque",
+                "Melcataure", "Pelerond", "Taurepeler", "Vanaost" };
+            static const char *const elvish_monarch[] = { /* 17 */
+                "Alasseheru", "King Linneanahrive", "Blemonir Maraingole",
+                "King Maraoma", "Queen Melimakamba", "King Menonaicele",
+                "Valief Meryale", "King Nenaranta", "King Nurosenda",
+                "King Palimerima", "Finlanir Poicacsa", "Oleros Ranetavari",
+                "King Serlonde and Queen Lintefiriel", "Henilwe Sardatolde",
+                "Lord Sinyapele", "Prince Sinyekal", "King Turemardo" };
+            static const char *const elvish_maker[] = { /* 65 = 5 * 13 */
+                "Aerod", "Aeras", "Amhel", "Amlenoth", "Amnir", "Amwe",
+                "Anelas", "Anelrian", "Arlebrimbor", "Baranhel", "Belin",
+                "Brimeloth", "Celaeros", "Celeuor", "Celeurog", "Celeuromil",
+                "Daeleth", "Deneuril", "Duilibrian", "Earuillien", "Earanhel",
+                "Ederas", "Eldanekil", "Elmanir", "Eleurin", "Ennaedor",
+                "Eolandeor", "Eorelin", "Finleroth", "Finriel", "Galaros",
+                "Garlemneth", "Gelrindhe", "Glanarwe", "Glaurin", "Gorodir",
+                "Henarwe", "Ilonwe", "Ilimdir", "Laniras", "Lebriul",
+                "Lindarion", "Marlinwe", "Naliador", "Nerlena", "Nirdan",
+                "Oldrion", "Oroleth", "Osmurien", "Penrelhas", "Penthuel",
+                "Quenrelwe", "Romil", "Ruidhir", "Ruilnias", "Saelen",
+                "Saunelos", "Tabreth", "Tabrion", "Tenriel", "Tenrilos",
+                "Thargilranos", "Thelimnir", "Tuillen", "Valrion" };
+            int nseed = ((unsigned) u.ubirthday / 257U);
+            int year  = 7 + ((nseed + scroll->o_id + scroll->otyp) % 478);
+            const char *itemword = ((scroll->oclass == WAND_CLASS) ? "wand" :
+                                    (scroll->otyp == ELVEN_ARROW) ? "arrow" :
+                                    (scroll->otyp == ELVEN_DAGGER ||
+                                     is_sword(scroll)) ? "blade" :
+                                    (scroll->oclass == WEAPON_CLASS) ?
+                                    "weapon" : xname_sansrunic(scroll));
+            pline(msgc_info, "%s %s %s made in %s,"
+                  " in year %d of the reign of %s, by %s the %s.",
+                  ((scroll->quan == 1) ? "This" : "These"),
+                  ((scroll->quan == 1) ? itemword: makeplural(itemword)),
+                  ((scroll->quan == 1) ? "was" : "were"),
+                  elvish_city[(nseed + scroll->o_id) % SIZE(elvish_city)], year,
+                  elvish_monarch[(nseed + scroll->o_id) % SIZE(elvish_monarch)],
+                  elvish_maker[(nseed + scroll->o_id) % SIZE(elvish_maker)],
+                  ((scroll->otyp == ELVEN_ARROW) ? "fletcher" :
+                   (objects[scroll->otyp].oc_material == WOOD) ? "woodcarver" :
+                   (scroll->oclass == WAND_CLASS) ? "artificer" :
+                   (scroll->oclass == WEAPON_CLASS ? "weaponsmith" :
+                    "artisan")));
+        } else {
+            /* Our character can't read Elvish; but recognizing them as elvish
+               runes is enough to type-identify the item as of Elvish origin. */
+            pline(msgc_info, "Elvish runes run %s %s.",
+                  (scroll->otyp == ELVEN_BOW ?
+                   "up the arc of" : "the length of the"),
+                  (scroll->otyp == ELVEN_ARROW ||
+                   scroll->otyp == ELVEN_SPEAR) ? "shaft" :
+                  (scroll->otyp == ELVEN_DAGGER || is_sword(scroll)) ? "blade" :
+                  (objects[scroll->otyp].oc_material == WOOD) ? "wood" :
+                  (scroll->oclass == WAND_CLASS) ? "wand" :
+                  xname_sansrunic(scroll));
+            makeknown(scroll->otyp);
+        }
+        return 1;
     } else if (scroll->oclass != SCROLL_CLASS &&
                scroll->oclass != SPBOOK_CLASS) {
         pline(msgc_cancelled, "That is a silly thing to read.");

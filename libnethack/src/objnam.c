@@ -5,6 +5,8 @@
 
 #include "hack.h"
 #include "artifact.h"
+#include "runes.h"
+#include "runics.h"
 
 /* Summary of all NetHack's object naming functions:
    obj_typename(otyp): entry in discovery list, from player's point of view
@@ -74,8 +76,8 @@ static const char *bracketize_of(int);
 static const char *bracketize(const char *, boolean, const char *);
 static boolean wishymatch(const char *, const char *, boolean);
 static const char *add_erosion_words(const struct obj *obj, const char *);
-static const char *xname2(const struct obj *obj,
-                          boolean ignore_oquan, boolean mark_user);
+static const char *xname2(const struct obj *obj, boolean ignore_oquan,
+                          boolean mark_user, boolean no_rune);
 
 struct Jitem {
     int item;
@@ -404,14 +406,21 @@ examine_object(struct obj *obj)
 
 
 const char *
+xname_sansrunic(const struct obj *obj)
+{
+    return xname2(obj, FALSE, FALSE, TRUE);
+}
+
+const char *
 xname(const struct obj *obj)
 {
-    return xname2(obj, FALSE, FALSE);
+    return xname2(obj, FALSE, FALSE, FALSE);
 }
 
 
 static const char *
-xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
+xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user,
+       boolean no_rune)
 {
     const char *buf;
     int typ = obj->otyp;
@@ -475,6 +484,10 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
         if (typ == LENSES)
             buf = "pair of ";
 
+        if (obj->orune && !no_rune && !(nn && dknown &&
+                                        !strncmpi(actualn, "runed", 5)))
+            buf = strlen(buf) ? msgprintf("%sruned ", buf) : "runed ";
+
         if (!dknown)
             buf = msgcat(buf, dn ? (dump ? msgprintf("%s [%s]", dn, actualn) :
                                     dn) : actualn);
@@ -487,25 +500,36 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
         else
             buf = msgcat(buf, dn ? (dump ? msgprintf("%s [%s]", dn, actualn) :
                                     dn) : actualn);
+
+        if (dump && obj->orune)
+            buf = msgprintf("%s %s%s Rune%s", buf,
+                            (u.rune_known[obj->orune] ? "(known " : "["),
+                            rune_name[obj->orune],
+                            (u.rune_known[obj->orune] ? ")" : "]"));
+        
         if (typ == FIGURINE)
             buf = msgcat_many(buf, " of ", an(mons[obj->corpsenm].mname), NULL);
         break;
 
     case ARMOR_CLASS:
         if (typ >= FIRST_DRAGON_SCALES && typ <= LAST_DRAGON_SCALES) {
-            buf = msgcat("set of ", actualn);
+            buf = msgcat("set of ", actualn); /* These cannot be runic. */
             break;
         }
         if (is_boots(obj) || is_gloves(obj))
             buf = "pair of ";
 
+        if (obj->orune)
+            buf = strlen(buf) ? msgprintf("%sruned ", buf) : "runed ";
+
         if (obj->otyp >= ELVEN_SHIELD && obj->otyp <= ORCISH_SHIELD &&
             !dknown) {
-            buf = dump ? bracketize_of(obj->otyp) : "shield";
+            buf = msgprintf("%s%s", buf,
+                            (dump ? bracketize_of(obj->otyp) : "shield"));
             break;
         }
         if (obj->otyp == SHIELD_OF_REFLECTION && !dknown) {
-            buf = "smooth shield";
+            buf = msgprintf("%s%s", buf, "smooth shield");
             break;
         }
 
@@ -1161,7 +1185,7 @@ cxname2(const struct obj *obj)
 {
     if (obj->otyp == CORPSE)
         return corpse_xname(obj, TRUE);
-    return xname2(obj, TRUE, FALSE);
+    return xname2(obj, TRUE, FALSE, FALSE);
 }
 
 
@@ -2004,6 +2028,8 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
     int ftype = gamestate.fruits.current;
     const char *fruitbuf;
     struct artifact *art = (struct artifact *) 0;
+    boolean runic = FALSE;
+    enum rune dorune = RUNE_NONE;
 
     /* Fruits may not mess up the ability to wish for real objects (since you
        can leave a fruit in a bones file and it will be added to another
@@ -2137,6 +2163,28 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
             isdiluted = 1;
         } else if (!strncmpi(bp, "empty ", l = 6)) {
             contents = EMPTY;
+        } else if (!strncmpi(bp, "runic ", l = 6)) {
+            runic = TRUE;  /* This only tracks the fact that the player has
+                              requested a runic object.  It's important for
+                              parsing the name of the rune, which would
+                              otherwise conflict with other things. */
+        } else if (runic) {
+            /* Allow the player to specify which rune they want. */
+            enum rune chosenr = RUNE_NONE;
+            enum rune r;
+            for (r = RUNE_NONE + 1; r <= RUNE_MAX; r++) {
+                if (!strncmpi(bp, rune_name[r], strlen(rune_name[r])))
+                    chosenr = r;
+            }
+            if (chosenr) {
+                dorune = chosenr;
+                pline(msgc_debug, "Parsed rune name %d: %s", chosenr,
+                      rune_name[chosenr]);
+                l = strlen(rune_name[chosenr]);
+                if (!strncmpi(bp + l, " ", 1))
+                    l++;
+            } else
+                break;
         } else
             break;
         bp += l;
@@ -2960,6 +3008,14 @@ typfnd:
 
     if (isdiluted && otmp->oclass == POTION_CLASS && otmp->otyp != POT_WATER)
         otmp->odiluted = 1;
+
+    if (wizard && dorune) {
+        pline (msgc_debug, "Rune of %s.", rune_name[dorune]);
+        if (rune_can_occur(dorune, runeslot(otmp)))
+            otmp->orune = dorune;
+        else
+            pline(msgc_debug, "That rune cannot occur on that item.");
+    }
 
     if (name) {
         const char *aname;

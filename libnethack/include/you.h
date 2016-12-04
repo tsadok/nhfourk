@@ -10,6 +10,7 @@
 # include "attrib.h"
 # include "monst.h"
 # include "prop.h"     /* for makedefs, enum objslot */
+# include "runes.h"
 # include "skills.h"
 # include "dungeon.h"
 # include "quest.h"
@@ -74,6 +75,10 @@ struct you {
     int oldcap;         /* carry cap on previous turn */
 
     unsigned uintrinsic[LAST_PROP + 1];     /* uses defines from prop.h */
+
+    unsigned short rune_appearance[RUNE_MAX + 1];
+                                        /* index into rune_appearance_pool[] */
+    boolean rune_known[RUNE_MAX + 1];
 
     struct obj *magicchestobjs;                   /* objects in magic chests */
     struct obj *utracked[tos_last_slot + 1];      /* occupation objects */
