@@ -7,6 +7,7 @@
 # define OBJ_H
 
 # include "global.h"
+# include "runes.h"
 
 enum obj_where {
     OBJ_FREE,   /* object not attached to anything */
@@ -65,6 +66,8 @@ struct obj {
 
     xchar where;                /* where the object thinks it is */
     xchar timed;                /* # of fuses (timers) attached to this obj */
+
+    enum rune orune;            /* rune depicted on the object, if any */
 
     unsigned cursed:1;
     unsigned blessed:1;
