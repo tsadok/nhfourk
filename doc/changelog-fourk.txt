@@ -62,6 +62,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Virtually any object can now be made impervious to elemental
+   erosion and destruction (fire, water, acid, shock, dilution, rust,
+   cold, etc.) by wielding it and reading a scroll of enchant weapon
+   while confused.  This works for weapons, tools, books, scrolls,
+   rings, potions, wands, even armor.  A fireproof scroll or potion
+   can be freely carried in open inventory without risk that it will
+   catch fire and burn or boil or freeze and shatter.
+
  * Benches have been improved.  They now instaheal you and also
    restore your energy, whenever you rest (or sit) on one.
 
