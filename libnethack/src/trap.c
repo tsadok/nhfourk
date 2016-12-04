@@ -3184,6 +3184,8 @@ water_damage(struct obj * obj, const char *ostr, boolean force)
             max luck (elsewhen): 10% avg luck (Luck==0): 75% awful luck
             (Luck<-4): 100% */
         return 0;
+    } else if (obj->oerodeproof) {
+        return 0;
     } else if (obj->oclass == SCROLL_CLASS) {
         obj->otyp = SCR_BLANK_PAPER;
         obj->spe = 0;

@@ -683,7 +683,8 @@ add_erosion_words(const struct obj *obj, const char *prefix)
 {
     boolean iscrys = (obj->otyp == CRYSKNIFE);
 
-    if (!is_damageable(obj) && !iscrys && !(obj->scalecolor))
+    if (!is_damageable(obj) && !iscrys && !(obj->scalecolor) &&
+        !obj->oerodeproof)
         return prefix;
 
     /* The only cases where any of these bits do double duty are for rotted
@@ -714,11 +715,13 @@ add_erosion_words(const struct obj *obj, const char *prefix)
         return msgprintf("%s%s%s%s", prefix, (obj->rknown ? "" : "["),
                          (Is_dragon_mail(obj) ? (msgprintf("%s-scaled",
                                           DRAGONCOLOR_NAME(obj->scalecolor))) :
+                          (obj->oclass == POTION_CLASS) ? "indilutable" :
                           iscrys ? "fixed" : is_rustprone(obj) ?
                           "rustproof" :
-                          /* Should we use "stainless" instead? */
+                          (objects[obj->otyp].oc_material == METAL) ?
+                          "stainless" :
                           is_corrodeable(obj) ? "corrodeproof" :
-                          is_flammable(obj) ? "fireproof" : ""),
+                          is_flammable(obj) ? "fireproof" : "durable"),
                          (obj->rknown ? " " : "] "));
     return prefix;
 }
@@ -815,6 +818,8 @@ doname_base(const struct obj *obj, boolean with_price)
     if (obj->greased)
         prefix = msgcat(prefix, "greased ");
 
+    prefix = add_erosion_words(obj, prefix);
+
     switch (obj->oclass) {
     case AMULET_CLASS:
         if (obj->owornmask & W_WORN)
@@ -824,7 +829,7 @@ doname_base(const struct obj *obj, boolean with_price)
         if (ispoisoned)
             prefix = msgcat(prefix, "poisoned ");
     plus:
-        prefix = add_erosion_words(obj, prefix);
+        /* prefix = add_erosion_words(obj, prefix); */
         if (obj->known || dump)
             prefix = msgcat(prefix, bracketize(msgprintf("%+d", obj->spe),
                                                !obj->known, " "));
@@ -836,9 +841,9 @@ doname_base(const struct obj *obj, boolean with_price)
                    " (being worn)");
         goto plus;
     case TOOL_CLASS:
-        /* weptools already get this done when we go to the +n code */
+        /* weptools already get this done when we go to the +n code
         if (!is_weptool(obj))
-            prefix = add_erosion_words(obj, prefix);
+            prefix = add_erosion_words(obj, prefix); */
         if (obj->owornmask & (W_WORN | W_MASK(os_saddle))) {
             buf = msgcat(buf, " (being worn)");
             break;
@@ -890,7 +895,7 @@ doname_base(const struct obj *obj, boolean with_price)
             prefix = msgcat(prefix, "[faint] ");
         break;
     case WAND_CLASS:
-        prefix = add_erosion_words(obj, prefix);
+        /* prefix = add_erosion_words(obj, prefix); */
     charges:
         if (obj->known || dump)
             buf = msgprintf("%s %s%d:%d%s", buf, (obj->known ? "(" : "["),
@@ -902,7 +907,7 @@ doname_base(const struct obj *obj, boolean with_price)
             buf = msgcat(buf, " (lit)");
         break;
     case RING_CLASS:
-        prefix = add_erosion_words(obj, prefix);
+        /* prefix = add_erosion_words(obj, prefix); */
     ring:
         if (obj->owornmask & W_MASK(os_ringr))
             buf = msgcat(buf, " (on right ");
@@ -945,7 +950,7 @@ doname_base(const struct obj *obj, boolean with_price)
         break;
     case BALL_CLASS:
     case CHAIN_CLASS:
-        prefix = add_erosion_words(obj, prefix);
+        /* prefix = add_erosion_words(obj, prefix); */
         if (obj == uball)
             buf = msgcat(buf, " (chained to you)");
         break;

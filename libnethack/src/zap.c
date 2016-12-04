@@ -4594,6 +4594,8 @@ destroy_item(int osym, int dmgtyp)
             continue;   /* don't destroy artifacts */
         if (obj->in_use && obj->quan == 1)
             continue;   /* not available */
+        if (obj->oerodeproof)
+            continue;   /* this one cannot be damaged that way */
         xresist = skip = 0;
         dmg = dindx = 0;
         quan = 0L;

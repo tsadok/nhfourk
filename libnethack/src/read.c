@@ -1220,13 +1220,17 @@ seffects(struct obj *sobj, boolean *known)
            monsters are not visible */
         break;
     case SCR_ENCHANT_WEAPON:
-        if (uwep && (uwep->oclass == WEAPON_CLASS || is_weptool(uwep))
-            && confused) {
-            /* oclass check added 10/25/86 GAN */
+        if (uwep && confused) {
+            /* oclass check added 10/25/86 GAN but altered in Fourk:  we now
+               allow non-weapons to be made durable, but we only repair existing
+               damage on weapons and weapon tools. */
             uwep->oerodeproof = !(sobj->cursed);
             if (Blind) {
                 uwep->rknown = FALSE;
-                pline(msgc_nospoil, "Your weapon feels warm for a moment.");
+                pline(msgc_nospoil, "Your %s feels warm for a moment.",
+                      (uwep && (uwep->oclass == WEAPON_CLASS ||
+                                is_weptool(uwep))) ? "weapon" :
+                      distant_name(uwep, xname));
             } else {
                 uwep->rknown = TRUE;
                 pline(sobj->cursed ? msgc_itemloss : msgc_itemrepair,
@@ -1235,7 +1239,8 @@ seffects(struct obj *sobj, boolean *known)
                       hcolor(sobj->cursed ? "purple" : "golden"),
                       sobj->cursed ? "glow" : "shield");
             }
-            if (uwep->oerodeproof && (uwep->oeroded || uwep->oeroded2)) {
+            if (uwep->oerodeproof && (uwep->oeroded || uwep->oeroded2) &&
+                (uwep->oclass == WEAPON_CLASS || is_weptool(uwep))) {
                 uwep->oeroded = uwep->oeroded2 = 0;
                 pline_implied(msgc_itemrepair, "Your %s as good as new!",
                               aobjnam(uwep, Blind ? "feel" : "look"));
