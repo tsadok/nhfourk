@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * There are now always three potions of hallucination available at
+   Delphi.  (One possible use for them is to dodge luck penalties
+   in Sokoban.)
+
  * When a randomly generated weapon is positively enchanted and
    not cursed, it may be assigned a name, like "Sword of Virtue",
    "Mace of Justice", "Staff of Yendor", etc.

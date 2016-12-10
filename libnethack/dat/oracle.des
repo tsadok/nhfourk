@@ -18,6 +18,9 @@ OBJECT:'`',"statue",(2,4),"plains centaur",1
 OBJECT:'`',"statue",(8,4),"plains centaur",1
 MONSTER: random, random, random
 MONSTER: random, random, random
+OBJECT:'!',"hallucination",random
+OBJECT:'!',"hallucination",random
+OBJECT:'!',"hallucination",random
 
 SUBROOM: "delphi" , lit , (4,3) , (3,3), "central"
 FOUNTAIN: (0, 1)
