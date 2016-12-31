@@ -2552,22 +2552,6 @@ queen bee
 	reported seeing queen bees elsewhere in the dungeon.  Some have even lived
 	to tell about it.
 
-# b - blobs
-acid blob
-	It is not known how a blob of acid can move around on its own.  Perhaps it
-	is the result of some wizard's arcane experiments.  Attacking one may damage
-	your weapon.  Fortunately they are not that fast and can often be avoided.
-quivering blob
-	A strange animated blob of protoplasm, this amoeba-like creature is slow
-	and not very dangerous.  Adventurers report that they can be safely eaten.
-gelatinous cube
-	The strange gelatinous substance of which this creature is composed can
-	paralyze the unwary adventurer who touches, or is touched by, the cube.
-	However, this only happens if the cube is still alive.  Once killed, its
-	corpse can be safely touched, although it is acidic to eat.  Gelatinous
-	cubes absorb objects that they find in the dungeon.  Durable objects may
-	be recovered if the cube is killed, but organic materials are dissolved.
-
 # c - chicken chimerae
 chickatrice
 	This is the infant form of the dreaded cockatrice.  The chick is even slower
@@ -2586,7 +2570,7 @@ fox
 jackal
 coyote
 	These wild dogs tend to run in packs.
-little dog
+puppy
 large dog
 dog
 	An ordinary domestic canine, raised as companions to humans for countless
@@ -2623,7 +2607,7 @@ hell hound
 	These canine denizens of the infernal depths beneath the dungeon are known
 	to breathe fire and hunt in packs.
 
-# e - eyes and spheres
+# e - eyes, spheres, and lights
 gas spore
 	No one has ever identified the species of subterranean plant that produces
 	these inflated pods.  Perhaps it lives within the rocks themselves.  Nor is
@@ -2633,6 +2617,12 @@ gas spore
 	hapless adventurer who may be nearby.
 floating eye
 	By some magic, a giant eyeball floats through the dungeon.  Beware its gaze.
+yellow light
+	A magical kamikaze that attacks by exploding, blinding nearby creatures,
+	including any hapless adventurer who manages to get in the way.
+black light
+	A magical kamikaze that attacks by exploding, causing nearby creatures
+	to hallucinate, including any hapless adventurer who gets in the way.
 freezing sphere
 flaming sphere
 shocking sphere
@@ -2683,26 +2673,42 @@ dwarf king
 bugbear
 	A primitive and frequently solitary goblinoid creature, capable of using
 	items it may find laying around the dungeon, including weapons.
+quantum mechanic
+	It is impossible to know everything about this at the same time.
 mind flayer
 master mind flayer
 	This much feared creature's feeding tentacles are capable of holding a
 	victim's head in place, preventing escape while the brain is sucked out.
 
-# i - imps and such
-manes
-lemure
-	The unresting spirit of a deceased adventurer.  Too weak and slow to be a
-	serious threat to most adventurers.
+# i - impish beings
 homunculus
 	What a boring spirit.  Just looking at it makes you want to yawn.
 imp
 	This spirit has a wicked sense of humor.
 quasit
 	The quasit's poison can reduce a victim's dexterity.
+leprechaun
+	A mischevious and elusive spirit that loves to collect gold.  Be
+	careful that it does not take yours and then disappear with it to
+	who knows where.
 tengu
 	A mischevious spirit capable of controlling its teleportation.
 
-# j - jellies
+# j - jellies and blobs
+acid blob
+	It is not known how a blob of acid can move around on its own.  Perhaps it
+	is the result of some wizard's arcane experiments.  Attacking one may damage
+	your weapon.  Fortunately they are not that fast and can often be avoided.
+quivering blob
+	A strange animated blob of protoplasm, this amoeba-like creature is slow
+	and not very dangerous.  Adventurers report that they can be safely eaten.
+gelatinous cube
+	The strange gelatinous substance of which this creature is composed can
+	paralyze the unwary adventurer who touches, or is touched by, the cube.
+	However, this only happens if the cube is still alive.  Once killed, its
+	corpse can be safely touched, although it is acidic to eat.  Gelatinous
+	cubes absorb objects that they find in the dungeon.  Durable objects may
+	be recovered if the cube is killed, but organic materials are dissolved.
 blue jelly
 	A blue jelly defends itself by sucking the heat out of anything that
 	attacks it.
@@ -2725,11 +2731,35 @@ kobold shaman
 	do possess a basic working knowledge of the psychic disciplines, enough
 	to stun many adventurers who do not expect it of them.
 
-# l, m, n - single-entry mlets
-leprechaun
-	A mischevious and elusive spirit that loves to collect gold.  Be
-	careful that it does not take yours and then disappear with it to who
-	knows where.
+# l - lizards and such
+newt
+	Some adventurers, low on food, have reported surviving by killing and
+	eating these small, weak reptiles.  An energizing experience no doubt.
+gecko
+iguana
+	One of several varieties of four-footed reptile that sometimes crawls
+	down through cracks and small caves from the surface to find its way
+	into even the uppermost portions of the dungeons.
+lizard
+	One of several varieties of four-footed reptile that sometimes crawls
+	down through cracks and small caves from the surface to find its way
+	into even the uppermost portions of the dungeons.  It is said that the
+	corpse of a lizard remains safe to eat even long after it is killed,
+	and some adventurers have reported that eating them can ease stiffening
+	muscles and promote limberness.
+# chameleon is covered with doppelganger, below.
+baby crocodile
+crocodile
+	A large, predatory lizard.  It is said that they can grow to be up to
+	twice the size of a horse.
+salamander
+	Unlike their small, weak, amphibious cousins found in the surface world,
+	the great subterranean salamanders found in the depths of the underworld
+	are smart enough to use weapons, not that they really need them when
+	their mere touch is enough to set their enemies on fire.
+
+
+# m, n - single-entry mlets
 *mimic
 	Mimics instinctively blend in with their surroundings by pretending
 	to be some inanimate object, perhaps a weapon or tool, or a stairway,
@@ -2760,13 +2790,6 @@ orc shaman
 orc-captain
 	A leader among the orcs.
 
-# p - pierces
-*piercer
-	This creature ambushes unwary adventurers by hanging from the ceiling,
-	blending in with the natural stalactites and other features, until
-	they sense prey below and attempt to drop on its head.  Once revealed,
-	however, piercers are too slow to be a very serious threat.
-
 # q - quadrupedal megafauna
 rothe
 	These four-hooved cave-dwelling herbivores are often kept as livestock.
@@ -2780,7 +2803,7 @@ wumpus
 mumak
 titanothere
 baluchitherium
-mastodon
+mammoth
 	This very large pachyderm packs quite a wallop.
 
 # r - rodent
@@ -2792,6 +2815,12 @@ rabid rat
 	The contagion this rat carries makes it poisonous.  Try not to
 	be bitten.
 # wererats are listed with werejackals and werewolves, above.
+scurrier
+	When standing erect, this rodent is almost as tall as a dwarf,
+	though not nearly as stocky.  It is surprisingly fast for its
+	size and is known for its ability to dig through walls and even
+	solid rock.  Scurriers are intelligent creatures and often carry
+	weapons.  They can pick up and use items they find in the dungeon.
 rock mole
 	This subterranean rodent has unusually strong teeth, giving it the
 	ability to eat metal.  It can also chew through solid rock.
@@ -2806,11 +2835,18 @@ centipede
 	This many-legged creature has a poisonous bite and likes to hide
 	under objects.
 giant spider
-	This type of spider is poisonous, but too large to hide under objects.
+	This type of spider is poisonous, and it has the ability to spin
+	its web toward an enemy, immobilzing the victim so it cannot easily
+	get away.  However, it is too large to hide under objects.
 scorpion
 	The scorpion's sting is poisonous.  It can also hide under objects.
 
 # t - trappers
+*piercer
+	This creature ambushes unwary adventurers by hanging from the ceiling,
+	blending in with the natural stalactites and other features, until
+	they sense prey below and attempt to drop on its head.  Once revealed,
+	however, piercers are too slow to be a very serious threat.
 lurker above
 	This strange animal looks just like part of the ceiling.  Why,
 	you'd hardly know it was there at all, until it tries to eat
@@ -2874,17 +2910,13 @@ purple worm
 # x - fantastic insects
 grid bug
 	This strange creature only ever moves in cardinal directions.
+jitterbug
+	This strange insect is very fast, but not very strong.  When
+	attacked, it has a strange ability to switch places with its
+	attacker.
 xan
 	Although this strange insect flies, it stays low to the ground.
 	Perhaps that is why it is known for attacking the feet and legs.
-
-# y - lights
-yellow light
-	A magical kamikaze that attacks by exploding, blinding nearby creatures,
-	including any hapless adventurer who manages to get in the way.
-black light
-	A magical kamikaze that attacks by exploding, causing nearby creatures
-	to hallucinate, including any hapless adventurer who gets in the way.
 
 # A - non-infernal, non-impish supernatural beings
 couatl
@@ -2919,44 +2951,68 @@ mountain centaur
 	are fast, like a horse, and can kick like one too.
 
 baby gray dragon
+young gray dragon
 gray dragon
+elder gray dragon
+ancient gray dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of gray dragons is made of pure magic and
 	will damage any creature that is not resistant to pure magic.  They
 	are immune to this type of attack themselves, as well as to numerous
 	other kinds of magic.
 baby red dragon
+young red dragon
 red dragon
+elder red dragon
+ancient red dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  Red dragons breathe fire from deep within themselves.
 baby white dragon
+young white dragon
 white dragon
+elder white dragon
+ancient white dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of white dragons is cold enough to freeze
 	water instantly, and will damage any creature that is not resistant
 	to cold.
 baby orange dragon
+young orange dragon
 orange dragon
+elder orange dragon
+ancient orange dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of orange dragons causes sleep.
 baby black dragon
+young black dragon
 black dragon
+elder black dragon
+ancient black dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of black dragons instantly disintegrates
 	whatever it touches, although it is said that it can be reflected
 	by a sufficiently well polished shield, though the black dragon
 	itself is of course immune to the effects of its own breath.
 baby blue dragon
+young blue dragon
 blue dragon
+elder blue dragon
+ancient blue dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of blue dragons is charged with energy and
 	will damage any creature that is not resistant to such shocks.
 baby green dragon
+young green dragon
 green dragon
+elder green dragon
+ancient green dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of green dragons is poisonous.
 baby yellow dragon
+young yellow dragon
 yellow dragon
+elder yellow dragon
+ancient yellow dragon
 	Dragons, those magical serpents of old, are feared mainly for their
 	dire breath.  The breath of yellow dragons is highly acidic, as is
 	their blood, which makes them one of the few creatures completely
@@ -2966,6 +3022,10 @@ yellow dragon
 stalker
 invisible stalker
 	This creature is so elusive, it is not even known what it looks like.
+sylph
+	As a creature of faerie (reportedly, the daughter of a water sprite
+	and a wood nymph), the sylph is not easily fooled by appearances.
+	She is not strong in battle, though her touch can slow her attackers.
 air elemental
 	Made of pure air, animated by some elemental magery, this creature can
 	surround, pick up, and batter its victims to death.
@@ -3034,6 +3094,12 @@ minotaur
 	and has no fear for any god.  Legend says the minotaur inhabits a great
 	maze, guarding against any intruder.
 
+# J - large bird-chimeric predators
+baby gryphon
+gryphon
+	Something like a large flying lion, or perhaps an oversized roaring eagle,
+	this magnificent birdlike creature could probably carry a passenger if
+	saddled, but who would dare?
 jabberwock
 	Beware this enormous birdlike predator.  What manner of adventurer
 	would dare to saddle and ride on of these massive beasts?
@@ -3103,15 +3169,28 @@ black pudding
 	This magically animated glob of bloody muck causes iron to rust and
 	has the ability to divide when attacked.  Fortunately, puddings are
 	slow, so most adventurers can simply outrun them.
+blood pudding
+	This magically animated glob of mucky blood drains the life energy,
+	and perhaps even the experiences, of its enemies.  It is much faster
+	than other puddings, and of course it divides when attacked.  Perhaps
+	it might be best to avoid this one.
 green slime
 	This magically animated glob of infections sickly green slime can
 	cause unwary adventurers to begin turning to slime themselves.
 	Fortunately, it is slow enough for most adventurers to outrun.  If
 	it does get any of its slime on you, you can purify yourself with fire.
 
-# Q
-quantum mechanic
-	It is impossible to know everything about this at the same time.
+# Quendi (Elves)
+elf
+woodland-elf
+green-elf
+grey-elf
+elf-lord
+elvenking
+	Generally regarded as one of the wiser and more intelligent races, elves
+	make up for their lack of physical prowess by keeping lore that allows
+	them to fashion generally superior equipment.  Elves do not fear the name
+	of Elbereth, for the consider her to be on their side.
 
 # R
 rust monster
@@ -3180,9 +3259,6 @@ olog-hai
 	polearms, which allow them to hit an enemy from more of a distance than would
 	be possible with a sword or mace.
 
-umber hulk
-	This strange creature lives deep underground, where it tunnels easily through
-	solid rock.  Its startling visage can be confusing to behold.
 vampire
 vampire lord
 	Of the many creatures of the night who sometimes make their way into the
@@ -3194,6 +3270,9 @@ vlad the impaler
 	some unholy rite.
 
 # Wraiths, ghosts, etc.
+manes
+	The unresting spirit of a deceased adventurer.  Too weak and slow to be a
+	serious threat to most adventurers.
 barrow wight
 	The animated remains of long dead warriors, these warriors know how to
 	use weapons and often carry reasonably good ones.  In some cases they can
@@ -3215,6 +3294,10 @@ shade
 	slower than most adventurers.  Their touch can slow or even paralyze their
 	victims.
 
+# X - deep rock dwellers
+umber hulk
+	This strange creature lives deep underground, where it tunnels easily through
+	solid rock.  Its startling visage can be confusing to behold.
 xorn
 	This bizarre creature lives deep underground, where it moves through solid
 	rock as easily as a bird moves through the air, or a fish through water.
@@ -3222,6 +3305,14 @@ xorn
 	metal objects it can find laying around in the dungeon.  A xorn is just
 	a little slower than a human and has three claws to attack with, plus
 	its bite.
+ettin
+	These enormous, two-headed beasts live deep underground, in tunnels
+	that they dig through the rock using whatever tools they may.
+deep ettin
+	These enormous, two-headed faerie creatures live deep underground, in
+	tunnels that they dig through the rock using some inborn magic.  They
+	have an instinctive knowledge of the magical arts and will defend
+	themselves with spells.
 
 # Y - primates
 monkey
@@ -3299,16 +3390,6 @@ human
 	their real specialty is flexibility.  One notable limitation is that their
 	eyes do not perceive infrared light, so they cannot see hot or cold objects
 	in the dark.
-elf
-woodland-elf
-green-elf
-grey-elf
-elf-lord
-elvenking
-	Generally regarded as one of the wiser and more intelligent races, elves
-	make up for their lack of physical prowess by keeping lore that allows
-	them to fashion generally superior equipment.  Elves do not fear the name
-	of Elbereth, for the consider her to be on their side.
 doppelganger
 sandestin
 chameleon
@@ -3337,6 +3418,10 @@ high priest
 	donations for maintenance of the temple from anyone.  However, this
 	only goes so far:  the priest will only offer the temple's sanctuary
 	to supplicants of the correct faith.
+librarian
+	Librarians are generally pretty liberal in what they will allow, but
+	don't underestimate them.  They are quite learned, and if attacked they
+	can defend themselves with weapons magical spells.
 soldier
 sergeant
 lieutenant
@@ -3376,10 +3461,7 @@ water demon
 horned devil
 barbed devil
 bone devil
-ice devil
 vrock
-hezrou
-pit fiend
 balrog
 	One of the infernal demons that inhabits the underworld of Gehennom.
 	Demons are notable for their ability to open infernal gates for their
@@ -3404,6 +3486,17 @@ marilith
 	demonic brethren, so that the unwary adventurer may suddenly find
 	himself facing not one demon, but several.  The marilith is notable
 	for having six arms, all of which are capable of attacking an enemy.
+hezrou
+	One of the infernal demons that inhabits the underworld of Gehennom,
+	the hezrou is known for its putrid stench.  If attacked, it emits a
+	terrible stinking cloud of poison.  Like any demon, it is also capable
+	of opening infernal gates for its demonic brethren to arrive.
+ice devil
+	One of the infernal demons that inhabits the underworld of Gehennom,
+	the ice devil is known for encasing its enemies in blocks of solid
+	ice, effectively immobilizing them until the ice melts, which fortunately
+	does not usually take very long in Gehennom's heat.  Like any demon, it
+	is also capable of opening infernal gates for its demonic brethren.
 nalfeshnee
 	One of the most dangerous of the infernal demons that inhabits the underworld
 	of Gehennom.  Demons are notable for their ability to open infernal gates for
@@ -3411,6 +3504,12 @@ nalfeshnee
 	himself facing not one demon, but several.  In addition to this, the
 	nalfeshnee is proficient in the arcane magical arts, providing it with the
 	ability to cast various magical spells.
+pit fiend
+	One of the infernal demons that inhabits the underworld of Gehennom,
+	the pit fiend lives up to its name, creating pits around and even directly
+	under its enemies, which can trap the unwary adventurer or even cause him
+	to fall through the floor into the smoking depths below.  Like any demon,
+	it is also capable of opening infernal gates for its demonic brethren.
 Juiblex
 	A dangerous demon lord of the underworld of Gehennom, Juiblex rules over
 	an infernal swamp of dread, where it is said that he infects any mortal
@@ -3421,7 +3520,7 @@ Yeenoghu
 Orcus
 	A dangerous demon lord of the underworld of Gehennom, Orcus rules over
 	an infernal mockery of a town.  He is known to be fond of zapping a
-	deadly wands at his enemies.
+	deadly wand at his enemies.
 Geryon
 	An infernal prince of the demon-ridden underworld of Gehennom, Geryon
 	has a poisonous sting, as well as the ability all demons have to open
@@ -3503,33 +3602,6 @@ kraken
 	deep beneath the surface, where it lurks, hiding in the water, waiting
 	for some hapless prey to wander within reach of its vile tentacles,
 	so that it can grab hold and draw its meal to a violent watery death.
-
-# lizards
-newt
-	Some adventurers, low on food, have reported surviving by killing and
-	eating these small, weak reptiles.  An energizing experience no doubt.
-gecko
-iguana
-	One of several varieties of four-footed reptile that sometimes crawls
-	down through cracks and small caves from the surface to find its way
-	into even the uppermost portions of the dungeons.
-lizard
-	One of several varieties of four-footed reptile that sometimes crawls
-	down through cracks and small caves from the surface to find its way
-	into even the uppermost portions of the dungeons.  It is said that the
-	corpse of a lizard remains safe to eat even long after it is killed,
-	and some adventurers have reported that eating them can ease stiffening
-	muscles and promote limberness.
-# chameleon is covered with doppelganger, above.
-baby crocodile
-crocodile
-	A large, predatory lizard.  It is said that they can grow to be up to
-	twice the size of a horse.
-salamander
-	Unlike their small, weak, amphibious cousins found in the surface world,
-	the great subterranean salamanders found in the depths of the underworld
-	are smart enough to use weapons, not that they really need them when
-	their mere touch is enough to set their enemies on fire.
 
 # TODO: player monsters (archeologist, barbarian, etc.)
 # TODO: quest-specific monsters (leaders, guardians, nemeses).
