@@ -1009,8 +1009,31 @@ kelp frond
 	The leaves of a plant that grows underwater. They are edible, but not
 	particularly nutritious, being about half as filling as an apple.
 key
-	A small piece of iron cut into a specific irregular pattern, designed to be
+	A small piece of metal cut into a specific irregular pattern, designed to be
 	recognised by a lock and open it.
+brass key
+	A tiny piece of brass cut into a specific irregular pattern, designed to
+	fit into and turn the lock on a box or chest.
+silver key
+	A tiny piece of silver cut into a specific irregular pattern, designed to
+	fit into and turn the lock on a box or chest.
+bronze key
+door key
+	A small piece of metal cut into a specific irregular pattern, designed to
+	fit into and turn the lock on a door.
+skeleton key
+	A small piece of carved bone.  It is magically enchanted to automatically
+	adjust to fit into and turn any lock, meaning that it can open and close
+	locks very quickly.
+iron key
+	A small piece of iron cut into a specific irregular pattern, designed to be
+	recognised by a lock and open it.  This key is magically enchanted to
+	fit into and turn any lock.
+sturdy key
+	A small piece of mithril cut into an irregular pattern, designed to be
+	recognised by a lock and open it.  This key is magically enchanted to
+	fit into and turn any lock.
+
 *kicking boots
 	These minimally protective boots have a hidden hard layer of metal inside,
 	allowing their wearer to kick things with huge and magically-enhanced force,
@@ -1913,9 +1936,7 @@ single-edged polearm
 	A very long iron spear with one sharpened edge, requiring two hands to
 	hold. Its length prevents it doing more than minimal damage against adjacent
 	enemies, but it can be used to attack enemies slightly further away.
-skeleton key
-	It is magically enchanted to automatically adjust to open any lock, meaning
-	that it can open and close locks very quickly.
+# skeleton key is listed under key now, to keep all key entries together.
 sky blue potion
 	A glass vial containing an airy light blue liquid.
 slime mold
