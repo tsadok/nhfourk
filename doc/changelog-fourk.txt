@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Food no longer has a random 1/7 chance to be rotten when you
+   eat it.  (Food is still rotten when cursed, and old eggs
+   and corpses behave the same as before.)
+
  * There are now always three potions of hallucination available at
    Delphi.  (One possible use for them is to dodge luck penalties
    in Sokoban.)
