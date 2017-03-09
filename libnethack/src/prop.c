@@ -1004,10 +1004,19 @@ show_conduct(int final)
 
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
+    else if (!u.uconduct[conduct_boughtprotection])
+        enl_msg(&menu, You_, "have not received", "did not receive",
+                " divine protection by donating to a temple");
     if (u.uconduct_time[conduct_gnostic] > 1800) {
         buf = msgprintf("an atheist until turn %d",
                         u.uconduct_time[conduct_gnostic]);
         enl_msg(&menu, You_, "were ", "had been ", buf);
+    } else if (u.uconduct_time[conduct_boughtprotection] > 0) {
+        enl_msg(&menu, You_, "have received", "received",
+                msgprintf(" temple protection %d time%s, starting on turn %d",
+                          u.uconduct[conduct_boughtprotection],
+                          ((u.uconduct[conduct_boughtprotection]==1)?"":"s"),
+                          u.uconduct_time[conduct_boughtprotection]));
     }
 
     if (!u.uconduct[conduct_weaphit])

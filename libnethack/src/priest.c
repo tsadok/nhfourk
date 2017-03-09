@@ -563,6 +563,7 @@ priest_talk(struct monst *priest)
             }
         } else if (offer < (u.ulevel * 600) && u.ublessed < 20 &&
                    (u.ublessed < 9 || !rn2(u.ublessed))) {
+            break_conduct(conduct_boughtprotection);
             verbalize(msgc_intrgain, "Thy devotion has been rewarded.");
             if (!(HProtection & INTRINSIC)) {
                 HProtection |= FROMOUTSIDE;

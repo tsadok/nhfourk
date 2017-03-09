@@ -279,6 +279,7 @@ enum player_conduct {
     conduct_invisible,                   /* were invisible */
     conduct_displacement,                /* were displaced */
     conduct_reflection,                  /* had reflection */
+    conduct_boughtprotection,            /* "donated" gold for protection */
     num_conducts,
 };
 
