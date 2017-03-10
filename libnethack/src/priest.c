@@ -540,20 +540,23 @@ priest_talk(struct monst *priest)
         return;
     } else {
         long offer;
+        long scale = u.ulevel * 100 *
+            (1 + u.uconduct[conduct_boughtprotection]);
 
         pline(msgc_uiprompt,
-              "%s asks you for a contribution for the temple.", Monnam(priest));
+              "%s asks for a contribution for the temple.  %s suggests %ldzm.",
+              Monnam(priest), msgupcasefirst(mhe(priest)), (scale * 2));
         if ((offer = bribe(priest)) == 0) {
             verbalize(msgc_alignbad, "Thou shalt regret thine action!");
             if (coaligned)
                 adjalign(-1);
-        } else if (offer < (u.ulevel * 200)) {
+        } else if (offer < (scale * 1)) {
             if (money_cnt(invent) > (offer * 2L))
                 verbalize(msgc_npcvoice, "Cheapskate.");
             else {
                 verbalize(msgc_npcvoice, "I thank thee for thy contribution.");
             }
-        } else if (offer < (u.ulevel * 400)) {
+        } else if (offer < (scale * 2)) {
             verbalize(msgc_aligngood, "Thou art indeed a pious individual.");
             if (money_cnt(invent) < (offer * 2L)) {
                 if (coaligned && UALIGNREC <= ALGN_SINNED)
@@ -561,8 +564,7 @@ priest_talk(struct monst *priest)
                 verbalize(msgc_statusgood, "I bestow upon thee a blessing.");
                 incr_itimeout(&HClairvoyant, rn1(500, 500));
             }
-        } else if (offer < (u.ulevel * 600) && u.ublessed < 20 &&
-                   (u.ublessed < 9 || !rn2(u.ublessed))) {
+        } else if (offer < (scale * 3) && u.ublessed < 10) {
             break_conduct(conduct_boughtprotection);
             verbalize(msgc_intrgain, "Thy devotion has been rewarded.");
             if (!(HProtection & INTRINSIC)) {

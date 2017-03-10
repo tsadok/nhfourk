@@ -61,6 +61,24 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The maximum number of points of divine protection you can buy from
+   a temple is now 10.  The low (and diminishing) probability that you
+   can get more from 9 up to 20 is eliminated, because it's tedious to
+   keep carting gold around in the late game, and quite unnecessary.
+   The tenth point works the same as the previous ones.  (The chance
+   of more than one point the first time remains the same as before.)
+   Once you donate the suggested amount and get the "selfless
+   generosity" message, you can stop carrying around gold, unless you
+   have some other use for it.
+
+ * The price when buying protection (or other services) from a temple
+   priest now scales with the number of times you have bought
+   protection already, as well as with your experience level.  The
+   basic formula is 100 * experience level * n, where n depends on
+   which service you want.  The priest will suggest an amount, which
+   is the minimum amount for protection.  The ratios between the
+   amounts for various services is the same as in vanilla.
+
  * Receiving divine protection when donating to a temple is now a
    tracked conduct.  (Atheist conduct implies protectionless,
    in the same way that foodless implies vegetarian and vegan.)
