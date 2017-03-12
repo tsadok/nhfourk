@@ -494,7 +494,7 @@ minliquid(struct monst *mtmp)
         }
     } else {
         /* but eels have a difficult time outside */
-        if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz) &&
+        if (mtmp->data->mlet == S_KRAKEN && !Is_waterlevel(&u.uz) &&
             !is_puddle(level, mtmp->mx, mtmp->my)) {
             if (mtmp->mhp >= 2)
                 mtmp->mhp--;
@@ -1132,7 +1132,7 @@ mfndpos(struct monst *mon, coord * poss,        /* coord poss[9] */
     nowtyp = mlevel->locations[x][y].typ;
 
     nodiag = (mdat == &mons[PM_GRID_BUG]);
-    wantpool = mdat->mlet == S_EEL;
+    wantpool = mdat->mlet == S_KRAKEN;
     poolok = is_flyer(mdat) || is_clinger(mdat) ||
         (is_swimmer(mdat) && !wantpool);
     lavaok = is_flyer(mdat) || is_clinger(mdat) || likes_lava(mdat);
@@ -1803,7 +1803,7 @@ mondead(struct monst *mtmp)
     if (mtmp->m_id == u.quest_status.leader_m_id)
         u.quest_status.leader_is_dead = TRUE;
 
-    if (mtmp->data->mlet == S_KOP) {
+    if (mtmp->iskop) {
         /* Dead Kops may come back. */
         switch (rnd(5)) {
         case 1:        /* returns near the stairs */
@@ -2188,7 +2188,7 @@ xkilled(struct monst *mtmp, int dest)
 
     /* might be here after swallowed */
     if (((x != u.ux) || (y != u.uy)) && !rn2(challengemode ? 36 : 6) &&
-        !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
+        !(mvitals[mndx].mvflags & G_NOCORPSE) && !mtmp->iskop) {
         int typ;
 
         otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
@@ -3022,7 +3022,7 @@ newcham(struct monst *mtmp, const struct permonst *mdat,
         mtmp->perminvis = pm_invisible(mdat);
     mtmp->minvis = mtmp->invis_blkd ? 0 : mtmp->perminvis;
     if (!(hides_under(mdat) && OBJ_AT_LEV(mtmp->dlevel, mtmp->mx, mtmp->my)) &&
-        !(mdat->mlet == S_EEL && is_pool(level, mtmp->mx, mtmp->my)))
+        !(mdat->mlet == S_KRAKEN && is_pool(level, mtmp->mx, mtmp->my)))
         mtmp->mundetected = 0;
     if (u.ustuck == mtmp) {
         if (Engulfed) {

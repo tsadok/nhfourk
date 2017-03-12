@@ -1652,7 +1652,7 @@ mkpuddles(struct level *lev, struct mkroom *croom)
         }
         if ((puddles > 4 + 2 * fish) && (rn2_on_rng(depth(&lev->z), rng) > 4)) {
             (void)makemon(is_pool(lev, m.x, m.y) ?
-                          mkclass(&lev->z, S_EEL, 0, rng) : &mons[PM_PIRANHA],
+                          mkclass(&lev->z, S_KRAKEN, 0, rng) : &mons[PM_PIRANHA],
                           lev, m.x, m.y, NO_MM_FLAGS);
             fish++;
         }

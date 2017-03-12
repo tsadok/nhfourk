@@ -1083,7 +1083,7 @@ findone(int zx, int zy, void *num)
             (*(int *)num)++;
         }
         if (mtmp->mundetected &&
-            (is_hider(mtmp->data) || mtmp->data->mlet == S_EEL)) {
+            (is_hider(mtmp->data) || mtmp->data->mlet == S_KRAKEN)) {
             mtmp->mundetected = 0;
             newsym(zx, zy);
             (*(int *)num)++;

@@ -93,12 +93,12 @@ TRAP:"board",(38,12)
 
 # Random monsters
 MONSTER:'@',"Medusa",(36,10),asleep
-MONSTER:';',"giant eel",(11,06)
-MONSTER:';',"giant eel",(23,13)
-MONSTER:';',"giant eel",(29,02)
-MONSTER:';',"jellyfish",(02,02)
-MONSTER:';',"jellyfish",(00,08)
-MONSTER:';',"jellyfish",(04,18)
+MONSTER:'K',"giant eel",(11,06)
+MONSTER:'K',"giant eel",(23,13)
+MONSTER:'K',"giant eel",(29,02)
+MONSTER:'K',"jellyfish",(02,02)
+MONSTER:'K',"jellyfish",(00,08)
+MONSTER:'K',"jellyfish",(04,18)
 MONSTER:'T',"water troll",(51,03)
 MONSTER:'T',"water troll",(64,11)
 MONSTER:'S',random,(38,07)
@@ -198,15 +198,15 @@ TRAP:random,random
 MONSTER:'@',"Medusa",(68,10),asleep
 MONSTER:'g',"gremlin",(02,14)
 MONSTER:'H',"titan",(02,05)
-MONSTER:';',"electric eel",(10,13)
-MONSTER:';',"electric eel",(11,13)
-MONSTER:';',"electric eel",(10,14)
-MONSTER:';',"electric eel",(11,14)
-MONSTER:';',"electric eel",(10,15)
-MONSTER:';',"electric eel",(11,15)
-MONSTER:';',"jellyfish",(01,01)
-MONSTER:';',"jellyfish",(00,08)
-MONSTER:';',"jellyfish",(04,19)
+MONSTER:'K',"electric eel",(10,13)
+MONSTER:'K',"electric eel",(11,13)
+MONSTER:'K',"electric eel",(10,14)
+MONSTER:'K',"electric eel",(11,14)
+MONSTER:'K',"electric eel",(10,15)
+MONSTER:'K',"electric eel",(11,15)
+MONSTER:'K',"jellyfish",(01,01)
+MONSTER:'K',"jellyfish",(00,08)
+MONSTER:'K',"jellyfish",(04,19)
 MONSTER:''',"stone golem",(64,08),asleep
 MONSTER:''',"stone golem",(65,08),asleep
 MONSTER:''',"stone golem",(64,09),asleep
@@ -320,10 +320,10 @@ TRAP:"board",random
 TRAP:random,random
 # Miscellaneous Monsters:
 MONSTER:'@',"Medusa",place[0]
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
 MONSTER:'n',"wood nymph",random
 MONSTER:'n',"water nymph",random
 MONSTER:'n',"water nymph",random
@@ -451,10 +451,10 @@ TRAP:random,random
 
 # Miscellaneous Monsters:
 MONSTER:'@',"Medusa",(51,10)
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
 
 # Northwest Room:
 MONSTER:'H',"storm giant",(48,05)
@@ -649,12 +649,12 @@ MONSTER:'C',random,(46,09)
 MONSTER:'C',random,(48,11)
 
 
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
 MONSTER:'T',"water troll",random
 MONSTER:'T',"water troll",random
 MONSTER:'D',random,random
@@ -768,7 +768,7 @@ TRAP:random,random
 TRAP:random,random
 # The major monsters:
 MONSTER:'@',"Medusa",place[0]
-MONSTER:';',"kraken",(07,07)
+MONSTER:'K',"kraken",(07,07)
 # the nesting dragon
 MONSTER:'D',"yellow dragon", (05,04), asleep
 MONSTER[50%]:'D',"baby yellow dragon", (04,04), asleep
@@ -777,10 +777,10 @@ OBJECT:'%',"egg",(05,04),"yellow dragon",0
 OBJECT[55%]: '%',"egg",(05,04),"yellow dragon",0
 OBJECT[25%]: '%',"egg",(05,04),"yellow dragon",0
 #
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
 # Fourteen assorted snakes
 MONSTER:'S',random,random
 MONSTER:'S',random,random

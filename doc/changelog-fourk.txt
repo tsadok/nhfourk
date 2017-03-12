@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * As part of my quest to get monsters off of punctuation and onto
+   letters, sea monsters are now represented, in text mode, as
+   K (mnemonic: Kraken) instead of ;
+
+ * The Kops have been replaced with the National Guard, i..e.,
+   Yendorian army troops get called in.
+
  * The maximum number of points of divine protection you can buy from
    a temple is now 10.  The low (and diminishing) probability that you
    can get more from 9 up to 20 is eliminated, because it's tedious to

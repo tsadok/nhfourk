@@ -168,14 +168,14 @@ MONSTER:'D',random,(47,06)
 MONSTER:'D',random,(47,10)
 MONSTER:'D',random,(47,11)
 # Sea monsters in the moat
-MONSTER:';',"giant eel",(05,07)
-MONSTER:';',"giant eel",(05,09)
-MONSTER:';',"giant eel",(57,07)
-MONSTER:';',"giant eel",(57,09)
-MONSTER:';',"shark",(05,00)
-MONSTER:';',"shark",(05,16)
-MONSTER:';',"shark",(57,00)
-MONSTER:';',"shark",(57,16)
+MONSTER:'K',"giant eel",(05,07)
+MONSTER:'K',"giant eel",(05,09)
+MONSTER:'K',"giant eel",(57,07)
+MONSTER:'K',"giant eel",(57,09)
+MONSTER:'K',"shark",(05,00)
+MONSTER:'K',"shark",(05,16)
+MONSTER:'K',"shark",(57,00)
+MONSTER:'K',"shark",(57,16)
 # The throne room and the court monsters
 MONSTER:monster[0],random,(27,05)
 MONSTER:monster[1],random,(30,05)
@@ -332,22 +332,22 @@ MONSTER:'X',random,(16,10)
 MONSTER:'X',random,(52,08)
 MONSTER:'X',"xorn",(58,10)
 # Moat Monsters (back):
-MONSTER:';',random,(05,03)
-MONSTER:';',random,(18,02)
-MONSTER:';',random,(30,01)
-MONSTER:';',random,(44,02)
-MONSTER:';',random,(58,01)
-MONSTER:';',random,(69,03)
+MONSTER:'K',random,(05,03)
+MONSTER:'K',random,(18,02)
+MONSTER:'K',random,(30,01)
+MONSTER:'K',random,(44,02)
+MONSTER:'K',random,(58,01)
+MONSTER:'K',random,(69,03)
 # Moat Monsters (front):
-MONSTER:';',random,(10,15)
-MONSTER:';',random,(21,16)
-MONSTER:';',random,(29,14)
-MONSTER:';',random,(44,14)
-MONSTER:';',random,(54,17)
-MONSTER:';',random,(64,14)
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
+MONSTER:'K',random,(10,15)
+MONSTER:'K',random,(21,16)
+MONSTER:'K',random,(29,14)
+MONSTER:'K',random,(44,14)
+MONSTER:'K',random,(54,17)
+MONSTER:'K',random,(64,14)
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
 
 # Northwest Storeroom
 OBJECT:object[0],random,(15,05)
@@ -1301,18 +1301,18 @@ MONSTER[50%]:'V',random,(23,09),asleep
 MONSTER:'V',random,(23,09),asleep
 
 # monsters in the water around the castle
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
 
 # monsters in attendance in the throne room
 MONSTER:monster[0],random,(25,04)

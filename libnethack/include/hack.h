@@ -168,6 +168,7 @@ struct distmap_state {
 # define MM_CMONSTER_U    0x1000 /* created by player, or */
 # define MM_CMONSTER_T    0x1800 /* either, but will be tamed after creation */
 # define MM_CHEWROCK      0x4000 /* allow placement on diggable walls */
+# define MM_KOP           0x8000 /* calling in the National Guard */
 
 /* special mhpmax value when loading bones monster to flag as extinct or
    genocided */

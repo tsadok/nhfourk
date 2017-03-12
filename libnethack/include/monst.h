@@ -114,7 +114,7 @@ struct monst {
 # define CHAM_DOPPELGANGER      2       /* demi-human */
 # define CHAM_SANDESTIN         3       /* demon */
 # define CHAM_MAX_INDX          CHAM_SANDESTIN
-    unsigned mundetected:1;     /* when S_EEL: underwater
+    unsigned mundetected:1;     /* when S_KRAKEN: underwater
                                    for hiding monsters: currently hidden
                                    otherwise: unused, always 0 */
     /* implies one of M1_CONCEAL or M1_HIDE, but not mimic (that is, snake,
@@ -146,6 +146,7 @@ struct monst {
     unsigned isgd:1;    /* is guard */
     unsigned ispriest:1;        /* is a priest */
     unsigned iswiz:1;   /* is the Wizard of Yendor */
+    unsigned iskop:1;   /* is a National Guard trooper */
 
     /* turnstate; doesn't count against bitfield bit count */
     unsigned deadmonster:1;     /* always 0 at neutral turnstate */
@@ -214,7 +215,7 @@ struct monst {
 # define m_mhiding(mon) ((mon) == &youmonst ? u.uundetected :   \
                          is_hider(mon->data) && (mon)->mundetected)
 # define m_underwater(mon) ((mon) == &youmonst ? Underwater :           \
-                            (mon)->data->mlet == S_EEL && (mon)->mundetected)
+                            (mon)->data->mlet == S_KRAKEN && (mon)->mundetected)
 # define m_minvent(mon) ((mon) == &youmonst ? invent : (mon)->minvent)
 # define m_mx(mon) ((mon) == &youmonst ? u.ux : (mon)->mx)
 # define m_my(mon) ((mon) == &youmonst ? u.uy : (mon)->my)

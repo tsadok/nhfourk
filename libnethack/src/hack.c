@@ -2345,7 +2345,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
 
     if (hides_under(URACEDATA))
         u.uundetected = OBJ_AT(u.ux, u.uy);
-    else if (youmonst.data->mlet == S_EEL)
+    else if (youmonst.data->mlet == S_KRAKEN)
         u.uundetected = is_pool(level, u.ux, u.uy) && !Is_waterlevel(&u.uz);
     else if (turnstate.move.dx || turnstate.move.dy)
         u.uundetected = 0;

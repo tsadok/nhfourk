@@ -415,47 +415,47 @@ ENDMAP
 TELEPORT_REGION:(0,0,25,19),levregion()
 PORTAL:(51,0,75,19),levregion(),"astral"
 # A fisherman's dream...
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"piranha",random
-MONSTER:';',"piranha",random
-MONSTER:';',"piranha",random
-MONSTER:';',"piranha",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
 # These guys feel like home here
 MONSTER:'E',"water elemental",random,hostile
 MONSTER:'E',"water elemental",random,hostile

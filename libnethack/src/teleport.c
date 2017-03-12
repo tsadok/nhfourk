@@ -64,7 +64,7 @@ goodpos(struct level *lev, int x, int y, struct monst *mtmp, unsigned gpflags)
                           Amphibious);
             else
                 return (is_flyer(mdat) || is_swimmer(mdat) || is_clinger(mdat));
-        } else if (mdat->mlet == S_EEL && !ignorewater &&
+        } else if (mdat->mlet == S_KRAKEN && !ignorewater &&
                    (!is_puddle(lev, x, y) || bigmonst(mdat))) {
             return FALSE;
         } else if (is_lava(lev, x, y)) {
@@ -281,7 +281,7 @@ teleds(int nux, int nuy, boolean allow_drag)
 
     if (hides_under(youmonst.data))
         u.uundetected = OBJ_AT(nux, nuy);
-    else if (youmonst.data->mlet == S_EEL)
+    else if (youmonst.data->mlet == S_KRAKEN)
         u.uundetected = is_pool(level, nux, nuy);
     else {
         u.uundetected = 0;

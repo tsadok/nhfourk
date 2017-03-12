@@ -809,8 +809,7 @@ create_monster(struct level *lev, monster * m, struct mkroom *croom)
             }
         } else {
             pm = mkclass(&lev->z, class,
-                         ((class == S_KOP) || (class == S_EEL)) ? G_NOGEN : 0,
-                         mrng());
+                         (class == S_KRAKEN) ? G_NOGEN : 0, mrng());
             /* if we can't get a specific monster type (pm == 0) then the class 
                has been genocided, so settle for a random monster */
             if (!pm)
@@ -829,7 +828,7 @@ create_monster(struct level *lev, monster * m, struct mkroom *croom)
         else {
             if (!pm || !is_swimmer(pm))
                 get_location(lev, &x, &y, DRY);
-            else if (pm->mlet == S_EEL)
+            else if (pm->mlet == S_KRAKEN)
                 get_location(lev, &x, &y, WET);
             else
                 get_location(lev, &x, &y, DRY | WET);

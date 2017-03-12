@@ -702,7 +702,7 @@ polymon(int mntmp, boolean noisy)
     drop_weapon(1, noisy);
     if (hides_under(youmonst.data))
         u.uundetected = OBJ_AT(u.ux, u.uy);
-    else if (youmonst.data->mlet == S_EEL)
+    else if (youmonst.data->mlet == S_KRAKEN)
         u.uundetected = is_pool(level, u.ux, u.uy);
     else
         u.uundetected = 0;
@@ -1633,7 +1633,7 @@ mbodypart(struct monst *mon, int part)
     }
     if (mptr == &mons[PM_STALKER] && part == HEAD)
         return "head";
-    if (mptr->mlet == S_EEL && mptr != &mons[PM_JELLYFISH])
+    if (mptr->mlet == S_KRAKEN && mptr != &mons[PM_JELLYFISH])
         return fish_parts[part];
     if (mptr->mlet == S_WORM)
         return worm_parts[part];

@@ -818,16 +818,16 @@ OBJECT: '(',"chest",(14,15)
 MONSTER: '@',"watch captain",random,peaceful
 MONSTER: 'G',random,(14,14)
 # River feeders
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
 # Junk
 OBJECT:random,random,random
 OBJECT:random,random,random
@@ -1257,19 +1257,19 @@ REGION:(00,00,74,20),unlit,"ordinary"
 STAIR:random,up
 
 OBJECT:'/',"cold",place[0]
-MONSTER:';',"electric eel",place[0]
-MONSTER:';',"electric eel",place[1]
-MONSTER:';',"electric eel",place[2]
-MONSTER:';',"giant eel",random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER[50%]:';',random,random
-MONSTER[50%]:';',random,random
-MONSTER[50%]:';',random,random
+MONSTER:'K',"electric eel",place[0]
+MONSTER:'K',"electric eel",place[1]
+MONSTER:'K',"electric eel",place[2]
+MONSTER:'K',"giant eel",random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER[50%]:'K',random,random
+MONSTER[50%]:'K',random,random
+MONSTER[50%]:'K',random,random
 MONSTER:'r',"sewer rat",random
 MONSTER:'r',"sewer rat",random
 MONSTER:'r',"sewer rat",random

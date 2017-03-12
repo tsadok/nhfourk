@@ -50,16 +50,16 @@ MONSTER:'V',"vampire lord",(17,05)
 # The local treasure
 OBJECT:'+',"Book of the Dead",(16,05)
 # Surrounding terror
-MONSTER:';',"kraken",(14,02)
-MONSTER:';',"giant eel",(17,02)
-MONSTER:';',"kraken",(13,04)
-MONSTER:';',"giant eel",(13,06)
-MONSTER:';',"kraken",(19,04)
-MONSTER:';',"giant eel",(19,06)
-MONSTER:';',"kraken",(15,08)
-MONSTER:';',"giant eel",(17,08)
-MONSTER:';',"piranha",(15,02)
-MONSTER:';',"piranha",(19,08)
+MONSTER:'K',"kraken",(14,02)
+MONSTER:'K',"giant eel",(17,02)
+MONSTER:'K',"kraken",(13,04)
+MONSTER:'K',"giant eel",(13,06)
+MONSTER:'K',"kraken",(19,04)
+MONSTER:'K',"giant eel",(19,06)
+MONSTER:'K',"kraken",(15,08)
+MONSTER:'K',"giant eel",(17,08)
+MONSTER:'K',"piranha",(15,02)
+MONSTER:'K',"piranha",(19,08)
 # Random monsters
 MONSTER:'D',random,random
 MONSTER:'H',random,random
@@ -189,10 +189,10 @@ NON_PASSWALL:(06,12,16,12)
 MONSTER:'L',random,(10,07)
 MONSTER:'V',"vampire lord",(12,07)
 # Some surrounding horrors
-MONSTER:';',"kraken",(08,05)
-MONSTER:';',"giant eel",(08,08)
-MONSTER:';',"kraken",(14,05)
-MONSTER:';',"giant eel",(14,08)
+MONSTER:'K',"kraken",(08,05)
+MONSTER:'K',"giant eel",(08,08)
+MONSTER:'K',"kraken",(14,05)
+MONSTER:'K',"giant eel",(14,08)
 # Other monsters
 MONSTER:'L',random,random
 MONSTER:'D',random,random
@@ -239,7 +239,7 @@ MAZEWALK:(08,05),east
 REGION:(04,03,06,06),unlit,"ordinary",unfilled,true
 MONSTER:'L',random,(04,04)
 MONSTER:'V',"vampire lord",(03,04)
-MONSTER:';',"kraken",(06,06)
+MONSTER:'K',"kraken",(06,06)
 # And to make things a little harder.
 TRAP:"board",(04,03)
 TRAP:"board",(04,05)
@@ -267,7 +267,7 @@ MAZEWALK:(08,05),east
 REGION:(04,03,06,06),unlit,"ordinary",unfilled,true
 MONSTER:'L',random,(04,04)
 MONSTER:'V',"vampire lord",(03,04)
-MONSTER:';',"kraken",(06,06)
+MONSTER:'K',"kraken",(06,06)
 # And to make things a little harder.
 TRAP:"board",(04,03)
 TRAP:"board",(04,05)

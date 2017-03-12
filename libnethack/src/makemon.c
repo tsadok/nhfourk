@@ -238,7 +238,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
  *      kobolds get darts to throw
  *      centaurs get some sort of bow & arrows or bolts
  *      soldiers get all sorts of things.
- *      kops get clubs & cream pies.
  *      the Wizard of Yendor gets various stuff
  */
     switch (ptr->mlet) {
@@ -416,13 +415,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 mongets(mtmp, !rn2_on_rng(3, rng) ? PICK_AXE : DAGGER, rng);
             }
         }
-        break;
-    case S_KOP:        /* create Keystone Kops with cream pies to throw. As
-                          suggested by KAA.  [MRS] */
-        if (!rn2_on_rng(4, rng))
-            m_initthrow(mtmp, CREAM_PIE, 2, rng);
-        if (!rn2_on_rng(3, rng))
-            mongets(mtmp, (rn2_on_rng(2, rng)) ? CLUB : RUBBER_HOSE, rng);
         break;
     case S_ORC:
         if (rn2_on_rng(2, rng))
@@ -1143,6 +1135,8 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         mtmp->mtrapseen = (1L << (PIT - 1)) | (1L << (HOLE - 1));
     if (ptr->msound == MS_LEADER)       /* leader knows about portal */
         mtmp->mtrapseen |= (1L << (MAGIC_PORTAL - 1));
+    if (mmflags && MM_KOP)
+        mtmp->iskop = 1;
 
     mtmp->dlevel = lev;
     place_monster(mtmp, x, y);
@@ -1211,7 +1205,7 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
             mtmp->minvis = TRUE;
         }
         break;
-    case S_EEL:
+    case S_KRAKEN:
         if (is_pool(lev, x, y))
             mtmp->mundetected = TRUE;
         break;

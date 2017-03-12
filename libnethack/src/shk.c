@@ -301,10 +301,10 @@ call_kops(struct monst *shkp, boolean nearshop)
     if (canhear())
         pline(msgc_levelwarning, "An alarm sounds!");
 
-    nokops = ((mvitals[PM_KEYSTONE_KOP].mvflags & G_GONE) &&
-              (mvitals[PM_KOP_SERGEANT].mvflags & G_GONE) &&
-              (mvitals[PM_KOP_LIEUTENANT].mvflags & G_GONE) &&
-              (mvitals[PM_KOP_KAPTAIN].mvflags & G_GONE));
+    nokops = ((mvitals[PM_SOLDIER].mvflags & G_GONE) &&
+              (mvitals[PM_SERGEANT].mvflags & G_GONE) &&
+              (mvitals[PM_LIEUTENANT].mvflags & G_GONE) &&
+              (mvitals[PM_CAPTAIN].mvflags & G_GONE));
 
     if (!angry_guards(!canhear()) && nokops) {
         if (canhear())
@@ -321,14 +321,14 @@ call_kops(struct monst *shkp, boolean nearshop)
         if (nearshop) {
             /* Create swarm around you, if you merely "stepped out" */
             if (flags.verbose)
-                pline_implied(msgc_levelwarning, "The Keystone Kops appear!");
+                pline_implied(msgc_levelwarning, "The National Guard appears!");
             mm.x = u.ux;
             mm.y = u.uy;
             makekops(&mm);
             return;
         }
 
-        pline_implied(msgc_levelwarning, "The Keystone Kops are after you!");
+        pline_implied(msgc_levelwarning, "The National Guard is after you!");
 
         /* Create swarm near down staircase (hinders return to level) */
         if (isok(level->dnstair.sx, level->dnstair.sy)) {
@@ -3542,14 +3542,14 @@ static void
 makekops(coord * mm)
 {
     static const short k_mndx[4] = {
-        PM_KEYSTONE_KOP, PM_KOP_SERGEANT, PM_KOP_LIEUTENANT, PM_KOP_KAPTAIN
+        PM_SOLDIER, PM_SERGEANT, PM_LIEUTENANT, PM_CAPTAIN
     };
     int k_cnt[4], cnt, mndx, k;
 
     k_cnt[0] = cnt = abs(depth(&u.uz)) + rnd(5);
     k_cnt[1] = (cnt / 3) + 1;   /* at least one sarge */
     k_cnt[2] = (cnt / 6);       /* maybe a lieutenant */
-    k_cnt[3] = (cnt / 9);       /* and maybe a kaptain */
+    k_cnt[3] = (cnt / 9);       /* and maybe a captain */
 
     for (k = 0; k < 4; k++) {
         if ((cnt = k_cnt[k]) == 0)
@@ -3560,7 +3560,7 @@ makekops(coord * mm)
 
         while (cnt--)
             if (enexto(mm, level, mm->x, mm->y, &mons[mndx]))
-                makemon(&mons[mndx], level, mm->x, mm->y, NO_MM_FLAGS);
+                makemon(&mons[mndx], level, mm->x, mm->y, MM_KOP);
     }
 }
 
@@ -3953,7 +3953,7 @@ kops_gone(boolean silent)
 
     for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
         mtmp2 = mtmp->nmon;
-        if (mtmp->data->mlet == S_KOP) {
+        if (mtmp->iskop) {
             if (canspotmon(mtmp))
                 cnt++;
             mongone(mtmp);
@@ -3961,7 +3961,7 @@ kops_gone(boolean silent)
     }
     if (cnt && !silent)
         pline(msgc_monneutral,
-              "The Kop%s (disappointed) vanish%s into thin air.",
+              "The national guard trooper%s vanish%s into thin air.",
               plur(cnt), cnt == 1 ? "es" : "");
 }
 

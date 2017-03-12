@@ -338,7 +338,6 @@ oname_random_weapon(struct obj *wpn, enum rng rng)
         is_sword(wpn) ? "Sword" :
         (wpn->otyp == LUCERN_HAMMER) ? "Lucern Hammer" :
         (wpn->otyp == MORNING_STAR) ? "Morning Star" :
-        (wpn->otyp == RUBBER_HOSE) ? "Hose" :
         ((skill == P_POLEARMS) || (skill == P_KNIFE) ||
          (wpn->otyp == ATHAME)) ? OBJ_NAME(objects[wpn->otyp]) :
         weapon_descr(wpn));

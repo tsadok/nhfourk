@@ -507,7 +507,7 @@ mattacku(struct monst *mtmp)
                 struct obj *obj = level->objects[u.ux][u.uy];
 
                 if (obj ||
-                    (youmonst.data->mlet == S_EEL &&
+                    (youmonst.data->mlet == S_KRAKEN &&
                      is_pool(level, u.ux, u.uy))) {
                     int save_spe = 0;   /* suppress warning */
 
@@ -516,7 +516,7 @@ mattacku(struct monst *mtmp)
                         if (obj->otyp == EGG)
                             obj->spe = 0;
                     }
-                    if (youmonst.data->mlet == S_EEL)
+                    if (youmonst.data->mlet == S_KRAKEN)
                         pline(msgc_youdiscover,
                               "Wait, %s!  There's a hidden %s named %s there!",
                               m_monnam(mtmp), youmonst.data->mname, u.uplname);
@@ -583,7 +583,7 @@ mattacku(struct monst *mtmp)
         tmp = 1;
 
     /* make eels visible the moment they hit/miss us */
-    if (mdat->mlet == S_EEL && mtmp->minvis && cansee(mtmp->mx, mtmp->my)) {
+    if (mdat->mlet == S_KRAKEN && mtmp->minvis && cansee(mtmp->mx, mtmp->my)) {
         mtmp->minvis = 0;
         newsym(mtmp->mx, mtmp->my);
     }
@@ -938,7 +938,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
 
     /* If the monster is undetected & hits you, you should know where the attack
        came from. */
-    if (mtmp->mundetected && (hides_under(mdat) || mdat->mlet == S_EEL)) {
+    if (mtmp->mundetected && (hides_under(mdat) || mdat->mlet == S_KRAKEN)) {
         mtmp->mundetected = 0;
         if (!(Blind ? Blind_telepat : Unblind_telepat)) {
             struct obj *obj;

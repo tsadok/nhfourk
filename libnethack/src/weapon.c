@@ -189,7 +189,7 @@ hitval(struct obj *otmp, struct monst *mon)
     if (otmp->otyp == TRIDENT && is_swimmer(ptr)) {
         if (is_pool(level, mon->mx, mon->my))
             tmp += 4;
-        else if (ptr->mlet == S_EEL || ptr->mlet == S_SNAKE)
+        else if (ptr->mlet == S_KRAKEN || ptr->mlet == S_SNAKE)
             tmp += 2;
     }
 
@@ -418,11 +418,6 @@ would_prefer_rwep(const struct monst *mtmp, struct obj *otmp)
         if (wep->oartifact)
             return FALSE;
 
-        if (mtmp->data->mlet == S_KOP && wep->otyp == CREAM_PIE)
-            return FALSE;
-        if (mtmp->data->mlet == S_KOP && otmp->otyp == CREAM_PIE)
-            return TRUE;
-
         if (throws_rocks(mtmp->data) && wep->otyp == BOULDER)
             return FALSE;
         if (throws_rocks(mtmp->data) && otmp->otyp == BOULDER)
@@ -472,12 +467,8 @@ select_rwep(const struct monst *mtmp)
     struct obj *mwep = MON_WEP(mtmp);
     struct obj *tmpprop = &zeroobj;
 
-    char mlet = mtmp->data->mlet;
-
     propellor = &zeroobj;
     Oselect(EGG);       /* cockatrice egg */
-    if (mlet == S_KOP)  /* pies are first choice for Kops */
-        Oselect(CREAM_PIE);
     if (throws_rocks(mtmp->data))       /* ...boulders for giants */
         Oselect(BOULDER);
 
@@ -597,7 +588,7 @@ static const short hwep[] = {
     MORNING_STAR, ELVEN_SHORT_SWORD, DWARVISH_SHORT_SWORD, SHORT_SWORD,
     ORCISH_SHORT_SWORD, MACE, AXE, DWARVISH_SPEAR, SILVER_SPEAR,
     ELVEN_SPEAR, SPEAR, ORCISH_SPEAR, FLAIL, BULLWHIP, QUARTERSTAFF,
-    JAVELIN, AKLYS, CLUB, PICK_AXE, RUBBER_HOSE,
+    JAVELIN, AKLYS, CLUB, PICK_AXE,
     WAR_HAMMER, SILVER_DAGGER, ELVEN_DAGGER, DAGGER, ORCISH_DAGGER,
     ATHAME, SCALPEL, KNIFE, WORM_TOOTH
 };

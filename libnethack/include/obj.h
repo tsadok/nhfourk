@@ -315,8 +315,7 @@ struct obj {
                                  (obj)->otyp == TOUCHSTONE)
 
 /* misc */
-# define is_flimsy(otmp)      (objects[(otmp)->otyp].oc_material <= LEATHER || \
-                               (otmp)->otyp == RUBBER_HOSE)
+# define is_flimsy(otmp)      (objects[(otmp)->otyp].oc_material <= LEATHER)
 
 /* helpers, simple enough to be macros */
 # define is_plural(o)   ((o)->quan > 1 || \

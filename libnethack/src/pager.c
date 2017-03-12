@@ -35,21 +35,20 @@ const char *const monexplain[MAXMCLASSES] = {
     "mimic", "nymph", "orc", "plant", "quadruped", "rodent",
     "arachnid or centipede", "trapper, piercer, or lurker above",
     "unicorn or horse", "vortex", "worm",
-    "xan or other fantastic insect", "[unused - y]",
-    "sea monster",
+    "xan or other fantastic insect", "[unused - y]", "[unused - z]",
 
     "angelic being", "bat or bird", "centaur",
     "dragon", "elemental", "fungus or mold",
     "gnome", "giant humanoid", 0,
     "jabberwock, gryphon, or large dangerous bird",
-    "Keystone Kop", "lich", "mummy", "naga", "ogre",
+    "kraken, eel, or sea creature", "lich", "mummy", "naga", "ogre",
     "pudding or ooze", "elf", "rust monster or disenchanter",
     "snake", "troll", "bear",
     "vampire", "wraith or ghost",
     "xorn, umber hulk, or other large deep-rock dweller",
     "apelike creature", "zombie",
 
-    "human or elf", "golem", "major demon", "sea monster",
+    "human or elf", "golem", "major demon",
     "long worm tail", "mimic"
 };
 

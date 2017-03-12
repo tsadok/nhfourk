@@ -1305,13 +1305,13 @@ postmov:
         }
 
         if (isok(mtmp->mx, mtmp->my) &&
-            (hides_under(ptr) || ptr->mlet == S_EEL)) {
+            (hides_under(ptr) || ptr->mlet == S_KRAKEN)) {
             /* Always set--or reset--mundetected if it's already hidden (just
                in case the object it was hiding under went away); usually set
                mundetected unless monster can't move.  */
             if (mtmp->mundetected ||
                 (mtmp->mcanmove && !mtmp->msleeping && rn2(5)))
-                mtmp->mundetected = (ptr->mlet != S_EEL) ?
+                mtmp->mundetected = (ptr->mlet != S_KRAKEN) ?
                     OBJ_AT(mtmp->mx, mtmp->my) :
                     (is_pool(level, mtmp->mx, mtmp->my) &&
                      !Is_waterlevel(&u.uz));

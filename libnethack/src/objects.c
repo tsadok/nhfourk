@@ -220,8 +220,6 @@ const struct objclass const_objects[] = {
     /* +1 small */
     WEAPON("club", NULL,
            1, 0, 0, 12, 30, 3, 6, 3, 0, B, P_CLUB, WOOD, HI_WOOD),
-    WEAPON("rubber hose", NULL,
-           1, 0, 0, 0, 20, 3, 4, 3, 0, 0, P_WHIP, PLASTIC, CLR_BROWN),
     WEAPON("quarterstaff", "staff",
            0, 0, 1, 11, 40, 5, 4, 4, 0, B, P_QUARTERSTAFF, WOOD, HI_WOOD),
 /* two-piece */

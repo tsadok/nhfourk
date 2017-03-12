@@ -242,7 +242,7 @@ doit:
         canmove = FALSE;
     if (!rn2(clumsy ? 3 : 4) && (clumsy || !bigmonst(mon->data)) && mon->mcansee
         && !mon->mtrapped && !thick_skinned(mon->data) &&
-        mon->data->mlet != S_EEL && haseyes(mon->data) && mon->mcanmove &&
+        mon->data->mlet != S_KRAKEN && haseyes(mon->data) && mon->mcanmove &&
         !mon->mstun && !mon->mconf && !mon->msleeping &&
         mon->data->mmove >= 12) {
         if (!canmove || (!nohands(mon->data) && !rn2(martial()? 5 : 3))) {

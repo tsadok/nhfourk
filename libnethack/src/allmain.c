@@ -932,7 +932,7 @@ you_moved(void)
             if (u.uinvulnerable) {
                 /* for the moment at least, you're in tiptop shape */
                 wtcap = UNENCUMBERED;
-            } else if (Upolyd && youmonst.data->mlet == S_EEL &&
+            } else if (Upolyd && youmonst.data->mlet == S_KRAKEN &&
                        !is_damp_terrain(level, u.ux, u.uy) &&
                        !Is_waterlevel(&u.uz)) {
                 if (u.mh > 1) {

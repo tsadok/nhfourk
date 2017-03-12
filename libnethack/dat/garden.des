@@ -69,11 +69,11 @@ OBJECT:'`',"statue",(45,05),"incubus",0
 OBJECT:'`',"statue",(49,05),"incubus",0
 # And in the lake...
 OBJECT:'(',"magic lamp",place[0]
-MONSTER:';',random,place[1]
-MONSTER:';',random,place[2]
-MONSTER:';',random,place[3]
-MONSTER:';',random,place[4]
-MONSTER:';',random,place[5]
+MONSTER:'K',random,place[1]
+MONSTER:'K',random,place[2]
+MONSTER:'K',random,place[3]
+MONSTER:'K',random,place[4]
+MONSTER:'K',random,place[5]
 # On the island...
 # (Placing fruit on the tree produces warnings but is deliberate.)
 OBJECT:'%',"banana",(29,15)
@@ -194,11 +194,11 @@ OBJECT:'`',"statue",(57,11),"incubus",0
 OBJECT:'`',"statue",(53,15),"incubus",0
 # And in the lake...
 OBJECT:'(',"magic lamp",place[0]
-MONSTER:';',random,place[1]
-MONSTER:';',random,place[2]
-MONSTER:';',random,place[3]
-MONSTER:';',random,place[4]
-MONSTER:';',random,place[5]
+MONSTER:'K',random,place[1]
+MONSTER:'K',random,place[2]
+MONSTER:'K',random,place[3]
+MONSTER:'K',random,place[4]
+MONSTER:'K',random,place[5]
 OBJECT:'%',"kelp frond",place[6]
 # On the island...
 CONTAINER:'`',"statue",(39,06),"monkey",0
