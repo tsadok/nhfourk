@@ -62,7 +62,7 @@ shuffle(int o_low, int o_high, boolean domaterial)
 void
 init_objects(void)
 {
-    int i, first, last, sum;
+    int i, j, k, first, last, sum, tries;
     char oclass;
 
     /* initialize object descriptions */
@@ -101,16 +101,32 @@ init_objects(void)
                 break;
             }
         }
+        tries = 0;
     check:
-        sum = 0;
+        sum = j = k = 0;
         for (i = first; i < last; i++)
             sum += objects[i].oc_prob;
-        if (sum == 0) {
-            for (i = first; i < last; i++)
-                objects[i].oc_prob = (1000 + i - first) / (last - first);
+        if ((sum == 0) && (tries++ < 3)) {
+            for (i = first; i < last; i++) {
+                if (!((objects[i].oc_name_idx) &&
+                      (obj_descr[objects[i].oc_name_idx].oc_name) &&
+                      strlen(OBJ_NAME(objects[i]))))
+                    j++;
+            }
+            for (i = first; i < last; i++) {
+                if (objects[i].oc_name_idx &&
+                    obj_descr[objects[i].oc_name_idx].oc_name &&
+                    strlen(OBJ_NAME(objects[i]))) {
+                    objects[i].oc_prob =
+                        (1000 + i - (first + k)) / (last - (first + j));
+                    /* raw_printf("set %s prob to %d",
+                       OBJ_NAME(objects[i]), objects[i].oc_prob); */
+                }
+                else k++;
+            }
             goto check;
         }
-        if (sum != 1000)
+        if (sum != 1000 && oclass != ILLOBJ_CLASS)
             raw_printf("init-prob error for class %d (%d%%)\n", oclass, sum);
 
         first = last;
