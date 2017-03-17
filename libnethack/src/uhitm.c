@@ -401,7 +401,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
     boolean hittxt = FALSE, destroyed = FALSE, already_killed = FALSE;
     boolean get_dmg_bonus = TRUE;
     boolean ispoisoned = FALSE, needpoismsg = FALSE, poiskilled = FALSE;
-    boolean silvermsg = FALSE, silverobj = FALSE;
+    boolean silvermsg = FALSE, silverobj = FALSE, silvermaterial = SILVER;
     boolean valid_weapon_attack = FALSE;
     boolean unarmed = !uwep && (!uarm || uskin()) && !uarms;
     int jousting = 0;
@@ -429,13 +429,16 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
         /* So do silver rings.  Note: rings are worn under gloves, so you don't
            get both bonuses. */
         if (!uarmg) {
-            if (uleft && objects[uleft->otyp].oc_material == SILVER)
+            int hated_material = hates_material(mdat, SILVER) ? SILVER :
+                hates_material(mdat, IRON) ? IRON : 0;
+            if (uleft && objects[uleft->otyp].oc_material == hated_material)
                 barehand_silver_rings++;
-            if (uright && objects[uright->otyp].oc_material == SILVER)
+            if (uright && objects[uright->otyp].oc_material == hated_material)
                 barehand_silver_rings++;
-            if (barehand_silver_rings && hates_silver(mdat)) {
-                tmp += rnd(20);
+            if (barehand_silver_rings && hates_material(mdat, hated_material)) {
+                tmp += rnd(material_damage(hated_material));
                 silvermsg = TRUE;
+                silvermaterial = hated_material;
             }
         }
     } else {
@@ -461,11 +464,11 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                 /* need to duplicate this check for silver arrows: they aren't
                    caught below as they're weapons, and aren't caught in dmgval
                    as they aren't melee weapons. */
-                if (objects[obj->otyp].oc_material == SILVER &&
-                    hates_silver(mdat)) {
+                if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                     silvermsg = TRUE;
                     silverobj = TRUE;
-                    tmp += rnd(20);
+                    silvermaterial = objects[obj->otyp].oc_material;
+                    tmp += rnd(material_damage(silvermaterial));
                 }
                 if (!thrown && obj == uwep && obj->otyp == BOOMERANG &&
                     rnl(4) == 4 - 1) {
@@ -550,10 +553,10 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                         return TRUE;
                     hittxt = TRUE;
                 }
-                if (objects[obj->otyp].oc_material == SILVER &&
-                    hates_silver(mdat)) {
+                if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                     silvermsg = TRUE;
                     silverobj = TRUE;
+                    silvermaterial = objects[obj->otyp].oc_material;
                 }
                 if (u.usteed && !thrown && tmp > 0 &&
                     obj->otyp == LANCE && mon != u.ustuck) {
@@ -923,11 +926,11 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                      * Things like silver wands can arrive here so
                      * so we need another silver check.
                      */
-                    if (objects[obj->otyp].oc_material == SILVER &&
-                        hates_silver(mdat)) {
-                        tmp += rnd(20);
+                    if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                         silvermsg = TRUE;
                         silverobj = TRUE;
+                        silvermaterial = objects[obj->otyp].oc_material;
+                        tmp += rnd(material_damage(silvermaterial));
                     }
                 }
             }
@@ -1135,10 +1138,13 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown)
                 fmt = "Your silver rings sear %s!";
             else if (silverobj && *saved_oname) {
                 fmt = msgprintf("Your %s%s %s %%s!",
-                                strstri(saved_oname, "silver") ? "" : "silver ",
+                                strstri(saved_oname,
+                                        material_name(silvermaterial)) ? "" :
+                                msgprintf("%s ", material_name(silvermaterial)),
                                 saved_oname, vtense(saved_oname, "sear"));
             } else
-                fmt = "The silver sears %s!";
+                fmt = msgprintf("The %s sears %%s!",
+                                material_name(silvermaterial));
         } else {
             whom = msgupcasefirst(whom);       /* "it" -> "It" */
             fmt = "%s is seared!";

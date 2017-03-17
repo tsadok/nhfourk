@@ -1009,9 +1009,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                    polymorphed and polymorph gives protection against HP
                    damage). msgc_statusbad makes sense, treating the "extra
                    damage" as a status effect. */
-                if (objects[otmp->otyp].oc_material == SILVER &&
-                    hates_silver(youmonst.data))
-                    pline(msgc_statusbad, "The silver sears your flesh!");
+                if (hates_material(URACEDATA, objects[otmp->otyp].oc_material))
+                    pline(msgc_statusbad, "The %s sears your flesh!",
+                          material_name(objects[otmp->otyp].oc_material));
 
                 if (dmg <= 0)
                     dmg = 1;

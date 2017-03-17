@@ -764,7 +764,7 @@ dogfood(const struct monst *mon, struct obj *obj)
         if (obj->otyp == AMULET_OF_STRANGULATION ||
             obj->otyp == RIN_SLOW_DIGESTION)
             return TABU;
-        if (hates_silver(mon->data) && objects[obj->otyp].oc_material == SILVER)
+        if (hates_material(mon->data, objects[obj->otyp].oc_material))
             return TABU;
         if (mon->data == &mons[PM_GELATINOUS_CUBE] && is_organic(obj))
             return ACCFOOD;

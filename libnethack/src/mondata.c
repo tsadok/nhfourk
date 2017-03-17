@@ -228,15 +228,38 @@ ranged_attk(const struct permonst * ptr)
     return FALSE;
 }
 
-/* returns TRUE if monster is especially affected by silver weapons */
+/* returns TRUE if monster is especially affected by weapons made from the
+   material in question.  Note that there's still a hardcoded case in
+   for lycanthropes hating silver in particular, in hmon_hitmon(), because
+   a monster can be a lycanthrope even when its permonst pointer does
+   not clearly indicate that fact.  TODO: It's possible that said special
+   case is not handled correctly elsewhere. */
 boolean
-hates_silver(const struct permonst * ptr)
+hates_material(const struct permonst *ptr, const int material)
 {
+    if (material == SILVER)
     return ((boolean)
             (is_were(ptr) || ptr->mlet == S_VAMPIRE || is_demon(ptr) ||
              ptr == &mons[PM_SHADE] || (ptr->mlet == S_IMP &&
                                         ptr != &mons[PM_TENGU] &&
                                         ptr != &mons[PM_LEPRECHAUN])));
+    if (material == IRON) {
+        return ((boolean) (is_elf(ptr) || ptr == &mons[PM_SYLPH]));
+    }
+    return FALSE;
+}
+
+/* Returns the maximum amount of special damage a material will do to a
+   material-hating monster, above and beyond what the weapon would do in any
+   case.  In practice, the actual damage bonus will be a random number from 1 to
+   this.  This function assumes that it is only called when hates_material() has
+   already returned true for the monster/material combination in question, so it
+   only has to handle materials to which some monster is sensitive. */
+int material_damage(const int material)
+{
+    if (material == SILVER)
+        return 20;
+    return 5;
 }
 
 /* true iff the type of monster pass through iron bars */

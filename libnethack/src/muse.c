@@ -2019,8 +2019,8 @@ use_misc(struct monst *mtmp, struct musable *m)
                               "A whip wraps around %s you're wielding!",
                               the_weapon);
 
-            if (where_to == 3 && hates_silver(mtmp->data) &&
-                objects[obj->otyp].oc_material == SILVER) {
+            if (where_to == 3 &&
+                hates_material(mtmp->data, objects[obj->otyp].oc_material)) {
                 /* this monster won't want to catch a silver weapon; drop it at 
                    hero's feet instead */
                 where_to = 2;

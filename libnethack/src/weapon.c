@@ -344,8 +344,8 @@ dmgval(struct obj *otmp, struct monst *mon)
             bonus += rnd(4);
         if (is_axe(otmp) && is_wooden(ptr))
             bonus += rnd(4);
-        if (objects[otyp].oc_material == SILVER && hates_silver(ptr))
-            bonus += rnd(20);
+        if (hates_material(ptr, objects[otyp].oc_material))
+            bonus += rnd(material_damage(objects[otyp].oc_material));
 
         /* if the weapon is going to get a double damage bonus, adjust this
            bonus so that effectively it's added after the doubling */
@@ -427,7 +427,7 @@ would_prefer_rwep(const struct monst *mtmp, struct obj *otmp)
     if (((strongmonst(mtmp->data) &&
           (mtmp->misc_worn_check & W_MASK(os_arms)) == 0)
          || !objects[pwep[i]].oc_bimanual) &&
-        (objects[pwep[i]].oc_material != SILVER || !hates_silver(mtmp->data))) {
+        (!hates_material(mtmp->data, objects[pwep[i]].oc_material))) {
         for (i = 0; i < SIZE(pwep); i++) {
             if (wep && wep->otyp == pwep[i] &&
                 !(otmp->otyp == pwep[i] &&
@@ -497,8 +497,7 @@ select_rwep(const struct monst *mtmp)
             if (((strongmonst(mtmp->data) &&
                   (mtmp->misc_worn_check & W_MASK(os_arms)) == 0)
                  || !objects[pwep[i]].oc_bimanual) &&
-                (objects[pwep[i]].oc_material != SILVER ||
-                 !hates_silver(mtmp->data))) {
+                (!hates_material(mtmp->data, objects[pwep[i]].oc_material))) {
                 if (((otmp = oselect(mtmp, pwep[i])) != 0) &&
                     (otmp == mwep || !mweponly)) {
                     propellor = otmp;   /* force the monster to wield it */
@@ -658,8 +657,7 @@ select_hwep(const struct monst *mtmp)
             continue;
         if (((strong && !wearing_shield)
              || !objects[hwep[i]].oc_bimanual) &&
-            (objects[hwep[i]].oc_material != SILVER ||
-             !hates_silver(mtmp->data)))
+            (!hates_material(mtmp->data, objects[hwep[i]].oc_material)))
             Oselect(hwep[i]);
     }
 

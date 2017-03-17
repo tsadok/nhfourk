@@ -1598,7 +1598,8 @@ eatspecial(int nutrition, struct obj *otmp)
 }
 
 /* NOTE: the order of these words exactly corresponds to the
-   order of oc_material values #define'd in objclass.h. */
+   order of oc_material values #define'd in objclass.h.
+   Some entries are different from matname[] in objnam.c */
 static const char *const foodwords[] = {
     "meal", "liquid", "wax", "food", "meat",
     "paper", "cloth", "leather", "wood", "bone", "scale",

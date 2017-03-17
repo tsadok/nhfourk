@@ -71,10 +71,10 @@ thitu(int tlev, int dam, struct obj *obj, const char *name)
         else
             pline(msgc_nonmonbad, "You are hit by %s%s", onm, exclam(dam));
 
-        if (obj && objects[obj->otyp].oc_material == SILVER &&
-            hates_silver(youmonst.data)) {
-            dam += rnd(20);
-            pline(msgc_statusbad, "The silver sears your flesh!");
+        if (obj && hates_material(URACEDATA, objects[obj->otyp].oc_material)) {
+            dam += rnd(material_damage(objects[obj->otyp].oc_material));
+            pline(msgc_statusbad, "The %s sears your flesh!",
+                  material_name(objects[obj->otyp].oc_material));
             exercise(A_CON, FALSE);
         }
         if (is_acid && Acid_resistance)
@@ -210,11 +210,12 @@ ohitmon(struct monst *mtmp, /* accidental target */
                 }
             }
         }
-        if (objects[otmp->otyp].oc_material == SILVER &&
-            hates_silver(mtmp->data)) {
+        if (hates_material(mtmp->data, objects[otmp->otyp].oc_material)) {
             if (vis)
                 pline(combat_msgc(magr, mtmp, cr_hit),
-                      "The silver sears %s flesh!", s_suffix(mon_nam(mtmp)));
+                      "The %s sears %s flesh!",
+                      material_name(objects[otmp->otyp].oc_material),
+                      s_suffix(mon_nam(mtmp)));
             else if (spoil_unseen)
                 pline(combat_msgc(magr, mtmp, cr_hit),
                       "Its flesh is seared!");

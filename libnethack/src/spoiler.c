@@ -92,16 +92,6 @@ const char *ad[ADSIZE] =
          "disenchantment", "corrosion", "vicarous suffering",
          "stinking cloud", "pits", "iceblock", "displace", "web"};
 
-/* NOTE: the order of these words exactly corresponds to the
-   order of oc_material values #define'd in objclass.h.  I
-   initially copy/pasted it from foodwords[] in eat.c */
-static const char *const material[] = {
-    "meal", "liquid", "wax", "vegetable", "meat",
-    "paper", "cloth", "leather", "wood", "bone", "scale",
-    "iron or steel", "metal", "copper", "silver", "gold",
-    "platinum", "mithril", "plastic", "glass", "gemstone", "mineral"
-};
-
 const char *
 htmlheader(const char * spoilername)
 {
@@ -564,7 +554,7 @@ spoilobjclass(FILE *file, const char * hrname, const char * aname,
                 "<td class=\"numeric weight\">%d</td>"
                 "<td class=\"numeric price\">%d</td>"
                 "</tr>\n",
-                spoiloname(i), material[objects[i].oc_material],
+                spoiloname(i), material_name(objects[i].oc_material),
                 extravalue, objects[i].oc_weight, objects[i].oc_cost);
     }
 
@@ -915,7 +905,7 @@ makehtmlspoilers(void)
                     "<td class=\"notes wpnnotes\">%s</td>"
                     "</tr>\n",
                     spoiloname(i), spoilweapskill(i),
-                    material[objects[i].oc_material], spoiltohit(i, NULL),
+                    material_name(objects[i].oc_material), spoiltohit(i, NULL),
                     spoildamage(i, SDAM, NULL), spoildamage(i, LDAM, NULL),
                     objects[i].oc_weight, objects[i].oc_cost,
                     (objects[i].oc_bimanual ?
@@ -938,7 +928,7 @@ makehtmlspoilers(void)
                             "<td class=\"notes wpnnotes artinotes\">%s"
                             " <span class=\"versus\">%s</span></td>"
                             "</tr>", art->name, spoilweapskill(i),
-                            material[objects[i].oc_material],
+                            material_name(objects[i].oc_material),
                             spoiltohit(i, art), spoildamage(i, SDAM, art),
                             spoildamage(i, LDAM, art), objects[i].oc_weight,
                             objects[i].oc_cost,
@@ -992,7 +982,7 @@ makehtmlspoilers(void)
                     oslotname(objects[i].oc_armcat), spoiloname(i),
                     (objects[i].a_can ?
                      msgprintf("MC%d", objects[i].a_can) : ""),
-                    objects[i].a_ac, material[objects[i].oc_material],
+                    objects[i].a_ac, material_name(objects[i].oc_material),
                     spoilarmorsize(&objects[i]),
                     objects[i].oc_weight, objects[i].oc_cost);
         }
@@ -1640,7 +1630,7 @@ makepinobotyaml(void)
                 AT(M3_BLINKAWAY, "FlBlinkAway");
                 AT(M3_VANDMGRDUC, "FlVanDmgRduc");
 #undef AT
-                if (hates_silver(pm)) fprintf(f, ", FlHatesSilver");
+                if (hates_material(pm, SILVER)) fprintf(f, ", FlHatesSilver");
                 if (passes_bars(pm)) fprintf(f, ", FlPassesBars");
                 if (vegan(pm)) fprintf(f, ", FlVegan");
                 else if (vegetarian(pm)) fprintf(f, ", FlVegetarian");

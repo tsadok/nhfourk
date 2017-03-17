@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Iron weapons do bonus damage against elves and sylphs.
+   (This bonus is smaller than the silver damage bonus, however.)
+
  * As part of my quest to get monsters off of punctuation and onto
    letters, sea monsters are now represented, in text mode, as
    K (mnemonic: Kraken) instead of ;

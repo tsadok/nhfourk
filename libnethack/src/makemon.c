@@ -1796,7 +1796,7 @@ int
 superioritem(struct monst *mon, int original)
 {
     int superioritem = original;
-    int nosilver = (mon && hates_silver(mon->data)) ? 1 : 0;
+    int nosilver = (mon && hates_material(mon->data, SILVER)) ? 1 : 0;
     if (!Inhell)
         return original;
     /* Note: I'm sure some of these probabilities will need tweaked. */

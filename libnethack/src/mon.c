@@ -1082,7 +1082,7 @@ can_carry(struct monst *mtmp, struct obj *otmp)
         return FALSE;
     if (otyp == CORPSE && is_rider(&mons[otmp->corpsenm]))
         return FALSE;
-    if (objects[otyp].oc_material == SILVER && hates_silver(mdat) &&
+    if (hates_material(mdat, objects[otyp].oc_material) &&
         (otyp != BELL_OF_OPENING || !is_covetous(mdat)))
         return FALSE;
 

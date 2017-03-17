@@ -1182,7 +1182,8 @@ extern boolean resists_magm(const struct monst *);
 extern boolean resists_blnd(const struct monst *);
 extern boolean can_blnd(struct monst *, struct monst *, uchar, struct obj *);
 extern boolean ranged_attk(const struct permonst *);
-extern boolean hates_silver(const struct permonst *);
+extern boolean hates_material(const struct permonst *, const int);
+extern int material_damage(const int);
 extern boolean passes_bars(const struct permonst *);
 extern boolean can_track(const struct permonst *);
 extern boolean breakarm(const struct permonst *, const struct objclass *oc);
@@ -1292,6 +1293,7 @@ extern void count_discovered_objects(int *, int *);
 
 /* ### objnam.c ### */
 
+extern const char *material_name(int);
 extern const char *obj_typename(int);
 extern const char *simple_typename(int);
 extern boolean obj_is_pname(const struct obj *);

@@ -108,6 +108,21 @@ static const struct Jitem Japanese_items[] = {
     {0, ""}
 };
 
+/* NOTE: the order of these words exactly corresponds to the
+   order of oc_material values #define'd in objclass.h.
+   See also foodwords[] in eat.c, which is similar. */
+static const char *const matname[] = {
+    "matter", "liquid", "wax", "vegetable", "meat",
+    "paper", "cloth", "leather", "wood", "bone", "scale",
+    "iron", "metal", "copper", "silver", "gold", "platinum",
+    "mithril", "plastic", "glass", "gemstone", "mineral"
+};
+
+const char *
+material_name(const int material)
+{
+    return matname[material];
+}
 
 static const char *Japanese_item_name(int i);
 

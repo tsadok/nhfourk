@@ -1717,8 +1717,9 @@ retouch_object(struct obj **objp, boolean loseit)
     
     if (touch_artifact(obj, &youmonst)) {
         /* nothing to do if hero can successfully handle this object */
-        if (!(objects[obj->otyp].oc_material == SILVER &&
-              (u.ulycn >= LOW_PM || hates_silver(youmonst.data))))
+        if (!((objects[obj->otyp].oc_material == SILVER &&
+               u.ulycn >= LOW_PM) ||
+              hates_material(URACEDATA, objects[obj->otyp].oc_material)))
             return 1;
         /* we didn't get "<obj> evades your grasp" message; give alt message */
         pline(msgc_consequence, "You can't handle %s anymore!",
