@@ -45,7 +45,9 @@ enum menuitems {
 static struct nh_menuitem mainmenu_items[] = {
     {NEWGAME, MI_NORMAL, 0, "new game", 'n'},
     {LOAD, MI_NORMAL, 0, "load game", 'l'},
+#ifndef SUPPRESS_REPLAY
     {REPLAY, MI_NORMAL, 0, "view replay", 'v'},
+#endif
     {OPTIONS, MI_NORMAL, 0, "set options", 'o'},
     {TOPTEN, MI_NORMAL, 0, "show score list", 's'},
 #if defined(NETCLIENT)
@@ -57,7 +59,9 @@ static struct nh_menuitem mainmenu_items[] = {
 static struct nh_menuitem mainmenu_items_noclient[] = {
     {NEWGAME, MI_NORMAL, 0, "new game", 'n'},
     {LOAD, MI_NORMAL, 0, "load game", 'l'},
+#ifndef SUPPRESS_REPLAY
     {REPLAY, MI_NORMAL, 0, "view replay", 'v'},
+#endif
     {OPTIONS, MI_NORMAL, 0, "set options", 'o'},
     {TOPTEN, MI_NORMAL, 0, "show score list", 's'},
     {EXITGAME, MI_NORMAL, 0, "quit", 'q', 'x'}
