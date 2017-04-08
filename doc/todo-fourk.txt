@@ -109,8 +109,6 @@
 ▒▒▒   4.3.0.5 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed
-▒▒▒
 ▒▒▒ * Figure out some way to make non-artifact crystal balls useful other than as polyfodder.
 ▒▒▒   
 ▒▒▒ * Finally have a decent plan for mummies.  See #nethack4 log from 2017 Apr 16, 18:45-18:50

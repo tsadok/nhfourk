@@ -119,15 +119,11 @@ init_objects(void)
                     strlen(OBJ_NAME(objects[i]))) {
                     objects[i].oc_prob =
                         (1000 + i - (first + k)) / (last - (first + j));
-                    /* raw_printf("set %s prob to %d",
-                       OBJ_NAME(objects[i]), objects[i].oc_prob); */
                 }
                 else k++;
             }
             goto check;
         }
-        if (sum != 1000 && oclass != ILLOBJ_CLASS)
-            raw_printf("init-prob error for class %d (%d%%)\n", oclass, sum);
 
         first = last;
     }
