@@ -3,6 +3,8 @@
 /* Copyright (c) Daniel Thaler, 2012 */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#ifdef NETCLIENT
+
 #include "nhcurses.h"
 #include <fcntl.h>
 
@@ -762,5 +764,7 @@ finally:
     free_displaychars();        /* remove server display info */
     init_displaychars();        /* go back to local object/monster/... lists */
 }
+
+#endif /* NETCLIENT */
 
 /* netgame.c */
