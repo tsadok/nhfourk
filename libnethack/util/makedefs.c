@@ -359,7 +359,7 @@ version_id_string(char *outbuf, const char *build_date,
     strcpy(&subbuf[1], PORT_SUB_ID);
 #endif
 
-    sprintf(outbuf, "%s NetHack%s version %s (%s) - last build %s.",
+    sprintf(outbuf, "%s NetHack Fourk%s version %s (%s) - last build %s.",
             PORT_ID, subbuf, version_string(versbuf),
             specific_version, build_date);
     return outbuf;
