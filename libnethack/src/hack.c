@@ -952,15 +952,20 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
         if ((t && t->tseen) ||
             (cache->grounded &&
              (level->locations[x][y].mem_bg == S_pool ||
-              level->locations[x][y].mem_bg == S_lava))) {
+              level->locations[x][y].mem_bg == S_lava)) ||
+            DSYM_ISROCK(level->locations[x][y].mem_bg)) {
             if (mode == DO_MOVE) {
                 if (is_pool(level, x, y))
                     autoexplore_msg("a body of water", mode);
                 else if (is_lava(level, x, y))
                     autoexplore_msg("a pool of lava", mode);
+                else if (!t || !t->tseen)
+                    autoexplore_msg("solid rock", mode);
                 if (travelling())
                     return FALSE;
-            }
+            } else if ((!t || !t->tseen) &&
+                       DSYM_ISROCK(level->locations[x][y].mem_bg))
+                return FALSE;
             return mode == TEST_SLOW || mode == DO_MOVE;
         }
     }

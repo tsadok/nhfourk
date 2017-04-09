@@ -185,7 +185,10 @@ enum dungeon_symbols {
     S_hcdoor_memlt,
 
     MAXPCHARS,  /* maximum number of mapped characters */
+    S_last_rock = S_trwall,
 };
+
+# define DSYM_ISROCK(typ) (typ != S_unexplored && typ <= S_last_rock)
 
 # define DUNGEON_FEATURE_OFFSET S_vodoor
 
