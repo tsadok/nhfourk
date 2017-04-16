@@ -1,0 +1,846 @@
+
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒                                                   ▒▒▒
+▒▒▒   T O D O    L i s t s  :                         ▒▒▒
+▒▒▒                                                   ▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒   4.3.0.4 :
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
+▒▒▒   
+▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
+▒▒▒   22:00 <             FIQ > what bug
+▒▒▒   22:01 <         Tangles > In a hardware store, if you drop a sack, you can sell it for 1zm, but retain possession of the
+▒▒▒                             non-tool items in the sack.
+▒▒▒   22:01 <         Tangles > but...
+▒▒▒   22:02 <         Tangles > when the shk runs out of gold, you instead trade the sack, for 1zm of credit, and the shk
+▒▒▒                             takes oqnership of everything in it.
+▒▒▒   22:03 <         Tangles > so when you pick it up again, you suddenly owe the shk thousands, and the last hour you spent
+▒▒▒                             credit-cloning is wasted :(
+▒▒▒   22:03 <             FIQ > ais523: ^ possibly in NH4 as well
+▒▒▒   22:04 <          ais523 > hmm, interesting
+▒▒▒   22:04 <          ais523 > that might be a vanilla bug
+▒▒▒
+▒▒▒ * 20:10 <             FIQ > jonadab: shouldn't prayer sanity checks run *before* breaking the conduct?
+▒▒▒   ...
+▒▒▒   This is about refusing to attempt to pray to a non-chaotic god if you are a demon.
+▒▒▒
+▒▒▒ * FIQ says he shot a watchman in the face because f1<direction> fired two darts.
+▒▒▒
+▒▒▒ * Find a way to compile on Windows.
+▒▒▒
+▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed
+▒▒▒
+▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.
+▒▒▒
+▒▒▒ * FIQ thinks Gnome darkvision should be able to see walls.
+▒▒▒
+▒▒▒ * FIQ thinks Stacked Dozen should be a prize level due to difficulty.
+▒▒▒
+▒▒▒ * FIQ suggests when pushing a boulder into (deep) water, sometimes shallow water should result.
+▒▒▒
+▒▒▒ * Increase the retry count on VS placement, try to make it not put the VS too close to the map edge.
+▒▒▒
+▒▒▒ * Test what happens when polyselfing into a python while wearing body armor.
+▒▒▒   Raisse suggests you should "slither" out of it, rather than breaking it.
+▒▒▒
+▒▒▒ * Your conscious should not "bother you a little less" if your alignment
+▒▒▒   record is as high as it has ever been.  Change the wording in that case.
+▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
+▒▒▒
+▒▒▒ * Can mindless things sleep?  WHY can mindless things sleep?
+▒▒▒
+▒▒▒ * Scurriers versus shop walls.
+▒▒▒
+▒▒▒ * 22:06 <         Tangles > Error: Couldn't load "garden-2.lev" - making a maze.
+▒▒▒   I absolutely cannot reproduce this here.  Both versions of the garden work as intended here.
+▒▒▒   Additionally, Travis does not report any unexpected problems building them.
+▒▒▒
+▒▒▒ * 10:37 <         Tangles > Some observations... Combat messages sometimes refer to you in the
+▒▒▒                             3rd person "the dwarf thrusts his dagger at the valkyrie".
+▒▒▒
+▒▒▒ * 08:36 < FIQ > jonadab: you screwed up the ordering of parameters in turn undead instadeath
+▒▒▒   08:36 < FIQ > it kills the user, rather than the target
+▒▒▒
+▒▒▒ * Find some way to compile on Windows, even if it involves Cygwin and exotic dependencies.
+▒▒▒
+▒▒▒ * Throwing food at a starving tame monster should not revert it to peaceful.
+▒▒▒
+▒▒▒ * Audit impact_drop(), the code wherein objects fall down stairs when
+▒▒▒   a thrown object hits the pile.  We think there may be at least
+▒▒▒   two bugs in it.  For details, see the log of #nhfourk from
+▒▒▒   2016 May 13th, starting at 8:30am.  Pay special attention to
+▒▒▒   what we noticed around 9:31.
+▒▒▒
+▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
+▒▒▒   the duplicated message that has been reported.
+▒▒▒
+▒▒▒ * Add -Wunused-parameter -Wunused-label -Wunused-variable to my CFLAGS,
+▒▒▒   fix any warnings that ensue.
+▒▒▒
+▒▒▒ * FIQ says a 60zm scroll in a shop that isn't marked up should auto-ID.
+▒▒▒
+▒▒▒ * Wiz quest text refers to a chest on wiz home that no longer exists.
+▒▒▒
+▒▒▒ * FIQ says fix the comment in objects.c, g isn't used as a spell letter.
+▒▒▒
+▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
+▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
+▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
+▒▒▒   Haven't verified whether this is Fourk-specific.  FIQ did a workaround to
+▒▒▒   convert this from segfault to panic(), but we should fix it for real.
+▒▒▒
+▒▒▒ * Check the wishing code, find out why it's possible to wish for a 0:127 wand.
+▒▒▒
+▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
+▒▒▒   This is bad and not at all what I want.  Fix it.
+▒▒▒
+▒▒▒ * Check whether the monster-carrying-egg crash is Fourk-specific, maybe
+▒▒▒   cherry-pick the workaround to 4.3-maint.
+▒▒▒
+▒▒▒ * FIQ says it's possible to bloat yourself so much you get faster.
+▒▒▒
+▒▒▒ * Why do poisoned ya get the wrong plural?  http://i.imgur.com/D5vsbwA.png
+▒▒▒
+▒▒▒ * Should commit 048af5eb19a2 be in #ifdef PUBLIC_SERVER ?
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒   4.3.0.5 :
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Figure out some way to make non-artifact crystal balls useful other than as polyfodder.
+▒▒▒   
+▒▒▒ * Should converting an altar grant an alignment bonus?  (hackedhead's idea)
+▒▒▒
+▒▒▒ * Still need to squeeze a line or two out of the new ranger quest home, and rogue quest home.
+▒▒▒
+▒▒▒ * Give elves lembas in the magic chest (FIQ's idea)
+▒▒▒
+▒▒▒ * Rething quaff-identification deterrents.  In particular, should potions of hallucination
+▒▒▒   really last that long?  (Mandevil complained about this; it _is_ basically forever.)
+▒▒▒   Should potions of polymorph be more common?
+▒▒▒
+▒▒▒ * 06:30 < FIQ > jonadab: maybe cursed remove curse should remove curses by destroying the cursed items
+▒▒▒
+▒▒▒ * Rebalance initial magic chest contents.
+▒▒▒
+▒▒▒ * The game should track what price quotes you've seen for a given item type.
+▒▒▒
+▒▒▒ * Grasshopper suggests club/mace/morningstar are basically the same skill, or should be.
+▒▒▒
+▒▒▒ * 12:28 < FIQ > fu nfact: in fourk, sylphs at <12 constitution heal 1hp per turn in hell, at >=12 they don't heal at all
+▒▒▒
+▒▒▒ * Probably should suppress the "generate statues every time a cockatrice is
+▒▒▒   generated" in cockatrice nests.
+▒▒▒
+▒▒▒ * Giants should have a better base AC than humans.
+▒▒▒
+▒▒▒ * Implement the ability for giants to wield two-handed weapons in one hand.
+▒▒▒
+▒▒▒ * It appears that material-sensitive players can wield weapons made of the
+▒▒▒   material in question without difficulty or consequence, provided you do
+▒▒▒   not change form _while_ wielding the item.  (This is true for silver
+▒▒▒   in .4, and probably upstream even, but I want to fix it in a general way,
+▒▒▒   not only for silver.)
+▒▒▒
+▒▒▒ * Make the gameplay mode option not offer challenge mode until it's unlocked.
+▒▒▒
+▒▒▒ * Bug: for non-setseed games, the seed reported in the xlogfile and dumplog is
+▒▒▒   not actually the seed that was used.
+▒▒▒
+▒▒▒ * Consider adjusting the difficulty of some monsters.
+▒▒▒   + For example, quasits should probably have their difficulty number reduced.
+▒▒▒   + 
+▒▒▒
+▒▒▒ * Allow two-handed weapons to be enchanted to +10?
+▒▒▒
+▒▒▒ * Enchanting a weapon to +5 or higher should identify its enchantment level.
+▒▒▒
+▒▒▒ * Ensure that runics interact reasonably with stacking.
+▒▒▒
+▒▒▒ * Make it possible to trigger traps by throwing objects onto them.
+▒▒▒   + arrow/dart trap: 
+▒▒▒   + falling rock trap: a rock falls
+▒▒▒   + squeaky board: if the object is heavy enough, you hear a sound
+▒▒▒   + bear trap: sets off the trap (equivalent to untrapping it)
+▒▒▒   + land mine: explosion, of course (the object gets blown to a new location)
+▒▒▒   + rolling boulder trap: duh
+▒▒▒   + sleeping gas trap: flavor text and reveal if you can see the trap tile
+▒▒▒   + rust trap: water damage the object
+▒▒▒   + fire trap: fire damage the object
+▒▒▒   + pit, spiked pit: object lands in pit, reveal pit
+▒▒▒   + hole, trap door: object falls through
+▒▒▒   + vibrating square: object vibrates if you can perceive it
+▒▒▒   + teleportation trap: object teleports
+▒▒▒   + level teleporter: object is levelported
+▒▒▒   + magic portal: object goes through to other level
+▒▒▒   + web: object gets stuck
+▒▒▒   + statue trap: statue comes to life
+▒▒▒   + magic trap: ?
+▒▒▒   + anti-magic field: if object is magical, umm, ?
+▒▒▒   + polymorph trap: object is polymorphed; chance of using up the trap
+▒▒▒   + stinking cloud trap: duh
+▒▒▒
+▒▒▒ * Make chameleons' ability to hold their form depend on how close it is to being
+▒▒▒   level-appropriate:  short duration if it's much too high or low, longer if it's close.
+▒▒▒
+▒▒▒ * Rebalance spellbook frequency (now that the spellbook polymorph bug is fixed).
+▒▒▒
+▒▒▒ * Check the case of cursed-confused enchant armor on scaled armor.
+▒▒▒
+▒▒▒ * Check the case of enchanting scales with no body armor under, while unchanging.
+▒▒▒
+▒▒▒ * Make sure blindness is handled correctly in read.c when applying sales to armor.
+▒▒▒
+▒▒▒ * Runics: ensure that differently-runic items don't stack.
+▒▒▒
+▒▒▒ * Decide whether to implement some or all of my Alchemy proposal.  For feedback,
+▒▒▒   https://www.reddit.com/r/nethack/comments/5e1taf/request_for_comments_solventsolute_alchemy/
+▒▒▒   See also rgrn and my logs from #nethack-dev starting on 2016-Nov-20.
+▒▒▒
+▒▒▒ * See lycanthropy discussion from 2016 Oct 25 in #nethack-dev, culminating
+▒▒▒   around 20:00.  Short version:  make transformations happen less often,
+▒▒▒   and make you invulnerable for a few turns after turning back to human,
+▒▒▒   flavored as a fear effect.
+▒▒▒
+▒▒▒ * "thunderous voice booms through the caverns" could benefit from some
+▒▒▒   conditional logic, e.g., outdoor levels should not be called caverns,
+▒▒▒   nor likely should mazes...
+▒▒▒
+▒▒▒ * Fix the bug wherein going into the options causes crashes.
+▒▒▒   (This is believed to be related to achievement unlocking.)
+▒▒▒
+▒▒▒ * Make sure monsters can't wear armor too large or small for them.
+▒▒▒   (Not sure if boots and cloaks and gloves are handled yet.)
+▒▒▒
+▒▒▒ * Give each item a generation LEVEL, in addition to its frequency.
+▒▒▒   Set it up so that the absolute value of the difference between an
+▒▒▒   item's level and the current dungeon level determines the probability
+▒▒▒   that mkobj (when deciding what to make at random) will reroll.
+▒▒▒
+▒▒▒ * Run the testbench and fix whatever it finds.
+▒▒▒
+▒▒▒ * Fix all those format warnings.
+▒▒▒
+▒▒▒ * Make pickup_thrown (at least optionally) work when autopickup is off otherwise.
+▒▒▒
+▒▒▒ * When hallucinating, statues should appear to be monsters.
+▒▒▒
+▒▒▒ * Makedefs must die.
+▒▒▒
+▒▒▒ * If the Amulet is going to suppress your teleport control, shouldn't it also
+▒▒▒   prevent teleportitis from randomly kicking in at odd times?
+▒▒▒
+▒▒▒ * Look into the "A a boulder bounces" bug (probably channelization-related).
+▒▒▒
+▒▒▒ * Figure out what further buffs to do to martial arts, if any.
+▒▒▒
+▒▒▒ * Add bears.
+▒▒▒
+▒▒▒ * Create multiple versions of Delphi, with minor subtle differences.
+▒▒▒
+▒▒▒ * Expand the number of versions of the Labyrinth just above the Castle.
+▒▒▒
+▒▒▒ * Add a couple new versions of the Garden.
+▒▒▒
+▒▒▒ * Expand the numbers of versions of Yeenoghu's and Dispater's lairs.
+▒▒▒
+▒▒▒ * Dream up another couple versions of Mine's End.
+▒▒▒
+▒▒▒ * Rebalance spellbook prevalance in light of the C343-149 fix.
+▒▒▒
+▒▒▒ * Make pickup_thrown able to work when autopickup is off otherwise.
+▒▒▒
+▒▒▒ * K-Mod commits I might consider cherry picking:
+▒▒▒   + Consider: d0c9cf1f691f (shopkeepers pick up gold they step onto)
+▒▒▒   + Resistance vs Immunity, see also (part of) fac2c6dd7dd for poison res.
+▒▒▒   + Two-weapon balance issues, see c20d51ca1c152cd7.
+▒▒▒   + Two-handed weapon balance, see 4ff7364914cb46
+▒▒▒   + Minor pickup_thrown bug, see dfddd28fdff213
+▒▒▒   + Monster balance.  Balrog buff, see c4d52d7a9bf4a
+▒▒▒   + Lava, see also 0580753ef5983, 56f511b72c36d
+▒▒▒   + Items shouldn't spawn on holes, see 6381113dd84ba7
+▒▒▒   + Player HP regen, consider 4ff7364914cb46 and maybe tweak.
+▒▒▒
+▒▒▒ * Separate Def into distinct Arm (Armor) and Ev (Evasiveness) stats.
+▒▒▒   Make Ev your chance to avoid being hit at all, and make Arm just be damage reduction.
+▒▒▒   Some (heavy) armor would have an Ev penalty, so it's a trade-off; enchantment might reduce this?
+▒▒▒
+▒▒▒ * Implement the Middle Gehennom generator and Fire Pits.
+▒▒▒
+▒▒▒ * Figure out which letter to clear for golems.
+▒▒▒
+▒▒▒ * Consider implementing a couple of plants.  Look at the
+▒▒▒   ones in dnethack and pick out the most interesting.
+▒▒▒
+▒▒▒ * Are all the q really distinctive enough to stay?
+▒▒▒
+▒▒▒ * There really ought to be a second viable strategy (other than reflection)
+▒▒▒   for dealing with an early black dragon.
+▒▒▒
+▒▒▒ * Find a way to make zombies interesting, even if it's
+▒▒▒   unbalanced and terrible and wrong.  They've been boring
+▒▒▒   for too long, and we must overcome the inertia.  Maybe
+▒▒▒   it'll be easier to steer them once they're moving.
+▒▒▒   See discussion in #nhfourk from 2017 Feb 05, starting 06:58
+▒▒▒
+▒▒▒ * Do something about mummies.  See discussion in #nhfourk
+▒▒▒   2017 Feb 05, starting 7:01
+▒▒▒
+▒▒▒ * Implement alternate versions of more special levels,
+▒▒▒   including the Sanctum.
+▒▒▒
+▒▒▒ * Implement the nethack-mapgen-lower-mines-with-closets.pl algorithm.
+▒▒▒   Use it sometimes (maybe 1/3) in deep Mines levels (last 2-3 levels
+▒▒▒   before Mine's End).
+▒▒▒
+▒▒▒ * Squeeze lines out of rogue quest home, ranger quest home.
+▒▒▒
+▒▒▒ * Implement banshees
+▒▒▒
+▒▒▒ * Replace scroll of food detection with scroll of silence.
+▒▒▒
+▒▒▒ * Consider making monsters more likely to generate asleep
+▒▒▒   if they are higher-level (relative to your current monster
+▒▒▒   level generation difficulty figure).
+▒▒▒
+▒▒▒ * Fine-tune the balance of sleep, including Valerian, and
+▒▒▒   of stealth.
+▒▒▒
+▒▒▒ * Consider changing the 18->18/**->25 progression for Str.
+▒▒▒
+▒▒▒ * Consider using the L Town generator (297 on Bilious) to
+▒▒▒   generate the Black Market, perhaps.
+▒▒▒   
+▒▒▒ * Consider making the Mines below Minetown generate items
+▒▒▒   of slightly higher quality than above Minetown.
+▒▒▒
+▒▒▒ * Track how much gold is generated, and diminish the amounts
+▒▒▒   generated as the total increases.  Be stingier with monster
+▒▒▒   inventory gold than floor gold (because the number of levels
+▒▒▒   is strictly limited).  Consider also tracking the ultimate
+▒▒▒   fate of gold by category (held by monsters, sitting on the
+▒▒▒   ground somewhere, in a container, destroyed, etc.)
+▒▒▒
+▒▒▒ * Fine tune the balance on the Pw regen formula, especially
+▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
+▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
+▒▒▒   of the discussion around 7:40.
+▒▒▒
+▒▒▒ * Make being stormprone work on monsters.
+▒▒▒
+▒▒▒ * Giants should wield even two-handed weapons in one hand.  "You heft
+▒▒▒   the mighty [weapon] in your hand.  Yes, that will do."  If it then
+▒▒▒   gets cursed, it's welded to the hand, but the other hand is free.
+▒▒▒   They can even use a shield in the other hand (but probably not
+▒▒▒   another weapon, and certainly not another two-hander).
+▒▒▒
+▒▒▒ * When a shopkeeper pushes another monster out of the doorway in order to stand in it
+▒▒▒   himself to block the player, he always calls the monster "scum", regardless of what
+▒▒▒   kind of monster it is.  shk.c line 3656.  Investigate whether this can be improved.
+▒▒▒
+▒▒▒ * Also, in 3.6, pay_for_damage() checks to see if the shopkeeper is an animal, and
+▒▒▒   takes this into account in various ways.  Investigate whether I ought to cherry-pick
+▒▒▒   some or all of that fix; if so, note that 5bb3e0142, already cherry-picked, interacts with it.
+▒▒▒
+▒▒▒ * Implement sirens and banshees.  Place sirens in the Garden.
+▒▒▒
+▒▒▒ * Import Aphrodite from a variant that has her, for her statue in the Garden.
+▒▒▒
+▒▒▒ * teach body_part about "teeth" (and fix the TODO in sounds.c).
+▒▒▒
+▒▒▒ * Look at DynaHack's skill progress bars.
+▒▒▒
+▒▒▒ * Consider adding a page to Ctrl-x with information about what
+▒▒▒   is good and bad for your alignment record given your current
+▒▒▒   race/role/alignment combination.
+▒▒▒
+▒▒▒ * Consider, and if necessary tweak, the balance of speed.
+▒▒▒   Also, make intrinsic and extrinsic and temporary speed stack
+▒▒▒   for monsters, same as for players.
+▒▒▒
+▒▒▒ * Check whether the "You hear" part of the Valley arrival message checks deafness.
+▒▒▒
+▒▒▒ * Put serious thought into giving the negative potions more uses than
+▒▒▒   blanking.  After midgame, you always have far more holy water than you
+▒▒▒   have any real use for, because far too many potions have no other real
+▒▒▒   use.  This takes away the need for the player to decide how to use
+▒▒▒   resources: you just blank all the useless potions and bless everything
+▒▒▒   that could conceivably benefit from being blessed.  This should remain
+▒▒▒   a possible strategy, but there should be other reasonable options.
+▒▒▒
+▒▒▒ * Rebalance body armor ACs and weights.
+▒▒▒
+▒▒▒ * When stuck in lava, levitation should prevent you from sinking in any deeper.
+▒▒▒
+▒▒▒ * Consider making early-game poison instadeath, when you're too low-level
+▒▒▒   to have a level drained, drain other stats instead, like HP, PW, Str, Con.
+▒▒▒   FIQ says divine anger does this.
+▒▒▒
+▒▒▒ * FIQ says that if you're level-drained below XL1, you can get something like
+▒▒▒   "The vampire hits!  Do you want your possessions identified? [ynq]"
+▒▒▒
+▒▒▒ * Eliminate the "snake" monster.  Consolidate water moccasins into pit vipers.
+▒▒▒   Ensure none of the snakes are using red, black, or yellow as their color.
+▒▒▒
+▒▒▒ * The lostalign conduct may have a bug: do_wear.c changes u.ualign.record,
+▒▒▒   setting it to -1, for helm of opposite alignment, without breaking the conduct.
+▒▒▒
+▒▒▒ * Peaceful monsters encountering a player-made trap should not become
+▒▒▒   angry if the trap can't have any impact on them (e.g., flying over
+▒▒▒   a hole, spiders on webs).
+▒▒▒
+▒▒▒ * Perhaps cursed gain level should simply deposit you on the down stairs
+▒▒▒   (of the level above) if you have the Amulet.
+▒▒▒
+▒▒▒ * Improve the spoilers for playable races and roles, even if it means
+▒▒▒   having a section written by hand.
+▒▒▒
+▒▒▒ * Look at dnethack's skill progress indicators.
+▒▒▒
+▒▒▒ * Haste self should give permanent, not temporary, speed.  Perhaps
+▒▒▒   intrinsic at low skill levels, extrinsic or both at high levels.
+▒▒▒
+▒▒▒ * After some players play .4 a bit, decide if the speed formulae
+▒▒▒   require further revision for balance.
+▒▒▒
+▒▒▒ * Reconsider unicorn horns.  Why do they heal raven blinding?  Why
+▒▒▒   do they completely trivialize restore ability?
+▒▒▒
+▒▒▒ * Consider adjusting the naming formula for randomly-named positively
+▒▒▒   enchanted weapons.  hackedhead argues that "sword named Sword of Virtue"
+▒▒▒   is terrible, breaks the fourth wall, doesn't scan right, and any other
+▒▒▒   negative thing he can think of to say about it.  Admittedly, I can see
+▒▒▒   how "a sword named Virtue" could be considered better.  Consider.
+▒▒▒
+▒▒▒ * Evaluate whether chest traps need to be rebalanced.
+▒▒▒
+▒▒▒ * Racial-weapon chest contents (e.g., dwarvish spears if you are a dwarf)
+▒▒▒   should probably be substituted out for something else if you are
+▒▒▒   restricted in the corresponding skill.  For example, a Dwa Arc gets
+▒▒▒   dwarvish spears but is restricted in them.  Either that, or else this:
+▒▒▒   09:56 <      hackedhead > no. i mean, for every racial weapons that exists, the relevant
+▒▒▒                             should be allowed to reach basic in the corresponding skill
+▒▒▒   09:57 <      hackedhead > so dwarves should be able to reach basic in spear, short sword.
+▒▒▒   09:57 <      hackedhead > orcs: dagger, spear, bow
+▒▒▒   09:57 <      hackedhead > elves: dagger, spear, bow, broadsword
+▒▒▒
+▒▒▒ * Really, really ought to figure out how to make it so a special (.des) level's
+▒▒▒   max x and y coords can be smaller than ROWNO and COLNO.  Levels that need this
+▒▒▒   include the Castle (else you can bypass), Yeenoghu's (ditto), Dispater's (ditto),
+▒▒▒   Creektown (with large ROWNO, the creek stops abruptly; with large COLNO, the
+▒▒▒   pieces don't fit goether correctly), and probably some others.  Additionally,
+▒▒▒   the BingeHack castles and one of the 3.6 Medusa levels trigger a place_lregion
+▒▒▒   bug, and limiting their size might solve that too.
+▒▒▒
+▒▒▒ * Implement the monster-vs-monster side of passive displace (jitterbug), and maybe
+▒▒▒   the monster-vs-player side as well (if I can think of a way to test that).
+▒▒▒
+▒▒▒ * Quasits are still boring.  Do something.
+▒▒▒
+▒▒▒ * Make mvm and uvm poison instandeath work like mvp poison instadeath.
+▒▒▒
+▒▒▒ * Give scurriers a movement point rebate when moving onto a tree tile.
+▒▒▒
+▒▒▒ * 16:51 < FIQ > jonadab: your method of exposing traps with magic mapping will not work correctly on plane of water
+▒▒▒
+▒▒▒ * Implement the Druid role.
+▒▒▒
+▒▒▒ * Should orcs have hooves, rather than feet?  (If so, should they be able to wear boots?)
+▒▒▒   Should they have snouts, rather than noses?
+▒▒▒
+▒▒▒ * Report various levels of speed (including being slowed, or slowed and
+▒▒▒   hasted, etc) reasonably in both enlightenment and end-of-game dumps.
+▒▒▒
+▒▒▒ * Perhaps randomly-generated spellbooks should be biased toward low
+▒▒▒   spell levels if generated on a low dungeon level.
+▒▒▒
+▒▒▒ * Make strange object m (in an otherwise unused color), then repurpose their
+▒▒▒   former symbol for instruments.  Rework tools to avoid reusing colors more
+▒▒▒   than is necessary.  FIQ has a start (which doesn't split off instruments
+▒▒▒   and so probably needs tweaking), q.v. below.
+▒▒▒
+▒▒▒ * 08:12 < FIQ > jonadab, certain forms of resistances should be foolproof in challenge mode too...
+▒▒▒   08:12 < FIQ > e.g. taking fire damage as a fire vortex makes no sense
+▒▒▒
+▒▒▒ * grep the codebase for TODO comments and deal with some of them.
+▒▒▒
+▒▒▒ * Jackals won't wade into shallow water to reach and attack me.  _Maybe_
+▒▒▒   that's ok for jackals, but check that it doesn't happen for larger foes.
+▒▒▒
+▒▒▒ * For 4.3.0.4, I bumped monster HP regen from every 20 turns to every 8
+▒▒▒   turns (commit 61efee7b811a93).  After .4 gets some play testing, evaluate
+▒▒▒   whether this is enough (see FIQ's comments lower down about pets attacking
+▒▒▒   floating eyes).
+▒▒▒
+▒▒▒ * Make trollsbane turn gremlins to dust.
+▒▒▒
+▒▒▒ * Make dipping any negatively-enchanted thing in a potion of restore ability
+▒▒▒   bring it up to +0.  Including unicorn horns.
+▒▒▒
+▒▒▒ * Do a fresh batch of new Oracle and/or fortune cookie hints about new features,
+▒▒▒   and review the existing ones for continued accuracy.
+▒▒▒
+▒▒▒ * Decide what to do about hidden corridors and secret doors.  (Lots of ideas below.)
+▒▒▒
+▒▒▒ * Make lenses grant automatic searching when worn.
+▒▒▒
+▒▒▒ * Consider cherry-picking pool rooms from Dyna, and look at its special levels.
+▒▒▒
+▒▒▒ * Do a bunch of playtesting with steeds.  If they die all the time, figure out
+▒▒▒   what to do about that.
+▒▒▒
+▒▒▒ * Test using the PYEC to unlock stuff, see comments below.
+▒▒▒
+▒▒▒ * Allow fireproof scrolls to be wished for, and make them actually
+▒▒▒   fireproof.  Ensure that blanking/writing don't alter their fireproof
+▒▒▒   status.  Decide whether to allow creating them by any other means.
+▒▒▒
+▒▒▒ * Allow any random object to be fooproofed when wielded, using a scroll
+▒▒▒   of enchant weapon, in the same way as it is done for a weapon.
+▒▒▒   Fooproofed items should be entirely protected from elemental damage
+▒▒▒   (wetting/blanking, shock, fire, cold, etc.)
+▒▒▒
+▒▒▒ * Make some (limited) armor that gnomes and scurriers can wear;
+▒▒▒   consider doing the same for giants.
+▒▒▒
+▒▒▒ * Implement dress shirts, give them to librarians.  Consider what other
+▒▒▒   equipment they should get.
+▒▒▒
+▒▒▒ * Consider adding a ring of speed, as an alternative to speed boots.
+▒▒▒
+▒▒▒ * Keep stats on how many game turns are spent on various multi-turn
+▒▒▒   activities (digging, for instance).  Dumplog it.
+▒▒▒
+▒▒▒ * When rings go down a sink, something about the message ought to hint at the possibility of recovery.
+▒▒▒
+▒▒▒ * Make potions of oil a bit more common, or put them in some monster's
+▒▒▒   starting inventory, or something, so they can be used for weapon repair.
+▒▒▒   Or introduce pools of oil so potions can be #dip-converted to oil.
+▒▒▒
+▒▒▒ * Make sure troll corpses aren't too old to eat before they're too old to revive.
+▒▒▒
+▒▒▒ * Make some weapon skills harder to learn than others, either in terms of
+▒▒▒   practice required, or skill points invested, or both.
+▒▒▒
+▒▒▒ * Make katanas use a different skill from long swords.
+▒▒▒
+▒▒▒ * Test attacking floating eyes as a raven, for message weirdness.
+▒▒▒
+▒▒▒ * Implement the autounlock feature as in DynaHack.
+▒▒▒
+▒▒▒ * Allow hezrou to see through and in stinking clouds.  (Maybe give them intrinsic astral vision?)
+▒▒▒
+▒▒▒ * Look into probing schrodinger's cat (see comments below).
+▒▒▒
+▒▒▒ * Add xlog and dumplog tracking for how many turns you suffered various
+▒▒▒   status effects (blindness, hallucination, confusion, stunning), similar
+▒▒▒   to conduct tracking but in a separate field.
+▒▒▒
+▒▒▒ * Make charged ring of searching increase your search radius.
+▒▒▒
+▒▒▒ * Make Valerian less OP somehow.  Perhaps sleep is too OP.
+▒▒▒
+▒▒▒ * Look at how the lamp charging code manages to allow charging a lit
+▒▒▒   lamp; use a similar toechnique to fix the issue of lit candles
+▒▒▒   being impervious to fire damage.
+▒▒▒
+▒▒▒ * Helm of Opposite Alignment should never be given as a sacrifice gift, ever.
+▒▒▒
+▒▒▒ * Consider guaranteeing a pick-axe in the Mines somewhere.  Maybe in Minetown.
+▒▒▒
+▒▒▒ * Really really should enable highlighting of peacefuls to be disabled
+▒▒▒   without turning off highlighting of pets.
+▒▒▒
+▒▒▒ * Decide whether to cherry-pick the vampire shapeshifter stuff (sans wolves)
+▒▒▒   from the 3.6 series, with all its bug fixes, A) now, B) later, or C) never.
+▒▒▒
+▒▒▒ * dnethack limits the number of pets you can keep to Charisma/3.  Consider
+▒▒▒   whether something like this might be good (and maybe some roles or races
+▒▒▒   should get a bonus, or take careful note of healer cha at least).
+▒▒▒
+▒▒▒ * Consider how the Staff of Aesculalialdkjlaius should work for Sylphs.
+▒▒▒
+▒▒▒ * Implement the infrastructure for runic weapons:
+▒▒▒   + Runics can be wished for in wizmode only.
+▒▒▒   + Randomly generated weapons that are allowed to be artifacts but the
+▒▒▒     RNG doesn't make them such, get a second chance to be runic instead.
+▒▒▒     Any given weapon can have at most one rune.  Most have none, obviously.
+▒▒▒   + Possible runes might include:
+▒▒▒     - rune of fire (provides fire res when wielded; does fire damage; when dipped in shallow water, evaporates it)
+▒▒▒     - rune of cold (provides cold res when wielded; does cold damage; when #dipped in a pool, moat, or shallow water, turns it to ice)
+▒▒▒     - rune of poison (weapon is permanently poisoned and provides poison res when wielded)
+▒▒▒     - rune of acid (weapon does acid damage and provides acid res when wielded and cannot be corroded)
+▒▒▒     - rune of lightning (weapon does shock damage and provides shock res when wielded)
+▒▒▒     - rune of accuracy (weapon never misses)
+▒▒▒     - rune of peace (weapon always misses but also improves the odds that enemies/projectiles miss you, when wielded)
+▒▒▒     - rune of magic (weapon does magic damage, like magic missile, and provides MR when wielded)
+▒▒▒     - rune of action (weapon provides free action when wielded)
+▒▒▒     - rune of blessing (weapon is permanently blessed and blocks the curse-items monster spell effect)
+▒▒▒     - rune of damage (weapon does 1.5 times as much damage as it otherwise would)
+▒▒▒     - rune of cancellation (weapon cancels monsters when it hits them, cancels potions when dipped in them, not using them up, except for holy/unholy water)
+▒▒▒     - rune of rune of awareness (weapon grants automatic searching when wielded)
+▒▒▒   + At game start, an array (probably in struct you) is populated providing a random rune appearance for
+▒▒▒     each type of rune.  Identification of these is tracked: when you see a runic weapon activate, or if
+▒▒▒     you formally identify one, its rune is identified.
+▒▒▒     - Possible rune appearances include:
+▒▒▒          glowing rune*, square rune, curved rune, angled rune, complex rune,
+▒▒▒          strange rune, simple rune, elaborate rune, ornate rune, ancient rune,
+▒▒▒          dwarvish rune*, gnomic rune*, dark rune, ominous rune, explicit rune,
+▒▒▒          embossed rune, raised rune, seriffed rune, stylized rune, ugly rune,
+▒▒▒          beautiful rune, straight rune, looping rune, unfamiliar rune, plain rune,
+▒▒▒          circumscribed rune, obscure rune, gilded rune, magnificent rune, fancy rune,
+▒▒▒          gaudy rune, convoluted rune, florid rune, portentious rune, grotesque rune
+▒▒▒     - A weapon with a glowing rune provides light, with a small radius.
+▒▒▒     - The identity of the dwarvish rune (if this appearance is assigned to a rune)
+▒▒▒       is known from game start by dwarvish players.
+▒▒▒     - The identity of the gnomic rune (same caveat) is known from game start by gnomish players.
+▒▒▒   + Any weapon with a rune is described as "runed" normally, and the player can (attempt to) read it.
+▒▒▒     (The player can also now attempt to read runed daggers, runed broadswords, and any other "runed" weapon.)
+▒▒▒     - If the weapon has a rune that is known, reading the weapon tells the player something like
+▒▒▒       "The rune signifies fire."
+▒▒▒       This _does_ break illiterate conduct.
+▒▒▒     - If the weapon has a rune that is unknown, reading the weapon tells the player something like
+▒▒▒       "There is a glowing rune, but you do not know what it signifies."
+▒▒▒       This does NOT break illiterate conduct.
+▒▒▒     - If the weapon has no rune as such but is "runed" because Elven, and you ARE elvish by race,
+▒▒▒       then reading the weapon tells the player something like this:
+▒▒▒       "The runes mark this weapon as the craftsmanship of [Elven-sounding name]."
+▒▒▒       This _does_ break illiterate conduct.
+▒▒▒       The name of the craftsman can be determined by object ID and modular arithmetic, given a list.
+▒▒▒     - If the weapon has no rune as such but is "runed" because Elven, and you are NOT elvish by race,
+▒▒▒       the attempting to read the weapon tells the player something like this:
+▒▒▒       "Elven runes run down the blade.  You cannot decipher their meaning."
+▒▒▒       (The word "blade" may need to be %s if there are runed spears or whatnot.)
+▒▒▒     - Weapons that do not have a rune and are not "runed" elven weapons cannot be read, as before.
+▒▒▒   + 
+▒▒▒
+▒▒▒ * Update the guidebook.
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒   Untriaged Stuff:
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Make charisma have the opposite effect on shop quotes when you are
+▒▒▒   both same-race and also same-gender to the shopkeeper.  (Maybe?)
+▒▒▒
+▒▒▒ * 20:32 < Grasshopper_ > YANI: blessed polymorph potion allows you to choose the poly form
+▒▒▒   20:54 <      jonadab > You know, as rare as those are, I think that would actually be ok.
+▒▒▒   But then I remembered, polymorph is a key deterrent to quaff-identifying potions.
+▒▒▒
+▒▒▒ * 13:06 < Chris_ANG > unfamilliar (and also familliar >_<) mosters turning
+▒▒▒                       out to be a member of your own race has been a constant
+▒▒▒                       problem in dNethack, right?
+▒▒▒   13:07 < Chris_ANG > I'm going to make it so that a sufficiently-well-aligned
+▒▒▒                       character gets a warning before doing something that
+▒▒▒                       would result in canibalism or same-race sacrifice. 
+▒▒▒
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒   4.3.0.6 or Later:
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Track the player's alignment record separately for each of the three alignments,
+▒▒▒   so that HoOA can be handled reasonably.
+▒▒▒
+▒▒▒ * Bats should be able to around corners, up to some limited number of LOS bounces (maybe 3).
+▒▒▒
+▒▒▒ * Clear up remaining niggles with the Garden implementation, see the
+▒▒▒   commit log notes on commit commit 302d5fa9072.  Some of this may
+▒▒▒   require levcomp overhaul and so may get pushed back further.
+▒▒▒
+▒▒▒ * Make wielding and throwing separate skills for daggers and knives.
+▒▒▒
+▒▒▒ * Instead of true/false, I want corridorbranch to be an enum:
+▒▒▒      stop:  branching corridors stop movement (except targetted travel)
+▒▒▒      stop_when_exploring (default): discovering a new branch stops movement;
+▒▒▒                           but previously explored ones don't.
+▒▒▒      keep_going: branching corridors do not interrupt movement.
+▒▒▒
+▒▒▒ * Khor says, definitely look at the demon lairs in dnethack.
+▒▒▒
+▒▒▒ * Move Nagas into S, freeing N for some other use.
+▒▒▒
+▒▒▒ * Consider making diagonal movement between a pit or hole and
+▒▒▒   something solid (such as a wall or boulder) cause you to fall
+▒▒▒   into the pit or hole.  Revise the Count Carefully Sokoban
+▒▒▒   level (and rename it).
+▒▒▒
+▒▒▒ * Implement Un-style HTML dumplogs.
+▒▒▒
+▒▒▒ * Consider how long potions of hallucination should last, and,
+▒▒▒   if those are nerfed a bit, what other quaff-identification
+▒▒▒   deterrents could supplement them.
+▒▒▒
+▒▒▒ * Consider changing the 18 -> 18/** -> 25 progression for Str,
+▒▒▒   see comments lower in this file about that.
+▒▒▒
+▒▒▒ * Consider adding an additional option for animation, to control
+▒▒▒   the duration of the delay between frames.
+▒▒▒
+▒▒▒ * Consider adding some kind of consolation special level that
+▒▒▒   only generates when Ludios doesn't (accessible a different way).
+▒▒▒
+▒▒▒ * Think through possible uses of restore_attrib and the ability to
+▒▒▒   _temporarily_ boost or penalize the users' attributes.
+▒▒▒
+▒▒▒ * Decide what to do about Minetown rules -- monsters can freely do
+▒▒▒   things that would anger the Watch if the player did them.
+▒▒▒
+▒▒▒ * Look at raisse's idea for a better Arc quest artifact,
+▒▒▒   http://valdyas.org/~irina/stonecutter
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒   Dev Team commits to look at at some point [reverse chronological order]:
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ [git log perused through 2016 Oct 14, 17e13f1e5]
+▒▒▒ * occasionally remove maze dead ends, creating loops, 4af4fc1143174
+▒▒▒ * give quest guardians some equipment, 710f5ed235 (may warrant further revision)
+▒▒▒ * kicking activates statue traps, dbe1da0bec
+▒▒▒ * pet starting apport equals your current charisma, e8e7d969c30
+▒▒▒ * accessibility target menu for travel/cursor, efd7526194b9, see also fb148c0d44
+▒▒▒ * feedback when timed levitation is about to expire, ea94100e9d0f5
+▒▒▒ * accessibility, compass coord mode for screen readers, e14120b282a
+▒▒▒ * tiny chance for horses to generate with saddles (make it even tinier): 996dd7192d0
+▒▒▒ * unseen combat, and umber hulks vs mimics, b5a027c3fedb
+▒▒▒ * "distant" squeak when it's not distant, b9a6f07c148be
+▒▒▒ * corpse eating feedback, b49830f4c14c76, see also 4ef3fe22d99b
+▒▒▒ * accessibility messages (but channelize them into oblivion): 27101066616f, f82205c232f
+▒▒▒ * blessed genocide: "titan" should not genocide quadrupeds: b848f2732d0e
+▒▒▒ * shop feedback when a disenchanter disenchants an item, a72d19b9056bf
+▒▒▒ * dungeon overview after escape, "You left from here", e03c14eeae1
+▒▒▒ * plural fix (MAY be irrelevant for us, but check): 6632c380f350
+▒▒▒ * mon vs mon thrown c egg: 47572a7946c
+▒▒▒ * Y and bananas: 16118580d5 (paxed), 53e8869a1 (fix), and dc6827ce120 (PatR)
+▒▒▒ * gelcubes and scare monster: 1cad5efe171
+▒▒▒ * Hallu petkill, "You kill poor goblin.": 2c8a359fe
+▒▒▒ * lycanthropy tweaks: 1f4574b6c8
+▒▒▒ * engulfer tweak, to stop _immediate_ reengulf: bc8e613719
+▒▒▒ * deserted temple ghost messages: 8fdd2318c16
+▒▒▒ * hallu liquids: 3502cfcc5a and 3f5116fbd
+▒▒▒ * bright blue fountains: 2ca57b996
+▒▒▒ * reduce #turn helpless duration: 69aca5ac -- or INSTEAD see fiqhack commit a88d9857561a9
+▒▒▒ * when attacking a peaceful, other peacefuls react: 939e507
+▒▒▒ * message when you can't hide because engulfed: a5d57430be
+▒▒▒ * bugfix, monster gets angry after being killed by thrown potion: 30855feb
+▒▒▒ * knox level tweaks: 5addbf
+▒▒▒ * gremlin wailing in agony waking nearby sleeping monster: d45d475
+▒▒▒ * shop bugfixes: 955c53eba and 656476e40
+▒▒▒ * bugfix, farlook while underwater, 81471c27c
+▒▒▒ * adjacent terrain when underwater, 888695c and f768e1fd
+▒▒▒ * nutrition tweaks (metallivores, sleep): 43df8c01
+▒▒▒ * angry god vs pacifist conduct: 2cffaccb3 and 74ee31e50
+▒▒▒ * "Both of your ...": 7bdc5a95
+▒▒▒ * vanquished monster list order: b98427955
+▒▒▒   (We probably don't want all of those choices, but.)
+▒▒▒ * lining up vaquished monster list better: ff6e62b3
+▒▒▒ * sortloot:
+▒▒▒   + revamp: b3b4953020d4
+▒▒▒   + fixes: 1aff4f89fd4
+▒▒▒   + revision fixes: e8e8c14b345
+▒▒▒   + bugfix: 221a73fe
+▒▒▒   + possibly unneeded, but look: 41ade6d3
+▒▒▒   + a0a440895
+▒▒▒   + bugfix: 1cad2bd783
+▒▒▒   + diluted potions: 1e0ab8f92
+▒▒▒   + holy/unholy water: 4750c0a30
+▒▒▒ * bugfix: chest trap and punishment interaction: daee9f3e7
+▒▒▒ * flaming monsters burn webs: 8132cb5a
+▒▒▒ * greased weapon vs R: 65b9429b6
+▒▒▒ * baalzebub's level revamp: bde9fdd4
+▒▒▒ * bugfix: scatter feedback: c53565036c
+▒▒▒ * bugfix: kicked daggers are lost: 96dd80030
+▒▒▒ * bugfixes for impairment timers: 13c40d85e7
+▒▒▒ * bugfix: paid object on bill, disorder: e1d0faa584
+▒▒▒ * bugfix, "you turn into a Elvenking", 7cf75b707a0
+▒▒▒ * quest artifact theft, _look_ at 850ed0cba, but it may want revision.
+▒▒▒ * punctuation fixup, bcb9780fe7
+▒▒▒ * Deafness:
+▒▒▒   + e1f5ddd820f     2003-09-28 sound cleanup
+▒▒▒   + dc5a2cf1d       2003-10-12 typo
+▒▒▒   + fec5392055      2003-10-28 healer fixup
+▒▒▒   + ef5b37a03a46    2015-12-10 explosions
+▒▒▒   + 7019a7da77593e  2015-12-18 pets
+▒▒▒   + 2eddec82873e    2015-12-18 pets typo
+▒▒▒   + 5eb9b082        2016-01-04 vaults
+▒▒▒   + b4867342        2016-01-06 vaults
+▒▒▒   + 5bb3e0142       2016-02-13 minetown watch and shops
+▒▒▒   + 592ae6972       2016-02-14 engraving
+▒▒▒   + e3d2dfc7        2016-03-07 shopkeeper message fix
+▒▒▒   + c53565036cfd    2016-03-19 explosions (again)
+▒▒▒ * Bugfix: jumping while punished: 25130e394c
+▒▒▒ * Unify putting a saddle on a steed: 0ca47748
+▒▒▒ * vorteces and unsolid monsters need not avoid webs: d01e45a6c
+▒▒▒ * shopkeeper "it" message fix, 6591f8beb1
+▒▒▒ * book becomes cursed while being read, 54325de339c54
+▒▒▒ * shop-door petrification crash fix (post-3.6), 68b7693d98b2d2
+▒▒▒ * risen undead vs shopkeeper inheritance, d591ebaa46d
+▒▒▒ * mvm passive consistency with uvm, 09ebe44ae9669
+▒▒▒ * for inside/outside wiztower issues, see 04bc04807
+▒▒▒   (This fixes a 360 bug, but still worth seeing how.)
+▒▒▒ * giant snatching boulder, 4d2c82e482
+▒▒▒ * monsters (including pets) walking into poison clouds: a2a1027be17
+▒▒▒ * iron bars and acid: 237c4a278
+▒▒▒ * drum of earthquake message: 31f883da0
+▒▒▒ * lava and boots: d598cf536b
+▒▒▒ * mimics as walls or trees block light: db4120012 and fd709d684
+▒▒▒   possibly related: d1ef006ee
+▒▒▒ * travel in sokoban: a049cd070b
+▒▒▒ * "Fido steps reluctantly over [object]." a236f9d5f6
+▒▒▒ * Mine's End minotaurs: 32305ace5c
+▒▒▒ * bugfix: message when rejecting a monster's original name: e429415832
+▒▒▒ * message typo fix: 0d36c443a3
+▒▒▒ * "killed by a died", 9114a334c98
+▒▒▒ * Some shopkeepers always stingier (consider as a replacement for my solution): cdde5b76c9
+▒▒▒ * Bugfix, blindness, stethoscope, object detection, and a dead invisible monster: 97974e99681
+▒▒▒ * dipping inconsistencies: 807afa22b3f6
+▒▒▒ * "slouse of pizza": 637f4a4bd690
+▒▒▒ * cursed genocide "none" vs "nothing", a35c3e184c5d
+▒▒▒ * dog/cat/rat/ape body parts: dd82c0db891fc
+▒▒▒ * quest message summaries: c8e83332fe, 5af330ad90b, 5ee6d8799b
+▒▒▒ * kraken farming: fish don't revive out of water: 772fea0361
+▒▒▒ * throne farming: 3a1e9ccd8096
+▒▒▒ * use of data from deleted trap: 8a07e2cdc5ab
+▒▒▒ * hiding under nothing when corpse rotted away: 489d56d4bb
+▒▒▒ * wallify catacombs: 8451f67dff8
+▒▒▒ * special level loader memory leaks: 0bcb713b4fd5
+▒▒▒ * T-shirt messages, use git blame (see 7132f56901670c for where).
+▒▒▒ * Corridor variation: 2ee06dda5a4f1b
+▒▒▒ * bugfix, spellcasting causing confusion/stun: c48e1732d89e5a2
+▒▒▒ * LOOK at the 3.6 change to potions of gain energy, 37771f779e9431,
+▒▒▒   compare it to my own change, and think about which is better, etc.
+▒▒▒ * can_carry: bugfix: 80d4acdc813
+▒▒▒ * use-after-destroy bug, crystal balls, 9181f06dab
+▒▒▒ * checking the curse-state of an object right after deleting the object: 4aac554b666b3
+▒▒▒ * levelporting with the amulet on a monster's turn: 41a40d41a0806a6d
+▒▒▒ * Not sure if relevant for us, but check: unitialized variables: 9008ba321b31, 2d83b83cc2b42
+▒▒▒ * Sanity check for light sources: 530ba8e3d30
+▒▒▒ * Livesaved disintegrated monster's weapon, 3fd92e3ef8b
+▒▒▒ * segfault, rogue-level chameleon failure, 581b1830ffff6, this may be a follow-up to def254959242456
+▒▒▒ * hallucinated currency names, see (part of) 2c20805b16fdd
+▒▒▒ * hallu monsters, see also cee766eb71ca, 795964802, fb14c41bd4222f80f6
+▒▒▒ * wet towels: 1703818a1163cb48, see also 4b8db661dd7f7
+▒▒▒ * segfault, wizard cannot spawn, 7e46c4924c584f40
+▒▒▒ * infinite loop, prayer, 60df7b2d3b73
+▒▒▒ * inaccessible areas on special levels, 65a30d2ba7f7f581
+▒▒▒ * makemon random coord picking, 2f54ed8eaeca9361
+▒▒▒ * segfault when tripping, 1e8f4ee0b1b10
+▒▒▒ * infinite loop in makemon, 185515e1c719
+▒▒▒ * reading scrolls of light while blind and engulfed, a28b535e80b0
+▒▒▒ * jumping into a monster should be noisy (waking nearby monsters), c48b3c4556c
+▒▒▒ * wands of nothing identification, 0ee1f316012 and 6ba0baa4cda1
+▒▒▒ * amulet branchport bug, see also 791c41e6b4492df
+▒▒▒ * quest message summaries, see e.g. 3caa4e2adb07ba6, e571b18985fa4b
+▒▒▒ * unique monsters being awakened from meditation by monster-activated squeaky boards, c574df1239
+▒▒▒ * level difficulty for builds-up branches (I have not _decided_ if this change is good), 29f9a8a33d97
+▒▒▒ * Glowing weapons and blindness, look at 3a5304c49eea282
+▒▒▒
+▒▒▒ [git log perused from 3a5304c49eea282ba02d8b Sun May 31 01:24:19 2015 -0700]
+▒▒▒
