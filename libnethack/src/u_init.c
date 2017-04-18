@@ -296,6 +296,7 @@ static const struct trobj Towel[] = {
 
 static const struct trobj Wishing[] = {
     {WAN_WISHING, 3, WAND_CLASS, 1, 0},
+    {SCR_WISHING, 1, SCROLL_CLASS, 1, 0},
     {0, 0, 0, 0, 0}
 };
 

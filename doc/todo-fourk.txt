@@ -80,8 +80,6 @@
 ▒▒▒   Haven't verified whether this is Fourk-specific.  FIQ did a workaround to
 ▒▒▒   convert this from segfault to panic(), but we should fix it for real.
 ▒▒▒
-▒▒▒ * Check the wishing code, find out why it's possible to wish for a 0:127 wand.
-▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
 ▒▒▒

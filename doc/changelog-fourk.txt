@@ -61,6 +61,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Explore mode now gives the player a scroll of wishing.
+   (This was necessary to allow testing non-wizmode use of their
+   higher wish quality, since wizmode wishes are even _higher_
+   quality and will give the player basically anything.)
+
  * Food no longer has a random 1/7 chance to be rotten when you
    eat it.  (Food is still rotten when cursed, and old eggs
    and corpses behave the same as before.)
@@ -1109,7 +1114,8 @@ Changes in 4.3.0.1:
    ways.  However, it also makes flavor sense, IMO, to have a lot
    of rocks laying around.
 
- * Wands of wishing are no longer rechargeable.
+ * Wands of wishing are no longer rechargeable.  However, several
+   scrolls of wishing are available in strategic locations.
 
  * Role rebalance, round one.
    + Starting inventory has been adjusted for some roles: a bit more
