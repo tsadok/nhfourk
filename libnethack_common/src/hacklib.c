@@ -351,7 +351,24 @@ isqrt(long long val)
 
 /* Integer base-2 logarithm without using floating point. The output is scaled
    by 1024 and rounded down. Returns -1024 for ilog2(0) (-1024 is actually the
-   logarithm of 0.5). */
+   logarithm of 0.5).
+
+   For reference:
+       ilog2(   1) =    0  	ilog2(   2) = 1024  	ilog2(   3) = 1623
+       ilog2(   4) = 2048  	ilog2(   5) = 2377  	ilog2(   6) = 2647
+       ilog2(   7) = 2874  	ilog2(   8) = 3072  	ilog2(   9) = 3246
+       ilog2(  10) = 3401  	ilog2(  11) = 3542  	ilog2(  12) = 3671
+       ilog2(  13) = 3789  	ilog2(  14) = 3898  	ilog2(  15) = 4000
+       ilog2(  16) = 4096  	ilog2(  17) = 4185  	ilog2(  18) = 4270
+       ilog2(  19) = 4349  	ilog2(  20) = 4425  	ilog2(  21) = 4497
+       ilog2(  22) = 4566  	ilog2(  23) = 4632  	ilog2(  24) = 4695
+       ilog2(  25) = 4755  	ilog2(  26) = 4813  	ilog2(  27) = 4869
+       ilog2(  28) = 4922  	ilog2(  29) = 4974  	ilog2(  30) = 5024
+       ilog2(  31) = 5073  	ilog2(  32) = 5120  	ilog2(  33) = 5165
+       ilog2(  34) = 5209  	ilog2(  35) = 5252  	ilog2(  36) = 5294
+       ilog2(  37) = 5334  	ilog2(  38) = 5373  	ilog2(  39) = 5412
+       ilog2(  40) = 5449  	ilog2(  41) = 5486  	ilog2(  42) = 5521
+ */
 long long
 ilog2(long long val)
 {

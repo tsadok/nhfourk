@@ -1048,13 +1048,16 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
             } else {
                 if (newdungeon) {
                     if (Is_stronghold(&u.uz)) {
-                        xchar x, y;
+                        xchar x, y, flex = 5;
+                        int tries = 12 * COLNO;
 
                         do {
-                            x = (COLNO - 2 - rnd(5));
+                            x = (COLNO - 2 - rnd(flex));
                             y = rn1(ROWNO - 4, 3);
-                        } while (occupied(level, x, y) ||
-                                 IS_WALL(level->locations[x][y].typ));
+                            if (!(tries % 20)) flex++;
+                        } while ((tries-- > 0) &&
+                                 (occupied(level, x, y) ||
+                                  IS_WALL(level->locations[x][y].typ)));
                         u_on_newpos(x, y);
                     } else
                         u_on_sstairs();

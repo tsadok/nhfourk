@@ -373,6 +373,8 @@ static const char *
 spoilmrace(int i)
 {
     int race = mons[i].mflagsr;
+    if (race == MRACE_NONE)
+        return "<span class=\"mrace norace\">N/A</span>";
     if (race == MRACE_HUMAN)
         return "<span class=\"mrace humanrace\">human</span>";
     if (race == MRACE_ELF)
@@ -385,8 +387,12 @@ spoilmrace(int i)
         return "<span class=\"mrace orcrace\">orc</span>";
     if (race == MRACE_FAIRY)
         return "<span class=\"mrace fairyrace\">fairy</span>";
+    if (race == MRACE_RODENT)
+        return "<span class=\"mrace rodentrace\">rodent</span>";
+    if (race == MRACE_GIANT)
+        return "<span class=\"mrace giantrace\">giant</span>";
 
-    return "<span class=\"mrace norace\">N/A</span>";
+    return "<span class=\"mrace unknownrace error\">UNKNOWN</span>";
 }
 
 static const char *

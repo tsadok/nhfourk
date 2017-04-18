@@ -1268,7 +1268,7 @@ eatcorpse(void)
         losehp(rnd(8), killer_msg(DIED, "a cadaver"));
     }
 
-    if (!tp && !nonrotting_corpse(mnum) && (otmp->orotten || !rn2(7))) {
+    if (!tp && !nonrotting_corpse(mnum) && otmp->orotten) {
         touchfood();
         if (rottenfood(otmp)) {
             if (!u.utracked[tos_food])
@@ -2065,11 +2065,7 @@ doeat(const struct nh_cmd_arg *arg)
                 break;
             }
 
-            if (otmp->otyp != FORTUNE_COOKIE &&
-                (otmp->cursed || (!nonrotting_food(otmp->otyp) &&
-                                  (((moves - otmp->age) >
-                                    (otmp->blessed ? 50 : 30)) &&
-                                   (otmp->orotten || !rn2(7)))))) {
+            if (otmp->otyp != FORTUNE_COOKIE && (otmp->cursed)) {
                 if (rottenfood(otmp))
                     dont_start = TRUE;
                 touchfood();

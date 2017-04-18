@@ -83,10 +83,10 @@
 # define GENOCIDED      13
 # define LAST_KILLER    (GENOCIDED)
 # define NUM_KILLERS    (LAST_KILLER + 1)
-# define TRICKED        13
-# define QUIT           14
-# define ESCAPED        15
-# define ASCENDED       16
+# define TRICKED        14
+# define QUIT           15
+# define ESCAPED        16
+# define ASCENDED       17
 # define LAST_ENDING    (ASCENDED)
 # define NUM_ENDINGS    (LAST_ENDING + 1)
 
