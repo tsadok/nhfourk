@@ -824,8 +824,8 @@ const struct objclass const_objects[] = {
  * default letter that's either lowercase, or an uppercase letter that isn't in
  * the last SPID_COUNT (those letters are reserved for supernatural abilities)
  *
- * Currently used: aABcCdDeEfFgGhHiIjkKlLmMnoOpPrRsStTuUvwxz
- *         unused: bJNqQy
+ * Currently used: aABcCdDeEfFGhHiIjkKlLmMnoOpPrRsStTuUvwxz
+ *         unused: bgJNqQy
  *       reserved: VWXYZ
  *
  * Reasoning:

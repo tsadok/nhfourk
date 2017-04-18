@@ -32,12 +32,7 @@
 ▒▒▒ * Find a way to compile on Windows.
 ▒▒▒
 ▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.  (Gnome)
-▒▒▒
-▒▒▒ * FIQ thinks Gnome darkvision should be able to see walls.
-▒▒▒
-▒▒▒ * FIQ thinks Stacked Dozen should be a prize level due to difficulty.
-▒▒▒
-▒▒▒ * FIQ suggests when pushing a boulder into (deep) water, sometimes shallow water should result.
+▒▒▒   + Preliminary attempts to reproduce this have failed (but uncovered another bug, which I fixed).
 ▒▒▒
 ▒▒▒ * Increase the retry count on VS placement, try to make it not put the VS too close to the map edge.
 ▒▒▒
@@ -75,14 +70,9 @@
 ▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
 ▒▒▒   the duplicated message that has been reported.
 ▒▒▒
-▒▒▒ * Add -Wunused-parameter -Wunused-label -Wunused-variable to my CFLAGS,
-▒▒▒   fix any warnings that ensue.
-▒▒▒
 ▒▒▒ * FIQ says a 60zm scroll in a shop that isn't marked up should auto-ID.
 ▒▒▒
 ▒▒▒ * Wiz quest text refers to a chest on wiz home that no longer exists.
-▒▒▒
-▒▒▒ * FIQ says fix the comment in objects.c, g isn't used as a spell letter.
 ▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
@@ -113,6 +103,12 @@
 ▒▒▒
 ▒▒▒ * Figure out some way to make non-artifact crystal balls useful other than as polyfodder.
 ▒▒▒   
+▒▒▒ * FIQ thinks Gnome darkvision should be able to see walls.
+▒▒▒
+▒▒▒ * FIQ thinks Stacked Dozen should be a prize level due to difficulty.
+▒▒▒
+▒▒▒ * FIQ suggests when pushing a boulder into (deep) water, sometimes shallow water should result.
+▒▒▒
 ▒▒▒ * Finally have a decent plan for mummies.  See #nethack4 log from 2017 Apr 16, 18:45-18:50
 ▒▒▒   
 ▒▒▒ * Should converting an altar grant an alignment bonus?  (hackedhead's idea)
