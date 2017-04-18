@@ -142,7 +142,7 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
         impossible("mkobj_of_class called with RANDOM_CLASS");
 
     int i;
-    int first_id = bases[oclass];
+    int first_id = bases[(int) oclass];
     int final_id = bases[oclass + 1] - 1;
 
     /* Precious gems start off elsewhere depending on dungeon level */

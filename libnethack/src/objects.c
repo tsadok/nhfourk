@@ -560,6 +560,7 @@ const struct objclass const_objects[] = {
          150, 1, 0, 5, IRON, HI_METAL),
     RING("protection from shape changers", PROT_FROM_SHAPE_CHANGERS, "shiny",
          100, 1, 0, 5, IRON, CLR_BRIGHT_CYAN),
+#undef RING
 /* Spare appearances should have 0 probability: */
 #define RING(name,power,stone,cost,mgc,spec,mohs,metal,color) OBJECT(   \
            OBJ(name,stone), \
