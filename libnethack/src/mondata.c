@@ -263,7 +263,7 @@ boolean
 sliparm(const struct permonst * ptr, const struct objclass *oc)
 {
     return ((boolean)
-            (is_whirly(ptr) || ptr->msize <= oc->a_minsize ||
+            (is_whirly(ptr) || ptr->msize < oc->a_minsize ||
              noncorporeal(ptr)));
 }
 
