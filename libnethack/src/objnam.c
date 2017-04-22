@@ -2738,6 +2738,9 @@ typfnd:
         }
         if (spe > otmp->spe && wishtype <= 2)
             spe = otmp->spe;
+        else if (oclass == WAND_CLASS &&
+                 spe > otmp->spe * (1 + rn2_on_rng(5, rng_wish_quality)))
+            spe = otmp->spe;
     }
 
     if (spesgn == -1)

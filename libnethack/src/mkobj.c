@@ -519,6 +519,18 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
             if (is_poisonable(otmp) && !rn2_on_rng(100, rng))
                 otmp->opoisoned = 1;
 
+            if ((otmp->spe == 0) && !otmp->blessed && !otmp->cursed &&
+                !rn2_on_rng(4, rng)) {
+                /* It's boring if practically everything is +0 and uncursed. */
+                int sign = rn2_on_rng(3,rng) ? -1 : 1;
+                otmp->spe = sign *
+                    (((10 + depth(&lev->z)) / 15) + rne_on_rng(2, rng));
+                if (sign < 0)
+                    curse(otmp);
+                else
+                    otmp->blessed = 1;
+            }
+
             if (artif && !rn2_on_rng(20, rng))
                 otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
             else if ((otmp->spe > (1 + rn2_on_rng(5, rng))) && (!otmp->cursed))
