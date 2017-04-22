@@ -34,8 +34,6 @@
 ▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.  (Gnome)
 ▒▒▒   + Preliminary attempts to reproduce this have failed (but uncovered another bug, which I fixed).
 ▒▒▒
-▒▒▒ * Increase the retry count on VS placement, try to make it not put the VS too close to the map edge.
-▒▒▒
 ▒▒▒ * Test what happens when polyselfing into a python while wearing body armor.
 ▒▒▒   Raisse suggests you should "slither" out of it, rather than breaking it.
 ▒▒▒
