@@ -147,6 +147,9 @@
 ▒▒▒ * Bug: for non-setseed games, the seed reported in the xlogfile and dumplog is
 ▒▒▒   not actually the seed that was used.
 ▒▒▒
+▒▒▒ * new monster: stinking sphere.  A sphere that releases a small-diameter
+▒▒▒   stinking cloud when it explodes.
+▒▒▒
 ▒▒▒ * Consider adjusting the difficulty of some monsters.
 ▒▒▒   + For example, quasits should probably have their difficulty number reduced.
 ▒▒▒   + 
