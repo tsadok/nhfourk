@@ -41,10 +41,6 @@
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
 ▒▒▒
-▒▒▒ * Can mindless things sleep?  WHY can mindless things sleep?
-▒▒▒
-▒▒▒ * Scurriers versus shop walls.
-▒▒▒
 ▒▒▒ * 22:06 <         Tangles > Error: Couldn't load "garden-2.lev" - making a maze.
 ▒▒▒   I absolutely cannot reproduce this here.  Both versions of the garden work as intended here.
 ▒▒▒   Additionally, Travis does not report any unexpected problems building them.
@@ -113,9 +109,11 @@
 ▒▒▒
 ▒▒▒ * Give elves lembas in the magic chest (FIQ's idea)
 ▒▒▒
-▒▒▒ * Rething quaff-identification deterrents.  In particular, should potions of hallucination
+▒▒▒ * Rethink quaff-identification deterrents.  In particular, should potions of hallucination
 ▒▒▒   really last that long?  (Mandevil complained about this; it _is_ basically forever.)
 ▒▒▒   Should potions of polymorph be more common?
+▒▒▒
+▒▒▒ * Can mindless things sleep?  WHY can mindless things sleep?
 ▒▒▒
 ▒▒▒ * 06:30 < FIQ > jonadab: maybe cursed remove curse should remove curses by destroying the cursed items
 ▒▒▒
