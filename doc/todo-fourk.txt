@@ -93,8 +93,8 @@
 ▒▒▒
 ▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed
 ▒▒▒
-▒▒▒ * Figure out some way to make non-artifact crystal balls useful other than as polyfodder.
-▒▒▒   
+▒▒▒ * Limit a crystal ball's effective search radius based on intelligence.
+▒▒▒
 ▒▒▒ * FIQ thinks Gnome darkvision should be able to see walls.
 ▒▒▒
 ▒▒▒ * FIQ thinks Stacked Dozen should be a prize level due to difficulty.

@@ -804,19 +804,14 @@ void
 use_crystal_ball(struct obj *obj)
 {
     char ch;
-    int oops;
 
     if (Blind) {
         pline(msgc_cancelled1, "Too bad you can't see %s.", the(xname(obj)));
         return;
     }
 
-    /* We use a custom RNG for whether looking into the crystal ball succeeds or
-       not, because the number of uses you get out of one crystal ball can be
-       strategically important. */
     int oops_result = rn2_on_rng(20, rng_crystal_ball);
-    oops = (rn2_on_rng(20, rng_crystal_ball) >= ACURR(A_INT) || obj->cursed);
-    if (oops && (obj->spe > 0)) {
+    if (obj->cursed && (obj->spe > 0)) {
         /* Guarantee lined-up results between artifact and non-artifact unless a
            non-artifact would explode; substitute a random result for artifacts
            in that case. (It's OK to use rnd() for the actual timeout, because
@@ -920,6 +915,9 @@ use_crystal_ball(struct obj *obj)
     } else {
         int class;
         int ret = 0;
+        /* TODO: limit the radius of detection based on intelligence
+        int radius = (COLNO + ROWNO) * ACURR(A_INT) / 30;
+        */
 
         makeknown(CRYSTAL_BALL);
         consume_obj_charge(obj, TRUE);

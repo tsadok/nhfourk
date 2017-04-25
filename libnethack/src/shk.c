@@ -3876,8 +3876,7 @@ cost_per_charge(struct monst *shkp, struct obj *otmp, boolean altusage)
     } else if (otmp->otyp == BAG_OF_TRICKS ||         /* 1 - 20 */
                otmp->otyp == HORN_OF_PLENTY) {
         tmp /= 5L;
-    } else if (otmp->otyp == CRYSTAL_BALL ||          /* 1 - 5 */
-               otmp->otyp == OIL_LAMP ||              /* 1 - 10 */
+    } else if (otmp->otyp == OIL_LAMP ||              /* 1 - 10 */
                otmp->otyp == BRASS_LANTERN ||
                (otmp->otyp >= MAGIC_FLUTE &&
                 otmp->otyp <= DRUM_OF_EARTHQUAKE) ||  /* 5 - 9 */
@@ -3887,7 +3886,7 @@ cost_per_charge(struct monst *shkp, struct obj *otmp, boolean altusage)
     } else if (otmp->oclass == SPBOOK_CLASS) {
         tmp -= tmp / 5L;
     } else if (otmp->otyp == CAN_OF_GREASE || otmp->otyp == TINNING_KIT ||
-               otmp->otyp == EXPENSIVE_CAMERA) {
+               otmp->otyp == CRYSTAL_BALL || otmp->otyp == EXPENSIVE_CAMERA) {
         tmp /= 10L;
     } else if (otmp->otyp == POT_OIL) {
         tmp /= 5L;

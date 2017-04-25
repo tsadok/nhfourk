@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Crystal balls get up to 25 charges.  Using a crystal ball
+   no longer requires you to pass an intelligence check (but
+   can still fail if the ball is cursed).
+
  * Explore mode now gives the player a scroll of wishing.
    (This was necessary to allow testing non-wizmode use of their
    higher wish quality, since wizmode wishes are even _higher_

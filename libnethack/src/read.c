@@ -414,12 +414,12 @@ recharge(struct obj *obj, int curse_bless)
         case CRYSTAL_BALL:
             if (is_cursed)
                 stripspe(obj);
-            else if (is_blessed) {
-                obj->spe = 6;
+            else if (is_blessed && obj->spe <= 25) {
+                obj->spe += 25;
                 p_glow2(msgc_itemrepair, obj, "blue");
             } else {
-                if (obj->spe < 5) {
-                    obj->spe++;
+                if (obj->spe <=25) {
+                    obj->spe += 10;
                     p_glow1(msgc_itemrepair, obj);
                 } else
                     pline(msgc_failcurse, "Nothing happens.");
