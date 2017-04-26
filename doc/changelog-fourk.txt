@@ -61,6 +61,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Polymorphing into a python or other snake-like creature no longer
+   breaks your armor, unless the target form is huge or gigantic
+   (e.g., long worm) or humanoid (e.g., salamander).  Instead of
+   breaking your armor, you now slither out of it.
+
  * Crystal balls get up to 25 charges.  Using a crystal ball
    no longer requires you to pass an intelligence check (but
    can still fail if the ball is cursed).

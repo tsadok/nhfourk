@@ -34,9 +34,6 @@
 ▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.  (Gnome)
 ▒▒▒   + Preliminary attempts to reproduce this have failed (but uncovered another bug, which I fixed).
 ▒▒▒
-▒▒▒ * Test what happens when polyselfing into a python while wearing body armor.
-▒▒▒   Raisse suggests you should "slither" out of it, rather than breaking it.
-▒▒▒
 ▒▒▒ * Your conscious should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
