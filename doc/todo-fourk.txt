@@ -42,9 +42,6 @@
 ▒▒▒   I absolutely cannot reproduce this here.  Both versions of the garden work as intended here.
 ▒▒▒   Additionally, Travis does not report any unexpected problems building them.
 ▒▒▒
-▒▒▒ * 10:37 <         Tangles > Some observations... Combat messages sometimes refer to you in the
-▒▒▒                             3rd person "the dwarf thrusts his dagger at the valkyrie".
-▒▒▒
 ▒▒▒ * 08:36 < FIQ > jonadab: you screwed up the ordering of parameters in turn undead instadeath
 ▒▒▒   08:36 < FIQ > it kills the user, rather than the target
 ▒▒▒
