@@ -1565,9 +1565,10 @@ mswingsm(struct monst *magr, struct monst *mdef, struct obj *otemp)
        different numbers of arguments; printf is specified to ignore spare
        arguments at the end of the format string (C11 7.21.6.1p2) */
     pline_implied(msgc_monneutral, "%s %s %s%s %s at %s.", Monnam(magr),
-          (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
-          ((otemp->quan > 1L) ? "one of " : ""),
-          mhis(magr), xname(otemp), mon_nam(mdef));
+                  (objects[otemp->otyp].oc_dir & PIERCE) ? "thrusts" : "swings",
+                  ((otemp->quan > 1L) ? "one of " : ""),
+                  mhis(magr), xname(otemp),
+                  ((mdef == &youmonst) ? "you" : mon_nam(mdef)));
 }
 
 /*
