@@ -36,10 +36,7 @@
 ▒▒▒
 ▒▒▒ * Increase the retry count on VS placement, try to make it not put the VS too close to the map edge.
 ▒▒▒
-▒▒▒ * Test what happens when polyselfing into a python while wearing body armor.
-▒▒▒   Raisse suggests you should "slither" out of it, rather than breaking it.
-▒▒▒
-▒▒▒ * Your conscious should not "bother you a little less" if your alignment
+▒▒▒ * Your conscience should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
 ▒▒▒
