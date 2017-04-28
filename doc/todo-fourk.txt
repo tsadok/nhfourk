@@ -96,6 +96,9 @@
 ▒▒▒     first hit, then not repeat until you wield again.
 ▒▒▒   + Make that message also force more by default, if not tab.
 ▒▒▒
+▒▒▒ * 14:37 < rumflump > you see Death with a Wand of Gnomes
+▒▒▒   14:39 <  jonadab+> Heh, that sounds like a hallucinatory monster.
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒   4.3.0.5 :
