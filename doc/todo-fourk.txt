@@ -75,10 +75,26 @@
 ▒▒▒   cherry-pick the workaround to 4.3-maint.
 ▒▒▒
 ▒▒▒ * FIQ says it's possible to bloat yourself so much you get faster.
+▒▒▒   I've confirmed that this is possible, though it takes enormous amounts of doing.
 ▒▒▒
 ▒▒▒ * Why do poisoned ya get the wrong plural?  http://i.imgur.com/D5vsbwA.png
 ▒▒▒
 ▒▒▒ * Should commit 048af5eb19a2 be in #ifdef PUBLIC_SERVER ?
+▒▒▒
+▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
+▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
+▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
+▒▒▒
+▒▒▒ * Make lenses grant autosearching when worn.  See 6b87dcd.
+▒▒▒
+▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
+▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
+▒▒▒     by default, if it doesn't already.
+▒▒▒   + Introduce a similar message for when you attack a monster with
+▒▒▒     a weapon you're not skilled in.  Make the wording stronger if you
+▒▒▒     are restricted than if merely unskilled.  Make it happen once on
+▒▒▒     first hit, then not repeat until you wield again.
+▒▒▒   + Make that message also force more by default, if not tab.
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
@@ -86,6 +102,9 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed
+▒▒▒
+▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
+▒▒▒   tools and also makes some interesting changes to cameras.
 ▒▒▒
 ▒▒▒ * Limit a crystal ball's effective search radius based on intelligence.
 ▒▒▒
