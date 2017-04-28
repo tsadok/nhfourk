@@ -85,8 +85,6 @@
 ▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
 ▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
 ▒▒▒
-▒▒▒ * Make lenses grant autosearching when worn.  See 6b87dcd.
-▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
 ▒▒▒     by default, if it doesn't already.
@@ -521,8 +519,6 @@
 ▒▒▒   and review the existing ones for continued accuracy.
 ▒▒▒
 ▒▒▒ * Decide what to do about hidden corridors and secret doors.  (Lots of ideas below.)
-▒▒▒
-▒▒▒ * Make lenses grant automatic searching when worn.
 ▒▒▒
 ▒▒▒ * Consider cherry-picking pool rooms from Dyna, and look at its special levels.
 ▒▒▒
