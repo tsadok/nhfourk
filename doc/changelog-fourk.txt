@@ -345,6 +345,15 @@ Changes in 4.3.0.5:
 Changes in 4.3.0.4:
 -------------------
 
+ * Polymorphing into a python or other snake-like creature no longer
+   breaks your armor, unless the target form is huge or gigantic
+   (e.g., long worm) or humanoid (e.g., salamander).  Instead of
+   breaking your armor, you now slither out of it.
+
+ * Crystal balls get up to 25 charges.  Using a crystal ball
+   no longer requires you to pass an intelligence check (but
+   can still fail if the ball is cursed).
+
  * Explore mode now gives the player a scroll of wishing.
    (This was necessary to allow testing non-wizmode use of their
    higher wish quality, since wizmode wishes are even _higher_

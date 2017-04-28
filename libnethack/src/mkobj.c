@@ -678,7 +678,7 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 blessorcurse(otmp, 10, rng);
                 break;
             case CRYSTAL_BALL:
-                otmp->spe = 1 + rn2_on_rng(5, rng);
+                otmp->spe = 1 + rn2_on_rng(25, rng);
                 blessorcurse(otmp, 2, rng);
                 break;
             case HORN_OF_PLENTY:

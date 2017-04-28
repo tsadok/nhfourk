@@ -2209,9 +2209,7 @@ mkinvpos(xchar x, xchar y, int dist)
     struct rm *loc = &level->locations[x][y];
 
     /* clip at existing map borders if necessary */
-    if (!within_bounded_area
-        (x, y, x_maze_min + 1, y_maze_min + 1, x_maze_max - 1,
-         y_maze_max - 1)) {
+    if (!within_bounded_area(x, y, 1, 1, COLNO - 1, ROWNO - 1)) {
         /* only outermost 2 columns and/or rows may be truncated due to edge */
         if (dist < (7 - 2)) {
             impossible("mkinvpos: <%d,%d> (%d) off map edge!", x, y, dist);

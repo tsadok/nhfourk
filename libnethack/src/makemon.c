@@ -2513,7 +2513,10 @@ save_mon(struct memfile *mf, struct monst *mon, const struct level *l)
        properly. */
     xchar mux = mon->mux;
     xchar muy = mon->muy;
-    if (mon->mux == mon->mx && mon->muy == mon->my) {
+    /* muxy is set to target dungeon (branch) + level if migrating,
+       check mxy if migrating or not */
+    if (mon->mx != COLNO && mon->my != ROWNO &&
+        mon->mux == mon->mx && mon->muy == mon->my) {
         impossible("save_mon: muxy and mxy are equal?");
         mux = COLNO;
         muy = ROWNO;

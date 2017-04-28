@@ -834,20 +834,31 @@ static void
 break_armor(boolean noisy)
 {
     struct obj *otmp;
+    boolean canslitherout = slithy(youmonst.data) &&
+        !humanoid(youmonst.data) && (youmonst.data->msize < MZ_HUGE);
 
     if ( (((otmp = uarm) != 0)) && (otmp != uskin()) &&
          (breakarm(youmonst.data, &objects[otmp->otyp]))) {
+        if (canslitherout) {
+            if (noisy)
+                pline(msgc_statusbad, "You slither out of your armor!");
+            setequip(os_arm, NULL, em_silent);
+            dropx(otmp);
+        } else {
             if (noisy)
                 pline(msgc_itemloss, "You break out of your armor!");
             exercise(A_STR, FALSE);
             setequip(os_arm, NULL, em_silent);
             useup(otmp);
+        }
     }
     if ( (((otmp = uarmc) != 0)) && (otmp != uskin()) &&
          (breakarm(youmonst.data, &objects[otmp->otyp]))) {
-            if (otmp->oartifact) {
+            if (otmp->oartifact || canslitherout) {
                 if (noisy)
-                    pline(msgc_statusbad, "Your %s falls off!",
+                    pline(msgc_statusbad, (canslitherout ?
+                                           "You slither out of your %s!" :
+                                           "Your %s falls off!"),
                           cloak_simple_name(otmp));
                 setequip(os_armc, NULL, em_silent);
                 dropx(otmp);
@@ -861,9 +872,16 @@ break_armor(boolean noisy)
     }
     if ( (((otmp = uarmu) != 0)) &&
          (breakarm(youmonst.data, &objects[otmp->otyp]))) {
+        if (canslitherout) {
+            if (noisy)
+                pline(msgc_statusbad, "You slither out of your shirt!");
+            setequip(os_armu, NULL, em_silent);
+            dropx(otmp);
+        } else {
             if (noisy)
                 pline(msgc_itemloss, "Your shirt rips to shreds!");
             useup(uarmu);
+        }
     }
     if ( (((otmp = uarm) != 0)) && (otmp != uskin()) &&
         /* uskin check is paranoia */
