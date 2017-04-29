@@ -96,6 +96,11 @@
 ▒▒▒     first hit, then not repeat until you wield again.
 ▒▒▒   + Make that message also force more by default, if not tab.
 ▒▒▒
+▒▒▒ * 18:35 <        rumflump > would it be possible for floors that contain a vault, to auto-annotate when you see 
+▒▒▒                             "coins being counted"?
+▒▒▒   18:36 <             FIQ > jonadab: ^
+▒▒▒   18:36 <             FIQ > also for other kind of special [rooms]
+▒▒▒
 ▒▒▒ * 14:37 < rumflump > you see Death with a Wand of Gnomes
 ▒▒▒   14:39 <  jonadab+> Heh, that sounds like a hallucinatory monster.
 ▒▒▒
