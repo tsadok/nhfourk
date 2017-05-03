@@ -8,6 +8,8 @@
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * Test what happens when a corpse is in a magic chest long enough to rot and then you go to get it out.
+▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒   
 ▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
@@ -103,6 +105,8 @@
 ▒▒▒
 ▒▒▒ * 14:37 < rumflump > you see Death with a Wand of Gnomes
 ▒▒▒   14:39 <  jonadab+> Heh, that sounds like a hallucinatory monster.
+▒▒▒
+▒▒▒ * Look at 0bb7d94 Fredrik Ljungdahl: Quarterstaves now [...] doesn't prevent casting if cursed despite no free hand
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
