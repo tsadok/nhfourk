@@ -116,8 +116,11 @@ log_recover_core_reasons(struct nh_menulist *menu, const char *message,
                      "Here is additional information about this save rewind:");
     } else {
     */
-        add_menutext(menu,
-            "You can report this error at <http://trac.nethack4.org>.");
+        add_menutext(menu, "You can report this error by email or in IRC.");
+        add_menutext(menu, msgprintf("My email address is %s%scolumbus.rr.com",
+                                     "jonadab", "@"));
+        add_menutext(menu, "Please include the word \"Fourk\" in the Subject.");
+        add_menutext(menu, "IRC users, join channel #nhfourk on Freenode.");
         add_menutext(menu, "Please include the following information:");
         /*
     }
