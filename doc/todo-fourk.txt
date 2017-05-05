@@ -89,6 +89,8 @@
 ▒▒▒
 ▒▒▒ * Make lenses grant autosearching when worn.  See 6b87dcd.
 ▒▒▒
+▒▒▒ * Convert the Wizard's Tower zoo into a dragon hall.
+▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
 ▒▒▒     by default, if it doesn't already.
@@ -114,6 +116,10 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed
+▒▒▒
+▒▒▒ * Look at and consider cherry-picking FIQ's unskilled bashmsh, 7ad158a
+▒▒▒
+▒▒▒ * Make the Wizard's Tower dragon hall have all colors of D.
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
