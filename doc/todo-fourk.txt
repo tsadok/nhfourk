@@ -58,9 +58,6 @@
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
 ▒▒▒
-▒▒▒ * 08:36 < FIQ > jonadab: you screwed up the ordering of parameters in turn undead instadeath
-▒▒▒   08:36 < FIQ > it kills the user, rather than the target
-▒▒▒
 ▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
 ▒▒▒   the duplicated message that has been reported.
 ▒▒▒
