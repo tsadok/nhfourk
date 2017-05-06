@@ -112,7 +112,7 @@ STAIR:levregion(00,00,78,20),(0,0,28,12),up
 STAIR:levregion(00,00,78,20),(0,0,28,12),down
 BRANCH:levregion(00,00,78,20),(0,0,28,12)
 TELEPORT_REGION:levregion(00,00,78,20),(0,0,27,12)
-REGION:(09,03,17,09),unlit,"zoo"
+REGION:(09,03,17,09),unlit,"dragonhall"
 DOOR:closed,(15,02)
 DOOR:closed,(11,10)
 MAZEWALK:(28,05),east

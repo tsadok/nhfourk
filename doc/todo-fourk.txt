@@ -90,8 +90,6 @@
 ▒▒▒
 ▒▒▒ * Make lenses grant autosearching when worn.  See 6b87dcd.
 ▒▒▒
-▒▒▒ * Convert the Wizard's Tower zoo into a dragon hall.
-▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
 ▒▒▒     by default, if it doesn't already.
