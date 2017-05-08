@@ -1049,32 +1049,23 @@ static struct {
     {"efreeti", FALSE},
     {"marid", FALSE},
     {"rot grub", FALSE},
-    {"bookworm", FALSE},
-    {"master lichen", FALSE},
     {"shadow", FALSE},
-    {"hologram", FALSE},
     {"jester", FALSE},
-    {"attorney", FALSE},
     {"sleazoid", FALSE},
-    {"winged monkey", FALSE},
     {"butterfly", FALSE},
     {"monster", FALSE},
-    {"radioactive spider", FALSE},
     {"angel of death", FALSE},
-    {"nanobot", FALSE},
-    {"killer tomato", FALSE},
-    {"robot", FALSE},
-    {"battlemech", FALSE},
-    {"rhinovirus", FALSE},
     {"lion-dog", FALSE},
     {"rat-ant", FALSE},
+        /* Modern threats, real and imaginary: */
+    {"bookworm", FALSE},
+    {"hologram", FALSE},
+    {"radioactive spider", FALSE},
+    {"rhinovirus", FALSE},
+    {"robot", FALSE},
+    {"nanobot", FALSE},
+    {"battlemech", FALSE},
     {"Y2K bug", FALSE},
-        /* Classical mythologies */
-    {"basilisk", FALSE},
-    {"sphinx", FALSE},
-    {"phoenix", FALSE},
-    {"amazon", FALSE},
-    {"harpy", FALSE},
         /* Quendor (Zork, &c.) */
     {"grue", FALSE},
     {"Christmas-tree monster", FALSE},
@@ -1082,6 +1073,9 @@ static struct {
     {"paskald", FALSE},
     {"brogmoid", FALSE},
     {"dornbeast", FALSE},
+        /* NetHack community in-joke: */
+    {"master lichen", FALSE},
+    {"Death with a wand of Gnomes", TRUE},
         /* assorted NetHack variants */
     {"wax golem", FALSE},               /* Slash'em */
     {"monoton", FALSE},                 /* dnethack */
@@ -1109,6 +1103,8 @@ static struct {
     {"octo", FALSE},
     {"enraged diggle", FALSE},
     {"arch diggle", FALSE},
+        /* Dwarf Fortress */
+    {"forgotten beast", FALSE}, /* It probably menaces with spikes. */
         /* Wesnoth */
     {"chocobone", FALSE},
         /* Minecraft */
@@ -1118,13 +1114,22 @@ static struct {
     {"garg", FALSE}, /* Keen 1 */
     {"poison slug", FALSE}, /* Keen 4 */
     {"dopefish", FALSE}, /* Keen 4 */
+        /* Other old PC games */
+    {"Jazz Jackrabbit", TRUE},    /* eponymous */
+    {"Jill of the Jungle", TRUE}, /* eponymous */
         /* Notable console games */
     {"octorok", FALSE}, /* Zelda series */
     {"goomba", FALSE},  /* Mario series */
     {"ramblin' evil mushroom", FALSE}, /* EarthBound */
         /* Wizardry */
     {"creeping coins", FALSE},
-        /* Greek legend */
+        /* Classical mythologies */
+    {"basilisk", FALSE},
+    {"sphinx", FALSE},
+    {"phoenix", FALSE},
+    {"amazon", FALSE},
+    {"harpy", FALSE},
+        /* Greek legend specifically */
     {"pegasus", FALSE},
     {"hydra", FALSE},
     {"siren", FALSE},
@@ -1133,10 +1138,6 @@ static struct {
     {"tanuki", FALSE},
         /* Beowulf */
     {"Grendel", TRUE},
-        /* Monty Python */
-    {"killer bunny", FALSE},
-        /* The Princess Bride */
-    {"rodent of unusual size", FALSE},
         /* "Only you can prevent forest fires!" */
     {"Smokey the bear", TRUE},
         /* Discworld */
@@ -1182,12 +1183,20 @@ static struct {
         /* monster movies */
     {"Godzilla", TRUE},
     {"King Kong", TRUE},
+        /* Monty Python */
+    {"killer bunny", FALSE},
+        /* The Princess Bride */
+    {"rodent of unusual size", FALSE},
+        /* Wizard of Oz (and other sources) */
+    {"winged monkey", FALSE},
+        /* Eponymous movie references */
+    {"Terminator", FALSE},
+    {"Predator", FALSE},
+    {"killer tomato", FALSE},
         /* old L of SH */
     {"earthquake beast", FALSE},
         /* Robotech */
     {"Invid", FALSE},
-        /* The Terminator */
-    {"Terminator", FALSE},
         /* Bubblegum Crisis */
     {"boomer", FALSE},
         /* Dr. Who ("Exterminate!") */
@@ -1212,17 +1221,18 @@ static struct {
     {"Morgoth", TRUE}, /* Originally from LOTR */
         /* Babylon 5 */
     {"Vorlon", FALSE},
+        /* Battlestar Galactica */
+    {"cylon", FALSE},
         /* King Arthur */
     {"questing beast", FALSE},
-        /* Movie */
-    {"Predator", FALSE},
         /* common pests */
     {"mother-in-law", FALSE},
     {"hyperactive child", FALSE},
     {"grumpy old man", FALSE},
     {"teenager", FALSE},
-        /* Battlestar Galactica */
-    {"cylon", FALSE},
+    {"telemarketer", FALSE},
+    {"politician", FALSE},
+    {"attorney", FALSE},
 };
 
 
