@@ -75,9 +75,7 @@ doread(const struct nh_cmd_arg *arg)
             "=^.^=",
             "100% goblin hair - do not wash",
             "Aberzombie and Fitch",
-            "cK -- Cockatrice touches the Kop",
             "Don't ask me, I only adventure here",
-            "Down with pants!",
             "d, your dog or a killer?",
             "FREE PUG AND NEWT!",
             "Go team ant!",
@@ -86,7 +84,7 @@ doread(const struct nh_cmd_arg *arg)
             "Hey! Nymphs! Steal This T-Shirt!",
             "I <3 Dungeon of Doom",
             "I <3 Maud",
-            "I am a Valkyrie. If you see me running, try to keep up.",
+            "I am a Barbarian. If you see me running, try to keep up.",
             "I am not a pack rat - I am a collector",
             "I bounced off a rubber tree",  /* Monkey Island */
             "Plunder Island Brimstone Beach Club", /* Monkey Island */
@@ -99,7 +97,6 @@ doread(const struct nh_cmd_arg *arg)
             "Meat is Mordor",
             "Minetown Better Business Bureau",
             "Minetown Watch",
-            "Ms. Palm's House of Negotiable Affection -- A Very Reputable House Of Disrepute",
             "Protection Racketeer",
             "Real men love Crom",
             "Somebody stole my Mojo!",
@@ -119,13 +116,14 @@ doread(const struct nh_cmd_arg *arg)
             "Mind flayers suck",
             "I'm not wearing any pants",
             "Down with the living!",
-            "Pudding farmer",
             "Vegetarian",
+            "Vegan and Proud",
             "Hello, I'm War",
             "Sredni Vashtar went forth.  " /* Saki short story */
-            "His thoughts were red and his teeth were white.",
+                "His thoughts were red and his teeth were white.",
             "Keep calm and explore the dungeon.",
             "One does not simply kill the Wizard of Yendor.",
+            "I killed the Wizard of Yendor.  (He got over it.)",
         };
         const char *buf;
         int erosion;
