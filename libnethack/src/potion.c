@@ -1496,8 +1496,12 @@ mixtype(struct obj *o1, struct obj *o2)
         }
         break;
     case AMETHYST:     /* "a-methyst" == "not intoxicated" */
-        if (o2->otyp == POT_BOOZE)
+        if (o2->otyp == POT_BOOZE) {
+            makeknown(AMETHYST);
+            makeknown(POT_BOOZE);
+            makeknown(POT_FRUIT_JUICE);
             return POT_FRUIT_JUICE;
+        }
         break;
     case POT_GAIN_LEVEL:
         if (o2->otyp == POT_FULL_HEALING)

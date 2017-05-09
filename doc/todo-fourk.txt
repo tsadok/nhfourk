@@ -103,6 +103,8 @@
 ▒▒▒
 ▒▒▒ * Look at 0bb7d94 Fredrik Ljungdahl: Quarterstaves now [...] doesn't prevent casting if cursed despite no free hand
 ▒▒▒
+▒▒▒ * Look at af5e753 Fredrik Ljungdahl: Make pickaxe/axe skill factor in when digging (+5 per skill level)
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒   4.3.0.5 :
