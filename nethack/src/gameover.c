@@ -7,7 +7,7 @@
 
 /* A normal tombstone for end of game display. */
 static const char *rip_txt[] = {
-    "                       ----------",
+    "                       __________",
     "                      /          \\",
     "                     /    REST    \\",
     "                    /      IN      \\",
