@@ -105,6 +105,12 @@
 ▒▒▒
 ▒▒▒ * Look at af5e753 Fredrik Ljungdahl: Make pickaxe/axe skill factor in when digging (+5 per skill level)
 ▒▒▒
+▒▒▒ * 15:15 <        rumflump > autoexplore killed my pet
+▒▒▒   15:16 <        rumflump > You displace your Green-elf.  The Green-elf drowns.
+▒▒▒   15:17 <        rumflump > I think because I was flying, it didn't count water terrain as special
+▒▒▒   15:17 <        rumflump > *am* flying
+▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒   4.3.0.5 :
