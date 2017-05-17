@@ -262,7 +262,7 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
                 if (yours)
                     killed(mtmp);
                 else
-                    monkilled(mtmp, user, "", AD_RBRE);
+                    monkilled(user, mtmp, "", AD_RBRE);
             }
         }
         break;

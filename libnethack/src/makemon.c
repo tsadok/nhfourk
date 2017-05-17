@@ -2517,6 +2517,7 @@ save_mon(struct memfile *mf, struct monst *mon, const struct level *l)
        check mxy if migrating or not */
     if (mon->mx != COLNO && mon->my != ROWNO &&
         mon->mux == mon->mx && mon->muy == mon->my) {
+        pline(msgc_debug, "%s", k_monnam(mon));
         impossible("save_mon: muxy and mxy are equal?");
         mux = COLNO;
         muy = ROWNO;

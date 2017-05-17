@@ -635,7 +635,8 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
         instapetrify(killer_msg(STONING,
             msgprintf("removing %s gloves while wielding %s", uhis(),
                       an(corpse_xname(uwep, TRUE)))));
-        uwepgone();     /* life-saved still doesn't allow touching cockatrice */
+        if (!Hallucination)
+            uwepgone(); /* life-saved still doesn't allow touching it */
     }
 
     /* KMH -- ...or your secondary weapon when you're wielding it */
@@ -647,7 +648,8 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
         instapetrify(killer_msg(STONING,
             msgprintf("removing %s gloves while wielding %s", uhis(),
                       an(corpse_xname(uwep, TRUE)))));
-        uswapwepgone(); /* lifesaved still doesn't allow touching cockatrice */
+        if (!Hallucination)
+            uswapwepgone(); /* lifesaved still doesn't allow touching it */
     }
 
     return destroyed;

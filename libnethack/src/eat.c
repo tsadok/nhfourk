@@ -905,7 +905,7 @@ eat_tin_one_turn(void)
 {
     int r;
     const char *what;
-    int which;
+    int which, mnum;
     int foodwarn;
 
     /* The !u.utracked[tos_tin] case can't happen in the current codebase
@@ -947,7 +947,8 @@ eat_tin_one_turn(void)
     }
     pline(msgc_actionok, "You succeed in opening the tin.");
     if (u.utracked[tos_tin]->spe != 1) {
-        if (u.utracked[tos_tin]->corpsenm == NON_PM) {
+        mnum = u.utracked[tos_tin]->corpsenm;
+        if (mnum == NON_PM) {
             pline(msgc_noconsequence, "It turns out to be empty.");
             u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
             costly_tin(NULL);
@@ -962,7 +963,11 @@ eat_tin_one_turn(void)
                  !u.utracked[tos_tin]->blessed && !rn2(7))
             r = ROTTEN_TIN;     /* some homemade tins go bad */
         which = 0;      /* 0=>plural, 1=>as-is, 2=>"the" prefix */
-        if (Hallucination) {
+        if ((mnum == PM_COCKATRICE || mnum == PM_CHICKATRICE) &&
+            (Stone_resistance || Hallucination)) {
+            what  = "chicken";
+            which = 1; /* suppress pluralization */
+        } else if (Hallucination) {
             int idx = rndmonidx();
 
             what = monnam_for_index(idx);
@@ -972,10 +977,9 @@ eat_tin_one_turn(void)
             else
                 which = monnam_is_pname(idx) ? 1 : 0;
         } else {
-            what = mons[u.utracked[tos_tin]->corpsenm].mname;
-            if (mons[u.utracked[tos_tin]->corpsenm].geno & G_UNIQ)
-                which =
-                    type_is_pname(&mons[u.utracked[tos_tin]->corpsenm]) ? 1 : 2;
+            what = mons[mnum].mname;
+            if (mons[mnum].geno & G_UNIQ)
+                which = type_is_pname(&mons[mnum]) ? 1 : 2;
         }
         if (which == 0)
             what = makeplural(what);
@@ -1009,21 +1013,21 @@ eat_tin_one_turn(void)
         u.utracked[tos_food] = NULL;
 
         pline(msgc_actionok, "You consume %s %s.", tintxts[r].txt,
-              mons[u.utracked[tos_tin]->corpsenm].mname);
+              mons[mnum].mname);
 
         /* KMH, conduct */
         break_conduct(conduct_food);
-        if (!vegan(&mons[u.utracked[tos_tin]->corpsenm]))
+        if (!vegan(&mons[mnum]))
             break_conduct(conduct_vegan);
-        if (!vegetarian(&mons[u.utracked[tos_tin]->corpsenm]))
+        if (!vegetarian(&mons[mnum]))
             break_conduct(conduct_vegetarian);
 
         u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
-        cprefx(u.utracked[tos_tin]->corpsenm);
+        cprefx(mnum);
         /* We call action_completed() here directly, so that the action is not
          * interruped if the player becomes helpless due to cpostfx. */
         action_completed();
-        cpostfx(u.utracked[tos_tin]->corpsenm);
+        cpostfx(mnum);
 
         /* charge for one at pre-eating cost */
         costly_tin(NULL);
@@ -1293,6 +1297,11 @@ eatcorpse(void)
             }
             retcode = 2;
         }
+    } else if ((mnum == PM_COCKATRICE || mnum == PM_CHICKATRICE) &&
+               (Stone_resistance || Hallucination)) {
+        pline(msgc_playerimmune, "This tastes just like chicken!");
+    } else if (mnum == PM_FLOATING_EYE && u.umonnum == PM_RAVEN) {
+        pline(msgc_actionok, "You peck the eyeball with delight!");
     } else {
         pline(msgc_actionok, "%s%s %s!",
               !uniq ? "This " : !type_is_pname(&mons[mnum]) ? "The " : "",
@@ -1667,6 +1676,7 @@ fpostfx(struct obj *otmp)
                 Stoned = 5;
             set_delayed_killer(STONING, killer_msg_obj(STONING, otmp));
         }
+        /* Note: no "tastes like chicken" message for eggs. */
         break;
     case EUCALYPTUS_LEAF:
         if (Sick && !otmp->cursed)

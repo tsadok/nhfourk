@@ -151,18 +151,14 @@ Contact
 =======
 
 Bugs in NetHack Fourk that can also be reproduced in NetHack 4 should
-preferably be reported upstream at http://trac.nethack4.org, our bug
-tracker.  The homepage for NetHack 4 itself is http://nethack4.org,
-and contains many other resources about the game and its community.
+preferably be reported upstream in #nethack4.  The homepage for
+NetHack 4 itself is http://nethack4.org, and contains many other
+resources about the game and its community.
 
-Bugs that are specific to NetHack Fourk, or have not been reproduced
-upstream in NH4, MAY also be reported in trac, since at the time of
-this writing, NetHack Fourk does not have its own bug tracker or
-website.  If reporting bugs in trac that have only been sighted in
-Fourk, please be sure to set the Version field to indicate that the
-bug was seen in Fourk.  Bug reports or other correspondance specific
-to NetHack Fourk may also be reported to jonadab either on the
-Freenode IRC network or by email (at columbus.rr.com).
+Bug reports or other correspondance specific to NetHack Fourk should
+be reported to jonadab either on the Freenode IRC network or by email
+(at columbus.rr.com).  If using email, please make sure that the word
+"Fourk" is included in the Subject: header of your message.
 
 You can discuss NetHack 4 and NetHack Fourk on IRC.
 irc:irc.freenode.net/nethack4 is the channel for NetHack 4, and
@@ -172,7 +168,7 @@ requests or discuss balance or other issues pertaining either to
 changes that NetHack Fourk has already made or perhaps should make.
 For gameplay advice, the best place is the general NetHack discussion
 channel at irc:irc.freenode.net/nethack (which also covers NetHack 3
-and Slash'EM).
+and other variants).
 
 If you're more old-fashioned, you can use Usenet instead; the appropriate
 newsgroup is rec.games.roguelike.nethack (although they would appreciate it if

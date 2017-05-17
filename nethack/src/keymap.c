@@ -72,7 +72,9 @@ enum keymap_action {
     KEYMAP_ACTION_END,               /* === Dummy action! Should be last === */
 };
 
+#ifdef PUBLIC_SERVER
 static unsigned int redraw_counter;
+#endif
 
 /* Try to add the Ctrl modifier to the specified 'key' code.
 
@@ -476,10 +478,22 @@ get_command(void *callbackarg,
                 repeats_remaining = multi;
             }
 
-            if ((cmd == find_command("redraw")) || (redraw_counter++ > 1000)) {
+            if ((cmd == find_command("redraw"))
+#ifdef PUBLIC_SERVER
+                /* This is for the benefit of dgamelaunch, which relies on
+                   finding certain things in the ttyrec to know where to start
+                   sending to a new watcher.  Without this, starting to watch a
+                   game in the middle can result in thousands of turns of
+                   catch-up, which is generally undesirable.  (Anyone who
+                   _wants_ that can download the whole ttyrec of course.) */
+                || (redraw_counter++ > 1000)
+#endif
+                ) {
                 /* This needs special handling locally in addition to sending
                    it to the server */
+#ifdef PUBLIC_SERVER
                 redraw_counter = 0;
+#endif
                 clear();
                 refresh();
                 rebuild_ui();

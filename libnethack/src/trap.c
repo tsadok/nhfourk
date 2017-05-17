@@ -2526,6 +2526,10 @@ instapetrify(const char *str)
 {
     if (Stone_resistance)
         return;
+    if (Hallucination) {
+        pline(msgc_playerimmune, "You are already stoned.");
+        return;
+    }
     if (poly_when_stoned(youmonst.data) && polymon(PM_STONE_GOLEM, TRUE))
         return;
     pline(msgc_fatal_predone, "You turn to stone...");
@@ -2568,7 +2572,7 @@ selftouch(const char *arg, const char *deathtype)
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uwep->corpsenm].mname))));
         /* life-saved; unwield the corpse if we can't handle it */
-        if (!Stone_resistance && !uarmg)
+        if (!Stone_resistance && !uarmg && !Hallucination)
             uwepgone();
     }
     /* Or your secondary weapon, if wielded */
@@ -2580,7 +2584,7 @@ selftouch(const char *arg, const char *deathtype)
             msgprintf("%s %s corpse", deathtype,
                       an(mons[uswapwep->corpsenm].mname))));
         /* life-saved; unwield the corpse */
-        if (!Stone_resistance && !uarmg)
+        if (!Stone_resistance && !uarmg && !Hallucination)
             uswapwepgone();
     }
 }

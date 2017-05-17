@@ -239,6 +239,8 @@ ready_weapon(struct obj *wep)
         setuwep(NULL);
     } else if (!uarmg && wep->otyp == CORPSE &&
                touched_monster(wep->corpsenm)) {
+        /* Save fmpud because msgc_fatal_predone sets it. */
+        boolean fmpud = turnstate.force_more_pending_until_done;
         /* Prevent wielding cockatrice when not wearing gloves --KAA */
         pline(msgc_fatal_predone, "You wield the %s corpse in your bare %s.",
               mons[wep->corpsenm].mname, makeplural(body_part(HAND)));
@@ -246,9 +248,15 @@ ready_weapon(struct obj *wep)
             msgprintf("wielding %s corpse without gloves",
                       an(mons[wep->corpsenm].mname))));
         /* if the player lifesaves from that, don't wield */
+        /* but if we survive via hallucination, go ahead: */
+        if (Hallucination) {
+            turnstate.force_more_pending_until_done = fmpud;
+            goto wield_even_if_stoned;
+        }
     } else if (wep->oartifact && !touch_artifact(wep, &youmonst)) {
         ; /* you got blasted, don't attempt to wield */
     } else {
+    wield_even_if_stoned:
         /* Weapon WILL be wielded after this point */
         if (will_weld(wep)) {
             const char *tmp = xname(wep), *thestr = "The ";
@@ -469,11 +477,20 @@ can_twoweapon(void)
     else if (!uarmg && !Stone_resistance &&
              (uswapwep->otyp == CORPSE &&
               touch_petrifies(&mons[uswapwep->corpsenm]))) {
+        /* Save fmpud because msgc_fatal_predone sets it. */
+        boolean fmpud = turnstate.force_more_pending_until_done;
         pline(msgc_fatal_predone, "You wield the %s corpse with your bare %s.",
               mons[uswapwep->corpsenm].mname, body_part(HAND));
         instapetrify(killer_msg(STONING,
             msgprintf("wielding %s corpse without gloves",
                       an(mons[uswapwep->corpsenm].mname))));
+        if (Hallucination) {
+            /* Survive, but still can't two-weapon a corpse: */
+            turnstate.force_more_pending_until_done = fmpud;
+            pline(msgc_cancelled,
+                  "One rubber chicken is all you can handle.");
+            return FALSE;
+        }
     } else if (Glib || uswapwep->cursed) {
         if (!Glib)
             uswapwep->bknown = TRUE;
