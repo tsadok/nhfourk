@@ -996,8 +996,9 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 if (otmp->otyp == CORPSE &&
                     touch_petrifies(&mons[otmp->corpsenm])) {
                     dmg = 1;
-                    pline(Stone_resistance ? msgc_fatalavoid :
-                          msgc_fatal, "%s hits you with the %s corpse.",
+                    pline((Stone_resistance || Hallucination) ?
+                          msgc_fatalavoid : msgc_fatal,
+                          "%s hits you with the %s corpse.",
                           Monnam(mtmp), mons[otmp->corpsenm].mname);
                     if (!Stoned)
                         goto do_stone;
@@ -1366,10 +1367,15 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             else {
                 if (flags.moonphase == NEW_MOON && !have_lizard())
                     stiffen = TRUE;
-                You_hear((Stone_resistance || !stiffen) ? msgc_fatalavoid :
-                         msgc_fatal, "%s hissing!", s_suffix(mon_nam(mtmp)));
+                You_hear((Stone_resistance || Hallucination || !stiffen) ?
+                         msgc_fatalavoid : msgc_fatal,
+                         "%s hissing!", s_suffix(mon_nam(mtmp)));
                 if (stiffen) {
                 do_stone:
+                    if (Hallucination) {
+                        pline(msgc_playerimmune, "You are already stoned.");
+                        return 1;
+                    } else
                     if (!Stoned && !Stone_resistance &&
                         !(poly_when_stoned(youmonst.data) &&
                           polymon(PM_STONE_GOLEM, TRUE))) {

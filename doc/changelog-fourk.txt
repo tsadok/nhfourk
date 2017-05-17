@@ -61,6 +61,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Hallucination protects against petrification, on the grounds that
+   you are already stoned.  Thanks to raisse for the idea.
+
  * Polymorphing into a python or other snake-like creature no longer
    breaks your armor, unless the target form is huge or gigantic
    (e.g., long worm) or humanoid (e.g., salamander).  Instead of
