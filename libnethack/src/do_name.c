@@ -1073,6 +1073,10 @@ static struct {
     {"paskald", FALSE},
     {"brogmoid", FALSE},
     {"dornbeast", FALSE},
+        /* Vanilla NetHack */
+    {"Keystone Kop", FALSE},
+    {"lemure", FALSE},
+    {"zruty", FALSE},
         /* NetHack community in-joke: */
     {"master lichen", FALSE},
     {"Death with a wand of Gnomes", TRUE},
