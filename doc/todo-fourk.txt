@@ -114,6 +114,7 @@
 ▒▒▒   15:17 <        rumflump > I think because I was flying, it didn't count water terrain as special
 ▒▒▒   15:17 <        rumflump > *am* flying
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
+▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
 ▒▒▒ * Ensure that there are at least a couple of gryphons in the Knight quest.
 ▒▒▒
