@@ -18,7 +18,7 @@
 #define PN_WANDS             (-4)
 #define PN_RIDING            (-5)
 #define PN_STEALTH           (-6)
-#define PN_POLEARMS          (-8)
+#define PN_POLEARMS          (-7)
 #define PN_SABER             (-8)
 #define PN_HAMMER            (-9)
 #define PN_WHIP              (-10)
