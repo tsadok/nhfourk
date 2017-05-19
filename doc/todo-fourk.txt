@@ -115,6 +115,13 @@
 ▒▒▒   15:17 <        rumflump > *am* flying
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒
+▒▒▒ * Ensure that there are at least a couple of gryphons in the Knight quest.
+▒▒▒
+▒▒▒ * Make Dragonbane first sac gift for Knights.
+▒▒▒
+▒▒▒ * The monster spoiler has /span> leaking on e.g. several of the s.
+▒▒▒
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒   4.3.0.5 :
