@@ -93,18 +93,31 @@ struct Jitem {
 
 
 static const struct Jitem Japanese_items[] = {
+    /* Some of these translations are a bit loose.  Particularly egregious
+       ones are noted with specific comments. */
     {SHORT_SWORD, "wakizashi"},
     {BROADSWORD, "ninja-to"},
     {FLAIL, "nunchaku"},
     {GLAIVE, "naginata"},
     {LOCK_PICK, "osaku"},
     {WOODEN_HARP, "koto"},
-    {KNIFE, "shito"},
+    {KNIFE, "shito"}, /* This word is formed by using the wrong readings for
+                         both of the kanji in the word for knife. */
+    {ROCK, "giri"},
     {PLATE_MAIL, "tanko"},
     {HELMET, "kabuto"},
     {LEATHER_GLOVES, "yugake"},
-    {FOOD_RATION, "gunyoki"},
+    {LOW_BOOTS, "kutsu"},
+    {SACK, "kaban"},
+    {FOOD_RATION, "gunyoki"}, /* This word is entirely original to NetHack. */
     {POT_BOOZE, "sake"},
+    {KELP_FROND, "nori"},
+    {APPLE, "ringo"},
+    {EGG, "tamago"},
+    {CANDY_BAR, "kittokatto"},
+    {ROBE, "kimono"},
+    {PEAR, "uma"}, /* There's really no English translation for "uma".
+                      It's sometimes translated "plum" or "apricot". */
     {0, ""}
 };
 

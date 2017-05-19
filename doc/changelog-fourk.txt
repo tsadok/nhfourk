@@ -61,6 +61,20 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Katana, being a single-edged blade, is now a distinct skill, and
+   harder to use if you don't have the skill (-2 to-hit bonus).
+   Samurai start with basic skill in katana and can get to expert, but
+   they start unskilled in Western-style (double-edged) long swords
+   and can only reach basic skill in them.  Barbarians, knights,
+   tourists, and valkyries can reach basic skill with katana and
+   rogues can become skilled with them; other roles are restricted.
+
+ * Samurai can once again reach expert skill in two-handed combat,
+   as in vanilla NetHack.
+
+ * A few objects have special (psuedo-Japanese) names for Samurai
+   that previously didn't.
+
  * Weapons are now 25% less likely to be generated as boring
    uncursed +0 weapons.
 
