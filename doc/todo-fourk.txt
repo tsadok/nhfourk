@@ -111,9 +111,7 @@
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
-▒▒▒ * Ensure that there are at least a couple of gryphons in the Knight quest.
-▒▒▒
-▒▒▒ * Make Dragonbane first sac gift for Knights.
+▒▒▒ * make red scales grant fire resistance and sliming resistance.
 ▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒

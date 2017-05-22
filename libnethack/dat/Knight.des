@@ -228,8 +228,6 @@ MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
-MONSTER:'i',"quasit",random,hostile
 MONSTER:'i',random,random,hostile
 MONSTER:'j',random,random,hostile
 MONSTER:'j',"ochre jelly",random,hostile
@@ -240,6 +238,9 @@ MONSTER:'j',"ochre jelly",random,hostile
 MONSTER:'j',"ochre jelly",random,hostile
 MONSTER:'j',"ochre jelly",random,hostile
 MONSTER:'j',random,random,hostile
+MONSTER:'J',"baby gryphon",random,hostile
+MONSTER:'J',"gryphon",random,hostile
+MONSTER:'J',"gryphon",random,hostile
 
 #
 #	The "goal" level for the quest.

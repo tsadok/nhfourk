@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Dragonbane (previously altered to be an unbreakable lance) is now
+   lawful and is the first sacrifice gift for knights.
+
+ * There are now gryphons on the knight quest.  Of course, they're
+   hostile, so if you want one for a steed, you'll have to find a
+   way to tame it.
+
  * Polymorphing into a python or other snake-like creature no longer
    breaks your armor, unless the target form is huge or gigantic
    (e.g., long worm) or humanoid (e.g., salamander).  Instead of
