@@ -419,7 +419,7 @@ spoilmonflagone(unsigned long mflags)
                      (((mflags & M1_TUNNEL) && !(mflags & M1_NEEDPICK)) ?
                                                          "<span class=\"flgtunnel\">Tunnel</span> " : ""),
                      ((mflags & M1_NEEDPICK)  ? "<span class=\"flgpick\">Pick</span> " : ""),
-                     ((mflags & M1_CONCEAL)   ? "<span class=\"flgconceal\">Conceal/span> " : ""),
+                     ((mflags & M1_CONCEAL)   ? "<span class=\"flgconceal\">Conceal</span> " : ""),
                      /* M1 second least byte */
                      ((mflags & M1_HIDE)       ? "<span class=\"flghide\">Hide</span> " : ""),
                      ((mflags & M1_AMPHIBIOUS) ? "<span class=\"flgamphib\">Amphib</span> " : ""),

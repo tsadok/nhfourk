@@ -120,8 +120,6 @@
 ▒▒▒
 ▒▒▒ * Make Dragonbane first sac gift for Knights.
 ▒▒▒
-▒▒▒ * The monster spoiler has /span> leaking on e.g. several of the s.
-▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
