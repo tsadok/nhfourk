@@ -33,8 +33,6 @@
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Test what happens when a corpse is in a magic chest long enough to rot and then you go to get it out.
-▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒   
 ▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
@@ -84,6 +82,8 @@
 ▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
 ▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
 ▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
+▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
+▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
 ▒▒▒
 ▒▒▒ * Make lenses grant autosearching when worn.  See 6b87dcd.
 ▒▒▒
@@ -95,11 +95,6 @@
 ▒▒▒     are restricted than if merely unskilled.  Make it happen once on
 ▒▒▒     first hit, then not repeat until you wield again.
 ▒▒▒   + Make that message also force more by default, if not tab.
-▒▒▒
-▒▒▒ * 18:35 <        rumflump > would it be possible for floors that contain a vault, to auto-annotate when you see 
-▒▒▒                             "coins being counted"?
-▒▒▒   18:36 <             FIQ > jonadab: ^
-▒▒▒   18:36 <             FIQ > also for other kind of special [rooms]
 ▒▒▒
 ▒▒▒ * Look at 0bb7d94 Fredrik Ljungdahl: Quarterstaves now [...] doesn't prevent casting if cursed despite no free hand
 ▒▒▒
@@ -130,7 +125,16 @@
 ▒▒▒
 ▒▒▒ * Look at and consider cherry-picking FIQ's unskilled bashmsh, 7ad158a
 ▒▒▒
+▒▒▒ * 18:35 <        rumflump > would it be possible for floors that contain a vault, to auto-annotate when you see
+▒▒▒                             "coins being counted"?
+▒▒▒   18:36 <             FIQ > jonadab: ^
+▒▒▒   18:36 <             FIQ > also for other kind of special [rooms]
+▒▒▒   Answer: the obvious and clean way to do that is by tracking which level "sounds"
+▒▒▒   the player has "heard", in the level data structure.
+▒▒▒
 ▒▒▒ * Make the Wizard's Tower dragon hall have all colors of D.
+▒▒▒
+▒▒▒ * Make red scales grant fire resistance and sliming resistance.
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
