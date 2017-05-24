@@ -25,16 +25,6 @@
 ▒▒▒   2016 May 13th, starting at 8:30am.  Pay special attention to
 ▒▒▒   what we noticed around 9:31.
 ▒▒▒
-▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
-▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
-▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
-▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
-▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
-▒▒▒   Probably related:
-▒▒▒ * 17:26 < hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
-▒▒▒                       should be prompting because i have esp and can see other shopkeepers
-▒▒▒   17:26 < hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
-▒▒▒
 ▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
 ▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
 ▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
