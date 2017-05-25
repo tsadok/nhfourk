@@ -94,8 +94,6 @@
 ▒▒▒     first hit, then not repeat until you wield again.
 ▒▒▒   + Make that message also force more by default, if not tab.
 ▒▒▒
-▒▒▒ * Consider adding Khor's town level as a Garden variant.
-▒▒▒
 ▒▒▒ * 15:15 <        rumflump > autoexplore killed my pet
 ▒▒▒   15:16 <        rumflump > You displace your Green-elf.  The Green-elf drowns.
 ▒▒▒   15:17 <        rumflump > I think because I was flying, it didn't count water terrain as special
