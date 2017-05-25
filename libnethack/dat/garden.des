@@ -281,7 +281,7 @@ MAP
 9.}}}|..|..........|}..................-----.....----...+...|....... ..T.TTTT
 0..}}|..|..........|}.................T|...|T...T|..|...|...|.T..........TTTT
 1..}}--S----+-------}}..-F-+-.---+---+--...+.....+..|...-----........  ..TTTT
-2T..}}||.........||}}}..|...|.|.....|..|...|T.{.T|----............T... ..TTTT
+2T..}}||(........||}}}..|...|.|.....|..|...|T.{.T|----............T... ..TTTT
 3TT..}--.........--}}}}.|...|.|.....|..|----.....+...|................  ..TTT
 4TT..}}--...\...--}}}}}.-----.|.....|..|...|T.T.T|...|..T...T....-F-F-F ..TTT
 5TTT..}}---...---}}} }}}......----------...|-+---|...|...........F.....  ..TT
@@ -341,19 +341,19 @@ REGION:(10,05,10,05),lit,"temple",filled,true
 REGION:(07,12,15,16),lit,"throne",unfilled
 DRAWBRIDGE:(19,09),west,open
 DRAWBRIDGE:(19,10),west,open
-OBJECT:'`',"statue",(10,04),"Archon",1
-OBJECT:'`',"statue",(12,04),"Archon",1
-OBJECT:'`',"statue",(08,05),"Archon",1
-OBJECT:'`',"statue",(14,05),"Archon",1
-OBJECT:'`',"statue",(07,07),"Archon",1
-OBJECT:'`',"statue",(15,07),"Archon",1
-OBJECT:'`',"statue",(07,12),"Archon",1
-OBJECT:'`',"statue",(15,12),"Archon",1
-OBJECT:'`',"statue",(08,14),"Archon",1
-OBJECT:'`',"statue",(14,14),"Archon",1
-OBJECT:'`',"statue",(10,15),"Archon",1
-OBJECT:'`',"statue",(12,15),"Archon",1
-ALTAR:(11,05),align[0],shrine
+OBJECT:'`',"statue",(10,04),"island nymph",1
+OBJECT:'`',"statue",(12,04),"wood nymph",1
+OBJECT:'`',"statue",(08,05),"incubus",1
+OBJECT:'`',"statue",(14,05),"succubus",1
+OBJECT:'`',"statue",(07,07),"succubus",1
+OBJECT:'`',"statue",(15,07),"incubus",1
+OBJECT:'`',"statue",(07,12),"incubus",1
+OBJECT:'`',"statue",(15,12),"succubus",1
+OBJECT:'`',"statue",(08,14),"succubus",1
+OBJECT:'`',"statue",(14,14),"incubus",1
+OBJECT:'`',"statue",(10,15),"mountain nymph",1
+OBJECT:'`',"statue",(12,15),"water nymph",1
+ALTAR:(11,05),noalign,shrine
 DOOR:closed,(11,08)
 DOOR:closed,(11,11)
 DOOR:closed,(06,08)
