@@ -142,10 +142,10 @@ encode_uevent(void)
         c |= 0x00040000UL;
     if (historysearch("reached the bottom of the Mines", TRUE))
         c |= 0x00080000UL;
-    if (historysearch("reached the Astral Plane", TRUE))
-        c |= 0x000F0000UL;
     if (historysearch("entered the Rogue tribute level", TRUE))
         c |= 0x00100000UL;
+    if (historysearch("reached the Astral Plane", TRUE))
+        c |= 0x00200000UL;
     return c;
 }
 
