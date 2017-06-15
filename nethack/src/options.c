@@ -177,7 +177,7 @@ static struct nh_option_desc curses_options[] = {
      nh_birth_ingame, OPTTYPE_ENUM, {.e = A_REVERSE}},
     {"mouse", "Terminal and Rendering",
      "accept mouse input (where supported)",
-     nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
+     nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"menupaging", "Messages and Menus",
      "scrolling behaviour of menus",
      nh_birth_ingame, OPTTYPE_ENUM, {.e = MP_LINES}},
