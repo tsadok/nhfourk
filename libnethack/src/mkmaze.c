@@ -14,7 +14,7 @@ static int extend_spine(int[3][3], int, int, int);
 static boolean okay(struct level *lev, int x, int y, int dir, int maxx, int maxy);
 static void maze0xy(coord *, int maxx, int maxy, enum rng);
 static boolean put_lregion_here(struct level *lev, xchar, xchar, xchar, xchar,
-                                xchar, xchar, xchar, boolean, d_level *);
+                                xchar, xchar, xchar, int, d_level *);
 static void move(int *, int *, int);
 static boolean bad_location(struct level *lev, xchar x, xchar y, xchar lx,
                             xchar ly, xchar hx, xchar hy);
@@ -233,8 +233,11 @@ place_lregion(struct level *lev, xchar lx, xchar ly, xchar hx, xchar hy,
               d_level * dest_lvl)
 {
     int trycnt;
-    boolean oneshot;
+    int urgency;
     xchar x, y;
+    const char *details = msgprintf("type %d in region (%d,%d,%d,%d) "
+                                    "but not in (%d,%d,%d,%d)",
+                                    rtype, lx, ly, hx, hy, nlx, nly, nhx, nhy);
 
     if (lx == COLNO) {  /* default to whole level */
         /* 
@@ -253,35 +256,37 @@ place_lregion(struct level *lev, xchar lx, xchar ly, xchar hx, xchar hy,
     }
 
     /* first a probabilistic approach */
-    oneshot = (lx == hx && ly == hy);
+    urgency = (lx == hx && ly == hy) ? 1 : 0;
     for (trycnt = 0; trycnt < 200; trycnt++) {
         x = lx + mklev_rn2((hx - lx) + 1, lev);
         y = ly + mklev_rn2((hy - ly) + 1, lev);
         if (put_lregion_here
-            (lev, x, y, nlx, nly, nhx, nhy, rtype, oneshot, dest_lvl))
+            (lev, x, y, nlx, nly, nhx, nhy, rtype, urgency, dest_lvl))
             return;
     }
 
     /* then a deterministic one */
-    oneshot = TRUE;
-    for (x = lx; x <= hx; x++)
-        for (y = ly; y <= hy; y++)
-            if (put_lregion_here
-                (lev, x, y, nlx, nly, nhx, nhy, rtype, oneshot, dest_lvl))
-                return;
+    for (urgency = 1; urgency <= 7; urgency++) {
+        for (x = lx; x <= hx; x++)
+            for (y = ly; y <= hy; y++)
+                if (put_lregion_here
+                    (lev, x, y, nlx, nly, nhx, nhy, rtype, urgency, dest_lvl))
+                    return;
 
-    impossible("Couldn't place lregion type %d in region (%d,%d,%d,%d) "
-               "but not in (%d,%d,%d,%d)!",
-               rtype, lx, ly, hx, hy, nlx, nly, nhx, nhy);
+        pline(msgc_debug, "Difficulty placing lregion %s at urgency %d.",
+              details, urgency);
+    }
+
+    impossible("Couldn't place lregion %s!", details);
 }
 
 static boolean
 put_lregion_here(struct level *lev, xchar x, xchar y, xchar nlx, xchar nly,
-                 xchar nhx, xchar nhy, xchar rtype, boolean oneshot,
+                 xchar nhx, xchar nhy, xchar rtype, int urgency,
                  d_level * dest_lvl)
 {
     if (bad_location(lev, x, y, nlx, nly, nhx, nhy)) {
-        if (!oneshot) {
+        if (urgency < 1) {
             return FALSE;       /* caller should try again */
         } else {
             /* Must make do with the only location possible; avoid failure due
@@ -291,7 +296,23 @@ put_lregion_here(struct level *lev, xchar x, xchar y, xchar nlx, xchar nly,
 
             if (t && t->ttyp != MAGIC_PORTAL && t->ttyp != VIBRATING_SQUARE)
                 deltrap(lev, t);
+            else if (t)
+                return FALSE;
+            /*
             if (bad_location(lev, x, y, nlx, nly, nhx, nhy))
+                return FALSE;
+            */
+            if (within_bounded_area(x, y, nlx, nly, nhx, nhy) &&
+                urgency < 6)
+                return FALSE;
+            if (invocation_pos(&lev->z, x, y) ||
+                lev->locations[x][y].typ == STAIRS ||
+                lev->locations[x][y].typ == LADDER ||
+                (is_lava(lev, x, y) && urgency > 6) ||
+                (lev->locations[x][y].typ == STONE && urgency > 4) ||
+                (IS_WALL(lev->locations[x][y].typ && urgency > 3)) ||
+                (is_pool(lev, x, y) && urgency > 2) ||
+                (lev->locations[x][y].typ == ALTAR && urgency > 1))
                 return FALSE;
         }
     }
@@ -302,7 +323,7 @@ put_lregion_here(struct level *lev, xchar x, xchar y, xchar nlx, xchar nly,
         /* "something" means the player in this case */
         if (MON_AT(lev, x, y)) {
             /* move the monster if no choice, or just try again */
-            if (oneshot)
+            if (urgency > 0)
                 rloc(m_at(lev, x, y), FALSE, lev);
             else
                 return FALSE;
