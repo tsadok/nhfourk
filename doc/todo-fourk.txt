@@ -103,9 +103,121 @@
 ▒▒▒
 ▒▒▒ * make red scales grant fire resistance and sliming resistance.
 ▒▒▒
+▒▒▒ * Wielded polearms (including lances) are currently statuslighted as non-weapons.
+▒▒▒   Give them their own status light instead.
+▒▒▒
+▒▒▒ * 16:17 < hothraxxa+> The elven dagger grows roots right in to the hobbit's hand!
+▒▒▒   Should have only one verb there, not both.
+▒▒▒
+▒▒▒ * 17:26 <       hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
+▒▒▒                             should be prompting because i have esp and can see other shopkeepers
+▒▒▒   17:26 <       hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
+▒▒▒
+▒▒▒ * hallucinatory monster: dire half-dragon bone-eating saltwater werepiranha (OOTS #599)
+▒▒▒
+▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
+▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
+▒▒▒
+▒▒▒ * scurriers trying to push boulders that can't move get incorrect messages about axes and possibly damage.
+▒▒▒   This is not intended.
+▒▒▒
+▒▒▒ * 02:30 < rumflump > <RLdiscord> <@luxidream> I can't even wear gloves. is there anything I can wear at all?
+▒▒▒ * 02:31 < rumflump > (trying out a giant)
+▒▒▒
+▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
+▒▒▒
+▒▒▒ * 15:21 < rumflump > "You crawl to the edge of the pit." No, I fly.
+▒▒▒
+▒▒▒ * 12:43 < rumflump > ] Noah: As a wererat scurrier in 4k shouldn't I just feel like a new woman instead of turning into a smaller rat?
+▒▒▒   12:47 <  jonadab > Oooh, that's an interesting thought.
+▒▒▒   12:47 <  jonadab > Actually, it's tempting to make wererats peaceful to scurriers.
+▒▒▒
+▒▒▒ * Should sacrifice/prayer in Gehennom be subject to the InterHack principle?  (What actually happens?  How bad is it?)
+▒▒▒
+▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
+▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
+▒▒▒
+▒▒▒ * 03:24 < K2 > priest quest, the quest leader when speaking to you says this:
+▒▒▒   03:24 < K2 > 'Acquire and wear the Sceptre of Might if you can.  It will aid you...'
+▒▒▒   03:25 < K2 > wear should be wield. hold over from the helm ;)
+▒▒▒   03:38 < K2 > jonadab: also - "Wear the Sceptre of Might.  It will assist you against the undead."
+▒▒▒
+▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
+▒▒▒                             wall as a scurrier seems to produce no message at all.
+▒▒▒
+▒▒▒ * 06:01 < Mandevil > jonadab: This looks like a bug:
+▒▒▒   06:01 < Mandevil > The tin opens like magic!  You succeed in opening the tin.
+▒▒▒   First, IMO, "You succeed in opening the tin." should be suppressed there, as redundant.
+▒▒▒
+▒▒▒ * But the bug he was referring to is probably what follows:
+▒▒▒   06:01 < Mandevil > It smells like dwarves.
+▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
+▒▒▒   06:01 < Mandevil > You consume pickled coyote.
+▒▒▒   Which was it, dwarves or coyote?
+▒▒▒
+▒▒▒ * Creektown may be having problems due to being pieced together
+▒▒▒   incorrectly.  Consider reworking it as a single MAP area.
+▒▒▒
+▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
+▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
+▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
+▒▒▒
+▒▒▒ * Make the ais-enhanced A command that players can't figure out how to use die in a fire.
+▒▒▒
+▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
+▒▒▒
+▒▒▒ * 08:41 < Mandevil > jonadab: Another bug:
+▒▒▒   08:42 < Mandevil > You have a little trouble removing B - an uncursed wand called make invisible.
+▒▒▒   08:42 < Mandevil > <What do you want to zap? [fuxBCGHT or ?*]: B>
+▒▒▒   08:42 < Mandevil > <In what direction?: self>
+▒▒▒   08:42 < Mandevil > Gee!  All of a sudden, you can't see yourself.
+▒▒▒   08:42 < Mandevil > Gee!  All of a sudden, you can't see yourself.
+▒▒▒   08:42 < Mandevil > (duplicate message)
+▒▒▒
+▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
+▒▒▒   08:43 < Mandevil > Why?
+▒▒▒
+▒▒▒ * Double-check the uninitialized-petname bug.
+▒▒▒
+▒▒▒ * 09:36 < Mandevil > jonadab: Also "This lamp has no oil" should autoidentify it as oil lamp.
+▒▒▒
+▒▒▒ * Make the armor spoiler have links to the start of each slot, and make it possible to link to
+▒▒▒   specific items (as with the monster one).
+▒▒▒
+▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
+▒▒▒                             there is no "The succubus hits you message at all? I just got
+▒▒▒                             "You die..." out of the blue.
+▒▒▒
+▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
+▒▒▒   seems to be a good way to find bugs.
+▒▒▒
+▒▒▒ * Orc as a playable race sucks because peaceful orcs spawn in huge groups and get
+▒▒▒   terribly in the way all the time.  Also:  flavor-wise, shouldn't orcs generally
+▒▒▒   be hostile to each other anyway?
+▒▒▒
+▒▒▒ * https://www.hardfought.org/userdata/M/Mandevil/nhfourk/dumps/2017-06-27%2014:28:35,%20Mandevil-Bar-Orc-Fem-Cha,%20died.txt
+▒▒▒   10:34 < Mandevil > jonadab: Note how the scrolls [in the bag of holding]
+▒▒▒                      are listed with appearance, not what they actually are.
+▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
+▒▒▒
+▒▒▒ * 12:39 < AmyBSOD\dislex > jonadab: ungrammatical death message in nethack fourk: "killed by contaminated potion"
+▒▒▒
+▒▒▒ * 19:43 < noty > jonadab: another bug exposed by the scumming: on the castle with the benches
+▒▒▒                  you can drop into the upper left corner and get trapped in the wall
+▒▒▒
+▒▒▒ * 12:18 < FIQ+> btw you might be interested in fh commit dd1bf8836b
+▒▒▒   12:18 < FIQ+> a minor tweak to replaymode
+▒▒▒   12:18 < FIQ+> to make it less annoying
+▒▒▒   12:19 < FIQ+> it makes it so that commands for going backwards doesn't wrap-around causing major lag
+▒▒▒
+▒▒▒ * Merge the save corruption bugfix from upstream.
+▒▒▒
+▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
+▒▒▒                      wear due to size restri- well, FIQ's faster on the draw
+▒▒▒
+▒▒▒ * 13:52 < rumflump > it's weird that scur rangers start with a single +1 dart
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒
 ▒▒▒   4.3.0.5 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
@@ -641,6 +753,11 @@
 ▒▒▒       (The word "blade" may need to be %s if there are runed spears or whatnot.)
 ▒▒▒     - Weapons that do not have a rune and are not "runed" elven weapons cannot be read, as before.
 ▒▒▒   + 
+▒▒▒
+▒▒▒ * Make the silly player-character ranks go away.  They don't add anything, and they
+▒▒▒   confuse new players, needlessly, and they're so badly constructed (in terms of what
+▒▒▒   the ranks are for each role) that they need a complete overhaul, which would only be
+▒▒▒   worth doing if they contributed anything meaningful to the game, which they don't.
 ▒▒▒
 ▒▒▒ * Update the guidebook.
 ▒▒▒
