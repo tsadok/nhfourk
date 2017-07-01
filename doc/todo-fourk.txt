@@ -85,8 +85,6 @@
 ▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
 ▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
 ▒▒▒
-▒▒▒ * Make lenses grant autosearching when worn.  See 6b87dcd.
-▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
 ▒▒▒     by default, if it doesn't already.
@@ -96,14 +94,6 @@
 ▒▒▒     first hit, then not repeat until you wield again.
 ▒▒▒   + Make that message also force more by default, if not tab.
 ▒▒▒
-▒▒▒ * Look at 0bb7d94 Fredrik Ljungdahl: Quarterstaves now [...] doesn't prevent casting if cursed despite no free hand
-▒▒▒
-▒▒▒ * Look at af5e753 Fredrik Ljungdahl: Make pickaxe/axe skill factor in when digging (+5 per skill level)
-▒▒▒
-▒▒▒ * Bustling Town is made out of 1x wide everything.  Do something about that.
-▒▒▒
-▒▒▒ * Consider adding Khor's town level as a Garden variant.
-▒▒▒
 ▒▒▒ * 15:15 <        rumflump > autoexplore killed my pet
 ▒▒▒   15:16 <        rumflump > You displace your Green-elf.  The Green-elf drowns.
 ▒▒▒   15:17 <        rumflump > I think because I was flying, it didn't count water terrain as special
@@ -111,9 +101,7 @@
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
-▒▒▒ * Ensure that there are at least a couple of gryphons in the Knight quest.
-▒▒▒
-▒▒▒ * Make Dragonbane first sac gift for Knights.
+▒▒▒ * make red scales grant fire resistance and sliming resistance.
 ▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -523,8 +511,6 @@
 ▒▒▒   and review the existing ones for continued accuracy.
 ▒▒▒
 ▒▒▒ * Decide what to do about hidden corridors and secret doors.  (Lots of ideas below.)
-▒▒▒
-▒▒▒ * Make lenses grant automatic searching when worn.
 ▒▒▒
 ▒▒▒ * Consider cherry-picking pool rooms from Dyna, and look at its special levels.
 ▒▒▒

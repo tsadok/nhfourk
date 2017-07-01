@@ -51,10 +51,10 @@ TRAP: random, random
 #
 LEVEL: "minetn-1"
 
-ROOM: "ordinary" , lit, (3,3), (center,center), (31,15)
+ROOM: "ordinary" , lit, (3,3), (center,center), (33,17)
 NAME: "town"
-FOUNTAIN: (13, 7)
-FOUNTAIN: (20, 7)
+FOUNTAIN: (14, 8)
+FOUNTAIN: (21, 8)
 OBJECT: '*', "touchstone", random, cursed, 0
 
 # The Town Watch
@@ -62,46 +62,46 @@ MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watch captain", random, peaceful
 
-SUBROOM: "shop" , lit, (2,2), (3,4), "town"
+SUBROOM: "shop" , lit, (3,3), (3,4), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "tool shop", lit, (2,9), (3,4), "town"
+SUBROOM: "tool shop", lit, (3,10), (3,4), "town"
 DOOR: false, closed, north, random
 
-SUBROOM: "ordinary", unlit, (6,2), (3,4), "town"
+SUBROOM: "ordinary", unlit, (7,3), (3,4), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", lit, (6,9), (3,4), "town"
+SUBROOM: "ordinary", lit, (7,10), (3,4), "town"
 DOOR: false, closed, north, random
 
-SUBROOM: "food shop", lit, (10,2), (2,3), "town"
+SUBROOM: "food shop", lit, (11,3), (2,3), "town"
 CHANCE: 50
 DOOR: false, closed, south, random
 
-SUBROOM: "candle shop", lit, (22,2), (3,3), "town"
+SUBROOM: "candle shop", lit, (23,3), (3,3), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", unlit, (10,10), (2,3), "town"
+SUBROOM: "ordinary", unlit, (11,11), (2,3), "town"
 DOOR: false, locked, east, random
 MONSTER: 'h', "dwarf lord", random
 
-SUBROOM: "ordinary", lit, (19,2),  (2,3), "town"
+SUBROOM: "ordinary", lit, (20,3),  (2,3), "town"
 DOOR: false, locked, west, random
 MONSTER: 'G', "gnome", random
 
-SUBROOM: "temple", lit, (15,9), (4,4), "town"
+SUBROOM: "temple", lit, (16,10), (4,4), "town"
 DOOR: false, closed, north, random
 ALTAR:(02,02),align[0],shrine
 MONSTER: 'h', "dwarf", random
 
-SUBROOM: "ordinary", lit, (22,10), (2,3), "town"
+SUBROOM: "ordinary", lit, (23,11), (2,3), "town"
 DOOR: false, locked, west, random
 
-SUBROOM: "ordinary", lit, (26,2), (3,3), "town"
+SUBROOM: "ordinary", lit, (27,3), (3,3), "town"
 DOOR: false, closed, south, random
 MONSTER: 'h', "dwarf", random
 
-SUBROOM: "chestroom", unlit, (25,10), (4,3), "town"
+SUBROOM: "chestroom", unlit, (26,11), (4,3), "town"
 DOOR: false, closed, north, random
 
 ROOM: "ordinary" , random, random, random, random
@@ -161,20 +161,20 @@ MONSTER: 'G', "gnome", random
 SUBROOM: "ordinary", unlit, (25,0), (2,2), "town"
 DOOR: false, closed, east, random
 
-SUBROOM: "ordinary", lit, (2,5), (2,2), "town"
+SUBROOM: "ordinary", lit, (3,5), (2,2), "town"
 DOOR: false, closed, north, random
 
-SUBROOM: "ordinary", lit, (5,5), (2,2), "town"
+SUBROOM: "ordinary", lit, (6,5), (2,2), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", random, (8,5), (2,2), "town"
+SUBROOM: "ordinary", random, (9,5), (2,2), "town"
 DOOR: false, locked, north, random
 MONSTER: 'G', "gnome", random
 
 SUBROOM: "shop" , lit, (2,10), (4,3), "town"
 DOOR: false, closed, west, random
 
-SUBROOM: "tool shop", lit, (23,10), (4,3), "town"
+SUBROOM: "tool shop", lit, (24,10), (4,3), "town"
 CHANCE: 90
 DOOR: false, closed, east, random
 
@@ -195,7 +195,7 @@ ALTAR:(02,02),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random
 MONSTER: 'G', "gnomish wizard", random
 
-SUBROOM: "ordinary", lit, (18,10), (4,3), "town"
+SUBROOM: "ordinary", lit, (19,10), (4,3), "town"
 DOOR: false, locked, west, random
 MONSTER: 'G', "gnome lord", random
 
@@ -349,18 +349,18 @@ SUBROOM:"ordinary",random,(26,2),(2,2),"town"
 DOOR:false,locked,east,random
 MONSTER: 'G',random,random
 
-SUBROOM:"tool shop",lit,(4,10),(3,3),"town"
+SUBROOM:"tool shop",lit,(3,10),(3,3),"town"
 CHANCE:90
 DOOR:false,closed,north,random
 
-SUBROOM:"ordinary",random,(8,11),(2,2),"town"
+SUBROOM:"ordinary",random,(7,11),(2,2),"town"
 DOOR:false,locked,south,random
 MONSTER: 'k',"kobold shaman",random
 MONSTER: 'k',"kobold shaman",random
 MONSTER: 'f',"kitten",random
 MONSTER: 'f',random,random
 
-SUBROOM:"food shop",lit,(11,11),(3,2),"town"
+SUBROOM:"food shop",lit,(10,11),(3,2),"town"
 CHANCE:90
 DOOR:false,closed,east,random
 
@@ -402,25 +402,25 @@ GEOMETRY:center,center
 #12345678901234567890123456789012345678901234567890123456789012345678901234
 MAP
 -----         ---------                                                    
-|...---  ------.......--    -------                       ---------------  
-|.....----.........--..|    |.....|          -------      |.............|  
---..-....-.----------..|    |.(...|          |.....|     --+---+--.----+-  
+|...---- ------.......--    -------                       ---------------  
+|......---.........--..|    |.....|          -------      |.............|  
+--..-....-..---------..|    |.(...|          |.....|     --+---+--.----+-  
  ----.........-     ----    |.....|  ------  --....----  |..-...--.-.+..|  
-    ----.-....|---  -----   ---+---  |..+.|   ---..-..----..---+-..---..|  
-       -----..|..----...--    |.|    |..|.|    ---+-.....-+--........--+-  
-    ------ |..|....-.....---- |.|    |..|.------......--................|  
+    ----.-....|---  -----   ---+---  |..+.--  ---..-..----..---+-..---..|  
+       -----..|..----...--    |.|    |..|..|   ---+-.....-+--........--+-  
+    ------ |..|....-.....---- |.|    |..|.------......-.................|  
     |....| --...............---.--   ----.+..|-.......--..--------+--..--  
-    |....|  |......---...........-----  |.|..|-...{....---|.........|..--  
-    ---+--------....-------..........----.|..|--.......|  |.........|...|  
+    |....|  |......---...........----- |..|..|-...{....---|.........|..--  
+    ---+--------....-------..........---..|..|--.......|  |.........|...|  
  ------.---...--...--..-..--...-.......--.-----...-....--------------...|  
  |..|-.........-..---..-..---.....---...|.--..-..---...-|....| |.......--  
  |..+...............-+---+-----..---....|..........--...+....| |.-------   
 -----.....{....----...............-..........---...-...-|....| |.|...S.    
 |..............-- --+--.---------.........--..-........------| |.|...|-----
--+-----.........| |...|.|....|  --.......------...|....------- |.--+-|....|
-|...| --..------- |...|.+....|   ---...---    --..|...--.....---.....+..-+|
-|...|  ----       ------|....|     -----       -----.....----.....{..|..|.|
------                   ------                     -------  ---------------
+-+-----.........| |...|.|....|  --.......------...|....--..-----.--+-|....|
+|...| --..------- |...|.+....|   ---...---    --..|...--.....--......+..-+|
+|...|  ----       ------|....|     -----       -----.....---......{..|..|.|
+-----                   ------                     ------- ----------------
 ENDMAP
 
 # Coordinate Changes for the ROWNO=20 project:
@@ -528,14 +528,15 @@ MAP
 .|..+...|...|.............|..|...|...|..
 .|..|...|...|-+-.....---+-------------.|
 .----...--+--..|..-+-|..................
-...|........|..|..|..|----....---------.
-...|..T.....----..|..|...+....|......|-.
-...|-....{........|..|...|....+.....(|-.
-...--..-....T.....--------....|......|-.
-.......--.....................----------
+...|........|..|..|..|----....--------..
+...|..T.....----..|..|...+....|......|..
+...|-....{........|..|...|....+.....(|..
+...--..-....T.....--------....|......|..
+.......--.....................|---------
+.......---....................|        |
 ENDMAP
 
-REGION:(00,00,38,15),lit,"ordinary"
+REGION:(00,00,38,16),lit,"ordinary"
 STAIR:levregion(00,03,19,19),(0,0,39,15),up
 STAIR:levregion(60,03,74,19),(0,0,39,15),down
 FOUNTAIN:(22,07)
@@ -590,10 +591,10 @@ MONSTER: '@', "watch captain", random, peaceful
 # "Bazaar Town" by Kelly Bailey
 #
 LEVEL: "minetn-7"
-ROOM: "ordinary" , lit, (3,3), (center,center), (30,15)
+ROOM: "ordinary" , lit, (3,3), (center,center), (32,15)
 NAME: "town"
-FOUNTAIN: (12, 07)
-FOUNTAIN: (11, 13)
+FOUNTAIN: (13, 07)
+FOUNTAIN: (12, 13)
 
 MONSTER: '@', "watchman", random, peaceful
 MONSTER: '@', "watchman", random, peaceful
@@ -611,19 +612,19 @@ MONSTER:'Y',"monkey",random
 MONSTER:'n',"wood nymph",random
 MONSTER:'n',"wood nymph",random
 
-SUBROOM: "armor shop", lit, (2,2), (4,2), "town"
+SUBROOM: "armor shop", lit, (3,2), (4,2), "town"
 CHANCE: 30
 DOOR: false, closed, south, random
 
-SUBROOM: "scroll shop", lit, (7,2), (2,2), "town"
+SUBROOM: "scroll shop", lit, (8,2), (2,2), "town"
 CHANCE: 10
 DOOR: false, closed, north, random
 
-SUBROOM: "ring shop", lit, (7,5), (2,2), "town"
+SUBROOM: "ring shop", lit, (8,5), (2,2), "town"
 CHANCE: 15
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", lit, (10,2), (3,4), "town"
+SUBROOM: "ordinary", lit, (11,2), (3,4), "town"
 MONSTER:'G',"gnome",random
 MONSTER:'Y',"monkey",random
 MONSTER:'Y',"monkey",random
@@ -632,56 +633,56 @@ MONSTER:'n',random,random
 DOOR: false, closed, south, random
 DOOR: true, locked, east, random
 
-SUBROOM: "ordinary", random, (14,2), (4,2), "town"
+SUBROOM: "ordinary", random, (15,2), (4,2), "town"
 DOOR: false, closed, south, 0
 MONSTER: 'n', random, random
 
-SUBROOM: "chestroom", random, (16,5), (2,2), "town"
+SUBROOM: "chestroom", random, (17,5), (2,2), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", unlit, (19,2), (2,2), "town"
+SUBROOM: "ordinary", unlit, (20,2), (2,2), "town"
 DOOR: false, locked, east, random
 MONSTER: 'G',"gnome king",random
 
-SUBROOM: "food shop", lit, (19,5), (2,3), "town"
+SUBROOM: "food shop", lit, (20,5), (2,3), "town"
 CHANCE: 50
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", random, (2,7), (2,2), "town"
+SUBROOM: "ordinary", random, (3,7), (2,2), "town"
 DOOR: false, closed, east, random
 
-SUBROOM: "tool shop", lit, (2,10), (2,3), "town"
+SUBROOM: "tool shop", lit, (3,10), (2,3), "town"
 CHANCE: 50
 DOOR: false, closed, south, random
 
-SUBROOM: "candle shop", lit, (5,10),(3,3), "town"
+SUBROOM: "candle shop", lit, (6,10),(3,3), "town"
 DOOR: false, closed, north, random
 
-SUBROOM: "ordinary", random, (11,10), (2,2), "town"
+SUBROOM: "ordinary", random, (12,10), (2,2), "town"
 DOOR: false, locked, west, random
 MONSTER: 'G',random,random
 
-SUBROOM: "shop", lit, (14,10), (2,3), "town"
+SUBROOM: "shop", lit, (15,10), (2,3), "town"
 DOOR: false, closed, north, random
 
-SUBROOM: "weapon shop", lit, (17,11), (4,2), "town"
+SUBROOM: "weapon shop", lit, (18,11), (4,2), "town"
 CHANCE: 30
 DOOR: false, closed, north, random
 
-SUBROOM: "ordinary", random, (22,11), (2,2), "town"
+SUBROOM: "ordinary", random, (23,11), (2,2), "town"
 DOOR: false, closed, south, random
 DOOR: true, locked, north, random
 SINK: (01,00)
 
-SUBROOM: "food shop", lit, (25,11), (3,2), "town"
+SUBROOM: "food shop", lit, (26,11), (3,2), "town"
 CHANCE: 50
 DOOR: false, closed, east, random
 
-SUBROOM: "tool shop", lit, (25,2), (3,3), "town"
+SUBROOM: "tool shop", lit, (26,2), (3,3), "town"
 CHANCE: 30
 DOOR: false, closed, west, random
 
-SUBROOM: "temple", lit, (24,8), (4,2), "town"
+SUBROOM: "temple", lit, (25,8), (4,2), "town"
 DOOR: false, closed, west, random
 ALTAR:(02,01),align[0],shrine
 MONSTER: 'G', "gnomish wizard", random

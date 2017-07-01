@@ -1012,7 +1012,8 @@ spelleffects(int spell, boolean atme, const struct nh_cmd_arg *arg)
     } else if (check_capacity
                ("Your concentration falters while carrying so much stuff.")) {
         return 1;
-    } else if (!freehand()) {
+    } else if (!freehand() &&
+               (!uwep || uwep->otyp != QUARTERSTAFF)) {
         pline(msgc_cancelled, "Your arms are not free to cast!");
         return 0;
     }

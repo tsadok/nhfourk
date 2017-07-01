@@ -305,22 +305,27 @@ dig(void)
         return 0;
     }
 
-    u.uoccupation_progress[tos_dig] +=
-        10 + rn2(5) + abon() +
-        (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0) + u.udaminc;
-    /* TODO: This formula looks /very/ suspicious, becuse the exponential
-       factor is going to override almost anyting else. */
+    int progress = 10;
+    progress += rn2(5);
+    progress += abon();
+    progress += (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0);
+    progress += u.udaminc;
+    if (uwep)
+        progress += (P_SKILL(is_pick(uwep) ? P_PICK_AXE : P_AXE) * 5);
+    if (progress < 1)
+        progress = 1;
     if (can_dig_without_pick && !ispick)
-        u.uoccupation_progress[tos_dig] = Race_if(PM_SCURRIER) ?
-            u.uoccupation_progress[tos_dig] * 5 / 2 :
-            u.uoccupation_progress[tos_dig] * 3 / 2;
+        progress =
+            Race_if(PM_SCURRIER) ? (progress * 5 / 2) : (progress * 3 / 2);
     else if (Race_if(PM_DWARF))
-        u.uoccupation_progress[tos_dig] *= 2;
+        progress *= 2;
     if (u_have_property(FAST_DIGGING, ANY_PROPERTY, FALSE)) {
         if (u.uoccupation_progress[tos_dig] < 20)
             u.uoccupation_progress[tos_dig] = 20;
-        u.uoccupation_progress[tos_dig] *= 3;
+        progress *= 3;
     }
+    u.uoccupation_progress[tos_dig] += progress;
+
     if (down) {
         struct trap *ttmp;
 
