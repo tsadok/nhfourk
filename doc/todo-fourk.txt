@@ -48,10 +48,6 @@
 ▒▒▒   22:04 <          ais523 > hmm, interesting
 ▒▒▒   22:04 <          ais523 > that might be a vanilla bug
 ▒▒▒
-▒▒▒ * 20:10 <             FIQ > jonadab: shouldn't prayer sanity checks run *before* breaking the conduct?
-▒▒▒   ...
-▒▒▒   This is about refusing to attempt to pray to a non-chaotic god if you are a demon.
-▒▒▒
 ▒▒▒ * Your conscious should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
