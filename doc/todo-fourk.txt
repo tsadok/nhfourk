@@ -217,13 +217,34 @@
 ▒▒▒
 ▒▒▒ * 13:52 < rumflump > it's weird that scur rangers start with a single +1 dart
 ▒▒▒
+▒▒▒ * 19:37 < rumflump > oh, one other thing about lab, I forget who pointed this out, but lab is
+▒▒▒                      notele and also explicitly has tele traps in it
+▒▒▒
+▒▒▒ * 16:42 < rumflump > http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/sokoban/open-at-the-top.html
+▒▒▒                      should say "push W one tile east" in step 2, line 4
+▒▒▒
+▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
+▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
+▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
+▒▒▒                      back on though
+▒▒▒
+▒▒▒ * 13:42 < elenmirie > giants are tossers.  :D
+▒▒▒   13:42 <        K2@> THAT should be a t-shirt quote
+▒▒▒
+▒▒▒ * Don't make peacefuls hide, 82b6b9b
+▒▒▒
+▒▒▒ * Grasshopper claims scrolls of enchant weapon and remove curse don't auto-ID when you use them.
+▒▒▒
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed
+▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed and 162611e
 ▒▒▒
 ▒▒▒ * Look at and consider cherry-picking FIQ's unskilled bashmsh, 7ad158a
+▒▒▒
+▒▒▒ * Look at and consider FIQ's autoswap feature, 719b864d5f
 ▒▒▒
 ▒▒▒ * 18:35 <        rumflump > would it be possible for floors that contain a vault, to auto-annotate when you see
 ▒▒▒                             "coins being counted"?
@@ -238,6 +259,21 @@
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
+▒▒▒
+▒▒▒ * Reduce the weight of mithril armor.
+▒▒▒
+▒▒▒ * Buff crystal plate mail in some way.
+▒▒▒
+▒▒▒ * Make extrinsic resistances protect against item destruction, including erosion.
+▒▒▒
+▒▒▒ * Potions shouldn't be destroyed by fire attacks (because they're destroyed by cold attacks,
+▒▒▒   and the player should be able to protect them with a single extrinsic resistance).
+▒▒▒
+▒▒▒ * Nuke magic cancellation.  Test late-game balance with this change.
+▒▒▒
+▒▒▒ * 02:06 #hardfought: <  LarienTelrunya > !tell jonadab at least in the bleeding-edge version of nethack fourk,
+▒▒▒                                          "Dancing with Demiliches" medusa level gives two wands to one demilich and
+▒▒▒                                           none to the other; not sure if that's a mistake, but I wanted to point it out :)
 ▒▒▒
 ▒▒▒ * Limit a crystal ball's effective search radius based on intelligence.
 ▒▒▒
@@ -700,6 +736,35 @@
 ▒▒▒
 ▒▒▒ * Consider how the Staff of Aesculalialdkjlaius should work for Sylphs.
 ▒▒▒
+▒▒▒ * Consider creating a generalized version of rne that takes two integers representing
+▒▒▒   a rational, so that fractions other than 1/n can be represented (e.g., 2/3).
+▒▒▒   The regular rne() that is already widely used could be a wrapper that passes 1 for
+▒▒▒   the denominator.  Consider using this function for things like random weapon
+▒▒▒   enchantments, so that the probability of higher enchantments is a bit higher.
+▒▒▒   Perhaps:
+▒▒▒   static inline int
+▒▒▒   rat_rne(int numerator, int denominator, enum rng rng)
+▒▒▒   {
+▒▒▒       int tmp = 1;
+▒▒▒       if (numerator < 1)
+▒▒▒          impossible("Numerator too small in rat_rne(%d, %d, %d)",
+▒▒▒                     numerator, denominator, rng);
+▒▒▒       else if (numerator >= denominator) {
+▒▒▒          impossible("Numerator too large in rat_rne(%d, %d, %d)",
+▒▒▒                     numerator, denominator, rng);
+▒▒▒          return tmp;
+▒▒▒       }
+▒▒▒       while (tmp < 10 && (numerator - 1) <= rn2_on_rng(denominator, rng))
+▒▒▒          tmp++;
+▒▒▒       return tmp;
+▒▒▒   }
+▒▒▒
+▒▒▒   static inline int
+▒▒▒   rne_on_rng(int x, enum rng rng)
+▒▒▒   {
+▒▒▒       return rat_rne(1, x, rng);
+▒▒▒   }
+▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Runics can be wished for in wizmode only.
 ▒▒▒   + Randomly generated weapons that are allowed to be artifacts but the
@@ -952,7 +1017,6 @@
 ▒▒▒ * hiding under nothing when corpse rotted away: 489d56d4bb
 ▒▒▒ * wallify catacombs: 8451f67dff8
 ▒▒▒ * special level loader memory leaks: 0bcb713b4fd5
-▒▒▒ * T-shirt messages, use git blame (see 7132f56901670c for where).
 ▒▒▒ * Corridor variation: 2ee06dda5a4f1b
 ▒▒▒ * bugfix, spellcasting causing confusion/stun: c48e1732d89e5a2
 ▒▒▒ * LOOK at the 3.6 change to potions of gain energy, 37771f779e9431,
