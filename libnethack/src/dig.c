@@ -1043,13 +1043,20 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
             else if (!ispick &&
                      (sobj_at(STATUE, level, rx, ry) ||
                       sobj_at(BOULDER, level, rx, ry))) {
-                boolean vibrate = !rn2(3);
+                if (uwep) {
+                    boolean vibrate = !rn2(3);
 
-                pline(worse_msgc, "Sparks fly as you whack the %s.%s",
-                      sobj_at(STATUE, level, rx, ry) ? "statue" : "boulder",
-                      vibrate ? " The axe-handle vibrates violently!" : "");
-                if (vibrate)
-                    losehp(2, killer_msg(DIED, "axing a hard object"));
+                    pline(worse_msgc, "Sparks fly as you whack the %s.%s",
+                          sobj_at(STATUE, level, rx, ry) ? "statue" : "boulder",
+                          vibrate ? " The axe-handle vibrates violently!" : "");
+                    if (vibrate)
+                        losehp(2, killer_msg(DIED, "axing a hard object"));
+                } else {
+                    pline(bad_msgc, Hallucination ? "Ack!  Way too chewy!" :
+                          msgprintf("The %s seems to resist your efforts.",
+                                    sobj_at(STATUE, level, rx, ry) ?
+                                    "statue" : "boulder"));
+                }
             } else
                 pline(msgc_notarget, "You swing your %s through thin air.",
                       (obj ? aobjnam(obj, NULL) :

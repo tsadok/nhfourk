@@ -99,23 +99,12 @@
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
-▒▒▒ * 16:17 < hothraxxa+> The elven dagger grows roots right in to the hobbit's hand!
-▒▒▒   Should have only one verb there, not both.
-▒▒▒
 ▒▒▒ * 17:26 <       hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
 ▒▒▒                             should be prompting because i have esp and can see other shopkeepers
 ▒▒▒   17:26 <       hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
 ▒▒▒
-▒▒▒ * hallucinatory monster: dire half-dragon bone-eating saltwater werepiranha (OOTS #599)
-▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
-▒▒▒
-▒▒▒ * scurriers trying to push boulders that can't move get incorrect messages about axes and possibly damage.
-▒▒▒   This is not intended.
-▒▒▒
-▒▒▒ * 02:30 < rumflump > <RLdiscord> <@luxidream> I can't even wear gloves. is there anything I can wear at all?
-▒▒▒ * 02:31 < rumflump > (trying out a giant)
 ▒▒▒
 ▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
 ▒▒▒
