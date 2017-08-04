@@ -304,10 +304,12 @@ make_player_info(struct nh_player_info *pi)
         strncpy(pi->statusitems[pi->nr_items++], "Fly", ITEMLEN);
     if (uwep && is_pick(uwep)) /* 15 (first case) */
         strncpy(pi->statusitems[pi->nr_items++], "Dig", ITEMLEN);
+    else if (uwep && is_pole(uwep))
+        strncpy(pi->statusitems[pi->nr_items++], "Pole", ITEMLEN);
     else if (uwep && is_launcher(uwep))
         strncpy(pi->statusitems[pi->nr_items++], "Ranged", ITEMLEN);
     else if (uwep && (uwep->otyp == CORPSE) && (touch_petrifies(&mons[uwep->corpsenm])))
-        strncpy(pi->statusitems[pi->nr_items++], "cWielded", ITEMLEN);
+        strncpy(pi->statusitems[pi->nr_items++], "Trice", ITEMLEN);
     else if (!uwep)
         strncpy(pi->statusitems[pi->nr_items++], "Unarmed", ITEMLEN);
     else if (!is_wep(uwep))

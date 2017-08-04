@@ -35,6 +35,8 @@
 ▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒   
+▒▒▒ * Make demon prince bribe amounts reasonable, and mostly independent of your wallet contents.
+▒▒▒   
 ▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
 ▒▒▒   22:00 <             FIQ > what bug
 ▒▒▒   22:01 <         Tangles > In a hardware store, if you drop a sack, you can sell it for 1zm, but retain possession of the
@@ -96,11 +98,6 @@
 ▒▒▒   15:17 <        rumflump > *am* flying
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
-▒▒▒
-▒▒▒ * make red scales grant fire resistance and sliming resistance.
-▒▒▒
-▒▒▒ * Wielded polearms (including lances) are currently statuslighted as non-weapons.
-▒▒▒   Give them their own status light instead.
 ▒▒▒
 ▒▒▒ * 16:17 < hothraxxa+> The elven dagger grows roots right in to the hobbit's hand!
 ▒▒▒   Should have only one verb there, not both.
@@ -237,6 +234,8 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed and 162611e
+▒▒▒
+▒▒▒ * make red scales grant fire resistance and sliming resistance.
 ▒▒▒
 ▒▒▒ * Look at and consider cherry-picking FIQ's unskilled bashmsh, 7ad158a
 ▒▒▒
@@ -761,6 +760,11 @@
 ▒▒▒       return rat_rne(1, x, rng);
 ▒▒▒   }
 ▒▒▒
+▒▒▒ * Consider making it harder to burn through nutrition quickly, by removing
+▒▒▒   the hunger "penalty" for things like spell casting and teleport-at-will.
+▒▒▒   Then make food-acquired intrinsics gradually time out, and make rings of
+▒▒▒   slow digestion usually generate cursed.  Then reduce the hunger rate.
+▒▒▒   
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Runics can be wished for in wizmode only.
 ▒▒▒   + Randomly generated weapons that are allowed to be artifacts but the
