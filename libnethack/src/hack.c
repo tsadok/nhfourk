@@ -2055,7 +2055,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
                       (In_sokoban(&u.uz) &&
                        Levitation) ?
                       "struggle against the air currents and float" : u.usteed ?
-                      "ride" : "crawl");
+                      "ride" : Flying ? "fly" : "crawl");
                 fill_pit(level, u.ux, u.uy);
                 turnstate.vision_full_recalc = TRUE; /* vision limits change */
             } else {

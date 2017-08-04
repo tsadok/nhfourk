@@ -108,8 +108,6 @@
 ▒▒▒
 ▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
 ▒▒▒
-▒▒▒ * 15:21 < rumflump > "You crawl to the edge of the pit." No, I fly.
-▒▒▒
 ▒▒▒ * 12:43 < rumflump > ] Noah: As a wererat scurrier in 4k shouldn't I just feel like a new woman instead of turning into a smaller rat?
 ▒▒▒   12:47 <  jonadab > Oooh, that's an interesting thought.
 ▒▒▒   12:47 <  jonadab > Actually, it's tempting to make wererats peaceful to scurriers.
