@@ -115,11 +115,6 @@
 ▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
 ▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
 ▒▒▒
-▒▒▒ * 03:24 < K2 > priest quest, the quest leader when speaking to you says this:
-▒▒▒   03:24 < K2 > 'Acquire and wear the Sceptre of Might if you can.  It will aid you...'
-▒▒▒   03:25 < K2 > wear should be wield. hold over from the helm ;)
-▒▒▒   03:38 < K2 > jonadab: also - "Wear the Sceptre of Might.  It will assist you against the undead."
-▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒

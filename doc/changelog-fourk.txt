@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * The Sceptre of Might now grants drain resistance when wielded.
+
  * The bribeable demons will no longer accept trivial amounts of chump
    change for safe passage.  If you're only carrying a couple hundred
    zorkmids, you will not be able to afford to bribe them.  (The

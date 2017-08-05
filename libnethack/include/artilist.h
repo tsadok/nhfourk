@@ -220,7 +220,7 @@ static const struct artifact const_artilist[] = {
 
     A("The Sceptre of Might", MACE,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DALIGN), 0, 0,
-      PHYS(5, 0), NO_DFNS, CARY(AD_MAGM),
+      PHYS(5, 0), DRLI(0,0), CARY(AD_MAGM),
       ENERGY_BOOST, A_LAWFUL, PM_PRIEST, NON_PM, 2500L),
 
     A("The Staff of Aesculapius", QUARTERSTAFF,
