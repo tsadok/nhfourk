@@ -188,10 +188,6 @@
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
 ▒▒▒
-▒▒▒ * Don't make peacefuls hide, 82b6b9b
-▒▒▒
-▒▒▒ * Grasshopper claims scrolls of enchant weapon and remove curse don't auto-ID when you use them.
-▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 :

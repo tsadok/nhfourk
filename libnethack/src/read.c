@@ -864,6 +864,7 @@ seffects(struct obj *sobj, boolean *known)
             boolean special_armor;
             boolean same_color;
 
+            makeknown(SCR_ENCHANT_ARMOR);
             otmp = some_armor(&youmonst);
             if (!otmp) {
                 strange_feeling(sobj,
@@ -1119,6 +1120,7 @@ seffects(struct obj *sobj, boolean *known)
         *known = TRUE;
         break;
     case SCR_REMOVE_CURSE:
+        makeknown(SCR_REMOVE_CURSE); /* Fall Through */
     case SPE_REMOVE_CURSE:
         {
             if (confused)
@@ -1155,6 +1157,7 @@ seffects(struct obj *sobj, boolean *known)
            monsters are not visible */
         break;
     case SCR_ENCHANT_WEAPON:
+        makeknown(SCR_ENCHANT_WEAPON);
         if (uwep && (uwep->oclass == WEAPON_CLASS || is_weptool(uwep))
             && confused) {
             /* oclass check added 10/25/86 GAN */
