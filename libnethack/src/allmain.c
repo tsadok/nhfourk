@@ -1046,7 +1046,7 @@ you_moved(void)
             }
 
             if (!u.uinvulnerable) {
-                if (Teleportation && !rn2(85)) {
+                if (Teleportation && !rn2(85) && !Uhave_amulet) {
                     xchar old_ux = u.ux, old_uy = u.uy;
 
                     tele();

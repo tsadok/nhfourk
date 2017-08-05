@@ -387,9 +387,6 @@
 ▒▒▒
 ▒▒▒ * Makedefs must die.
 ▒▒▒
-▒▒▒ * If the Amulet is going to suppress your teleport control, shouldn't it also
-▒▒▒   prevent teleportitis from randomly kicking in at odd times?
-▒▒▒
 ▒▒▒ * Look into the "A a boulder bounces" bug (probably channelization-related).
 ▒▒▒
 ▒▒▒ * Figure out what further buffs to do to martial arts, if any.
