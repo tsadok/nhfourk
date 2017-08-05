@@ -183,16 +183,10 @@
 ▒▒▒
 ▒▒▒ * 13:52 < rumflump > it's weird that scur rangers start with a single +1 dart
 ▒▒▒
-▒▒▒ * 16:42 < rumflump > http://jonadab.jumpingcrab.com/nethack-stuff/spoilers-fourk/sokoban/open-at-the-top.html
-▒▒▒                      should say "push W one tile east" in step 2, line 4
-▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
-▒▒▒
-▒▒▒ * 13:42 < elenmirie > giants are tossers.  :D
-▒▒▒   13:42 <        K2@> THAT should be a t-shirt quote
 ▒▒▒
 ▒▒▒ * Don't make peacefuls hide, 82b6b9b
 ▒▒▒

@@ -124,6 +124,7 @@ doread(const struct nh_cmd_arg *arg)
             "Keep calm and explore the dungeon.",
             "One does not simply kill the Wizard of Yendor.",
             "I killed the Wizard of Yendor.  (He got over it.)",
+            "Giants are Tossers!", /* -- elenmirie */
         };
         const char *buf;
         int erosion;
