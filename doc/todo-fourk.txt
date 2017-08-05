@@ -153,9 +153,8 @@
 ▒▒▒ * Double-check the uninitialized-petname bug.
 ▒▒▒
 ▒▒▒ * 09:36 < Mandevil > jonadab: Also "This lamp has no oil" should autoidentify it as oil lamp.
-▒▒▒
-▒▒▒ * Make the armor spoiler have links to the start of each slot, and make it possible to link to
-▒▒▒   specific items (as with the monster one).
+▒▒▒   There's a problem with this:  it might not be an oil lamp that has run out.
+▒▒▒   It could also be a wished-for magic lamp.
 ▒▒▒
 ▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
 ▒▒▒                             there is no "The succubus hits you message at all? I just got

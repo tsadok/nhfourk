@@ -565,12 +565,12 @@ spoilobjclass(FILE *file, const char * hrname, const char * aname,
             msgprintf("<td class=\"spschool\">%s</td>"
                       "<td class=\"numeric extrafield splev\">%d</td>",
                       spoilschool(i), objects[i].oc_level) : "";
-        fprintf(file, "<tr><td class=\"object\">%s</td>"
+        fprintf(file, "<tr><td class=\"object\" id=\"obj%d\">%s</td>"
                 "<td class=\"material\">%s</td>%s"
                 "<td class=\"numeric weight\">%d</td>"
                 "<td class=\"numeric price\">%d</td>"
                 "</tr>\n",
-                spoiloname(i), material[objects[i].oc_material],
+                i, spoiloname(i), material[objects[i].oc_material],
                 extravalue, objects[i].oc_weight, objects[i].oc_cost);
     }
 
@@ -970,8 +970,23 @@ makehtmlspoilers(void)
     }
     
     if (change_fd_lock(fd, FALSE, LT_WRITE, 10)) {
+        int firstarmor, lastslot = -1;
         outfile = fdopen(fd, "w");
         fprintf(outfile, "%s", htmlheader("Armor"));
+        /* navbar at top */
+        for (firstarmor = 0; !firstarmor ||
+                 objects[firstarmor].oc_class != ARMOR_CLASS; firstarmor++)
+            ;
+        fprintf(outfile, "<div class=\"nav\">Jump to: ");
+        for (i = firstarmor; objects[i].oc_class == ARMOR_CLASS; i++)
+            if (objects[i].oc_armcat != lastslot) {
+                fprintf(outfile, "<a href=\"#obj%d\">%s</a> ",
+                        i, oslotname(objects[i].oc_armcat));
+                lastslot = objects[i].oc_armcat;
+            }
+        fprintf(outfile, "</div>");
+        /* then the actual armor table */
+
         fprintf(outfile, "\n<table id=\"armor\"><thead>\n  "
                 "<tr><th class=\"slot\">slot</th>"
                 "<th class=\"object\">armor</th>"
@@ -987,7 +1002,7 @@ makehtmlspoilers(void)
             if (objects[i].oc_class != ARMOR_CLASS)
                 continue;
             fprintf(outfile, "<tr><td class=\"slot\">%s</td>"
-                    "<td class=\"object\">%s</td>"
+                    "<td class=\"object\" id=\"obj%d\">%s</td>"
                     "<td class=\"numeric mc\">%s</td>"
                     "<td class=\"numeric ac\">%d</td>"
                     "<td class=\"material\">%s</td>"
@@ -995,7 +1010,7 @@ makehtmlspoilers(void)
                     "<td class=\"numeric weight\">%d</td>"
                     "<td class=\"numeric price\">%d</td>"
                     "</tr>\n",
-                    oslotname(objects[i].oc_armcat), spoiloname(i),
+                    oslotname(objects[i].oc_armcat), i, spoiloname(i),
                     (objects[i].a_can ?
                      msgprintf("MC%d", objects[i].a_can) : ""),
                     objects[i].a_ac, material[objects[i].oc_material],
@@ -1082,6 +1097,17 @@ makehtmlspoilers(void)
                 "Armor Spoiler</a></p>");
         fprintf(outfile, "<p>See also: <a href=\"artifact-spoiler.html\">"
                 "Artifact Spoiler</a></p>");
+
+        fprintf(outfile, "<p>Jump to: %s %s %s %s %s %s %s %s %s</p>",
+                "<a href=\"#jewelry\">=</a>",
+                msgprintf("<a href=\"#obj%d\">&quot;</a>", AMULET_OF_ESP),
+                "<a href=\"#potions\">!</a>",
+                "<a href=\"#scrolls\">?</a>",
+                "<a href=\"#books\">+</a>",
+                "<a href=\"#wands\">/</a>",
+                "<a href=\"#tools\">(</a>",
+                "<a href=\"#food\">%</a>",
+                "<a href=\"#rocks\">*</a>");
         spoilobjclass(outfile, "Jewelry", "jewelry", RING_CLASS, AMULET_CLASS);
         /* TODO: alchemy spoiler */
         spoilobjclass(outfile, "Potions", "potions", POTION_CLASS, POTION_CLASS);
