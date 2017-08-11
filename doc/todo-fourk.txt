@@ -72,8 +72,7 @@
 ▒▒▒ * Check whether the monster-carrying-egg crash is Fourk-specific, maybe
 ▒▒▒   cherry-pick the workaround to 4.3-maint.
 ▒▒▒
-▒▒▒ * In the Unicode tileset, introduce D-with-diacritics glyphs to better
-▒▒▒   differentiate the various levels of dragons.
+▒▒▒ * Adjust the graphical tiles to better differentiate the various levels of dragons.
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
