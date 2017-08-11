@@ -35,6 +35,11 @@
 ▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒   
+▒▒▒ * Look at fba3a19220f and see whether it is relevant to Fourk.
+▒▒▒   
+▒▒▒ * Check on artifact_exists usage and consider renaming it.  See FIQ's
+▒▒▒   explanation in #dnethack, 2017 Aug 08, 20:14 through 20:18.
+▒▒▒   
 ▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
 ▒▒▒   22:00 <             FIQ > what bug
 ▒▒▒   22:01 <         Tangles > In a hardware store, if you drop a sack, you can sell it for 1zm, but retain possession of the
@@ -48,14 +53,14 @@
 ▒▒▒   22:04 <          ais523 > hmm, interesting
 ▒▒▒   22:04 <          ais523 > that might be a vanilla bug
 ▒▒▒
-▒▒▒ * Your conscious should not "bother you a little less" if your alignment
-▒▒▒   record is as high as it has ever been.  Change the wording in that case.
-▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
-▒▒▒
 ▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
 ▒▒▒   the duplicated message that has been reported.
 ▒▒▒
-▒▒▒ * FIQ says a 60zm scroll in a shop that isn't marked up should auto-ID.
+▒▒▒ * Make doname_base take surcharge possibilities into account when deciding
+▒▒▒   whether an item's price might match another's.
+▒▒▒
+▒▒▒ * 15:17 < NeroOneTrueKing > idea: potion of see invisible -> potion of sight.
+▒▒▒                             Same effects, plus cures blindness and if blessed cures hallucination.
 ▒▒▒
 ▒▒▒ * Wiz quest text refers to a chest on wiz home that no longer exists.
 ▒▒▒
@@ -66,6 +71,9 @@
 ▒▒▒   convert this from segfault to panic(), but we should fix it for real.
 ▒▒▒ * Check whether the monster-carrying-egg crash is Fourk-specific, maybe
 ▒▒▒   cherry-pick the workaround to 4.3-maint.
+▒▒▒
+▒▒▒ * In the Unicode tileset, introduce D-with-diacritics glyphs to better
+▒▒▒   differentiate the various levels of dragons.
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
@@ -188,10 +196,17 @@
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
 ▒▒▒
+▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
+▒▒▒   19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
+▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Your conscious should not "bother you a little less" if your alignment
+▒▒▒   record is as high as it has ever been.  Change the wording in that case.
+▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
 ▒▒▒
 ▒▒▒ * Cherry-pick FIQ's probabilty-1000 refactor, a0781683398ed and 162611e
 ▒▒▒
@@ -814,7 +829,18 @@
 ▒▒▒ * Track the player's alignment record separately for each of the three alignments,
 ▒▒▒   so that HoOA can be handled reasonably.
 ▒▒▒
-▒▒▒ * Bats should be able to around corners, up to some limited number of LOS bounces (maybe 3).
+▒▒▒ * Hunger rework:
+▒▒▒   + Rings of slow digestion and hunger are the same chargeable ring, with opposite
+▒▒▒     charges.  Call it ring of digestion.
+▒▒▒   + Things like spellcasting and teleportation no longer cause hunger.  The only
+▒▒▒     way to hunger faster than usual is via a ring of digestion.
+▒▒▒   + Tinning kits use charges proportional to corpse weight.
+▒▒▒   + Intrinsics gained by eating now gradually time out.  Balance the rate of this
+▒▒▒     so that eating food that does NOT grant intrinsics is almost always suboptimal
+▒▒▒     strategy, because it means you'll end up bloated (or missing some resistance)
+▒▒▒     or have to expend scrolls of charging on a tinning kit.
+▒▒▒
+▒▒▒ * Bats should be able to echolocate around corners, up to some limited number of LOS bounces (maybe 3).
 ▒▒▒
 ▒▒▒ * Clear up remaining niggles with the Garden implementation, see the
 ▒▒▒   commit log notes on commit commit 302d5fa9072.  Some of this may

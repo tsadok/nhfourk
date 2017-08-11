@@ -1912,6 +1912,9 @@ get_cost(const struct obj *obj, struct monst *shkp)
             tmp = (long)objects[i].oc_cost;
         } else if (!(obj->o_id % 4)) {
             /* unidentified: arbitrarily impose surcharge: tmp *= 4/3 */
+            /* Note that doname_base duplicates this check to decide
+               whether it should mark certain non-marked-up items as
+               known based on their price. */
             multiplier *= 4L;
             divisor    *= 3L;
         }
