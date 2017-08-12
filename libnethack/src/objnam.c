@@ -779,6 +779,7 @@ doname_base(const struct obj *obj, boolean with_price)
                 if (i == obj->otyp)
                     continue;
                 if (objects[i].oc_cost == objects[obj->otyp].oc_cost &&
+                    /* TODO: take surcharges into account */
                     objects[i].oc_class == objects[obj->otyp].oc_class &&
                     objects[i].oc_weight == objects[obj->otyp].oc_weight)
                     id = FALSE;
@@ -786,6 +787,11 @@ doname_base(const struct obj *obj, boolean with_price)
             /* tallow candles are unique by this check, wax ones aren't;
                special-case wax candles to make it consistent */
             if (id || obj->otyp == WAX_CANDLE)
+                makeknown(obj->otyp);
+            /* There's only one 60zm random-appearance scroll, so if it's not
+               marked up, you know what it is.  We check whether it's marked
+               up or not using the same logic as get_cost (albeit negated). */
+            if ((obj->otyp == SCR_ENCHANT_WEAPON) && (obj->o_id %4))
                 makeknown(obj->otyp);
         }
     }

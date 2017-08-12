@@ -129,7 +129,7 @@ encode_uevent(void)
     if (mvitals[PM_HIGH_PRIEST].died)
         c |= 0x8000UL;  /* defeated a high priest */
     if (mvitals[PM_DEMOGORGON].died)
-        c |= 0xF000UL;  /* defeated Demogorgon */
+        c |= 0x10000UL;  /* defeated Demogorgon */
 
     /* notable other events */
     if (u.uevent.uhand_of_elbereth)
@@ -142,10 +142,10 @@ encode_uevent(void)
         c |= 0x00040000UL;
     if (historysearch("reached the bottom of the Mines", TRUE))
         c |= 0x00080000UL;
-    if (historysearch("reached the Astral Plane", TRUE))
-        c |= 0x000F0000UL;
     if (historysearch("entered the Rogue tribute level", TRUE))
         c |= 0x00100000UL;
+    if (historysearch("reached the Astral Plane", TRUE))
+        c |= 0x00200000UL;
     return c;
 }
 

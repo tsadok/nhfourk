@@ -2061,12 +2061,12 @@ dopray(const struct nh_cmd_arg *arg)
         if (yn("Are you sure you want to pray?") == 'n')
             return 0;
 
-    break_conduct(conduct_gnostic);
-    historic_event(FALSE, FALSE, "prayed to %s.", u_gname());
-
     /* set up turnstate alignment and trouble */
     if (!can_pray(TRUE))
         return 0;
+
+    break_conduct(conduct_gnostic);
+    historic_event(FALSE, FALSE, "prayed to %s.", u_gname());
 
     if (wizard && turnstate.pray.type != pty_smite_undead) {
         if (yn("Force the gods to be pleased?") == 'y') {

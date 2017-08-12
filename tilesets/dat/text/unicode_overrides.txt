@@ -59,3 +59,58 @@ swallow middle right: orange '│'
 
 ! Traps.
 web: gray '╬'
+
+! Dragon differentiation: use diacritics to distinguish levels.
+baby gray dragon: gray 'D'
+young gray dragon: gray 'Ḋ'
+gray dragon: gray 'Ď'
+elder gray dragon: gray base_underline 'Ď'
+ancient gray dragon: gray base_underline 'Ð'
+
+baby silver dragon: bright_cyan 'D'
+young silver dragon: bright_cyan 'Ḋ'
+silver dragon: bright_cyan 'Ď'
+elder silver dragon: bright_cyan base_underline 'Ď'
+ancient silver dragon: bright_cyan base_underline 'Ð'
+
+baby red dragon: red 'D'
+young red dragon: red 'Ḋ'
+red dragon: red 'Ď'
+elder red dragon: red base_underline 'Ď'
+ancient red dragon: red base_underline 'Ð'
+
+baby white dragon: white 'D'
+young white dragon: white 'Ḋ'
+white dragon: white 'Ď'
+elder white dragon: white base_underline 'Ď'
+ancient white dragon: white base_underline 'Ð'
+
+baby orange dragon: orange 'D'
+young orange dragon: orange 'Ḋ'
+orange dragon: orange 'Ď'
+elder orange dragon: orange base_underline 'Ď'
+ancient orange dragon: orange base_underline 'Ð'
+
+baby black dragon: darkgray 'D'
+young black dragon: darkgray 'Ḋ'
+black dragon: darkgray 'Ď'
+elder black dragon: darkgray base_underline 'Ď'
+ancient black dragon: darkgray base_underline 'Ð'
+
+baby blue dragon: blue 'D'
+young blue dragon: blue 'Ḋ'
+blue dragon: blue 'Ď'
+elder blue dragon: blue base_underline 'Ď'
+ancient blue dragon: blue base_underline 'Ð'
+
+baby green dragon: green 'D'
+young green dragon: green 'Ḋ'
+green dragon: green 'Ď'
+elder green dragon: green base_underline 'Ď'
+ancient green dragon: green base_underline 'Ð'
+
+baby yellow dragon: yellow 'D'
+young yellow dragon: yellow 'Ḋ'
+yellow dragon: yellow 'Ď'
+elder yellow dragon: yellow base_underline 'Ď'
+ancient yellow dragon: yellow base_underline 'Ð'

@@ -1162,6 +1162,8 @@ static struct {
     {"jubjub bird", FALSE},
     {"white rabbit", FALSE},
     {"snark", FALSE},
+        /* Order of the Stick */
+    {"dire half-dragon bone-eating saltwater werepiranha", FALSE},
         /* Dr. Dolittle */
     {"pushmi-pullyu", FALSE},
         /* The Smurfs */

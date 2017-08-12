@@ -899,12 +899,12 @@ TRAP:"board",random
 TRAP:"board",random
 TRAP:"board",random
 TRAP:"board",random
-TRAP:"teleport",random
-TRAP:"teleport",random
 TRAP:"trap door",random
 TRAP:"trap door",random
 TRAP:"trap door",random
 TRAP:"trap door",random
+TRAP:random,random
+TRAP:random,random
 
 # Cabinet One:
 OBJECT:'[',"alchemy smock",place[0]

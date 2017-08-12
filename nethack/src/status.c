@@ -117,13 +117,15 @@ static const struct {
       { "Fainting", CLR_BRIGHT_MAGENTA, CLR_YELLOW },
       { "Fainted", CLR_BRIGHT_MAGENTA, CLR_YELLOW },
       { "Starved", CLR_BRIGHT_MAGENTA, CLR_YELLOW },
-      /* misc */
-      { "Melee", CLR_GRAY, -1 },
+      /* weapon */
+      { "Melee", CLR_GRAY, -1 }, /* (currently omitted) */
       { "Dig", CLR_BROWN, -1 },
+      { "Pole", CLR_GREEN, -1 },
       { "Ranged", CLR_GREEN, -1 },
       { "Unarmed", CLR_MAGENTA, -1 },
       { "NonWeap", CLR_ORANGE, -1 },
-      { "cWielded", CLR_YELLOW, -1 },
+      { "Trice", CLR_YELLOW, -1 },
+      /* misc */
       { "Lev", CLR_BROWN, -1 },
       { "Fly", CLR_GREEN, -1 },
       /* trapped */

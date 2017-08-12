@@ -146,7 +146,7 @@ static const struct artifact const_artilist[] = {
 
     A("Dragonbane", LANCE,
       (SPFX_RESTR | SPFX_DCLAS), 0, S_DRAGON,
-      PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_NONE, NON_PM, NON_PM, 500L),
+      PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, PM_KNIGHT, NON_PM, 500L),
 
     A("Demonbane", LONG_SWORD,
       (SPFX_RESTR | SPFX_DFLAG2), 0, M2_DEMON,
@@ -220,7 +220,7 @@ static const struct artifact const_artilist[] = {
 
     A("The Sceptre of Might", MACE,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_DALIGN), 0, 0,
-      PHYS(5, 0), NO_DFNS, CARY(AD_MAGM),
+      PHYS(5, 0), DRLI(0,0), CARY(AD_MAGM),
       ENERGY_BOOST, A_LAWFUL, PM_PRIEST, NON_PM, 2500L),
 
     A("The Staff of Aesculapius", QUARTERSTAFF,

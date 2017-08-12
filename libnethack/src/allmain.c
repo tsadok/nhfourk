@@ -562,7 +562,7 @@ just_reloaded_save:
                 case DIR_W:
                 case DIR_N:
                     /* Move backwards one command. */
-                    log_sync(program_state.binary_save_location-1,
+                    log_sync(min(program_state.binary_save_location-1, 1),
                              TLU_BYTES, FALSE);
                     goto just_reloaded_save;
                 case DIR_NW:
@@ -575,7 +575,7 @@ just_reloaded_save:
                     goto just_reloaded_save;
                 case DIR_NE:
                     /* Move backwards 50 turns. */
-                    log_sync(moves - 50, TLU_TURNS, FALSE);
+                    log_sync(min(moves - 50, 1), TLU_TURNS, FALSE);
                     goto just_reloaded_save;
                 case DIR_SE:
                     /* Move forwards 50 turns. */
@@ -1046,7 +1046,7 @@ you_moved(void)
             }
 
             if (!u.uinvulnerable) {
-                if (Teleportation && !rn2(85)) {
+                if (Teleportation && !rn2(85) && !Uhave_amulet) {
                     xchar old_ux = u.ux, old_uy = u.uy;
 
                     tele();

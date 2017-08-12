@@ -305,24 +305,30 @@ dig(void)
         return 0;
     }
 
+    int progress = 10;
+    progress += rn2(5);
+    progress += abon();
+    progress += (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0);
+    progress += u.udaminc;
+
     achievement(achieve_dig);
 
-    u.uoccupation_progress[tos_dig] +=
-        10 + rn2(5) + abon() +
-        (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0) + u.udaminc;
-    /* TODO: This formula looks /very/ suspicious, becuse the exponential
-       factor is going to override almost anyting else. */
+    if (uwep)
+        progress += (P_SKILL(is_pick(uwep) ? P_PICK_AXE : P_AXE) * 5);
+    if (progress < 1)
+        progress = 1;
     if (can_dig_without_pick && !ispick)
-        u.uoccupation_progress[tos_dig] = Race_if(PM_SCURRIER) ?
-            u.uoccupation_progress[tos_dig] * 5 / 2 :
-            u.uoccupation_progress[tos_dig] * 3 / 2;
+        progress =
+            Race_if(PM_SCURRIER) ? (progress * 5 / 2) : (progress * 3 / 2);
     else if (Race_if(PM_DWARF))
-        u.uoccupation_progress[tos_dig] *= 2;
+        progress *= 2;
     if (u_have_property(FAST_DIGGING, ANY_PROPERTY, FALSE)) {
         if (u.uoccupation_progress[tos_dig] < 20)
             u.uoccupation_progress[tos_dig] = 20;
-        u.uoccupation_progress[tos_dig] *= 3;
+        progress *= 3;
     }
+    u.uoccupation_progress[tos_dig] += progress;
+
     if (down) {
         struct trap *ttmp;
 
@@ -1040,13 +1046,20 @@ use_pick_axe(struct obj *obj, const struct nh_cmd_arg *arg)
             else if (!ispick &&
                      (sobj_at(STATUE, level, rx, ry) ||
                       sobj_at(BOULDER, level, rx, ry))) {
-                boolean vibrate = !rn2(3);
+                if (uwep) {
+                    boolean vibrate = !rn2(3);
 
-                pline(worse_msgc, "Sparks fly as you whack the %s.%s",
-                      sobj_at(STATUE, level, rx, ry) ? "statue" : "boulder",
-                      vibrate ? " The axe-handle vibrates violently!" : "");
-                if (vibrate)
-                    losehp(2, killer_msg(DIED, "axing a hard object"));
+                    pline(worse_msgc, "Sparks fly as you whack the %s.%s",
+                          sobj_at(STATUE, level, rx, ry) ? "statue" : "boulder",
+                          vibrate ? " The axe-handle vibrates violently!" : "");
+                    if (vibrate)
+                        losehp(2, killer_msg(DIED, "axing a hard object"));
+                } else {
+                    pline(bad_msgc, Hallucination ? "Ack!  Way too chewy!" :
+                          msgprintf("The %s seems to resist your efforts.",
+                                    sobj_at(STATUE, level, rx, ry) ?
+                                    "statue" : "boulder"));
+                }
             } else
                 pline(msgc_notarget, "You swing your %s through thin air.",
                       (obj ? aobjnam(obj, NULL) :

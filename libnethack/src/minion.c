@@ -214,8 +214,9 @@ demon_talk(struct monst *mtmp)
     cash = money_cnt(invent);
     /* don't bother with a custom RNG here, too much unpredictability is
        involved */
-    demand = (cash * (rnd(80) + 20 * Athome)) /
-        (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp))));
+    demand = 200 * mtmp->data->difficulty +
+        ((cash * (rnd(80) + 20 * Athome)) /
+         (100 * (1 + (sgn(u.ualign.type) == sgn(mtmp->data->maligntyp)))));
 
     if (!demand) {      /* you have no gold */
         msethostility(mtmp, TRUE, TRUE);
