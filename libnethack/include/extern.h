@@ -113,7 +113,7 @@ extern struct obj *mk_artifact(struct level *lev, struct obj *, aligntyp,
                                enum rng);
 extern const char *artifact_name(const char *, short *);
 extern boolean exist_artifact(int, const char *);
-extern void artifact_exists(struct obj *, const char *, boolean);
+extern void mark_artifact_extant(struct obj *, const char *, boolean);
 extern int nartifact_exist(void);
 extern boolean spec_ability(struct obj *, unsigned long);
 extern boolean confers_luck(struct obj *);

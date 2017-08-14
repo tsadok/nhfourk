@@ -36,11 +36,6 @@
 ▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒   
-▒▒▒ * Look at fba3a19220f and see whether it is relevant to Fourk.
-▒▒▒   
-▒▒▒ * Check on artifact_exists usage and consider renaming it.  See FIQ's
-▒▒▒   explanation in #dnethack, 2017 Aug 08, 20:14 through 20:18.
-▒▒▒   
 ▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
 ▒▒▒   22:00 <             FIQ > what bug
 ▒▒▒   22:01 <         Tangles > In a hardware store, if you drop a sack, you can sell it for 1zm, but retain possession of the

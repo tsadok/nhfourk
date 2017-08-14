@@ -2915,7 +2915,7 @@ typfnd:
                                            (challengemode ? 2 : 1) : 0)),
                      rng_artifact_wish) >
           ((wishtype == 3) ? 2 : 1))) && !wizard) {
-        artifact_exists(otmp, ONAME(otmp), FALSE);
+        mark_artifact_extant(otmp, ONAME(otmp), FALSE);
         obfree(otmp, NULL);
         otmp = &zeroobj;
         pline(msgc_nospoil,
