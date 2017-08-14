@@ -52,9 +52,6 @@
 ▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
 ▒▒▒   the duplicated message that has been reported.
 ▒▒▒
-▒▒▒ * Make doname_base take surcharge possibilities into account when deciding
-▒▒▒   whether an item's price might match another's.
-▒▒▒
 ▒▒▒ * 15:17 < NeroOneTrueKing > idea: potion of see invisible -> potion of sight.
 ▒▒▒                             Same effects, plus cures blindness and if blessed cures hallucination.
 ▒▒▒
@@ -212,6 +209,10 @@
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
 ▒▒▒   of the discussion around 7:40.
+▒▒▒
+▒▒▒ * Let Samurai get expert in polearms, and put a naginata (glaive) in their magic chest.
+▒▒▒
+▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
 ▒▒▒
 ▒▒▒ * Your conscious should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
