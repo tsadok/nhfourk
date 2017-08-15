@@ -1512,20 +1512,29 @@ static const char *plurals_dictionary[][2] = {
     /* Same singular and plural; most of these are Japanese loanwords */
     {"^ya", "ya"},
     {"ai", "ai"},             /* e.g. "samurai" */
+    {"uma", "uma"},
     {"fish", "fish"},
     {"tuna", "tuna"},
     {"deer", "deer"},
+    {"giri", "giri"},
+    {"nori", "nori"},
+    {"sake", "sake"},
     {"yaki", "yaki"},
+    {"ringo", "ringo"},
+    {"kaban", "kaban"},
     {"sheep", "sheep"},
     {"ninja", "ninja"},
     {"ronin", "ronin"},
     {"shito", "shito"},
     {"tengu", "tengu"},
     {"manes", "manes"},
+    {"kimono", "kimono"},
+    {"tamago", "tamago"},
     {"ki-rin", "ki-rin"},
     {"Nazgul", "Nazgul"},
     {"gunyoki", "gunyoki"},
     {"shuriken", "shuriken"},
+    {"kittokatto", "kittokatto"},
 
     /* Irregular endings */
     {"shaman", "shamans"},    /* -man exception */
