@@ -60,9 +60,6 @@
 ▒▒▒ * Make doname_base take surcharge possibilities into account when deciding
 ▒▒▒   whether an item's price might match another's.
 ▒▒▒
-▒▒▒ * 15:17 < NeroOneTrueKing > idea: potion of see invisible -> potion of sight.
-▒▒▒                             Same effects, plus cures blindness and if blessed cures hallucination.
-▒▒▒
 ▒▒▒ * Wiz quest text refers to a chest on wiz home that no longer exists.
 ▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.

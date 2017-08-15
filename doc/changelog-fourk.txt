@@ -61,6 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The potion of see invisible has been replaced with potion of sight.
+   This potion tastes like fruit juice, always cures temporary
+   blindness, cures hallucination if not cursed, provides a few
+   hundred (or if blessed a few thousand) turns of temporary
+   see-invisible and, if blessed, provides 50-200 turns of intrinsic
+   x-ray vision as well.
+
  * Hallucination protects against petrification, on the grounds that
    you are already stoned.  Thanks to raisse for the idea.
 

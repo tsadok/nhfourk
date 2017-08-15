@@ -787,7 +787,7 @@ const struct objclass const_objects[] = {
     POTION("hallucination", "sky blue", 1, HALLUC, 40, 100, CLR_CYAN),
     POTION("invisibility", "brilliant blue", 1, INVIS, 40, 150,
            CLR_BRIGHT_BLUE),
-    POTION("see invisible", "magenta", 1, SEE_INVIS, 42, 50, CLR_MAGENTA),
+    POTION("sight", "magenta", 1, SEE_INVIS, 42, 50, CLR_MAGENTA),
     POTION("healing", "purple-red", 1, 0, 57, 100, CLR_MAGENTA),
     POTION("extra healing", "puce", 1, 0, 47, 100, CLR_RED),
     POTION("gain level", "milky", 1, 0, 20, 300, CLR_WHITE),

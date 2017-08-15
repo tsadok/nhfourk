@@ -620,7 +620,7 @@ peffects(struct obj *otmp)
             aggravate();
         }
         break;
-    case POT_SEE_INVISIBLE:
+    case POT_SIGHT:
         /* tastes like fruit juice in Rogue */
     case POT_FRUIT_JUICE:
         {
@@ -640,15 +640,20 @@ peffects(struct obj *otmp)
                 newuhs(FALSE);
                 break;
             }
-            if (!otmp->cursed) {
-                /* Tell them they can see again immediately, which will help
-                   them identify the potion... */
-                make_blinded(0L, TRUE);
+            /* Tell them they can see again immediately, which will help
+               them identify the potion... */
+            make_blinded(0L, TRUE);
+            if (Hallucination && !otmp->cursed) {
+                pline(msgc_statusheal, "That was way moby!");
+                make_hallucinated(0L, FALSE);
             }
-            if (otmp->blessed)
-                HSee_invisible |= FROMOUTSIDE;
-            else
-                incr_itimeout(&HSee_invisible, rn1(100, 750));
+            if (otmp->blessed) {
+                /* HSee_invisible |= FROMOUTSIDE; */
+                incr_itimeout(&HSee_invisible, rn1(2500, 7500));
+                incr_itimeout(&HXray_vision, rn1(50,150));
+            } else
+                incr_itimeout(&HSee_invisible, rn1(otmp->cursed ? 100 : 500,
+                                                   otmp->cursed ? 400 : 2000));
             set_mimic_blocking();       /* do special mimic handling */
             see_monsters(FALSE);        /* see invisible monsters */
             newsym(u.ux, u.uy);         /* see yourself! */
@@ -1530,7 +1535,7 @@ mixtype(struct obj *o1, struct obj *o2)
         case POT_FULL_HEALING:
             return POT_GAIN_ABILITY;
         case POT_FRUIT_JUICE:
-            return POT_SEE_INVISIBLE;
+            return POT_SIGHT;
         case POT_BOOZE:
             return POT_HALLUCINATION;
         }
@@ -1543,7 +1548,7 @@ mixtype(struct obj *o1, struct obj *o2)
             return POT_BOOZE;
         case POT_GAIN_LEVEL:
         case POT_GAIN_ENERGY:
-            return POT_SEE_INVISIBLE;
+            return POT_SIGHT;
         }
         break;
     case POT_ENLIGHTENMENT:
@@ -1798,7 +1803,7 @@ dodip(const struct nh_cmd_arg *arg)
         makeknown(POT_INVISIBILITY);
         useup(potion);
         return 1;
-    } else if (potion->otyp == POT_SEE_INVISIBLE && obj->oinvis) {
+    } else if (potion->otyp == POT_SIGHT && obj->oinvis) {
         obj->oinvis = FALSE;
         if (!Blind) {
             if (!See_invisible)
@@ -1808,7 +1813,7 @@ dodip(const struct nh_cmd_arg *arg)
                 pline(msgc_actionok, "The haziness around %s disappears.",
                       the(xname(obj)));
         }
-        makeknown(POT_SEE_INVISIBLE);
+        makeknown(POT_SIGHT);
         useup(potion);
         return 1;
     }

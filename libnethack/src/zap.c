@@ -1088,7 +1088,7 @@ cancel_item(struct obj *obj)
             break;
         case POTION_CLASS:
             costly_cancel(obj);
-            if (obj->otyp == POT_SICKNESS || obj->otyp == POT_SEE_INVISIBLE) {
+            if (obj->otyp == POT_SICKNESS || obj->otyp == POT_SIGHT) {
                 /* sickness is "biologically contaminated" fruit juice; cancel
                    it and it just becomes fruit juice... whereas see invisible
                    tastes like "enchanted" fruit juice, it similarly cancels. */

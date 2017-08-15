@@ -95,6 +95,8 @@
 # define Hunger                 u_any_property(HUNGER)
 
 /*** Vision and senses ***/
+# define HXray_vision           u.uintrinsic[XRAY_VISION]
+# define Xray_vision            u_any_property(XRAY_VISION)
 # define HSee_invisible         u.uintrinsic[SEE_INVIS]
 # define See_invisible          u_any_property(SEE_INVIS)
 # define HWarning               u.uintrinsic[WARNING]
@@ -201,7 +203,6 @@
 # define Free_action            u_any_property(FREE_ACTION)
 # define Fixed_abil             u_any_property(FIXED_ABIL)
 # define Lifesaved              u_any_property(LIFESAVED)
-# define Xray_vision            u_any_property(XRAY_VISION)
 
 # define XRAY_RANGE             3
 
