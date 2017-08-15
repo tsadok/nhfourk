@@ -52,11 +52,6 @@
 ▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
 ▒▒▒   the duplicated message that has been reported.
 ▒▒▒
-▒▒▒ * 15:17 < NeroOneTrueKing > idea: potion of see invisible -> potion of sight.
-▒▒▒                             Same effects, plus cures blindness and if blessed cures hallucination.
-▒▒▒
-▒▒▒ * Wiz quest text refers to a chest on wiz home that no longer exists.
-▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
 ▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
