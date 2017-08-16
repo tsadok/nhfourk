@@ -62,16 +62,8 @@
 ▒▒▒
 ▒▒▒ * Adjust the graphical tiles to better differentiate the various levels of dragons.
 ▒▒▒
-▒▒▒ * Consider forking off a cp437 or 8859 tileset, similar to unicode but with
-▒▒▒   no characters from outside that narrow set (see: dragon diacritics).
-▒▒▒
-▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
-▒▒▒   This is bad and not at all what I want.  Fix it.
-▒▒▒
 ▒▒▒ * FIQ says it's possible to bloat yourself so much you get faster.
 ▒▒▒   I've confirmed that this is possible, though it takes enormous amounts of doing.
-▒▒▒
-▒▒▒ * Why do poisoned ya get the wrong plural?  http://i.imgur.com/D5vsbwA.png
 ▒▒▒
 ▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
 ▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
@@ -204,6 +196,9 @@
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
 ▒▒▒   of the discussion around 7:40.
+▒▒▒
+▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
+▒▒▒   This is bad and not at all what I want.  Fix it.
 ▒▒▒
 ▒▒▒ * Let Samurai get expert in polearms, and put a naginata (glaive) in their magic chest.
 ▒▒▒

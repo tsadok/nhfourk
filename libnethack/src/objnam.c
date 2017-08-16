@@ -1488,6 +1488,7 @@ static const char *plurals_dictionary[][2] = {
 
     /* Same singular and plural; most of these are Japanese loanwords */
     {"^ya", "ya"},
+    {"poisoned ya", "poisoned ya"},
     {"ai", "ai"},             /* e.g. "samurai" */
     {"fish", "fish"},
     {"tuna", "tuna"},
