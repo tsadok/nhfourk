@@ -39,6 +39,10 @@
 ▒▒▒                       should be prompting because i have esp and can see other shopkeepers
 ▒▒▒   17:26 < hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
 ▒▒▒
+▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
+▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
+▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
+▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
@@ -115,11 +119,8 @@
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
 ▒▒▒   Which was it, dwarves or coyote?
 ▒▒▒
-▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
-▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
-▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
-▒▒▒
-▒▒▒ * Make the ais-enhanced A command that players can't figure out how to use die in a fire.
+▒▒▒ * Consider letting Gnomes get one level higher in wands than other races of their role
+▒▒▒   up to a limit of expert, to compensate for the armor restrictions.
 ▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
 ▒▒▒
@@ -133,8 +134,6 @@
 ▒▒▒
 ▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
 ▒▒▒   08:43 < Mandevil > Why?
-▒▒▒
-▒▒▒ * Double-check the uninitialized-petname bug.
 ▒▒▒
 ▒▒▒ * 09:36 < Mandevil > jonadab: Also "This lamp has no oil" should autoidentify it as oil lamp.
 ▒▒▒   There's a problem with this:  it might not be an oil lamp that has run out.
@@ -623,6 +622,8 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (can be after save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Make the ais-enhanced A command that players can't figure out how to use die in a fire.
 ▒▒▒
 ▒▒▒ * Hallucination should make umber hulk and medusa gazes ineffective and should
 ▒▒▒   block all touch-of-death (not just Death's).

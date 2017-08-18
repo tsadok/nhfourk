@@ -159,12 +159,18 @@ makedog(struct newgame_options *ngo)
         /* All of these names were for dogs. */
         if (Role_if(PM_CAVEMAN))
             petname = "Slasher";        /* The Warrior */
-        if (Role_if(PM_SAMURAI))
+        else if (Role_if(PM_SAMURAI))
             petname = "Hachi";  /* Shibuya Station */
-        if (Role_if(PM_BARBARIAN))
+        else if (Role_if(PM_BARBARIAN))
             petname = "Idefix"; /* Obelix */
-        if (Role_if(PM_RANGER))
+        else if (Role_if(PM_RANGER))
             petname = "Sirius"; /* Orion's dog */
+        else
+            petname = "Killer";
+    } else if (!*petname && pettype == PM_PONY) {
+        petname = "Fat Ninny"; /* Miles Vorkosigan's horse */
+    } else if (!*petname) {
+        petname = "Tigger"; /* Winnie the Pooh's companion */
     }
 
     /* ideally we'd use rng_charstats_role for this, but... */
