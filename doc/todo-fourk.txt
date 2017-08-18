@@ -29,6 +29,16 @@
 ▒▒▒   2016 May 13th, starting at 8:30am.  Pay special attention to
 ▒▒▒   what we noticed around 9:31.
 ▒▒▒
+▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
+▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
+▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
+▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
+▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
+▒▒▒   Probably related:
+▒▒▒ * 17:26 < hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
+▒▒▒                       should be prompting because i have esp and can see other shopkeepers
+▒▒▒   17:26 < hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
+▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
@@ -65,12 +75,6 @@
 ▒▒▒ * FIQ says it's possible to bloat yourself so much you get faster.
 ▒▒▒   I've confirmed that this is possible, though it takes enormous amounts of doing.
 ▒▒▒
-▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
-▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
-▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
-▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
-▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
-▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
 ▒▒▒     by default, if it doesn't already.
@@ -86,13 +90,6 @@
 ▒▒▒   15:17 <        rumflump > *am* flying
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
-▒▒▒
-▒▒▒ * 17:26 <       hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
-▒▒▒                             should be prompting because i have esp and can see other shopkeepers
-▒▒▒   17:26 <       hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
-▒▒▒
-▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
-▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
 ▒▒▒
 ▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
 ▒▒▒
@@ -117,9 +114,6 @@
 ▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
 ▒▒▒   Which was it, dwarves or coyote?
-▒▒▒
-▒▒▒ * Creektown may be having problems due to being pieced together
-▒▒▒   incorrectly.  Consider reworking it as a single MAP area.
 ▒▒▒
 ▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
 ▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
@@ -199,6 +193,9 @@
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
+▒▒▒
+▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
+▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
 ▒▒▒
 ▒▒▒ * Let Samurai get expert in polearms, and put a naginata (glaive) in their magic chest.
 ▒▒▒
