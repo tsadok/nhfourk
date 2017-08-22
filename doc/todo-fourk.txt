@@ -68,9 +68,6 @@
 ▒▒▒   22:04 <          ais523 > hmm, interesting
 ▒▒▒   22:04 <          ais523 > that might be a vanilla bug
 ▒▒▒
-▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
-▒▒▒   the duplicated message that has been reported.
-▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
 ▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
@@ -168,7 +165,14 @@
 ▒▒▒                      back on though
 ▒▒▒
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
-▒▒▒   19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
+▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
+▒▒▒
+▒▒▒ * 19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
+▒▒▒   This contains two things.  The one Fourk probably wants has to do with bags of holding auto-identifying
+▒▒▒   when used.  Since object weights are shown, that makes sense on the InterHack Principle.
+▒▒▒   The other half has to do with gaining/losing a property (regeneration, as it happens), and since
+▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
+▒▒▒   that part to Fourk, without carefully checking for implications.
 ▒▒▒
 ▒▒▒ * Reconsider unicorn horns.  Why do they heal raven blinding?  Why
 ▒▒▒   do they completely trivialize restore ability?
@@ -773,6 +777,23 @@
 ▒▒▒
 ▒▒▒   Untriaged Stuff:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * 14:11 <     FIQ > jonadab: if you're going to do stuff like achievement tracking
+▒▒▒   14:11 <     FIQ > you could also add stuff like tracking what kind of monsters players have met over time, etc
+▒▒▒   14:11 <     FIQ > and tried out
+▒▒▒   14:12 <     FIQ > and give that info if asked
+▒▒▒   14:13 < jonadab > You mean like "You have encountered an Arch-lich 27 times in 23 games, vanquishing 8 of them"?
+▒▒▒   14:14 <     FIQ > I meant more for taking notes for the player
+▒▒▒   14:14 < jonadab > I don't think I understand.
+▒▒▒   14:14 <     FIQ > if a player has eaten a shrieker corpse
+▒▒▒   14:14 <     FIQ > and it gave poison res
+▒▒▒   14:15 <     FIQ > the game will tell the player this if asked with extended info that they give poison res
+▒▒▒   14:15 <     FIQ > in the future
+▒▒▒   14:15 <     FIQ > stuff like that
+▒▒▒   14:16 <     FIQ > you could then relegate stuff like poison/acid warnings to only show up if the player has seen it do this earlier
+▒▒▒   14:17 <     FIQ > let players explore, let them find stuff out on their own
+▒▒▒   14:17 <     FIQ > but keep track for the player
+▒▒▒   14:18 <     FIQ > you could also do stuff like only letting people polyinit-play into creatures they've already killed at least once
 ▒▒▒
 ▒▒▒ * Consider replacing amulet of ESP with amulet of monster detection
 ▒▒▒

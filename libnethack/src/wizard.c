@@ -771,6 +771,10 @@ nasty(struct monst *mcast)
                 pline(msgc_youdiscover,
                       "Monsters suddenly arrive from nowhere!");
             win_pause_output(P_MESSAGE);    /* --More-- */
+        } else if (count == 1) {
+            pline(msgc_youdiscover,
+                  "A monster suddenly appears from nowhere!");
+            win_pause_output(P_MESSAGE);    /* --More-- */
         }
     }
     return count;
