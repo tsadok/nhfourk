@@ -289,6 +289,18 @@ make_hallucinated(long xtime,   /* nonzero if this is an attempt to turn on
         if (talk)
             pline(xtime ? msgc_statusbad : msgc_statusheal, message, verb);
     }
+    if (changed && !Hallucination && !uarmg && uwep && uwep->otyp == CORPSE &&
+        touch_petrifies(&mons[uwep->corpsenm]) && !Stone_resistance) {
+        pline(msgc_fatal_predone, "You touch the %s corpse and realize %s.",
+              mons[uwep->corpsenm].mname, "that you are still stoned");
+        instapetrify(killer_msg(STONING,
+                                msgprintf("touching %s corpse",
+                                          an(mons[uwep->corpsenm].mname))));
+        /* life-saved: unwield the corpse if we can't handle it */
+        if (!Stone_resistance && !uarmg && !Hallucination)
+            uwepgone();
+    }
+
     return changed;
 }
 
