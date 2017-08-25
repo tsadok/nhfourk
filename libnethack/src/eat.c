@@ -2165,6 +2165,17 @@ morehungry(int num)
 static void
 lesshungry(int num, struct obj *otmp)
 {
+    /* Extreme corner case: prevent the player from increasing nutrition to
+       completely insane levels and potentially triggering wraparound.  I'm
+       not entirely convinced this is actually necessary, as the slowdown
+       due to bloating should make eating for nutrition self-limiting; but
+       just in case, we'll add this check. */
+    while ((u.uhunger >= 2147000000 - num) && (num > 0)) {
+        pline(msgc_debug, "Nutritional value reduced from %d to %d.",
+              num, (num / 2));
+        num = num / 2;
+    }
+
     u.uhunger += num;
 
     /* Have lesshungry() report when you're nearly full so all eating warns

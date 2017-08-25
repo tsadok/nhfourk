@@ -78,9 +78,6 @@
 ▒▒▒
 ▒▒▒ * Adjust the graphical tiles to better differentiate the various levels of dragons.
 ▒▒▒
-▒▒▒ * FIQ says it's possible to bloat yourself so much you get faster.
-▒▒▒   I've confirmed that this is possible, though it takes enormous amounts of doing.
-▒▒▒
 ▒▒▒ * Regarding changing the remaining time on lit objects, see FIQ's e8904cc
 ▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
