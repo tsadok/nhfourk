@@ -230,14 +230,17 @@ attack(struct monst *mtmp, schar dx, schar dy, boolean confirmed)
 
     if (u.bashmsg) {
         u.bashmsg = FALSE;
-        if (uwep)
+        if (uwep) {
             pline(msgc_occstart, "You begin bashing monsters with your %s.",
                   aobjnam(uwep, NULL));
-        else if (!cantwield(youmonst.data))
+            win_pause_output(P_MESSAGE);    /* --More-- */
+        } else if (!cantwield(youmonst.data)) {
             pline(msgc_occstart, "You begin %sing monsters with your %s %s.",
                   Role_if(PM_MONK) ? "strik" : "bash",
                   uarmg ? "gloved" : "bare",      /* Del Lamb */
                   makeplural(body_part(HAND)));
+            win_pause_output(P_MESSAGE);    /* --More-- */
+        }
     }
     exercise(A_STR, TRUE);      /* you're exercising muscles */
     /* andrew@orca: prevent unlimited pick-axe attacks */

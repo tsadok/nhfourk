@@ -48,6 +48,10 @@
 ▒▒▒   be hostile to each other anyway?
 ▒▒▒   Oddly, it looks like the lovemask for orcs is 0.
 ▒▒▒
+▒▒▒ * Regarding changing the remaining time on lit objects, see FIQ's e8904cc.
+▒▒▒   But I'm pretty sure actually _changing_ the timers is more complicated than that,
+▒▒▒   because among other things the timer code relies on their being in order, so then
+▒▒▒   you have to sort the linked list...
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
@@ -78,11 +82,9 @@
 ▒▒▒
 ▒▒▒ * Adjust the graphical tiles to better differentiate the various levels of dragons.
 ▒▒▒
-▒▒▒ * Regarding changing the remaining time on lit objects, see FIQ's e8904cc
-▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
-▒▒▒     by default, if it doesn't already.
+▒▒▒     by default, if it doesn't already.  (Did this part 2017 August 25.)
 ▒▒▒   + Introduce a similar message for when you attack a monster with
 ▒▒▒     a weapon you're not skilled in.  Make the wording stronger if you
 ▒▒▒     are restricted than if merely unskilled.  Make it happen once on
