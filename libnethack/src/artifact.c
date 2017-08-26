@@ -236,7 +236,7 @@ exist_artifact(int otyp, const char *name)
 }
 
 void
-artifact_exists(struct obj *otmp, const char *name, boolean mod)
+mark_artifact_extant(struct obj *otmp, const char *name, boolean mod)
 {
     const struct artifact *a;
 

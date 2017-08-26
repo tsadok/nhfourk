@@ -758,7 +758,7 @@ peffects(struct obj *otmp)
                                killer_msg(DIED, "contaminated tap water"));
                     else
                         losehp(rnd(10) + 5 * ! !(otmp->cursed),
-                               killer_msg(DIED, "contaminated potion"));
+                               killer_msg(DIED, "a contaminated potion"));
                 }
                 exercise(A_CON, FALSE);
             }

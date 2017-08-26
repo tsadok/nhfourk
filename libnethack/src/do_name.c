@@ -440,7 +440,7 @@ oname(struct obj *obj, const char *name)
         obj = realloc_obj(obj, obj->oxlth, obj->oextra, lth, name);
     }
     if (lth)
-        artifact_exists(obj, name, TRUE);
+        mark_artifact_extant(obj, name, TRUE);
     if (obj->oartifact) {
         /* can't dual-wield with artifact as secondary weapon */
         if (obj == uswapwep)

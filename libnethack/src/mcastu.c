@@ -455,31 +455,14 @@ cast_wizard_spell(struct monst *mtmp, int dmg, int spellnum)
             int count;
 
             count = nasty(mtmp);        /* summon something nasty */
+            /* nasty() has produced the "Monsters appear from nowhere" message
+               if that is indeed the case.  No need to duplicate it here. */
             if (mtmp->iswiz && !Deaf)
                 /* The Wizard of Yendor _can_ talk directly into your mind,
                    but in this case he's talking to someone else and you're
                    only overhearing, so you don't hear it if deaf. */
                 verbalize(msgc_levelwarning, "Destroy the thief, my pet%s!",
                           plur(count));
-            else {
-                const char *mappear =
-                    (count == 1) ? "A monster appears" : "Monsters appear";
-
-                /* messages not quite right if plural monsters created but only
-                   a single monster is seen */
-                switch (awareness_reason(mtmp)) {
-                case mar_aware:
-                    pline(msgc_levelwarning, "%s from nowhere!", mappear);
-                    break;
-                case mar_guessing_displaced:
-                    pline(msgc_levelwarning, "%s around your displaced image!",
-                          mappear);
-                    break;
-                default:
-                    pline(msgc_levelwarning, "%s around a spot near you!",
-                          mappear);
-                }
-            }
             dmg = 0;
             break;
         }

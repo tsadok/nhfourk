@@ -2751,7 +2751,8 @@ load_maze(struct level *lev, dlb * fd)
             --x;
             break;
         default:
-            panic("load_maze: bad MAZEWALK direction");
+            panic("load_maze: bad MAZEWALK direction (%d) for walk %d",
+                  dir, nwalk);
         }
 
         if (!IS_DOOR(lev->locations[x][y].typ)) {
@@ -2765,6 +2766,9 @@ load_maze(struct level *lev, dlb * fd)
          * what direction was chosen.
          */
         if (!(x % 2)) {
+            pline(msgc_debug,
+                  "load_maze: adjusting x parity from %d to odd (walk %d)",
+                  x, nwalk);
             if (dir == W_EAST)
                 x++;
             else
@@ -2773,15 +2777,28 @@ load_maze(struct level *lev, dlb * fd)
             /* no need for IS_DOOR check; out of map bounds */
             lev->locations[x][y].typ = ROOM;
             lev->locations[x][y].flags = 0;
+        } else {
+            pline(msgc_debug, "load_maze: x parity is already odd (walk %d)",
+                  nwalk);
         }
 
         if (!(y % 2)) {
+            pline(msgc_debug,
+                  "load_maze: adjusting y parity from %d to odd (walk %d)",
+                  y, nwalk);
             if (dir == W_SOUTH)
                 y++;
             else
                 y--;
+            lev->locations[x][y].typ = ROOM;
+            lev->locations[x][y].flags = 0;
+        } else {
+            pline(msgc_debug, "load_maze: y parity is already odd (walk %d)",
+                  nwalk);
         }
 
+        pline(msgc_debug, "load_maze: walkfrom(lev, %d, %d, %d, %d)",
+              x, y, x_maze_max, y_maze_max);
         walkfrom(lev, x, y, x_maze_max, y_maze_max);
     }
     wallification(lev, 0, 0, COLNO - 1, ROWNO - 1);

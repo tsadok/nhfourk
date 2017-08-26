@@ -779,7 +779,18 @@ doname_base(const struct obj *obj, boolean with_price)
                 if (i == obj->otyp)
                     continue;
                 if (objects[i].oc_cost == objects[obj->otyp].oc_cost &&
-                    /* TODO: take surcharges into account */
+                    /* Take surcharges into account: */
+                    !((obj->o_id % 4) ? (/* obj is not marked up, so the
+                                            player can't distinguish it
+                                            from items that get marked up
+                                            to this one's base price */
+                                         objects[i].oc_cost * 4 / 3 ==
+                                         objects[obj->otyp].oc_cost) :
+                                         /* obj _is_ marked up, so player
+                                            cannot distinguish it from
+                                            items with 4/3 the value */
+                                        (objects[i].oc_cost ==
+                                         objects[obj->otyp].oc_cost * 4 / 3)) &&
                     objects[i].oc_class == objects[obj->otyp].oc_class &&
                     objects[i].oc_weight == objects[obj->otyp].oc_weight)
                     id = FALSE;
@@ -791,7 +802,7 @@ doname_base(const struct obj *obj, boolean with_price)
             /* There's only one 60zm random-appearance scroll, so if it's not
                marked up, you know what it is.  We check whether it's marked
                up or not using the same logic as get_cost (albeit negated). */
-            if ((obj->otyp == SCR_ENCHANT_WEAPON) && (obj->o_id %4))
+            if ((obj->otyp == SCR_ENCHANT_WEAPON) && (obj->o_id % 4))
                 makeknown(obj->otyp);
         }
     }
@@ -1511,6 +1522,7 @@ static const char *plurals_dictionary[][2] = {
 
     /* Same singular and plural; most of these are Japanese loanwords */
     {"^ya", "ya"},
+    {"poisoned ya", "poisoned ya"},
     {"ai", "ai"},             /* e.g. "samurai" */
     {"uma", "uma"},
     {"fish", "fish"},
@@ -2956,7 +2968,7 @@ typfnd:
                                            (challengemode ? 2 : 1) : 0)),
                      rng_artifact_wish) >
           ((wishtype == 3) ? 2 : 1))) && !wizard) {
-        artifact_exists(otmp, ONAME(otmp), FALSE);
+        mark_artifact_extant(otmp, ONAME(otmp), FALSE);
         obfree(otmp, NULL);
         otmp = &zeroobj;
         pline(msgc_nospoil,

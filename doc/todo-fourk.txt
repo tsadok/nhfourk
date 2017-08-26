@@ -29,17 +29,35 @@
 ▒▒▒   2016 May 13th, starting at 8:30am.  Pay special attention to
 ▒▒▒   what we noticed around 9:31.
 ▒▒▒
+▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
+▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
+▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
+▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
+▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
+▒▒▒   Probably related:
+▒▒▒ * 17:26 < hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
+▒▒▒                       should be prompting because i have esp and can see other shopkeepers
+▒▒▒   17:26 < hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
+▒▒▒
+▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
+▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
+▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
+▒▒▒
+▒▒▒ * Orc as a playable race sucks because peaceful orcs spawn in huge groups and get
+▒▒▒   terribly in the way all the time.  Also:  flavor-wise, shouldn't orcs generally
+▒▒▒   be hostile to each other anyway?
+▒▒▒   Oddly, it looks like the lovemask for orcs is 0.
+▒▒▒
+▒▒▒ * Regarding changing the remaining time on lit objects, see FIQ's e8904cc.
+▒▒▒   But I'm pretty sure actually _changing_ the timers is more complicated than that,
+▒▒▒   because among other things the timer code relies on their being in order, so then
+▒▒▒   you have to sort the linked list...
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
-▒▒▒   
-▒▒▒ * Look at fba3a19220f and see whether it is relevant to Fourk.
-▒▒▒   
-▒▒▒ * Check on artifact_exists usage and consider renaming it.  See FIQ's
-▒▒▒   explanation in #dnethack, 2017 Aug 08, 20:14 through 20:18.
 ▒▒▒   
 ▒▒▒ * 22:00 <         Tangles > jonadab: I found a shk bug in fourk (which was probably also inherited from vanilla).
 ▒▒▒   22:00 <             FIQ > what bug
@@ -54,14 +72,6 @@
 ▒▒▒   22:04 <          ais523 > hmm, interesting
 ▒▒▒   22:04 <          ais523 > that might be a vanilla bug
 ▒▒▒
-▒▒▒ * FIQ says the nasty() message in MGC_SUMMON_MON is redundant and results in
-▒▒▒   the duplicated message that has been reported.
-▒▒▒
-▒▒▒ * Make doname_base take surcharge possibilities into account when deciding
-▒▒▒   whether an item's price might match another's.
-▒▒▒
-▒▒▒ * Wiz quest text refers to a chest on wiz home that no longer exists.
-▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
 ▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
@@ -72,28 +82,9 @@
 ▒▒▒
 ▒▒▒ * Adjust the graphical tiles to better differentiate the various levels of dragons.
 ▒▒▒
-▒▒▒ * Consider forking off a cp437 or 8859 tileset, similar to unicode but with
-▒▒▒   no characters from outside that narrow set (see: dragon diacritics).
-▒▒▒
-▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
-▒▒▒   This is bad and not at all what I want.  Fix it.
-▒▒▒
-▒▒▒ * FIQ says it's possible to bloat yourself so much you get faster.
-▒▒▒   I've confirmed that this is possible, though it takes enormous amounts of doing.
-▒▒▒
-▒▒▒ * Why do poisoned ya get the wrong plural?  http://i.imgur.com/D5vsbwA.png
-▒▒▒
-▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
-▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
-▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
-▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
-▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
-▒▒▒
-▒▒▒ * Convert the Wizard's Tower zoo into a dragon hall.
-▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
-▒▒▒     by default, if it doesn't already.
+▒▒▒     by default, if it doesn't already.  (Did this part 2017 August 25.)
 ▒▒▒   + Introduce a similar message for when you attack a monster with
 ▒▒▒     a weapon you're not skilled in.  Make the wording stronger if you
 ▒▒▒     are restricted than if merely unskilled.  Make it happen once on
@@ -106,13 +97,6 @@
 ▒▒▒   15:17 <        rumflump > *am* flying
 ▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
-▒▒▒
-▒▒▒ * 17:26 <       hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
-▒▒▒                             should be prompting because i have esp and can see other shopkeepers
-▒▒▒   17:26 <       hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
-▒▒▒
-▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
-▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
 ▒▒▒
 ▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
 ▒▒▒
@@ -138,14 +122,8 @@
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
 ▒▒▒   Which was it, dwarves or coyote?
 ▒▒▒
-▒▒▒ * Creektown may be having problems due to being pieced together
-▒▒▒   incorrectly.  Consider reworking it as a single MAP area.
-▒▒▒
-▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
-▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
-▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
-▒▒▒
-▒▒▒ * Make the ais-enhanced A command that players can't figure out how to use die in a fire.
+▒▒▒ * Consider letting Gnomes get one level higher in wands than other races of their role
+▒▒▒   up to a limit of expert, to compensate for the armor restrictions.
 ▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
 ▒▒▒
@@ -160,12 +138,6 @@
 ▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
 ▒▒▒   08:43 < Mandevil > Why?
 ▒▒▒
-▒▒▒ * Double-check the uninitialized-petname bug.
-▒▒▒
-▒▒▒ * 09:36 < Mandevil > jonadab: Also "This lamp has no oil" should autoidentify it as oil lamp.
-▒▒▒   There's a problem with this:  it might not be an oil lamp that has run out.
-▒▒▒   It could also be a wished-for magic lamp.
-▒▒▒
 ▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
 ▒▒▒                             there is no "The succubus hits you message at all? I just got
 ▒▒▒                             "You die..." out of the blue.
@@ -173,20 +145,15 @@
 ▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
 ▒▒▒   seems to be a good way to find bugs.
 ▒▒▒
-▒▒▒ * Orc as a playable race sucks because peaceful orcs spawn in huge groups and get
-▒▒▒   terribly in the way all the time.  Also:  flavor-wise, shouldn't orcs generally
-▒▒▒   be hostile to each other anyway?
-▒▒▒   Oddly, it looks like the lovemask for orcs is 0.
-▒▒▒
 ▒▒▒ * https://www.hardfought.org/userdata/M/Mandevil/nhfourk/dumps/2017-06-27%2014:28:35,%20Mandevil-Bar-Orc-Fem-Cha,%20died.txt
 ▒▒▒   10:34 < Mandevil > jonadab: Note how the scrolls [in the bag of holding]
 ▒▒▒                      are listed with appearance, not what they actually are.
 ▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
 ▒▒▒
-▒▒▒ * 12:39 < AmyBSOD\dislex > jonadab: ungrammatical death message in nethack fourk: "killed by contaminated potion"
-▒▒▒
 ▒▒▒ * 19:43 < noty > jonadab: another bug exposed by the scumming: on the castle with the benches
 ▒▒▒                  you can drop into the upper left corner and get trapped in the wall
+▒▒▒
+▒▒▒ * 23:38 < FIQ > jonadab: shouldn't earth E be always-peaceful to gnomes?
 ▒▒▒
 ▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
 ▒▒▒                      wear due to size restri- well, FIQ's faster on the draw
@@ -199,10 +166,14 @@
 ▒▒▒                      back on though
 ▒▒▒
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
-▒▒▒   19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
+▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
-▒▒▒ * The lostalign conduct may have a bug: do_wear.c changes u.ualign.record,
-▒▒▒   setting it to -1, for helm of opposite alignment, without breaking the conduct.
+▒▒▒ * 19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
+▒▒▒   This contains two things.  The one Fourk probably wants has to do with bags of holding auto-identifying
+▒▒▒   when used.  Since object weights are shown, that makes sense on the InterHack Principle.
+▒▒▒   The other half has to do with gaining/losing a property (regeneration, as it happens), and since
+▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
+▒▒▒   that part to Fourk, without carefully checking for implications.
 ▒▒▒
 ▒▒▒ * Reconsider unicorn horns.  Why do they heal raven blinding?  Why
 ▒▒▒   do they completely trivialize restore ability?
@@ -216,6 +187,16 @@
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
 ▒▒▒   of the discussion around 7:40.
+▒▒▒
+▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
+▒▒▒   This is bad and not at all what I want.  Fix it.
+▒▒▒
+▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
+▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
+▒▒▒
+▒▒▒ * Let Samurai get expert in polearms, and put a naginata (glaive) in their magic chest.
+▒▒▒
+▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
 ▒▒▒
 ▒▒▒ * Your conscious should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
@@ -643,6 +624,8 @@
 ▒▒▒   4.3.0.5 (can be after save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * Make the ais-enhanced A command that players can't figure out how to use die in a fire.
+▒▒▒
 ▒▒▒ * Hallucination should make umber hulk and medusa gazes ineffective and should
 ▒▒▒   block all touch-of-death (not just Death's).
 ▒▒▒
@@ -798,6 +781,23 @@
 ▒▒▒
 ▒▒▒   Untriaged Stuff:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * 14:11 <     FIQ > jonadab: if you're going to do stuff like achievement tracking
+▒▒▒   14:11 <     FIQ > you could also add stuff like tracking what kind of monsters players have met over time, etc
+▒▒▒   14:11 <     FIQ > and tried out
+▒▒▒   14:12 <     FIQ > and give that info if asked
+▒▒▒   14:13 < jonadab > You mean like "You have encountered an Arch-lich 27 times in 23 games, vanquishing 8 of them"?
+▒▒▒   14:14 <     FIQ > I meant more for taking notes for the player
+▒▒▒   14:14 < jonadab > I don't think I understand.
+▒▒▒   14:14 <     FIQ > if a player has eaten a shrieker corpse
+▒▒▒   14:14 <     FIQ > and it gave poison res
+▒▒▒   14:15 <     FIQ > the game will tell the player this if asked with extended info that they give poison res
+▒▒▒   14:15 <     FIQ > in the future
+▒▒▒   14:15 <     FIQ > stuff like that
+▒▒▒   14:16 <     FIQ > you could then relegate stuff like poison/acid warnings to only show up if the player has seen it do this earlier
+▒▒▒   14:17 <     FIQ > let players explore, let them find stuff out on their own
+▒▒▒   14:17 <     FIQ > but keep track for the player
+▒▒▒   14:18 <     FIQ > you could also do stuff like only letting people polyinit-play into creatures they've already killed at least once
 ▒▒▒
 ▒▒▒ * Consider replacing amulet of ESP with amulet of monster detection
 ▒▒▒

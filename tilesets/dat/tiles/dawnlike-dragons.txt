@@ -37,7 +37,7 @@ N = (109, 170, 44)
 O = (211, 170, 154)
 P = (52, 101, 36)
 Q = (134, 150, 162)
-# tile 134 (baby gray dragon)
+# tile 134 (young gray dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAABCCAAAAA
@@ -56,7 +56,7 @@ Q = (134, 150, 162)
   AFFHCHCCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 135 (baby silver dragon)
+# tile 135 (young silver dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAABCCAAAAA
@@ -75,7 +75,7 @@ Q = (134, 150, 162)
   AFFHCHCCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 136 (baby shimmering dragon)
+# tile 136 (young shimmering dragon)
 {
   AAMAAIIHHHIIAMAA
   MAAAINNPBCCNIAMA
@@ -94,7 +94,7 @@ Q = (134, 150, 162)
   MFFHCHCCCCCCNNNI
   AAAAAAAAAAAAAAAA
 }
-# tile 137 (baby red dragon)
+# tile 137 (young red dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAABCCAAAAA
@@ -113,7 +113,7 @@ Q = (134, 150, 162)
   AFFHCHCCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 138 (baby white dragon)
+# tile 138 (young white dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAAFLLAAAAA
@@ -132,7 +132,7 @@ Q = (134, 150, 162)
   AFFILILLLLLLFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 139 (baby orange dragon)
+# tile 139 (young orange dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAABCCAAAAA
@@ -151,7 +151,7 @@ Q = (134, 150, 162)
   AFFHCHCCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 140 (baby black dragon)
+# tile 140 (young black dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAACCCAAAAA
@@ -170,7 +170,7 @@ Q = (134, 150, 162)
   AFFECECCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 141 (baby blue dragon)
+# tile 141 (young blue dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAACCCAAAAA
@@ -189,7 +189,7 @@ Q = (134, 150, 162)
   AFFHCHCCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 142 (baby green dragon)
+# tile 142 (young green dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAABCCAAAAA
@@ -208,7 +208,7 @@ Q = (134, 150, 162)
   AFFHCHCCCCCCFAFA
   AAAAAAAAAAAAAAAA
 }
-# tile 143 (baby yellow dragon)
+# tile 143 (young yellow dragon)
 {
   AAAAAAAAAAAAAAAA
   AAAAAAAABCCAAAAA

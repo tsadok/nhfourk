@@ -22,9 +22,18 @@ static const char *const random_mesg[] = {
     "Kilroy was here",
     "A.S. ->", "<- A.S.",       /* Journey to the Center of the Earth */
     "You won't get it up the steps",    /* Adventure */
+    "Plugh", "Fee fie foe foo [sic]",    /* ditto */
+    "You are in a maze of twisty little passages, all alike.", /* ditto */
+    "You have died of dysentery.", /* Oregon Trail */
+    "The cake is a lie.", /* Portal */
+    "We all make choices, but in the end our choices make us.", /* Bioshock */
     "Lasciate ogni speranza o voi ch'entrate.", /* Inferno */
     "Well Come",        /* Prisoner */
     "We juggle priceless eggs in variable gravity.", /* Gateway */
+    "They therefore went up here with much agility and speed",
+       /* Borders of Infinity (and originally from Pilgrim's Progress) */
+    "We are the dead.", /* 1984 */
+    "To sleep, perchance to dream, aye, there's the rub.", /* Hamlet */
     "We apologize for the inconvenience.",      /* So Long... */
     "See you next Wednesday",   /* Thriller */
     "notary sojak",     /* Smokey Stover */
@@ -36,8 +45,10 @@ static const char *const random_mesg[] = {
     "As if!",   /* Clueless */
     "Klaatu barada nikto!", /* The Day the Earth Stood Still */
     "When the goat turns red strikes true.", /* Order of the Stick */
-    "It is a far, far better thing I do than I have ever done.", /* A Tale of Two Cities */
-    "In the dungeon, all adventurers are equal; but some are more equal than others.", /* Animal Farm (sort of) */
+    "It is a far, far better thing I do than I have ever done.",
+       /* A Tale of Two Cities */
+    "All dungeon adventurers are equal; but some are more equal than others.",
+       /* Animal Farm */
 };
 
 const char *

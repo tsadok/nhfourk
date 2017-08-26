@@ -1,7 +1,6 @@
 0 0
-Unicode
+Legacy/CP437
 ascii_overrides.txt
 cp437_overrides.txt
-unicode_overrides.txt
 dungeoncolors.txt
 rogue_overrides.txt

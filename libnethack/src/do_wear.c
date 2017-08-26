@@ -374,6 +374,8 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
                 A_CHAOTIC : A_LAWFUL;
         else
             u.ualign.type = -(u.ualign.type);
+        if (u.ualign.record > -1)
+            break_conduct(conduct_lostalign);
         u.ualign.record = -1;   /* consistent with altar conversion */
         u.ublessed = 0; /* lose the appropriate god's protection */
         /* Run makeknown() only after printing messages */

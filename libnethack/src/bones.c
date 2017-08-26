@@ -100,7 +100,7 @@ resetobjs(struct obj *ochain, boolean restore)
             otmp->oartifact = 0;
             otmp->onamelth = 0;
         } else if (otmp->oartifact && restore)
-            artifact_exists(otmp, ONAME(otmp), TRUE);
+            mark_artifact_extant(otmp, ONAME(otmp), TRUE);
         if (!restore) {
             /* do not zero out o_ids for ghost levels anymore */
 
