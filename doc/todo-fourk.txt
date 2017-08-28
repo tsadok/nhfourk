@@ -188,6 +188,9 @@
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
 ▒▒▒   of the discussion around 7:40.
 ▒▒▒
+▒▒▒ * Double check that orchain_int() doesn't need a NULL last
+▒▒▒   argument.
+▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
 ▒▒▒

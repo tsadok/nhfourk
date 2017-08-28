@@ -493,12 +493,6 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         itemfour  = WAN_FIRE;
         break;
     }
-    itemfour = itemone;
-    for (i = RIN_ADORNMENT; i <= RIN_PROTECTION_FROM_SHAPE_CHANGERS; i++) {
-        const char *s;
-        if ((s = OBJ_DESCR(objects[i])) != 0 && !strcmp(s, ifourdesc))
-            itemfour = i;
-    }
     i = 0;
     /* Add all the viable floor positions in the room to a list: */
     for (px = sroom->lx; px <= sroom->hx; px++) {
@@ -541,7 +535,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
             break;
         }
         /* dragons hoard things they like */
-        switch(rn2_on_rng(17, rng)) {
+        switch(rn2_on_rng(19, rng)) {
         case 1:
             mksobj_at(itemfour, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
             break;
@@ -560,12 +554,8 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         case 10:
             mksobj_at(itemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
             break;
-        case 6:
-        case 7:
-        case 8:
-            mksobj_at(itemfour, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
-            break;
-        case 9:
+        case 11:
+        case 12:
             mkobj_at(RING_CLASS, lev, pos[i].x, pos[i].y, FALSE, rng);
             break;
         default:
