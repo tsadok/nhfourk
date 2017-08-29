@@ -156,26 +156,26 @@ vampire bat
 plains centaur
 forest centaur
 mountain centaur
-baby gray dragon;young gray dragon
-baby silver dragon;young silver dragon
-baby shimmering dragon;young shimmering dragon
-baby red dragon;young red dragon
-baby white dragon;young white dragon
-baby orange dragon;young orange dragon
-baby black dragon;young black dragon
-baby blue dragon;young blue dragon
-baby green dragon;young green dragon
-baby yellow dragon;young yellow dragon
-gray dragon;elder gray dragon;ancient gray dragon
-silver dragon;elder silver dragon;ancient silver dragon
-shimmering dragon;elder shimmering dragon;ancient shimmering dragon
-red dragon;elder red dragon;ancient red dragon
-white dragon;elder white dragon;ancient white dragon
-orange dragon;elder orange dragon;ancient orange dragon
-black dragon;elder black dragon;ancient black dragon
-blue dragon;elder blue dragon;ancient blue dragon
-green dragon;elder green dragon;ancient green dragon
-yellow dragon;elder yellow dragon;ancient yellow dragon
+baby gray dragon
+baby silver dragon
+baby shimmering dragon
+baby red dragon
+baby white dragon
+baby orange dragon
+baby black dragon
+baby blue dragon
+baby green dragon
+baby yellow dragon
+elder gray dragon
+elder silver dragon
+elder shimmering dragon
+elder red dragon
+elder white dragon
+elder orange dragon
+elder black dragon
+elder blue dragon
+elder green dragon
+elder yellow dragon
 stalker
 air elemental
 fire elemental
@@ -1134,3 +1134,35 @@ gas cloud
 
 ! This one's just an aid for the tiles artist:
 tile size measuring spacer
+
+! More Fourk additions:
+young gray dragon
+young silver dragon
+young shimmering dragon
+young red dragon
+young white dragon
+young orange dragon
+young black dragon
+young blue dragon
+young green dragon
+young yellow dragon
+gray dragon
+silver dragon
+shimmering dragon
+red dragon
+white dragon
+orange dragon
+black dragon
+blue dragon
+green dragon
+yellow dragon
+ancient gray dragon
+ancient silver dragon
+ancient shimmering dragon
+ancient red dragon
+ancient white dragon
+ancient orange dragon
+ancient black dragon
+ancient blue dragon
+ancient green dragon
+ancient yellow dragon

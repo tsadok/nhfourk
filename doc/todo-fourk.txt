@@ -67,7 +67,7 @@
 ▒▒▒ * Check whether the monster-carrying-egg crash is Fourk-specific, maybe
 ▒▒▒   cherry-pick the workaround to 4.3-maint.
 ▒▒▒
-▒▒▒ * Adjust the graphical tiles to better differentiate the various levels of dragons.
+▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
 ▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
