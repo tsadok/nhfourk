@@ -30,9 +30,9 @@
 #  include <sys/select.h>
 #  include <sys/time.h>
 # else
-#  include <Winsock2.h>
-#  include <Ws2def.h>
-#  include <Ws2tcpip.h>
+#  include <winsock2.h>
+#  include <ws2def.h>
+#  include <ws2tcpip.h>
 
 #  define snprintf(buf, len, fmt, ...) \
     _snprintf_s(buf, len, len-1, fmt, __VA_ARGS__)
