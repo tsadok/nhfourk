@@ -1,0 +1,456 @@
+# NetHack 3.6	Makefile.gcc
+#
+#==============================================================================
+#
+#   Win32 Compilers Tested:
+#                  === TDM-GCC Compiler Suite for Windows ===
+#                  ---        GCC 4.6 & 4.7 Series        ---
+#                  ***   Standard MinGW 32-bit Edition    ***
+#
+#   If you don't have this compiler, you can get it at:
+#		http://tdm-gcc.tdragon.net/
+#
+#==============================================================================
+#   This is used for building two versions of NetHack:
+#
+#   A tty port utilizing the Win32 Console I/O subsystem, Console
+#       NetHack.
+#
+#   A Win32 native port built on the Windows API, Graphical NetHack or
+#       NetHackW.
+#
+#   In addition to your C compiler,
+#
+#     if you want to change     you will need a
+#     files with suffix         workalike for
+#         .y                     yacc   (such as bison)
+#         .l                     lex    (such as flex)
+#
+#   If you have any questions read the sys/winnt/Install.nt file included
+#   with the distribution.
+#==============================================================================
+# BUILD DECISIONS SECTION
+#
+# There are currently only 3 decisions that you have to make.
+#	1. Where do you want your build to end up?
+#	2. Do you want debug information in the executable?
+#
+#==============================================================================
+#
+#---------------------------------------------------------------
+# 1. Where do you want the game to be built (which folder)?
+#    If not present prior to compilation it gets created.
+#
+
+GAMEDIR = ../binary
+
+#
+#---------------------------------------------------------------
+# 3. Do you want debug information in the executable?
+#
+
+DEBUGINFO = Y
+
+# This marks the end of the BUILD DECISIONS section.
+#==============================================================================
+#
+#===============================================
+#======= End of Modification Section ===========
+#===============================================
+#
+################################################
+#                                              #
+# Nothing below here should have to be changed.#
+#                                              #
+################################################
+
+VERSION = MinGW
+
+#
+#  Source directories.    Makedefs hardcodes these, don't change them.
+#
+
+# Build files
+BUILD_ROOT = ../../..
+BUILD_INCL = $(BUILD_ROOT)/scripts/build/mingw
+BUILD_SRC = $(BUILD_ROOT)/scripts/build/mingw
+
+# NetHack files
+NH_ROOT = $(BUILD_ROOT)/nethack
+NH_INCL = $(BUILD_ROOT)/nethack/include
+NH_SRC  = $(BUILD_ROOT)/nethack/src
+NH_RC   = $(BUILD_ROOT)/nethack/rc
+
+# NetHack Library files
+LIB_NH_ROOT = $(BUILD_ROOT)/libnethack
+LIB_NH_INCL = $(LIB_NH_ROOT)/include
+LIB_NH_SRC  = $(LIB_NH_ROOT)/src
+LIB_NH_DAT  = $(LIB_NH_ROOT)/dat
+LIB_NH_UTIL = $(LIB_NH_ROOT)/util
+# NetHack Library artifacts
+LIB_NH_DLL_FILE = $(LIB_NH_ROOT)/libnethack.dll
+LIB_NH_LIB_FILE = $(LIB_NH_ROOT)/libnethack.a
+
+# NetHack Client Library files
+LIB_CLIENT_ROOT = $(BUILD_ROOT)/libnethack_client
+LIB_CLIENT_INCL = $(LIB_CLIENT_ROOT)/include
+LIB_CLIENT_SRC  = $(LIB_CLIENT_ROOT)/src
+# NetHack Client Library artifacts
+LIB_CLIENT_DLL_FILE = $(LIB_CLIENT_ROOT)/libnethack_client.dll
+LIB_CLIENT_LIB_FILE = $(LIB_CLIENT_ROOT)/libnethack_client.a
+
+# NetHack Common Library files
+LIB_COMMON_ROOT = $(BUILD_ROOT)/libnethack_common
+LIB_COMMON_INCL = $(LIB_COMMON_ROOT)/include
+LIB_COMMON_SRC  = $(LIB_COMMON_ROOT)/src
+LIB_COMMON_DAT  = $(LIB_COMMON_ROOT)/dat
+
+# Jansson Library files
+LIB_JANSSON_ROOT = $(BUILD_ROOT)/libjansson
+LIB_JANSSON_INCL = $(LIB_JANSSON_ROOT)
+LIB_JANSSON_SRC  = $(LIB_JANSSON_ROOT)
+# Jansson Library artifacts
+LIB_JANSSON_DLL_FILE = $(LIB_JANSSON_SRC)/libjansson.dll
+LIB_JANSSON_LIB_FILE = $(LIB_JANSSON_SRC)/libjansson.a
+
+# Uncursed Library files
+LIB_UNCURSED_ROOT = $(BUILD_ROOT)/libuncursed
+LIB_UNCURSED_INCL = $(LIB_UNCURSED_ROOT)/include
+LIB_UNCURSED_SRC  = $(LIB_UNCURSED_ROOT)/src
+LIB_UNCURSED_DOC  = $(LIB_UNCURSED_ROOT)/doc
+# Uncursed Library artifacts
+LIB_UNCURSED_DLL_FILE = $(LIB_UNCURSED_ROOT)/libuncursed.dll
+LIB_UNCURSED_LIB_FILE = $(LIB_UNCURSED_ROOT)/libuncursed.a
+LIB_UNCURSED_SDL_DLL_FILE = $(LIB_UNCURSED_ROOT)/libuncursed_sdl.dll
+LIB_UNCURSED_SDL_LIB_FILE = $(LIB_UNCURSED_ROOT)/libuncursed_sdl.a
+
+# Tileset Compiler files
+TILESETS_ROOT = $(BUILD_ROOT)/tilesets
+TILESETS_INCL = $(TILESETS_ROOT)/include
+TILESETS_SRC  = $(TILESETS_ROOT)/src
+TILESETS_DAT  = $(TILESETS_ROOT)/dat
+TILESETS_UTIL = $(TILESETS_ROOT)/util
+
+#
+#==========================================
+# Source Compiler Info
+#==========================================
+
+OBJ   = o
+OBJXX = obj
+
+CC = i686-w64-mingw32-gcc
+RC = i686-w64-mingw32-windres
+LD = i686-w64-mingw32-gcc
+
+CFLAGS = --std=gnu99
+
+ifeq  "$(DEBUGINFO)" "Y"
+CFLAGS += -Og -g
+else
+CFLAGS += -O2
+endif
+
+override CFLAGS += -DNETCLIENT -D_REENTRANT -DAIMAKE_NORETURN=_Noreturn -fPIC -fno-common -fvisibility=hidden
+override CFLAGS += -fdiagnostics-show-option -Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -Wno-sign-compare -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith
+override LDFLAGS += -fPIC
+
+#
+#==========================================
+# Level Compiler Info
+#==========================================
+
+YACC = bison -y
+LEX  = flex -w
+
+#
+#==========================================
+# Builds
+#==========================================
+all: $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_SDL_DLL_FILE)
+
+clean:
+	rm -f $(BUILD_SRC)/*.o
+	rm -f $(LIB_JANSSON_SRC)/*.o
+	rm -f $(LIB_JANSSON_DLL_FILE) $(LIB_JANSSON_LIB_FILE)
+	rm -f $(LIB_UNCURSED_SRC)/*.o
+	rm -f $(LIB_UNCURSED_SRC)/plugins/*.o
+	rm -f $(LIB_UNCURSED_SRC)/plugins/*.obj
+	rm -f $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_LIB_FILE) $(LIB_UNCURSED_SDL_DLL_FILE) $(LIB_UNCURSED_SDL_LIB_FILE)
+	rm -f $(LIB_NH_INCL)/artinames.h
+	rm -f $(LIB_NH_ROOT)/*.exe
+	rm -f $(LIB_NH_SRC)/*.o
+	rm -f $(LIB_NH_UTIL)/*.o
+	rm -f $(LIB_NH_UTIL)/*.l.c
+	rm -f $(LIB_NH_UTIL)/*.y.c
+	rm -f $(patsubst %.y,%.h,$(wildcard $(LIB_NH_UTIL)/*.y))
+	rm -f $(LIB_COMMON_SRC)/*.o
+	rm -f $(LIB_NH_DAT)/data $(LIB_NH_DAT)/dungeon.pdf $(LIB_NH_DAT)/oracles $(LIB_NH_DAT)/quest.dat $(LIB_NH_DAT)/rumors
+	rm -f $(LIB_NH_INCL)/date.h $(LIB_NH_INCL)/onames.h $(LIB_NH_INCL)/verinfo.h $(LIB_NH_INCL)/pm.h $(LIB_NH_SRC)/readonly.c
+	rm -f $(LIB_NH_DAT)/*.lev
+	rm -f $(LIB_NH_DAT)/nhdat
+	rm -f $(LIB_NH_DLL_FILE) $(LIB_NH_LIB_FILE)
+	rm -f $(LIB_CLIENT_SRC)/*.o
+	rm -f $(LIB_CLIENT_DLL_FILE) $(LIB_CLIENT_LIB_FILE)
+	rm -f $(TILESETS_SRC)/*.o
+	rm -f $(TILESETS_UTIL)/*.o
+	rm -f $(TILESETS_ROOT)/*.exe
+	rm -f $(TILESETS_DAT)/text/base.txt
+	rm -f $(TILESETS_DAT)/fonts/*.png
+	rm -f $(TILESETS_DAT)/palettes/dawnlike.txt
+	rm -f $(TILESETS_DAT)/*.nh4ct
+	rm -f $(NH_SRC)/*.o
+	rm -f $(NH_ROOT)/*.exe
+
+#
+#==========================================
+# Generate artifacts names
+#==========================================
+
+#
+#==========================================
+# Build Jansson Library
+#==========================================
+libjansson: $(LIB_JANSSON_DLL_FILE)
+	@:
+
+$(LIB_JANSSON_SRC)/%.o: $(LIB_JANSSON_SRC)/%.c
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_JANSSON_INCL) -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_JANSSON_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_JANSSON_SRC)/*.c))
+	$(CC) -shared $(LDFLAGS) -o $@ $^ -Wl,--out-implib,$(LIB_JANSSON_LIB_FILE)
+
+#
+#==========================================
+# Build Uncursed Library
+#==========================================
+libuncursed: $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_SDL_DLL_FILE)
+	@:
+
+$(LIB_UNCURSED_SRC)/%.o: $(LIB_UNCURSED_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_UNCURSED_SRC)/plugins/sdl.o: $(LIB_UNCURSED_SRC)/plugins/sdl.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DUNCURSED_MAIN_PROGRAM -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+
+$(LIB_UNCURSED_SRC)/plugins/sdl.obj: $(LIB_UNCURSED_SRC)/plugins/sdl.cxx
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DUNCURSED_MAIN_PROGRAM -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_UNCURSED_SRC)/plugins/wincon.o: $(LIB_UNCURSED_SRC)/plugins/wincon.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_UNCURSED_SRC)/plugins/wincon.obj: $(LIB_UNCURSED_SRC)/plugins/wincon.cxx
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_UNCURSED_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsubst %.c,%.o,$(wildcard $(LIB_UNCURSED_SRC)/*.c))) $(LIB_UNCURSED_SRC)/plugins/wincon.o $(LIB_UNCURSED_SRC)/plugins/wincon.obj
+	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_UNCURSED_LIB_FILE)
+
+$(LIB_UNCURSED_SDL_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsubst %.c,%.o,$(wildcard $(LIB_UNCURSED_SRC)/*.c))) $(LIB_UNCURSED_SRC)/plugins/wincon.o $(LIB_UNCURSED_SRC)/plugins/wincon.obj $(LIB_UNCURSED_SRC)/plugins/sdl.o $(LIB_UNCURSED_SRC)/plugins/sdl.obj
+	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_UNCURSED_SDL_LIB_FILE) -Wl,-Bstatic -lpng -lz -Wl,-Bdynamic -lSDL2 -lws2_32
+
+#
+#==========================================
+# Build NetHack Library
+#==========================================
+libnethack: artinames defs libjansson $(LIB_NH_DLL_FILE) $(LIB_CLIENT_DLL_FILE)
+	@:
+
+$(LIB_COMMON_SRC)/%.o: $(LIB_COMMON_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_NH_SRC)/%.o: $(LIB_NH_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_CLIENT_SRC)/%.o: $(LIB_CLIENT_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_JANSSON_INCL) -I $(LIB_CLIENT_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_NH_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(LIB_NH_SRC)/readonly.o
+	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_NH_LIB_FILE) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32
+
+$(LIB_CLIENT_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_CLIENT_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c))
+	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_CLIENT_LIB_FILE) -L $(LIB_JANSSON_ROOT) -L $(LIB_NH_ROOT) -lws2_32 -ljansson -lnethack
+
+#
+#==========================================
+# Build resources
+#==========================================
+resources: defs $(LIB_NH_DAT)/data $(LIB_NH_DAT)/dungeon.pdf $(LIB_NH_DAT)/oracles $(LIB_NH_DAT)/quest.dat $(LIB_NH_DAT)/rumors
+	@:
+
+$(LIB_NH_DAT)/data: $(LIB_NH_DAT)/data.base
+	$(LIB_NH_ROOT)/makedefs.exe -d $< $@
+
+$(LIB_NH_DAT)/dungeon.pdf: $(LIB_NH_DAT)/dungeon.def
+	$(LIB_NH_ROOT)/makedefs.exe -e $< $@
+
+$(LIB_NH_DAT)/oracles: $(LIB_NH_DAT)/oracles.txt
+	$(LIB_NH_ROOT)/makedefs.exe -h $< $@
+
+$(LIB_NH_DAT)/quest.dat: $(LIB_NH_DAT)/quest.txt
+	$(LIB_NH_ROOT)/makedefs.exe -q $< $@
+
+$(LIB_NH_DAT)/rumors: $(LIB_NH_DAT)/rumors.tru $(LIB_NH_DAT)/rumors.fal
+	$(LIB_NH_ROOT)/makedefs.exe -r $^ $@
+
+#
+#==========================================
+# Build definition files
+#==========================================
+defs: artinames $(LIB_NH_ROOT)/makedefs.exe $(LIB_NH_INCL)/date.h $(LIB_NH_INCL)/onames.h $(LIB_NH_INCL)/verinfo.h $(LIB_NH_INCL)/pm.h $(LIB_NH_SRC)/readonly.o
+	@:
+
+artinames: $(LIB_NH_INCL)/artinames.h
+
+$(LIB_NH_ROOT)/makedefs.exe: $(LIB_NH_UTIL)/makedefs.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+
+$(LIB_NH_INCL)/artinames.h: $(LIB_NH_INCL)/artilist.h
+	$(CC) -DARTINAMES_H -E -DNETCLIENT -D_REENTRANT -o $@ -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_NH_INCL)/date.h: $(LIB_NH_ROOT)/makedefs.exe
+	$(LIB_NH_ROOT)/makedefs.exe -v $@ $(VERSION) 
+
+$(LIB_NH_INCL)/onames.h: $(LIB_NH_ROOT)/makedefs.exe
+	$(LIB_NH_ROOT)/makedefs.exe -o $@
+
+$(LIB_NH_INCL)/verinfo.h: $(LIB_NH_ROOT)/makedefs.exe
+	$(LIB_NH_ROOT)/makedefs.exe -w $@
+
+$(LIB_NH_INCL)/pm.h: $(LIB_NH_ROOT)/makedefs.exe
+	$(LIB_NH_ROOT)/makedefs.exe -p $@
+
+$(LIB_NH_SRC)/readonly.c: $(LIB_NH_ROOT)/makedefs.exe
+	$(LIB_NH_ROOT)/makedefs.exe -m $@
+
+$(LIB_NH_SRC)/readonly.o: $(LIB_NH_SRC)/readonly.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+#
+#==========================================
+# Build utilities
+#==========================================
+utils: artinames defs $(LIB_NH_ROOT)/lev_main.exe $(LIB_NH_ROOT)/dgn_main.exe $(LIB_NH_ROOT)/dlb_main.exe
+	@:
+
+$(LIB_NH_UTIL)/%.y.c: $(LIB_NH_UTIL)/%.y
+	$(YACC) -o $@ --defines=$(patsubst %.y,%.h,$<) $<
+
+$(LIB_NH_UTIL)/%.l.c: $(LIB_NH_UTIL)/%.l
+	$(LEX) -o $@ $<
+
+$(LIB_NH_UTIL)/%.y.o: $(LIB_NH_UTIL)/%.y.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_NH_UTIL)/%.l.o: $(LIB_NH_UTIL)/%.l.c $(LIB_NH_UTIL)/%.y.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_NH_UTIL)/%.o: $(LIB_NH_UTIL)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(LIB_NH_ROOT)/lev_main.exe: $(LIB_NH_UTIL)/lev_main.o $(LIB_NH_UTIL)/lev_comp.l.o $(LIB_NH_UTIL)/lev_comp.y.o $(LIB_NH_SRC)/readonly.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+
+$(LIB_NH_ROOT)/dgn_main.exe: $(LIB_NH_UTIL)/dgn_main.o $(LIB_NH_UTIL)/dgn_comp.l.o $(LIB_NH_UTIL)/dgn_comp.y.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+
+$(LIB_NH_ROOT)/dlb_main.exe: $(LIB_NH_UTIL)/dlb_main.o $(LIB_NH_SRC)/dlb.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+
+#
+#==========================================
+# Build levels
+#==========================================
+levels: $(patsubst %.des,%.lev,$(wildcard $(LIB_NH_DAT)/*.des))
+	@:
+
+%.lev: $(LIB_NH_ROOT)/lev_main.exe
+	$(LIB_NH_ROOT)/lev_main.exe -o $(LIB_NH_DAT)/ $(patsubst %.lev,%.des,$@)
+
+#
+#==========================================
+# Build dungeon
+#==========================================
+dungeon: $(LIB_NH_DAT)/dungeon
+	@:
+
+$(LIB_NH_DAT)/dungeon: $(LIB_NH_DAT)/dungeon.pdf utils
+	$(LIB_NH_ROOT)/dgn_main.exe $<
+
+#
+#==========================================
+# Build archived data
+#==========================================
+archive: $(LIB_NH_ROOT)/nhdat
+	@:
+
+$(LIB_NH_ROOT)/nhdat: utils dungeon resources levels
+	cd $(LIB_NH_DAT) && $(abspath $(LIB_NH_ROOT)/dlb_main.exe) cf nhdat data dungeon history oracles quest.dat rumors *.lev
+
+#
+#==========================================
+# Build NetHack
+#==========================================
+nethack: libnethack libuncursed $(NH_ROOT)/nethack4.exe $(NH_ROOT)/nethack4-sdl.exe
+	@:
+
+$(NH_SRC)/%.o: $(NH_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(NH_INCL) -I $(LIB_NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_UNCURSED_INCL) -I $(TILESETS_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(BUILD_SRC)/%.o: $(BUILD_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(NH_ROOT)/nethack4.exe: $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -lws2_32 -luncursed -lnethack -lnethack_client
+
+$(NH_ROOT)/nethack4-sdl.exe: $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -lws2_32 -luncursed_sdl -lnethack -lnethack_client
+
+#
+#==========================================
+# Build tileset compiler
+#==========================================
+tilecompile: libnethack $(TILESETS_ROOT)/tilecompile.exe $(TILESETS_ROOT)/basecchar.exe
+	@:
+
+$(TILESETS_SRC)/%.o: $(TILESETS_SRC)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(TILESETS_UTIL)/%.o: $(TILESETS_UTIL)/%.c
+	$(CC) -c -o $@ $(CFLAGS) -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+
+$(TILESETS_ROOT)/basecchar.exe: $(TILESETS_UTIL)/basecchar.o $(filter-out %/netconnect.o,$(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c))) $(TILESETS_SRC)/tilesequence.o $(NH_SRC)/brandings.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/monst.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^ -Wl,-Bstatic -lpng
+
+$(TILESETS_ROOT)/tilecompile.exe: $(filter-out %/basecchar.o,$(patsubst %.c,%.o,$(wildcard $(TILESETS_UTIL)/*.c))) $(filter-out %/netconnect.o,$(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c))) $(TILESETS_SRC)/tilesequence.o $(NH_SRC)/brandings.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/monst.o
+	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^ -Wl,-Bstatic -lpng
+
+#
+#==========================================
+# Build tilesets
+#==========================================
+tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/dawnlike-16.nh4ct $(TILESETS_DAT)/rltiles-32.nh4ct $(TILESETS_DAT)/slashem-16.nh4ct $(TILESETS_DAT)/textascii.nh4ct $(TILESETS_DAT)/textunicode.nh4ct
+	@:
+
+$(TILESETS_DAT)/text/base.txt:
+	$(TILESETS_ROOT)/basecchar.exe -o $@
+
+$(TILESETS_DAT)/fonts/font14.png:
+	$(TILESETS_ROOT)/tilecompile.exe -z 8 14 -b 0 0 0 -t image -u -o $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/fonts/font14.txt
+
+$(TILESETS_DAT)/palettes/dawnlike.txt:
+	$(TILESETS_ROOT)/tilecompile.exe -t palette -o $(TILESETS_DAT)/palettes/dawnlike.txt $(TILESETS_DAT)/tiles/dawnlike-dragons.txt
+
+$(TILESETS_DAT)/dawnlike-16.nh4ct: $(TILESETS_DAT)/palettes/dawnlike.txt
+	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n DawnLike -z 16 16 -p $(TILESETS_DAT)/palettes/dawnlike.txt -o $(TILESETS_DAT)/dawnlike-16.nh4ct $(TILESETS_DAT)/tiles/dawnlike-16.txt $(TILESETS_DAT)/tiles/dawnlike-343.txt $(TILESETS_DAT)/tiles/dawnlike-4.txt $(TILESETS_DAT)/tiles/dawnlike-dragons.txt
+
+$(TILESETS_DAT)/rltiles-32.nh4ct:
+	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n RLTiles -z 32 32 -o $(TILESETS_DAT)/rltiles-32.nh4ct $(TILESETS_DAT)/tiles/rltiles-32.png $(TILESETS_DAT)/tiles/rltiles.map $(TILESETS_DAT)/tiles/los-transformations.txt
+
+$(TILESETS_DAT)/slashem-16.nh4ct:
+	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n "Slash'EM" -z 16 16 -o $(TILESETS_DAT)/slashem-16.nh4ct $(TILESETS_DAT)/tiles/n-343.txt $(TILESETS_DAT)/tiles/s-extras.txt $(TILESETS_DAT)/tiles/s-monsters.txt $(TILESETS_DAT)/tiles/s-objects.txt $(TILESETS_DAT)/tiles/s-other.txt $(TILESETS_DAT)/tiles/n-4-16.txt
+
+$(TILESETS_DAT)/textascii.nh4ct: $(TILESETS_DAT)/text/base.txt
+	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n ASCII -z 0 0 -W $(TILESETS_DAT)/text/base.txt -o $(TILESETS_DAT)/textascii.nh4ct $(TILESETS_DAT)/text/ascii_overrides.txt $(TILESETS_DAT)/text/dungeoncolors.txt $(TILESETS_DAT)/text/rogue_overrides.txt
+
+$(TILESETS_DAT)/textunicode.nh4ct: $(TILESETS_DAT)/text/base.txt
+	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n Unicode -z 0 0 -W $(TILESETS_DAT)/text/base.txt -o $(TILESETS_DAT)/textunicode.nh4ct $(TILESETS_DAT)/text/ascii_overrides.txt $(TILESETS_DAT)/text/unicode_overrides.txt $(TILESETS_DAT)/text/dungeoncolors.txt $(TILESETS_DAT)/text/rogue_overrides.txt
