@@ -62,6 +62,7 @@ NH_ROOT = $(BUILD_ROOT)/nethack
 NH_INCL = $(BUILD_ROOT)/nethack/include
 NH_SRC  = $(BUILD_ROOT)/nethack/src
 NH_RC   = $(BUILD_ROOT)/nethack/rc
+NH_DOC  = $(BUILD_ROOT)/doc
 
 # NetHack Library files
 LIB_NH_ROOT = $(BUILD_ROOT)/libnethack
@@ -126,6 +127,7 @@ LD = i686-w64-mingw32-gcc
 RC = i686-w64-mingw32-windres
 
 CFLAGS = --std=gnu99
+LDFLAGS = -static-libgcc
 
 ifeq  "$(DEBUGINFO)" "Y"
 	CXXFLAGS += -Og -g
@@ -158,6 +160,9 @@ LEX  = flex -w
 # Builds
 #==========================================
 all: nethack archive tilesets
+	@:
+
+install: nethack_install tilesets_install doc_install save_install
 	@:
 
 clean:
@@ -195,15 +200,14 @@ clean:
 
 #
 #==========================================
-# Generate artifacts names
-#==========================================
-
-#
-#==========================================
 # Build Jansson Library
 #==========================================
 libjansson: $(LIB_JANSSON_DLL_FILE)
 	@:
+
+libjansson_install: libjansson
+	@mkdir -p $(INSTALL_ROOT)
+	@cp $(LIB_JANSSON_DLL_FILE) $(INSTALL_ROOT)
 
 $(LIB_JANSSON_SRC)/%.o: $(LIB_JANSSON_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_JANSSON_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -217,6 +221,11 @@ $(LIB_JANSSON_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_JANSSON_SRC)/*.c))
 #==========================================
 libuncursed: $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_SDL_DLL_FILE)
 	@:
+
+libuncursed_install: libuncursed
+	@mkdir -p $(INSTALL_ROOT)
+	@cp $(LIB_UNCURSED_DLL_FILE) $(INSTALL_ROOT)
+	@cp $(LIB_UNCURSED_SDL_DLL_FILE) $(INSTALL_ROOT)
 
 $(LIB_UNCURSED_SRC)/%.o: $(LIB_UNCURSED_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -245,6 +254,11 @@ $(LIB_UNCURSED_SDL_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsub
 #==========================================
 libnethack: artinames defs libjansson $(LIB_NH_DLL_FILE) $(LIB_CLIENT_DLL_FILE)
 	@:
+
+libnethack_install: libnethack libjansson_install
+	@mkdir -p $(INSTALL_ROOT)
+	@cp $(LIB_NH_DLL_FILE) $(INSTALL_ROOT)
+	@cp $(LIB_CLIENT_DLL_FILE) $(INSTALL_ROOT)
 
 $(LIB_COMMON_SRC)/%.o: $(LIB_COMMON_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -371,10 +385,15 @@ $(LIB_NH_DAT)/dungeon: $(LIB_NH_DAT)/dungeon.pdf utils
 #==========================================
 # Build archived data
 #==========================================
-archive: $(LIB_NH_ROOT)/nhdat
+archive: $(LIB_NH_DAT)/nhdat
 	@:
 
-$(LIB_NH_ROOT)/nhdat: utils dungeon resources levels
+archive_install: archive
+	@mkdir -p $(INSTALL_ROOT)/data
+	@cp $(LIB_NH_DAT)/nhdat $(INSTALL_ROOT)/data
+	@cp $(LIB_NH_DAT)/license $(INSTALL_ROOT)/data
+
+$(LIB_NH_DAT)/nhdat: utils dungeon resources levels
 	cd $(LIB_NH_DAT) && $(abspath $(LIB_NH_ROOT)/dlb_main.exe) cf nhdat data dungeon history oracles quest.dat rumors *.lev
 
 #
@@ -383,6 +402,11 @@ $(LIB_NH_ROOT)/nhdat: utils dungeon resources levels
 #==========================================
 nethack: libnethack libuncursed $(NH_ROOT)/nethack4.exe $(NH_ROOT)/nethack4-sdl.exe
 	@:
+
+nethack_install: nethack libnethack_install libuncursed_install
+	@mkdir -p $(INSTALL_ROOT)
+	@cp $(NH_ROOT)/nethack4.exe $(INSTALL_ROOT)
+	@cp $(NH_ROOT)/nethack4-sdl.exe $(INSTALL_ROOT)
 
 $(NH_SRC)/%.o: $(NH_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(NH_INCL) -I $(LIB_NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_UNCURSED_INCL) -I $(TILESETS_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -422,6 +446,11 @@ $(TILESETS_ROOT)/tilecompile.exe: $(filter-out %/basecchar.o,$(patsubst %.c,%.o,
 tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/dawnlike-16.nh4ct $(TILESETS_DAT)/rltiles-32.nh4ct $(TILESETS_DAT)/slashem-16.nh4ct $(TILESETS_DAT)/textascii.nh4ct $(TILESETS_DAT)/textunicode.nh4ct
 	@:
 
+tilesets_install: tilesets
+	@mkdir -p $(INSTALL_ROOT)/data
+	@cp $(TILESETS_DAT)/fonts/*.png $(INSTALL_ROOT)/data
+	@cp $(TILESETS_DAT)/*.nh4ct $(INSTALL_ROOT)/data
+
 $(TILESETS_DAT)/text/base.txt:
 	$(TILESETS_ROOT)/basecchar.exe -o $@
 
@@ -445,3 +474,24 @@ $(TILESETS_DAT)/textascii.nh4ct: $(TILESETS_DAT)/text/base.txt
 
 $(TILESETS_DAT)/textunicode.nh4ct: $(TILESETS_DAT)/text/base.txt
 	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n Unicode -z 0 0 -W $(TILESETS_DAT)/text/base.txt -o $(TILESETS_DAT)/textunicode.nh4ct $(TILESETS_DAT)/text/ascii_overrides.txt $(TILESETS_DAT)/text/unicode_overrides.txt $(TILESETS_DAT)/text/dungeoncolors.txt $(TILESETS_DAT)/text/rogue_overrides.txt
+
+#
+#==========================================
+# Install misc files
+#==========================================
+doc_install:
+	@mkdir -p $(INSTALL_ROOT)/doc
+	@cp $(NH_DOC)/changelog.txt $(INSTALL_ROOT)/doc
+	@cp $(NH_DOC)/changelog-fourk.txt $(INSTALL_ROOT)/doc
+	@cp $(NH_DOC)/faq.txt $(INSTALL_ROOT)/doc
+	@cp $(NH_DOC)/philosophy.txt $(INSTALL_ROOT)/doc
+	@cp $(NH_DOC)/keyboard-layouts-nethack.png $(INSTALL_ROOT)/doc
+	@asciidoc -o $(INSTALL_ROOT)/doc/guidebook.html $(NH_DOC)/guidebook.asc
+	@pod2html --infile=$(NH_DOC)/nhfourk.pod --outfile=$(INSTALL_ROOT)/doc/nhfourk.html
+
+save_install:
+	@mkdir -p $(INSTALL_ROOT)/save
+	@touch $(INSTALL_ROOT)/save/logfile
+	@touch $(INSTALL_ROOT)/save/xlogfile
+	@touch $(INSTALL_ROOT)/save/paniclog
+	@touch $(INSTALL_ROOT)/save/record
