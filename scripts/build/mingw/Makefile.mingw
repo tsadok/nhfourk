@@ -1,23 +1,8 @@
-# NetHack 3.6	Makefile.gcc
-#
-#==============================================================================
-#
-#   Win32 Compilers Tested:
-#                  === TDM-GCC Compiler Suite for Windows ===
-#                  ---        GCC 4.6 & 4.7 Series        ---
-#                  ***   Standard MinGW 32-bit Edition    ***
-#
-#   If you don't have this compiler, you can get it at:
-#		http://tdm-gcc.tdragon.net/
-#
 #==============================================================================
 #   This is used for building two versions of NetHack:
 #
-#   A tty port utilizing the Win32 Console I/O subsystem, Console
-#       NetHack.
-#
-#   A Win32 native port built on the Windows API, Graphical NetHack or
-#       NetHackW.
+#   A Win32 Console version.
+#   A Win32 Graphical version.
 #
 #   In addition to your C compiler,
 #
@@ -26,27 +11,24 @@
 #         .y                     yacc   (such as bison)
 #         .l                     lex    (such as flex)
 #
-#   If you have any questions read the sys/winnt/Install.nt file included
-#   with the distribution.
 #==============================================================================
 # BUILD DECISIONS SECTION
 #
-# There are currently only 3 decisions that you have to make.
+# There are currently only 2 decisions that you have to make.
 #	1. Where do you want your build to end up?
 #	2. Do you want debug information in the executable?
 #
 #==============================================================================
 #
 #---------------------------------------------------------------
-# 1. Where do you want the game to be built (which folder)?
-#    If not present prior to compilation it gets created.
+# 1. Where do you want the game to be installed?
 #
 
-GAMEDIR = ../binary
+INSTALL_ROOT = $(BUILD_ROOT)/release
 
 #
 #---------------------------------------------------------------
-# 3. Do you want debug information in the executable?
+# 2. Do you want debug information in the executable?
 #
 
 DEBUGINFO = Y
@@ -140,20 +122,28 @@ OBJ   = o
 OBJXX = obj
 
 CC = i686-w64-mingw32-gcc
-RC = i686-w64-mingw32-windres
 LD = i686-w64-mingw32-gcc
+RC = i686-w64-mingw32-windres
 
 CFLAGS = --std=gnu99
 
 ifeq  "$(DEBUGINFO)" "Y"
-CFLAGS += -Og -g
+	CXXFLAGS += -Og -g
+	CFLAGS += -Og -g
 else
-CFLAGS += -O2
+	CXXFLAGS += -O2
+	CFLAGS += -O2
 endif
 
-override CFLAGS += -DNETCLIENT -D_REENTRANT -DAIMAKE_NORETURN=_Noreturn -fPIC -fno-common -fvisibility=hidden
+ifeq (,$(findstring -mingw,$(shell $(CC) -dumpmachine)))
+	CFLAGS += -fPIC
+	LDFLAGS += -fPIC
+endif
+
+override CXXFLAGS += -DNETCLIENT -D_REENTRANT -fvisibility=hidden
+override CXXFLAGS += -Wall -Wextra -Wmissing-declarations
+override CFLAGS += -DNETCLIENT -D_REENTRANT -DAIMAKE_NORETURN=_Noreturn -fno-common -fvisibility=hidden
 override CFLAGS += -fdiagnostics-show-option -Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter -Wno-sign-compare -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wpointer-arith
-override LDFLAGS += -fPIC
 
 #
 #==========================================
@@ -167,7 +157,8 @@ LEX  = flex -w
 #==========================================
 # Builds
 #==========================================
-all: $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_SDL_DLL_FILE)
+all: nethack archive tilesets
+	@:
 
 clean:
 	rm -f $(BUILD_SRC)/*.o
@@ -218,7 +209,7 @@ $(LIB_JANSSON_SRC)/%.o: $(LIB_JANSSON_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_JANSSON_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_JANSSON_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_JANSSON_SRC)/*.c))
-	$(CC) -shared $(LDFLAGS) -o $@ $^ -Wl,--out-implib,$(LIB_JANSSON_LIB_FILE)
+	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_JANSSON_LIB_FILE) -o $@ $^
 
 #
 #==========================================
@@ -228,25 +219,25 @@ libuncursed: $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_SDL_DLL_FILE)
 	@:
 
 $(LIB_UNCURSED_SRC)/%.o: $(LIB_UNCURSED_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_UNCURSED_SRC)/plugins/sdl.o: $(LIB_UNCURSED_SRC)/plugins/sdl.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DUNCURSED_MAIN_PROGRAM -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+	$(CC) -c $(CFLAGS) -DUNCURSED_MAIN_PROGRAM -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $^
 
 $(LIB_UNCURSED_SRC)/plugins/sdl.obj: $(LIB_UNCURSED_SRC)/plugins/sdl.cxx
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DUNCURSED_MAIN_PROGRAM -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CXXFLAGS) -DUNCURSED_MAIN_PROGRAM -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_UNCURSED_SRC)/plugins/wincon.o: $(LIB_UNCURSED_SRC)/plugins/wincon.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_UNCURSED_SRC)/plugins/wincon.obj: $(LIB_UNCURSED_SRC)/plugins/wincon.cxx
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_UNCURSED_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CXXFLAGS) -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_UNCURSED_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsubst %.c,%.o,$(wildcard $(LIB_UNCURSED_SRC)/*.c))) $(LIB_UNCURSED_SRC)/plugins/wincon.o $(LIB_UNCURSED_SRC)/plugins/wincon.obj
-	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_UNCURSED_LIB_FILE)
+	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_UNCURSED_LIB_FILE) -o $@ $^
 
 $(LIB_UNCURSED_SDL_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsubst %.c,%.o,$(wildcard $(LIB_UNCURSED_SRC)/*.c))) $(LIB_UNCURSED_SRC)/plugins/wincon.o $(LIB_UNCURSED_SRC)/plugins/wincon.obj $(LIB_UNCURSED_SRC)/plugins/sdl.o $(LIB_UNCURSED_SRC)/plugins/sdl.obj
-	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_UNCURSED_SDL_LIB_FILE) -Wl,-Bstatic -lpng -lz -Wl,-Bdynamic -lSDL2 -lws2_32
+	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_UNCURSED_SDL_LIB_FILE) -o $@ $^ -Wl,-Bstatic -lpng -lz -Wl,-Bdynamic -lSDL2 -lws2_32
 
 #
 #==========================================
@@ -256,19 +247,19 @@ libnethack: artinames defs libjansson $(LIB_NH_DLL_FILE) $(LIB_CLIENT_DLL_FILE)
 	@:
 
 $(LIB_COMMON_SRC)/%.o: $(LIB_COMMON_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_SRC)/%.o: $(LIB_NH_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_CLIENT_SRC)/%.o: $(LIB_CLIENT_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_JANSSON_INCL) -I $(LIB_CLIENT_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_JANSSON_INCL) -I $(LIB_CLIENT_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(LIB_NH_SRC)/readonly.o
-	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_NH_LIB_FILE) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32
+	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_NH_LIB_FILE) -o $@ $^ -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32
 
 $(LIB_CLIENT_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_CLIENT_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c))
-	$(CC) -shared -fPIC -o $@ $(CFLAGS) $^ -Wl,--out-implib,$(LIB_CLIENT_LIB_FILE) -L $(LIB_JANSSON_ROOT) -L $(LIB_NH_ROOT) -lws2_32 -ljansson -lnethack
+	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_CLIENT_LIB_FILE) -o $@ $^ -L $(LIB_JANSSON_ROOT) -L $(LIB_NH_ROOT) -Wl,-Bdynamic -ljansson -lnethack -lws2_32
 
 #
 #==========================================
@@ -302,10 +293,10 @@ defs: artinames $(LIB_NH_ROOT)/makedefs.exe $(LIB_NH_INCL)/date.h $(LIB_NH_INCL)
 artinames: $(LIB_NH_INCL)/artinames.h
 
 $(LIB_NH_ROOT)/makedefs.exe: $(LIB_NH_UTIL)/makedefs.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+	$(CC) $(LDFLAGS) -o $@ $^
 
 $(LIB_NH_INCL)/artinames.h: $(LIB_NH_INCL)/artilist.h
-	$(CC) -DARTINAMES_H -E -DNETCLIENT -D_REENTRANT -o $@ -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) $(CFLAGS) -DARTINAMES_H -E -o $@ -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_INCL)/date.h: $(LIB_NH_ROOT)/makedefs.exe
 	$(LIB_NH_ROOT)/makedefs.exe -v $@ $(VERSION) 
@@ -323,7 +314,7 @@ $(LIB_NH_SRC)/readonly.c: $(LIB_NH_ROOT)/makedefs.exe
 	$(LIB_NH_ROOT)/makedefs.exe -m $@
 
 $(LIB_NH_SRC)/readonly.o: $(LIB_NH_SRC)/readonly.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 #
 #==========================================
@@ -339,22 +330,22 @@ $(LIB_NH_UTIL)/%.l.c: $(LIB_NH_UTIL)/%.l
 	$(LEX) -o $@ $<
 
 $(LIB_NH_UTIL)/%.y.o: $(LIB_NH_UTIL)/%.y.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_UTIL)/%.l.o: $(LIB_NH_UTIL)/%.l.c $(LIB_NH_UTIL)/%.y.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_UTIL)/%.o: $(LIB_NH_UTIL)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_ROOT)/lev_main.exe: $(LIB_NH_UTIL)/lev_main.o $(LIB_NH_UTIL)/lev_comp.l.o $(LIB_NH_UTIL)/lev_comp.y.o $(LIB_NH_SRC)/readonly.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+	$(CC) $(LDFLAGS) -o $@ $^
 
 $(LIB_NH_ROOT)/dgn_main.exe: $(LIB_NH_UTIL)/dgn_main.o $(LIB_NH_UTIL)/dgn_comp.l.o $(LIB_NH_UTIL)/dgn_comp.y.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+	$(CC) $(LDFLAGS) -o $@ $^
 
 $(LIB_NH_ROOT)/dlb_main.exe: $(LIB_NH_UTIL)/dlb_main.o $(LIB_NH_SRC)/dlb.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^
+	$(CC) $(LDFLAGS) -o $@ $^
 
 #
 #==========================================
@@ -394,16 +385,16 @@ nethack: libnethack libuncursed $(NH_ROOT)/nethack4.exe $(NH_ROOT)/nethack4-sdl.
 	@:
 
 $(NH_SRC)/%.o: $(NH_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(NH_INCL) -I $(LIB_NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_UNCURSED_INCL) -I $(TILESETS_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(NH_INCL) -I $(LIB_NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_UNCURSED_INCL) -I $(TILESETS_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(BUILD_SRC)/%.o: $(BUILD_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -include $(BUILD_INCL)/_aimake.h $<
 
 $(NH_ROOT)/nethack4.exe: $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -lws2_32 -luncursed -lnethack -lnethack_client
+	$(CC) $(LDFLAGS) -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed -lws2_32
 
 $(NH_ROOT)/nethack4-sdl.exe: $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -lws2_32 -luncursed_sdl -lnethack -lnethack_client
+	$(CC) $(LDFLAGS) -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed_sdl -lws2_32
 
 #
 #==========================================
@@ -413,16 +404,16 @@ tilecompile: libnethack $(TILESETS_ROOT)/tilecompile.exe $(TILESETS_ROOT)/basecc
 	@:
 
 $(TILESETS_SRC)/%.o: $(TILESETS_SRC)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(TILESETS_UTIL)/%.o: $(TILESETS_UTIL)/%.c
-	$(CC) -c -o $@ $(CFLAGS) -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $<
+	$(CC) -c $(CFLAGS) -o $@ -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
 $(TILESETS_ROOT)/basecchar.exe: $(TILESETS_UTIL)/basecchar.o $(filter-out %/netconnect.o,$(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c))) $(TILESETS_SRC)/tilesequence.o $(NH_SRC)/brandings.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/monst.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^ -Wl,-Bstatic -lpng
+	$(CC) $(LDFLAGS) -o $@ $^ -Wl,-Bstatic -lpng -lz
 
 $(TILESETS_ROOT)/tilecompile.exe: $(filter-out %/basecchar.o,$(patsubst %.c,%.o,$(wildcard $(TILESETS_UTIL)/*.c))) $(filter-out %/netconnect.o,$(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c))) $(TILESETS_SRC)/tilesequence.o $(NH_SRC)/brandings.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/monst.o
-	$(CC) -o $@ $(CFLAGS) -DAIMAKE_NORETURN=_Noreturn -DNETCLIENT -D_REENTRANT -fPIC -fno-common -fdiagnostics-show-option -w -include $(BUILD_INCL)/_aimake.h $^ -Wl,-Bstatic -lpng
+	$(CC) $(LDFLAGS) -o $@ $^ -Wl,-Bstatic -lpng -lz
 
 #
 #==========================================
