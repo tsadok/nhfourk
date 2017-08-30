@@ -30,8 +30,8 @@
 #include "uncursed_sdl.h"
 
 #ifdef AIMAKE_BUILDOS_MSWin32
-# include <Winsock2.h>
-# include <Ws2def.h>
+# include <winsock2.h>
+# include <ws2def.h>
 #else
 # include <sys/select.h>
 #endif
