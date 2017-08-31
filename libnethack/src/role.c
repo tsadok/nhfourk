@@ -505,7 +505,7 @@ const struct Race races[] = {
      16, /* base speed on the fast side (may need tweaked) */
      PM_SCURRIER, NON_PM, NON_PM, NON_PM,
      MRACE_SCURRIER | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
-     MRACE_SCURRIER, 0, MRACE_ORC,
+     MRACE_SCURRIER, MRACE_RODENT, MRACE_ORC,
      /* Str Int Wis Dex Con Cha */
      {2, 2, 3, 4, 2, 3},
      {16, 16, 18, 22, 15, 22},

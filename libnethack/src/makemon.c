@@ -2000,16 +2000,15 @@ peace_minded(const struct permonst *ptr)
 
     if (always_peaceful(ptr))
         return TRUE;
+    if (race_peaceful(ptr))
+        return TRUE;
     if (always_hostile(ptr))
+        return FALSE;
+    if (race_hostile(ptr))
         return FALSE;
     if (ptr->msound == MS_LEADER || ptr->msound == MS_GUARDIAN)
         return TRUE;
     if (ptr->msound == MS_NEMESIS)
-        return FALSE;
-
-    if (race_peaceful(ptr))
-        return TRUE;
-    if (race_hostile(ptr))
         return FALSE;
 
     /* the monster is hostile if its alignment is different from the player's */
