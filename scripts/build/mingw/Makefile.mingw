@@ -509,7 +509,35 @@ $(TILESETS_ROOT)/tilecompile.exe: $(filter-out %/basecchar.o,$(patsubst %.c,%.o,
 #==========================================
 # Build tilesets
 #==========================================
-tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/dawnlike-16.nh4ct $(TILESETS_DAT)/rltiles-32.nh4ct $(TILESETS_DAT)/slashem-16.nh4ct $(TILESETS_DAT)/textascii.nh4ct $(TILESETS_DAT)/textunicode.nh4ct
+define GET_TILECOMPILE_ARGS_SCRIPT =
+echo "-W -t nh4ct -n";
+tail -n +2 "$(2)" | head -n 1;
+echo "-z";
+head -n 1 "$(2)";
+
+PALETTE=$$(find $(1)/palettes -name `basename $(2) | rev | cut -d. -f2- | rev | cut -d- -f1`.txt);
+if [ -f "$$PALETTE" ] && [ `basename $$PALETTE` != "slashem.txt" ]; then
+	echo "-p `readlink -f $$PALETTE`";
+fi;
+
+if [ -n "$$(echo `basename $(2)` | grep '^text')" ]; then
+	echo "-W $(4)";
+fi;
+
+echo "-o $(3)";
+
+tail -n +3 "$(2)" | while read -r line ; do
+	if [ ! -z "$$line" ]; then
+		readlink -f `find $(1) -name "$$line" -type f -not -path "*/catalogues/*"`;
+	fi;
+done;
+endef
+
+define GET_TILECOMPILE_ARGS =
+	$(subst ',\',$(shell $(call GET_TILECOMPILE_ARGS_SCRIPT,$(1),$(2),$(3),$(4))))
+endef
+
+tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/text/base.txt $(TILESETS_DAT)/palettes/dawnlike.txt $(filter-out %/rltiles-32.nh4ct,$(subst /catalogues/,/,$(patsubst %.txt,%.nh4ct,$(wildcard $(TILESETS_DAT)/catalogues/*.txt))))
 	@:
 
 tilesets_install: tilesets
@@ -520,26 +548,14 @@ tilesets_install: tilesets
 $(TILESETS_DAT)/text/base.txt:
 	$(TILESETS_ROOT)/basecchar.exe -o $@
 
-$(TILESETS_DAT)/fonts/font14.png:
-	$(TILESETS_ROOT)/tilecompile.exe -z 8 14 -b 0 0 0 -t image -u -o $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/fonts/font14.txt
-
 $(TILESETS_DAT)/palettes/dawnlike.txt:
 	$(TILESETS_ROOT)/tilecompile.exe -t palette -o $(TILESETS_DAT)/palettes/dawnlike.txt $(TILESETS_DAT)/tiles/dawnlike-dragons.txt
 
-$(TILESETS_DAT)/dawnlike-16.nh4ct: $(TILESETS_DAT)/palettes/dawnlike.txt
-	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n DawnLike -z 16 16 -p $(TILESETS_DAT)/palettes/dawnlike.txt -o $(TILESETS_DAT)/dawnlike-16.nh4ct $(TILESETS_DAT)/tiles/dawnlike-16.txt $(TILESETS_DAT)/tiles/dawnlike-343.txt $(TILESETS_DAT)/tiles/dawnlike-4.txt $(TILESETS_DAT)/tiles/dawnlike-dragons.txt
+$(TILESETS_DAT)/fonts/font14.png:
+	$(TILESETS_ROOT)/tilecompile.exe -z 8 14 -b 0 0 0 -t image -u -o $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/fonts/font14.txt
 
-$(TILESETS_DAT)/rltiles-32.nh4ct:
-	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n RLTiles -z 32 32 -o $(TILESETS_DAT)/rltiles-32.nh4ct $(TILESETS_DAT)/tiles/rltiles-32.png $(TILESETS_DAT)/tiles/rltiles.map $(TILESETS_DAT)/tiles/los-transformations.txt
-
-$(TILESETS_DAT)/slashem-16.nh4ct:
-	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n "Slash'EM" -z 16 16 -o $(TILESETS_DAT)/slashem-16.nh4ct $(TILESETS_DAT)/tiles/n-343.txt $(TILESETS_DAT)/tiles/s-extras.txt $(TILESETS_DAT)/tiles/s-monsters.txt $(TILESETS_DAT)/tiles/s-objects.txt $(TILESETS_DAT)/tiles/s-other.txt $(TILESETS_DAT)/tiles/n-4-16.txt
-
-$(TILESETS_DAT)/textascii.nh4ct: $(TILESETS_DAT)/text/base.txt
-	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n ASCII -z 0 0 -W $(TILESETS_DAT)/text/base.txt -o $(TILESETS_DAT)/textascii.nh4ct $(TILESETS_DAT)/text/ascii_overrides.txt $(TILESETS_DAT)/text/dungeoncolors.txt $(TILESETS_DAT)/text/rogue_overrides.txt
-
-$(TILESETS_DAT)/textunicode.nh4ct: $(TILESETS_DAT)/text/base.txt
-	$(TILESETS_ROOT)/tilecompile.exe -W -t nh4ct -n Unicode -z 0 0 -W $(TILESETS_DAT)/text/base.txt -o $(TILESETS_DAT)/textunicode.nh4ct $(TILESETS_DAT)/text/ascii_overrides.txt $(TILESETS_DAT)/text/unicode_overrides.txt $(TILESETS_DAT)/text/dungeoncolors.txt $(TILESETS_DAT)/text/rogue_overrides.txt
+$(TILESETS_DAT)/%.nh4ct: $(TILESETS_DAT)/catalogues/%.txt $(TILESETS_DAT)/text/base.txt $(TILESETS_DAT)/palettes/dawnlike.txt
+	$(TILESETS_ROOT)/tilecompile.exe $(call GET_TILECOMPILE_ARGS,$(TILESETS_DAT),$<,$(abspath $@),$(abspath $(TILESETS_DAT)/text/base.txt))
 
 #
 #==========================================
@@ -547,8 +563,7 @@ $(TILESETS_DAT)/textunicode.nh4ct: $(TILESETS_DAT)/text/base.txt
 #==========================================
 doc_install:
 	@mkdir -p $(INSTALL_ROOT)/doc
-	@cp $(NH_DOC)/changelog.txt $(INSTALL_ROOT)/doc
-	@cp $(NH_DOC)/changelog-fourk.txt $(INSTALL_ROOT)/doc
+	@cp $(NH_DOC)/changelog*.txt $(INSTALL_ROOT)/doc
 	@cp $(NH_DOC)/faq.txt $(INSTALL_ROOT)/doc
 	@cp $(NH_DOC)/philosophy.txt $(INSTALL_ROOT)/doc
 	@cp $(NH_DOC)/keyboard-layouts-nethack.png $(INSTALL_ROOT)/doc
@@ -558,12 +573,13 @@ doc_install:
 define SAVE_README_FILE
 This directory stores data shared between all users
 When you play locally, your save files are stored in your home
-directory (e.g. ~/$(subst $(SPACE),,$(NH_APP_NAME))).
+directory (e.g. %APPDATA%/$(subst $(SPACE),,$(NH_APP_NAME))).
 endef
 
 save_install: $(INSTALL_ROOT)/save
 	@touch $(INSTALL_ROOT)/save/logfile
 	@touch $(INSTALL_ROOT)/save/xlogfile
+	@touch $(INSTALL_ROOT)/save/livelog
 	@touch $(INSTALL_ROOT)/save/paniclog
 	@touch $(INSTALL_ROOT)/save/record
 	$(file >$(INSTALL_ROOT)/save/README,$(SAVE_README_FILE))
