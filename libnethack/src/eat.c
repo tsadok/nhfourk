@@ -945,7 +945,9 @@ eat_tin_one_turn(void)
         costly_tin("destroyed");
         goto use_me;
     }
-    pline(msgc_actionok, "You succeed in opening the tin.");
+    /* If blessed, we were already told that it opens like magic. */
+    if (!(u.utracked[tos_tin]->blessed))
+        pline(msgc_actionok, "You succeed in opening the tin.");
     if (u.utracked[tos_tin]->spe != 1) {
         mnum = u.utracked[tos_tin]->corpsenm;
         if (mnum == NON_PM) {
