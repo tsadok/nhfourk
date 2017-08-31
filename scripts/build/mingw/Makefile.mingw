@@ -45,12 +45,17 @@ DEBUGINFO = Y
 # Nothing below here should have to be changed.#
 #                                              #
 ################################################
+NH_APP_NAME = NetHack Fourk
+NH_BIN_NAME = nhfourk
+NH_PRODUCT_VERSION = 4.3.0.4
+NH_BUILD_VERSION = MinGW
+NH_COMPANY = NetHack Fourk DevTeam
+NH_COPYRIGHT = (c) Stichting Mathematisch Centrum, Amsterdam, 1985; Alex Smith 2010-2015; Daniel Thaler 2011-2012; and many others
+NH_DESCRIPTION = Dungeon exploration game
 
-VERSION = MinGW
-
-#
-#  Source directories.    Makedefs hardcodes these, don't change them.
-#
+#===============================================
+# Source directories.
+#===============================================
 
 # Build files
 BUILD_ROOT = ../../..
@@ -128,8 +133,9 @@ RC = i686-w64-mingw32-windres
 
 CFLAGS = --std=gnu99
 LDFLAGS = -static-libgcc
+RCFLAGS = --output-format=coff -F pe-i386
 
-ifeq  "$(DEBUGINFO)" "Y"
+ifeq "$(DEBUGINFO)" "Y"
 	CXXFLAGS += -Og -g
 	CFLAGS += -Og -g
 else
@@ -157,16 +163,27 @@ LEX  = flex -w
 
 #
 #==========================================
+# Build contants
+#==========================================
+
+COMMA = ,
+SPACE =
+SPACE +=
+
+#
+#==========================================
 # Builds
 #==========================================
 all: nethack archive tilesets
 	@:
 
-install: nethack_install tilesets_install doc_install save_install
+install: nethack_install archive_install tilesets_install doc_install save_install
 	@:
 
 clean:
 	rm -f $(BUILD_SRC)/*.o
+	rm -f $(BUILD_SRC)/*.rc
+	rm -f $(BUILD_SRC)/*.ico
 	rm -f $(LIB_JANSSON_SRC)/*.o
 	rm -f $(LIB_JANSSON_DLL_FILE) $(LIB_JANSSON_LIB_FILE)
 	rm -f $(LIB_UNCURSED_SRC)/*.o
@@ -197,6 +214,7 @@ clean:
 	rm -f $(TILESETS_DAT)/*.nh4ct
 	rm -f $(NH_SRC)/*.o
 	rm -f $(NH_ROOT)/*.exe
+	rm -f -r $(INSTALL_ROOT)/*
 
 #
 #==========================================
@@ -246,7 +264,7 @@ $(LIB_UNCURSED_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsubst %
 	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_UNCURSED_LIB_FILE) -o $@ $^
 
 $(LIB_UNCURSED_SDL_DLL_FILE): $(filter-out $(LIB_UNCURSED_SRC)/test_%.o,$(patsubst %.c,%.o,$(wildcard $(LIB_UNCURSED_SRC)/*.c))) $(LIB_UNCURSED_SRC)/plugins/wincon.o $(LIB_UNCURSED_SRC)/plugins/wincon.obj $(LIB_UNCURSED_SRC)/plugins/sdl.o $(LIB_UNCURSED_SRC)/plugins/sdl.obj
-	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_UNCURSED_SDL_LIB_FILE) -o $@ $^ -Wl,-Bstatic -lpng -lz -Wl,-Bdynamic -lSDL2 -lws2_32
+	$(CC) -shared $(LDFLAGS) -Wl,--out-implib,$(LIB_UNCURSED_SDL_LIB_FILE) -o $@ $^ -Wl,-Bstatic -lpng -lz -lSDL2 -Wl,-Bdynamic -lgdi32 -limm32 -lole32 -loleaut32 -lversion -lwinmm -lws2_32
 
 #
 #==========================================
@@ -313,7 +331,7 @@ $(LIB_NH_INCL)/artinames.h: $(LIB_NH_INCL)/artilist.h
 	$(CC) $(CFLAGS) -DARTINAMES_H -E -o $@ -include $(BUILD_INCL)/_aimake.h $<
 
 $(LIB_NH_INCL)/date.h: $(LIB_NH_ROOT)/makedefs.exe
-	$(LIB_NH_ROOT)/makedefs.exe -v $@ $(VERSION) 
+	$(LIB_NH_ROOT)/makedefs.exe -v $@ $(NH_BUILD_VERSION)
 
 $(LIB_NH_INCL)/onames.h: $(LIB_NH_ROOT)/makedefs.exe
 	$(LIB_NH_ROOT)/makedefs.exe -o $@
@@ -400,13 +418,61 @@ $(LIB_NH_DAT)/nhdat: utils dungeon resources levels
 #==========================================
 # Build NetHack
 #==========================================
-nethack: libnethack libuncursed $(NH_ROOT)/nethack4.exe $(NH_ROOT)/nethack4-sdl.exe
+define NH_VERSION_FILE
+#include <winresrc.h>
+
+1 ICON "$(BUILD_SRC)/icon.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     $(subst .,$(COMMA),$(NH_PRODUCT_VERSION))
+PRODUCTVERSION  $(subst .,$(COMMA),$(NH_PRODUCT_VERSION))
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904E4"
+		BEGIN
+			VALUE "CompanyName",      "$(NH_COMPANY)"
+			VALUE "FileDescription",  "$(NH_DESCRIPTION) ($(1))"
+			VALUE "LegalCopyright",   "$(NH_COPYRIGHT)"
+			VALUE "ProductName",      "$(NH_APP_NAME) ($(2))"
+			VALUE "ProductVersion",   "$(NH_PRODUCT_VERSION)"
+			VALUE "FileVersion",      "$(NH_PRODUCT_VERSION)"
+			VALUE "OriginalFilename", "$(NH_BIN_NAME)$(3).exe"
+			VALUE "InternalName",     "$(NH_BIN_NAME)$(3).exe"
+		END
+	END
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1252
+	END
+END
+endef
+
+nethack: libnethack libuncursed $(NH_ROOT)/$(NH_BIN_NAME).exe $(NH_ROOT)/$(NH_BIN_NAME)-sdl.exe
 	@:
 
 nethack_install: nethack libnethack_install libuncursed_install
 	@mkdir -p $(INSTALL_ROOT)
-	@cp $(NH_ROOT)/nethack4.exe $(INSTALL_ROOT)
-	@cp $(NH_ROOT)/nethack4-sdl.exe $(INSTALL_ROOT)
+	@cp $(NH_ROOT)/$(NH_BIN_NAME).exe $(INSTALL_ROOT)
+	@cp $(NH_ROOT)/$(NH_BIN_NAME)-sdl.exe $(INSTALL_ROOT)
+
+$(BUILD_SRC)/icon.ico: $(wildcard $(BUILD_ROOT)/dist/common/icon*.png)
+	icotool -c -o $@ $^
+
+$(BUILD_SRC)/version_console.rc:
+	$(file >$@,$(call NH_VERSION_FILE,text interface,console,))
+
+$(BUILD_SRC)/version_console.res: $(BUILD_SRC)/version_console.rc $(BUILD_SRC)/icon.ico
+	$(RC) $(RCFLAGS) -o $@ $<
+
+$(BUILD_SRC)/version_gui.rc:
+	$(file >$@,$(call NH_VERSION_FILE,graphical interface,GUI,-sdl))
+
+$(BUILD_SRC)/version_gui.res: $(BUILD_SRC)/version_gui.rc $(BUILD_SRC)/icon.ico
+	$(RC) $(RCFLAGS) -o $@ $<
 
 $(NH_SRC)/%.o: $(NH_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(NH_INCL) -I $(LIB_NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_UNCURSED_INCL) -I $(TILESETS_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -414,10 +480,10 @@ $(NH_SRC)/%.o: $(NH_SRC)/%.c
 $(BUILD_SRC)/%.o: $(BUILD_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -include $(BUILD_INCL)/_aimake.h $<
 
-$(NH_ROOT)/nethack4.exe: $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
+$(NH_ROOT)/$(NH_BIN_NAME).exe: $(BUILD_SRC)/version_console.res $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
 	$(CC) $(LDFLAGS) -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed -lws2_32
 
-$(NH_ROOT)/nethack4-sdl.exe: $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
+$(NH_ROOT)/$(NH_BIN_NAME)-sdl.exe: $(BUILD_SRC)/version_gui.res $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
 	$(CC) $(LDFLAGS) -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed_sdl -lws2_32
 
 #
@@ -489,9 +555,18 @@ doc_install:
 	@asciidoc -o $(INSTALL_ROOT)/doc/guidebook.html $(NH_DOC)/guidebook.asc
 	@pod2html --infile=$(NH_DOC)/nhfourk.pod --outfile=$(INSTALL_ROOT)/doc/nhfourk.html
 
-save_install:
-	@mkdir -p $(INSTALL_ROOT)/save
+define SAVE_README_FILE
+This directory stores data shared between all users
+When you play locally, your save files are stored in your home
+directory (e.g. ~/$(subst $(SPACE),,$(NH_APP_NAME))).
+endef
+
+save_install: $(INSTALL_ROOT)/save
 	@touch $(INSTALL_ROOT)/save/logfile
 	@touch $(INSTALL_ROOT)/save/xlogfile
 	@touch $(INSTALL_ROOT)/save/paniclog
 	@touch $(INSTALL_ROOT)/save/record
+	$(file >$(INSTALL_ROOT)/save/README,$(SAVE_README_FILE))
+
+$(INSTALL_ROOT)/save:
+	@mkdir -p $(INSTALL_ROOT)/save
