@@ -2301,6 +2301,7 @@ zapyourself(struct obj *obj, boolean ordinary)
                     makeknown(WAN_MAKE_INVISIBLE);
                     newsym(u.ux, u.uy);
                     self_invis_message();
+                    msg = FALSE;
                 }
             } else { /* temporary */
                 incr_itimeout(&HInvis, dice(obj->spe, 250));

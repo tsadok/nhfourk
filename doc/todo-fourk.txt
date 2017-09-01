@@ -96,14 +96,6 @@
 ▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
 ▒▒▒
-▒▒▒ * 08:41 < Mandevil > jonadab: Another bug:
-▒▒▒   08:42 < Mandevil > You have a little trouble removing B - an uncursed wand called make invisible.
-▒▒▒   08:42 < Mandevil > <What do you want to zap? [fuxBCGHT or ?*]: B>
-▒▒▒   08:42 < Mandevil > <In what direction?: self>
-▒▒▒   08:42 < Mandevil > Gee!  All of a sudden, you can't see yourself.
-▒▒▒   08:42 < Mandevil > Gee!  All of a sudden, you can't see yourself.
-▒▒▒   08:42 < Mandevil > (duplicate message)
-▒▒▒
 ▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
 ▒▒▒   08:43 < Mandevil > Why?
 ▒▒▒
