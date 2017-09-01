@@ -572,7 +572,7 @@ define GET_TILECOMPILE_ARGS =
 	$(subst ',\',$(shell $(call GET_TILECOMPILE_ARGS_SCRIPT,$(1),$(2),$(3),$(4))))
 endef
 
-tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/text/base.txt $(TILESETS_DAT)/palettes/dawnlike.txt $(filter-out %/rltiles-32.nh4ct,$(subst /catalogues/,/,$(patsubst %.txt,%.nh4ct,$(wildcard $(TILESETS_DAT)/catalogues/*.txt))))
+tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/text/base.txt $(TILESETS_DAT)/palettes/dawnlike.txt $(subst /catalogues/,/,$(patsubst %.txt,%.nh4ct,$(wildcard $(TILESETS_DAT)/catalogues/*.txt)))
 	@:
 
 tilesets_install: tilesets
