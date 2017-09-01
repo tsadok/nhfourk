@@ -2747,7 +2747,8 @@ move_on:
                           "%scredit.", tmpcr,
                           (eshkp->credit > 0L) ? "additional " : "");
             eshkp->credit += tmpcr;
-            dropped_container(obj, shkp, TRUE);
+            if (container)
+                dropped_container(obj, shkp, TRUE);
             subfrombill(obj, shkp);
         } else {
             if (c == 'q')

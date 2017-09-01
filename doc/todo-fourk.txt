@@ -53,12 +53,12 @@
 ▒▒▒   because among other things the timer code relies on their being in order, so then
 ▒▒▒   you have to sort the linked list...
 ▒▒▒
+▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
-▒▒▒   
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
 ▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
@@ -69,32 +69,14 @@
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
 ▒▒▒
-▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
-▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
-▒▒▒     by default, if it doesn't already.  (Did this part 2017 August 25.)
-▒▒▒   + Introduce a similar message for when you attack a monster with
-▒▒▒     a weapon you're not skilled in.  Make the wording stronger if you
-▒▒▒     are restricted than if merely unskilled.  Make it happen once on
-▒▒▒     first hit, then not repeat until you wield again.
-▒▒▒   + Make that message also force more by default, if not tab.
-▒▒▒
-▒▒▒ * 15:15 <        rumflump > autoexplore killed my pet
-▒▒▒   15:16 <        rumflump > You displace your Green-elf.  The Green-elf drowns.
-▒▒▒   15:17 <        rumflump > I think because I was flying, it didn't count water terrain as special
-▒▒▒   15:17 <        rumflump > *am* flying
-▒▒▒   15:18 <        rumflump > http://i.imgur.com/mgliT5i.png
+▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
+▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
+▒▒▒   15:17 < rumflump > I think because I was flying, it didn't count water terrain as special
+▒▒▒   15:17 < rumflump > *am* flying
+▒▒▒   15:18 < rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
 ▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
-▒▒▒
-▒▒▒ * 12:43 < rumflump > ] Noah: As a wererat scurrier in 4k shouldn't I just feel like a new woman instead of turning into a smaller rat?
-▒▒▒   12:47 <  jonadab > Oooh, that's an interesting thought.
-▒▒▒   12:47 <  jonadab > Actually, it's tempting to make wererats peaceful to scurriers.
-▒▒▒
-▒▒▒ * Should sacrifice/prayer in Gehennom be subject to the InterHack principle?  (What actually happens?  How bad is it?)
-▒▒▒   Ok, so first you get, "Since you are in Gehennom, [yourdiety] won't help you."  (IMO that should be "can't", but eh.)
-▒▒▒   Then Moloch hits you with a standard you-prayed-with-a-too-high-prayer-timeout response,
-▒▒▒   which can be e.g. a level drain, curse items, punishment, a hostile minion, etc.
 ▒▒▒
 ▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
 ▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
@@ -104,9 +86,7 @@
 ▒▒▒
 ▒▒▒ * 06:01 < Mandevil > jonadab: This looks like a bug:
 ▒▒▒   06:01 < Mandevil > The tin opens like magic!  You succeed in opening the tin.
-▒▒▒   First, IMO, "You succeed in opening the tin." should be suppressed there, as redundant.
-▒▒▒
-▒▒▒ * But the bug he was referring to is probably what follows:
+▒▒▒   [As of 4.3.0.4, "You succeed in opening the tin." is suppressed there as redundant.]
 ▒▒▒   06:01 < Mandevil > It smells like dwarves.
 ▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
@@ -140,9 +120,6 @@
 ▒▒▒                      are listed with appearance, not what they actually are.
 ▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
 ▒▒▒
-▒▒▒ * 19:43 < noty > jonadab: another bug exposed by the scumming: on the castle with the benches
-▒▒▒                  you can drop into the upper left corner and get trapped in the wall
-▒▒▒
 ▒▒▒ * 23:38 < FIQ > jonadab: shouldn't earth E be always-peaceful to gnomes?
 ▒▒▒
 ▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
@@ -164,9 +141,6 @@
 ▒▒▒   The other half has to do with gaining/losing a property (regeneration, as it happens), and since
 ▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
 ▒▒▒   that part to Fourk, without carefully checking for implications.
-▒▒▒
-▒▒▒ * Reconsider unicorn horns.  Why do they heal raven blinding?  Why
-▒▒▒   do they completely trivialize restore ability?
 ▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -551,6 +525,11 @@
 ▒▒▒
 ▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
 ▒▒▒
+▒▒▒ * Should sacrifice/prayer in Gehennom be subject to the InterHack principle?  (What actually happens?  How bad is it?)
+▒▒▒   Ok, so first you get, "Since you are in Gehennom, [yourdiety] won't help you."  (IMO that should be "can't", but eh.)
+▒▒▒   Then Moloch hits you with a standard you-prayed-with-a-too-high-prayer-timeout response,
+▒▒▒   which can be e.g. a level drain, curse items, punishment, a hostile minion, etc.
+▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Runics can be wished for in wizmode only.
 ▒▒▒   + Randomly generated weapons that are allowed to be artifacts but the
@@ -613,6 +592,18 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (can be after save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Reconsider unicorn horns.  Why do they heal raven blinding?  Why
+▒▒▒   do they completely trivialize restore ability?
+▒▒▒
+▒▒▒ * Per discussion in #hardfought on 2017 Apr 28, 7:38-7:47 am:
+▒▒▒   + Make "You begin bashing monsters with your [nonweapon]" force more
+▒▒▒     by default, if it doesn't already.  (Did this part 2017 August 25.)
+▒▒▒   + Introduce a similar message for when you attack a monster with
+▒▒▒     a weapon you're not skilled in.  Make the wording stronger if you
+▒▒▒     are restricted than if merely unskilled.  Make it happen once on
+▒▒▒     first hit, then not repeat until you wield again.
+▒▒▒   + Make that message also force more by default, if not tab.
 ▒▒▒
 ▒▒▒ * Make the ais-enhanced A command that players can't figure out how to use die in a fire.
 ▒▒▒
