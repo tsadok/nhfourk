@@ -167,8 +167,8 @@ LEX  = flex -w
 #==========================================
 
 COMMA = ,
-SPACE =
-SPACE +=
+EMPTY =
+SPACE = $(EMPTY) $(EMPTY)
 
 #
 #==========================================
@@ -517,7 +517,7 @@ head -n 1 "$(2)";
 
 PALETTE=$$(find $(1)/palettes -name `basename $(2) | rev | cut -d. -f2- | rev | cut -d- -f1`.txt);
 if [ -f "$$PALETTE" ] && [ `basename $$PALETTE` != "slashem.txt" ]; then
-	echo "-p `readlink -f $$PALETTE`";
+	echo "-p $$PALETTE";
 fi;
 
 if [ -n "$$(echo `basename $(2)` | grep '^text')" ]; then
@@ -528,7 +528,7 @@ echo "-o $(3)";
 
 tail -n +3 "$(2)" | while read -r line ; do
 	if [ ! -z "$$line" ]; then
-		readlink -f `find $(1) -name "$$line" -type f -not -path "*/catalogues/*"`;
+		find $(1) -name "$$line" -type f -not -path "*/catalogues/*";
 	fi;
 done;
 endef
@@ -555,7 +555,7 @@ $(TILESETS_DAT)/fonts/font14.png:
 	$(TILESETS_ROOT)/tilecompile.exe -z 8 14 -b 0 0 0 -t image -u -o $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/fonts/font14.txt
 
 $(TILESETS_DAT)/%.nh4ct: $(TILESETS_DAT)/catalogues/%.txt $(TILESETS_DAT)/text/base.txt $(TILESETS_DAT)/palettes/dawnlike.txt
-	$(TILESETS_ROOT)/tilecompile.exe $(call GET_TILECOMPILE_ARGS,$(TILESETS_DAT),$<,$(abspath $@),$(abspath $(TILESETS_DAT)/text/base.txt))
+	$(TILESETS_ROOT)/tilecompile.exe $(call GET_TILECOMPILE_ARGS,$(TILESETS_DAT),$<,$@,$(TILESETS_DAT)/text/base.txt)
 
 #
 #==========================================
@@ -568,7 +568,7 @@ doc_install:
 	@cp $(NH_DOC)/philosophy.txt $(INSTALL_ROOT)/doc
 	@cp $(NH_DOC)/keyboard-layouts-nethack.png $(INSTALL_ROOT)/doc
 	@asciidoc -o $(INSTALL_ROOT)/doc/guidebook.html $(NH_DOC)/guidebook.asc
-	@pod2html --infile=$(NH_DOC)/nhfourk.pod --outfile=$(INSTALL_ROOT)/doc/nhfourk.html
+	@pod2html --infile=$(NH_DOC)/$(NH_BIN_NAME).pod --outfile=$(INSTALL_ROOT)/doc/$(NH_BIN_NAME).html
 
 define SAVE_README_FILE
 This directory stores data shared between all users
