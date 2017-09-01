@@ -179,41 +179,8 @@ all: nethack archive tilesets
 install: nethack_install archive_install tilesets_install doc_install save_install
 	@:
 
-clean:
-	rm -f $(BUILD_SRC)/*.o
-	rm -f $(BUILD_SRC)/*.rc
-	rm -f $(BUILD_SRC)/*.ico
-	rm -f $(LIB_JANSSON_SRC)/*.o
-	rm -f $(LIB_JANSSON_DLL_FILE) $(LIB_JANSSON_LIB_FILE)
-	rm -f $(LIB_UNCURSED_SRC)/*.o
-	rm -f $(LIB_UNCURSED_SRC)/plugins/*.o
-	rm -f $(LIB_UNCURSED_SRC)/plugins/*.obj
-	rm -f $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_LIB_FILE) $(LIB_UNCURSED_SDL_DLL_FILE) $(LIB_UNCURSED_SDL_LIB_FILE)
-	rm -f $(LIB_NH_INCL)/artinames.h
-	rm -f $(LIB_NH_ROOT)/*.exe
-	rm -f $(LIB_NH_SRC)/*.o
-	rm -f $(LIB_NH_UTIL)/*.o
-	rm -f $(LIB_NH_UTIL)/*.l.c
-	rm -f $(LIB_NH_UTIL)/*.y.c
-	rm -f $(patsubst %.y,%.h,$(wildcard $(LIB_NH_UTIL)/*.y))
-	rm -f $(LIB_COMMON_SRC)/*.o
-	rm -f $(LIB_NH_DAT)/data $(LIB_NH_DAT)/dungeon.pdf $(LIB_NH_DAT)/oracles $(LIB_NH_DAT)/quest.dat $(LIB_NH_DAT)/rumors
-	rm -f $(LIB_NH_INCL)/date.h $(LIB_NH_INCL)/onames.h $(LIB_NH_INCL)/verinfo.h $(LIB_NH_INCL)/pm.h $(LIB_NH_SRC)/readonly.c
-	rm -f $(LIB_NH_DAT)/*.lev
-	rm -f $(LIB_NH_DAT)/nhdat
-	rm -f $(LIB_NH_DLL_FILE) $(LIB_NH_LIB_FILE)
-	rm -f $(LIB_CLIENT_SRC)/*.o
-	rm -f $(LIB_CLIENT_DLL_FILE) $(LIB_CLIENT_LIB_FILE)
-	rm -f $(TILESETS_SRC)/*.o
-	rm -f $(TILESETS_UTIL)/*.o
-	rm -f $(TILESETS_ROOT)/*.exe
-	rm -f $(TILESETS_DAT)/text/base.txt
-	rm -f $(TILESETS_DAT)/fonts/*.png
-	rm -f $(TILESETS_DAT)/palettes/dawnlike.txt
-	rm -f $(TILESETS_DAT)/*.nh4ct
-	rm -f $(NH_SRC)/*.o
-	rm -f $(NH_ROOT)/*.exe
-	rm -f -r $(INSTALL_ROOT)/*
+clean: libjansson_clean libuncursed_clean libnethack_clean resources_clean defs_clean utils_clean levels_clean dungeon_clean archive_clean nethack_clean tilecompile_clean tilesets_clean
+	@rm -f -r $(INSTALL_ROOT)/*
 
 #
 #==========================================
@@ -225,6 +192,10 @@ libjansson: $(LIB_JANSSON_DLL_FILE)
 libjansson_install: libjansson
 	@mkdir -p $(INSTALL_ROOT)
 	@cp $(LIB_JANSSON_DLL_FILE) $(INSTALL_ROOT)
+
+libjansson_clean:
+	@rm -f $(LIB_JANSSON_SRC)/*.o
+	@rm -f $(LIB_JANSSON_DLL_FILE) $(LIB_JANSSON_LIB_FILE)
 
 $(LIB_JANSSON_SRC)/%.o: $(LIB_JANSSON_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_JANSSON_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -243,6 +214,13 @@ libuncursed_install: libuncursed
 	@mkdir -p $(INSTALL_ROOT)
 	@cp $(LIB_UNCURSED_DLL_FILE) $(INSTALL_ROOT)
 	@cp $(LIB_UNCURSED_SDL_DLL_FILE) $(INSTALL_ROOT)
+
+libuncursed_clean:
+	@rm -f $(LIB_UNCURSED_SRC)/*.o
+	@rm -f $(LIB_UNCURSED_SRC)/plugins/*.o
+	@rm -f $(LIB_UNCURSED_SRC)/plugins/*.obj
+	@rm -f $(LIB_UNCURSED_DLL_FILE) $(LIB_UNCURSED_LIB_FILE)
+	@rm -f $(LIB_UNCURSED_SDL_DLL_FILE) $(LIB_UNCURSED_SDL_LIB_FILE)
 
 $(LIB_UNCURSED_SRC)/%.o: $(LIB_UNCURSED_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_UNCURSED_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -277,6 +255,13 @@ libnethack_install: libnethack libjansson_install
 	@cp $(LIB_NH_DLL_FILE) $(INSTALL_ROOT)
 	@cp $(LIB_CLIENT_DLL_FILE) $(INSTALL_ROOT)
 
+libnethack_clean:
+	@rm -f $(LIB_COMMON_SRC)/*.o
+	@rm -f $(LIB_NH_SRC)/*.o
+	@rm -f $(LIB_NH_DLL_FILE) $(LIB_NH_LIB_FILE)
+	@rm -f $(LIB_CLIENT_SRC)/*.o
+	@rm -f $(LIB_CLIENT_DLL_FILE) $(LIB_CLIENT_LIB_FILE)
+
 $(LIB_COMMON_SRC)/%.o: $(LIB_COMMON_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
 
@@ -298,6 +283,13 @@ $(LIB_CLIENT_DLL_FILE): $(patsubst %.c,%.o,$(wildcard $(LIB_CLIENT_SRC)/*.c)) $(
 #==========================================
 resources: defs $(LIB_NH_DAT)/data $(LIB_NH_DAT)/dungeon.pdf $(LIB_NH_DAT)/oracles $(LIB_NH_DAT)/quest.dat $(LIB_NH_DAT)/rumors
 	@:
+
+resources_clean:
+	@rm -f $(LIB_NH_DAT)/data
+	@rm -f $(LIB_NH_DAT)/dungeon.pdf
+	@rm -f $(LIB_NH_DAT)/oracles
+	@rm -f $(LIB_NH_DAT)/quest.dat
+	@rm -f $(LIB_NH_DAT)/rumors
 
 $(LIB_NH_DAT)/data: $(LIB_NH_DAT)/data.base
 	$(LIB_NH_ROOT)/makedefs.exe -d $< $@
@@ -322,6 +314,16 @@ defs: artinames $(LIB_NH_ROOT)/makedefs.exe $(LIB_NH_INCL)/date.h $(LIB_NH_INCL)
 	@:
 
 artinames: $(LIB_NH_INCL)/artinames.h
+
+defs_clean:
+	@rm -f $(LIB_NH_INCL)/artinames.h
+	@rm -f $(LIB_NH_ROOT)/makedefs.exe
+	@rm -f $(LIB_NH_INCL)/date.h
+	@rm -f $(LIB_NH_INCL)/onames.h
+	@rm -f $(LIB_NH_INCL)/verinfo.h
+	@rm -f $(LIB_NH_INCL)/pm.h
+	@rm -f $(LIB_NH_SRC)/readonly.c
+	@rm -f $(LIB_NH_SRC)/readonly.o
 
 $(LIB_NH_ROOT)/makedefs.exe: $(LIB_NH_UTIL)/makedefs.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
 	$(CC) $(LDFLAGS) -o $@ $^
@@ -354,6 +356,15 @@ $(LIB_NH_SRC)/readonly.o: $(LIB_NH_SRC)/readonly.c
 utils: artinames defs $(LIB_NH_ROOT)/lev_main.exe $(LIB_NH_ROOT)/dgn_main.exe $(LIB_NH_ROOT)/dlb_main.exe
 	@:
 
+utils_clean:
+	@rm -f $(LIB_NH_ROOT)/lev_main.exe
+	@rm -f $(LIB_NH_ROOT)/dgn_main.exe
+	@rm -f $(LIB_NH_ROOT)/dlb_main.exe
+	@rm -f $(LIB_NH_UTIL)/*.o
+	@rm -f $(LIB_NH_UTIL)/*.l.c
+	@rm -f $(LIB_NH_UTIL)/*.y.c
+	@rm -f $(patsubst %.y,%.h,$(wildcard $(LIB_NH_UTIL)/*.y))
+
 $(LIB_NH_UTIL)/%.y.c: $(LIB_NH_UTIL)/%.y
 	$(YACC) -o $@ --defines=$(patsubst %.y,%.h,$<) $<
 
@@ -385,6 +396,9 @@ $(LIB_NH_ROOT)/dlb_main.exe: $(LIB_NH_UTIL)/dlb_main.o $(LIB_NH_SRC)/dlb.o
 levels: $(patsubst %.des,%.lev,$(wildcard $(LIB_NH_DAT)/*.des))
 	@:
 
+levels_clean:
+	@rm -f $(LIB_NH_DAT)/*.lev
+
 %.lev: $(LIB_NH_ROOT)/lev_main.exe
 	$(LIB_NH_ROOT)/lev_main.exe -o $(LIB_NH_DAT)/ $(patsubst %.lev,%.des,$@)
 
@@ -394,6 +408,9 @@ levels: $(patsubst %.des,%.lev,$(wildcard $(LIB_NH_DAT)/*.des))
 #==========================================
 dungeon: $(LIB_NH_DAT)/dungeon
 	@:
+
+dungeon_clean:
+	@rm -f $(LIB_NH_DAT)/dungeon
 
 $(LIB_NH_DAT)/dungeon: $(LIB_NH_DAT)/dungeon.pdf utils
 	$(LIB_NH_ROOT)/dgn_main.exe $<
@@ -410,6 +427,9 @@ archive_install: archive
 	@cp $(LIB_NH_DAT)/nhdat $(INSTALL_ROOT)/data
 	@cp $(LIB_NH_DAT)/license $(INSTALL_ROOT)/data
 
+archive_clean:
+	@rm -f $(LIB_NH_DAT)/nhdat
+
 $(LIB_NH_DAT)/nhdat: utils dungeon resources levels
 	cd $(LIB_NH_DAT) && $(abspath $(LIB_NH_ROOT)/dlb_main.exe) cf nhdat data dungeon history oracles quest.dat rumors *.lev
 
@@ -420,15 +440,13 @@ $(LIB_NH_DAT)/nhdat: utils dungeon resources levels
 define NH_VERSION_FILE
 #include <winresrc.h>
 #include "nethack.h"
-
-#define VERSION_STR(x,y,z) VERSION_STR_(x,y,z)
-#define VERSION_STR_(x,y,z) "0." #x "." #y "." #z
+#include "verinfo.h"
 
 1 ICON "$(BUILD_SRC)/icon.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     0,VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL
-PRODUCTVERSION  0,VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL
+FILEVERSION     VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL,0
+PRODUCTVERSION  VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL,0
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_APP
 FILESUBTYPE     VFT2_UNKNOWN
@@ -441,8 +459,8 @@ BEGIN
 			VALUE "FileDescription",  "$(NH_DESCRIPTION) ($(1))"
 			VALUE "LegalCopyright",   "$(NH_COPYRIGHT)"
 			VALUE "ProductName",      "$(NH_APP_NAME) ($(2))"
-			VALUE "ProductVersion",   VERSION_STR(VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL)
-			VALUE "FileVersion",      VERSION_STR(VERSION_MAJOR,VERSION_MINOR,PATCHLEVEL)
+			VALUE "ProductVersion",   VERSION_STRING
+			VALUE "FileVersion",      VERSION_STRING
 			VALUE "OriginalFilename", "$(NH_BIN_NAME)$(3).exe"
 			VALUE "InternalName",     "$(NH_BIN_NAME)$(3).exe"
 		END
@@ -462,20 +480,29 @@ nethack_install: nethack libnethack_install libuncursed_install
 	@cp $(NH_ROOT)/$(NH_BIN_NAME).exe $(INSTALL_ROOT)
 	@cp $(NH_ROOT)/$(NH_BIN_NAME)-sdl.exe $(INSTALL_ROOT)
 
+nethack_clean:
+	@rm -f $(BUILD_SRC)/*.o
+	@rm -f $(BUILD_SRC)/*.rc
+	@rm -f $(BUILD_SRC)/*.res
+	@rm -f $(BUILD_SRC)/*.tmp
+	@rm -f $(BUILD_SRC)/*.ico
+	@rm -f $(NH_SRC)/*.o
+	@rm -f $(NH_ROOT)/*.exe
+
 $(BUILD_SRC)/icon.ico: $(wildcard $(BUILD_ROOT)/dist/common/icon*.png)
 	icotool -c -o $@ $^
 
 $(BUILD_SRC)/version_console.rc:
 	$(file >$@,$(call NH_VERSION_FILE,text interface,console,))
 
-$(BUILD_SRC)/version_console.res: $(BUILD_SRC)/version_console.rc $(BUILD_SRC)/icon.ico
-	$(RC) $(RCFLAGS) -o $@ -I $(LIB_COMMON_INCL) $<
+$(BUILD_SRC)/version_console.res: $(BUILD_SRC)/version_console.rc $(BUILD_SRC)/icon.ico defs
+	$(RC) $(RCFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) $<
 
 $(BUILD_SRC)/version_gui.rc:
 	$(file >$@,$(call NH_VERSION_FILE,graphical interface,GUI,-sdl))
 
-$(BUILD_SRC)/version_gui.res: $(BUILD_SRC)/version_gui.rc $(BUILD_SRC)/icon.ico
-	$(RC) $(RCFLAGS) -o $@ -I $(LIB_COMMON_INCL)  $<
+$(BUILD_SRC)/version_gui.res: $(BUILD_SRC)/version_gui.rc $(BUILD_SRC)/icon.ico defs
+	$(RC) $(RCFLAGS) -o $@ -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) $<
 
 $(NH_SRC)/%.o: $(NH_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(NH_INCL) -I $(LIB_NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_UNCURSED_INCL) -I $(TILESETS_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -495,6 +522,11 @@ $(NH_ROOT)/$(NH_BIN_NAME)-sdl.exe: $(BUILD_SRC)/version_gui.res $(patsubst %.c,%
 #==========================================
 tilecompile: libnethack $(TILESETS_ROOT)/tilecompile.exe $(TILESETS_ROOT)/basecchar.exe
 	@:
+
+tilecompile_clean:
+	@rm -f $(TILESETS_SRC)/*.o
+	@rm -f $(TILESETS_UTIL)/*.o
+	@rm -f $(TILESETS_ROOT)/*.exe
 
 $(TILESETS_SRC)/%.o: $(TILESETS_SRC)/%.c
 	$(CC) -c $(CFLAGS) -o $@ -I $(TILESETS_INCL) -I $(NH_INCL) -I $(LIB_COMMON_INCL) -I $(LIB_NH_INCL) -include $(BUILD_INCL)/_aimake.h $<
@@ -547,6 +579,12 @@ tilesets_install: tilesets
 	@mkdir -p $(INSTALL_ROOT)/data
 	@cp $(TILESETS_DAT)/fonts/*.png $(INSTALL_ROOT)/data
 	@cp $(TILESETS_DAT)/*.nh4ct $(INSTALL_ROOT)/data
+
+tilesets_clean:
+	@rm -f $(TILESETS_DAT)/text/base.txt
+	@rm -f $(TILESETS_DAT)/palettes/dawnlike.txt
+	@rm -f $(TILESETS_DAT)/fonts/font14.png
+	@rm -f $(TILESETS_DAT)/*.nh4ct
 
 $(TILESETS_DAT)/text/base.txt:
 	$(TILESETS_ROOT)/basecchar.exe -o $@
