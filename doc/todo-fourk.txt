@@ -55,6 +55,10 @@
 ▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒
+▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
+▒▒▒   08:43 < Mandevil > Why?
+▒▒▒   I don't know how to reproduce this.
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -96,9 +100,6 @@
 ▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
 ▒▒▒
-▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
-▒▒▒   08:43 < Mandevil > Why?
-▒▒▒
 ▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
 ▒▒▒                             there is no "The succubus hits you message at all? I just got
 ▒▒▒                             "You die..." out of the blue.
@@ -115,8 +116,6 @@
 ▒▒▒
 ▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
 ▒▒▒                      wear due to size restri- well, FIQ's faster on the draw
-▒▒▒
-▒▒▒ * 13:52 < rumflump > it's weird that scur rangers start with a single +1 dart
 ▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
