@@ -55,6 +55,10 @@
 ▒▒▒
 ▒▒▒ * Poison spikes crash bug, see #hardfought log from 2017 Apr 11, starting at 15:14 and up to about 15:30 or so.
 ▒▒▒
+▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
+▒▒▒   08:43 < Mandevil > Why?
+▒▒▒   I don't know how to reproduce this.
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -68,6 +72,8 @@
 ▒▒▒   cherry-pick the workaround to 4.3-maint.
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
+▒▒▒
+▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
 ▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
 ▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
@@ -92,21 +98,7 @@
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
 ▒▒▒   Which was it, dwarves or coyote?
 ▒▒▒
-▒▒▒ * Consider letting Gnomes get one level higher in wands than other races of their role
-▒▒▒   up to a limit of expert, to compensate for the armor restrictions.
-▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
-▒▒▒
-▒▒▒ * 08:41 < Mandevil > jonadab: Another bug:
-▒▒▒   08:42 < Mandevil > You have a little trouble removing B - an uncursed wand called make invisible.
-▒▒▒   08:42 < Mandevil > <What do you want to zap? [fuxBCGHT or ?*]: B>
-▒▒▒   08:42 < Mandevil > <In what direction?: self>
-▒▒▒   08:42 < Mandevil > Gee!  All of a sudden, you can't see yourself.
-▒▒▒   08:42 < Mandevil > Gee!  All of a sudden, you can't see yourself.
-▒▒▒   08:42 < Mandevil > (duplicate message)
-▒▒▒
-▒▒▒ * 08:43 < Mandevil > Hm, also I didn't gain see invisible from stalker when I was invisible.
-▒▒▒   08:43 < Mandevil > Why?
 ▒▒▒
 ▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
 ▒▒▒                             there is no "The succubus hits you message at all? I just got
@@ -124,8 +116,6 @@
 ▒▒▒
 ▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
 ▒▒▒                      wear due to size restri- well, FIQ's faster on the draw
-▒▒▒
-▒▒▒ * 13:52 < rumflump > it's weird that scur rangers start with a single +1 dart
 ▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
