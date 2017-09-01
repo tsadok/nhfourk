@@ -995,6 +995,7 @@ u_init_inv_skills(void)
         augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
         augment_skill_cap(P_STEALTH, 1, P_BASIC, P_EXPERT);
+        augment_skill_cap(P_WANDS, 1, P_BASIC, P_EXPERT);
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
         break;
 

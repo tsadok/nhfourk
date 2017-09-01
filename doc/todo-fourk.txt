@@ -69,6 +69,8 @@
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
 ▒▒▒
+▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
+▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
 ▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
 ▒▒▒   15:17 < rumflump > I think because I was flying, it didn't count water terrain as special
@@ -91,9 +93,6 @@
 ▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
 ▒▒▒   Which was it, dwarves or coyote?
-▒▒▒
-▒▒▒ * Consider letting Gnomes get one level higher in wands than other races of their role
-▒▒▒   up to a limit of expert, to compensate for the armor restrictions.
 ▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
 ▒▒▒
