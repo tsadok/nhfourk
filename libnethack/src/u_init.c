@@ -697,8 +697,9 @@ u_init_inv_skills(void)
     short nclist[4] =
         { STRANGE_OBJECT, STRANGE_OBJECT, STRANGE_OBJECT, STRANGE_OBJECT };
 
-        /*** Role-specific initializations ***/
     augment_magic_chest_contents(SCR_CONSECRATION, 0, 1);
+
+    /*** Role-specific initializations ***/
     switch (Role_switch) {
     case PM_ARCHEOLOGIST:
         role_ini_inv(Archeologist, nclist);
@@ -808,6 +809,7 @@ u_init_inv_skills(void)
         trobj_list = copy_trobj_list(Ranger);
         if (Race_if(PM_SCURRIER)) {
             /* darts */
+            trobj_list[RAN_DAGGER].trspe = 2; /* no single +1 dart */
             trobj_list[RAN_TWO_ARROWS].trquan = 25 + rolern2(10);
             trobj_list[RAN_ZERO_ARROWS].trquan = 15 + rolern2(5);
         } else if (Race_if(PM_GIANT)) {
@@ -1001,6 +1003,7 @@ u_init_inv_skills(void)
         augment_skill_cap(P_CROSSBOW, 2, P_SKILLED, P_EXPERT);
         augment_skill_cap(P_CLUB, 1, P_SKILLED, P_MASTER);
         augment_skill_cap(P_STEALTH, 1, P_BASIC, P_EXPERT);
+        augment_skill_cap(P_WANDS, 1, P_BASIC, P_EXPERT);
         augment_magic_chest_contents(CROSSBOW_BOLT, 0, 20);
         break;
 
