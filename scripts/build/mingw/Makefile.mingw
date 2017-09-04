@@ -608,7 +608,7 @@ doc_install:
 	@cp $(NH_DOC)/faq.txt $(INSTALL_ROOT)/doc
 	@cp $(NH_DOC)/philosophy.txt $(INSTALL_ROOT)/doc
 	@cp $(NH_DOC)/keyboard-layouts-nethack.png $(INSTALL_ROOT)/doc
-	@asciidoc -o $(INSTALL_ROOT)/doc/guidebook.html $(NH_DOC)/guidebook.asc
+	@asciidoc -b html4 -o $(INSTALL_ROOT)/doc/guidebook.html $(NH_DOC)/guidebook.asc
 	@pod2html --infile=$(NH_DOC)/$(NH_BIN_NAME).pod --outfile=$(INSTALL_ROOT)/doc/$(NH_BIN_NAME).html
 
 define SAVE_README_FILE
