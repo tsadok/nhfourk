@@ -4,12 +4,19 @@
 #   A Win32 Console version.
 #   A Win32 Graphical version.
 #
-#   In addition to your C compiler,
+#   In addition to your C compiler, you'll need the following packages.
 #
-#     if you want to change     you will need a
-#     files with suffix         workalike for
-#         .y                     yacc   (such as bison)
-#         .l                     lex    (such as flex)
+#       bison
+#       flex
+#       icoutils
+#       asciidoc
+#       perl (for pod2html)
+#
+#   The following development libraries are required.
+#
+#       z
+#       png (1.6)
+#       SDL2
 #
 #==============================================================================
 # BUILD DECISIONS SECTION
@@ -514,7 +521,7 @@ $(NH_ROOT)/$(NH_BIN_NAME).exe: $(BUILD_SRC)/version_console.res $(patsubst %.c,%
 	$(CC) $(LDFLAGS) -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed -lws2_32
 
 $(NH_ROOT)/$(NH_BIN_NAME)-sdl.exe: $(BUILD_SRC)/version_gui.res $(patsubst %.c,%.o,$(wildcard $(NH_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(LIB_COMMON_SRC)/*.c)) $(patsubst %.c,%.o,$(wildcard $(BUILD_SRC)/*.c)) $(TILESETS_SRC)/tilesequence.o $(LIB_NH_SRC)/drawing.o $(LIB_NH_SRC)/symclass.o $(LIB_NH_SRC)/objects.o $(LIB_NH_SRC)/monst.o
-	$(CC) $(LDFLAGS) -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed_sdl -lws2_32
+	$(CC) $(LDFLAGS) -mwindows -o $@ $^ -L $(LIB_UNCURSED_ROOT) -L $(LIB_NH_ROOT) -L $(LIB_CLIENT_ROOT) -Wl,-Bdynamic -lnethack -lnethack_client -luncursed_sdl -lws2_32
 
 #
 #==========================================
