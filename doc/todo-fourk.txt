@@ -59,6 +59,9 @@
 ▒▒▒   08:43 < Mandevil > Why?
 ▒▒▒   I don't know how to reproduce this.
 ▒▒▒
+▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water,
+▒▒▒                      which can block them from getting to the stairs
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -82,7 +85,7 @@
 ▒▒▒   15:18 < rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
-▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water, which can block them from getting to the stairs
+▒▒▒ * Test RL-tiles since the cherry-pick/merge mixup.
 ▒▒▒
 ▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
 ▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
@@ -112,8 +115,6 @@
 ▒▒▒                      are listed with appearance, not what they actually are.
 ▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
 ▒▒▒
-▒▒▒ * 23:38 < FIQ > jonadab: shouldn't earth E be always-peaceful to gnomes?
-▒▒▒
 ▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
 ▒▒▒                      wear due to size restri- well, FIQ's faster on the draw
 ▒▒▒
@@ -132,10 +133,17 @@
 ▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
 ▒▒▒   that part to Fourk, without carefully checking for implications.
 ▒▒▒
+▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change, 1117745, might should be cherry-picked.
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * 23:38 < FIQ > jonadab: shouldn't earth E be always-peaceful to gnomes?
+▒▒▒   Yes, but this should go in after the rodent change.  So => 4.3.0.5
+▒▒▒   (It'll be a special case in peace_minded().)
+▒▒▒
+▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
 ▒▒▒ * Fine tune the balance on the Pw regen formula, especially
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
@@ -178,7 +186,15 @@
 ▒▒▒
 ▒▒▒ * Buff crystal plate mail in some way.
 ▒▒▒
-▒▒▒ * Make extrinsic resistances protect against item destruction, including erosion.
+▒▒▒ * Item destruction rework:
+▒▒▒   + Make extrinsic resistances protect against item destruction, including erosion.
+▒▒▒   + Double check that fooproofing the item protects against item destruction.
+▒▒▒   + Make sure potions of oil don't freeze in any case (but they can be lit by fire).
+▒▒▒   + Make potions other than oil not boil/explode with fire (because cold shatters them).
+▒▒▒   + Instead of exploding, wands should release a charge when shocked.  Depending on
+▒▒▒     the type of wand, the charge may be activated rather than simply lost.
+▒▒▒   + Instead of exploding, charged rings should lose a charge when shocked (unless at -3 or worse).
+▒▒▒     I'll need to decide what to do about uncharged rings.
 ▒▒▒
 ▒▒▒ * Nuke magic cancellation.  Test late-game balance with this change.
 ▒▒▒
@@ -815,14 +831,18 @@
 ▒▒▒
 ▒▒▒ * Hunger rework:
 ▒▒▒   + Rings of slow digestion and hunger are the same chargeable ring, with opposite
-▒▒▒     charges.  Call it ring of digestion.
+▒▒▒     charges.  Call it ring of digestion.  When positively charged, it speeds your
+▒▒▒     digestion; when negative, it slows it.  Go ahead and let it protect against
+▒▒▒     _being_ digested regardless of its charge/enchantment.
 ▒▒▒   + Things like spellcasting and teleportation no longer cause hunger.  The only
-▒▒▒     way to hunger faster than usual is via a ring of digestion.
-▒▒▒   + Tinning kits use charges proportional to corpse weight.
+▒▒▒     way to hunger faster than usual is via a (positive) ring of digestion.
+▒▒▒   + Tinning kits use charges proportional to corpse weight.  (This makes tinning dragons
+▒▒▒     for their intrinsics more expensive.)
 ▒▒▒   + Intrinsics gained by eating now gradually time out.  Balance the rate of this
 ▒▒▒     so that eating food that does NOT grant intrinsics is almost always suboptimal
 ▒▒▒     strategy, because it means you'll end up bloated (or missing some resistance)
 ▒▒▒     or have to expend scrolls of charging on a tinning kit.
+▒▒▒   + Make sure cursed food doesn't grant useful intrinsics.  (It may already not; check.)
 ▒▒▒
 ▒▒▒ * Bats should be able to echolocate around corners, up to some limited number of LOS bounces (maybe 3).
 ▒▒▒
