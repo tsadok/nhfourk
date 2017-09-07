@@ -145,7 +145,8 @@
 ▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
 ▒▒▒   that part to Fourk, without carefully checking for implications.
 ▒▒▒
-▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change, 1117745, might should be cherry-picked.
+▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
+▒▒▒   commits 1117745, e7c193d
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
