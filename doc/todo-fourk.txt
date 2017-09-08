@@ -76,6 +76,18 @@
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
 ▒▒▒
+▒▒▒ * Redo the colors on the following dawnlike-16 tiles:
+▒▒▒   + blood pudding
+▒▒▒   + bench
+▒▒▒   + all of the keys
+▒▒▒   + violet potion (maybe)
+▒▒▒
+▒▒▒ * I didn't realize this before, but Dawnlike makes each scroll distinct.  Ergo,
+▒▒▒   we need to redo all the Fourk-specific ones.
+▒▒▒
+▒▒▒ * Redo the dawnlike-16 baby gray dragon, so it's similar to the other gray dragon
+▒▒▒   tiles that are used, and comment out the unused alternate dragon tiles.
+▒▒▒
 ▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
 ▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
