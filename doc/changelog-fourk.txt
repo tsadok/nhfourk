@@ -61,9 +61,15 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Characters who are restricted in two-weapon combat skill can
+   still wield two weapons at once if they are expert in the
+   relevant skill(s) for both weapons involved.  For example, a
+   Caveman who is expert in slings can dual-wield two slings
+   (which allows firing a larger number of projectiles).
+
  * The Sceptre of Might now grants drain resistance when wielded.
 
-* Several spare random appearances have been added for spellbooks,
+ * Several spare random appearances have been added for spellbooks,
    potions, and rings, so that not every appearance for these
    classes of items appears in every game.
 
