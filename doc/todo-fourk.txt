@@ -76,12 +76,6 @@
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
 ▒▒▒
-▒▒▒ * Redo the colors on the following dawnlike-16 tiles:
-▒▒▒   + blood pudding
-▒▒▒   + bench
-▒▒▒   + all of the keys
-▒▒▒   + violet potion (maybe)
-▒▒▒
 ▒▒▒ * I didn't realize this before, but Dawnlike makes each scroll distinct.  Ergo,
 ▒▒▒   we need to redo all the Fourk-specific ones.
 ▒▒▒
@@ -137,19 +131,15 @@
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
 ▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
-▒▒▒ * 19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
-▒▒▒   This contains two things.  The one Fourk probably wants has to do with bags of holding auto-identifying
-▒▒▒   when used.  Since object weights are shown, that makes sense on the InterHack Principle.
-▒▒▒   The other half has to do with gaining/losing a property (regeneration, as it happens), and since
-▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
-▒▒▒   that part to Fourk, without carefully checking for implications.
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.5 (before save-compat-freeze) :
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
 ▒▒▒   commits 1117745, e7c193d
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.5 (before save-compat-freeze) :
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒ * Redo the colors for the Dawnlike tiles for all the keys,
+▒▒▒   and maybe the violet potion as well.
 ▒▒▒
 ▒▒▒ * 23:38 < FIQ > jonadab: shouldn't earth E be always-peaceful to gnomes?
 ▒▒▒   Yes, but this should go in after the rodent change.  So => 4.3.0.5
@@ -645,6 +635,13 @@
 ▒▒▒                                           none to the other; not sure if that's a mistake, but I wanted to point it out :)
 ▒▒▒
 ▒▒▒ * Limit a crystal ball's effective search radius based on intelligence.
+▒▒▒
+▒▒▒ * 19:12 < FIQ > and ea76623be59adb32f24c1c4b197cc6815deab611
+▒▒▒   This contains two things.  The one Fourk probably wants has to do with bags of holding auto-identifying
+▒▒▒   when used.  Since object weights are shown, that makes sense on the InterHack Principle.
+▒▒▒   The other half has to do with gaining/losing a property (regeneration, as it happens), and since
+▒▒▒   a lot of property-related stuff is reworked in FIQHack I'd be hesitant to just blindly apply
+▒▒▒   that part to Fourk, without carefully checking for implications.
 ▒▒▒
 ▒▒▒ * FIQ thinks Gnome darkvision should be able to see walls.
 ▒▒▒
