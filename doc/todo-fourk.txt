@@ -97,8 +97,6 @@
 ▒▒▒   15:18 < rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
 ▒▒▒
-▒▒▒ * Test RL-tiles since the cherry-pick/merge mixup.
-▒▒▒
 ▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
 ▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
 ▒▒▒
@@ -127,8 +125,9 @@
 ▒▒▒                      are listed with appearance, not what they actually are.
 ▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
 ▒▒▒
-▒▒▒ * 22:23 < rumflump > currently, sacrifice gifts can include gifts that you're unable to
-▒▒▒                      wear due to size restri- well, FIQ's faster on the draw
+▒▒▒ * When giving armor/weapons as a sacrifice gift, don't give inappropriately-racial ones,
+▒▒▒   e.g., don't give orcish items to elves or vice versa.  Artifacts should only care about
+▒▒▒   this if the artifact itself is racially aligned.
 ▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
@@ -468,6 +467,9 @@
 ▒▒▒
 ▒▒▒ * Make some (limited) armor that gnomes and scurriers can wear;
 ▒▒▒   consider doing the same for giants.
+▒▒▒
+▒▒▒ * Revisit the sacrifice gift code's fallback options for armor, to
+▒▒▒   ensure it can always find something size-appropriate.
 ▒▒▒
 ▒▒▒ * Implement dress shirts, give them to librarians.  Consider what other
 ▒▒▒   equipment they should get.
