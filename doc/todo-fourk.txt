@@ -107,9 +107,6 @@
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
 ▒▒▒
-▒▒▒ * 07:16 < FIQ > btw, it appears you never fixed the stinking cloud issues with peacefuls? see
-▒▒▒   bccd29c8e88be8042e71e1a068ceac8b964a59a9
-▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 (not blockers):
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
