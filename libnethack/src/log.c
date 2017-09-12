@@ -110,26 +110,16 @@ log_recover_core_reasons(struct nh_menulist *menu, const char *message,
     }
 
     add_menutext(menu, "");
-    /*
-    if (flags.debug) {
-        add_menutext(menu,
-                     "Here is additional information about this save rewind:");
-    } else {
-    */
-        add_menutext(menu, "You can report this error by email or in IRC.");
-        add_menutext(menu, msgprintf("My email address is %s%scolumbus.rr.com",
-                                     "jonadab", "@"));
-        add_menutext(menu, "Please include the word \"Fourk\" in the Subject.");
-        add_menutext(menu, "IRC users, join channel #nhfourk on Freenode.");
-        add_menutext(menu, "Please include the following information:");
-        /*
-    }
-        */
-    add_menutext(menu, "");
     add_menutext(menu, msgprintf("Error: %s", message));
     add_menutext(menu, msgprintf("Location: %s:%d", file, line));
     add_menutext(menu, msgprintf("Game ID: %s_%" PRIdLEAST64, u.uplname,
                                  (int_least64_t)u.ubirthday / 1000000L));
+    add_menutext(menu, "");
+    add_menutext(menu, "You can report this error by email or in IRC.");
+    add_menutext(menu, msgprintf("My email address is %s%scolumbus.%s.com",
+                                 "jonadab", "@", "rr"));
+    add_menutext(menu, "Please include the word \"Fourk\" in the Subject.");
+    add_menutext(menu, "IRC users, join channel #nhfourk on Freenode.");
     add_menutext(menu, "");
 }
 
@@ -251,11 +241,11 @@ log_recover_core(long offset, boolean canreturn, const char *message,
     } else {
         init_menulist(&menu);
 
+        log_recover_core_reasons(&menu, message, file, line);
+
         add_menutext(&menu,
-                     "The gamestate or save file is internally inconsistent.");
-        add_menutext(&menu,
-                     "However, the game can be recovered from a backup save.");
-        buf = msgprintf("This will lose approximately %.4g%% of your progress.",
+                     "The game can be recovered from a backup save.");
+        buf = msgprintf("This will lose about %.4g%% of your progress.",
                         100.0 * (1.0 - ((float)offset /
                                         lseek(program_state.logfile, 0,
                                               SEEK_END))));
@@ -264,22 +254,23 @@ log_recover_core(long offset, boolean canreturn, const char *message,
         if (canreturn) {
             add_menutext(&menu, "");
             add_menutext(&menu,
-                         "It also seems like it might be possible to repair");
+                         "It also seems like it might be possible to simply");
             add_menutext(&menu,
-                         "the gamestate. This will lose no progress, "
+                         "continue. This will lose no progress, "
                          "but might");
             add_menutext(&menu, "leave the game more unstable than usual.");
         }
-
-        log_recover_core_reasons(&menu, message, file, line);
+        add_menutext(&menu, "");
+        add_menutext(&menu, "What do you want to do?");
+        add_menutext(&menu, "");
 
         if (canreturn)
-            add_menuitem(&menu, 3, "Attempt to repair the gamestate", 'P', FALSE);
+            add_menuitem(&menu, 3, "Attempt to continue", 'C', FALSE);
         add_menuitem(&menu, 1, "Automatically recover the save file", 'R', FALSE);
-        add_menuitem(&menu, 2, "Leave the save file to be recovered manually", 'Q',
+        add_menuitem(&menu, 2, "Leave the save file, wait for a bugfix", 'Q',
                      FALSE);
 
-        n = display_menu(&menu, "The save file is corrupted...",
+        n = display_menu(&menu, "The following error has occurred:",
                          PICK_ONE, PLHINT_URGENT, &selected);
     }
 

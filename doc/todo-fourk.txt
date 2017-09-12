@@ -11,6 +11,7 @@
 ▒▒▒ * FIQ says he shot a watchman in the face because f1<direction> fired two darts.
 ▒▒▒
 ▒▒▒ * Find a way to compile on Windows.
+▒▒▒ * Find some way to compile on Windows, even if it involves Cygwin and exotic dependencies.
 ▒▒▒
 ▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.  (Gnome)
 ▒▒▒   + Preliminary attempts to reproduce this have failed (but uncovered another bug, which I fixed).
@@ -18,8 +19,6 @@
 ▒▒▒ * 22:06 <         Tangles > Error: Couldn't load "garden-2.lev" - making a maze.
 ▒▒▒   I absolutely cannot reproduce this here.  Both versions of the garden work as intended here.
 ▒▒▒   Additionally, Travis does not report any unexpected problems building them.
-▒▒▒
-▒▒▒ * Find some way to compile on Windows, even if it involves Cygwin and exotic dependencies.
 ▒▒▒
 ▒▒▒ * Throwing food at a starving tame monster should not revert it to peaceful.
 ▒▒▒
@@ -61,6 +60,7 @@
 ▒▒▒
 ▒▒▒ * 02:50 < rumflump > pets are unnecessarily afraid of shallow water,
 ▒▒▒                      which can block them from getting to the stairs
+▒▒▒   I don't understand the AI code well enough to find the right place to fix this.
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
@@ -81,6 +81,10 @@
 ▒▒▒
 ▒▒▒ * Redo the dawnlike-16 baby gray dragon, so it's similar to the other gray dragon
 ▒▒▒   tiles that are used, and comment out the unused alternate dragon tiles.
+▒▒▒
+▒▒▒ * 09:40 < FIQ+> also pushed a change so that the case you encountered shouldn't create a
+▒▒▒                 save which needs manual recover anymore, for both master and 4.3.0
+▒▒▒   09:41 < FIQ+> jonadab: this also applies to you -- a8da34f
 ▒▒▒
 ▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
 ▒▒▒
