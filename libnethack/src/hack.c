@@ -1003,7 +1003,8 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
                           "There isn't space to move around the boulder.");
                 /* otherwise we've already printed a message */
                 return FALSE;
-            }
+            } else
+                pline(msgc_debug, "Unreachable codepath: csontgnhpieh");
         }
 
         /* Exceptions: we can't move boulders while travelling in Sokoban, and

@@ -451,12 +451,15 @@ can_twoweapon(void)
         else if (Upolyd)
             pline(msgc_cancelled,
                   "You can't use two weapons in your current form.");
-        else
+        else if ((uwep && P_SKILL(objects[uwep->otyp].oc_skill) < P_EXPERT) ||
+                 (uswapwep && P_SKILL(objects[uswapwep->otyp].oc_skill) <
+                  P_EXPERT))
             pline(msgc_cancelled,
-                  "%s aren't able to use two weapons at once.",
+                  "%s can only use two weapons at once, if expert in both.",
                   msgupcasefirst(makeplural(
                                      (u.ufemale && urole.name.f) ?
                                      urole.name.f : urole.name.m)));
+        else return TRUE;
     } else if (!uwep || !uswapwep)
         pline(msgc_cancelled,
               "Your %s%s%s empty.", uwep ? "left " : uswapwep ? "right " : "",

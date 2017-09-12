@@ -1381,6 +1381,17 @@ sacrifice_gift(void)
                     (i != HELM_OF_OPPOSITE_ALIGNMENT) &&
                     /* Don't give highly-undesirable items. */
                     (i != GAUNTLETS_OF_FUMBLING) && (i != FUMBLE_BOOTS) &&
+                    /* Don't give armor too large/small for the player.
+                       We don't use URACEDATA here, because we care about
+                       the player's "natural form", not current polyform. */
+                    (objects[i].a_maxsize >=
+                     ((&mons[(urace.femalenum == NON_PM || !u.ufemale) ?
+                             urace.malenum : urace.femalenum])->msize) &&
+                     objects[i].a_minsize <=
+                        ((&mons[(urace.femalenum == NON_PM || !u.ufemale) ?
+                                urace.malenum : urace.femalenum])->msize)) &&
+                    /* TODO: don't get inappropriately-racial armor, e.g.,
+                       don't give orcish armor to elves, etc. */
                     /* Match the slot we're aiming for, if we have
                        chosen a slot to aim for. */
                     ((tryforslot == os_invalid) ||
