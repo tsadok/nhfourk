@@ -62,26 +62,20 @@
 ▒▒▒                      which can block them from getting to the stairs
 ▒▒▒   I don't understand the AI code well enough to find the right place to fix this.
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.4 :
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
 ▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
 ▒▒▒   Haven't verified whether this is Fourk-specific.  FIQ did a workaround to
 ▒▒▒   convert this from segfault to panic(), but we should fix it for real.
-▒▒▒ * Check whether the monster-carrying-egg crash is Fourk-specific, maybe
-▒▒▒   cherry-pick the workaround to 4.3-maint.
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.4 :
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * Redo the dawnlike-16 baby gray dragon, so it's similar to the other gray dragon
 ▒▒▒   tiles that are used, and comment out the unused alternate dragon tiles.
-▒▒▒
-▒▒▒ * 09:40 < FIQ+> also pushed a change so that the case you encountered shouldn't create a
-▒▒▒                 save which needs manual recover anymore, for both master and 4.3.0
-▒▒▒   09:41 < FIQ+> jonadab: this also applies to you -- a8da34f
 ▒▒▒
 ▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
 ▒▒▒
