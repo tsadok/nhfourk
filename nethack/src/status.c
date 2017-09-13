@@ -230,7 +230,7 @@ draw_status(struct nh_player_info *pi, nh_bool threeline)
     uncursed_color fgcode, bgcode;
     pair_content(PAIR_NUMBER(curses_color_attr(mainframe_color, 0)),
                  &fgcode, &bgcode);
-    init_pair(MAINFRAME_PAIR, fgcode, bgcode);
+    init_pair(MAINFRAME_PAIR, fgcode + (mainframe_color > 7 ? 8 : 0), bgcode);
 
     /* name */
     if (threeline) {

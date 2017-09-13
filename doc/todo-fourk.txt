@@ -77,8 +77,6 @@
 ▒▒▒ * Redo the dawnlike-16 baby gray dragon, so it's similar to the other gray dragon
 ▒▒▒   tiles that are used, and comment out the unused alternate dragon tiles.
 ▒▒▒
-▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
-▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
 ▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
 ▒▒▒   15:17 < rumflump > I think because I was flying, it didn't count water terrain as special
