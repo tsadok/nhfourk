@@ -68,11 +68,22 @@
 ▒▒▒   Haven't verified whether this is Fourk-specific.  FIQ did a workaround to
 ▒▒▒   convert this from segfault to panic(), but we should fix it for real.
 ▒▒▒
+▒▒▒ * 06:01 < Mandevil > jonadab: This looks like a bug:
+▒▒▒   06:01 < Mandevil > The tin opens like magic!  You succeed in opening the tin.
+▒▒▒   [As of 4.3.0.4, "You succeed in opening the tin." is suppressed there as redundant.]
+▒▒▒   06:01 < Mandevil > It smells like dwarves.
+▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
+▒▒▒   06:01 < Mandevil > You consume pickled coyote.
+▒▒▒   Which was it, dwarves or coyote?
+▒▒▒   Realistically, I don't have any idea how to reproduce this.
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
+▒▒▒
+▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
 ▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
@@ -86,14 +97,6 @@
 ▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
-▒▒▒
-▒▒▒ * 06:01 < Mandevil > jonadab: This looks like a bug:
-▒▒▒   06:01 < Mandevil > The tin opens like magic!  You succeed in opening the tin.
-▒▒▒   [As of 4.3.0.4, "You succeed in opening the tin." is suppressed there as redundant.]
-▒▒▒   06:01 < Mandevil > It smells like dwarves.
-▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
-▒▒▒   06:01 < Mandevil > You consume pickled coyote.
-▒▒▒   Which was it, dwarves or coyote?
 ▒▒▒
 ▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
 ▒▒▒
@@ -109,10 +112,6 @@
 ▒▒▒                      are listed with appearance, not what they actually are.
 ▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
 ▒▒▒
-▒▒▒ * When giving armor/weapons as a sacrifice gift, don't give inappropriately-racial ones,
-▒▒▒   e.g., don't give orcish items to elves or vice versa.  Artifacts should only care about
-▒▒▒   this if the artifact itself is racially aligned.
-▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
@@ -120,6 +119,9 @@
 ▒▒▒
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
 ▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
+▒▒▒
+▒▒▒ * 07:16 < FIQ > btw, it appears you never fixed the stinking cloud issues with peacefuls? see
+▒▒▒   bccd29c8e88be8042e71e1a068ceac8b964a59a9
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
@@ -170,6 +172,11 @@
 ▒▒▒   18:36 <             FIQ > also for other kind of special [rooms]
 ▒▒▒   Answer: the obvious and clean way to do that is by tracking which level "sounds"
 ▒▒▒   the player has "heard", in the level data structure.
+▒▒▒   07:13 <             FIQ > 5c3f742f18fdd791c91b0232cc413183ac23952b
+▒▒▒   07:14 <             FIQ > adds a flag, and there was free space there
+▒▒▒   07:14 <             FIQ > so I didn't even have to saveshim
+▒▒▒   The FIQHack fix is for vault sounds only; I'd like to handle other level sounds
+▒▒▒   in the same way.
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.

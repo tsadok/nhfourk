@@ -706,6 +706,7 @@ extern void swapinv(struct obj *oldobj, struct obj *newobj);
 extern void delallobj(int, int);
 extern void delobj(struct obj *);
 extern struct obj *sobj_at(int otyp, struct level *lev, int x, int y);
+extern boolean would_be_racial_equip(int otyp, const struct permonst *pm);
 extern boolean is_racial_equipment(struct monst *mon, struct obj *obj);
 extern int carried_alignment(void);
 extern struct obj *carrying(int);
