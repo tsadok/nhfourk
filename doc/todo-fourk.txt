@@ -81,10 +81,6 @@
 ▒▒▒   4.3.0.4 :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Differentiate ancient dragons in DawnHack.
-▒▒▒
-▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
-▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
 ▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
 ▒▒▒   15:17 < rumflump > I think because I was flying, it didn't count water terrain as special
@@ -98,7 +94,7 @@
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
-▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
+▒▒▒ * Show effective speed in the status area.
 ▒▒▒
 ▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
 ▒▒▒                             there is no "The succubus hits you message at all? I just got
@@ -126,6 +122,10 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Differentiate ancient dragons in DawnHack.
+▒▒▒
+▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
 ▒▒▒   commits 1117745, e7c193d
