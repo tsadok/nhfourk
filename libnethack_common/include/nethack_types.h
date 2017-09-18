@@ -592,7 +592,7 @@ struct nh_player_info {
     char racename[PL_NSIZ];
     char level_desc[COLNO];
     char statusitems[STATUSITEMS_MAX][ITEMLEN];
-    int score, xp, gold, moves;
+    int score, xp, gold, moves, speed;
     int max_rank_sz;
     int st, st_extra, dx, co, in, wi, ch;
     int align, nr_items;
