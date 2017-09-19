@@ -783,7 +783,7 @@ you_speed(boolean infoonly) {
     int amt = 0;
     if (u.usteed && u.umoved) {
         /* your speed doesn't augment steed's speed */
-        return mcalcmove(u.usteed);
+        amt = mcalcmove(u.usteed);
     } else {
         amt = (Upolyd ? youmonst.data->mmove : urace.basespeed);
         /* Different sources of speed now stack: */
@@ -933,7 +933,7 @@ you_moved(void)
                struct you because unlike for monsters, there's a random factor
                in player movement.) */
             int oldmoveamt = u.moveamt;
-            u.moveamt += you_move_amount();
+            u.moveamt = you_move_amount();
             /* Adjust the move offset for the change in speed. */
             adjust_move_offset(&youmonst, oldmoveamt, u.moveamt);
 
