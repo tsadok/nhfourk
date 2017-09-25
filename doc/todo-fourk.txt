@@ -77,9 +77,9 @@
 ▒▒▒   Which was it, dwarves or coyote?
 ▒▒▒   Realistically, I don't have any idea how to reproduce this.
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.4 :
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
+▒▒▒                             there is no "The succubus hits you message at all? I just got
+▒▒▒                             "You die..." out of the blue.
 ▒▒▒
 ▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
 ▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
@@ -87,16 +87,12 @@
 ▒▒▒   15:17 < rumflump > *am* flying
 ▒▒▒   15:18 < rumflump > http://i.imgur.com/mgliT5i.png
 ▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
+▒▒▒   Eh, I'm going to file this under "autoexplore can get you killed, but you knew that."
+▒▒▒   And if somebody implements an autofight feature, I'll say the same about it.
 ▒▒▒
-▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
-▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
-▒▒▒
-▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
-▒▒▒                             wall as a scurrier seems to produce no message at all.
-▒▒▒
-▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
-▒▒▒                             there is no "The succubus hits you message at all? I just got
-▒▒▒                             "You die..." out of the blue.
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.4 (release blockers):
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
 ▒▒▒   seems to be a good way to find bugs.
@@ -106,24 +102,45 @@
 ▒▒▒                      are listed with appearance, not what they actually are.
 ▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
 ▒▒▒
+▒▒▒ * rungame.c has a chmod() that needs #ifdef UNIX or something.  Only a blocker because easy.
+▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
 ▒▒▒
+▒▒▒ * 07:16 < FIQ > btw, it appears you never fixed the stinking cloud issues with peacefuls? see
+▒▒▒   bccd29c8e88be8042e71e1a068ceac8b964a59a9
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.4 (not blockers):
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
+▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
+▒▒▒   This appears to be an as-designed one-in-100 chance inherited from vanilla.
+▒▒▒   I do think I'll change it (because it's pointlessly annoying and kind of makes me
+▒▒▒   not want to use thrown Mojo), but it's not a bug, so not a release blocker.
+▒▒▒
+▒▒▒ * Differentiate ancient dragons in DawnHack.
+▒▒▒
+▒▒▒ * RL-Tiles: do statues for all the Fourk-specific monsters.
+▒▒▒
+▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
+▒▒▒                             wall as a scurrier seems to produce no message at all.
+▒▒▒
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
 ▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
-▒▒▒ * 07:16 < FIQ > btw, it appears you never fixed the stinking cloud issues with peacefuls? see
-▒▒▒   bccd29c8e88be8042e71e1a068ceac8b964a59a9
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Differentiate ancient dragons in DawnHack.
-▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
+▒▒▒
+▒▒▒ * Consider FIQ's changes to spellbook mechanics, 5f81af2.  Be advised this will absolutely
+▒▒▒   necessitate a fullwise balance check on spellbook availability.
 ▒▒▒
 ▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
 ▒▒▒   commits 1117745, e7c193d

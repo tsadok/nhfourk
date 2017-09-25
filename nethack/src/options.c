@@ -82,6 +82,14 @@ static struct nh_listitem menupaging_list[] = {
 static struct nh_enum_option menupaging_spec =
     { menupaging_list, listlen(menupaging_list) };
 
+static struct nh_listitem msgfading_list[] = {
+    {MF_FADE, "fade"},
+    {MF_BLANK, "blank"},
+    {MF_DONTCHANGE, "leave unchanged"},
+};
+static struct nh_enum_option msgfading_spec =
+    { msgfading_list, listlen(msgfading_list) };
+
 static struct nh_listitem optstyle_list[] = {
     {OPTSTYLE_DESC, "description only"},
     {OPTSTYLE_NAME, "name only"},
@@ -181,6 +189,12 @@ static struct nh_option_desc curses_options[] = {
     {"menupaging", "Messages and Menus",
      "scrolling behaviour of menus",
      nh_birth_ingame, OPTTYPE_ENUM, {.e = MP_LINES}},
+    {"msgcolor", "Screen Layout",
+     "color messages depending on context",
+     nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
+    {"msgfading", "Screen Layout",
+     "how to display old messages",
+     nh_birth_ingame, OPTTYPE_ENUM, {.e = MF_FADE}},
     {"msgheight", "Screen Layout",
      "message window height",
      nh_birth_ingame, OPTTYPE_INT, {.i = 8}},
@@ -241,6 +255,7 @@ static struct nhlib_boolopt_map boolopt_map[] = {
     {"extmenu", &settings.extmenu},
     {"hintswindow", &settings.extrawin},
     {"invweight", &settings.invweight},
+    {"msgcolor", &settings.msgcolor},
     {"mouse", &settings.mouse},
     {"msgnomerge", &settings.msgnomerge},
     {"prompt_inline", &settings.prompt_inline},
@@ -389,6 +404,8 @@ curses_set_option(const char *name, union nh_optvalue value)
         settings.show_motd = option->value.e;
     } else if (!strcmp(option->name, "menupaging")) {
         settings.menupaging = option->value.e;
+    } else if (!strcmp(option->name, "msgfading")) {
+        settings.msgfading = option->value.e;
     } else if (!strcmp(option->name, "msg_window")) {
         settings.msg_window = option->value.e;
     } else if (!strcmp(option->name, "optstyle")) {
@@ -441,6 +458,7 @@ init_options(void)
     find_option("networkmotd")->e = networkmotd_spec;
     find_option("optstyle")->e = optstyle_spec;
     find_option("menupaging")->e = menupaging_spec;
+    find_option("msgfading")->e = msgfading_spec;
     find_option("msg_window")->e = msg_window_spec;
     find_option("palette")->e = palette_spec;
     find_option("scores_top")->i.max = 10000;
