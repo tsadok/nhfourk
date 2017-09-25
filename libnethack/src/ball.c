@@ -574,11 +574,12 @@ drag:
             pline(msgc_interrupted, "You are jerked back by the iron ball!");
             if ((victim = m_at(level, uchain->ox, uchain->oy)) != 0) {
                 int tmp;
+                int dieroll;
 
                 tmp = -2 + Luck + find_mac(victim);
                 tmp += omon_adj(victim, uball, TRUE);
-                if (tmp >= rnd(20))
-                    hmon(victim, uball, 1);
+                if (tmp >= (dieroll = rnd(20)))
+                    hmon(victim, uball, 1, dieroll);
                 else
                     miss(xname(uball), victim, &youmonst);
 

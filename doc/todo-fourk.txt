@@ -102,6 +102,8 @@
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
 ▒▒▒
+▒▒▒ * Cherry-pick the thrown dieroll fix,  0f2fe57c79b99, 583f99a4d4a9fa, and 04290ca8a81fef.
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.4 (not blockers):
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -144,10 +146,23 @@
 ▒▒▒
 ▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
+▒▒▒ * With regard to add_erosion_words:
+▒▒▒   08:25 < FIQ > ou forgot rotproof for wood
+▒▒▒   08:25 < FIQ > and fixed cor crysknives
+▒▒▒
 ▒▒▒ * Fine tune the balance on the Pw regen formula, especially
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
 ▒▒▒   of the discussion around 7:40.
+▒▒▒
+▒▒▒ * Rename the Valkyrie role to Shieldmaster/Shieldmaiden, and allow them to be any
+▒▒▒   alignment (subject to race restrictions).  For race they can be human, valkyrie,
+▒▒▒   or dwarf.  Make the valkyrie race always neutral female, dwarf always lawful male.
+▒▒▒   Design the role to have less melee offensive power than e.g. Samurai or Barbarian,
+▒▒▒   but better defense and some casting ability (e.g., cold).  Reflavor the quest text
+▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
+▒▒▒   doing so at the behest of the Norn still makes flavor sense).  The cold res and
+▒▒▒   flying are traits specific to valkyrie race: compensate non-valk shieldmasters.
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
@@ -418,7 +433,9 @@
 ▒▒▒
 ▒▒▒ * 16:51 < FIQ > jonadab: your method of exposing traps with magic mapping will not work correctly on plane of water
 ▒▒▒
-▒▒▒ * Implement the Druid role.
+▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
+▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,
+▒▒▒   and lawful druid seems weird to me for some reason.)
 ▒▒▒
 ▒▒▒ * Should orcs have hooves, rather than feet?  (If so, should they be able to wear boots?)
 ▒▒▒   Should they have snouts, rather than noses?

@@ -1248,6 +1248,7 @@ thitmonst(struct monst *mon, struct obj *obj)
     int disttmp;        /* distance modifier */
     int otyp = obj->otyp;
     boolean guaranteed_hit = (Engulfed && mon == u.ustuck);
+    int dieroll;
 
     /* Differences from melee weapons: Dex still gives a bonus, but strength
        does not (unless it's a stone fired from a sling, and even then the
@@ -1396,8 +1397,8 @@ thitmonst(struct monst *mon, struct obj *obj)
             tmp += weapon_hit_bonus(obj);
         }
 
-        if (tmp >= rnd(20)) {
-            if (hmon(mon, obj, 1)) {    /* mon still alive */
+        if (tmp >= (dieroll = rnd(20))) {
+            if (hmon(mon, obj, 1, dieroll)) {    /* mon still alive */
                 cutworm(mon, bhitpos.x, bhitpos.y, obj);
             }
             exercise(A_DEX, TRUE);
@@ -1447,11 +1448,11 @@ thitmonst(struct monst *mon, struct obj *obj)
 
     } else if (otyp == HEAVY_IRON_BALL) {
         exercise(A_STR, TRUE);
-        if (tmp >= rnd(20)) {
+        if (tmp >= (dieroll = rnd(20))) {
             int was_swallowed = guaranteed_hit;
 
             exercise(A_DEX, TRUE);
-            if (!hmon(mon, obj, 1)) {   /* mon killed */
+            if (!hmon(mon, obj, 1, dieroll)) {   /* mon killed */
                 if (was_swallowed && !Engulfed && obj == uball)
                     return 1;   /* already did placebc() */
             }
@@ -1461,9 +1462,9 @@ thitmonst(struct monst *mon, struct obj *obj)
 
     } else if (otyp == BOULDER) {
         exercise(A_STR, TRUE);
-        if (tmp >= rnd(20)) {
+        if (tmp >= (dieroll = rnd(20))) {
             exercise(A_DEX, TRUE);
-            hmon(mon, obj, 1);
+            hmon(mon, obj, 1, dieroll);
         } else {
             tmiss(obj, mon);
         }
@@ -1471,7 +1472,8 @@ thitmonst(struct monst *mon, struct obj *obj)
     } else if ((otyp == EGG || otyp == CREAM_PIE || otyp == BLINDING_VENOM ||
                 otyp == ACID_VENOM || otyp == VAMPIRE_BLOOD)) {
         if ((guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
-            hmon(mon, obj, 1);
+            dieroll = rnd(20); /* what dieroll should we use here? */
+            hmon(mon, obj, 1, dieroll);
             return 1;   /* hmon used it up */
         }
         tmiss(obj, mon);
