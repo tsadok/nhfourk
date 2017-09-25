@@ -97,11 +97,6 @@
 ▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
 ▒▒▒   seems to be a good way to find bugs.
 ▒▒▒
-▒▒▒ * https://www.hardfought.org/userdata/M/Mandevil/nhfourk/dumps/2017-06-27%2014:28:35,%20Mandevil-Bar-Orc-Fem-Cha,%20died.txt
-▒▒▒   10:34 < Mandevil > jonadab: Note how the scrolls [in the bag of holding]
-▒▒▒                      are listed with appearance, not what they actually are.
-▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
-▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
