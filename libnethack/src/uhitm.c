@@ -344,8 +344,8 @@ hitum(struct monst *mon, int tmp, const struct attack *uattk, schar dx,
       schar dy)
 {
     boolean malive;
-    int dieroll;
-    int mhit = (tmp > (dieroll = rnd(20)) || Engulfed);
+    int dieroll = rnd(20);
+    int mhit = ((tmp > dieroll) || Engulfed);
 
     if (tmp > dieroll)
         exercise(A_DEX, TRUE);
@@ -2395,7 +2395,7 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
     int i, sum[NATTK], hittmp = 0;
     int nsum = 0;
     int dhit = 0;
-    int dieroll;
+    int dieroll = rnd(20);
 
     for (i = 0; i < NATTK; i++) {
 
@@ -2414,7 +2414,7 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
             hittmp = hitval(uwep, mon);
             hittmp += weapon_hit_bonus(uwep);
             tmp += hittmp;
-            dhit = (tmp > (dieroll = rnd(20)) || Engulfed);
+            dhit = ((tmp > dieroll) || Engulfed);
             /* KMH -- Don't accumulate to-hit bonuses */
             if (uwep)
                 tmp -= hittmp;
@@ -2449,7 +2449,7 @@ hmonas(struct monst *mon, int tmp, schar dx, schar dy)
         case AT_SPIN:
             if (i == 0 && uwep && (youmonst.data->mlet == S_LICH))
                 goto use_weapon;
-            if ((dhit = (tmp > rnd(20) || Engulfed))) {
+            if ((dhit = ((tmp > dieroll) || Engulfed))) {
                 int compat;
 
                 if (!Engulfed &&

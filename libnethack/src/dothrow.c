@@ -1351,6 +1351,8 @@ thitmonst(struct monst *mon, struct obj *obj)
         return 0;
     }
 
+    dieroll = rnd(20);
+
     if (obj->oclass == ARMOR_CLASS &&
         objects[obj->otyp].oc_armcat == ARM_GLOVES &&
         mon->mpeaceful && !mon->mtame) {
@@ -1397,7 +1399,7 @@ thitmonst(struct monst *mon, struct obj *obj)
             tmp += weapon_hit_bonus(obj);
         }
 
-        if (tmp >= (dieroll = rnd(20))) {
+        if (tmp >= dieroll) {
             if (hmon(mon, obj, 1, dieroll)) {    /* mon still alive */
                 cutworm(mon, bhitpos.x, bhitpos.y, obj);
             }
@@ -1448,7 +1450,7 @@ thitmonst(struct monst *mon, struct obj *obj)
 
     } else if (otyp == HEAVY_IRON_BALL) {
         exercise(A_STR, TRUE);
-        if (tmp >= (dieroll = rnd(20))) {
+        if (tmp >= dieroll) {
             int was_swallowed = guaranteed_hit;
 
             exercise(A_DEX, TRUE);
@@ -1462,7 +1464,7 @@ thitmonst(struct monst *mon, struct obj *obj)
 
     } else if (otyp == BOULDER) {
         exercise(A_STR, TRUE);
-        if (tmp >= (dieroll = rnd(20))) {
+        if (tmp >= dieroll) {
             exercise(A_DEX, TRUE);
             hmon(mon, obj, 1, dieroll);
         } else {
@@ -1472,7 +1474,6 @@ thitmonst(struct monst *mon, struct obj *obj)
     } else if ((otyp == EGG || otyp == CREAM_PIE || otyp == BLINDING_VENOM ||
                 otyp == ACID_VENOM || otyp == VAMPIRE_BLOOD)) {
         if ((guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
-            dieroll = rnd(20); /* what dieroll should we use here? */
             hmon(mon, obj, 1, dieroll);
             return 1;   /* hmon used it up */
         }
