@@ -10,7 +10,7 @@ static struct o {
   char working[MAX_PATH];
 #endif
 } options[] = {
-  {"gamesdatadir", ".\\data", -1},
+  {"gamesdatadir", ".\\dat", -1},
   {"gamesstatedir", ".\\save", -1},
   {"specificlockdir", ".\\lock", -1},
   {0, 0, -1}

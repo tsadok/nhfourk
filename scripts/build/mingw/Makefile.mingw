@@ -430,9 +430,9 @@ archive: $(LIB_NH_DAT)/nhdat
 	@:
 
 archive_install: archive
-	@mkdir -p $(INSTALL_ROOT)/data
-	@cp $(LIB_NH_DAT)/nhdat $(INSTALL_ROOT)/data
-	@cp $(LIB_NH_DAT)/license $(INSTALL_ROOT)/data
+	@mkdir -p $(INSTALL_ROOT)/dat
+	@cp $(LIB_NH_DAT)/nhdat $(INSTALL_ROOT)/dat
+	@cp $(LIB_NH_DAT)/license $(INSTALL_ROOT)/dat
 
 archive_clean:
 	@rm -f $(LIB_NH_DAT)/nhdat
@@ -583,9 +583,9 @@ tilesets: tilecompile $(TILESETS_DAT)/fonts/font14.png $(TILESETS_DAT)/text/base
 	@:
 
 tilesets_install: tilesets
-	@mkdir -p $(INSTALL_ROOT)/data
-	@cp $(TILESETS_DAT)/fonts/*.png $(INSTALL_ROOT)/data
-	@cp $(TILESETS_DAT)/*.nh4ct $(INSTALL_ROOT)/data
+	@mkdir -p $(INSTALL_ROOT)/dat
+	@cp $(TILESETS_DAT)/fonts/*.png $(INSTALL_ROOT)/dat
+	@cp $(TILESETS_DAT)/*.nh4ct $(INSTALL_ROOT)/dat
 
 tilesets_clean:
 	@rm -f $(TILESETS_DAT)/text/base.txt
