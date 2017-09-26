@@ -1224,6 +1224,7 @@ done_noreturn(int how, const char *killer)
     umoney = money_cnt(invent) + hidden_gold();
     u.urexp = calc_score(how, FALSE, umoney);
 
+    turnstate.generating_dump = TRUE;
     const char *dumpname = begin_dump(how);
     dump_disclose(how);
 
