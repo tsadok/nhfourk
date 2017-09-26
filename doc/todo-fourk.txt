@@ -90,27 +90,18 @@
 ▒▒▒   Eh, I'm going to file this under "autoexplore can get you killed, but you knew that."
 ▒▒▒   And if somebody implements an autofight feature, I'll say the same about it.
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.4 (release blockers):
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒
-▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
-▒▒▒   seems to be a good way to find bugs.
-▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
+▒▒▒   At this time, I cannot reproduce this issue, even when the shield is cursed.
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.4 (not blockers):
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.4:
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
-▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
-▒▒▒   This appears to be an as-designed one-in-100 chance inherited from vanilla.
-▒▒▒   I do think I'll change it (because it's pointlessly annoying and kind of makes me
-▒▒▒   not want to use thrown Mojo), but it's not a bug, so not a release blocker.
+▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
+▒▒▒   seems to be a good way to find bugs.
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒

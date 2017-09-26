@@ -1089,8 +1089,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             mpickobj(u.ustuck, obj);
     } else {
         /* the code following might become part of dropy() */
-        if (obj->oartifact == ART_MJOLLNIR && Role_if(PM_VALKYRIE) &&
-            rn2_on_rng(100, rng_mjollnir_return)) {
+        if (obj->oartifact == ART_MJOLLNIR && Role_if(PM_VALKYRIE)) {
             /* we must be wearing Gauntlets of Power to get here */
             sho_obj_return_to_u(obj, dx, dy);   /* display its flight */
 
