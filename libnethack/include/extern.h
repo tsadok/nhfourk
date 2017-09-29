@@ -68,6 +68,7 @@ extern void action_incomplete(const char *gerund, enum occupation occupation);
 extern void action_interrupted(void);
 extern void action_completed(void);
 extern void one_occupation_turn(int (*)(void), const char *, enum occupation);
+extern int you_speed(boolean infoonly);
 extern void helpless(int turns, enum helpless_reason reason, const char *cause,
                      const char *endmsg);
 extern void cancel_helplessness(enum helpless_mask mask, const char *msg);
@@ -706,6 +707,7 @@ extern void swapinv(struct obj *oldobj, struct obj *newobj);
 extern void delallobj(int, int);
 extern void delobj(struct obj *);
 extern struct obj *sobj_at(int otyp, struct level *lev, int x, int y);
+extern boolean would_be_racial_equip(int otyp, const struct permonst *pm);
 extern boolean is_racial_equipment(struct monst *mon, struct obj *obj);
 extern int carried_alignment(void);
 extern struct obj *carrying(int);

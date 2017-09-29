@@ -61,7 +61,209 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Your current movement rate is now shown in the status area.
+
+ * Characters who are restricted in two-weapon combat skill can
+   still wield two weapons at once if they are expert in the
+   relevant skill(s) for both weapons involved.  For example, a
+   Caveman who is expert in slings can dual-wield two slings
+   (which allows firing a larger number of projectiles).
+
  * The Sceptre of Might now grants drain resistance when wielded.
+
+ * Several spare random appearances have been added for spellbooks,
+   potions, and rings, so that not every appearance for these
+   classes of items appears in every game.
+
+ * The player character can now be temporarily deafened (e.g., by
+   beating a deafening row).  While deaf, your character does not
+   hear sounds.
+
+ * Sacks have been added to the list of objects that may show up
+   in the first few levels of the dungeon (above and beyond their
+   ordinary generation probability as a random object), similar to
+   eucalyptus, wolfsbane, scare monster, and wands of enlightenment.
+
+ * The rules for which containers protect their contents from water
+   damage have changed:
+   + Oilskin sacks work the same as before: guaranteed protection if
+     non-cursed, two-thirds chance of protection if cursed.
+   + Ice boxes now always protect their contents against wetting.
+   + Chests, large boxes, and bags of holding now offer guaranteed
+     protection of their contents from wetting if blessed, four-fifths
+     chance if uncursed, fifty-fifty chance if cursed.
+   + As before, sacks do not protect against wetting.
+
+ * The "fake wizard towers" are now embedded in Gehennom-style
+   cavern levels (aiscav), rather than in mazes.
+
+ * Introduced three new types of shops:
+   + Music stores sell mostly musical instruments, and occasionally
+     other tools.  They are a bit less common than jewelers.
+   + Gift shops sell T-shirts, cameras, plastic amulets, luckstones,
+     loadstones, bags of tricks, crystal balls, looking glasses,
+     candy bars, fortune cookies, meat sticks, and worthless glass.
+     Gift shops are uncommon (1% of all shops).
+   + Rare goods showrooms sell random amulets, boomerangs, athames,
+     silver daggers, grappling hooks, fedoras, dunce caps,
+     cornuthaums, oilskin cloaks, oilskin sacks, lenses, saddles,
+     magic markers, magic lamps, stethoscopes, and wands of
+     nothing, enlightenment, probing, cancellation, or polymorph.
+     Rare goods showrooms occur when a small delicatessen would
+     have been generated below dungeon level 16.
+
+ * Delicatessens are no longer generated below dungeon level 16.
+   If the deli would have been small, it is converted to a rare
+   goods showroom, otherwise to a general store.
+
+ * Corridors are very slightly less predictable than before
+   (cherry-picked from 3.6).
+
+ * Some colors of dragon hall are now more likely than others, and
+   certain colors are possible that previously weren't implemented.
+   (Gray and silver dragon halls are still not implemented.)
+
+ * Dragon halls now contain a mix of items that are thematic by use
+   or nature and things that are thematic by appearance or color.
+   Also, they now contain dragon eggs.
+
+ * There are now several different kinds of keys.  Some keys open
+   boxes and chests; some open doors; some open both.  Some keys (and
+   lock picks) can corrode or rust, which can make them take longer to
+   open a lock.  Skeleton keys, which are made of bone, and credit
+   cards (unless you are a Tourist), can even break outright (except
+   for artifacts).  The very best type of (non-artifact) key to have
+   is a sturdy key, which is made of mithril (so it does not corrode)
+   and will open both doors and chests.
+
+ * The relationship between experience points and experience levels
+   has been adjusted, starting at level 14, which you now reach at
+   sixty thousand XP (previously, eighty thousand were required).  The
+   new curve culminates at seven hundred thousand XP for level thirty,
+   which probably sounds like a lot if you don't know that the figure
+   for level thirty was a hundred million XP in vanilla NetHack.
+
+ * Polymorphed spellbooks may turn blank or be too faint to read.
+   (This is a 3.6 bugfix, from the 3.4.3 bug list, but one that I held
+   off on until now because it has significant balance implications,
+   and I was waiting until I was ready to rebalance spellbook
+   availability.)
+
+ * The bones option, instead of being boolean (on or off), now has
+   three possible values:  disabled, which causes bones not to be
+   loaded at all; normal, which is the default setting and allows
+   bones to be loaded on regular, non-special levels only; and fully
+   enabled, which allows bones to be loaded even on special levels.
+   Some levels (such as the Castle) are still completely exempt from
+   bones, but many formerly-exempt levels now allow bones files to
+   exist -- but they will only be loaded if the player has set the
+   option to fully enabled.  Players who do not change the option may
+   notice that they no longer get bones for Minetown or Delphi, which
+   allowed bones in vanilla but are special levels and so no longer
+   load bones by default.
+
+ * Benches can (albeit rarely) be generated at random in rooms.
+
+ * Cherry-picked two alternative room-and-corridor level topologies
+   ("styles") from K-Mod, and added one of my own.  These are only
+   used for non-special levels.  Seven-eighths of the time, the
+   traditional style of corridor arrangement is used; one-eighth of
+   the time, a style is randomly chosen from among four available
+   topologies:  the traditional standard topology, a ring topology, a
+   hub-and-spoke topology, or a topology wherein a minimum number of
+   connections are formed from one random room to another so that all
+   rooms are connected.  So in effect, room-and-corridor filler levels
+   will have the ring topology 1/32nd of the time, hub-and-spoke
+   topology another 1/32nd of the time, and the minimum-random
+   topology another 1/32nd of the time; so a typical game will average
+   a bit less than one of each of these, and the rest traditional.
+
+ * The statues at Medusa's Island (except for Perseus) now have the
+   usual chance to contain spellbooks, like any other random statue.
+
+ * More special levels have been given more alternate versions.
+   Special levels that have more distinct versions than before now
+   include Mine's End, the Valley of the Dead, Moloch's Sanctum,
+   Fort Ludios, and Medusa's Island.
+
+ * Sting can be held second to Orcrist, for two-weapon combat.
+
+ * Fire Brand and Frost Brand are now artifact short swords.  As a
+   special case, the rule against two-weapon combat with an artifact
+   in the off-hand does not apply when one of the weapons you are
+   wielding is Fire Brand and the other is Frost Brand.  You can get
+   artifact damage against your foes from both of them.  However,
+   you only get resistance from the one in your first hand.
+
+ * Achievement-unlockable features have been implemented.  You can now
+   unlock certain game features by achieving certain things within the
+   game.  Once a feature is unlocked, it stays unlocked after your
+   game ends (and, in fact, most of them are features you use when
+   starting a game, such as birth options).
+
+   (Note that "deferred" means the feature itself isn't implemented
+   yet, but I went ahead and put it on the unlockable list for later.)
+
+   ROLES:
+   + Barbarian:    (always unlocked)
+   + Wizard:       (always unlocked)
+   + Ranger:       use normal stairs
+   + Rogue:        use branch stairs, steal gold from a vault,
+                   or enter a leprechaun hall
+   + Monk:         enter the Minetown temple
+   + Priest:       use an altar to identify an item's beatitude
+   + Valkyrie:     convert an altar, or perform the invocation
+   + Knight:       enter a treasure zoo (the one in Sokoban counts)
+   + Healer:       kill Medusa, or make holy water via prayer
+   + Caveman:      dig with a pick-axe
+   + Samurai:      embark on the Barbarian quest
+   + Tourist:      embark on the monk or rogue quest
+   + Archeologist: ascend
+   + Convict [deferred]: embark on the priest or caveman quest
+   + Druid   [deferred]: embark on the ranger or knight quest
+
+   RACES:
+   + Human:        (always unlocked)
+   + Elf:          use stairs within Sokoban, or kill the Wizard of Yendor
+   + Dwarf:        reach the bottom level of the Gnomish Mines
+   + Orc:          enter a throne room
+   + Gnome:        enter a dragon hall, or use a magic portal
+   + Sylph:        kill your quest nemesis, or use the passtune
+   + Scurrier:     embark on the wizard quest
+   + Giant:        ascend with a conduct intact
+
+   OPTIONS:
+   + Fruit: eat a melon (i.e., a custom-nameable fruit)
+   + Horsename: unlock the knight role
+   + Autowear: embark on the archeologist quest
+   + Permablind: embark on the healer quest
+   + Permahallu: embark on the valkyrie quest
+   + Permanconfused: ascend all races
+   + Permastunned: ascend all roles
+   + Permaglib (greasy fingers): embark on the Samurai quest
+   + Permafumbling: ascend in challenge mode
+   + Permalame: ascend with a perma-impairment
+   + Permabadluck: ascend with a perma-impariment
+
+   MODES:
+   + Challenge mode:  embark on the tourist or convict quest
+   + Polyinit mode:   ascend with a non-easy conduct
+                      Alternately, embark on the druid quest.
+   + One-Hitpoint [deferred]: ascend with a hard conduct combo
+     (foodless atheist, foodless pacifist, illiterate pacifist,
+      nude atheist, pacifist in under 10k turns, or any three
+      non-easy conducts) or just ascend in under 10k turns.
+
+   The "easy" conducts are vegetarian, vegan, weaponless, polyitemless,
+   polyselfless, wishless, artiwishless, genoless, elberethless,
+   pudding-splitless, alignment-lossless, sokoguiltless, conflictless,
+   displacementless, invisibilityless.  The others are non-easy.
+
+ * Additional challenge options have been implemented: you can now
+   (subject to unlocking) play a character who is permanently confused,
+   stunned, fumbling, or has permanent greasy fingers, wounded legs,
+   or terrible luck.
+>>>>>>> 5cab2a8... Update rltiles-32 to support the new item appearances.
 
  * The bribeable demons will no longer accept trivial amounts of chump
    change for safe passage.  If you're only carrying a couple hundred

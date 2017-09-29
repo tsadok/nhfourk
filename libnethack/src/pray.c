@@ -1346,6 +1346,16 @@ sacrifice_gift(void)
         if (oclass == ARMOR_CLASS) {
             int tryforslot = os_invalid; /* sentinel value means any slot */
             int choice = T_SHIRT;        /* default, try to do better */
+            if (objects[choice].a_minsize > ((&mons[(urace.femalenum == NON_PM
+                                                     || !u.ufemale) ?
+                                  urace.malenum : urace.femalenum])->msize))
+                /* Shirt is too large, offer something smaller. */\
+                choice = SMALL_SHIELD;
+            else if (objects[choice].a_maxsize <
+                     ((&mons[(urace.femalenum == NON_PM || !u.ufemale) ?
+                             urace.malenum : urace.femalenum])->msize))
+                /* Shirt is too small, offer something larger. */
+                choice = LARGE_SHIELD;
             int i;
             if (Race_if(PM_SYLPH)) {
                 if (!uarms)
@@ -1377,6 +1387,22 @@ sacrifice_gift(void)
                     (i != HELM_OF_OPPOSITE_ALIGNMENT) &&
                     /* Don't give highly-undesirable items. */
                     (i != GAUNTLETS_OF_FUMBLING) && (i != FUMBLE_BOOTS) &&
+                    /* Don't give armor too large/small for the player.
+                       We don't use URACEDATA here, because we care about
+                       the player's "natural form", not current polyform. */
+                    (objects[i].a_maxsize >=
+                     ((&mons[(urace.femalenum == NON_PM || !u.ufemale) ?
+                             urace.malenum : urace.femalenum])->msize) &&
+                     objects[i].a_minsize <=
+                        ((&mons[(urace.femalenum == NON_PM || !u.ufemale) ?
+                                urace.malenum : urace.femalenum])->msize)) &&
+                    /* Don't give inappropriately-racial armor: */
+                    (Race_if(PM_ORC) ||
+                     !would_be_racial_equip(i, &mons[PM_ORC])) &&
+                    (Race_if(PM_ELF) || Race_if(PM_SYLPH) ||
+                     !would_be_racial_equip(i, &mons[PM_ELF])) &&
+                    (Race_if(PM_DWARF) || Race_if(PM_GNOME) ||
+                     !would_be_racial_equip(i, &mons[PM_DWARF])) &&
                     /* Match the slot we're aiming for, if we have
                        chosen a slot to aim for. */
                     ((tryforslot == os_invalid) ||

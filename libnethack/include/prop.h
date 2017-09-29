@@ -272,8 +272,9 @@ enum tracked_location {
 /* Permanent properties */
 # define FROMEXPER    ((unsigned)W_MASK(os_role))
 # define FROMRACE     ((unsigned)W_MASK(os_race))
+# define FROMPOLY     ((unsigned)W_MASK(os_polyform))
 # define FROMOUTSIDE  ((unsigned)W_MASK(os_outside))
-# define INTRINSIC    (FROMOUTSIDE|FROMRACE|FROMEXPER)
+# define INTRINSIC    (FROMOUTSIDE|FROMRACE|FROMEXPER|FROMPOLY)
 /* Control flags */
 # define I_SPECIAL    ((unsigned)W_MASK(os_special))
 # define ANY_PROPERTY ((unsigned)-1)
