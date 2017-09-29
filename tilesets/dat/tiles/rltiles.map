@@ -1644,16 +1644,16 @@ sub statue baby black dragon
 sub statue baby blue dragon
 sub statue baby green dragon
 sub statue baby yellow dragon
-sub statue gray dragon
-sub statue silver dragon
-sub statue shimmering dragon
-sub statue red dragon
-sub statue white dragon
-sub statue orange dragon
-sub statue black dragon
-sub statue blue dragon
-sub statue green dragon
-sub statue yellow dragon
+sub statue ancient gray dragon
+sub statue ancient silver dragon
+sub statue ancient shimmering dragon
+sub statue ancient red dragon
+sub statue ancient white dragon
+sub statue ancient orange dragon
+sub statue ancient black dragon
+sub statue ancient blue dragon
+sub statue ancient green dragon
+sub statue ancient yellow dragon
 sub statue stalker
 sub statue air elemental
 sub statue fire elemental
@@ -2161,3 +2161,16 @@ elder black dragon
 elder blue dragon
 elder green dragon
 elder yellow dragon
+unused zap stun 0
+unused zap stun 1
+unused zap stun 2
+unused zap stun 3
+sub statue island nymph
+sub statue gryphon
+sub statue baby gryphon
+sub statue scurrier
+sub statue librarian
+sub statue jitterbug
+sub statue young gray dragon; sub statue young silver dragon; sub statue young shimmering dragon; sub statue young red dragon; sub statue young white dragon; sub statue young orange dragon; sub statue young black dragon; sub statue young blue dragon; sub statue young green dragon; sub statue young yellow dragon
+sub statue gray dragon; sub statue silver dragon; sub statue shimmering dragon; sub statue red dragon; sub statue white dragon; sub statue orange dragon; sub statue black dragon; sub statue blue dragon; sub statue green dragon; sub statue yellow dragon
+sub statue elder gray dragon; sub statue elder silver dragon; sub statue elder shimmering dragon; sub statue elder red dragon; sub statue elder white dragon; sub statue elder orange dragon; sub statue elder black dragon; sub statue elder blue dragon; sub statue elder green dragon; sub statue elder yellow dragon

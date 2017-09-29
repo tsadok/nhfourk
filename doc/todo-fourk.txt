@@ -102,8 +102,6 @@
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
-▒▒▒ * RL-Tiles: do statues for all the Fourk-specific monsters.
-▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
