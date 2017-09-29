@@ -1,10 +1,11 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2017-09-27 */
 /*      Copyright (c) 1989 Janet Walz, Mike Threepoint */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 #include "edog.h"
+#include "eshk.h"
 
 static int domonnoise(struct monst *);
 static const char * librarian_chat(struct monst *libr);
@@ -265,12 +266,20 @@ dosounds(void)
     if ((sroom = search_special(level, ANY_SHOP)) && !rn2(200)) {
         if (tended_shop(sroom) &&
             !strchr(u.ushops, ROOM_INDEX(sroom) + ROOMOFFSET)) {
+            const char *name = shkname(sroom->resident);
+            struct eshk *eshkp = ESHK(sroom->resident);
+            /*
+            pline(msgc_debug, "Checking visitct for %s, got %d",
+                  name, eshkp->visitct);
+            */
+            if (!(eshkp->visitct))
+                name = "someone";
             static const char *const shop_msg[3] = {
-                "someone cursing shoplifters.",
+                "%s cursing shoplifters.",
                 "the chime of a cash register.",
                 "Neiman and Marcus arguing!",
             };
-            You_hear(msgc_levelsound, "%s", shop_msg[rn2(2) + hallu]);
+            You_hear(msgc_levelsound, shop_msg[rn2(2) + hallu], name);
         }
         return;
     }

@@ -61,7 +61,17 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
- * Your current movement rate is now shown in the status area.
+ * When throwing Mjollnir, it no longer has a 1% chance to land
+   at your enemy's feet.  (The chance to land at your feet, so
+   you need to pick it up, is unchanged from vanilla, apart
+   from the longstanding change where it no longer shocks you.)
+
+ * Your current (average) movement rate is now shown in the status
+   area (after M:, because S: was taken for score).  Note that how
+   many actions you get on any given turn is now very slightly
+   unpredictable (even if you have normal speed), but it doesn't
+   deviate by very much, and the long term average approaches the
+   expected value.
 
  * Characters who are restricted in two-weapon combat skill can
    still wield two weapons at once if they are expert in the
@@ -183,8 +193,8 @@ Changes in 4.3.0.4:
 
  * More special levels have been given more alternate versions.
    Special levels that have more distinct versions than before now
-   include Mine's End, the Valley of the Dead, Moloch's Sanctum,
-   Fort Ludios, and Medusa's Island.
+   include the Big Room, Mine's End, the Valley of the Dead, Moloch's
+   Sanctum, Fort Ludios, and Medusa's Island.
 
  * Sting can be held second to Orcrist, for two-weapon combat.
 

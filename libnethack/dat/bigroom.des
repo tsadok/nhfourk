@@ -796,7 +796,6 @@ MONSTER:random,random,random
 
 
 # Two Streams
-
 MAZE:"bigrm-9",' '
 GEOMETRY:center,center
 MAP
@@ -881,3 +880,181 @@ MONSTER:random,random,random
 MONSTER:random,random,random
 MONSTER:random,random,random
 
+# Tiny Pillars: as proposed (succinctly) by ais523 here:
+# http://nethack4.org/pastebin/dungeon-redesign.txt
+MAZE:"bigrm-10",' '
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#1234567890123456789012345678901234567890123456789012345678901234567890123
+MAP
+--------------------------------------------------------------------------
+|...--......--......--......--......--......--......--......--......--...|
+|-......--......--......--......--......--......--......--......--......-|
+|-......--......--......--......--......--......--......--......--......-|
+|...--......--......--......--......--......--......--......--......--...|
+|...--......--......--......--......--......--......--......--......--...|
+|-......--......--......--......--......--......--......--......--......-|
+|-......--......--......--......--......--......--......--......--......-|
+|...--......--......--......--......--......--......--......--......--...|
+|...--......--......--......--......--......--......--......--......--...|
+|-......--......--......--......--......--......--......--......--......-|
+|-......--......--......--......--......--......--......--......--......-|
+|...--......--......--......--......--......--......--......--......--...|
+|...--......--......--......--......--......--......--......--......--...|
+|-......--......--......--......--......--......--......--......--......-|
+--------------------------------------------------------------------------
+ENDMAP
+# Dungeon Description
+REGION:(01,01,72,14),lit,"ordinary"
+# Stairs
+STAIR:random,up
+STAIR:random,down
+# Non diggable walls
+NON_DIGGABLE:(00,00,73,15)
+# Objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Random traps
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+# Random monsters.
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+
+
+# Split Bigroom with Bars
+MAZE:"bigrm-11",' '
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#1234567890123456789012345678901234567890123456789012345678901234567890123
+MAP
+----------------------------------                                        
+|................................|      ----------------------------------
+|................................+##    |................................|
+|................................| #  ##+................................|
+|................................| #  # |................................|
+|................................|-+--+-|................................|
+|................................|......|................................|
+|................................F......F................................|
+|................................F......F................................|
+|................................F......F................................|
+|................................|......|................................|
+|................................|-+--+-|................................|
+|................................| #  # |................................|
+|................................+##  # |................................|
+|................................|    ##+................................|
+----------------------------------      |................................|
+                                        ----------------------------------
+ENDMAP
+# Dungeon Description
+REGION:(01,01,32,14),lit,"ordinary"
+REGION:(41,02,72,15),lit,"ordinary"
+# Stairs
+STAIR:(02,02,31,13),(27,05,40,11),up
+STAIR:(42,03,71,14),(33,05,38,11),down
+# Non diggable walls
+NON_DIGGABLE:(00,00,73,15)
+# Doors:
+DOOR:random,(33,02)
+DOOR:random,(35,05)
+DOOR:random,(38,05)
+DOOR:random,(40,03)
+DOOR:random,(33,13)
+DOOR:random,(35,11)
+DOOR:random,(38,11)
+DOOR:random,(40,14)
+# Objects
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# Random traps
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+# Random monsters.
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
+MONSTER:random,random,random
