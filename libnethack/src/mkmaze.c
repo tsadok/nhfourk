@@ -306,13 +306,13 @@ put_lregion_here(struct level *lev, xchar x, xchar y, xchar nlx, xchar nly,
                 urgency < 6)
                 return FALSE;
             if (invocation_pos(&lev->z, x, y) ||
-                lev->locations[x][y].typ == STAIRS ||
-                lev->locations[x][y].typ == LADDER ||
-                (is_lava(lev, x, y) && urgency > 6) ||
-                (lev->locations[x][y].typ == STONE && urgency > 4) ||
-                (IS_WALL(lev->locations[x][y].typ && urgency > 3)) ||
-                (is_pool(lev, x, y) && urgency > 2) ||
-                (lev->locations[x][y].typ == ALTAR && urgency > 1))
+                (lev->locations[x][y].typ == STAIRS) ||
+                (lev->locations[x][y].typ == LADDER) ||
+                (is_lava(lev, x, y) && (urgency > 6)) ||
+                ((lev->locations[x][y].typ == STONE) && (urgency > 4)) ||
+                ((IS_WALL(lev->locations[x][y].typ) && (urgency > 3))) ||
+                (is_pool(lev, x, y) && (urgency > 2)) ||
+                ((lev->locations[x][y].typ == ALTAR) && (urgency > 1)))
                 return FALSE;
         }
     }

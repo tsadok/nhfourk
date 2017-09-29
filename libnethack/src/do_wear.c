@@ -432,7 +432,7 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
         if ((!redundant) && !Levitation) {
             makeknown(otyp);
             if (msgtype != em_silent)
-                pline(good_msgc, equipping ?
+                pline(good_msgc, "%s", equipping ?
                       msgprintf("The %s recedes beneath you.",
                                 surface(u.ux, u.uy)) :
                       msgprintf("You settle to the %s.", surface(u.ux, u.uy)));

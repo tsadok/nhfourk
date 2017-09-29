@@ -478,7 +478,7 @@ get_command(void *callbackarg,
                 repeats_remaining = multi;
             }
 
-            if ((cmd == find_command("redraw"))
+            if ((cmd == find_command("redraw")
 #ifdef PUBLIC_SERVER
                 /* This is for the benefit of dgamelaunch, which relies on
                    finding certain things in the ttyrec to know where to start
@@ -487,6 +487,8 @@ get_command(void *callbackarg,
                    catch-up, which is generally undesirable.  (Anyone who
                    _wants_ that can download the whole ttyrec of course.) */
                 || (redraw_counter++ > 1000)
+#else
+                    )
 #endif
                 ) {
                 /* This needs special handling locally in addition to sending
