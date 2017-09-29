@@ -66,6 +66,8 @@ Changes in 4.3.0.4:
    you need to pick it up, is unchanged from vanilla, apart
    from the longstanding change where it no longer shocks you.)
 
+ * Your current movement rate is now shown in the status area.
+
  * Characters who are restricted in two-weapon combat skill can
    still wield two weapons at once if they are expert in the
    relevant skill(s) for both weapons involved.  For example, a

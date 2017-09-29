@@ -188,8 +188,8 @@ draw_status(struct nh_player_info *pi, nh_bool threeline)
     /* last line */
     wmove(statuswin, (threeline ? 2 : 1), 0);
     draw_bar(15, pi->en, pi->enmax, FALSE);
-    wprintw(statuswin, " %c%ld S:%ld T:%ld", pi->coinsym, pi->gold, pi->score,
-            pi->moves);
+    wprintw(statuswin, " %c%ld S:%ld M:%ld T:%ld", pi->coinsym, pi->gold,
+            pi->score, pi->speed, pi->moves);
     if (getcurx(statuswin) > 0)
         wclrtoeol(statuswin);
 
