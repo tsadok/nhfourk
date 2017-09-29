@@ -178,7 +178,6 @@ make_player_info(struct nh_player_info *pi)
     memset(pi, 0, sizeof (struct nh_player_info));
 
     pi->moves = moves;
-    pi->speed = you_speed(TRUE);
     strncpy(pi->plname, u.uplname, sizeof (pi->plname));
     pi->align = u.ualign.type;
 

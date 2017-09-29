@@ -68,7 +68,6 @@ extern void action_incomplete(const char *gerund, enum occupation occupation);
 extern void action_interrupted(void);
 extern void action_completed(void);
 extern void one_occupation_turn(int (*)(void), const char *, enum occupation);
-extern int you_speed(boolean infoonly);
 extern void helpless(int turns, enum helpless_reason reason, const char *cause,
                      const char *endmsg);
 extern void cancel_helplessness(enum helpless_mask mask, const char *msg);
