@@ -777,7 +777,8 @@ deluxe_sylph_healing(void)
 
 /* infoonly is true if we are calling the function to find out the player's
    speed for purposes other than calculating movement, e.g., if we want to
-   display speed in the UI. */
+   display speed in the UI; in that case temporarly timeout counters (for
+   temporary slowness or haste) don't get advanced. */
 int
 you_speed(boolean infoonly) {
     int amt = 0;
@@ -834,16 +835,17 @@ static int
 you_move_amount(void) {
     int amt = 0;
     int speed = you_speed(FALSE);
-    while (speed >= NORMAL_SPEED) {
-        amt   += NORMAL_SPEED;
-        speed -= NORMAL_SPEED;
+    int increment = (NORMAL_SPEED / 3);
+    while (speed > increment) {
+        amt   += increment;
+        speed -= increment;
     }
     /* Unlike other monsters, the player's movement has a random
        component.  Fractions of a turn are distrubuted in a way
        that preserves average movement rate but in a manner that
        is not entirely predictable: */
-    if (speed > rn2(NORMAL_SPEED))
-        amt += NORMAL_SPEED;
+    if (speed > rn2_on_rng(increment, rng_player_speed))
+        amt += increment;
     /* Avoid an infinite loop on corner cases (e.g. polyinit to blue
        jelly), by limiting how long the player can be stuck without
        movement points. */

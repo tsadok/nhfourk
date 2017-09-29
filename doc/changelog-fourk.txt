@@ -66,7 +66,12 @@ Changes in 4.3.0.4:
    you need to pick it up, is unchanged from vanilla, apart
    from the longstanding change where it no longer shocks you.)
 
- * Your current movement rate is now shown in the status area.
+ * Your current (average) movement rate is now shown in the status
+   area (after M:, because S: was taken for score).  Note that how
+   many actions you get on any given turn is now very slightly
+   unpredictable (even if you have normal speed), but it doesn't
+   deviate by very much, and the long term average approaches the
+   expected value.
 
  * Characters who are restricted in two-weapon combat skill can
    still wield two weapons at once if they are expert in the
