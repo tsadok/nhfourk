@@ -19,6 +19,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         packagename_text => 'NetHack Fourk',
         packageversion => '3.0.4',
         companyname => 'NetHack Fourk DevTeam',
+        ignore_directories => qr/^(?:\.git|mingw)/i,
 
         AM_CPPFLAGS => '-D_REENTRANT',
         CFLAGS      => '-Wall -Wextra -fdiagnostics-show-option -O2 -g',
