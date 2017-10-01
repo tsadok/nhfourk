@@ -63,6 +63,10 @@ delivermail(const char *from, const char *message)
 void
 checkformail(void)
 {
+/* No point trying to make this compile on Windows (which doesn't have things
+   like flock), as nobody is going to run dgamelaunch on that platform anyway,
+   so simplemail support is entirely moot anyway. Just ifdef it out. */
+#ifndef AIMAKE_BUILDOS_MSWin32
     char *box, *msg;
     FILE* mb;
     char curline[102];
@@ -116,5 +120,6 @@ checkformail(void)
 		
     fclose(mb);
     unlink(box);
+#endif
     return;
 }
