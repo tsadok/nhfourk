@@ -273,7 +273,6 @@ Changes in 4.3.0.4:
    (subject to unlocking) play a character who is permanently confused,
    stunned, fumbling, or has permanent greasy fingers, wounded legs,
    or terrible luck.
->>>>>>> 5cab2a8... Update rltiles-32 to support the new item appearances.
 
  * The bribeable demons will no longer accept trivial amounts of chump
    change for safe passage.  If you're only carrying a couple hundred
