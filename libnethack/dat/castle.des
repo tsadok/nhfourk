@@ -7,8 +7,13 @@
 #	- opening the drawbridge (wand of opening, knock spell, playing
 #	  the appropriate tune)
 #
+#   - destroy the drawbridge (striking, force bolt) and cross the
+#     moat using any of the various water traversal strategies
+#
 #	- enter via the back entry (this suppose a ring of levitation, boots
-#	  of water walking, etc.)
+#	  of water walking, arrival from below, etc.)
+#
+#   - polymorph into something that can phase through
 #
 # Note : If you don't play the right tune, you get indications like in the
 #	 MasterMind game...
@@ -130,9 +135,16 @@ OBJECT:object[3],random,(52,11)
 OBJECT:object[3],random,(53,11)
 OBJECT:object[3],random,(54,11)
 OBJECT:object[3],random,(55,11)
-# THE WAND OF WISHING in 1 of the 4 towers
+# The all-important wish chest, in 1 of the 4 towers
 CONTAINER:'(',"chest",place[0]
-OBJECT:'/',"wishing",contained
+OBJECT:'?',"wishing",contained
+OBJECT:'?',"wishing",contained
+OBJECT[30%]:'"',"amulet of life saving",contained
+OBJECT[30%]:'"',"amulet of ESP",contained
+OBJECT[30%]:'"',"amulet of flying",contained
+OBJECT:random,random,contained
+OBJECT:random,random,contained
+OBJECT:random,random,contained
 # Prevent monsters from eating it.  (@'s never eat objects)
 ENGRAVING:place[0],burn,"Elbereth"
 # The treasure of the lord (in addition to the magic chest)
@@ -425,6 +437,7 @@ OBJECT:object[3],random,(59,13)
 # The treasure:
 CONTAINER:'(',"chest",place[0]
 OBJECT:'(',"magic lamp",contained
+OBJECT:'?',"wishing",contained
 OBJECT:'$',"gold piece",contained
 OBJECT:'*',random,contained
 OBJECT:'*',random,contained
@@ -758,6 +771,7 @@ OBJECT:'(',"magic marker",contained
 OBJECT[50%]:'(',"magic marker",contained
 OBJECT:')',"athame",contained
 OBJECT:'?',"wishing",contained
+ENGRAVING:(51,02),burn,"Elbereth"
 
 REGION:(00,00,74,19),lit,"ordinary"
 NON_DIGGABLE:(00,00,62,16)
@@ -918,7 +932,7 @@ OBJECT:random,random,place[0]
 
 # Cabinet Two:
 #OBJECT:'[',"piece of cloth",place[1]
-#OBJECT:'[',"piece of cloth",place[1]
+#OBJECT:'[',"dirty rag",place[1]
 OBJECT:'(',"can of grease",place[1],cursed,13
 OBJECT:'(',"lenses",place[1]
 OBJECT:'(',"brass lantern",place[1]
@@ -1126,7 +1140,7 @@ MONSTER:random,random,random
 # are a kludge to prevent the walls showing up through the iron bars from
 # outside the castle.
 #
-MAZE:"castle-6",'}'
+MAZE:"castle-5",'}'
 FLAGS: noteleport
 GEOMETRY: center, center
 #000000000111111111122222222223333333333444444444455555555556666666666777777
@@ -1356,7 +1370,7 @@ MONSTER:'C',random,(37,13)
 
 # The Troll King's Dungeons
 # https://github.com/ComputerScienceHouse/bingehack4/wiki/Castle
-MAZE:"castle-5",' '
+MAZE:"castle-6",' '
 FLAGS: noteleport
 GEOMETRY: center, center
 #000000000111111111122222222223333333333444444444455555555556666666666777777
