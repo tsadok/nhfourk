@@ -2642,7 +2642,7 @@ use_pole(struct obj *obj, const struct nh_cmd_arg *arg)
     pline(msgc_uiprompt, where_to_hit);
     cc.x = u.ux;
     cc.y = u.uy;
-    if (getargpos(arg, &cc, TRUE, "the spot to hit") == NHCR_CLIENT_CANCEL)
+    if (getargpos(arg, &cc, FALSE, "the spot to hit") == NHCR_CLIENT_CANCEL)
         return 0;     /* user pressed ESC */
 
     /* Calculate range */
