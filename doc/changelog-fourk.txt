@@ -273,7 +273,6 @@ Changes in 4.3.0.4:
    (subject to unlocking) play a character who is permanently confused,
    stunned, fumbling, or has permanent greasy fingers, wounded legs,
    or terrible luck.
->>>>>>> 5cab2a8... Update rltiles-32 to support the new item appearances.
 
  * The bribeable demons will no longer accept trivial amounts of chump
    change for safe passage.  If you're only carrying a couple hundred
@@ -433,7 +432,7 @@ Changes in 4.3.0.4:
  * Lights are now on symbol e, eye or sphere or light.
 
  * Instead of the Castle, it is now possible to get the Palace, the
-   Library, or the Laboratory.
+   Library, or the Laboratory.  Your wishes may come in non-wand form.
 
  * Scrolls of consecration have been implemented.  Reading one of
    these will create an altar (or, if confused, a magic chest) at your

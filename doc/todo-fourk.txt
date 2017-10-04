@@ -105,9 +105,6 @@
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
-▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
-▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
-▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -149,6 +146,10 @@
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
+▒▒▒
+▒▒▒ * Fix mazewalk so the same map-relative coordinates work regardless of the values
+▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
+▒▒▒   and re-enable them.
 ▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
@@ -624,6 +625,9 @@
 ▒▒▒   block all touch-of-death (not just Death's).
 ▒▒▒
 ▒▒▒ * Make red scales grant fire resistance and sliming resistance.
+▒▒▒
+▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
+▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
 ▒▒▒ * Look at and consider cherry-picking FIQ's unskilled bashmsh, 7ad158a
 ▒▒▒
