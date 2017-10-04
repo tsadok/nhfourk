@@ -109,6 +109,9 @@
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
+▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
+▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Consider FIQ's changes to spellbook mechanics, 5f81af2.  Be advised this will absolutely
