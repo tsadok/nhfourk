@@ -1057,6 +1057,7 @@ static struct {
     {"angel of death", FALSE},
     {"lion-dog", FALSE},
     {"rat-ant", FALSE},
+    {"lllama", FALSE}, /* a big fire */
         /* Modern threats, real and imaginary: */
     {"bookworm", FALSE},
     {"hologram", FALSE},
@@ -1103,6 +1104,10 @@ static struct {
     {"kestrel", FALSE},
     {"xeroc", FALSE},
     {"venus flytrap", FALSE},
+        /* ZapM */
+    {"catbot", FALSE},
+    {"dogbot", FALSE},
+    {"clerkbot", FALSE},
         /* Dredmore */
     {"octo", FALSE},
     {"enraged diggle", FALSE},

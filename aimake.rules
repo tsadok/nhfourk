@@ -19,6 +19,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         packagename_text => 'NetHack Fourk',
         packageversion => '3.0.4',
         companyname => 'NetHack Fourk DevTeam',
+        ignore_directories => qr/^(?:\.git|mingw)/i,
 
 # Must build NETCLIENT or else Windows build will fail.
         AM_CPPFLAGS => '-DNETCLIENT -D_REENTRANT',
