@@ -10,9 +10,6 @@
 ▒▒▒
 ▒▒▒ * FIQ says he shot a watchman in the face because f1<direction> fired two darts.
 ▒▒▒
-▒▒▒ * Find a way to compile on Windows.
-▒▒▒ * Find some way to compile on Windows, even if it involves Cygwin and exotic dependencies.
-▒▒▒
 ▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.  (Gnome)
 ▒▒▒   + Preliminary attempts to reproduce this have failed (but uncovered another bug, which I fixed).
 ▒▒▒
@@ -104,6 +101,9 @@
 ▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
+▒▒▒
+▒▒▒ * Evaluate whether it's reasonable/safe to cherry-pick replay goto-turn at this late point
+▒▒▒   in the dev cycle.  http://home.fiq.se/goto.png
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
@@ -261,7 +261,7 @@
 ▒▒▒ * Make pickup_thrown (at least optionally) work when autopickup is off otherwise.
 ▒▒▒
 ▒▒▒ * When hallucinating, statues should appear to be monsters, and perform
-▒▒▒   hallucinatory actions, such as singing, dancing, etc.
+▒▒▒   hallucinatory actions, such as singing, dancing, sneezing, etc.
 ▒▒▒
 ▒▒▒ * Makedefs must die.  Make a list of all the things it does and triage
 ▒▒▒   when to refactor each of them.
