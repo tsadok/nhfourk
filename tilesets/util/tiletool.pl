@@ -48,12 +48,10 @@ while (<CAT>) {
 my (%palette, @tile, $currenttile, $maxtilenum, %numidx);
 my ($cursorx, $cursory) = (-1, -1);
 # A note about the palette: we originally assumed that the palette was
-# the same for all the tiles in any given tileset.  This is currently
-# the case for both slashem-16 and dawnlike, which are the tilesets we
-# were originally interested in working with using this utility.  (The
-# RL-tiles and Geoduck tilesets use 32-bit color and use PNG images,
-# and the ASCII and Unicode tilesets are not pixel-based.)  However, it
-# fails for Slash'EM-32, so we have to fix that now.
+# the same for all the tiles in any given tileset, a conclusion we
+# drew from looking mostly at slashem-16.  That assumption was invalid,
+# a fact that became obvious when we started looking at slashem-32 and
+# at the dragons in dawnlike-16.  We now treat palette as file-specific.
 for my $tf (@tilefile) {
   my $filespec = catfile("dat", "tiles", $tf);
   warn "Cannot find tiles file: $filespec" if not -e $filespec;
@@ -76,7 +74,7 @@ for my $tf (@tilefile) {
         die "Cannot mix double-width and single-width palette modes.\n$line\n";
       }
       $palettemode = 1;
-      $palette{$char} = [$r, $g, $b];
+      $palette{$tf}{$char} = [$r, $g, $b];
     } elsif ($line =~ /^\s*#\s*tile\s+(\d+)\s+[(]([^)]+)[)]/) {
       ($tilenum, $tilename) = ($1, $2);
       $maxtilenum ||= $tilenum; $maxtilenum = $tilenum if $tilenum > $maxtilenum;
@@ -110,7 +108,7 @@ for my $tf (@tilefile) {
   }
 }
 
-showpalette();
+showpalettes();
 print $reset . "$setname defines " . @tile . " tiles.\n";
 
 for my $s (@show) {
@@ -135,8 +133,9 @@ exit 0; # Subroutines follow
 sub edittile {
   my %dirkey = ( h => [-1,  0], j => [ 0,  1], k => [0, -1], l => [1, 0],
                  y => [-1, -1], u => [ 1, -1], b => [-1, 1], n => [1, 1],);
-  my $defaultcolor = (sort { $a cmp $b } keys %palette)[0];
-  my $tile = $currenttile || +{ file => "[no file]",
+  my $file = $currenttile ? $$currenttile{file} : $tilefile[0];
+  my $defaultcolor = (sort { $a cmp $b } keys %{$palette{$file}})[0];
+  my $tile = $currenttile || +{ file => $file,
                                 tile => [ map {
                                   join "", map { $defaultcolor } 1 .. $dimx
                                 } 1 .. $dimy],
@@ -177,7 +176,7 @@ sub edittile {
       if ($cursory < 0) {
         $cursory = $wrap ? ($dimy - 1) : $cursory + 1;
       }
-    } elsif ($palette{$k}) {
+    } elsif ($palette{$$tile{file}}{$k}) {
       my $line        = $$tile{tile}[$cursory];
       my @char        = split //, $line;
       $char[$cursorx] = $k;
@@ -256,7 +255,7 @@ sub showtile {
         if (($y == $cursory) and ($x == $cursorx)) {
           print rgb(16,16,16,"bg");
         }
-        my $p = $palette{$char};
+        my $p = $palette{$$t{file}}{$char};
         if (defined $p) {
           print rgb($$p[0], $$p[1], $$p[2]);
         }
@@ -266,7 +265,7 @@ sub showtile {
       print $reset . "  ";
       $x = 0;
       for my $char (split //, $line) {
-        my $p = $palette{$char};
+        my $p = $palette{$$t{file}}{$char};
         if (defined $p) {
           print $reset . rgb($$p[0], $$p[1], $$p[2], "bg")
             . ((($x == $cursorx) and ($y == $cursory))
@@ -283,16 +282,15 @@ sub showtile {
   print $reset . "\n\n";
 }
 
+sub showpalettes {
+  showpalette($_) for keys %palette;
+}
+
 sub showpalette {
   my ($tf) = @_;
-  my @pkey;
+  my @pkey = sort { $a cmp $b } keys %{$palette{$tf}};
   if ($palettemode eq 2) {
-    @pkey = sort { $a cmp $b } keys %{$palette{$tf}};
-  } else {
-    @pkey = sort { $a cmp $b } keys %palette;
-  }
-  if ($palettemode eq 2) {
-    # For double-wide palettes, the palette gets large, so we have to do it a different way.
+    # Double-wide-key palettes get large, so we have to do it a different way.
     print "$tf palette: " . (join "", map {
       my $c = $_;
       my ($r, $g, $b) = @{$palette{$tf}{$c}};
@@ -300,12 +298,12 @@ sub showpalette {
         . " ";
     } @pkey) . "\n";
   } else {
-    print "$setname palette: " . (join "", map {
+    print "$tf palette:\n " . (join "", map {
       my $c = $_;
-      my ($r, $g, $b) = @{$palette{$c}};
+      my ($r, $g, $b) = @{$palette{$tf}{$c}};
       rgb($r, $g, $b, "bg") . "   ";
     } @pkey)
-      . $reset . "\n" . (" " x length $setname) . "          "
+      . $reset . "\n " #. (" " x length $setname) . "          "
       . join ("", map {
         " $_ "
       } @pkey) . "\n";

@@ -313,6 +313,8 @@ savegamestate(struct memfile *mf)
     save_timers(mf, level, RANGE_GLOBAL);
     save_light_sources(mf, level, RANGE_GLOBAL);
 
+    inven_inuse(FALSE);
+
     saveobjchn(mf, invent);
     saveobjchn(mf, magic_chest_objs);
     savemonchn(mf, migrating_mons, NULL);

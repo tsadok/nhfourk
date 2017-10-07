@@ -1,6 +1,7 @@
 language: c
 script:
-    - mkdir build installdir
+    - mkdir build
+    - mkdir installdir
     - cd build
     - ../aimake -i ../installdir --without=gui
 compiler:

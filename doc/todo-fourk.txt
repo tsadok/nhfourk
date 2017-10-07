@@ -10,9 +10,6 @@
 ▒▒▒
 ▒▒▒ * FIQ says he shot a watchman in the face because f1<direction> fired two darts.
 ▒▒▒
-▒▒▒ * Find a way to compile on Windows.
-▒▒▒ * Find some way to compile on Windows, even if it involves Cygwin and exotic dependencies.
-▒▒▒
 ▒▒▒ * You are now wearing a leather jacket.  The suit will not fit on your body.  (Gnome)
 ▒▒▒   + Preliminary attempts to reproduce this have failed (but uncovered another bug, which I fixed).
 ▒▒▒
@@ -62,41 +59,11 @@
 ▒▒▒                      which can block them from getting to the stairs
 ▒▒▒   I don't understand the AI code well enough to find the right place to fix this.
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.4 :
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒
 ▒▒▒ * Monster-carrying-egg crash.  Steps to reproduce: 1. wish for a trice egg.
 ▒▒▒   2. drop it on a stair.  3. genesis a hill orc.  4. get it to pick up the egg.
 ▒▒▒   5. make the hill orc escape via the stairs.  6. levelport to follow.  segfault.
 ▒▒▒   Haven't verified whether this is Fourk-specific.  FIQ did a workaround to
 ▒▒▒   convert this from segfault to panic(), but we should fix it for real.
-▒▒▒ * Check whether the monster-carrying-egg crash is Fourk-specific, maybe
-▒▒▒   cherry-pick the workaround to 4.3-maint.
-▒▒▒
-▒▒▒ * Differentiate elder and ancient dragons in DawnHack.
-▒▒▒
-▒▒▒ * Redo the dawnlike-16 baby gray dragon, so it's similar to the other gray dragon
-▒▒▒   tiles that are used, and comment out the unused alternate dragon tiles.
-▒▒▒
-▒▒▒ * 09:40 < FIQ+> also pushed a change so that the case you encountered shouldn't create a
-▒▒▒                 save which needs manual recover anymore, for both master and 4.3.0
-▒▒▒   09:41 < FIQ+> jonadab: this also applies to you -- a8da34f
-▒▒▒
-▒▒▒ * Grab FIQHack's bold-frame-color fix.  See #hardfought, 2017 Aug 31, around 18:34.
-▒▒▒
-▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
-▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
-▒▒▒   15:17 < rumflump > I think because I was flying, it didn't count water terrain as special
-▒▒▒   15:17 < rumflump > *am* flying
-▒▒▒   15:18 < rumflump > http://i.imgur.com/mgliT5i.png
-▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
-▒▒▒
-▒▒▒ * 07:06 < rumflump > Mjollnir hits the balrog!  Your movements are now unencumbered.
-▒▒▒   07:07 < rumflump > and I am the piously aligned envoy of balance, says enlightenment
-▒▒▒
-▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
-▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
 ▒▒▒ * 06:01 < Mandevil > jonadab: This looks like a bug:
 ▒▒▒   06:01 < Mandevil > The tin opens like magic!  You succeed in opening the tin.
@@ -105,36 +72,47 @@
 ▒▒▒   06:01 < Mandevil > <Eat it? [yn]: y>
 ▒▒▒   06:01 < Mandevil > You consume pickled coyote.
 ▒▒▒   Which was it, dwarves or coyote?
-▒▒▒
-▒▒▒ * Mandevil says amulet of flying doesn't self-identify.
+▒▒▒   Realistically, I don't have any idea how to reproduce this.
 ▒▒▒
 ▒▒▒ * 14:08 <  AmyBSOD\dislex > Is it intentional that if a succubus kills me with its melee attack,
 ▒▒▒                             there is no "The succubus hits you message at all? I just got
 ▒▒▒                             "You die..." out of the blue.
 ▒▒▒
-▒▒▒ * Do a bunch of testing by playing Scu Tou and just digging down as fast as possible, this
-▒▒▒   seems to be a good way to find bugs.
-▒▒▒
-▒▒▒ * https://www.hardfought.org/userdata/M/Mandevil/nhfourk/dumps/2017-06-27%2014:28:35,%20Mandevil-Bar-Orc-Fem-Cha,%20died.txt
-▒▒▒   10:34 < Mandevil > jonadab: Note how the scrolls [in the bag of holding]
-▒▒▒                      are listed with appearance, not what they actually are.
-▒▒▒   10:53 < Mandevil > Maybe it was because I dismissed the question if I want things identified?
-▒▒▒
-▒▒▒ * When giving armor/weapons as a sacrifice gift, don't give inappropriately-racial ones,
-▒▒▒   e.g., don't give orcish items to elves or vice versa.  Artifacts should only care about
-▒▒▒   this if the artifact itself is racially aligned.
+▒▒▒ * 15:15 < rumflump > autoexplore killed my pet
+▒▒▒   15:16 < rumflump > You displace your Green-elf.  The Green-elf drowns.
+▒▒▒   15:17 < rumflump > I think because I was flying, it didn't count water terrain as special
+▒▒▒   15:17 < rumflump > *am* flying
+▒▒▒   15:18 < rumflump > http://i.imgur.com/mgliT5i.png
+▒▒▒   This is probably an NH4 bug, and FIQ thinks it may have found its way into 3.6 as well.
+▒▒▒   Eh, I'm going to file this under "autoexplore can get you killed, but you knew that."
+▒▒▒   And if somebody implements an autofight feature, I'll say the same about it.
 ▒▒▒
 ▒▒▒ * 14:46 < rumflump > is unarmed treated as a 2 handed weapon in 4k? http://i.imgur.com/lXOsE8l.png
 ▒▒▒   14:47 < rumflump > broke weaponless conduct, because I hit w - by rote and didn't notice that it hadn't
 ▒▒▒                      worked. looks like I can remove the shield, wield unarmed, and then put the shield
 ▒▒▒                      back on though
+▒▒▒   At this time, I cannot reproduce this issue, even when the shield is cursed.
 ▒▒▒
-▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
-▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.4:
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Differentiate ancient dragons in DawnHack.
+▒▒▒
+▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
+▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
+▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
+▒▒▒
+▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
+▒▒▒
+▒▒▒ * Consider FIQ's changes to spellbook mechanics, 5f81af2.  Be advised this will absolutely
+▒▒▒   necessitate a fullwise balance check on spellbook availability.
 ▒▒▒
 ▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
 ▒▒▒   commits 1117745, e7c193d
@@ -148,16 +126,32 @@
 ▒▒▒
 ▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
+▒▒▒ * With regard to add_erosion_words:
+▒▒▒   08:25 < FIQ > ou forgot rotproof for wood
+▒▒▒   08:25 < FIQ > and fixed cor crysknives
+▒▒▒
 ▒▒▒ * Fine tune the balance on the Pw regen formula, especially
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
 ▒▒▒   of the discussion around 7:40.
 ▒▒▒
-▒▒▒ * Double check that orchain_int() doesn't need a NULL last
-▒▒▒   argument.
+▒▒▒ * Double check that orchain_int() doesn't need a NULL last argument.
+▒▒▒
+▒▒▒ * Rename the Valkyrie role to Shieldmaster/Shieldmaiden, and allow them to be any
+▒▒▒   alignment (subject to race restrictions).  For race they can be human, valkyrie,
+▒▒▒   or dwarf.  Make the valkyrie race always neutral female, dwarf always lawful male.
+▒▒▒   Design the role to have less melee offensive power than e.g. Samurai or Barbarian,
+▒▒▒   but better defense and some casting ability (e.g., cold).  Reflavor the quest text
+▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
+▒▒▒   doing so at the behest of the Norn still makes flavor sense).  The cold res and
+▒▒▒   flying are traits specific to valkyrie race: compensate non-valk shieldmasters.
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
+▒▒▒
+▒▒▒ * Fix mazewalk so the same map-relative coordinates work regardless of the values
+▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
+▒▒▒   and re-enable them.
 ▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
@@ -184,6 +178,11 @@
 ▒▒▒   18:36 <             FIQ > also for other kind of special [rooms]
 ▒▒▒   Answer: the obvious and clean way to do that is by tracking which level "sounds"
 ▒▒▒   the player has "heard", in the level data structure.
+▒▒▒   07:13 <             FIQ > 5c3f742f18fdd791c91b0232cc413183ac23952b
+▒▒▒   07:14 <             FIQ > adds a flag, and there was free space there
+▒▒▒   07:14 <             FIQ > so I didn't even have to saveshim
+▒▒▒   The FIQHack fix is for vault sounds only; I'd like to handle other level sounds
+▒▒▒   in the same way.
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
@@ -261,7 +260,7 @@
 ▒▒▒ * Make pickup_thrown (at least optionally) work when autopickup is off otherwise.
 ▒▒▒
 ▒▒▒ * When hallucinating, statues should appear to be monsters, and perform
-▒▒▒   hallucinatory actions, such as singing, dancing, etc.
+▒▒▒   hallucinatory actions, such as singing, dancing, sneezing, etc.
 ▒▒▒
 ▒▒▒ * Makedefs must die.  Make a list of all the things it does and triage
 ▒▒▒   when to refactor each of them.
@@ -420,7 +419,9 @@
 ▒▒▒
 ▒▒▒ * 16:51 < FIQ > jonadab: your method of exposing traps with magic mapping will not work correctly on plane of water
 ▒▒▒
-▒▒▒ * Implement the Druid role.
+▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
+▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,
+▒▒▒   and lawful druid seems weird to me for some reason.)
 ▒▒▒
 ▒▒▒ * Should orcs have hooves, rather than feet?  (If so, should they be able to wear boots?)
 ▒▒▒   Should they have snouts, rather than noses?
@@ -626,6 +627,9 @@
 ▒▒▒   block all touch-of-death (not just Death's).
 ▒▒▒
 ▒▒▒ * Make red scales grant fire resistance and sliming resistance.
+▒▒▒
+▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
+▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
 ▒▒▒ * Look at and consider cherry-picking FIQ's unskilled bashmsh, 7ad158a
 ▒▒▒

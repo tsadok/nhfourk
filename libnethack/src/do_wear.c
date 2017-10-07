@@ -190,9 +190,11 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     int otyp = o->otyp;
     int prop = objects[otyp].oc_oprop;
     boolean redundant_extrinsic = !!(worn_extrinsic(prop) & ~W_MASK(slot));
-    /* TODO: Effects that are redundant to racial properties. I'm not sure if
-       this can actually come up, but we should handle it anyway. */
-    boolean redundant = redundant_extrinsic || u.uintrinsic[prop];
+    boolean redundant_racial = !!(u_have_property(prop, FROMRACE, FALSE));
+    boolean redundant_experience = !!(u_have_property(prop, FROMEXPER, FALSE));
+    boolean redundant_polyform = !!(u_have_property(prop, FROMPOLY, FALSE));
+    boolean redundant = redundant_extrinsic || u.uintrinsic[prop] ||
+        redundant_racial || redundant_experience || redundant_polyform;
     redundant = redundant && !worn_blocked(prop);
     boolean destroyed = FALSE;
     boolean already_blind = Blind; /* for blindfold tracking */
@@ -424,16 +426,31 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
     case AMULET_OF_ESP:
         see_monsters(FALSE);
         break;
+    case AMULET_OF_FLYING:
+        if ((!redundant) && !Levitation) {
+            makeknown(otyp);
+            if (msgtype != em_silent)
+                pline(good_msgc, "%s", equipping ?
+                      msgprintf("The %s recedes beneath you.",
+                                surface(u.ux, u.uy)) :
+                      msgprintf("You settle to the %s.", surface(u.ux, u.uy)));
+            if (!equipping)
+                spoteffects(TRUE);
+        }
+        break;
     case AMULET_OF_LIFE_SAVING:
     case AMULET_VERSUS_POISON:
     case AMULET_OF_REFLECTION:
-    case AMULET_OF_FLYING:
     case AMULET_OF_MAGICAL_BREATHING:
     case FAKE_AMULET_OF_YENDOR:
         break;
     case AMULET_OF_UNCHANGING:
-        if (Slimed && equipping)
-            Slimed = 0;
+        if (Slimed && equipping) {
+            makeknown(otyp);
+            Slimed = 0L;
+            if (msgtype != em_silent)
+                pline(msgc_statusheal, "Your transformation ceases.");
+        }
         break;
     case AMULET_OF_CHANGE:
         /* Here we ignore em_silent because the messages might be needed to

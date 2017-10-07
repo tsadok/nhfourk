@@ -641,36 +641,42 @@ sobj_at(int otyp, struct level *lev, int x, int y)
 }
 
 boolean
-is_racial_equipment(struct monst *mon, struct obj *obj)
+would_be_racial_equip(int otyp, const struct permonst *pm)
 {
-    const struct permonst *pm = ((mon == &youmonst) ? URACEDATA : mon->data);
     if (is_elf(pm) &&
-        (obj->otyp == ELVEN_LEATHER_HELM || obj->otyp == ELVEN_MITHRIL_COAT ||
-         obj->otyp == ELVEN_CLOAK || obj->otyp == ELVEN_SHIELD ||
-         obj->otyp == ELVEN_BOOTS || obj->otyp == ELVEN_SPEAR ||
-         obj->otyp == ELVEN_DAGGER || obj->otyp == ELVEN_SHORT_SWORD ||
-         obj->otyp == ELVEN_BROADSWORD || obj->otyp == ELVEN_BOW))
+        (otyp == ELVEN_LEATHER_HELM || otyp == ELVEN_MITHRIL_COAT ||
+         otyp == ELVEN_CLOAK || otyp == ELVEN_SHIELD ||
+         otyp == ELVEN_BOOTS || otyp == ELVEN_SPEAR ||
+         otyp == ELVEN_DAGGER || otyp == ELVEN_SHORT_SWORD ||
+         otyp == ELVEN_BROADSWORD || otyp == ELVEN_BOW))
         return TRUE;
     if (is_orc(pm) &&
-        (obj->otyp == ORCISH_HELM || obj->otyp == ORCISH_RING_MAIL ||
-         obj->otyp == ORCISH_CHAIN_MAIL || obj->otyp == ORCISH_CLOAK ||
-         obj->otyp == URUK_HAI_SHIELD || obj->otyp == ORCISH_SHIELD ||
-         obj->otyp == ORCISH_SPEAR || obj->otyp == ORCISH_DAGGER ||
-         obj->otyp == ORCISH_SHORT_SWORD || obj->otyp == ORCISH_BOW))
+        (otyp == ORCISH_HELM || otyp == ORCISH_RING_MAIL ||
+         otyp == ORCISH_CHAIN_MAIL || otyp == ORCISH_CLOAK ||
+         otyp == URUK_HAI_SHIELD || otyp == ORCISH_SHIELD ||
+         otyp == ORCISH_SPEAR || otyp == ORCISH_DAGGER ||
+         otyp == ORCISH_SHORT_SWORD || otyp == ORCISH_BOW))
         return TRUE;
     if (is_dwarf(pm) &&
-        (obj->otyp == DWARVISH_IRON_HELM || obj->otyp == DWARVISH_CLOAK ||
-         obj->otyp == DWARVISH_MITHRIL_COAT || obj->otyp == DWARVISH_SPEAR ||
-         obj->otyp == DWARVISH_ROUNDSHIELD || obj->otyp == DWARVISH_MATTOCK ||
-         obj->otyp == DWARVISH_SHORT_SWORD))
+        (otyp == DWARVISH_IRON_HELM || otyp == DWARVISH_CLOAK ||
+         otyp == DWARVISH_MITHRIL_COAT || otyp == DWARVISH_SPEAR ||
+         otyp == DWARVISH_ROUNDSHIELD || otyp == DWARVISH_MATTOCK ||
+         otyp == DWARVISH_SHORT_SWORD))
         return TRUE;
     if (is_gnome(pm) &&
-        (obj->otyp == AKLYS || obj->otyp == CROSSBOW))
+        (otyp == AKLYS || otyp == CROSSBOW))
     if (is_human(pm) &&
-        (obj->otyp == FEDORA))
+        (otyp == FEDORA))
         return TRUE;
     /* Should slings count as racial for anybody? */
     return FALSE;
+}
+
+boolean
+is_racial_equipment(struct monst *mon, struct obj *obj)
+{
+    const struct permonst *pm = ((mon == &youmonst) ? URACEDATA : mon->data);
+    return would_be_racial_equip(obj->otyp, pm);
 }
 
 int

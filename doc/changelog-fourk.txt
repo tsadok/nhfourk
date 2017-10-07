@@ -369,6 +369,18 @@ Changes in 4.3.0.5:
 Changes in 4.3.0.4:
 -------------------
 
+ * When throwing Mjollnir, it no longer has a 1% chance to land
+   at your enemy's feet.  (The chance to land at your feet, so
+   you need to pick it up, is unchanged from vanilla, apart
+   from the longstanding change where it no longer shocks you.)
+
+ * Your current (average) movement rate is now shown in the status
+   area (after M:, because S: was taken for score).  Note that how
+   many actions you get on any given turn is now very slightly
+   unpredictable (even if you have normal speed), but it doesn't
+   deviate by very much, and the long term average approaches the
+   expected value.
+
  * Characters who are restricted in two-weapon combat skill can
    still wield two weapons at once if they are expert in the
    relevant skill(s) for both weapons involved.  For example, a
@@ -489,8 +501,8 @@ Changes in 4.3.0.4:
 
  * More special levels have been given more alternate versions.
    Special levels that have more distinct versions than before now
-   include Mine's End, the Valley of the Dead, Moloch's Sanctum,
-   Fort Ludios, and Medusa's Island.
+   include the Big Room, Mine's End, the Valley of the Dead, Moloch's
+   Sanctum, Fort Ludios, and Medusa's Island.
 
  * Sting can be held second to Orcrist, for two-weapon combat.
 
@@ -569,7 +581,6 @@ Changes in 4.3.0.4:
    (subject to unlocking) play a character who is permanently confused,
    stunned, fumbling, or has permanent greasy fingers, wounded legs,
    or terrible luck.
->>>>>>> 5cab2a8... Update rltiles-32 to support the new item appearances.
 
  * The bribeable demons will no longer accept trivial amounts of chump
    change for safe passage.  If you're only carrying a couple hundred
@@ -729,7 +740,7 @@ Changes in 4.3.0.4:
  * Lights are now on symbol e, eye or sphere or light.
 
  * Instead of the Castle, it is now possible to get the Palace, the
-   Library, or the Laboratory.
+   Library, or the Laboratory.  Your wishes may come in non-wand form.
 
  * Scrolls of consecration have been implemented.  Reading one of
    these will create an altar (or, if confused, a magic chest) at your

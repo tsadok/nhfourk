@@ -634,7 +634,7 @@ givit(int type, const struct permonst *ptr, int scalefactor)
             if (Hallucination)
                 pline(msgc_intrgain, "You feel grounded in reality.");
             else
-                pline(msgc_intrgain, "Your health currently feels amplified!");
+                pline(msgc_intrgain, "Your current health feels amplified!");
             HShock_resistance |= FROMOUTSIDE;
         }
         break;

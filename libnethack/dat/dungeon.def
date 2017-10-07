@@ -61,13 +61,13 @@ BRANCH:		"Advent Calendar" @ (1, 5) portal
 LEVEL:		"oracle" "O" @ (5, 5)
 LEVALIGN:	neutral
 CHAINBRANCH:	"Sokoban" "oracle" + (1, 0) up
-RNDLEVEL:	"bigrm" "B" @ (13, 3) 40 9
+RNDLEVEL:	"bigrm" "B" @ (13, 3) 40 11
 CHAINBRANCH:	"The Quest" "oracle" + (6, 2) portal
 BRANCH:		"Fort Ludios" @ (18, 4) portal
 RNDLEVEL:	"medusa" "M" @ (-7, 2) 5
 LEVALIGN:	chaotic
 RNDLEVEL:       "labyr" "L" @ (-2, 0) 40 3
-RNDLEVEL:	"castle" "none" @ (-1, 0) 6
+RNDLEVEL:	"castle" "none" @ (-1, 0) 4
 CHAINBRANCH:	"Gehennom" "castle" + (0, 0) no_down
 BRANCH:		"The Elemental Planes" @ (1, 0) no_down up
 

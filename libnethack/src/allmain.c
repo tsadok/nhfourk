@@ -32,6 +32,8 @@ static void constitution_based_healing(int minlevel);
 
 static void deluxe_sylph_healing(void);
 
+static int you_move_amount(void);
+
 const char *const *
 nh_get_copyright_banner(void)
 {
@@ -773,6 +775,85 @@ deluxe_sylph_healing(void)
     }
 }
 
+/* infoonly is true if we are calling the function to find out the player's
+   speed for purposes other than calculating movement, e.g., if we want to
+   display speed in the UI; in that case temporarly timeout counters (for
+   temporary slowness or haste) don't get advanced. */
+int
+you_speed(boolean infoonly) {
+    int amt = 0;
+    if (u.usteed && u.umoved) {
+        /* your speed doesn't augment steed's speed */
+        amt = mcalcmove(u.usteed);
+    } else {
+        amt = (Upolyd ? youmonst.data->mmove : urace.basespeed);
+        /* Different sources of speed now stack: */
+        if (youmonst.mslowed > 0) {
+            amt = amt * 2 / 3;
+            if (!infoonly) {
+                youmonst.mslowed--;
+                if (youmonst.mslowed == 0)
+                    pline(msgc_statusheal, "You move more freely.");
+            }
+        }
+        if ((u.uintrinsic[FAST] & INTRINSIC))
+            amt += NORMAL_SPEED * 2 / 3; /* intrinsic speed */
+        if (u.uintrinsic[FAST] & ~INTRINSIC)
+            amt = amt * 5 / 4;          /* temporary haste/potion */
+        if (mworn_extrinsic(&youmonst, FAST))
+            amt += NORMAL_SPEED / 3;    /* extrinsic speed (e.g., boots) */
+    }
+    /* Being encumbered slows you down. */
+    switch (near_capacity()) {
+    case UNENCUMBERED:
+        break;
+    case SLT_ENCUMBER:
+        amt -= (amt / 4);
+        break;
+    case MOD_ENCUMBER:
+        amt -= (amt / 2);
+        break;
+    case HVY_ENCUMBER:
+        amt -= ((amt * 3) / 4);
+        break;
+    case EXT_ENCUMBER:
+        amt -= ((amt * 7) / 8);
+        break;
+    default:
+        break;
+    }
+    /* Being bloated from eating too much slows you down. */
+    if (u.uhunger >= 5000)
+        return 0;  /* but see "Avoid infinite loop" in you_move_amount() */
+    else if (u.uhunger >= 1200) {
+        amt -= (amt * (u.uhunger - 1000) / 4000);
+    }
+    return amt;
+}
+
+static int
+you_move_amount(void) {
+    int amt = 0;
+    int speed = you_speed(FALSE);
+    int increment = (NORMAL_SPEED / 3);
+    while (speed > increment) {
+        amt   += increment;
+        speed -= increment;
+    }
+    /* Unlike other monsters, the player's movement has a random
+       component.  Fractions of a turn are distrubuted in a way
+       that preserves average movement rate but in a manner that
+       is not entirely predictable: */
+    if (speed > rn2_on_rng(increment, rng_player_speed))
+        amt += increment;
+    /* Avoid an infinite loop on corner cases (e.g. polyinit to blue
+       jelly), by limiting how long the player can be stuck without
+       movement points. */
+    if ((amt < 1) && !(moves % 12))
+        amt = 1;
+    return amt;
+}
+
 static void
 you_moved(void)
 {
@@ -850,80 +931,13 @@ you_moved(void)
                      (depth(&u.uz) > depth(&stronghold_level)) ? 50 : 70))
                 makemon(NULL, level, COLNO, ROWNO, MM_SPECIESLEVRNG);
 
-            int oldmoveamt = u.moveamt;
-
             /* Calculate how much movement you get this turn. (We cache this in
                struct you because unlike for monsters, there's a random factor
                in player movement.) */
-            if (u.usteed && u.umoved) {
-                /* your speed doesn't augment steed's speed */
-                u.moveamt = mcalcmove(u.usteed);
-            } else {
-                u.moveamt = Upolyd ? youmonst.data->mmove : urace.basespeed;
-                /* Different sources of speed now stack: */
-                if (youmonst.mslowed > 0) {
-                   u.moveamt = u.moveamt * 2 / 3;
-                   youmonst.mslowed--;
-                   if (youmonst.mslowed == 0)
-                       pline(msgc_statusheal, "You move more freely.");
-                }
-                if ((u.uintrinsic[FAST] & INTRINSIC) && (rn2(3) != 0))
-                    u.moveamt += NORMAL_SPEED / 3; /* intrinsic speed */
-                else if (u.uintrinsic[FAST] & INTRINSIC)
-                    u.moveamt += NORMAL_SPEED / 12;
-                if (u.uintrinsic[FAST] & ~INTRINSIC)
-                    u.moveamt = u.moveamt * 5 / 4; /* temporary haste/potion */
-                if (mworn_extrinsic(&youmonst, FAST))
-                    u.moveamt += rn2(3) ? (NORMAL_SPEED * 3 / 7) :
-                        (NORMAL_SPEED / 4); /* extrinsic speed (e.g., boots) */
-            }
-
-            switch (wtcap) {
-            case UNENCUMBERED:
-                break;
-            case SLT_ENCUMBER:
-                u.moveamt -= (u.moveamt / 4);
-                break;
-            case MOD_ENCUMBER:
-                u.moveamt -= (u.moveamt / 2);
-                break;
-            case HVY_ENCUMBER:
-                u.moveamt -= ((u.moveamt * 3) / 4);
-                break;
-            case EXT_ENCUMBER:
-                u.moveamt -= ((u.moveamt * 7) / 8);
-                break;
-            default:
-                break;
-            }
-            /* Being satiated now slows you down. */
-            if (u.uhunger >= 1200) {
-                u.moveamt -= (u.moveamt * (u.uhunger - 1000) / 4000);
-                if (u.moveamt < 1)
-                    u.moveamt = 0; /* but see "corner cases" just below... */
-            }
-            /* Avoid an infinite loop on corner cases (e.g. polyinit to blue
-               jelly), by limiting how long the player can be stuck without
-               movement points. */
-            if ((u.moveamt < 1) && !(moves % 12))
-                u.moveamt = 1;
-
+            int oldmoveamt = u.moveamt;
+            u.moveamt = you_move_amount();
             /* Adjust the move offset for the change in speed. */
             adjust_move_offset(&youmonst, oldmoveamt, u.moveamt);
-
-            /* SAVEBREAK (4.3-beta1 -> 4.3-beta2)
-
-               If we're loading a 4.3-beta1 save, then youmonst.moveamt may have
-               been set incorrectly. The game detects this by seeing whether
-               youmonst.moveoffset >= 12 (which it never can be, under normal
-               circumstances, but which it will be in a 4.3-beta1 save because
-               you need 12 movement points for the code to reach the point where
-               it runs neutral_turnstate_tasks). We're about to set
-               youmonst.moveamt correctly, so we need to set youmonst.moveoffset
-               correctly too to let can_act_this_turn know to use it. */
-            if (youmonst.moveoffset >= 12) {
-                youmonst.moveoffset = 0;
-            }
 
             settrack();
 
