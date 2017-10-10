@@ -472,7 +472,7 @@ static void
 add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
 {
     const char *buf;
-    int diff = monstr[monsndx(pm)];
+    int diff = MONSTR(monsndx(pm));
     int gen = pm->geno;
     int freq = (gen & G_FREQ);
     boolean uniq = !!(gen & G_UNIQ);
@@ -485,8 +485,8 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
     unsigned int mflag3 = pm->mflags3;
 
     /* Misc */
-    buf = msgprintf("Difficulty %d, %s, willpower %d.", diff,
-                    show_ac("%s %d", pm->ac), pm->mr);
+    buf = msgprintf("Difficulty %d, Def %d, willpower %d.",
+                    diff, (10 - pm->ac), pm->mr);
     add_menutext(menu, buf);
 
     /* Generation */
