@@ -456,10 +456,17 @@ nh_describe_pos(int x, int y, struct nh_desc_buf *bufs, int *is_in)
     API_EXIT();
 }
 
+#define ADDRES(res, str)                                \
+    if (pm_resistance(pm, res))                         \
+        buf = msgprintf("%s%s", buf && *buf ?           \
+                        msgcat(buf, ", ") : "", str);
+
+/*
 #define ADDPROP(prop, str)                              \
     if (pm_has_property(pm, (prop)))                    \
         buf = msgprintf("%s%s", buf && *buf ?           \
                         msgcat(buf, ", ") : "", str);
+*/
 #define ADDMR(field, res, str)                          \
     if (field & (res))                                  \
         buf = msgprintf("%s%s", buf && *buf ?           \
@@ -481,8 +488,8 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
     uchar mcon = pm->mconveys;
     mcon &= ~(MR_ACID | MR_STONE); /* these don't do anything */
     unsigned int mflag1 = pm->mflags1;
-    unsigned int mflag2 = pm->mflags2;
-    unsigned int mflag3 = pm->mflags3;
+    /* unsigned int mflag2 = pm->mflags2; */
+    /* unsigned int mflag3 = pm->mflags3; */
 
     /* Misc */
     buf = msgprintf("Difficulty %d, Def %d, willpower %d.",
@@ -509,17 +516,19 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
 
     /* Resistances */
     buf = NULL;
-    ADDPROP(FIRE_RES, "fire");
-    ADDPROP(COLD_RES, "cold");
-    ADDPROP(SLEEP_RES, "sleep");
-    ADDPROP(DISINT_RES, "disintegration");
-    ADDPROP(SHOCK_RES, "shock");
-    ADDPROP(POISON_RES, "poison");
-    ADDPROP(ACID_RES, "acid");
-    ADDPROP(STONE_RES, "petrification");
+    ADDRES(MR_FIRE, "fire");
+    ADDRES(MR_COLD, "cold");
+    ADDRES(MR_SLEEP, "sleep");
+    ADDRES(MR_DISINT, "disintegration");
+    ADDRES(MR_ELEC, "shock");
+    ADDRES(MR_POISON, "poison");
+    ADDRES(MR_ACID, "acid");
+    ADDRES(STONE_RES, "petrification");
+    /*
     ADDPROP(DRAIN_RES, "life-drain");
     ADDPROP(SICK_RES, "sickness");
     ADDPROP(ANTIMAGIC, "magic");
+    */
     if (buf)
         buf = msgprintf("Resists %s.", buf);
     else
@@ -538,7 +547,10 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
         buf = msgprintf("%s resistance", buf);
     ADDMR(mflag1, M1_TPORT, "teleportitis");
     ADDMR(mflag1, M1_TPORT_CNTRL, "teleport control");
-    ADDMR(mflag2, M2_TELEPATHIC, "telepathy");
+    if (telepathic(pm)) { /* ADDMR(mflag2, M2_TELEPATHIC, "telepathy"); */
+        buf = msgprintf("%s%s", (buf && *buf ? msgcat(buf, ", ") : ""),
+                        "telepathy");
+    }
     if (!(gen & G_NOCORPSE)) {
         if (buf)
             buf = msgprintf("Corpse conveys %s.", buf);
@@ -585,7 +597,7 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
     }
 
     APPENDC(is_hider(pm), "hide");
-    APPENDC(pm_swims(pm), "swim");
+    APPENDC(is_swimmer(pm), "swim");
     if (!is_floater(pm)) /* overrides */
         APPENDC(pm->mflags1 & M1_FLY, "fly");
     APPENDC(pm->mflags1 & M1_WALLWALK, "phase through walls");
@@ -635,9 +647,12 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
         buf = "Has no attacks.";
     add_menutext(menu, buf);
 }
+#undef ADDRES
 #undef APPENDC
 #undef ADDMR
+/*
 #undef ADDPROP
+*/
 
 /* Look in the "data" file for more info.  Called if the user typed in the
    whole name (user_typed_name == TRUE), or we've found a possible match
@@ -765,7 +780,7 @@ checkfile(const char *inp, const struct permonst *pm,
     }
 
     if (found_in_file) {
-        struct nh_menulist menu;
+        /* struct nh_menulist menu; */
         long entry_offset;
         int entry_count;
         int i;
@@ -908,7 +923,8 @@ do_look(boolean quick, const struct nh_cmd_arg *arg)
            because that'll fail in cases like "Dudley's ghost" */
         struct monst *mon = NULL;
         if (append_str(&out_str, descbuf.mondesc, 1, 0)) {
-            mon = vismon_at(level, cc.x, cc.y);
+            /* FIQ believes m_at is safe here, see #hardfought 2017 Oct 11. */
+            mon = m_at(level, cc.x, cc.y);
             if (!mon && cc.x == u.ux && cc.y == u.uy)
                 mon = &youmonst;
 
