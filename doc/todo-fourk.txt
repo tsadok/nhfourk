@@ -101,8 +101,6 @@
 ▒▒▒   + Monsters with a large number of verbose attacks (mmf is the
 ▒▒▒     poster child for this) get their attack list cut off unless
 ▒▒▒     the player's terminal is quite wide.  Wrapping would be good.
-▒▒▒   + "conveys nothing" is not strictly accurate for newt; there
-▒▒▒     may be other special cases.
 ▒▒▒   + "Normally occurs everywhere" is inaccurate for monsters that
 ▒▒▒     don't randomly generate.
 ▒▒▒

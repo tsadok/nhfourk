@@ -552,8 +552,27 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
                         "telepathy");
     }
     if (!(gen & G_NOCORPSE)) {
-        if (buf)
+        if (pm == &mons[PM_QUANTUM_MECHANIC])
+            buf = "Corpse conveys: ?";
+        else if (pm == &mons[PM_MIND_FLAYER] || pm == &mons[PM_MASTER_MIND_FLAYER])
+            buf = buf ? msgprintf("Corpse conveys intelligence, %s", buf) :
+                "Corpse conveys intelligence";
+        else if (buf)
             buf = msgprintf("Corpse conveys %s.", buf);
+        /* Some corpses are special-cased in cpostfx() */
+        else if (pm == &mons[PM_NEWT]         ||
+                 pm == &mons[PM_NURSE]        ||
+                 pm == &mons[PM_WRAITH]       ||
+                 pm == &mons[PM_YELLOW_LIGHT] ||
+                 pm == &mons[PM_GIANT_BAT]    ||
+                 pm == &mons[PM_BAT]          ||
+                 pm == &mons[PM_GIANT_MIMIC]  ||
+                 pm == &mons[PM_LARGE_MIMIC]  ||
+                 pm == &mons[PM_SMALL_MIMIC]  ||
+                 pm == &mons[PM_LIZARD]       ||
+                 pm == &mons[PM_CHAMELEON]    ||
+                 pm == &mons[PM_DOPPELGANGER])
+            buf = "Corpse conveys no resistances.";
         else
             buf = "Corpse conveys nothing.";
         add_menutext(menu, buf);
