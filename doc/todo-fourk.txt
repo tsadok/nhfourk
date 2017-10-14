@@ -97,11 +97,6 @@
 ▒▒▒   4.3.0.4:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Fix up the remaining niggles for the monster lookup feature.
-▒▒▒   + Monsters with a large number of verbose attacks (mmf is the
-▒▒▒     poster child for this) get their attack list cut off unless
-▒▒▒     the player's terminal is quite wide.  Wrapping would be good.
-▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable

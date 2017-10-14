@@ -653,18 +653,25 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
     /* Attacks */
     buf = NULL;
     const char *atkbuf;
+    boolean didsome = FALSE;
     int i;
     for (i = 0; i < 6; i++) {
         atkbuf = oneattack(&pm->mattk[i]);
         if (!atkbuf)
             break;
         APPENDC(atkbuf, atkbuf);
+        if (i % 2) {
+            add_menutext(menu, msgprintf("%s %s ", (didsome ? "        " :
+                                                    "Attacks:"), buf));
+            buf = NULL;
+            didsome = TRUE;
+        }
     }
     if (buf)
-        buf = msgprintf("Attacks: %s.", buf);
-    else
-        buf = "Has no attacks.";
-    add_menutext(menu, buf);
+        add_menutext(menu, msgprintf("%s %s ", (didsome ? "        " :
+                                                "Attacks:"), buf));
+    else if (!didsome)
+        add_menutext(menu, "Has no attacks.");
 }
 #undef ADDRES
 #undef APPENDC
