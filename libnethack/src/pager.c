@@ -500,10 +500,10 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
     if (uniq)
         buf = "Unique.";
     else
-        buf = msgprintf("Normally %s%s, %s.",
+        buf = msgprintf("Theoretically %s%s, %s.",
                         hell ? "only appears in Gehennom" :
                         nohell ? "only appears outside Gehennom" :
-                        "appears everywhere",
+                        "can appear anywhere",
                         (gen & G_SGROUP) ? " in groups" :
                         (gen & G_LGROUP) ? " in large groups" : "",
                         freq >= 5 ? "very common" :
