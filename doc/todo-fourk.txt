@@ -102,9 +102,18 @@
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
+▒▒▒7 * Add the git hash to xlog as a separate field.
+▒▒▒
+▒▒▒ * mbodypart has no special cases for owlbears and almost certainly needs some.
+▒▒▒
+▒▒▒ * Look at FIQ's multiturn movement fix:  [reverted: 98a9db1], 6a5dcba, 6648540
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
+▒▒▒   the current situation with old-version saves.
 ▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
@@ -116,6 +125,9 @@
 ▒▒▒
 ▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
 ▒▒▒   commits 1117745, e7c193d
+▒▒▒
+▒▒▒ * Didn't 3.6 add a feature where mazes sometimes get walls removed to form loops?
+▒▒▒   Consider cherry-picking that.
 ▒▒▒
 ▒▒▒ * Redo the colors for the Dawnlike tiles for all the keys,
 ▒▒▒   and maybe the violet potion as well.
