@@ -7,6 +7,7 @@
 #include "patchlevel.h"
 #include "quest.h"
 #include "dlb.h"
+#include "date.h"
 
 #include <fcntl.h>
 #include <inttypes.h>
@@ -221,13 +222,13 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
 
     /* regular logfile data */
     fprintf(rfile,
-            "version=%d.%d.%d" SEP "variant=Fourk" SEP
-            "points=%d" SEP "deathdnum=%d" SEP
-            "deathlev=%d" SEP "maxlvl=%d" SEP "hp=%d" SEP "maxhp=%d" SEP
+            "version=%d.%d.%d" SEP "variant=Fourk" SEP "versionstring=%s" SEP
+            "points=%d" SEP "deathdnum=%d" SEP "deathlev=%d" SEP
+            "maxlvl=%d" SEP "hp=%d" SEP "maxhp=%d" SEP
             "deaths=%d" SEP "deathdate=%ld" SEP "birthdate=%ld" SEP "uid=%d",
-            tt->ver_major, tt->ver_minor, tt->patchlevel, tt->points,
-            tt->deathdnum, tt->deathlev, tt->maxlvl, tt->hp, tt->maxhp,
-            tt->deaths, (unsigned long)tt->deathdate,
+            tt->ver_major, tt->ver_minor, tt->patchlevel, VERSION_ID,
+            tt->points, tt->deathdnum, tt->deathlev, tt->maxlvl, tt->hp,
+            tt->maxhp, tt->deaths, (unsigned long)tt->deathdate,
             (unsigned long)tt->birthdate, tt->uid);
 
     get_initial_rng_seed(rngseedbuf);
