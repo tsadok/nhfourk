@@ -113,7 +113,7 @@
 ▒▒▒
 ▒▒▒ * Look at FIQ's multiturn movement fix:  [reverted: 98a9db1], 6a5dcba, 6648540
 ▒▒▒
-▒▒▒ * Add the git hash to xlog as a separate field.
+▒▒▒ * 
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
