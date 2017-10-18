@@ -49,10 +49,16 @@ Building with Strawberry Perl (Recommended):
     K. Open a cmd.exe window, type PATH (and hit Enter) to verify that your PATH now
        includes that directory.  (It should already include the Strawberry Perl stuff,
        since the Strawberry installer takes care of that.)
- 3. Obtain a copy of the latest source.  I used git in WSL and just cloned the repo.
-    Be sure you get a version recent enough to include commit a820cf65090, from September 2017.
-    Older versions than this will not build on Microsoft Windows.  (Note:  I've cherry-picked
-    this commit to the 4.3.0.3 branch as of October 4th.)
+ 3. Obtain a copy of the latest source.  I used git in WSL and just cloned the repo:
+       git clone https://github.com/tsadok/nhfourk.git
+    There are also other ways, e.g., the github web interface has a
+    feature that will let you download a zipfile containing the
+    current tip of any given branch.  In any case, be sure you get a
+    version recent enough to include commit a820cf65090, from late
+    September 2017.  Older versions than this will not build on
+    Microsoft Windows.  (Note:  I've cherry-picked this commit to the
+    4.3.0.3 branch as of October 4th.  If you are building master or
+    4.3.0.4, you definitely need a copy from October 4th or later.)
  4. Optional: install SDL2 and its development stuff.
     A. Go to the SDL home page at https://www.libsdl.org/
     B. On the sidebar at the left, under Download, click on SDL 2.0
@@ -109,8 +115,24 @@ Building with Strawberry Perl (Recommended):
     using this very set of instructions, and later the same day got
     the tip of the master branch to compile after making a change to
     aimake.rules that causes NETCLIENT to be defined.
- 8. Optional: build the .msi installer.  I intend to document this
-    step here shortly.  For now, see the aimake --documentation
+ 8. Optional: build the .msi installer.
+    A. Make sure your copy of the source is recent enough to have
+       commit 9b17a9439a9, from 2017 October 17.
+    B. Go to the WiX website, http://wixtoolset.org/
+    C. Click on Downloads.  Under Recommended Build, click the download
+       button (currently, Download WIX V3.11).  The link goes to github.
+    D. On the github release page, scroll to near the bottom, and you
+       will find the actual downloads.  I chose wix311.exe
+    E. Run the wix installer as administrator, click Install (the middle
+       row), wait for it to say Complete, then hit exit.
+    F. Depending on your setup, if you want to distribute the .msi to
+       other folks and have it work, you may need to add additional
+       DLLs into the Prebuilt folder, e.g.,  libpng16-16.dll, zlib1__.dll
+    G. At the Strawberry command prompt,
+       SET PATH=%PATH%;"C:\Program Files (x86)\WiX Toolset v3.11\bin"
+    H. perl ..\nhfourk\aimake --without=server --with=gui --with=playfield_utils \
+                              --with=tilecompile --with=sourcecode --with=jansson \
+                              --gen-installer=msi
 
 
 Building with Cygwin:
