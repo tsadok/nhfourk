@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Looking things up with whatis (/) now gives useful information.
+
  * When throwing Mjollnir, it no longer has a 1% chance to land
    at your enemy's feet.  (The chance to land at your feet, so
    you need to pick it up, is unchanged from vanilla, apart

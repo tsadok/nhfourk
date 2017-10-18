@@ -1037,14 +1037,8 @@ static struct {
     /* misc. */
     {"jumbo shrimp", FALSE},
     {"giant pigmy", FALSE},
-    {"gnu", FALSE},
     {"killer penguin", FALSE},
-    {"giant cockroach", FALSE},
-    {"giant slug", FALSE},
-    {"maggot", FALSE},
-    {"pterodactyl", FALSE},
-    {"tyrannosaurus rex", FALSE},
-    {"beholder", FALSE},
+    {"winged kraken", FALSE},
     {"nightmare", FALSE},
     {"efreeti", FALSE},
     {"marid", FALSE},
@@ -1052,12 +1046,24 @@ static struct {
     {"shadow", FALSE},
     {"jester", FALSE},
     {"sleazoid", FALSE},
-    {"butterfly", FALSE},
     {"monster", FALSE},
     {"angel of death", FALSE},
     {"lion-dog", FALSE},
     {"rat-ant", FALSE},
     {"lllama", FALSE}, /* a big fire */
+        /* Real animals, past and present: */
+    {"butterfly", FALSE},
+    {"gnu", FALSE},
+    {"capybara", FALSE},
+    {"numbat", FALSE},
+    {"quoll", FALSE},
+    {"giant cockroach", FALSE},
+    {"giant slug", FALSE},
+    {"maggot", FALSE},
+    {"passenger pigeon", FALSE},
+    {"dodo bird", FALSE},
+    {"pterodactyl", FALSE},
+    {"tyrannosaurus rex", FALSE},
         /* Modern threats, real and imaginary: */
     {"bookworm", FALSE},
     {"hologram", FALSE},
@@ -1078,11 +1084,13 @@ static struct {
     {"Keystone Kop", FALSE},
     {"lemure", FALSE},
     {"zruty", FALSE},
-        /* NetHack community in-joke: */
+        /* NetHack community in-jokes: */
     {"master lichen", FALSE},
-    {"Death with a wand of Gnomes", TRUE},
+    {"Gnome with a wand of death", TRUE},
+    {"Death with a wand of gnomes", TRUE},
         /* assorted NetHack variants */
     {"wax golem", FALSE},               /* Slash'em */
+    {"beholder", FALSE},                /* GruntHack, and other sources */
     {"monoton", FALSE},                 /* dnethack */
     {"disintegrator", FALSE},           /* Biodiversity patch */
     {"dissolved undead potato", FALSE}, /* Slash'em Extended.  Really. */
@@ -1090,6 +1098,11 @@ static struct {
     {"dar battlemage", FALSE},
     {"tentacle horror", FALSE},
     {"Warden of Yendor", FALSE},
+        /* Angband */
+    {"white icky thing", FALSE},
+    {"blue yeek", FALSE},
+    {"metallic green centipede", FALSE},
+    {"Morgoth", TRUE}, /* Originally from LOTR */
         /* ADOM */
     {"ratling", FALSE},
         /* DCSS */
@@ -1129,6 +1142,7 @@ static struct {
         /* Notable console games */
     {"octorok", FALSE}, /* Zelda series */
     {"goomba", FALSE},  /* Mario series */
+    {"metroid", FALSE}, /* eponymous */
     {"ramblin' evil mushroom", FALSE}, /* EarthBound */
         /* Wizardry */
     {"creeping coins", FALSE},
@@ -1228,8 +1242,6 @@ static struct {
     {"one-eyed one-horned flying purple people eater", FALSE},
         /* saccharine kiddy TV */
     {"Barney the dinosaur", TRUE},
-        /* Angband */
-    {"Morgoth", TRUE}, /* Originally from LOTR */
         /* Babylon 5 */
     {"Vorlon", FALSE},
         /* Battlestar Galactica */
@@ -1240,7 +1252,7 @@ static struct {
     {"mother-in-law", FALSE},
     {"hyperactive child", FALSE},
     {"grumpy old man", FALSE},
-    {"teenager", FALSE},
+    {"surly teenager", FALSE},
     {"telemarketer", FALSE},
     {"politician", FALSE},
     {"attorney", FALSE},

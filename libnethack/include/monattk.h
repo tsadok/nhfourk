@@ -18,6 +18,8 @@
 # define AT_TUCH 5      /* touches */
 # define AT_STNG 6      /* sting */
 # define AT_HUGS 7      /* crushing bearhug */
+# define AT_ERR8 8      /* (unused) */
+# define AT_ERR9 9      /* (unused) */
 # define AT_SPIT 10     /* spits substance - ranged */
 # define AT_ENGL 11     /* engulf (swallow or by a cloud) */
 # define AT_BREA 12     /* breath - ranged */
@@ -27,8 +29,12 @@
 # define AT_TENT 16     /* tentacles */
 # define AT_SPIN 17     /* web spinners */
 
+# define LAST_CONTINUOUS_AT AT_SPIN
+
 # define AT_WEAP 254    /* uses weapon */
 # define AT_MAGC 255    /* uses magic spell(s) */
+
+# define LAST_AT AT_MAGC
 
 /*      Add new damage types below.
  *
@@ -85,6 +91,9 @@
 # define AD_ICEB 46     /* embeds in block of ice */
 # define AD_DISP 47     /* displaces the target */
 # define AD_WEBS 48     /* traps in a web; this also causes temp slowness */
+
+# define LAST_CONTINUOUS_AD AD_WEBS
+
 # define AD_OTHER 60    /* Numbers starting here can be used for non-damage
                          * constants stored in a damage type field, such as the
                          * field in the artilist that governs what an artifact
@@ -99,6 +108,7 @@
 # define AD_SAMU 252    /* hits, may steal Amulet (Wizard) */
 # define AD_CURS 253    /* random curse (ex. gremlin) */
 
+# define LAST_AD AD_CURS
 
 # define AD_WEBS_MAX_TURNCOUNT 150
 

@@ -80,7 +80,7 @@ Building with Strawberry Perl (Recommended):
        (C:\Strawberry\c\lib\ if Strawberry Perl is in the default place).
     H. Open the SDL2 binary runtime zip file that you downloaded.  It should contain a
        README-SDL.txt file, which you can read if you want, and SDL2.dll.  Copy SLD2.dll
-       to the prebuild folder inside your source tree.
+       to the prebuilt folder inside your source tree.
  5. Final preparations:
     A. Open Strawberry Perl's command line.
         * Note:  the console window used by Strawberry Perl has a
