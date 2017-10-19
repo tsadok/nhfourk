@@ -1506,6 +1506,11 @@ mbodypart(struct monst *mon, int part)
         "leg", "light headed", "neck", "back", "toe", "aura", "spirit",
         "interior", "nose", "interior", "aura", "ghostly limbs", "aura",
         "manifestation"
+    }, *const owlbear_parts[] = { "wing", "eye", "face", "wingtip",
+        "wingtip", "claw", "wingtip", "winged", "head", "leg",
+        "light headed", "ruff", "spine", "talon", "feathers",
+        "blood", "lung", "beak", "stomach", "hide",
+        "limbs", "skin", "body"
     };
     /* claw attacks are overloaded in mons[]; most humanoids with such attacks
        should still reference hands rather than claws */
@@ -1517,6 +1522,9 @@ mbodypart(struct monst *mon, int part)
     };
     const struct permonst *mptr = (mon == &youmonst) ? URACEDATA : mon->data;
 
+    if (mptr == &mons[PM_OWLBEAR]) /* These things are exceptions to several of
+                                      the special cases. */
+        return owlbear_parts[part];
     if (part == HAND || part == HANDED) {       /* some special cases */
         if (mptr->mlet == S_DOG || mptr->mlet == S_FELINE ||
             mptr->mlet == S_YETI || mptr == &mons[PM_SCURRIER])

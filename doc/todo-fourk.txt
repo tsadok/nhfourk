@@ -102,8 +102,6 @@
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                             wall as a scurrier seems to produce no message at all.
 ▒▒▒
-▒▒▒ * mbodypart has no special cases for owlbears and almost certainly needs some.
-▒▒▒
 ▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
 ▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
 ▒▒▒   23:27 < FIQ > and play a lawful male human monk
@@ -113,7 +111,9 @@
 ▒▒▒
 ▒▒▒ * Look at FIQ's multiturn movement fix:  [reverted: 98a9db1], 6a5dcba, 6648540
 ▒▒▒
-▒▒▒ * 
+▒▒▒ * https://nethackwiki.com/wiki/User:FIQ/DevTeam#Minor_scroll_reading_quirk
+▒▒▒
+▒▒▒ * Wooble says hallucination should make you immune to falling rock traps, because you are already stoned.
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
