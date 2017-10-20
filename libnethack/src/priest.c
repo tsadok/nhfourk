@@ -546,7 +546,13 @@ priest_talk(struct monst *priest)
         pline(msgc_uiprompt,
               "%s asks for a contribution for the temple.  %s suggests %ldzm.",
               Monnam(priest), msgupcasefirst(mhe(priest)), (scale * 2));
-        if ((offer = bribe(priest)) == 0) {
+        offer = bribe(priest);
+        /* We allow the player to offer one token zorkmid to avoid the alignment
+           penalty, in case chatting was accidental; anything more than that
+           counts as a donation. */
+        if ((offer > 1L) && (money_cnt(invent) > 1L))
+            break_conduct(conduct_donation);
+        if (offer == 0) {
             verbalize(msgc_alignbad, "Thou shalt regret thine action!");
             if (coaligned)
                 adjalign(-1);

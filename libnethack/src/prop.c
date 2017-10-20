@@ -1004,14 +1004,32 @@ show_conduct(int final)
 
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
-    else if (!u.uconduct[conduct_boughtprotection])
-        enl_msg(&menu, You_, "have not received", "did not receive",
-                " divine protection by donating to a temple");
-    if (u.uconduct_time[conduct_gnostic] > 1800) {
-        buf = msgprintf("an atheist until turn %d",
-                        u.uconduct_time[conduct_gnostic]);
-        enl_msg(&menu, You_, "were ", "had been ", buf);
-    } else if (u.uconduct_time[conduct_boughtprotection] > 0) {
+    else {
+        if (u.uconduct_time[conduct_gnostic] > 1800) {
+            buf = msgprintf("an atheist until turn %d",
+                            u.uconduct_time[conduct_gnostic]);
+            enl_msg(&menu, You_, "were ", "had been ", buf);
+        }
+        if (!u.uconduct[conduct_donation])
+            enl_msg(&menu, You_, "have not", "did not",
+                    " donate to any temples.");
+        else {
+            enl_msg(&menu, You_, "have donated", "donated",
+                    msgprintf(" to %stemple%s %d time%s%s, starting on turn %d",
+                              ((u.uconduct[conduct_donation] > 1) ? "" : "a "),
+                              ((u.uconduct[conduct_donation] > 1) ? "s" : ""),
+                              u.uconduct[conduct_donation],
+                              ((u.uconduct[conduct_donation] > 1) ? "s" : ""),
+                              (u.ublessed  ? msgprintf(
+                                  " (receiving %d points of protection)",
+                                  u.ublessed) : ""),
+                              u.uconduct_time[conduct_donation]));
+            if (!u.uconduct[conduct_boughtprotection])
+                enl_msg(&menu, You_, "have not received", "did not receive",
+                        " divine protection from a temple");
+        }
+    }
+    if (u.uconduct_time[conduct_boughtprotection] > 0) {
         enl_msg(&menu, You_, "have received", "received",
                 msgprintf(" temple protection %d time%s, starting on turn %d",
                           u.uconduct[conduct_boughtprotection],

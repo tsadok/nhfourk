@@ -281,6 +281,7 @@ enum player_conduct {
     conduct_displacement,                /* were displaced */
     conduct_reflection,                  /* had reflection */
     conduct_boughtprotection,            /* "donated" gold for protection */
+    conduct_donation,                    /* donated to a temple at all */
     num_conducts,
 };
 
