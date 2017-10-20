@@ -288,8 +288,9 @@ Changes in 4.3.0.4:
    hostile, so if you want one for a steed, you'll have to find a
    way to tame it.
 
- * Hallucination protects against petrification, on the grounds that
-   you are already stoned.  Thanks to raisse for the idea.
+ * Hallucination protects against petrification, falling rocks, and
+   thrown/fired rocks, on the grounds that you are already stoned.
+   Thanks to raisse for this idea and others who expanded on it.
 
  * Polymorphing into a python or other snake-like creature no longer
    breaks your armor, unless the target form is huge or gigantic

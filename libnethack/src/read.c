@@ -1450,6 +1450,10 @@ seffects(struct obj *sobj, boolean *known)
         if (!Is_rogue_level(&u.uz) &&
             (!In_endgame(&u.uz) || Is_earthlevel(&u.uz))) {
             int x, y;
+            if (Hallucination && Confusion) {
+                pline(msgc_playerimmune, "You are already stoned.");
+                break;
+            }
 
             /* Identify the scroll */
             pline(msgc_actionok, "The %s rumbles %s you!",
