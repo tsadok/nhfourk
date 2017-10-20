@@ -111,8 +111,6 @@
 ▒▒▒
 ▒▒▒ * Look at FIQ's multiturn movement fix:  [reverted: 98a9db1], 6a5dcba, 6648540
 ▒▒▒
-▒▒▒ * Wooble says hallucination should make you immune to falling rock traps, because you are already stoned.
-▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
