@@ -508,6 +508,17 @@
 ▒▒▒   whether something like this might be good (and maybe some roles or races
 ▒▒▒   should get a bonus, or take careful note of healer cha at least).
 ▒▒▒
+▒▒▒ * 14:44 < FIQ > jonadab: when I was new to nethack
+▒▒▒   14:44 < FIQ > I used to think that luck was a lot more complicated than what it actually is
+▒▒▒   14:45 < FIQ > due to the enlightenment message for uncursed luckstones
+▒▒▒   14:45 < FIQ > basically, I thought you had both "good luck" and "bad luck"
+▒▒▒   14:45 < FIQ > which could cancel each other out, but was still 2 seperate scales
+▒▒▒   14:45 < FIQ > and thus if you had any bad luck, you'd be unable to max out your luck
+▒▒▒   14:45 < FIQ > until it timed out
+▒▒▒   14:46 < FIQ > blessing your luckstone would be more important
+▒▒▒   14:47 < FIQ > since otherwise, your rare cases of bad luck (mirrors, killing a peaceful before angering, etc)
+▒▒▒   14:47 < FIQ > would accumulate
+▒▒▒
 ▒▒▒ * Consider how the Staff of Aesculalialdkjlaius should work for Sylphs.
 ▒▒▒
 ▒▒▒ * Consider creating a generalized version of rne that takes two integers representing
