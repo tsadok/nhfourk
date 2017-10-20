@@ -232,7 +232,8 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
                  int randomall)
 {
     struct nh_menulist menu;
-    int i, j, k, listlen, id, randrole;
+    int i, j, k, listlen, id;
+    int randrole = 1; /* Barbarian is the emergency fallthrough/backup choice. */
     char pick4u = 'n', thisch, lastch = 0;
     char pbuf[QBUFSZ], plbuf[QBUFSZ];
     struct plselect_listitem list[LISTSZ];    /* need enough space for lists of roles

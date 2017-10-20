@@ -59,6 +59,8 @@ const struct Role roles[] = {
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
      10, 5, 0, 2, 10, A_INT, SPE_MAGIC_MAPPING, -4, achieve_quest_archeologist,
      UNLOCKFEAT_ROLE_ARCHEOLOGIST, UNLOCKFEAT_ROLE_ARCHEOLOGIST},
+    /* The fact that Barbarian is at index 1 in this list is mildly significant
+       to player_selection, for pre-initializing randrole. */
     {{"Barbarian", 0}, {
                         {"Plunderer", "Plunderess"},
                         {"Pillager", 0},
