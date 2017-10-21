@@ -487,10 +487,8 @@ get_command(void *callbackarg,
                    catch-up, which is generally undesirable.  (Anyone who
                    _wants_ that can download the whole ttyrec of course.) */
                 || (redraw_counter++ > 1000)
-#else
-                    )
 #endif
-                ) {
+                    )) {
                 /* This needs special handling locally in addition to sending
                    it to the server */
 #ifdef PUBLIC_SERVER
