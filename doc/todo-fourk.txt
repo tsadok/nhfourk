@@ -411,6 +411,10 @@
 ▒▒▒
 ▒▒▒ * Quasits are still boring.  Do something.
 ▒▒▒
+▒▒▒ * 21:18 <             FIQ > jonadab: you should make a flying monster with a displacement attack
+▒▒▒   21:18 <             FIQ > and have them like using it over water or traps
+▒▒▒   Or a swimming monster with a displacement attack.  Or amphibious.
+▒▒▒
 ▒▒▒ * Make mvm and uvm poison instandeath work like mvp poison instadeath.
 ▒▒▒
 ▒▒▒ * Give scurriers a movement point rebate when moving onto a tree tile.
