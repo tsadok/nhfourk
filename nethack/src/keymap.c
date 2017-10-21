@@ -480,7 +480,7 @@ get_command(void *callbackarg,
 
 
 #ifdef PUBLIC_SERVER
-            if ((cmd == find_command("redraw")
+            if ((cmd == find_command("redraw"))
                 /* This is for the benefit of dgamelaunch, which relies on
                    finding certain things in the ttyrec to know where to start
                    sending to a new watcher.  Without this, starting to watch a
