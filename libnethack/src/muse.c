@@ -1513,7 +1513,10 @@ use_offensive(struct monst *mtmp, struct musable *m)
                     goto xxx_noobj;     /* Shouldn't happen */
                 otmp2->quan = confused ? rn1(5, 2) : 1;
                 otmp2->owt = weight(otmp2);
-                if (!amorphous(youmonst.data) && !Passes_walls &&
+                if (Hallucination) {
+                    pline(msgc_playerimmune, "You are already stoned.");
+                    dmg = 0;
+                } else if (!amorphous(youmonst.data) && !Passes_walls &&
                     !noncorporeal(youmonst.data) && !unsolid(youmonst.data)) {
                     pline(combat_msgc(mtmp, &youmonst, cr_hit),
                           "You are hit by %s!", doname(otmp2));

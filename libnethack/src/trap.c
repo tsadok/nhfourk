@@ -822,6 +822,14 @@ dotrap(struct trap *trap, unsigned trflags)
 
             trap->once = 1;
             seetrap(trap);
+
+            if (Hallucination) {
+                pline(msgc_playerimmune, "You are already stoned.");
+                /* The message is ambiguous, so don't reveal the trap. */
+                dmg = 0;
+                break;
+            }
+
             otmp = mksobj_at(ROCK, level, u.ux, u.uy, TRUE, FALSE, rng_main);
             otmp->quan = 1L;
             otmp->owt = weight(otmp);

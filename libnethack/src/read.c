@@ -179,8 +179,9 @@ doread(const struct nh_cmd_arg *arg)
     if (scroll->otyp != SCR_BLANK_PAPER) {
         if (Blind)
             pline(msgc_occstart,
-                  "As you %s the formula on it, the scroll disappears.",
-                  is_silent(youmonst.data) ? "cogitate" : "pronounce");
+                  "As you %s the formula, the scroll disappears.",
+                  (is_silent(youmonst.data) || Strangled) ? "cogitate on" :
+                  "pronounce");
         else
             pline(msgc_occstart, "As you read the scroll, it disappears.");
         if (confused) {
@@ -189,7 +190,8 @@ doread(const struct nh_cmd_arg *arg)
             else
                 pline(msgc_substitute,
                       "Being confused, you mis%s the magic words...",
-                      is_silent(youmonst.data) ? "understand" : "pronounce");
+                      (is_silent(youmonst.data) || Strangled) ? "understand" :
+                      "pronounce");
         }
     }
     if (!seffects(scroll, &known)) {
@@ -1448,6 +1450,10 @@ seffects(struct obj *sobj, boolean *known)
         if (!Is_rogue_level(&u.uz) &&
             (!In_endgame(&u.uz) || Is_earthlevel(&u.uz))) {
             int x, y;
+            if (Hallucination && Confusion) {
+                pline(msgc_playerimmune, "You are already stoned.");
+                break;
+            }
 
             /* Identify the scroll */
             pline(msgc_actionok, "The %s rumbles %s you!",

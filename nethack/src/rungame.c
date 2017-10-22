@@ -507,16 +507,19 @@ rungame(nh_bool net)
      
     /* Create the game, then immediately load it. */
     ret = ERR_CREATE_FAILED;
-    if (net) {
 #ifdef NETCLIENT
+    if (net) {
         fd = nhnet_create_game(new_opts);
         if (fd >= 0)
             ret = playgame(fd, FM_PLAY);
-#endif
     } else {
         if (nh_create_game(fd, new_opts) == NHCREATE_OK)
             ret = playgame(fd, FM_PLAY);
     }
+#else
+    if (nh_create_game(fd, new_opts) == NHCREATE_OK)
+        ret = playgame(fd, FM_PLAY);
+#endif
 
     close(fd);
 
