@@ -1,0 +1,5 @@
+24 24
+FMOB
+fmob-terrain.txt
+fmob-animals.txt
+fmob-monsters-misc.txt
