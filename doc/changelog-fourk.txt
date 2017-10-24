@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Light radius from lamps and candles now depents on beatitude.
+
  * Looking things up with whatis (/) now gives useful information.
 
  * When throwing Mjollnir, it no longer has a 1% chance to land
