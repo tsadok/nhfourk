@@ -369,6 +369,21 @@ Changes in 4.3.0.5:
 Changes in 4.3.0.4:
 -------------------
 
+ * Light radius from lamps and candles now depents on beatitude.
+
+ * Looking things up with whatis (/) now gives useful information.
+   (Cherry-picked from FIQHack.)
+
+ * The list of available tilesets is now as follows:
+   + text-unicode (NEW, differentiates all dragon ages)
+   + text-legacy (for if your terminal doesn't do UTF-8)
+   + text-ascii
+   + geoduck (graphical but with elements of the text symbols)
+   + slashem-16 (basically the vanilla default GUI tileset)
+   + slashem-32 (NEW, 32x32, 8-bit color)
+   + dawnlike16 (16x16, 4-bit color, very distinctive art style)
+   + rltiles-32 (32x32, 24-bit color)
+
  * When throwing Mjollnir, it no longer has a 1% chance to land
    at your enemy's feet.  (The chance to land at your feet, so
    you need to pick it up, is unchanged from vanilla, apart
@@ -594,8 +609,9 @@ Changes in 4.3.0.4:
    hostile, so if you want one for a steed, you'll have to find a
    way to tame it.
 
- * Hallucination protects against petrification, on the grounds that
-   you are already stoned.  Thanks to raisse for the idea.
+ * Hallucination protects against petrification, falling rocks, and
+   thrown/fired rocks, on the grounds that you are already stoned.
+   Thanks to raisse for this idea and others who expanded on it.
 
  * Polymorphing into a python or other snake-like creature no longer
    breaks your armor, unless the target form is huge or gigantic

@@ -510,8 +510,8 @@ rungame(nh_bool net)
      
     /* Create the game, then immediately load it. */
     ret = ERR_CREATE_FAILED;
-    if (net) {
 #ifdef NETCLIENT
+    if (net) {
         fd = nhnet_create_game(new_opts);
 #ifdef DEBUG_GAME_CREATION
         curses_raw_print("Aleph");
@@ -522,7 +522,6 @@ rungame(nh_bool net)
         else
             curses_raw_print("Beth");
 #endif /* DEBUG_GAME_CREATION */
-#endif /* NETCLIENT */
     } else {
 #ifdef DEBUG_GAME_CREATION
         curses_raw_print("Gimmel");
@@ -534,6 +533,10 @@ rungame(nh_bool net)
             curses_raw_print("Daleth");
 #endif
     }
+#else /* (not NETCLIENT) */
+    if (nh_create_game(fd, new_opts) == NHCREATE_OK)
+        ret = playgame(fd, FM_PLAY);
+#endif /* NETCLIENT */
 
     close(fd);
 

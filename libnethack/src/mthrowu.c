@@ -68,6 +68,10 @@ thitu(int tlev, int dam, struct obj *obj, const char *name)
     } else {
         if (Blind || !flags.verbose)
             pline(msgc_nonmonbad, "You are hit!");
+        else if (Hallucination && obj->oclass == GEM_CLASS) {
+            pline(msgc_playerimmune, "You are already stoned.");
+            return 0;
+        }
         else
             pline(msgc_nonmonbad, "You are hit by %s%s", onm, exclam(dam));
 

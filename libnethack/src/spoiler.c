@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Nathan Eady, 2016-06-01 */
+/* Last modified by Fredrik Ljungdahl, 2017-10-07 */
 /* File opening code based on the xlogfile code. */
 /* Object-looping code based on makedefs.c */
 /* Concept based on Autospoil, by Cristan Szmajda
@@ -32,6 +32,8 @@ static const char * spoiltohit(int i, struct artifact *);
 static const char * oslotname(enum objslot os);
 static const char * spoilmaligntyp(int i);
 static const char * spoilaligntyp(aligntyp aln);
+static const char * one_attack_type(const struct attack *attk);
+static const char * one_damage_type(const struct attack *attk);
 static const char * spoiloneattack(const struct attack *attk);
 static const char * spoilattacks(int i);
 static const char * spoilmonskills(int i);
@@ -72,25 +74,77 @@ static const char * spoilquestart(int i);
 static void makehtmlspoilers(void);
 static void makepinobotyaml(void);
 
-#define ATSIZE 18
-const char *at[ATSIZE] =
-        {"passive", "claw", "bite", "kick", "butt", "touch",
-         "sting", "hug", "AT_8", "AT_9", "spit", "engulf", "breath",
-         "actively explode", "passively explode", "gaze", "tentacles",
-         "spin"};
-#define ADSIZE 49
-const char *ad[ADSIZE] =
-        {"physical", "magic missile", "fire", "cold", "sleep", "disint",
-         "shock", "strength drain", "acid", "special1", "special2",
-         "blinding", "stun", "slow", "paralysis", "level drain",
-         "energy drain", "leg wound", "petrification", "stick-to-you",
-         "gold theft", "item theft", "charming", "teleportation",
-         "rust", "confusion", "digestion", "healing", "wrap-around",
-         "lycanthropy", "dexterity drain", "constitution drain",
-         "intelligence drain", "disease", "rotting", "seduction",
-         "hallucination", "death", "pestilence", "famine", "sliming",
-         "disenchantment", "corrosion", "vicarous suffering",
-         "stinking cloud", "pits", "iceblock", "displace", "web"};
+const char *at[LAST_CONTINUOUS_AT + 1] = {
+[AT_NONE] = "passive",
+    [AT_CLAW] = "claw",
+    [AT_BITE] = "bite",
+    [AT_KICK] = "kick",
+    [AT_BUTT] = "butt",
+    [AT_TUCH] = "touch",
+    [AT_STNG] = "sting",
+    [AT_HUGS] = "hug",
+    [AT_ERR8] = "error_8",
+    [AT_ERR9] = "error_9",
+    [AT_SPIT] = "spit",
+    [AT_ENGL] = "engulf",
+    [AT_BREA] = "breath",
+    [AT_EXPL] = "actively explode",
+    [AT_BOOM] = "passively explode",
+    [AT_GAZE] = "gaze",
+    [AT_TENT] = "tentacle",
+    [AT_SPIN] = "spin",
+};
+const char *ad[LAST_CONTINUOUS_AD + 1] = {
+    [AD_PHYS] = "physical",
+    [AD_MAGM] = "magic missile",
+    [AD_FIRE] = "fire",
+    [AD_COLD] = "cold",
+    [AD_SLEE] = "sleep",
+    [AD_DISN] = "disintegrate",
+    [AD_ELEC] = "shock",
+    [AD_DRST] = "strength drain",
+    [AD_ACID] = "acid",
+    [AD_SPC1] = "special1",
+    [AD_SPC2] = "special2",
+    [AD_BLND] = "blinding",
+    [AD_STUN] = "stun",
+    [AD_SLOW] = "slow",
+    [AD_PLYS] = "paralysis",
+    [AD_DRLI] = "level drain",
+    [AD_DREN] = "energy drain",
+    [AD_LEGS] = "leg wound",
+    [AD_STON] = "petrification",
+    [AD_STCK] = "stick-to-you",
+    [AD_SGLD] = "gold theft",
+    [AD_SITM] = "item theft",
+    [AD_SEDU] = "charming",
+    [AD_TLPT] = "teleportation",
+    [AD_RUST] = "rust",
+    [AD_CONF] = "confusion",
+    [AD_DGST] = "digestion",
+    [AD_HEAL] = "healing",
+    [AD_WRAP] = "wrap-around",
+    [AD_WERE] = "lycanthropy",
+    [AD_DRDX] = "dexterity drain",
+    [AD_DRCO] = "constitution drain",
+    [AD_DRIN] = "intelligence drain",
+    [AD_DISE] = "disease",
+    [AD_DCAY] = "rotting",
+    [AD_SSEX] = "seduction",
+    [AD_HALU] = "hallucination",
+    [AD_DETH] = "death",
+    [AD_PEST] = "pestilence",
+    [AD_FAMN] = "famine",
+    [AD_SLIM] = "sliming",
+    [AD_ENCH] = "disenchantment",
+    [AD_CORR] = "corrosion",
+    [AD_FLPN] = "vicarious suffering",
+    [AD_SCLD] = "stinking cloud",
+    [AD_PITS] = "pits",
+    [AD_ICEB] = "iceblock",
+    [AD_DISP] = "displacement",
+    [AD_WEBS] = "web",
+};
 
 const char *
 htmlheader(const char * spoilername)
@@ -273,6 +327,28 @@ spoilaligntyp(aligntyp aln)
     return "<span class=\"error alnunknown\">ERR</span>";    
 }
 
+/* helper function for oneattack and spoiloneattack */
+static const char *
+one_attack_type(const struct attack *attk) {
+    return ((attk->aatyp == AT_WEAP) ? "weapon" :
+            (attk->aatyp == AT_MAGC) ? "spellcasting" :
+            (attk->aatyp <= LAST_CONTINUOUS_AT  /* && attk->aatyp >= 0 */) ?
+            at[attk->aatyp] : "mysterious");
+}
+
+/* helper function for oneattack and spoiloneattack */
+static const char *
+one_damage_type(const struct attack *attk)
+{
+    return ((attk->adtyp == AD_CLRC) ? "clerical" :
+            (attk->adtyp == AD_SPEL) ? "arcane" :
+            (attk->adtyp == AD_RBRE) ? "random breath" :
+            (attk->adtyp == AD_SAMU) ? "amulet stealing" :
+            (attk->adtyp == AD_CURS) ? "intrinsic stealing" :
+            (attk->adtyp <= LAST_CONTINUOUS_AD /* && attk->adtyp >= 0 */) ?
+            ad[attk->adtyp] : "unknown damage");
+}
+
 static const char *
 spoiloneattack(const struct attack *attk)
 {
@@ -280,17 +356,26 @@ spoiloneattack(const struct attack *attk)
         return "";
     return msgprintf("<span class=\"attack\">%dd%d <span class=\"aatyp\">%s</span> <span type=\"adtype\">%s</span></span>",
                      attk->damn, attk->damd,
-                     ((attk->aatyp == AT_WEAP) ? "weapon" :
-                      (attk->aatyp == AT_MAGC) ? "spellcasting" :
-                      (attk->aatyp < ATSIZE  /* && attk->aatyp >= 0 */) ?
-                      at[attk->aatyp] : "mysterious"),
-                     ((attk->adtyp == AD_CLRC) ? "clerical spellcasting" :
-                      (attk->adtyp == AD_SPEL) ? "arcane spellcasting" :
-                      (attk->adtyp == AD_RBRE) ? "random breath weapon" :
-                      (attk->adtyp == AD_SAMU) ? "amulet stealing" :
-                      (attk->adtyp == AD_CURS) ? "intrinsic stealing" :
-                      (attk->adtyp < ADSIZE /* && attk->adtyp >= 0 */) ?
-                      ad[attk->adtyp] : "unknown damage"));
+                     one_attack_type(attk), one_damage_type(attk));
+}
+
+/* HTML-less version of the above, used for in-game lookup */
+const char *
+oneattack(const struct attack *attk)
+{
+    const char *dicestr = "";
+    if (!attk->aatyp && !attk->adtyp && !attk->damn && !attk->damd)
+        return NULL;
+    if (attk->damn || attk->damd) {
+        if (attk->damn)
+            dicestr = msgprintf("%dd%d ",
+                                attk->damn, attk->damd);
+        else
+            dicestr = msgprintf("(level+1)d%d ", attk->damd);
+    }
+
+    return msgprintf("%s%s %s", dicestr,
+                     one_attack_type(attk), one_damage_type(attk));
 }
 
 /* This relies on NATTK being small and known at code-writing time.

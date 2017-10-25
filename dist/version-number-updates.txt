@@ -50,6 +50,8 @@ Places to announce a new release (including betas):
   * rec.games.roguelikes.nethack on Usenet
   * the networkmotd daemon on http://motd.nethack4.org (needs an admin
     to change this)
+  * consider signing up for Feedback Friday
+    https://docs.google.com/forms/d/e/1FAIpQLSetLKKsh5vM__F2p5BorbsbB87377Bl88J59-wY0u2oQ19Oag/viewform
 
 Note that the NGPL also requires all modified files to specify who
 modified them and when, which is a pretty obnoxious requirement.

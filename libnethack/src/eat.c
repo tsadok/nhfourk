@@ -683,6 +683,8 @@ givit(int type, const struct permonst *ptr, int scalefactor)
     }
 }
 
+/* Note: when adding any special-cases here, consider whether they need to be
+         listed by add_mon_info in pager.c */
 static void
 cpostfx(int pm)
 {       /* called after completely consuming a corpse */

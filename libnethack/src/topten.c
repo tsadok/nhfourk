@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-07-20 */
+/* Last modified by Fredrik Ljungdahl, 2017-10-21 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -7,6 +7,7 @@
 #include "patchlevel.h"
 #include "quest.h"
 #include "dlb.h"
+#include "date.h"
 
 #include <fcntl.h>
 #include <inttypes.h>
@@ -70,7 +71,7 @@ static char end_killer[DTHSZ + 1] = {0};
 #endif
 #define SEPC (SEP[0])
 
-static void
+void
 munge_xlstring(char *dest, const char *src, int n)
 {
     int i;
@@ -210,7 +211,7 @@ encode_birthoptions(void)
 
 static_assert(num_conducts <= 32,
               "Too many conducts for encode_conduct to encode");
-static unsigned long
+unsigned long
 encode_conduct(void)
 {
     enum player_conduct cond = conduct_first;
@@ -234,13 +235,13 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
 
     /* regular logfile data */
     fprintf(rfile,
-            "version=%d.%d.%d" SEP "variant=Fourk" SEP
-            "points=%d" SEP "deathdnum=%d" SEP
-            "deathlev=%d" SEP "maxlvl=%d" SEP "hp=%d" SEP "maxhp=%d" SEP
+            "version=%d.%d.%d" SEP "variant=Fourk" SEP "versionstring=%s" SEP
+            "points=%d" SEP "deathdnum=%d" SEP "deathlev=%d" SEP
+            "maxlvl=%d" SEP "hp=%d" SEP "maxhp=%d" SEP
             "deaths=%d" SEP "deathdate=%ld" SEP "birthdate=%ld" SEP "uid=%d",
-            tt->ver_major, tt->ver_minor, tt->patchlevel, tt->points,
-            tt->deathdnum, tt->deathlev, tt->maxlvl, tt->hp, tt->maxhp,
-            tt->deaths, (unsigned long)tt->deathdate,
+            tt->ver_major, tt->ver_minor, tt->patchlevel, VERSION_ID,
+            tt->points, tt->deathdnum, tt->deathlev, tt->maxlvl, tt->hp,
+            tt->maxhp, tt->deaths, (unsigned long)tt->deathdate,
             (unsigned long)tt->birthdate, tt->uid);
 
     get_initial_rng_seed(rngseedbuf);
