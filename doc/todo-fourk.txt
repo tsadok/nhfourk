@@ -97,6 +97,8 @@
 ▒▒▒   4.3.0.4:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * hallucinatory monsters to add:  "dreaded bunnywolf", "ferocious penguilion", "terrible ducksnake"
+▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable

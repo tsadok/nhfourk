@@ -4,3 +4,4 @@ fmob-terrain.txt
 fmob-animals.txt
 fmob-monsters-misc.txt
 fmob-potions.txt
+fmob-scrolls.txt
