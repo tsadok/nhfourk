@@ -7,3 +7,4 @@ fmob-roles.txt
 fmob-weapons.txt
 fmob-potions.txt
 fmob-scrolls.txt
+fmob-beams.txt
