@@ -1213,7 +1213,7 @@ eatcorpse(void)
         boolean cannibal = maybe_cannibal(mnum, FALSE);
 
         pline(Sick_resistance ? msgc_playerimmune : msgc_fatal,
-              "Ulch!  That %s was tainted%s!",
+              "Ulch!  That %s was so old, it was tainted%s!",
               mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
               !vegetarian(&mons[mnum]) ? "meat" : "protoplasm",
               cannibal ? ", you cannibal" : "");
