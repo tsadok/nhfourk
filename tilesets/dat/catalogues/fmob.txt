@@ -8,3 +8,4 @@ fmob-weapons.txt
 fmob-potions.txt
 fmob-scrolls.txt
 fmob-beams.txt
+fmob-explosions.txt
