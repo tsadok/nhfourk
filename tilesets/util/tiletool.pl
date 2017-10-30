@@ -61,14 +61,14 @@ for my $tf (@tilefile) {
     my $line = $_;
     if ($line =~ /^[!]/) {
       # comment, ignore
-    } elsif ($line =~ /^([A-Za-z0-9_\$][A-Za-z0-9_\$])\s+[=]\s+[(](\d+),\s*(\d+),\s*(\d+)\s*[)]$/) {
-      my ($chars, $r, $g, $b) = ($1, $2, $3, $4);
+    } elsif ($line =~ /^([A-Za-z0-9_\$][A-Za-z0-9_\$])\s+[=]\s+[(](\d+),\s*(\d+),\s*(\d+)\s*(?:,\s*(\d+)\s*)?[)]$/) {
+      my ($chars, $r, $g, $b, $alpha) = ($1, $2, $3, $4, $5);
       if ((defined $palettemode) and ($palettemode ne 2)) {
         die "Cannot mix single-width and double-width palette modes.\n$line\n";
       }
       $palettemode = 2;
-      $palette{$tf}{$chars} = [$r, $g, $b];
-    } elsif ($line =~ /^([A-Z\$])\s+[=]\s+[(](\d+),\s*(\d+),\s*(\d+)\s*[)]$/) {
+      $palette{$tf}{$chars} = [$r, $g, $b, $alpha];
+    } elsif ($line =~ /^([A-Z0-9\$])\s+[=]\s+[(](\d+),\s*(\d+),\s*(\d+)(?:,\s*\d+)?\s*[)]$/) {
       my ($char, $r, $g, $b) = ($1, $2, $3, $4);
       if ((defined $palettemode) and ($palettemode ne 1)) {
         die "Cannot mix double-width and single-width palette modes.\n$line\n";
@@ -86,7 +86,7 @@ for my $tf (@tilefile) {
       }
     } elsif ($line =~ /^[{]/) {
       # This just indicates we're about to start getting tile lines.
-    } elsif (($palettemode eq 1) and ($line =~ /^\s+([A-Z\$]{$dimx})$/)) {
+    } elsif (($palettemode eq 1) and ($line =~ /^\s+([A-Z0-9_\$]{$dimx})$/)) {
       push @tileline, $1;
     } elsif (($palettemode eq 2) and ($line =~ /^\s+([A-Za-z0-9_\$]{$dimxtwo})$/)) {
       push @tileline, $1;
@@ -142,11 +142,13 @@ sub edittile {
                               };
   $$tile{num}  = ($maxtilenum += 1);
   $$tile{name} = $edit || $$tile{name} || "newtile";
+  my $lastcolor = undef;
   use Term::ReadKey;
   END { ReadMode 'restore'; } ReadMode 'cbreak'; # Don't auto-echo typed characters.
   $cursorx = $cursory = 0;
   print rgb(63,191,191) . "hjklyubn to move cursor, * see palette for colors" . $reset . "\n";
   print rgb(63,191,191) . "* - enter a palette color that starts with a conflicted key" . $reset . "\n";
+  print rgb(63,191,191) . ". - use the same color you just used." . $reset . "\n";
   print rgb(63,191,191) . "a - turn autoadvance " . ($autoadvance ? "off" : "on")
     . "; w - turn wraparound " . ($wrap ? "off" : "on") . "; x - exit" . $reset . "\n";
   while (1) {
@@ -176,6 +178,29 @@ sub edittile {
       if ($cursory < 0) {
         $cursory = $wrap ? ($dimy - 1) : $cursory + 1;
       }
+    } elsif (($k eq ".") and defined $lastcolor) {
+      my $line        = $$tile{tile}[$cursory];
+      my @char;
+      if ($palettemode eq 2) {
+        my @c = split //, $line;
+        while (1 < scalar @c) {
+          my $one = shift @c;
+          my $two = shift @c;
+          push @char, "$one$two";
+        }
+      } else {
+        @char        = split //, $line;
+      }
+      $char[$cursorx] = $lastcolor;
+      $$tile{tile}[$cursory] = join '', @char;
+      if ($autoadvance) {
+        $cursorx++;
+        if ($cursorx >= $dimx) {
+          $cursorx = 0;
+          $cursory++;
+          if ($cursory >= $dimy) {
+            $cursory = $wrap ? 0 : ($cursory - 1);
+          }}}
     } elsif ($palette{$$tile{file}}{$k}) {
       my $line        = $$tile{tile}[$cursory];
       my @char        = split //, $line;
@@ -189,6 +214,7 @@ sub edittile {
           if ($cursory >= $dimy) {
             $cursory = $wrap ? 0 : ($cursory - 1);
           }}}
+      $lastcolor = $k;
     } else {
       $k = ReadKey 0 if $k eq "*";
       $k .= ReadKey 0 if $palettemode eq 2;
@@ -215,6 +241,7 @@ sub edittile {
           if ($cursory >= $dimy) {
             $cursory = $wrap ? 0 : ($cursory - 1);
           }}}
+        $lastcolor = $k;
       } else {
         warn rgb(63,0,0,"bg") . rgb(255,255,127) . "Unrecognized color: '$k'" . $reset . "\n";
       }}
@@ -232,7 +259,9 @@ sub showtile {
       my $chars = "$line"; my $x = 0;
       while (1 < length $chars) {
         ($key, $chars) = $chars =~ /(..)(.*)/;
-        my ($r, $g, $b) = @{$palette{$$t{file}}{$key}};
+        my ($r, $g, $b) = (255, 128, 212); # Make palette misses very noticeable.
+        my $p = $palette{$$t{file}}{$key};
+        ($r, $g, $b) = @$p if ref $p;
         #my $labelshade = ($r + $b + $g < (128 * 3)) ? 160 : 96;
         my $contrast = 96;
         if ((($x == $cursorx) and ($y == $cursory))) {
@@ -243,6 +272,18 @@ sub showtile {
                                                      (($b > 128) ? $b - $contrast : $b + $contrast)) . $key;
         }
         $x++;
+      }
+      if (1) {
+        print $reset . "  ";
+        $chars = "$line"; $x = 0;
+        while (1 < length $chars) {
+          ($key, $chars) = $chars =~ /(..)(.*)/;
+          my ($r, $g, $b) = (196, 255, 128); # Make palette misses very noticeable.
+          my $p = $palette{$$t{file}}{$key};
+          ($r, $g, $b) = @$p if ref $p;
+          print $reset . rgb($r, $g, $b, "bg") . "  ";
+          $x++;
+        }
       }
     } else {
       for my $char (split //, $line) {
@@ -279,7 +320,7 @@ sub showtile {
     print $reset . "\n";
     $y++;
   }
-  print $reset . "\n\n";
+  print $reset . "\n";
 }
 
 sub showpalettes {
