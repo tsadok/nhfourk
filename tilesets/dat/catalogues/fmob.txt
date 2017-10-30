@@ -5,6 +5,7 @@ fmob-animals.txt
 fmob-monsters-misc.txt
 fmob-roles.txt
 fmob-weapons.txt
+fmob-armor.txt
 fmob-potions.txt
 fmob-scrolls.txt
 fmob-beams.txt
