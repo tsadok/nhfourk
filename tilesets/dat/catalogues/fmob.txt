@@ -4,6 +4,7 @@ fmob-terrain.txt
 fmob-animals.txt
 fmob-monsters-misc.txt
 fmob-humanoids.txt
+fmob-imps.txt
 fmob-roles.txt
 fmob-weapons.txt
 fmob-armor.txt
