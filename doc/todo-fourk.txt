@@ -97,6 +97,14 @@
 ▒▒▒   4.3.0.4:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * FMOB tileset issues:
+▒▒▒   + Need to redo the water and lava, they are lopsided.
+▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
+▒▒▒     don't need their full haft length, could do with more
+▒▒▒     detail on the operative bits instead.
+▒▒▒   + Grasshopper suggests a lip (maybe one extra pixel
+▒▒▒     sticking out at the top) on the potion containers.
+▒▒▒
 ▒▒▒ * hallucinatory monsters to add:  "dreaded bunnywolf", "ferocious penguilion", "terrible ducksnake"
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
