@@ -826,7 +826,7 @@ Of = (176, 176, 176)
   OcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOc
   OcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOcOc
 }
-# tile 109 (molten lava)
+# tile 110 (molten lava)
 {
   DgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDg
   DgDgDgDgDgDgDgDcDcDgDcDcDgDcDcDgDgDgDgDgDgDgDgDg
@@ -853,7 +853,7 @@ Of = (176, 176, 176)
   DgDgDcDgDgDcDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDg
   DgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDgDg
 }
-# tile 110 (iron bars)
+# tile 111 (iron bars)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbHgBbBbBbBbBbBbBbBbBbHgBbBbBbBbBbBbBbBbBb
@@ -880,7 +880,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbHgBbBbBbBbBbBbBbBbBbHgBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 111 (tree)
+# tile 112 (tree)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -907,7 +907,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 112 (staircase down)
+# tile 113 (staircase down)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -934,7 +934,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 113 (staircase up)
+# tile 114 (staircase up)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -961,7 +961,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 114 (long staircase down)
+# tile 115 (long staircase down)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -988,7 +988,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 115 (long staircase up)
+# tile 116 (long staircase up)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -1015,7 +1015,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 116 (grave)
+# tile 117 (grave)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -1042,7 +1042,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 117 (bench)
+# tile 118 (bench)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -1069,7 +1069,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 118 (opulent throne)
+# tile 119 (opulent throne)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -1096,7 +1096,7 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }
-# tile 119 (fountain)
+# tile 408 (fountain)
 {
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
@@ -1120,6 +1120,33 @@ Of = (176, 176, 176)
   BbBbBbBbBbBbBbBbBbBbBbHfHfBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbHfHfBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbHfHfBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+}
+# tile 409 (magic chest)
+{
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
+  BbBbBbBbIeIeIeBbBbIeIeIeIeIeIeIeBbBbIeIeIeBbBbBb
+  BbBbBbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbBbBbBbBb
+  BbBbBbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeBbBbIeIeIeBb
+  BbBbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeIeIeBb
+  BbBbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeBbBbIeIeIeIeBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbIeIeIeIeIeBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeIeIeIeBb
+  BbIeIeIeBbIeIeIeBbBbIeIeIeBbIeIeIeBbIeIeIeIeIeBb
+  BbIeIeIeBbIeIeIeBbBbIeIeIeBbIeIeIeBbIeIeIeIeIeBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeIeIeIeBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeIeIeIeBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeIeIeBbBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeIeBbBbBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeIeBbBbBbBb
+  BbIeIeIeBbIeIeIeIeIeIeIeIeBbIeIeIeBbIeBbBbBbBbBb
+  BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
   BbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBbBb
 }

@@ -104,6 +104,16 @@
 ▒▒▒     detail on the operative bits instead.
 ▒▒▒   + Grasshopper suggests a lip (maybe one extra pixel
 ▒▒▒     sticking out at the top) on the potion containers.
+▒▒▒   + Bring the (adult) crocodile's tail around in front
+▒▒▒     of his feet, or something.
+▒▒▒   + Make the gremlin smaller if possible.
+▒▒▒   + Some of the early animals have opaque black (Bb) at
+▒▒▒     joints, e.g., where limbs connect to bodies.  Later
+▒▒▒     I abandoned this style as impractical for many of the
+▒▒▒     animals with more complex silhouettes.  For consistency,
+▒▒▒     go back and clean up the early ones to not do it either.
+▒▒▒   + Consider using a wall-type color, rather than a terrain
+▒▒▒     background type color, for the iron bars.
 ▒▒▒
 ▒▒▒ * hallucinatory monsters to add:  "dreaded bunnywolf", "ferocious penguilion", "terrible ducksnake"
 ▒▒▒
