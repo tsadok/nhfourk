@@ -61,7 +61,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
- * Light radius from lamps and candles now depents on beatitude.
+ * When using polearms, the game now tries to place the cursor
+   at a reasonable target initially (rather than at your own
+   location).  Also, you can now hit monsters with a polearm
+   whether you can see them or not.  (Picked from FIQHack)
+
+ * Light radius from lamps and candles now depends on beatitude.
+   (Picked from FIQHack)
 
  * Looking things up with whatis (/) now gives useful information.
    (Cherry-picked from FIQHack.)
