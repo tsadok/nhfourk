@@ -664,6 +664,7 @@ extern int dopickup(const struct nh_cmd_arg *);
 extern void lookaround(enum u_interaction_mode);
 extern int monster_nearby(void);
 extern void losehp(int, const char *);
+extern void xlosehp(int, const char *, boolean);
 extern int weight_cap(void);
 extern int inv_weight(void);
 extern int near_capacity(void);
@@ -788,7 +789,7 @@ extern boolean obj_sheds_light(struct obj *);
 extern boolean obj_is_burning(struct obj *);
 extern void obj_split_light_source(struct obj *, struct obj *);
 extern void obj_merge_light_sources(struct obj *, struct obj *);
-extern int candle_light_range(struct obj *);
+extern int obj_light_range(struct obj *);
 extern int wiz_light_sources(const struct nh_cmd_arg *);
 
 /* ### localtime.c ### */

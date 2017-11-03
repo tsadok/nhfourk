@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2017-11-03 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1213,7 +1213,7 @@ eatcorpse(void)
         boolean cannibal = maybe_cannibal(mnum, FALSE);
 
         pline(Sick_resistance ? msgc_playerimmune : msgc_fatal,
-              "Ulch!  That %s was tainted%s!",
+              "Ulch!  That %s was so old, it was tainted%s!",
               mons[mnum].mlet == S_FUNGUS ? "fungoid vegetation" :
               !vegetarian(&mons[mnum]) ? "meat" : "protoplasm",
               cannibal ? ", you cannibal" : "");
@@ -1245,13 +1245,13 @@ eatcorpse(void)
         tp++;
         pline(msgc_badidea, "You have a very bad case of stomach acid.");
         /* not body_part() */
-        losehp(rnd(15), killer_msg(DIED, "an acidic corpse"));
+        xlosehp(rnd(15), killer_msg(DIED, "an acidic corpse"), FALSE);
     } else if (poisonous(&mons[mnum]) && rn2(5)) {
         tp++;
         if (!Poison_resistance) {
             pline(msgc_intrloss, "Ecch - that must have been poisonous!");
             losestr(rnd(4), DIED, killer_msg(DIED, "a poisonous corpse"), NULL);
-            losehp(rnd(15), killer_msg(DIED, "a poisonous corpse"));
+            xlosehp(rnd(15), killer_msg(DIED, "a poisonous corpse"), FALSE);
         } else {
             /* change from 3.4.3: reduce message spam by condensing two
                messages into one */
@@ -1263,7 +1263,7 @@ eatcorpse(void)
                && !Sick_resistance) {
         tp++;
         pline(msgc_statusbad, "You feel %ssick.", (Sick) ? "very " : "");
-        losehp(rnd(8), killer_msg(DIED, "a cadaver"));
+        xlosehp(rnd(8), killer_msg(DIED, "a cadaver"), FALSE);
     }
 
     if (!tp && !nonrotting_corpse(mnum) && otmp->orotten) {
@@ -1973,7 +1973,7 @@ doeat(const struct nh_cmd_arg *arg)
             if (!Poison_resistance) {
                 pline(msgc_intrloss, "Ecch - that must have been poisonous!");
                 losestr(rnd(4), DIED, killer_msg_obj(DIED, otmp), NULL);
-                losehp(rnd(15), killer_msg_obj(DIED, otmp));
+                xlosehp(rnd(15), killer_msg_obj(DIED, otmp), FALSE);
             } else /* now a single message, as with the poisonous() check for
                       corpses, but a different one for ID knowledge reasons */
                 pline(msgc_playerimmune, "Was that thing poisoned?");

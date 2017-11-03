@@ -61,7 +61,26 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * When using polearms, the game now tries to place the cursor
+   at a reasonable target initially (rather than at your own
+   location).  Also, you can now hit monsters with a polearm
+   whether you can see them or not.  (Picked from FIQHack)
+
+ * Light radius from lamps and candles now depends on beatitude.
+   (Picked from FIQHack)
+
  * Looking things up with whatis (/) now gives useful information.
+   (Cherry-picked from FIQHack.)
+
+ * The list of available tilesets is now as follows:
+   + text-unicode (NEW, differentiates all dragon ages)
+   + text-legacy (for if your terminal doesn't do UTF-8)
+   + text-ascii
+   + geoduck (graphical but with elements of the text symbols)
+   + slashem-16 (basically the vanilla default GUI tileset)
+   + slashem-32 (NEW, 32x32, 8-bit color)
+   + dawnlike16 (16x16, 4-bit color, very distinctive art style)
+   + rltiles-32 (32x32, 24-bit color)
 
  * When throwing Mjollnir, it no longer has a 1% chance to land
    at your enemy's feet.  (The chance to land at your feet, so
