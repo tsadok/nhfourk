@@ -241,6 +241,7 @@ struct flag {
     /* 1 bit values: booleans */
     boolean autodig;    /* MRKR: Automatically dig */
     boolean autodigdown;        /* autodigging works downwadrds */
+    boolean autounlock; /* unlock known-locked doors upon walking into them */
     boolean autoquiver; /* Automatically fill quiver */
     boolean beginner;
     boolean bypasses;   /* bypass flag is set on at least one fobj */

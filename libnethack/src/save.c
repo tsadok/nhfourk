@@ -143,6 +143,9 @@ save_flags(struct memfile *mf)
        debugging easier */
     mtag(mf, 0, MTAG_FLAGS);
 
+    if (flags.mon_moving)
+        panic("flags.mon_moving is nonzero during neutral turnstate?");
+
     mwrite64(mf, flags.turntime);
 
     mwrite32(mf, flags.djinni_count);
@@ -217,11 +220,12 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.save_encoding);
     mwrite8(mf, flags.hide_implied);
     mwrite8(mf, flags.servermail);
+    mwrite8(mf, flags.autounlock);
 
     /* Padding to allow options to be added without breaking save compatibility;
        add new options just before the padding, then remove the same amount of
        padding */
-    for (i = 0; i < 108; i++)
+    for (i = 0; i < 107; i++)
         mwrite8(mf, 0);
 
     mwrite(mf, flags.setseed, sizeof (flags.setseed));
