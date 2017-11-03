@@ -5,6 +5,7 @@ fmob-animals.txt
 fmob-monsters-misc.txt
 fmob-humanoids.txt
 fmob-imps.txt
+fmob-undead.txt
 fmob-demons.txt
 fmob-roles.txt
 fmob-weapons.txt

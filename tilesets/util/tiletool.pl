@@ -93,8 +93,10 @@ for my $tf (@tilefile) {
     } elsif ($line =~ /^[{]/) {
       # This just indicates we're about to start getting tile lines.
     } elsif (($palettemode eq 1) and ($line =~ /^\s+([A-Z0-9_\$]{$dimx})$/)) {
+      # TODO: report incorrect line widths
       push @tileline, $1;
     } elsif (($palettemode eq 2) and ($line =~ /^\s+([A-Za-z0-9_\$]{$dimxtwo})$/)) {
+      # TODO: report incorrect line widths
       push @tileline, $1;
     } elsif ($line =~ /^[}]/) {
       warn "Incorrect number of lines in tile $tilenum ($tilename): expected $dimy found " . scalar @tileline
@@ -116,6 +118,19 @@ for my $tf (@tilefile) {
 
 showpalettes();
 print $reset . "$setname defines " . @tile . " tiles.\n";
+if ($check) { # report skipped tile numbers
+  @tile = sort { $$a{num} <=> $$b{num} } @tile;
+  my @skipped = ();
+  my $expected = 0;
+  for my $t (@tile) {
+    while ($$t{num} > ++$expected) {
+      push @skipped, $expected;
+    }
+  }
+  if (@skipped) {
+    print "Skipped tile numbers: " . (join ", ", @skipped) . "\n";
+  }
+}
 
 for my $s (@show) {
   my @t = grep {
