@@ -14,7 +14,7 @@ die "This script is designed to be run from the main tilesets directory in the s
 my $tileset = 'slashem-16'; # by default
 my @arg = @ARGV;
 my (@show, $edit, $debug);
-my ($autoadvance, $wrap, $palettemode) = (0, 0);
+my ($autoadvance, $wrap, $check, $palettemode) = (0, 0, 0);
 while (@arg) {
   my $x = shift @arg;
   if ($x eq 'tileset') {
@@ -29,6 +29,8 @@ while (@arg) {
     $wrap = 1;
   } elsif ($x eq 'autoadvance') {
     $autoadvance = 1;
+  } elsif ($x eq 'checknums') {
+    $check = 1;
   }
 }
 
@@ -56,7 +58,7 @@ for my $tf (@tilefile) {
   my $filespec = catfile("dat", "tiles", $tf);
   warn "Cannot find tiles file: $filespec" if not -e $filespec;
   open TF, "<", $filespec or die "Cannot read tiles file ($tf): $!";
-  my ($tilenum, $tilename, @tileline);
+  my ($lastnum, $tilenum, $tilename, @tileline) = (0);
   while (<TF>) {
     my $line = $_;
     if ($line =~ /^[!]/) {
@@ -80,9 +82,13 @@ for my $tf (@tilefile) {
       $maxtilenum ||= $tilenum; $maxtilenum = $tilenum if $tilenum > $maxtilenum;
       if ($numidx{$tilenum}) {
         warn "Duplicate tile number: $tilenum ($numidx{$tilenum}) ($tilename)\n"
-          if $debug;
+          if $debug or $check;
+      } elsif ($tilenum <= $lastnum) {
+        warn "Decreasing tile number: $tilenum ($numidx{$tilenum}) ($tilename)\n"
+          if $debug or $check;
       } else {
         $numidx{$tilenum} = $tilename;
+        $lastnum = $tilenum;
       }
     } elsif ($line =~ /^[{]/) {
       # This just indicates we're about to start getting tile lines.
