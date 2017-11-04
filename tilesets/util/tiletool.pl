@@ -47,7 +47,7 @@ while (<CAT>) {
   chomp;
   push @tilefile, $_;
 }
-my (%palette, @tile, $currenttile, $maxtilenum, %numidx);
+my (%palette, @tile, $currenttile, $maxtilenum, %numidx, @badnum);
 my ($cursorx, $cursory) = (-1, -1);
 # A note about the palette: we originally assumed that the palette was
 # the same for all the tiles in any given tileset, a conclusion we
@@ -81,9 +81,11 @@ for my $tf (@tilefile) {
       ($tilenum, $tilename) = ($1, $2);
       $maxtilenum ||= $tilenum; $maxtilenum = $tilenum if $tilenum > $maxtilenum;
       if ($numidx{$tilenum}) {
+        push @badnum, $tilenum;
         warn "Duplicate tile number: $tilenum ($numidx{$tilenum}) ($tilename)\n"
           if $debug or $check;
       } elsif ($tilenum <= $lastnum) {
+        push @badnum, $tilenum;
         warn "Decreasing tile number: $tilenum ($numidx{$tilenum}) ($tilename)\n"
           if $debug or $check;
       } else {
@@ -118,7 +120,7 @@ for my $tf (@tilefile) {
 
 showpalettes();
 print $reset . "$setname defines " . @tile . " tiles.\n";
-if ($check) { # report skipped tile numbers
+if ($check) { # report problematic and skipped tile numbers
   @tile = sort { $$a{num} <=> $$b{num} } @tile;
   my @skipped = ();
   my $expected = 0;
@@ -126,6 +128,9 @@ if ($check) { # report skipped tile numbers
     while ($$t{num} > ++$expected) {
       push @skipped, $expected;
     }
+  }
+  if (@badnum) {
+    print "Problematic tile numbers: " . (join ", ", @badnum) . "\n";
   }
   if (@skipped) {
     print "Skipped tile numbers: " . (join ", ", @skipped) . "\n";
