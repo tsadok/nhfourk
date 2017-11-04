@@ -1,4 +1,5 @@
 # "LabyrNth" - the final maze level before the Castle, version 1
+# This file is in the public domain.
 MAZE:"labyr-1",'-'
 FLAGS:nommap
 GEOMETRY:center,bottom

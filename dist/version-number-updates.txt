@@ -41,6 +41,10 @@ Additionally, almost every release will change the copyright status
   * aimake.rules ($copyright statement)
   * libnethack/include/patchlevel.h (this is the central place from
     which most C code should be pulling the copyright statement)
+  * last thing before release, run libnethack/util/update-last-updated.pl
+    on the version-specific branch.  (Once this is done, the branch can
+    no longer be merged, or it will cause merge conflicts every single
+    time anything is merged or cherry-picked from that point forward.)
 
 Places to announce a new release (including betas):
 

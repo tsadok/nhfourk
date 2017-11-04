@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# -*- cperl -*-
+# This file (soko2des.pl) is in the public domain.
 
 # soko2des: read a Sokoban ASCII screenshot (similar to what one would
 # use with nhss, but it can have stairs and doors) and produce a .des

@@ -1,3 +1,5 @@
+This file (challengemode.txt) is in the public domain.
+
 A player asked for a list of differences in challenge mode.  I hadn't
 been maintaining one until that point, but now I am:
  * Effective minimum monster difficulty is 1 higher than in normal mode,

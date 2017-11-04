@@ -2454,7 +2454,7 @@ const struct permonst mons[] = {
         A(ATTK(AT_CLAW, AD_PHYS, 1, 3), ATTK(AT_CLAW, AD_PHYS, 1, 3),
           ATTK(AT_BITE, AD_PHYS, 1, 4), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(100, 100, 0, MS_SILENT, MZ_SMALL), MR_SLEEP | MR_POISON, 0,
-        MRACE_NONE, M1_POIS, M2_HOSTILE | M2_STALK,
+        MRACE_NONE, M1_POIS, M2_HOSTILE | M2_STALK | M2_UNDEAD,
         M3_INFRAVISIBLE | M3_INFRAVISION | M3_SEEINDARK, 0, CLR_RED),
     MON("barrow wight", S_WRAITH,
         LVL(3, 8, 12, 5, 5, -3), (G_GENO | G_NOCORPSE | 1),
