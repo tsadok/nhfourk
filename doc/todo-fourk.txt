@@ -112,6 +112,8 @@
 ▒▒▒   + Test that the transparency works as intended in the
 ▒▒▒     swallow tiles.  (If not, both FMOB and slashem-32 would
 ▒▒▒     need a minor adjustment.)
+▒▒▒   + The air elemental tile isn't very good.  Redraw.
+▒▒▒
 ▒▒▒
 ▒▒▒ * hallucinatory monsters to add:  "dreaded bunnywolf", "ferocious penguilion", "terrible ducksnake"
 ▒▒▒
