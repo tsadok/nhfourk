@@ -109,6 +109,9 @@
 ▒▒▒   + Make the gremlin smaller if possible.
 ▒▒▒   + Consider using a wall-type color, rather than a terrain
 ▒▒▒     background type color, for the iron bars.
+▒▒▒   + Test that the transparency works as intended in the
+▒▒▒     swallow tiles.  (If not, both FMOB and slashem-32 would
+▒▒▒     need a minor adjustment.)
 ▒▒▒
 ▒▒▒ * hallucinatory monsters to add:  "dreaded bunnywolf", "ferocious penguilion", "terrible ducksnake"
 ▒▒▒
