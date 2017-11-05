@@ -2,6 +2,7 @@
 FMOB
 fmob-terrain.txt
 fmob-animals.txt
+fmob-dragons.txt
 fmob-monsters-misc.txt
 fmob-humanoids.txt
 fmob-imps.txt
