@@ -130,10 +130,10 @@ if ($check) { # report problematic and skipped tile numbers
     }
   }
   if (@badnum) {
-    print "Problematic tile numbers: " . (join ", ", @badnum) . "\n";
+    print "Problematic tile numbers: " . (join ", ", consolidate_range(@badnum)) . "\n";
   }
   if (@skipped) {
-    print "Skipped tile numbers: " . (join ", ", @skipped) . "\n";
+    print "Skipped tile numbers: " . (join ", ", consolidate_range(@skipped)) . "\n";
   }
 }
 
@@ -384,4 +384,25 @@ sub rgb { # Return terminal code for a 24-bit color.
   return $fallback . "\x1b[$fgbg$ {delimiter}2$ {delimiter}$ {red}$ {delimiter}$ {green}$ {delimiter}$ {blue}m";
 }
 
-
+sub consolidate_range {
+  my (@num) = @_;
+  my @range = ();
+  while (scalar @num) {
+    my $rmin = shift @num;
+    my $rmax = $rmin;
+    while ((scalar @num) and ($rmax + 1 == $num[0])) {
+      $rmax = shift @num;
+    }
+    if ($rmax == $rmin) {
+      push @range, $rmin;
+    } elsif ($rmax == $rmin + 1) {
+      push @range, $rmin;
+      push @range, $rmax;
+    } elsif (int($rmin / 10) == int($rmax / 10)) {
+      push @range, ($rmin . "-" . ($rmax % 10));
+    } else {
+      push @range, ($rmin . "-" . $rmax);
+    }
+  }
+  return @range;
+}
