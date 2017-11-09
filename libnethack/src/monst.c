@@ -2249,8 +2249,8 @@ const struct permonst mons[] = {
 /*
  * Quendi (Elves)
  */
-    MON("elf", S_QUENDI,
-        SLVL(10, 12, 12, 10, 3, 2, -3), G_NOGEN,     /* for corpses */
+    MON("elf", S_QUENDI,     /* for corpses */
+        SLVL(10, 12, 12, 10, 3, 2, -3), G_NOGEN,
         A(ATTK(AT_WEAP, AD_PHYS, 1, 8),
           NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(WT_ELF, 350, 0, MS_HUMANOID, MZ_HUMAN), MR_SLEEP, MR_SLEEP,
