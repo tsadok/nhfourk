@@ -3,15 +3,18 @@
 
 my %cmdarg = @ARGV;
 
-my $num = $cmdarg{start_numbers_at} || 1000;
+my $num = $cmdarg{start_numbers_at} || 2000;
 
 my @monsterfile = map {
   "/home/jonadab/git/fourk/tilesets/dat/tiles/$_.txt"
 } ("fmob-animals",
+   "fmob-dragons",
    "fmob-monsters-misc",
    "fmob-humanoids",
    "fmob-imps",
+   "fmob-undead",
    "fmob-demons",
+   "fmob-roles",
   );
 my $statuefile = "/home/jonadab/fmob-statues-generated.txt";
 

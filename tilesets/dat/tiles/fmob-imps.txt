@@ -112,7 +112,7 @@ Oe = (200, 200, 200)
 Of = (176, 176, 176)
 ! If you need darker than that, see Bf under blacks, above.
 
-# tile 359 (homonculus)
+# tile 359 (homunculus)
 {
   BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
   BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB

@@ -427,6 +427,8 @@
 ▒▒▒
 ▒▒▒ * Add bears.
 ▒▒▒
+▒▒▒ * Sacrifice gifts:  there should be a limit to how many artifact weapons your diety bestows.
+▒▒▒
 ▒▒▒ * Create multiple versions of Delphi, with minor subtle differences.
 ▒▒▒
 ▒▒▒ * Expand the number of versions of the Labyrinth just above the Castle,
