@@ -98,24 +98,14 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * FMOB tileset issues:
-▒▒▒   + Need to redo the water and lava, they are lopsided.
 ▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
 ▒▒▒     don't need their full haft length, could do with more
 ▒▒▒     detail on the operative bits instead.
-▒▒▒   + Grasshopper suggests a lip (maybe one extra pixel
-▒▒▒     sticking out at the top) on the potion containers.
-▒▒▒   + Bring the (adult) crocodile's tail around in front
-▒▒▒     of his feet, or something.
-▒▒▒   + Make the gremlin smaller if possible.
-▒▒▒   + Consider using a wall-type color, rather than a terrain
-▒▒▒     background type color, for the iron bars.
 ▒▒▒   + Test that the transparency works as intended in the
 ▒▒▒     swallow tiles.  (If not, both FMOB and slashem-32 would
 ▒▒▒     need a minor adjustment.)
 ▒▒▒   + The air elemental tile isn't very good.  Redraw.
 ▒▒▒
-▒▒▒
-▒▒▒ * hallucinatory monsters to add:  "dreaded bunnywolf", "ferocious penguilion", "terrible ducksnake"
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
