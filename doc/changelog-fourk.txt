@@ -369,7 +369,13 @@ Changes in 4.3.0.5:
 Changes in 4.3.0.4:
 -------------------
 
- * Light radius from lamps and candles now depents on beatitude.
+ * When using polearms, the game now tries to place the cursor
+   at a reasonable target initially (rather than at your own
+   location).  Also, you can now hit monsters with a polearm
+   whether you can see them or not.  (Picked from FIQHack)
+
+ * Light radius from lamps and candles now depends on beatitude.
+   (Picked from FIQHack)
 
  * Looking things up with whatis (/) now gives useful information.
    (Cherry-picked from FIQHack.)
@@ -382,6 +388,7 @@ Changes in 4.3.0.4:
    + slashem-16 (basically the vanilla default GUI tileset)
    + slashem-32 (NEW, 32x32, 8-bit color)
    + dawnlike16 (16x16, 4-bit color, very distinctive art style)
+   + fmob (NEW, 24x24, one foreground color per tile)
    + rltiles-32 (32x32, 24-bit color)
 
  * When throwing Mjollnir, it no longer has a 1% chance to land

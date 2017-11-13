@@ -1,0 +1,26 @@
+24 24
+FMOB
+fmob-terrain.txt
+fmob-animals.txt
+fmob-dragons.txt
+fmob-monsters-misc.txt
+fmob-humanoids.txt
+fmob-imps.txt
+fmob-undead.txt
+fmob-demons.txt
+fmob-roles.txt
+fmob-weapons.txt
+fmob-armor.txt
+fmob-jewelry.txt
+fmob-tools.txt
+fmob-food.txt
+fmob-potions.txt
+fmob-scrolls.txt
+fmob-books.txt
+fmob-wands.txt
+fmob-gems.txt
+fmob-statues.txt
+fmob-junk.txt
+fmob-traps.txt
+fmob-beams.txt
+fmob-explosions.txt

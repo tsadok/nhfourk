@@ -97,6 +97,16 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * FMOB tileset issues:
+▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
+▒▒▒     don't need their full haft length, could do with more
+▒▒▒     detail on the operative bits instead.
+▒▒▒   + Test that the transparency works as intended in the
+▒▒▒     swallow tiles.  (If not, both FMOB and slashem-32 would
+▒▒▒     need a minor adjustment.)
+▒▒▒   + The air elemental tile isn't very good.  Redraw.
+▒▒▒
+▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
@@ -307,6 +317,8 @@
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
+▒▒▒ * Cherry-pick 22fae87 (autounlock)
+▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Consider FIQ's changes to spellbook mechanics, 5f81af2.  Be advised this will absolutely
@@ -406,6 +418,8 @@
 ▒▒▒ * Make pickup_thrown (at least optionally) work when autopickup is off otherwise.
 ▒▒▒
 ▒▒▒ * Add bears.
+▒▒▒
+▒▒▒ * Sacrifice gifts:  there should be a limit to how many artifact weapons your diety bestows.
 ▒▒▒
 ▒▒▒ * Create multiple versions of Delphi, with minor subtle differences.
 ▒▒▒

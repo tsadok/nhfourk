@@ -1087,12 +1087,13 @@ static struct {
     {"master lichen", FALSE},
     {"Gnome with a wand of death", TRUE},
     {"Death with a wand of gnomes", TRUE},
-        /* assorted NetHack variants */
+        /* assorted NetHack variants (and bugs) */
     {"wax golem", FALSE},               /* Slash'em */
     {"beholder", FALSE},                /* GruntHack, and other sources */
     {"monoton", FALSE},                 /* dnethack */
     {"disintegrator", FALSE},           /* Biodiversity patch */
     {"dissolved undead potato", FALSE}, /* Slash'em Extended.  Really. */
+    {"Bassbasskickkickbasskickkick", TRUE}, /* NH4 player-name crash bug */
         /* Brogue */
     {"dar battlemage", FALSE},
     {"tentacle horror", FALSE},
@@ -1183,6 +1184,9 @@ static struct {
     {"snark", FALSE},
         /* Order of the Stick */
     {"dire half-dragon bone-eating saltwater werepiranha", FALSE},
+    {"dreaded bunnywolf", FALSE},
+    {"ferocious penguilion", FALSE},
+    {"terrible ducksnake", FALSE},
         /* Dr. Dolittle */
     {"pushmi-pullyu", FALSE},
         /* The Smurfs */
