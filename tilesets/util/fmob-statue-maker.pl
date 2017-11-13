@@ -31,6 +31,7 @@ for my $mfile (@monsterfile) {
     } elsif ($line =~ /^\s*([B-O][Bb-z]){24}\s*$/) {
       $line =~ s/[C-O][b-z]/Oe/g;
       $line =~ s/B[c-z]/Oe/g;
+      $line =~ s/Bb/Be/g;
     } elsif ($line =~ /^\s*[{}]\s*$/) {
       # No changes
     } elsif ($line =~ /^\s*[!]/) {
@@ -48,3 +49,5 @@ for my $mfile (@monsterfile) {
     print OUT $line;
   }
 }
+close OUT;
+print "Wrote $statuefile\n";
