@@ -506,10 +506,12 @@ static const struct def_skill Skill_Ran[] = {
 static const struct def_skill Skill_S[] = {
     {P_DAGGER, P_BASIC}, {P_KNIFE, P_SKILLED},
     {P_SHORT_SWORD, P_EXPERT}, {P_BROAD_SWORD, P_SKILLED},
-    {P_LONG_SWORD, P_SKILLED}, {P_TWO_HANDED_SWORD, P_SKILLED},
+    {P_LONG_SWORD, P_EXPERT}, /* Temporary stand-in for katana.  In the next
+                                 version, it'll be a separate skill. */
+    {P_TWO_HANDED_SWORD, P_SKILLED},
     {P_SCIMITAR, P_BASIC}, {P_SABER, P_BASIC},
     {P_FLAIL, P_SKILLED}, {P_QUARTERSTAFF, P_BASIC},
-    {P_POLEARMS, P_SKILLED}, {P_SPEAR, P_BASIC},
+    {P_POLEARMS, P_EXPERT}, {P_SPEAR, P_BASIC},
     {P_JAVELIN, P_BASIC}, {P_BOW, P_EXPERT}, {P_SHURIKEN, P_EXPERT},
     {P_ATTACK_SPELL, P_SKILLED}, {P_CLERIC_SPELL, P_SKILLED},
     {P_RIDING, P_SKILLED},
@@ -647,7 +649,7 @@ u_init(microseconds birthday)
     u.uspellprot = 0;
     adjabil(0, 1);
     u.ulevel = u.ulevelmax = 1;
-    u.uac = 10;
+    u.uac = (urace.malenum == PM_GIANT) ? 0 : 10;
 
     u.urexp = -1;       /* indicates that score is calculated not remembered */
 
@@ -856,6 +858,7 @@ u_init_inv_skills(void)
         knows_class(ARMOR_CLASS);
         skill_init(Skill_S);
         augment_magic_chest_contents(KATANA, 0, 1);
+        augment_magic_chest_contents(HALBERD, 0, 1);
         augment_magic_chest_contents(SHURIKEN, 0, 20);
         augment_magic_chest_contents(YA, 0, 20);
         augment_magic_chest_contents(SADDLE, 0, 1);
