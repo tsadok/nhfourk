@@ -100,6 +100,13 @@ by its respective author.
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * FMOB tileset issues:
+▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
+▒▒▒     don't need their full haft length, could do with more
+▒▒▒     detail on the operative bits instead.
+▒▒▒   + The air elemental tile isn't very good.  Redraw.
+▒▒▒
+▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
@@ -127,14 +134,8 @@ by its respective author.
 ▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
 ▒▒▒   and re-enable them.
 ▒▒▒
-▒▒▒ * With regard to add_erosion_words:
-▒▒▒   08:25 < FIQ > ou forgot rotproof for wood
-▒▒▒   08:25 < FIQ > and fixed cor crysknives
-▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
-▒▒▒
-▒▒▒ * Let Samurai get expert in polearms, and put a naginata (glaive) in their magic chest.
 ▒▒▒
 ▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
 ▒▒▒
@@ -153,8 +154,6 @@ by its respective author.
 ▒▒▒     the type of wand, the charge may be activated rather than simply lost.
 ▒▒▒   + Instead of exploding, charged rings should lose a charge when shocked (unless at -3 or worse).
 ▒▒▒     I'll need to decide what to do about uncharged rings.
-▒▒▒
-▒▒▒ * Giants should have a better base AC than humans.
 ▒▒▒
 ▒▒▒ * Giants should wield even two-handed weapons in one hand.  "You heft
 ▒▒▒   the mighty [weapon] in your hand.  Yes, that will do."  If it then
@@ -409,6 +408,8 @@ by its respective author.
 ▒▒▒ * Make pickup_thrown (at least optionally) work when autopickup is off otherwise.
 ▒▒▒
 ▒▒▒ * Add bears.
+▒▒▒
+▒▒▒ * Sacrifice gifts:  there should be a limit to how many artifact weapons your diety bestows.
 ▒▒▒
 ▒▒▒ * Create multiple versions of Delphi, with minor subtle differences.
 ▒▒▒

@@ -715,11 +715,12 @@ add_erosion_words(const struct obj *obj, const char *prefix)
     }
     if ((obj->rknown || turnstate.generating_dump) && obj->oerodeproof)
         return msgprintf("%s%s%s%s", prefix, (obj->rknown ? "" : "["),
-                         (iscrys ? "fixed" : is_rustprone(obj) ?
-                          "rustproof" :
+                         (iscrys ? "fixed" :
+                          is_rustprone(obj) ? "rustproof" :
                           /* Should we use "stainless" instead? */
                           is_corrodeable(obj) ? "corrodeproof" :
-                          is_flammable(obj) ? "fireproof" : ""),
+                          is_flammable(obj) ? "fireproof" :
+                          is_rottable(obj) ? "rotproof" : ""),
                          (obj->rknown ? " " : "] "));
     return prefix;
 }

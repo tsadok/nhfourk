@@ -80,6 +80,7 @@ Changes in 4.3.0.4:
    + slashem-16 (basically the vanilla default GUI tileset)
    + slashem-32 (NEW, 32x32, 8-bit color)
    + dawnlike16 (16x16, 4-bit color, very distinctive art style)
+   + fmob (NEW, 24x24, one foreground color per tile)
    + rltiles-32 (32x32, 24-bit color)
 
  * When throwing Mjollnir, it no longer has a 1% chance to land
@@ -569,7 +570,7 @@ Changes in 4.3.0.4:
    Big Stick, was given the conflict #invoke effect.
 
  * Added giants as a playable race.  Giants can be barbarians,
-   cavemen, or (for the time being at least) rangers.
+   cavemen, samurai, or (for the time being at least) rangers.
 
  * The name of Elbereth only scares monsters if it is the only thing
    engraved there (although you can also use the more complete form

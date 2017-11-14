@@ -258,7 +258,7 @@ addattrib(int attr, int value, int addend)
         }
     }
     if (addend > 4) {
-        return STR19(addend - 4);
+        return STR19(18 + addend - 4);
     } else if (addend > 0) {
         return STR18(addend * 25);
     } else {

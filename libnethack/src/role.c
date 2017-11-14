@@ -284,7 +284,7 @@ const struct Role roles[] = {
      PM_LORD_SATO, PM_ROSHI, PM_ASHIKAGA_TAKAUJI,
      PM_WOLF, PM_STALKER, S_DOG, S_ELEMENTAL,
      ART_TSURUGI_OF_MURAMASA,
-     MRACE_HUMAN | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL,
+     MRACE_HUMAN | MRACE_GIANT | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL,
      /* Str Int Wis Dex Con Cha */
      {10, 8, 7, 10, 17, 6},
      {30, 10, 8, 30, 14, 8},
@@ -445,7 +445,7 @@ const struct Race races[] = {
      MRACE_GIANT, MRACE_GIANT, 0,
      /* Str Int Wis Dex Con Cha */
      {18, 3, 3, 3, 3, 3},
-     {STR18(100), 15, 15, 18, 20, 16},
+     {STR19(24), 15, 15, 18, 20, 16},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
      {1, 0, 1, 0, 1, 0} /* Energy */
