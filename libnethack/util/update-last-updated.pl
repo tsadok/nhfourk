@@ -66,7 +66,7 @@ sub processfile {
   if (-d $filename) {
     return processdir($filename);
   } else {
-    open FILE, "<", $filename;
+    open FILE, "<", $filename or die "Cannot read $filename: $!";
     my @line = <FILE>; # Sluuurp
     close FILE;
     for my $n (0 .. 12) {
@@ -75,7 +75,10 @@ sub processfile {
         #print "OLD: $line[$n]";
         $line[$n] = updateline($line[$n], $filename, $name, $date);
         #print "NEW: $line[$n]";
-        # TODO: actually write the contents of the file back out.
+        # Actually write the contents of the file back out:
+        open FILE, ">", $filename or die "Cannot write $filename: $!";
+        print FILE $_ for @line;
+        close FILE;
         return $line[$n];
       }
       for my $license (@safelicense) {
