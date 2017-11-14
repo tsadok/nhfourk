@@ -1,4 +1,4 @@
-! Last modified by Alex Smith, 2013-09-24
+! Last modified by Alex Smith, 2013-Sep-24
 ! NetHack may be freely redistributed.  See license for details.
 !
 ! The tiles in this file are for tiles that are used by NetHack 3.4.3 but not

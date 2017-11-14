@@ -1,4 +1,4 @@
-This README-MSWindows.txt file was last modified by Jonadab the Unsightly one, 2015-Sep-07.
+This README-MSWindows.txt file was last modified by Jonadab the Unsightly One, 2017-Oct-17.
 Copyright (C) 2013 Alex Smith, 2015 Nathan Eady.
 
 This README file is licensed under the NetHack General Public License.

@@ -1,4 +1,4 @@
-/* Last modified by Alex Smith, 2013-09-21 */
+/* Last modified by Alex Smith, 2013-Sep-21 */
 /*
  * Copyright (c) 2009-2011 Petri Lehtinen <petri@digip.org>
  *

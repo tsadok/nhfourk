@@ -1,5 +1,5 @@
 %{
-/* Last modified by Sean Hunt, 2014-10-17 */
+/* Last modified by Leon Arnott <>, 2015-Sep-29 */
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 #include "hack.h"

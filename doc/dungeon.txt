@@ -1,5 +1,5 @@
 About this document:
-Last modified by Sean Hunt, 2014-01-15
+Last modified by Sean Hunt, 2014-Jan-15
 
 Copyright (C) 2013 Sean Hunt
 

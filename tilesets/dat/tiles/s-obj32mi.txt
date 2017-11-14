@@ -1,4 +1,4 @@
-! Last modified by Alex Smith, 2014-10-20
+! Last modified by Jonadab the Unsightly One, 2017-Oct-25
 ! NetHack may be freely redistributed.  See license for details.
 __ = (71, 108, 108)
 _A = (0, 0, 0)

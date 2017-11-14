@@ -1,5 +1,5 @@
 About this document:
-Last modified by Alex Smith, 2015-11-11
+Last modified by Alex Smith, 2015-Nov-10
 
 This document documents the version of the network protocol used in
 NetHack 4.3, and was written by Daniel Thaler, GreyKnight, Alex Smith.

@@ -1,4 +1,4 @@
-! Last modified by Alex Smith, 2015-04-03
+! Last modified by Jonadab the Unsightly One, 2016-Jan-29
 ! Copyright (C) 2014 Alex Smith
 ! NetHack may be freely redistributed. See license for details.
 !

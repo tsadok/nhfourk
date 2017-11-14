@@ -1,4 +1,4 @@
-! Last modified by Alex Smith, 2015-03-21
+! Last modified by Alex Smith, 2015-Mar-21
 ! NetHack may be freely redistributed. See license for details.
 !
 ! Copyright (C) 2014 Alex Smith

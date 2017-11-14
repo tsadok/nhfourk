@@ -1,5 +1,5 @@
 =for comment
-Last modified by Alex Smith, 2015-03-17
+Last modified by Jonadab the Unsightly One, 2015-Nov-10
 .
 Copyright (C) 2014, 2015 Alex Smith
 NetHack can be freely redistributed.  See license for details.

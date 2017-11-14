@@ -1,5 +1,5 @@
 " NetHack4 date conflict resolver vim script
-" Last modified by Sean Hunt, 2014-08-25
+" Last modified by Sean Hunt, 2014-Aug-25
 " Copyright (c) Sean Hunt, 2014
 " This script may be freely redistributed under the same license as NetHack.
 " See license for details.

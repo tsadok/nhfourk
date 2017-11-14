@@ -1,5 +1,5 @@
 About this document:
-Last modified by Alex Smith, 2013-12-29
+Last modified by Alex Smith, 2013-Dec-29
 
 Copyright (C) 2013 Alex Smith.
 

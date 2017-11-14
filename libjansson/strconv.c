@@ -1,4 +1,4 @@
-/* Last modified by Alex Smith, 2013-09-21 */
+/* Last modified by Alex Smith, 2013-Sep-21 */
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>

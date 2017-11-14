@@ -1,4 +1,4 @@
-# Last modified by Alex Smith, 2015-03-10
+# Last modified by Jonadab the Unsightly One, 2015-Oct-08
 # NetHack may be freely redistributed.  See license for details.
 -----
 If thy wand hath run out of charges, thou mayst zap it again and again; though

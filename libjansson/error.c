@@ -1,4 +1,4 @@
-/* Last modified by Alex Smith, 2013-09-21 */
+/* Last modified by Alex Smith, 2013-Sep-21 */
 #include <string.h>
 #include "jansson_private.h"
 

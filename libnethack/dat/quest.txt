@@ -1,4 +1,4 @@
-# Last modified by Alex Smith, 2013-12-23
+# Last modified by Jonadab the Unsightly One, 2017-Aug-05
 #	Copyright (c) 1991 by M. Stephenson
 # NetHack may be freely redistributed.  See license for details.
 #
