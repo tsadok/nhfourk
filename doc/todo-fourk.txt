@@ -134,10 +134,6 @@
 ▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
 ▒▒▒   and re-enable them.
 ▒▒▒
-▒▒▒ * With regard to add_erosion_words:
-▒▒▒   08:25 < FIQ > ou forgot rotproof for wood
-▒▒▒   08:25 < FIQ > and fixed cor crysknives
-▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
 ▒▒▒
