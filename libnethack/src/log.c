@@ -119,7 +119,7 @@ log_recover_core_reasons(struct nh_menulist *menu, const char *message,
     add_menutext(menu, msgprintf("My email address is %s%scolumbus.%s.com",
                                  "jonadab", "@", "rr"));
     add_menutext(menu, "Please include the word \"Fourk\" in the Subject.");
-    add_menutext(menu, "IRC users, join channel #nhfourk on Freenode.");
+    add_menutext(menu, "IRC users, join channel #nethack4 on Freenode.");
     add_menutext(menu, "");
 }
 

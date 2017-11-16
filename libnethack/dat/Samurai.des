@@ -59,7 +59,7 @@ MONSTER:'@',"Lord Sato",(20,04)
 OBJECT:')',"ya",(33,04),uncursed,2
 OBJECT[50%]:')',"ya",(33,04),uncursed,2
 OBJECT[25%]:')',"ya",(33,04),uncursed,2
-OBJECT:')',"long sword",(33,04),uncursed,2
+OBJECT:')',"glaive",(33,04),uncursed,2
 # roshi guards for the audience chamber
 MONSTER:'@',"roshi",(18,04)
 MONSTER:'@',"roshi",(18,05)

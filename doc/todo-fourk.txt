@@ -101,9 +101,6 @@
 ▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
 ▒▒▒     don't need their full haft length, could do with more
 ▒▒▒     detail on the operative bits instead.
-▒▒▒   + Test that the transparency works as intended in the
-▒▒▒     swallow tiles.  (If not, both FMOB and slashem-32 would
-▒▒▒     need a minor adjustment.)
 ▒▒▒   + The air elemental tile isn't very good.  Redraw.
 ▒▒▒
 ▒▒▒
@@ -134,14 +131,8 @@
 ▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
 ▒▒▒   and re-enable them.
 ▒▒▒
-▒▒▒ * With regard to add_erosion_words:
-▒▒▒   08:25 < FIQ > ou forgot rotproof for wood
-▒▒▒   08:25 < FIQ > and fixed cor crysknives
-▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
-▒▒▒
-▒▒▒ * Let Samurai get expert in polearms, and put a naginata (glaive) in their magic chest.
 ▒▒▒
 ▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
 ▒▒▒
@@ -160,8 +151,6 @@
 ▒▒▒     the type of wand, the charge may be activated rather than simply lost.
 ▒▒▒   + Instead of exploding, charged rings should lose a charge when shocked (unless at -3 or worse).
 ▒▒▒     I'll need to decide what to do about uncharged rings.
-▒▒▒
-▒▒▒ * Giants should have a better base AC than humans.
 ▒▒▒
 ▒▒▒ * Giants should wield even two-handed weapons in one hand.  "You heft
 ▒▒▒   the mighty [weapon] in your hand.  Yes, that will do."  If it then
@@ -184,8 +173,21 @@
 ▒▒▒ * When hallucinating, statues should appear to be monsters, and perform
 ▒▒▒   hallucinatory actions, such as singing, dancing, etc.
 ▒▒▒
-▒▒▒ * Makedefs must die.  Make a list of all the things it does and triage
-▒▒▒   when to refactor each of them.
+▒▒▒ * Makedefs must die.  Triage when to refactor each of the things it does:
+▒▒▒   + DONE: monstr[]
+▒▒▒   + oracles.txt => oracles
+▒▒▒   + rumors.tru + rumors.fal => rumors
+▒▒▒   + data.base => data
+▒▒▒   + quest.txt => quest.dat
+▒▒▒   + dungeon.def => dungeon.pdf
+▒▒▒   + date.h
+▒▒▒   + verinfo.h
+▒▒▒   + readonly.c
+▒▒▒     * bases[]
+▒▒▒     * timezone_list[] / timezone_spec
+▒▒▒     * polyinit_list[] / polyinit_spec
+▒▒▒   + onames.h
+▒▒▒   + permonst.h
 ▒▒▒
 ▒▒▒ * Look into the "A a boulder bounces" bug (probably channelization-related).
 ▒▒▒
@@ -224,8 +226,6 @@
 ▒▒▒ * Consider, and if necessary tweak, the balance of speed.
 ▒▒▒   Also, make intrinsic and extrinsic and temporary speed stack
 ▒▒▒   for monsters, same as for players.
-▒▒▒
-▒▒▒ * Check whether the "You hear" part of the Valley arrival message checks deafness.
 ▒▒▒
 ▒▒▒ * Consider making early-game poison instadeath, when you're too low-level
 ▒▒▒   to have a level drained, drain other stats instead, like HP, PW, Str, Con.

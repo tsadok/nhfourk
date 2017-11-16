@@ -746,12 +746,13 @@ add_erosion_words(const struct obj *obj, const char *prefix)
                          (Is_dragon_mail(obj) ? (msgprintf("%s-scaled",
                                           DRAGONCOLOR_NAME(obj->scalecolor))) :
                           (obj->oclass == POTION_CLASS) ? "indilutable" :
-                          iscrys ? "fixed" : is_rustprone(obj) ?
-                          "rustproof" :
+                          iscrys ? "fixed" :
+                          is_rustprone(obj) ? "rustproof" :
                           (objects[obj->otyp].oc_material == METAL) ?
-                          "stainless" :
+                             "stainless" :
                           is_corrodeable(obj) ? "corrodeproof" :
-                          is_flammable(obj) ? "fireproof" : "durable"),
+                          is_flammable(obj) ? "fireproof" :
+                          is_rottable(obj) ? "rotproof" : "durable"),
                          (obj->rknown ? " " : "] "));
     return prefix;
 }

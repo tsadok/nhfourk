@@ -1229,7 +1229,7 @@ makehtmlspoilers(void)
             "<th class=\"numeric monstr\">mon<br />str</th>"
             "<th class=\"numeric speed\">mov</th>"
             "<th class=\"numeric ac\">def</th>"
-            "<th class=\"numeric monmr\">mr</th>"
+            "<th class=\"numeric monmr willpower\">will</th>"
             "<th class=\"align\">aln</th>"
             "<th><span class=\"skills\">skills</span>"
             "    <span class=\"attacks\">attacks</span></th>"
