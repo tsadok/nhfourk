@@ -1,5 +1,5 @@
 About this document:
-Last modified by Alex Smith, 2014-Oct-26
+Last modified by Jonadab the Unsightly One, 2017-Nov-14
 
 The tiles code in this directory was originally taken from Slash'EM, and has
 been modified by Alex Smith for use in NetHack 4.  (This documentation file

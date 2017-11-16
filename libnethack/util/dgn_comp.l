@@ -1,5 +1,5 @@
 %{
-/* Last modified by Sean Hunt, 2014-Oct-17 */
+/* Last modified by Jonadab the Unsightly One, 2017-Nov-14 */
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /*	Copyright (c) 1990 by M. Stephenson	     */
 /* NetHack may be freely redistributed.  See license for details. */

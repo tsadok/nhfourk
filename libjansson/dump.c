@@ -1,4 +1,4 @@
-/* Last modified by chasonr, 2014-Sep-22 */
+/* Last modified by Jonadab the Unsightly One, 2017-Nov-14 */
 /*
  * Copyright (c) 2009-2011 Petri Lehtinen <petri@digip.org>
  *

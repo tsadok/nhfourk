@@ -1,7 +1,7 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
 /* Last modified by Nathan Eady, 2015-July-16 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* Last modified by Jonadab the Unsightly One, 2017-Nov-03 */
+/* Last modified by Jonadab the Unsightly One, 2017-Nov-14 */
 /* NetHack may be freely redistributed.  See license for details. */
 /* This level generation algorithm is based on Perl code by Alex Smith. */
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Last modified by Alex Smith, 2013-Nov-25
+# Last modified by Jonadab the Unsightly One, 2017-Nov-14
 
 # If there are any changes in the working copy, stash them.
 stashed_changes=`git stash create`

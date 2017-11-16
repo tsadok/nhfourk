@@ -1,5 +1,5 @@
 %{
-/* Last modified by Jonadab the Unsightly One, 2016-Jul-16 */
+/* Last modified by Jonadab the Unsightly One, 2017-Nov-14 */
 /*	Copyright (c) 1989 by Jean-Christophe Collet */
 /* NetHack may be freely redistributed.  See license for details. */
 
