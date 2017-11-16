@@ -176,8 +176,21 @@ by its respective author.
 ▒▒▒ * When hallucinating, statues should appear to be monsters, and perform
 ▒▒▒   hallucinatory actions, such as singing, dancing, etc.
 ▒▒▒
-▒▒▒ * Makedefs must die.  Make a list of all the things it does and triage
-▒▒▒   when to refactor each of them.
+▒▒▒ * Makedefs must die.  Triage when to refactor each of the things it does:
+▒▒▒   + DONE: monstr[]
+▒▒▒   + oracles.txt => oracles
+▒▒▒   + rumors.tru + rumors.fal => rumors
+▒▒▒   + data.base => data
+▒▒▒   + quest.txt => quest.dat
+▒▒▒   + dungeon.def => dungeon.pdf
+▒▒▒   + date.h
+▒▒▒   + verinfo.h
+▒▒▒   + readonly.c
+▒▒▒     * bases[]
+▒▒▒     * timezone_list[] / timezone_spec
+▒▒▒     * polyinit_list[] / polyinit_spec
+▒▒▒   + onames.h
+▒▒▒   + permonst.h
 ▒▒▒
 ▒▒▒ * Look into the "A a boulder bounces" bug (probably channelization-related).
 ▒▒▒
@@ -216,8 +229,6 @@ by its respective author.
 ▒▒▒ * Consider, and if necessary tweak, the balance of speed.
 ▒▒▒   Also, make intrinsic and extrinsic and temporary speed stack
 ▒▒▒   for monsters, same as for players.
-▒▒▒
-▒▒▒ * Check whether the "You hear" part of the Valley arrival message checks deafness.
 ▒▒▒
 ▒▒▒ * Consider making early-game poison instadeath, when you're too low-level
 ▒▒▒   to have a level drained, drain other stats instead, like HP, PW, Str, Con.

@@ -9,4 +9,4 @@ compiler:
 notifications:
     irc:
         channels:
-            - "chat.freenode.net#nhfourk"
+            - "chat.freenode.net#nethack4"
