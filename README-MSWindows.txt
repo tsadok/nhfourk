@@ -1,4 +1,4 @@
-This README-MSWindows.txt file was last modified by Jonadab the Unsightly One, 2017-Nov-14.
+This README-MSWindows.txt file was last modified by Jonadab the Unsightly One, 2017-Nov-16.
 Copyright (C) 2013 Alex Smith, 2015 Nathan Eady.
 
 This README file is licensed under the NetHack General Public License.
@@ -92,11 +92,11 @@ Building with Strawberry Perl (Recommended):
           this, especially when running aimake.
     B. cd to wherever your source tree lives.  In my case:
        cd C:\Users\Public\Documents\nhfourk
-    C. mkdir ..\build  [NOTE: this MUST be a new clean entirely-empty directory.]
+    C. mkdir build  [NOTE: this MUST be a new clean entirely-empty directory.]
     D. mkdir ..\install
- 6. Actually try to build (still in the Strawberry command line)
-    A. cd ..\build
-    B. perl ..\nhfourk\aimake -i ..\install --without=server --with=tilecompile --with=playfield_utils \
+ 6. Actually build (still in the Strawberry command line)
+    A. cd build
+    B. perl ..\nhfourk\aimake -i ..\..\install --without=server --with=tilecompile --with=playfield_utils \
                        --with=sourcecode --with=jansson --with=gui --directory-layout=single_directory
  7. Be patient.  aimake may take a long time (and is particularly slow
     on systems with not much physical RAM) but should automatically
@@ -125,14 +125,53 @@ Building with Strawberry Perl (Recommended):
        will find the actual downloads.  I chose wix311.exe
     E. Run the wix installer as administrator, click Install (the middle
        row), wait for it to say Complete, then hit exit.
-    F. Depending on your setup, if you want to distribute the .msi to
+    F. Delete (or move) the icon files out of dist/common.  If there
+       are icon files there, Win32::Exe will fail to add them to the
+       executables, and aimake will consider this a fatal failure and
+       stop the build process before it completes.
+    G. Depending on your setup, if you want to distribute the .msi to
        other folks and have it work, you may need to add additional
        DLLs into the Prebuilt folder, e.g.,  libpng16-16.dll, zlib1__.dll
-    G. At the Strawberry command prompt,
+       If you have them installed, e.g., because you have Cygwin installed,
+       aimake will find them and think they are system libraries and assume
+       that they therefore don't need to be included (on the theory that
+       everyone will have them already; which is not actually true).  
+       Putting them in prebuilt fixes this.  I found libpng16-16.dll in 
+       C:\cygwin64\usr\i686-w64-mingw32\sys-root\mingw\bin and
+       zlib1__.dll in C:\Strawberry\c\bin  If you don't have Cygwin
+       installed and don't have libpng16-16.dll in such a location, it
+       may be that aimake will not get confused and think it's a system
+       library when you build, so you may not need to do anything further
+       for that library.  You probably do have the zlib dll, however,
+       because you installed Strawberry Perl in order to do this build.
+    H. At the Strawberry command prompt,
        SET PATH=%PATH%;"C:\Program Files (x86)\WiX Toolset v3.11\bin"
-    H. perl ..\nhfourk\aimake --without=server --with=gui --with=playfield_utils \
-                              --with=tilecompile --with=sourcecode --with=jansson \
-                              --gen-installer=msi
+    I. Make sure you are using a clean, not-previously-used build directory.
+       Delete and recreate it if necessary.
+    J. perl ..\aimake --without=server --with=gui --with=playfield_utils \
+                      --with=tilecompile --with=sourcecode --with=jansson \
+                      --gen-installer=msi
+ 9. Super Optional:  build an .msi installer with the icons on the executables.
+    A. Use aimake to do the build as in step 8 first.
+    B. Go the the Resource Hacker website, http://www.angusj.com/resourcehacker/
+       Download, install.
+    C. Open nhfourk-sdl.exe in Resource Hacker
+    D. Action->Add from a Resource file.
+       Choose an existing .exe file that has an icon.
+       Check "Icon Group" and hit import.
+    E. Expand Icon.  Right-click on any size of the icon and choose Replace Icon.
+       Open file with new icon.  Select fourk.ico and hit Replace.
+    F. Save.
+    G. Repeat steps B-F for nhfourk.exe if desired.
+    H. Copy your shiny new icon-enabled .exe file(s) into
+       build\aimake_wix_input\CSIDL_PROGRAM_FILES\NetHack Fourk
+    I. candle -arch x64 -nologo aimake_wix_input\nhfourk.wxs
+    J. light -nologo -exzt WixUIExtension -sice:ICE38 -sice:ICE43 -sice:ICE57 -sice:ICE64 -sice:ICE90 \
+             -dWIXUILicenseRtf="aimake_wix_input\CSIDL_PROGRAM_FILES\NetHack Fourk\doc\license.rtf" \
+             aimake_wix_input\nhfourk.wixobj
+    K. You should now find an .msi file in the current directory.  If all has gone well, it
+       should include the executables with the icon embedded in them.  This is the process I
+       used to produce the official .msi release of version 4.3.0.4 of NetHack Fourk.
 
 
 Building with Cygwin:
@@ -142,11 +181,10 @@ Cross-compiling from Cygwin to native Windows using the mingw
 cross-compiler is believed to be possible, using a makefile for Gnu
 make, although thus far I have not managed to get it to work,
 personally, and so I do not have detailed working tested instructions.
-(Efforts are ongoing.)  However, see the mingw-build branch, which is
-based on work by Vincent Ho, who seems to have succeeded where I, thus
-far, have not.  It is likely also be worth checking out his git
-repository.  To add this as a remote on an existing NetHack Fourk
-repository, do this:
+However, see the mingw-build branch, which is based on work by Vincent
+Ho, who seems to have succeeded where I, thus far, have not.  It is
+likely also be worth checking out his git repository.  To add this as
+a remote on an existing NetHack Fourk repository, do this:
   git remote add vince https://github.com/vinceho/nhfourk.git
   git checkout vince/mingw-build
 If you just want a separate repository, you can do this instead:
@@ -167,17 +205,19 @@ Building with Windows Services for Linux (WSL / "Ubuntu on Ten"):
 Experiments in getting the build to work under WSL have reached the
 point where I can get a working makedefs.exe, which can be run from a
 cmd.exe prompt and works (though the Makefile cannot call this
-directly from within WSL, because it's a native Windows .exe).
-Efforts to get a complete working build procedure for this setup are
-also ongoing.  If you manage to get it to work, I'd love to hear about
-it (contact jonadab either on the freenode IRC network or via email at
-columbus.rr.com; in the case of email, be sure to put the word "Fourk"
-in the subject line, otherwise my filters won't notice the message and
-it'll land in the middle of a spam-filled inbox and not get noticed).
+directly from within WSL, because it's a native Windows .exe, and
+unlike Cygwin, WSL doesn't have the ability to run native Windows
+programs from within the environment).  Efforts to get a complete
+working build procedure for this setup are also ongoing.  If you
+manage to get it to work, I'd love to hear about it (contact jonadab
+either on the freenode IRC network or via email at columbus.rr.com; in
+the case of email, be sure to put the word "Fourk" in the subject
+line, otherwise my filters won't notice the message and it'll land in
+the middle of a spam-filled inbox and not get noticed).
 
 
 Building with Visual Studio
 ===========================
 
-I have no idea if this is even remotely possible.
+I have no idea.
 
