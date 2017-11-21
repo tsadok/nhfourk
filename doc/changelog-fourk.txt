@@ -65,6 +65,9 @@ Changes in 4.3.0.4:
    hand, leaving the other hand free to use a shield if desired.
    (You still can't dual-wield them, though.)
 
+ * Flint does more damage against large monsters than before.
+   Non-cursed loadstones do even more.
+
  * When using polearms, the game now tries to place the cursor
    at a reasonable target initially (rather than at your own
    location).  Also, you can now hit monsters with a polearm
