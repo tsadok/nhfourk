@@ -265,9 +265,6 @@
 ▒▒▒   fireproof.  Ensure that blanking/writing don't alter their fireproof
 ▒▒▒   status.
 ▒▒▒
-▒▒▒ * Make potions of oil a bit more common, or put them in some monster's
-▒▒▒   starting inventory, or something, so they can be used for weapon repair.
-▒▒▒
 ▒▒▒ * Make some weapon skills harder to learn than others, either in terms of
 ▒▒▒   practice required, or skill points invested, or both.
 ▒▒▒

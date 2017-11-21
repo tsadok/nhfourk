@@ -725,6 +725,9 @@ m_initinv(struct monst *mtmp, enum rng rng)
             mongets(mtmp, rn2_on_rng(11, rng) ? ROBE :
                     CLOAK_OF_MAGIC_RESISTANCE, rng);
         }
+        if (!rn2_on_rng(13, rng)) {
+            mongets(mtmp, POT_OIL, rng);
+        }
         break;
     case S_NYMPH:
         if (!rn2_on_rng(2, rng))
