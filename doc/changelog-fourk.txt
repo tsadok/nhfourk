@@ -62,6 +62,7 @@ Changes in 4.3.0.4:
 -------------------
 
  * Flint does more damage against large monsters than before.
+   Non-cursed loadstones do even more.
 
  * When using polearms, the game now tries to place the cursor
    at a reasonable target initially (rather than at your own

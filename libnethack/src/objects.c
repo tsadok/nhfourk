@@ -1034,7 +1034,7 @@ const struct objclass const_objects[] = {
  * that is currently everything between luckstones and flint (inclusive).
  */
     ROCK("luckstone", "gray", 0, 10, 10, 60, 3, 3, 1, 10, 7, MINERAL, CLR_GRAY),
-    ROCK("loadstone", "gray", 0, 10, 500, 1, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
+    ROCK("loadstone", "gray", 0, 10, 500, 1, 15, 15, 1, 10, 6, MINERAL, CLR_GRAY),
     ROCK("touchstone", "gray", 0, 8, 10, 45, 3, 3, 1, 10, 6, MINERAL, CLR_GRAY),
     ROCK("flint", "gray", 0, 9, 10, 1, 6, 8, 0, 10, 7, MINERAL, CLR_GRAY),
     ROCK("silver nugget", "shiny", 0, 1, 10, 1, 6, 6, 0, 10, 7, SILVER, HI_SILVER),
