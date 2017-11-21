@@ -180,6 +180,7 @@
                                    (i.e., ac_threshhold is always 0) */
 # define M3_SEEINDARK    0x4000 /* does not require light to see */
 # define M3_EMITSLIGHT   0x8000 /* emits light */
+# define M3_XRAY_VISION  0x10000 /* can see through obstacles */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */

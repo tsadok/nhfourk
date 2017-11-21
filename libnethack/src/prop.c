@@ -86,6 +86,7 @@ m_has_property(const struct monst *mon, enum youprop property,
         property == SEE_INVIS    ? perceives(mon->data)                  :
         property == TELEPAT      ? telepathic(mon->data)                 :
         property == INFRAVISION  ? infravision(mon->data)                :
+        property == XRAY_VISION  ? has_xray_vision(mon->data)            :
         /* Note: This one assumes that there's no way to permanently turn
            visible when you're in stalker form (i.e. mummy wrappings only). */
         property == INVIS        ? pm_invisible(mon->data)               :
