@@ -577,3 +577,22 @@ mklev_rn2(int x, struct level *lev)
 {
     return rn2_on_rng(x, rng_for_level(&lev->z));
 }
+
+int
+rat_rne(int numerator, int denominator, enum rng rng)
+{
+    int tmp = 1;
+    if (numerator < 1) {
+        impossible("Numerator too small in rat_rne(%d,%d,%d)",
+                   numerator, denominator, rng);
+        return tmp;
+    }
+    if (numerator >= denominator) {
+        impossible("Numerator too large in rat_rne(%d,%d,%d)",
+                   numerator, denominator, rng);
+        return tmp;
+    }
+    while (tmp < 10 && (numerator - 1) >= rn2_on_rng(denominator, rng))
+        tmp++;
+    return tmp;
+}

@@ -58,11 +58,19 @@ Chronological Changelog (most recent at top):
 =============================================
 =============================================
 
-Changes in 4.3.0.4:
+
+Changes in 4.3.0.5:
 -------------------
+
+ * Potions of oil are slightly more common than before.
+
+ * Hezrou can now see through stinking clouds and other obstacles.
 
  * Flint does more damage against large monsters than before.
    Non-cursed loadstones do even more.
+
+Changes in 4.3.0.4:
+-------------------
 
  * When using polearms, the game now tries to place the cursor
    at a reasonable target initially (rather than at your own

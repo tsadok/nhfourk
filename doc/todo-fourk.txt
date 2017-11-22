@@ -270,8 +270,6 @@
 ▒▒▒
 ▒▒▒ * Implement the autounlock feature as in DynaHack.
 ▒▒▒
-▒▒▒ * Allow hezrou to see through and in stinking clouds.  (Maybe give them intrinsic astral vision?)
-▒▒▒
 ▒▒▒ * Fine tune the balance on the Pw regen formula, especially
 ▒▒▒   as regards Sylphs.  See discussion in #nhfourk from Sunday,
 ▒▒▒   Feburary 5th, starting at 7:13, don't miss the late part
@@ -279,35 +277,6 @@
 ▒▒▒ * 12:28 < FIQ > fu nfact: in fourk, sylphs at <12 constitution heal 1hp per turn in hell, at >=12 they don't heal at all
 ▒▒▒
 ▒▒▒ * Consider how the Staff of Aesculalialdkjlaius should work for Sylphs.
-▒▒▒
-▒▒▒ * Consider creating a generalized version of rne that takes two integers representing
-▒▒▒   a rational, so that fractions other than 1/n can be represented (e.g., 2/3).
-▒▒▒   The regular rne() that is already widely used could be a wrapper that passes 1 for
-▒▒▒   the denominator.  Consider using this function for things like random weapon
-▒▒▒   enchantments, so that the probability of higher enchantments is a bit higher.
-▒▒▒   Perhaps:
-▒▒▒   static inline int
-▒▒▒   rat_rne(int numerator, int denominator, enum rng rng)
-▒▒▒   {
-▒▒▒       int tmp = 1;
-▒▒▒       if (numerator < 1)
-▒▒▒          impossible("Numerator too small in rat_rne(%d, %d, %d)",
-▒▒▒                     numerator, denominator, rng);
-▒▒▒       else if (numerator >= denominator) {
-▒▒▒          impossible("Numerator too large in rat_rne(%d, %d, %d)",
-▒▒▒                     numerator, denominator, rng);
-▒▒▒          return tmp;
-▒▒▒       }
-▒▒▒       while (tmp < 10 && (numerator - 1) <= rn2_on_rng(denominator, rng))
-▒▒▒          tmp++;
-▒▒▒       return tmp;
-▒▒▒   }
-▒▒▒
-▒▒▒   static inline int
-▒▒▒   rne_on_rng(int x, enum rng rng)
-▒▒▒   {
-▒▒▒       return rat_rne(1, x, rng);
-▒▒▒   }
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :

@@ -1267,6 +1267,7 @@ extern int do_play_instrument(struct obj *, const struct nh_cmd_arg *);
 
 enum rng rng_for_level(const d_level *);
 int mklev_rn2(int, struct level *);
+int rat_rne(int, int, enum rng);
 extern long gameseed_long(void);
 
 /* ### o_init.c ### */
