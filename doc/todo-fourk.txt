@@ -103,7 +103,6 @@
 ▒▒▒     detail on the operative bits instead.
 ▒▒▒   + The air elemental tile isn't very good.  Redraw.
 ▒▒▒
-▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
 ▒▒▒ * Add program icons for the utilities (tilecompile, dlb, etc.)
