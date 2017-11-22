@@ -582,6 +582,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             exeparams => {
                 copyright => $dlb_copyright,
                 name => "NetHack Fourk Data Librarian",
+                icon => qr/^path:dist\/common\/dlb.*\.png$/,
                 description => "Archiver/unarchiver for NetHack Fourk's 'nhdat' file",
                 interactive => 0,
             },
