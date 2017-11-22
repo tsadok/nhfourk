@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Last modified by Jonadab the Unsightly One, 2017-Nov-14
+# Last modified by Jonadab the Unsightly One, 2017-Nov-15
 %:
 	env DH_VERBOSE=1 dh $@
 

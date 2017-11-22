@@ -1,4 +1,4 @@
-! Last modified by Jonadab the Unsightly One, 2017-Nov-14
+! Last modified by Jonadab the Unsightly One, 2017-Nov-15
 ! NetHack may be freely redistributed.  See license for details.
 A = (0, 0, 0)
 B = (0, 182, 255)

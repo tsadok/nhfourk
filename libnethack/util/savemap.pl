@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Last modified by Jonadab the Unsightly One, 2017-Nov-14
+# Last modified by Jonadab the Unsightly One, 2017-Nov-15
 # savemap: Reads save.c and similar files and maps byte offsets to
 # variable names, dumping the results (typically to savemap.txt) for
 # debugging purposes.
