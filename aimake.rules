@@ -570,6 +570,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             exeparams => {
                 copyright => $tilecompile_copyright,
                 name => "NetHack Fourk Tile Compiler",
+                icon => qr/^path:dist\/common\/tilecompile.*\.png$/,
                 terminal => 1,
                 interactive => 0,
             },
