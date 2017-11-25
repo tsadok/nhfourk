@@ -1539,7 +1539,7 @@ deliver_object(struct obj *obj, xchar dnum, xchar dlevel, int where)
 {
     struct level *lev;
     d_level levnum = { dnum, dlevel };
-    int nx, ny;
+    int nx, ny, i;
 
     lev = levels[ledger_no(&levnum)];
     if (!lev) { /* this can go away if we pre-generate all levels */
@@ -1548,6 +1548,8 @@ deliver_object(struct obj *obj, xchar dnum, xchar dlevel, int where)
         reset_rndmonst(NON_PM);
         lev = mklev(&levnum);
         reset_rndmonst(NON_PM);
+        for (i = 3 + mklev_rn2(3 + (depth(&lev->z) / 3), lev); i > 0; i--)
+            makemon(NULL, level, COLNO, ROWNO, MM_SPECIESLEVRNG);
     }
 
     obj_extract_self(obj);

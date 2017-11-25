@@ -928,7 +928,7 @@ you_moved(void)
 
             if (flags.mon_generation &&
                 !rn2(u.uevent.udemigod ? 25 :
-                     (depth(&u.uz) > depth(&stronghold_level)) ? 50 : 70))
+                     (depth(&u.uz) > depth(&stronghold_level)) ? 120 : 250))
                 makemon(NULL, level, COLNO, ROWNO, MM_SPECIESLEVRNG);
 
             /* Calculate how much movement you get this turn. (We cache this in
