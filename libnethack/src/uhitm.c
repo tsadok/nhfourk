@@ -501,6 +501,9 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll)
                 } else if (dieroll == 2 &&
                            (obj == uwep || (obj == uswapwep && u.twoweap)) &&
                            obj->oclass == WEAPON_CLASS &&
+                           /* No penalty for being a giant: two-handed weapons
+                              count as two-handed for this regardless of whether
+                              you actually need two hands to wield them. */
                            (bimanual(obj) ||
                             (Role_if(PM_SAMURAI) && obj->otyp == KATANA &&
                              !uarms)) &&

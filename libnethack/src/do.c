@@ -929,6 +929,7 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     boolean at_trapdoor = ((t_at(level, u.ux, u.uy)) &&
                            (t_at(level, u.ux, u.uy))->ttyp == TRAPDOOR);
     d_level orig_d;
+    int i;
 
     if (dunlev(newlevel) > dunlevs_in_dungeon(newlevel))
         newlevel->dlevel = dunlevs_in_dungeon(newlevel);
@@ -1030,6 +1031,11 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     /* don't let that reenable vision yet */
     turnstate.vision_full_recalc = FALSE; 
     flush_screen_disable();     /* ensure all map flushes are postponed */
+
+    if (new) {
+        for (i = 3 + mklev_rn2(3 + (depth(&level->z) / 3), level); i > 0; i--)
+            makemon(NULL, level, COLNO, ROWNO, MM_SPECIESLEVRNG);
+    }
 
     if (portal && !In_endgame(&u.uz)) {
         /* find the portal on the new level */

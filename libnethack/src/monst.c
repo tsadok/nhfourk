@@ -3055,6 +3055,7 @@ const struct permonst mons[] = {
         SIZ(WT_HUMAN, 400, 0, MS_SILENT, MZ_LARGE), MR_FIRE | MR_POISON, 0,
         MRACE_NONE, M1_HUMANOID | M1_POIS,
         M2_DEMON | M2_STALK | M2_HOSTILE | M2_NASTY,
+        M3_XRAY_VISION /* let them see through/in stinking cloud */ |
         M3_INFRAVISIBLE | M3_INFRAVISION, MP_WAND_BASIC, CLR_ORANGE),
     MON("bone devil", S_DEMON,
         LVL(9, 13, 15, -1, 40, -9), (G_HELL | G_NOCORPSE | G_SGROUP | 2),

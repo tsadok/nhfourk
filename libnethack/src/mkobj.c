@@ -524,7 +524,7 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 /* It's boring if practically everything is +0 and uncursed. */
                 int sign = rn2_on_rng(3,rng) ? -1 : 1;
                 otmp->spe = sign *
-                    (((10 + depth(&lev->z)) / 15) + rne_on_rng(2, rng));
+                    (((10 + depth(&lev->z)) / 15) + rat_rne(2, 3, rng));
                 if (sign < 0)
                     curse(otmp);
                 else
@@ -782,7 +782,7 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                 }
                 /* make useless +0 rings MUCH less common */
                 if (otmp->spe == 0)
-                    otmp->spe = rne_on_rng(2, rng)
+                    otmp->spe = (1 + rne_on_rng(2, rng))
                         * (rn2_on_rng(challengemode ? 2 : 3, rng) ? 1 : -1);
                 /* negative rings are usually cursed */
                 if (otmp->spe < 0 && rn2_on_rng(5, rng))
@@ -791,7 +791,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                        (otmp->otyp == RIN_TELEPORTATION ||
                         otmp->otyp == RIN_POLYMORPH ||
                         otmp->otyp == RIN_AGGRAVATE_MONSTER ||
-                        otmp->otyp == RIN_HUNGER || !rn2_on_rng(9, rng))) {
+                        otmp->otyp == RIN_HUNGER || !rn2_on_rng(9, rng) ||
+                        (otmp->otyp == RIN_LEVITATION && !rn2_on_rng(3, rng)))) {
                 curse(otmp);
             }
             break;

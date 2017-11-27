@@ -1184,7 +1184,7 @@ equip_in_slot(struct obj *otmp, enum objslot slot, boolean keep_swapwep)
        shield, and then equip the weapon afterwards, without needing extra
        codepaths and thus minimizing on special cases. */
     if (flags.cblock && slot == os_wep && otmp != &zeroobj &&
-        bimanual(otmp) && uarms) {
+        bimanual(otmp) && (URACEDATA)->msize < MZ_HUGE && uarms) {
         weapon = otmp;
         otmp = &zeroobj;
         slot = os_arms;
@@ -1194,7 +1194,7 @@ equip_in_slot(struct obj *otmp, enum objslot slot, boolean keep_swapwep)
        and cblock, we keep the shield as the focus, but nonetheless add a
        desire to unequip the weapon. */
     if (flags.cblock && slot == os_arms && otmp != &zeroobj &&
-        uwep && bimanual(uwep))
+        uwep && bimanual(uwep) && (URACEDATA)->msize < MZ_HUGE)
         weapon = &zeroobj;
 
     /* We're resuming if we request an equip that's already the case (the
@@ -1572,10 +1572,11 @@ canwearobj(struct obj *otmp, long *mask,
             silly_thing("equip", otmp);
         return FALSE;
     } else if (slot == os_arm || slot == os_armu || slot == os_ringl) {
-        if (uwep && bimanual(uwep) && known_welded(spoil)) {
+        if (uwep && bimanual(uwep) && known_welded(spoil)
+            && (URACEDATA)->msize < MZ_HUGE) {
             if (noisy)
-                pline(msgc, "You cannot do that while your hands "
-                      "%s your %s.",
+                pline(msgc, "You cannot do that while your %s %s your %s.",
+                      makeplural(body_part(HAND)),
                       (objects[uwep->otyp].oc_material == WOOD) ?
                       "are ingrown with" : "are welded to",
                       is_sword(uwep) ? "sword" : c_slotnames[os_wep]);
@@ -1654,7 +1655,8 @@ canwearobj(struct obj *otmp, long *mask,
         break;
 
     case os_arms:
-        if (CBLOCK(uwep) && uwep && bimanual(uwep)) {
+        if (CBLOCK(uwep) && uwep && bimanual(uwep) &&
+            (URACEDATA)->msize < MZ_HUGE) {
             pline(msgc,
                   "You cannot wear a shield while wielding a two-handed %s.",
                   is_sword(uwep) ? "sword" :
@@ -1829,7 +1831,8 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
         }
 
         why = 0;        /* the item which prevents ring removal */
-        if ((otmp == uright || (uwep && bimanual(uwep))) &&
+        if ((otmp == uright || (uwep && bimanual(uwep) &&
+                                (URACEDATA)->msize < MZ_HUGE)) &&
             known_welded(spoil)) {
             buf = msgprintf("free a weapon %s", body_part(HAND));
             why = uwep;
@@ -1890,7 +1893,8 @@ canunwearobj(struct obj *otmp, boolean noisy, boolean spoil, boolean cblock)
                happen, because draconic forms break shirts. */
             buf = "remove your armor";
             why = uarm;
-        } else if (uwep && bimanual(uwep) && known_welded(spoil)) {
+        } else if (uwep && bimanual(uwep) && known_welded(spoil) &&
+                   (URACEDATA)->msize < MZ_HUGE) {
             buf = msgcat("release your ",
                          is_sword(uwep) ? "sword" :
                          (uwep->otyp == BATTLE_AXE) ? "axe" : "weapon");
@@ -1944,7 +1948,8 @@ glibr(void)
     const char *otherwep = 0, *thiswep, *which, *hand;
 
     leftfall = (uleft && !uleft->cursed &&
-                (!uwep || !welded(uwep) || !bimanual(uwep)));
+                (!uwep || !welded(uwep) || !bimanual(uwep) ||
+                 (URACEDATA)->msize >= MZ_HUGE));
     rightfall = (uright && !uright->cursed && (!welded(uwep)));
     if (!uarmg && (leftfall || rightfall) && !nolimbs(youmonst.data)) {
         /* changed so cursed rings don't fall off, GAN 10/30/86 */
@@ -2005,7 +2010,7 @@ glibr(void)
         }
         hand = body_part(HAND);
         which = "";
-        if (bimanual(otmp))
+        if (bimanual(otmp) && (URACEDATA)->msize < MZ_HUGE)
             hand = makeplural(hand);
         else if (wastwoweap)
             which = "right ";   /* preceding msg was about left */
@@ -2064,7 +2069,8 @@ stuck_ring(struct obj *ring, int otyp)
         if (nolimbs(youmonst.data) && uamul &&
             uamul->otyp == AMULET_OF_UNCHANGING && uamul->cursed)
             return uamul;
-        if ((ring == uright || (uwep && bimanual(uwep))) && welded(uwep))
+        if ((ring == uright || (uwep && bimanual(uwep) &&
+                                (URACEDATA)->msize < MZ_HUGE)) && welded(uwep))
             return uwep;
         if (uarmg && uarmg->cursed)
             return uarmg;
