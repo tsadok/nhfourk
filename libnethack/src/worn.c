@@ -425,7 +425,8 @@ m_dowear(struct monst *mon, boolean creation)
         mon->data->msize == MZ_SMALL)
         m_dowear_type(mon, os_armc, creation, FALSE);
     m_dowear_type(mon, os_armh, creation, FALSE);
-    if (!MON_WEP(mon) || !bimanual(MON_WEP(mon)))
+    if (!MON_WEP(mon) ||
+        !(bimanual(MON_WEP(mon)) && mon->data->msize < MZ_HUGE))
         m_dowear_type(mon, os_arms, creation, FALSE);
     m_dowear_type(mon, os_armg, creation, FALSE);
     if (!slithy(mon->data) && mon->data->mlet != S_CENTAUR)

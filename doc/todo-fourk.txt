@@ -156,12 +156,6 @@ by its respective author.
 ▒▒▒   + Instead of exploding, charged rings should lose a charge when shocked (unless at -3 or worse).
 ▒▒▒     I'll need to decide what to do about uncharged rings.
 ▒▒▒
-▒▒▒ * Giants should wield even two-handed weapons in one hand.  "You heft
-▒▒▒   the mighty [weapon] in your hand.  Yes, that will do."  If it then
-▒▒▒   gets cursed, it's welded to the hand, but the other hand is free.
-▒▒▒   They can even use a shield in the other hand (but probably not
-▒▒▒   another weapon, and certainly not another two-hander).
-▒▒▒
 ▒▒▒ * It appears that material-sensitive players can wield weapons made of the
 ▒▒▒   material in question without difficulty or consequence, provided you do
 ▒▒▒   not change form _while_ wielding the item.  (This is true for silver

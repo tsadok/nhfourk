@@ -148,7 +148,7 @@ canwieldobj(struct obj *wep, boolean noisy, boolean spoil, boolean cblock)
         return 0;
     }
     if (uarms && (!cblock || (uarms->cursed && (uarms->bknown || spoil))) &&
-        bimanual(wep)) {
+        bimanual(wep) && (URACEDATA)->msize < MZ_HUGE) {
         if (noisy) {
             if (!uarms->bknown && cblock) {
                 if (!spoil)
@@ -272,6 +272,9 @@ ready_weapon(struct obj *wep)
                   bimanual(wep) ? (const char *)makeplural(body_part(HAND))
                   : body_part(HAND));
             wep->bknown = TRUE;
+        } else if (bimanual(wep) && (URACEDATA)->msize >= MZ_HUGE) {
+            pline(msgc_actionok, "You heft the mighty %s in your %s.  %s",
+                  xname(wep), body_part(HAND), "Yes, that will do.");
         } else {
             pline(msgc_actionok, "You are now wielding %s.", yname(wep));
         }
@@ -446,7 +449,14 @@ can_twoweapon(void)
               is_plural(otmp) ? "aren't weapons" : "isn't a weapon");
     } else if (bimanual(uwep) || bimanual(uswapwep)) {
         otmp = bimanual(uwep) ? uwep : uswapwep;
-        pline(msgc_cancelled, "%s isn't one-handed.", Yname2(otmp));
+        /* Even if you are a giant and can wield a two-hander in one hand, you
+           still can't dual-wield with a two-hander.  This is mostly for balance
+           reasons but needs a special message to avoid looking like a bug. */
+        if ((URACEDATA)->msize >= MZ_HUGE)
+            pline(msgc_cancelled, "%s %s adequate by itself.", Yname2(otmp),
+                  ((otmp == uwep) ? "is" : "would be"));
+        else
+            pline(msgc_cancelled, "%s isn't one-handed.", Yname2(otmp));
     } else if (uarms)
         pline(msgc_cancelled,
               "You can't use two weapons while wearing a shield.");
@@ -684,8 +694,8 @@ weldmsg(enum msg_channel msgc, struct obj *obj)
     pline(msgc, "Your %s %s %s your %s!", xname(obj), otense(obj, "are"),
           (objects[obj->otyp].oc_material == WOOD) ?
           "grown right into" : "welded to",
-          bimanual(obj) ? (const char *)makeplural(body_part(HAND))
-          : body_part(HAND));
+          (bimanual(obj) && (URACEDATA)->msize < MZ_HUGE) ?
+          (const char *)makeplural(body_part(HAND)) : body_part(HAND));
 }
 
 /* Unwields all weapons silently. */

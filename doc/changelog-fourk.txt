@@ -61,6 +61,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.4:
 -------------------
 
+ * Giants can wield large, normally two-handed weapons in one
+   hand, leaving the other hand free to use a shield if desired.
+   (You still can't dual-wield them, though.)
+
  * When using polearms, the game now tries to place the cursor
    at a reasonable target initially (rather than at your own
    location).  Also, you can now hit monsters with a polearm

@@ -937,7 +937,8 @@ dotrap(struct trap *trap, unsigned trflags)
                   body_part(ARM));
             if (water_damage(uarms, "shield", TRUE))
                 break;
-            if (u.twoweap || (uwep && bimanual(uwep)))
+            if (u.twoweap || (uwep && bimanual(uwep) &&
+                              (URACEDATA)->msize < MZ_HUGE))
                 water_damage(u.twoweap ? uswapwep : uwep, NULL, TRUE);
         glovecheck:
             water_damage(uarmg, "gauntlets", TRUE);
@@ -2075,7 +2076,8 @@ mintrap(struct monst *mtmp)
                     if (water_damage(target, "shield", TRUE))
                         break;
                     target = MON_WEP(mtmp);
-                    if (target && bimanual(target))
+                    if (target && bimanual(target) &&
+                        (URACEDATA)->msize < MZ_HUGE)
                         water_damage(target, NULL, TRUE);
                 glovecheck:
                     target =
@@ -3456,7 +3458,8 @@ dountrap(const struct nh_cmd_arg *arg)
               mon_nam(u.ustuck));
         return 0;
     }
-    if (u.ustuck || (welded(uwep) && bimanual(uwep))) {
+    if (u.ustuck || (welded(uwep) && bimanual(uwep) &&
+                     (URACEDATA)->msize < MZ_HUGE)) {
         pline(msgc_cancelled, "Your %s seem to be too busy for that.",
               makeplural(body_part(HAND)));
         return 0;

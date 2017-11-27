@@ -1962,7 +1962,7 @@ use_misc(struct monst *mtmp, struct musable *m)
             const char *the_weapon = the(xname(obj));
 
             hand = body_part(HAND);
-            if (bimanual(obj))
+            if (bimanual(obj) && mtmp->data->msize < MZ_HUGE)
                 hand = makeplural(hand);
 
             if (obj->otyp == HEAVY_IRON_BALL) {

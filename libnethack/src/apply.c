@@ -2516,7 +2516,7 @@ use_whip(struct obj *obj, const struct nh_cmd_arg *arg)
 
             if (gotit) {
                 mon_hand = mbodypart(mtmp, HAND);
-                if (bimanual(otmp))
+                if (bimanual(otmp) && mtmp->data->msize < MZ_HUGE)
                     mon_hand = makeplural(mon_hand);
             } else
                 mon_hand = 0;   /* lint suppression */

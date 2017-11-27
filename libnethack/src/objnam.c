@@ -976,7 +976,7 @@ doname_base(const struct obj *obj, boolean with_price)
         } else {
             const char *hand_s = body_part(HAND);
 
-            if (bimanual(obj))
+            if (bimanual(obj) && (URACEDATA)->msize < MZ_HUGE)
                 hand_s = makeplural(hand_s);
             buf = msgcat_many(buf, " (weapon in ", hand_s, ")", NULL);
         }
