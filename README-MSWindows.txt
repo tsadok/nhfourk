@@ -1,4 +1,4 @@
-This README-MSWindows.txt file was last modified by Jonadab the Unsightly One, 2017-Nov-16.
+This README-MSWindows.txt file was last modified by Jonadab the Unsightly One, 2017-Nov-27.
 Copyright (C) 2013 Alex Smith, 2015 Nathan Eady.
 
 This README file is licensed under the NetHack General Public License.
@@ -166,7 +166,7 @@ Building with Strawberry Perl (Recommended):
     H. Copy your shiny new icon-enabled .exe file(s) into
        build\aimake_wix_input\CSIDL_PROGRAM_FILES\NetHack Fourk
     I. candle -arch x64 -nologo aimake_wix_input\nhfourk.wxs
-    J. light -nologo -exzt WixUIExtension -sice:ICE38 -sice:ICE43 -sice:ICE57 -sice:ICE64 -sice:ICE90 \
+    J. light -nologo -ext WixUIExtension -sice:ICE38 -sice:ICE43 -sice:ICE57 -sice:ICE64 -sice:ICE90 \
              -dWIXUILicenseRtf="aimake_wix_input\CSIDL_PROGRAM_FILES\NetHack Fourk\doc\license.rtf" \
              aimake_wix_input\nhfourk.wixobj
     K. You should now find an .msi file in the current directory.  If all has gone well, it
