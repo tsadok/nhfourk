@@ -1,5 +1,5 @@
 =for comment
-Last modified by Jonadab the Unsightly One, 2017-Nov-15
+Last modified by Jonadab the Unsightly One, 2017-Nov-21
 NetHack can be freely redistributed.  See license for details.
 
 =encoding utf8

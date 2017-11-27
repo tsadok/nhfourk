@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Jonadab the Unsightly One, 2017-Nov-15 */
+/* Last modified by Jonadab the Unsightly One, 2017-Nov-21 */
 /* Copyright (c) Daniel Thaler, 2012. */
 /* Copyright (c) 2014 Alex Smith. */
 /* This network connection library may be freely redistributed under the terms of

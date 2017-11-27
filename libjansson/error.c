@@ -1,4 +1,4 @@
-/* Last modified by Jonadab the Unsightly One, 2017-Nov-15 */
+/* Last modified by Jonadab the Unsightly One, 2017-Nov-21 */
 #include <string.h>
 #include "jansson_private.h"
 

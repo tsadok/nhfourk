@@ -1,5 +1,5 @@
 #!/bin/sh
-# Last modified by Jonadab the Unsightly One, 2017-Nov-15
+# Last modified by Jonadab the Unsightly One, 2017-Nov-21
 # Copyright (C) 2013, 2015 Alex Smith
 # NetHack may be freely redistributed. See license for details.
 for x in `nm "$1" | egrep -v '^[0-9a-f]* *[tTrUwAd]' | sort -k1.20 | cut -c20-`

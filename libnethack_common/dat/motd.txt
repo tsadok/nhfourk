@@ -1,5 +1,5 @@
 # -*- mode:fundamental -*-
-# Last modified by Jonadab the Unsightly One, 2017-Nov-15
+# Last modified by Jonadab the Unsightly One, 2017-Nov-21
 #       Copyright (c) 2014 Alex Smith
 # NetHack may be freely redistributed.  See license for details.
 #
