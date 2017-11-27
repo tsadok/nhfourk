@@ -456,7 +456,8 @@ int
 freehand(void)
 {
     return (!uwep || !welded(uwep) ||
-            (!bimanual(uwep) && (!uarms || !uarms->cursed)));
+            (!(bimanual(uwep) && (URACEDATA)->msize < MZ_HUGE) &&
+             (!uarms || !uarms->cursed)));
 /* if ((uwep && bimanual(uwep)) ||
            (uwep && uarms))
        return 0;

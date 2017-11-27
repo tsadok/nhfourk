@@ -791,7 +791,7 @@ mon_wield_item(struct monst *mon)
                 const char *welded_buf;
                 const char *mon_hand = mbodypart(mon, HAND);
 
-                if (bimanual(mw_tmp))
+                if (bimanual(mw_tmp) && mon->data->msize < MZ_HUGE)
                     mon_hand = makeplural(mon_hand);
                 welded_buf = msgprintf(
                     "%s welded to %s %s", otense(mw_tmp, "are"),

@@ -42,8 +42,10 @@ is_better_armor(const struct monst *mtmp, struct obj *otmp)
     if (is_shirt(otmp) && (mtmp->misc_worn_check & W_MASK(os_arm)))
         return FALSE;
 
-    if (is_shield(otmp) && (mtmp == &youmonst) ? (uwep && bimanual(uwep))
-        : (MON_WEP(mtmp) && bimanual(MON_WEP(mtmp))))
+    if (is_shield(otmp) && ((mtmp == &youmonst) ? (uwep && bimanual(uwep) &&
+                                                   (URACEDATA)->msize < MZ_HUGE)
+                            : (MON_WEP(mtmp) && bimanual(MON_WEP(mtmp)) &&
+                               mtmp->data->msize < MZ_HUGE)))
         return FALSE;
 
     if (is_gloves(otmp) && nohands(mtmp->data))
