@@ -102,7 +102,7 @@ enhancements, should instead be contributed to NetHack 4 directly.  NetHack
 Fourk regularly pulls in changes from NetHack 4, so anything contributed there
 will automatically become a part of NetHack Fourk as well.
 
-Beyond that, the source repository is available on Gitorious.  Anyone can clone
+Beyond that, the source repository is available on github.  Anyone can clone
 this repository and commit additional changes to their own repository.  If you
 have changes that you believe should be merged into NetHack Fourk for testing
 (but are not ready for NetHack 4), contact Jonadab.
@@ -113,7 +113,10 @@ How can I follow/contribute to the programming of NetHack 4?
 
 NetHack 4's development can be followed from its [git repository][3]; active
 development is typically in branch "master".  (That repository also contains
-(often out-of-date) versions of some related variants.)
+(often out-of-date) versions of some related variants.)  There is also a
+public [bug tracker][4], where you can read or report bugs.  The same bug
+tracker is used for NetHack4 itself and for variants, including NetHack
+Fourk and FIQHack.
 
 Sometimes, interim development projects take place on other branches, because
 the "master" branch is expected to be at least somewhat playable.  In
@@ -145,7 +148,8 @@ I'm not a programmer.  Can I still help with NetHack 4?
 You can.  One way any NetHack player can help out is in playtesting; connect
 to the server (following the instructions below) and start playing the most
 recent version.  If you encounter a bug, or if the game tells you that
-something is wrong and asks you to make a bug report, please do contact us.
+something is wrong and asks you to make a bug report, please do contact us,
+or file a bug report in the public [bug tracker][4]
 
 
 What about playing in tournaments?
@@ -718,6 +722,7 @@ References:
 [1]: http://nethack.org
 [2]: http://nethack4.org
 [3]: http://nethack4.org/media/nethack4.git
+[4]: http://roguelikes.live/nh4-bugzilla/
 [5]: http://junethack.de
 [6]: http://www.chiark.greenend.org.uk/~sgtatham/putty/
 [7]: http://www.digip.org/jansson
