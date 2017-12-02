@@ -110,8 +110,10 @@ by its respective author.
 ▒▒▒
 ▒▒▒ * Add program icons for the the level and dungeon compilers.
 ▒▒▒
-▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
-▒▒▒                             wall as a scurrier seems to produce no message at all.
+▒▒▒ * 15:35 < shpingrlde > 4k yani - resting on a bench regains pw too
+▒▒▒
+▒▒▒ * 10:36 < AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
+▒▒▒                            wall as a scurrier seems to produce no message at all.
 ▒▒▒
 ▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
 ▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
