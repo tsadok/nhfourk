@@ -1630,7 +1630,11 @@ donull(const struct nh_cmd_arg *arg)
         IS_BENCH(level->locations[u.ux][u.uy].typ)) {
         u.uhp = u.uhpmax;
         u.uen = u.uenmax;
-        pline_once(msgc_statusheal, "You rest on the bench.");
+        if (Hallucination)
+            exercise(A_STR, TRUE);
+        pline_once(msgc_statusheal,
+                   (Hallucination) ? "Weight training!" :
+                   "You rest on the bench.");
     }
     limited_turns(arg, occ_wait);
     return 1;   /* Do nothing, but let other things happen */
