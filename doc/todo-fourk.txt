@@ -107,8 +107,6 @@
 ▒▒▒
 ▒▒▒ * Add program icons for the the level and dungeon compilers.
 ▒▒▒
-▒▒▒ * 15:35 < shpingrlde > 4k yani - resting on a bench regains pw too
-▒▒▒
 ▒▒▒ * 10:36 < AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                            wall as a scurrier seems to produce no message at all.
 ▒▒▒
@@ -281,6 +279,21 @@
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
+▒▒▒
+▒▒▒ * 12:12 < aosdict > YANI: if this doesn't exist already, add a M2_CLIMB or M3_CLIMB flag for
+▒▒▒                     monsters that are natural climbers (spiders, ants, monkeys).  Such
+▒▒▒                     monsters can do things like get out of pits in one turn.
+▒▒▒   Perhaps such monsters should also be able to enter tree tiles.
+▒▒▒
+▒▒▒ * 14:01 < RLdiscord1 > <@Webmant> "you throw the dagger at the fire elemental" "the dagger shoots back at you, burning with primal flame
+▒▒▒   14:02 < RLdiscord1 > <@Webmant> "The air elemental returns your dagger with a strong gust of wind
+▒▒▒   14:04 < RLdiscord1 > <@Webmant> "The earth elemental adds the primal elements of the dagger to itself and becomes stronger
+▒▒▒   In general, I want to add passive-versus-ranged attacks.
+▒▒▒
+▒▒▒ * 15:46 < jonadab > YANI: werebane provides protection from shape changers when wielded.
+▒▒▒
+▒▒▒ * 12:41 < aosdict > FIQ: YANI/EPI: open doors can generate trapped (possible with my door overhaul).
+▒▒▒                     Once you step off of a trapped open door, it closes and locks.
 ▒▒▒
 ▒▒▒ * Cherry-pick 22fae87 (autounlock)
 ▒▒▒

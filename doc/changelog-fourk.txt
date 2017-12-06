@@ -62,6 +62,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Benches have been improved.  They now instaheal you and also
+   restore your energy, whenever you rest (or sit) on one.
+
  * Potions of oil are slightly more common than before.
 
  * Hezrou can now see through stinking clouds and other obstacles.
