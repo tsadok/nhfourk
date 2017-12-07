@@ -408,7 +408,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll)
             tmp = rnd(4 + (P_SKILL(P_MARTIAL_ARTS) * 2)) +
                 P_SKILL(P_MARTIAL_ARTS);
         else
-            tmp = rnd(2);
+        /* digging claws are sharp! */
+             tmp = rnd(2 + can_dig_without_pick ? 3 : 0);
         valid_weapon_attack = (tmp > 1);
         /* blessed gloves give bonuses when fighting 'bare-handed' */
         if (uarmg && uarmg->blessed && (is_undead(mdat) || is_demon(mdat)))
