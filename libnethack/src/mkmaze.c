@@ -399,18 +399,6 @@ expandmaze(struct level *lev, int xcw, int ycw, int xww, int yww)
     }
 }
 
-/* adjust a coordinate one step in the specified direction */
-#define mz_move(X, Y, dir)                                       \
-    do {                                                         \
-        switch (dir) {                                           \
-        case 0:  --(Y);  break;                                  \
-        case 1:  (X)++;  break;                                  \
-        case 2:  (Y)++;  break;                                  \
-        case 3:  --(X);  break;                                  \
-        default: impossible("mz_move: bad direction %d", dir);   \
-        }                                                        \
-    } while (0)
-
 static boolean
 maze_inbounds(int x, int y)
 {
@@ -434,13 +422,13 @@ maze_remove_deadends(struct level *lev, schar typ)
                     int dy = y;
                     int dx2 = x;
                     int dy2 = y;
-                    mz_move(dx,dy, dir);
+                    move(&dx,&dy, dir);
                     if (!maze_inbounds(dx,dy)) {
                         idx2++;
                         continue;
                     }
-                    mz_move(dx2,dy2, dir);
-                    mz_move(dx2,dy2, dir);
+                    move(&dx2,&dy2, dir);
+                    move(&dx2,&dy2, dir);
                     if (!maze_inbounds(dx2,dy2)) {
                         idx2++;
                         continue;
@@ -455,7 +443,7 @@ maze_remove_deadends(struct level *lev, schar typ)
                     dir = dirok[rn2(idx)];
                     int dx = x;
                     int dy = y;
-                    mz_move(dx,dy, dir);
+                    move(&dx,&dy, dir);
                     lev->locations[dx][dy].typ = typ;
                 }
             }
@@ -739,7 +727,7 @@ move(int *x, int *y, int dir)
         --(*x);
         break;
     default:
-        panic("move: bad direction");
+        impossible("move: bad direction");
     }
 }
 
