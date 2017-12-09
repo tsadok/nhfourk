@@ -33,6 +33,7 @@
 # description. Therefore, unidentified descriptions should be written standalone, and
 # identified descriptions to follow on from their unidentified counterparts.
 
+~agate ring
 agate
 	This is one of the least valuable sorts of gemstone, and is not hard enough to
 	be able to make scratches in rock.
@@ -252,6 +253,7 @@ boulder
 	looks very unlikely that a normal-sized person could lift it, or even climb
 	over or around it. Most likely, you'll just have to settle for pushing it out
 	of your way, or squeezing past it.
+~*longbow of diana
 bow
 	A piece of string with both ends connected to a curved piece of wood; wielding
 	a bow allows arrows to be fired rather than thrown. Bashing monsters with a
@@ -2274,6 +2276,7 @@ tripe ration
 	most other intelligent races find this disgusting, being able to eat them but
 	with lots of bad side effects, dogs consider this one of the best treats
 	available.
+~*muramasa
 tsurugi
 	This one shows signs of having been more heavily enchanted in the past.
 turquoise spellbook
@@ -2522,6 +2525,145 @@ yumi
 zinc wand
 	A plain cylinder of zinc, that can be zapped to release a magical effect,
 	although only a limited number of times.
+
+# Artifacts
+big stick
+	Big stick, good to hit things with.  Wham wham wham.
+cleaver
+	A great artifact battle axe.  It prefers to be wielded by a
+	true barbarian.
+demonbane
+	An artifact long sword.
+dragonbane
+	An artifact lance, perhaps best wielded by a knight.  It will
+	not break when jousting.
+excalibur
+	The great artifact long sword Excalibur is ideal for a knight
+	who is on a quest to find things, since it is said to improve
+	the wielder's keenness when seeking and searching.
+eye of the aethiopica
+	This is a powerful amulet of ESP.  In addition to its standard
+	powers, it regenerates the energy of anyone who carries
+	it, allowing them to cast spells more often.  It also reduces
+	any spell damage to the person who carries it by half, and
+	protects from magic missiles.  Finally, when invoked it has
+	the power to instantly open a portal to any other area of the
+	dungeon, allowing its invoker to travel quickly between
+	areas.
+eyes of the overworld
+	This obscure artifact pushes the wearer's visual senses into
+	the aetheric realm.  Usually there is nothing supernatural to
+	be seen; however, the wearer is also able to look down upon
+	the mortal realm and see the area around himself, bypassing
+	any physical obstacles to vision.
+f* brand
+	Legend speaks of a pair of magical swords with elemental
+	powers, one bound to fire, the other to frost.
+giantslayer
+	What makes this long blade so effective for killing giants?
+grayswandir
+	Being crafted from silver, this great sabre is a mighty weapon
+	indeed for facing creatures sensitive to that fine metal; but
+	even against mortal foes, it is still a powerful weapon.
+grimtooth
+	A unique dagger of orcish make, this blade is somehow permanently
+	infused with a deadly poison.  It is particularly deadly to elves.
+heart of ahriman
+	This lucky stone is said to have the ability to neutralize curses.
+longbow of diana
+	The legendary bow once carried by the goddess of the hunt herself.
+	It is said that it never runs out of arrows.
+magic mirror of merlin
+	Philosophers have long debated the source of the great wizard
+	Merlin's power.  Many have supposed that it was innate, or that
+	he was born out of time, or achieved great learning through much
+	study of arcane lore.  The enchanted mirror that was the true
+	source of his power is one of the better kept secrets of magic.
+magicbane
+	This legendary ceremonial dagger has many different enchantments
+	forged into it.
+master key of thievery
+	A true master thief must be able to bypass not only physical
+	locks, but magical protections as well, for sometimes it is
+	necessary to steal from wizards, and they are known to enchant
+	their storage chests and the doors to their secret rooms with
+	traps and snares that would be the undoing of an ordinary thief
+	with only mundane lockpicks, dexterity, and wit.
+mjollnir
+	A mighty war hammer that visit lightning upon the wielder's
+	foes.  It can be thrown, and will usually return to the hand
+	that threw it.
+*orb of detection
+	This Orb is a crystal ball of exceptional powers.  When
+	carried, it grants ESP, limits damage done by spells, and
+	protects the carrier from magic missiles.  When invoked it
+	allows the carrier to become invisible.
+*orb of fate
+	Some say that Odin himself created this ancient crystal ball,
+	although others argue that Loki created it and forged Odin's
+	signature on the bottom.  In any case, it is a powerful
+	artifact.  Anyone who carries it is granted the gift of
+	warning, and damage, both spell and physical, is partially
+	absorbed by the orb itself.  When invoked it has the power
+	to teleport the invoker between levels.
+orcrist
+	A legendary blade of elvish make, particularly deadly to orcs.
+platinum yendorian express card
+	This is an ancient artifact made of an unknown material.  It
+	is rectangular in shape, very thin, and inscribed with
+	unreadable ancient runes.  When carried, it grants the one
+	who carries it ESP, and reduces all spell induced damage done to
+	the carrier by half.  It also protects from magic missile
+	attacks.  Finally, its power is such that when invoked, it
+	can charge other objects.
+quickpick
+	An enchanted pick-axe with the power to dig through solid rock
+	more quickly than would otherwise be possible.
+*sceptre of might
+	Created aeons ago in some unknown forge, this legendary mace
+	protects the wielder from magic missiles, in addition to
+	damaging his foes.  When invoked, it provides magical energy.
+snickersnee
+	This mighty sword has been carried by so many legendary samurai
+	over the centuries, that it is difficult to say who wielded it most
+	famously.  It is said to have been forged by Amaterasu herself, but
+	that may be only a legend.
+*staff of aesculapius
+	This staff is considered sacred to all healers, as it truly
+	holds the powers of life and death.  When wielded, it
+	protects its user from all life draining attacks, and
+	additionally gives the wielder the power of regeneration.
+	When invoked it performs healing magic.
+sting
+	A dagger of elvish make, useful against orcs.
+stormbringer
+	This mighty blade is a double-edged sword, both literally and
+	also figuratively.  Aracane runes running the length of the blade
+	cause it to drain the very life from your foes; but the very runes
+	that give the swords its power also cause others to fear and hate
+	and attack the wielder, even if they would normally be at peace.
+trollsbane
+	Magically imbued by its creator with the light of the sun itself,
+	this weapon gives off a glow that is normally just enough to light
+	the area around the wielder; but when facing a troll, it reveals
+	its full glory, and lo, the light of the noonday sun streaming
+	forth from the weapon will turn	the enemy to stone, for such is
+	the nature of trolls.
+*tsurugi of muramasa
+	This most ancient of swords has been passed down through the
+	leadership of the Samurai legions for hundreds of years.  It
+	is said to grant luck to its wielder, but its main power is
+	terrible to behold.  It has the capability to cut in half any
+	creature it is wielded against, instantly killing them.
+valerian
+	The blade of this dagger smells sickly sweet, like a perfume;
+	but beware, inhaling its scent too deeply may cause drowsiness.
+vorpal blade
+	This overzealous sword occasionally beheads its foes.
+werebane
+	Crafted from finest silver, this blade is particularly effective
+	against such supernatural creatures as are sensitive to that metal,
+	such as those lycanthropically bound to the jackal or the wolf.
 
 # a - S_ANT - insects
 giant ant
@@ -2934,6 +3076,8 @@ archon
 	the archon has the ability to summon other powerful creatures.
 
 # B - birds and bats
+~*combat
+~*wombat
 bat
 giant bat
 	These nocturnal winged animals fly erratically.
