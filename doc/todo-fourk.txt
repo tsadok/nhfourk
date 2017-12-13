@@ -122,6 +122,11 @@
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
 ▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
+▒▒▒ * Rather than nerf longswords, it's tempting to buff all the other
+▒▒▒   weapons.  Long swords are d8/d12, ok, so make broadsword
+▒▒▒   2d4/d9+1, scimitar and saber d8/d10, morning star 2d4/d8+1,
+▒▒▒   flail d6+1/3d3, mace d6+1/2d4, etc.
+▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
