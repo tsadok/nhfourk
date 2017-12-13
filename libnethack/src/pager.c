@@ -333,12 +333,8 @@ describe_mon(int x, int y, int monnum, char *buf)
                 mtmp, (mtmp->mtame && accurate) ? "tame" :
                 (mtmp->mpeaceful && accurate) ? "peaceful" : NULL,
                 ARTICLE_A);
-            /*
-            if (mtmp->mtame)
-                name = msgprintf("%s:%d:%s", name, mtmp->mtame,
-                                 mx_edog(mtmp) ? "dog" : mx_epri(mtmp) ? "minion" :
-                                 "???");
-            */
+            if (mtmp->mtame && wizard)
+                name = msgprintf("%s (tame:%d)", name, mtmp->mtame);
         }
 
         spotted = canspotmon(mtmp);
