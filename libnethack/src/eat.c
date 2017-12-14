@@ -15,7 +15,7 @@ static void nutrition_calculations(struct obj *, unsigned *,
                                    unsigned *, unsigned *);
 static void touchfood(void);
 static void done_eating(boolean);
-static void cprefx(int);
+static void cprefx(int, boolean);
 static int intrinsic_possible(int, const struct permonst *);
 static void givit(int, const struct permonst *ptr, int);
 static void cpostfx(int);
@@ -384,9 +384,10 @@ maybe_cannibal(int pm, boolean allowmsg)
 }
 
 static void
-cprefx(int pm)
+cprefx(int pm, boolean resumed)
 {
-    maybe_cannibal(pm, TRUE);
+    if (!resumed)
+        maybe_cannibal(pm, TRUE);
     /* Note: can't use touched_monster here, Medusa acts differently on touching
        and eating */
     if (flesh_petrifies(&mons[pm])) {
@@ -1018,7 +1019,7 @@ eat_tin_one_turn(void)
             break_conduct(conduct_vegetarian);
 
         u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
-        cprefx(mnum);
+        cprefx(mnum, FALSE);
         /* We call action_completed() here directly, so that the action is not
          * interruped if the player becomes helpless due to cpostfx. */
         action_completed();
@@ -1309,7 +1310,7 @@ eatcorpse(void)
     }
 
     if (!retcode)
-        cprefx(mnum);
+        cprefx(mnum, FALSE);
 
     return retcode;
 }
@@ -2000,10 +2001,8 @@ doeat(const struct nh_cmd_arg *arg)
         if (turnstate.continue_message)
             pline(msgc_occstart, "You resume your meal.");
 
-        /* 3.4.3 indirectly has a cprefx check here, but it doesn't make sense
-           that the number of cannibalism penalties you get depends on how many
-           times you get interrupted. TODO: We still want to check some things,
-           like stoning. Probably cprefx needs an argument. */
+        if (otmp->otyp == CORPSE)
+            cprefx(otmp->corpsenm, TRUE);
     } else if (otmp->otyp == TIN) {
         /* special case */
         if (otmp != u.utracked[tos_tin] && !start_tin(otmp))
