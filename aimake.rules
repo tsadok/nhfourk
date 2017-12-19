@@ -442,7 +442,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         _merge_tilesets => {
             object => qr=^path:tilesets/dat/catalogues/.*\.txt$=s,
             command => ["bpath:tilesets/util/tilecompile.c/tilecompile$exeext",
-                        "optstring:-W", "optstring:-t nh4ct"],
+                        "optstring:-W", "optstring:-t nh4ct", "optstring:-k"],
             output_from_optpath => '-o ',
             verb => 'merged',
         },
