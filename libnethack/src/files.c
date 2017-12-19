@@ -5,7 +5,7 @@
 
 #if defined(AIMAKE_BUILDOS_MSWin32)
 # define WIN32_LEAN_AND_MEAN
-# include <Windows.h> /* must be before compilers.h */
+# include <windows.h> /* must be before compilers.h */
 
 # if !defined(S_IRUSR)
 #  define S_IRUSR _S_IREAD

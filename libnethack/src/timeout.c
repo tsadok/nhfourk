@@ -372,7 +372,7 @@ nh_timeout(void)
                     /* The more you are carrying the more likely you are to
                        make noise when you fumble.  Adjustments to this number
                        must be thoroughly play tested. */
-                    if ((inv_weight() > -500)) {
+                    if ((inv_weight_over_cap() > -500)) {
                         pline(msgc_levelwarning, "You make a lot of noise!");
                         wake_nearby(FALSE);
                     }

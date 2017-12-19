@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Alex Smith, 2017-05-15 */
 /* Copyright (c) Daniel Thaler, 2011.                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -495,9 +495,11 @@ rungame(nh_bool net)
             curses_raw_print("Could not create the logfile.");
             goto cleanup;
         }
+        /*
 #ifdef DEBUG_GAME_CREATION
         curses_raw_print(filename);
 #endif
+        */
     }
 
     create_game_windows();
@@ -511,34 +513,27 @@ rungame(nh_bool net)
     /* Create the game, then immediately load it. */
     ret = ERR_CREATE_FAILED;
 #ifdef NETCLIENT
-    if (net) {
-        fd = nhnet_create_game(new_opts);
-#ifdef DEBUG_GAME_CREATION
-        curses_raw_print("Aleph");
-#endif
-        if (fd >= 0)
-            ret = playgame(fd, FM_PLAY);
-#ifdef DEBUG_GAME_CREATION
-        else
-            curses_raw_print("Beth");
-#endif /* DEBUG_GAME_CREATION */
-    } else {
+    /*
 #ifdef DEBUG_GAME_CREATION
         curses_raw_print("Gimmel");
 #endif
-        if (nh_create_game(fd, new_opts) == NHCREATE_OK)
-            ret = playgame(fd, FM_PLAY);
+    */
+    if (nh_create_game(fd, new_opts) == NHCREATE_OK) {
+        ret = playgame(fd, FM_PLAY);
+        /*
 #ifdef DEBUG_GAME_CREATION
         else
             curses_raw_print("Daleth");
 #endif
-    }
+        */
+
 #else /* (not NETCLIENT) */
-    if (nh_create_game(fd, new_opts) == NHCREATE_OK)
+    if (nh_create_game(fd, new_opts) == NHCREATE_OK) {
         ret = playgame(fd, FM_PLAY);
 #endif /* NETCLIENT */
 
-    close(fd);
+        close(fd);
+    }
 
     destroy_game_windows();
     discard_message_history(0);

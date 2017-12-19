@@ -924,7 +924,7 @@ get_stealth(struct monst *mon)
         }
     }
     if (player) {
-        int iwt = inv_weight();
+        int iwt = inv_weight_total();
         switch (calc_capacity(equipweight)) {
             /* Calling calc_capacity in this way, with equipweight, basically
                causes equipped items such as armor and weapons to count double,

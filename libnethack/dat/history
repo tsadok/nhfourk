@@ -1,5 +1,5 @@
 NetHack Fourk History file for release 4.3.0.5
-This file was last updated by Jonadab, 2016-07-16
+This file was last updated by Alex Smith, 2017-09-01
 
 Behold, mortal, the origins of NetHack...
 
@@ -274,6 +274,10 @@ The NetHack 4 distribution also contains contributions from:
     Edoardo Spadolini         Nathan Eady               Tim Visher
     Eric S. Raymond           Nephi                     Trevor Cook
     Fredrik Ljungdahl         Pasi Kallinnen            Tung Nguyen
+    GreyKnight                Patric Müller             Vincent Ho
+    Grunt                     Paul Pliska               Wan-ichi
+    Haruko Numata             Paula Breton              Zmy
+    Hojita Discordia          quuxplusone               Zsbán Ambrus
     GreyKnight                Patric Müller             Wan-ichi
     Grunt                     Paul Pliska               Zmy
     Haruko Numata             Paula Breton              Zsbán Ambrus
@@ -281,8 +285,12 @@ The NetHack 4 distribution also contains contributions from:
     
 NetHack Fourk also contains contributions from:
 
-    The Mighty Khor           Chris Plus Alphanumeric Gibberish
-    hackedhead                Leon Arnott
-    Robert M. Cook            Maya "GoldenIvy"
-    Chris Lockfort            Karadoc
-    yrmvgh                    Vincent Ho
+    Chris Plus Alphanumeric Gibberish
+    Leon Arnott
+    Robert M. Cook
+    Maya "GoldenIvy"
+    hackedhead
+    Karadoc
+    The Mighty Khor
+    Chris Lockfort
+    yrmvgh
