@@ -16,8 +16,9 @@ my @skipfilere = (# Any filename matching this regular expression pattern will b
                   qr/\b(COPYING|LICENSE|README.prebuilt|license|gpl)$/,
                  );
 
-# Test:
-processfile(".");
+my @file = @ARGV;
+push @file, "." if not @file;
+processfile($_) for @file;
 
 sub updateline {
   my ($oline, $filename, $oldname, $olddate) = @_;

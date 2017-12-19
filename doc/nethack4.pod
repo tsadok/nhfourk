@@ -114,10 +114,7 @@ L<http://nethack4.org>
 
 Numerous.  If you find a bug, please do report it.  Usually the
 fastest way to get a response is on IRC (#nethack4 on freenode).
-You can also email the developers.
-
-Currently there is no public bug tracker.  We had one, but it had to
-be taken down for technical reasons.  We would like to replace it but
-have not worked out the details yet.
+You can also email the developers.  See also the public bug
+tracker at L<http://roguelikes.live/nh4-bugzilla/>.
 
 =cut

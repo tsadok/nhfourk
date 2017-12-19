@@ -1640,9 +1640,15 @@ revive_mon(void *arg, long timeout)
 int
 donull(const struct nh_cmd_arg *arg)
 {
-    if ((u.uhp < u.uhpmax) && IS_BENCH(level->locations[u.ux][u.uy].typ)) {
-        u.uhp++;
-        pline_once(msgc_statusheal, "You rest on the bench.");
+    if ((u.uhp < u.uhpmax || u.uen < u.uenmax) &&
+        IS_BENCH(level->locations[u.ux][u.uy].typ)) {
+        u.uhp = u.uhpmax;
+        u.uen = u.uenmax;
+        if (Hallucination)
+            exercise(A_STR, TRUE);
+        pline_once(msgc_statusheal,
+                   (Hallucination) ? "Weight training!" :
+                   "You rest on the bench.");
     }
     limited_turns(arg, occ_wait);
     return 1;   /* Do nothing, but let other things happen */

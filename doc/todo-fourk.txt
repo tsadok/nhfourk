@@ -107,8 +107,8 @@
 ▒▒▒
 ▒▒▒ * Add program icons for the the level and dungeon compilers.
 ▒▒▒
-▒▒▒ * 10:36 <  AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
-▒▒▒                             wall as a scurrier seems to produce no message at all.
+▒▒▒ * 10:36 < AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
+▒▒▒                            wall as a scurrier seems to produce no message at all.
 ▒▒▒
 ▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
 ▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
@@ -122,13 +122,15 @@
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
 ▒▒▒   This is the thing that shows you your carry cap and total # of inventory slots in the sidebar.
 ▒▒▒
+▒▒▒ * Rather than nerf longswords, it's tempting to buff all the other
+▒▒▒   weapons.  Long swords are d8/d12, ok, so make broadsword
+▒▒▒   2d4/d9+1, scimitar and saber d8/d10, morning star 2d4/d8+1,
+▒▒▒   flail d6+1/3d3, mace d6+1/2d4, etc.
+▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
-▒▒▒ * Didn't 3.6 add a feature where mazes sometimes get walls removed to form loops?
-▒▒▒   Consider cherry-picking that.
-▒▒▒
-▒▒▒ * Fix mazewalk so the same map-relative coordinates work regardless of the values
+▒▒▒ * Fix mazewalk (walkfrom) so the same map-relative coordinates work regardless of the values
 ▒▒▒   of ROWNO and COLNO.  Fix the two Castles that were cherry-picked via BingeHack4,
 ▒▒▒   and re-enable them.
 ▒▒▒
@@ -244,7 +246,12 @@
 ▒▒▒
 ▒▒▒ * Make mvm and uvm poison instandeath work like mvp poison instadeath.
 ▒▒▒
-▒▒▒ * Give scurriers a movement point rebate when moving onto a tree tile.
+▒▒▒ * Rebalance the formula for when you can squeeze past or not.
+▒▒▒
+▒▒▒ * Allow elves to squeeze past trees, regardless of what they're carrying.
+▒▒▒
+▒▒▒ * Allow scurriers to outright move _onto_ a tree tile, and give them a movement
+▒▒▒   point discount/rebate (maybe NORMAL_SPEED * 2 / 3) when they do so.
 ▒▒▒
 ▒▒▒ * Perhaps randomly-generated spellbooks should be biased toward low
 ▒▒▒   spell levels if generated on a low dungeon level.
@@ -277,6 +284,21 @@
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
+▒▒▒
+▒▒▒ * 12:12 < aosdict > YANI: if this doesn't exist already, add a M2_CLIMB or M3_CLIMB flag for
+▒▒▒                     monsters that are natural climbers (spiders, ants, monkeys).  Such
+▒▒▒                     monsters can do things like get out of pits in one turn.
+▒▒▒   Perhaps such monsters should also be able to enter tree tiles.
+▒▒▒
+▒▒▒ * 14:01 < RLdiscord1 > <@Webmant> "you throw the dagger at the fire elemental" "the dagger shoots back at you, burning with primal flame
+▒▒▒   14:02 < RLdiscord1 > <@Webmant> "The air elemental returns your dagger with a strong gust of wind
+▒▒▒   14:04 < RLdiscord1 > <@Webmant> "The earth elemental adds the primal elements of the dagger to itself and becomes stronger
+▒▒▒   In general, I want to add passive-versus-ranged attacks.
+▒▒▒
+▒▒▒ * 15:46 < jonadab > YANI: werebane provides protection from shape changers when wielded.
+▒▒▒
+▒▒▒ * 12:41 < aosdict > FIQ: YANI/EPI: open doors can generate trapped (possible with my door overhaul).
+▒▒▒                     Once you step off of a trapped open door, it closes and locks.
 ▒▒▒
 ▒▒▒ * Cherry-pick 22fae87 (autounlock)
 ▒▒▒

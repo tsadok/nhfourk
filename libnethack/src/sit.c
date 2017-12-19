@@ -174,9 +174,14 @@ dosit(const struct nh_cmd_arg *arg)
 
         pline(msgc_yafm, sit_message, "drawbridge");
 
-    } else if (IS_BENCH(typ) && (u.uhp < u.uhpmax)) {
-        u.uhp++;
+    } else if (IS_BENCH(typ) && ((u.uhp < u.uhpmax) ||
+                                 (u.uen < u.uenmax))) {
+        u.uhp = u.uhpmax;
+        u.uen = u.uenmax;
+        if (Hallucination)
+            exercise(A_STR, TRUE);
         pline_once(msgc_statusheal,
+                   (Hallucination) ? "Weight training!" :
                    "You sit on the bench and rest for a moment.");
     } else if (IS_THRONE(typ)) {
         int vanishnum = 3;

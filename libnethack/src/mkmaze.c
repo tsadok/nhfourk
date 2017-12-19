@@ -15,6 +15,8 @@ static boolean okay(struct level *lev, int x, int y, int dir, int maxx, int maxy
 static void maze0xy(coord *, int maxx, int maxy, enum rng);
 static boolean put_lregion_here(struct level *lev, xchar, xchar, xchar, xchar,
                                 xchar, xchar, xchar, int, d_level *);
+static boolean maze_inbounds(int x, int y);
+static void maze_remove_deadends(struct level *lev, schar typ);
 static void move(int *, int *, int);
 static boolean bad_location(struct level *lev, xchar x, xchar y, xchar lx,
                             xchar ly, xchar hx, xchar hy);
@@ -397,6 +399,58 @@ expandmaze(struct level *lev, int xcw, int ycw, int xww, int yww)
     }
 }
 
+static boolean
+maze_inbounds(int x, int y)
+{
+    return (x >= 2 && y >= 2
+            && x < x_maze_max && y < y_maze_max && isok(x,y));
+}
+
+static void
+maze_remove_deadends(struct level *lev, schar typ)
+{
+    int x, y, dir;
+    for (x = 2; x < x_maze_max; x++) {
+        for (y = 2; y < y_maze_max; y++) {
+            if (ACCESSIBLE(lev->locations[x][y].typ) &&
+                (x % 2) && (y % 2)) {
+                char dirok[4];
+                int idx = 0;
+                int idx2 = 0;
+                for (dir = 0; dir < 4; dir++) {
+                    int dx = x;
+                    int dy = y;
+                    int dx2 = x;
+                    int dy2 = y;
+                    move(&dx,&dy, dir);
+                    if (!maze_inbounds(dx,dy)) {
+                        idx2++;
+                        continue;
+                    }
+                    move(&dx2,&dy2, dir);
+                    move(&dx2,&dy2, dir);
+                    if (!maze_inbounds(dx2,dy2)) {
+                        idx2++;
+                        continue;
+                    }
+                    if (!ACCESSIBLE(lev->locations[dx][dy].typ)
+                        && ACCESSIBLE(lev->locations[dx2][dy2].typ)) {
+                        dirok[idx++] = dir;
+                        idx2++;
+                    }
+                }
+                if (idx2 >= 3 && idx > 0) {
+                    dir = dirok[rn2(idx)];
+                    int dx = x;
+                    int dy = y;
+                    move(&dx,&dy, dir);
+                    lev->locations[dx][dy].typ = typ;
+                }
+            }
+        }
+    }
+}
+
 void
 makemaz(struct level *lev, const char *s, int *smeq)
 {
@@ -536,6 +590,9 @@ makemaz(struct level *lev, const char *s, int *smeq)
             walkfrom(lev, mm.x, mm.y, maxx * 2, maxy * 2);
     }
 
+    if (!rn2_on_rng(5, rng_for_level(&lev->z)))
+        maze_remove_deadends(lev, ROOM);
+
     /* And once the maze is designed, we expand it into place: */
     expandmaze(lev, xcorrwidth, ycorrwidth, xwallwidth, ywallwidth);
 
@@ -670,7 +727,7 @@ move(int *x, int *y, int dir)
         --(*x);
         break;
     default:
-        panic("move: bad direction");
+        impossible("move: bad direction");
     }
 }
 
