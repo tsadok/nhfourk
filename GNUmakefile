@@ -1,6 +1,6 @@
 GAME = nethack4
 DESTDIR =
-BINDIR = $(HOME)/nethack4dir
+BINDIR = $(HOME)/fiqfourkdir
 DATADIR = $(BINDIR)/data
 STATEDIR = $(BINDIR)/save
 
