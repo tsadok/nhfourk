@@ -189,7 +189,7 @@ static const struct artifact const_artilist[] = {
  *                        (From Sir W.S. Gilbert's "The Mikado")
  */
     A("Snickersnee", KATANA,
-      SPFX_RESTR, 0, 0,
+      (SPFX_RESTR | SPFX_FREEA), 0, 0,
       PHYS(0, 8), NO_DFNS, NO_CARY, 0, A_LAWFUL, PM_SAMURAI, NON_PM, 1200L),
 
 /*

@@ -93,6 +93,13 @@
 ▒▒▒                      back on though
 ▒▒▒   At this time, I cannot reproduce this issue, even when the shield is cursed.
 ▒▒▒
+▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
+▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
+▒▒▒   23:27 < FIQ > and play a lawful male human monk
+▒▒▒   23:27 < FIQ > load game will crash FIQHack and presumably  other NH4 variants
+▒▒▒   23:27 < FIQ > but not always
+▒▒▒   http://sprunge.us/XhXe
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -110,13 +117,6 @@
 ▒▒▒ * 10:36 < AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                            wall as a scurrier seems to produce no message at all.
 ▒▒▒
-▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
-▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
-▒▒▒   23:27 < FIQ > and play a lawful male human monk
-▒▒▒   23:27 < FIQ > load game will crash FIQHack and presumably  other NH4 variants
-▒▒▒   23:27 < FIQ > but not always
-▒▒▒   http://sprunge.us/XhXe
-▒▒▒
 ▒▒▒ * Look at FIQ's multiturn movement fix:  [reverted: 98a9db1], 6a5dcba, 6648540
 ▒▒▒
 ▒▒▒ * 19:12 < FIQ > jonadab: 73e8721caf89aa966cdf03af258dde5374f33598 might interest you
@@ -127,6 +127,9 @@
 ▒▒▒   2d4/d9+1, scimitar and saber d8/d10, morning star 2d4/d8+1,
 ▒▒▒   flail d6+1/3d3, mace d6+1/2d4, etc.
 ▒▒▒
+▒▒▒ * In challenge mode, turn item destruction up to eleven, complete with rust and
+▒▒▒   corrosion destroying thoroughly rusted/corroded (non-unique) items completely.
+▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
@@ -136,8 +139,6 @@
 ▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
-▒▒▒
-▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
 ▒▒▒
 ▒▒▒ * Look at and consider FIQ's autoswap feature, 719b864d5f
 ▒▒▒

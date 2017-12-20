@@ -497,6 +497,7 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         (spfx & SPFX_HALRES  && extrinsic == HALLUC_RES) ||
         (spfx & SPFX_REFLECT && extrinsic == REFLECTING) ||
         (spfx & SPFX_STRM    && extrinsic == STORMPRONE) ||
+        (spfx & SPFX_FREEA   && extrinsic == FREE_ACTION) ||
         (spfx & SPFX_XRAY    && extrinsic == XRAY_VISION))
         return mask;
 

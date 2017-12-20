@@ -693,7 +693,7 @@ spoilartalign(struct artifact *art)
 static const char *
 spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
+    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
                      ((spfx & SPFX_SEEK) ?
                       /* TODO: currently, the code checks SPFX_SEARCH for both
                          auto-searching and the +n search bonus and never
@@ -735,6 +735,8 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
                       "<span class=\"spfx spfxreflect\">reflect</span> " : ""),
                      ((spfx & SPFX_STRM) ?
                       "<span class=\"spfx spfxstrm\">storm</span>" : ""),
+                     ((spfx & SPFX_FREEA) ?
+                      "<span class=\"spfx spfxfreea\">free act.</span>" : ""),
                      msgprintf("<span class=\"artattk\">%s</span>",
                                /* TODO: handle attk.damn and attk.damd */
                                (attk.adtyp && attk.adtyp == AD_MAGM) ? "MR" :
