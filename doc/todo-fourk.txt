@@ -140,6 +140,11 @@
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
 ▒▒▒
+▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
+▒▒▒
+▒▒▒ * Hallucination should protect against harmful gazes in general and specifically should
+▒▒▒   prevent Medusa's gaze from stoning you.  "You feel, like, totally stoned."
+▒▒▒
 ▒▒▒ * Look at and consider FIQ's autoswap feature, 719b864d5f
 ▒▒▒
 ▒▒▒ * Reduce the weight of mithril armor.
