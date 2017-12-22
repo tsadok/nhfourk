@@ -62,6 +62,10 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * "Permanent" alignment conversion (using a cross-aligned altar)
+   is no longer irreversible:  finding an altar of your original
+   alignment and doing the same thing again can turn you back.
+
  * Virtually any object can now be made impervious to elemental
    erosion and destruction (fire, water, acid, shock, dilution, rust,
    cold, etc.) by wielding it and reading a scroll of enchant weapon
