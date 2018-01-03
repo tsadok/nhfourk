@@ -112,6 +112,13 @@
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
+▒▒▒ * Rebalance magic trap effects so they aren't completely insane
+▒▒▒   on early dungeon levels.
+▒▒▒
+▒▒▒ * 03:22 < nht > an oddity in fourk
+▒▒▒   03:22 < nht > as a scurrier I can dig down while wielding a weapon on dungeon floor
+▒▒▒   03:22 < nht > but not when I'm in a pit
+▒▒▒
 ▒▒▒ * Add program icons for the the level and dungeon compilers.
 ▒▒▒
 ▒▒▒ * 10:36 < AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
@@ -129,6 +136,14 @@
 ▒▒▒
 ▒▒▒ * In challenge mode, turn item destruction up to eleven, complete with rust and
 ▒▒▒   corrosion destroying thoroughly rusted/corroded (non-unique) items completely.
+▒▒▒
+▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
+▒▒▒                     speed 24-26 \n no special abilities other than flight
+▒▒▒   18:50 < jonadab+> FIQ: That is not a bad idea.
+▒▒▒   18:54 <  ais523 > would they be tameable with vegetables?
+▒▒▒   18:54 <     FIQ+> I feel like it should be harder \n but preferably possible without magic
+▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
+▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
 ▒▒▒
 ▒▒▒ * Make the aiscav generator sometimes randomly embed an optional-challenge area (surrounded
 ▒▒▒   by wall surrounded by floor, so guaranteed possible to go around, probably with just one
