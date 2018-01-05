@@ -62,6 +62,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The possible effects of a magic trap are now dependent on
+   the depth at which it is found.
+
  * Gehennom filler levels now sometimes contain an optional
    "challenge area".  These areas are populated by various
    groups of monsters and contain rewards:  large quantities

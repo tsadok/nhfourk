@@ -112,9 +112,6 @@
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
-▒▒▒ * Rebalance magic trap effects so they aren't completely insane
-▒▒▒   on early dungeon levels.
-▒▒▒
 ▒▒▒ * 03:22 < nht > an oddity in fourk
 ▒▒▒   03:22 < nht > as a scurrier I can dig down while wielding a weapon on dungeon floor
 ▒▒▒   03:22 < nht > but not when I'm in a pit

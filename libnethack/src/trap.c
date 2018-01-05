@@ -6,7 +6,7 @@
 #include "hack.h"
 
 static void dofiretrap(struct obj *);
-static void domagictrap(void);
+static void domagictrap(struct trap *trap);
 static boolean emergency_disrobe(boolean *);
 static int untrap_prob(struct trap *ttmp);
 static void move_into_trap(struct trap *);
@@ -1192,17 +1192,7 @@ dotrap(struct trap *trap, unsigned trflags)
 
     case MAGIC_TRAP:   /* A magic trap. */
         seetrap(trap);
-        if (!rn2(30)) {
-            deltrap(level, trap);
-            newsym(u.ux, u.uy); /* update position */
-            pline(msgc_nonmonbad, "You are caught in a magical explosion!");
-            losehp(rnd(10), killer_msg(DIED, "a magical explosion"));
-            pline_implied(msgc_intrgain,
-                          "Your %s absorbs some of the magical energy!",
-                          body_part(BODY));
-            u.uen = (u.uenmax += 2);
-        } else
-            domagictrap();
+        domagictrap(trap);
         steedintrap(trap, NULL);
         break;
 
@@ -2892,17 +2882,23 @@ dofiretrap(struct obj *box)
 }
 
 static void
-domagictrap(void)
+domagictrap(struct trap *trap)
 {
-    int fate = rnd(20);
+    int fate = 21 - rnd(depth(&u.uz));
     struct monst *mtmp;
 
     /* What happened to the poor sucker? */
-
-    if (fate < 10) {
-        /* Most of the time, it creates some monsters. */
+    if (!rn2(30)) {
+        deltrap(level, trap);
+        newsym(u.ux, u.uy); /* update position */
+        pline(msgc_nonmonbad, "You are caught in a magical explosion!");
+        losehp(rnd(10), killer_msg(DIED, "a magical explosion"));
+        pline_implied(msgc_intrgain,
+                      "Your %s absorbs some of the magical energy!",
+                      body_part(BODY));
+        u.uen = (u.uenmax += 2);
+    } else if (fate < 10) {
         int cnt = rnd(4);
-
         if (!resists_blnd(&youmonst)) {
             pline(msgc_statusbad,
                   "You are momentarily blinded by a flash of light!");
@@ -2966,7 +2962,6 @@ domagictrap(void)
             break;
 
             /* very occasionally something nice happens. */
-
         case 19:
             /* tame nearby monsters */
             {
