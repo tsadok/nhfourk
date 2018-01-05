@@ -2962,6 +2962,11 @@ rnd_class(int first, int last, enum rng rng)
 
     if (first == last)
         return first;
+    if (first > last) {
+        impossible("rnd_class: invalid object order (%d > %d)",
+                   first, last);
+        return first;
+    }
     for (i = first; i <= last; i++)
         sum += objects[i].oc_prob;
     if (!sum)   /* all zero */

@@ -111,6 +111,53 @@ mk_mplayer_armor(struct monst *mon, short typ, enum rng rng)
     mpickobj(mon, obj);
 }
 
+/* High-level function used to create player-character monsters for special
+   challenges.  Calls mk_mplayer() and then does additional stuff.  */
+struct monst *
+make_player_monster_at(int pm, struct level *lev, xchar x, xchar y,
+                       boolean dopet, enum rng rng)
+{
+    struct monst *mon = mk_mplayer(&mons[pm], lev, x, y, TRUE, rng);
+    int steedpm[] = { PM_WARHORSE, PM_WARHORSE, PM_WARHORSE, PM_WARHORSE,
+                      PM_JABBERWOCK, PM_GRYPHON, PM_KI_RIN,
+                      PM_BALUCHITHERIUM, PM_TITANOTHERE, PM_MOUNTAIN_CENTAUR,
+                      PM_ANCIENT_BLACK_DRAGON, PM_ANCIENT_YELLOW_DRAGON,
+                      PM_ANCIENT_SILVER_DRAGON, PM_ANCIENT_GRAY_DRAGON };
+    if (dopet) {
+        struct monst *pet;
+        int petpm =
+            (pm == PM_KNIGHT) ? steedpm[rn2_on_rng(SIZE(steedpm), rng)] :
+            !rn2_on_rng(5, rng) ? PM_PURPLE_WORM :
+            !rn2_on_rng(7, rng) ? PM_ARCHON :
+            (pm == PM_SAMURAI) ? PM_LARGE_DOG :
+            (pm == PM_WIZARD) ? PM_LARGE_CAT :
+            rn2_on_rng(2, rng) ? PM_LARGE_DOG : PM_LARGE_CAT;
+        int px = x, py = y;
+        switch(rn2_on_rng(4, rng)) {
+        case 1:
+            px += ((x < COLNO / 2) ? 1 : -1);
+        case 2:
+            px -= ((x < COLNO / 2) ? 1 : -1);
+        case 3:
+            py += ((y < ROWNO / 2) ? 1 : -1);
+        default:
+            py -= ((y < ROWNO / 2) ? 1 : -1);
+        }
+        pet = makemon(&mons[petpm], lev, px, py, MM_ADJACENTOK | MM_ANGRY);
+        if (can_saddle(pet)) {
+            struct obj *saddle = mksobj(lev, SADDLE, TRUE, FALSE, rng);
+            if (saddle) {
+                if (mpickobj(pet, saddle))
+                    panic("merged saddle?");
+                saddle->owornmask = W_MASK(os_saddle);
+                saddle->leashmon = pet->m_id;
+                update_mon_intrinsics(pet, saddle, TRUE, TRUE);
+            }
+        }
+    }
+    return mon;
+}
+
 /* assumes rng is rng_main or rng_for_level(&lev->z) */
 struct monst *
 mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
@@ -125,13 +172,11 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
     if (MON_AT(lev, x, y))
         rloc(m_at(lev, x, y), FALSE, lev);   /* insurance */
 
-    if (!In_endgame(&u.uz))
-        special = FALSE;
-
     if ((mtmp = makemon(ptr, lev, x, y,
                         rng == rng_main ? NO_MM_FLAGS : MM_ALLLEVRNG)) != 0) {
         short weapon = rn2_on_rng(2, rng) ?
             LONG_SWORD : rnd_class(SPEAR, BULLWHIP, rng);
+        short ammo  = DAGGER;
         short armor =
             rnd_class(GRAY_DRAGON_SCALE_MAIL, YELLOW_DRAGON_SCALE_MAIL, rng);
         short cloak = !rn2_on_rng(8, rng) ? STRANGE_OBJECT :
@@ -150,15 +195,19 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
         if (special) {
             get_mplname(mtmp, nam);
             mtmp = christen_monst(mtmp, nam);
-            /* that's why they are "stuck" in the endgame :-) */
-            mongets(mtmp, FAKE_AMULET_OF_YENDOR, rng);
+            if (In_endgame(&lev->z)) {
+                /* This is why they are "stuck" in the endgame :-) */
+                mongets(mtmp, FAKE_AMULET_OF_YENDOR, rng);
+            }
         }
         msethostility(mtmp, TRUE, TRUE);
 
         switch (monsndx(ptr)) {
         case PM_ARCHEOLOGIST:
-            if (rn2_on_rng(2, rng))
+            if (!rn2_on_rng(3, rng))
                 weapon = BULLWHIP;
+            else if (rn2_on_rng(2, rng))
+                weapon = DWARVISH_MATTOCK;
             break;
         case PM_BARBARIAN:
             if (rn2_on_rng(2, rng)) {
@@ -168,7 +217,9 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(2, rng))
                 armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
             if (helm == HELM_OF_BRILLIANCE)
-                helm = STRANGE_OBJECT;
+                helm = HELMET;
+            if (rn2_on_rng(3, rng))
+                ammo = rnd_class(SPEAR, DWARVISH_SPEAR, rng);
             break;
         case PM_CAVEMAN:
         case PM_CAVEWOMAN:
@@ -183,30 +234,37 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(4, rng))
                 weapon = QUARTERSTAFF;
             else if (rn2_on_rng(2, rng))
-                weapon = rn2_on_rng(2, rng) ? UNICORN_HORN : SCALPEL;
+                weapon = rn2_on_rng(2, rng) ? UNICORN_HORN : CRYSKNIFE;
             if (rn2_on_rng(4, rng))
                 helm = rn2_on_rng(2, rng) ?
                     HELM_OF_BRILLIANCE : HELM_OF_TELEPATHY;
             if (rn2_on_rng(2, rng))
                 shield = STRANGE_OBJECT;
+            if (rn2_on_rng(3, rng))
+                ammo = STRANGE_OBJECT;
             break;
         case PM_KNIGHT:
             if (rn2_on_rng(4, rng))
                 weapon = LONG_SWORD;
-            if (rn2_on_rng(2, rng))
+            if (!rn2_on_rng(3, rng))
                 armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+            if (rn2_on_rng(3, rng))
+                ammo = STRANGE_OBJECT;
             break;
         case PM_MONK:
-            weapon = STRANGE_OBJECT;
+            if (rn2_on_rng(3, rng))
+                weapon = STRANGE_OBJECT;
             armor = STRANGE_OBJECT;
             cloak = ROBE;
             if (rn2_on_rng(2, rng))
                 shield = STRANGE_OBJECT;
+            if (rn2_on_rng(3, rng))
+                ammo = SHURIKEN;
             break;
         case PM_PRIEST:
         case PM_PRIESTESS:
             if (rn2_on_rng(2, rng))
-                weapon = MACE;
+                weapon = rn2_on_rng(3, rng) ? MACE : FLAIL;
             if (rn2_on_rng(2, rng))
                 armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
             if (rn2_on_rng(4, rng))
@@ -216,24 +274,41 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                     HELM_OF_BRILLIANCE : HELM_OF_TELEPATHY;
             if (rn2_on_rng(2, rng))
                 shield = STRANGE_OBJECT;
+            if (!rn2_on_rng(4, rng))
+                ammo = rnd_class(SPEAR, DWARVISH_SPEAR, rng);
             break;
         case PM_RANGER:
-            if (rn2_on_rng(2, rng))
+            if (rn2_on_rng(2, rng)) {
+                weapon = ELVEN_BOW;
+                ammo = ELVEN_ARROW;
+            } else if (!rn2_on_rng(3, rng))
                 weapon = ELVEN_DAGGER;
+            else
+                ammo = ELVEN_DAGGER;
             break;
         case PM_ROGUE:
-            if (rn2_on_rng(2, rng))
+            if (rn2_on_rng(3, rng))
+                weapon = DAGGER;
+            else if (rn2_on_rng(2, rng))
                 weapon = SHORT_SWORD;
+            if (rn2_on_rng(3, rng))
+                ammo = ELVEN_DAGGER;
             break;
         case PM_SAMURAI:
             if (rn2_on_rng(2, rng))
                 weapon = KATANA;
+            else if (!rn2_on_rng(3, rng))
+                weapon = TSURUGI;
+            if (rn2_on_rng(3, rng))
+                ammo = SHURIKEN;
+            else
+                ammo = YA;
             break;
         case PM_TOURIST:
-            /* Defaults are just fine */
+            ammo = DART;
             break;
         case PM_VALKYRIE:
-            if (rn2_on_rng(2, rng))
+            if (!rn2_on_rng(3, rng))
                 weapon = WAR_HAMMER;
             if (rn2_on_rng(2, rng))
                 armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
@@ -248,6 +323,12 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             }
             if (rn2_on_rng(4, rng))
                 helm = HELM_OF_BRILLIANCE;
+            if (rn2_on_rng(3, rng))
+                ammo = SPE_MAGIC_MISSILE;
+            else if (!rn2_on_rng(3, rng))
+                ammo = (rn2_on_rng(2, rng)) ? SPE_CONE_OF_COLD : SPE_FIREBALL;
+            else if (!rn2_on_rng(3, rng))
+                ammo = SPE_FINGER_OF_DEATH;
             shield = STRANGE_OBJECT;
             break;
         default:
@@ -270,10 +351,20 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 otmp->spe = 1 + rn2_on_rng(4, rng);
             mpickobj(mtmp, otmp);
         }
+        if (ammo != STRANGE_OBJECT) {
+            otmp = mksobj(level, weapon, TRUE, FALSE, rng);
+            if (otmp->oclass == WEAPON_CLASS) {
+                otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
+                             rn2_on_rng(3, rng));
+                otmp->quan = (5 + rn2_on_rng(5, rng)) *
+                    (1 + rne_on_rng(3, rng));
+            }
+            mpickobj(mtmp, otmp);
+        }
 
         if (special) {
             if (!rn2_on_rng(10, rng))
-                mongets(mtmp, rn2_on_rng(3, rng) ? LUCKSTONE : LOADSTONE, rng);
+                mongets(mtmp, rn2_on_rng(4, rng) ? LUCKSTONE : LOADSTONE, rng);
             mk_mplayer_armor(mtmp, armor, rng);
             mk_mplayer_armor(mtmp, cloak, rng);
             mk_mplayer_armor(mtmp, helm, rng);
@@ -282,7 +373,9 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 mk_mplayer_armor(mtmp, rnd_class(LEATHER_GLOVES,
                                                  GAUNTLETS_OF_DEXTERITY, rng),
                                  rng);
-            if (rn2_on_rng(8, rng))
+            if ((monsndx(ptr) == PM_VALKYRIE) && rn2_on_rng(4, rng))
+                mk_mplayer_armor(mtmp, SPEED_BOOTS, rng);
+            else if (rn2_on_rng(8, rng))
                 mk_mplayer_armor(mtmp, rnd_class(LOW_BOOTS,
                                                  LEVITATION_BOOTS, rng), rng);
             m_dowear(mtmp, TRUE);

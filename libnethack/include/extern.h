@@ -1219,6 +1219,9 @@ extern boolean can_ooze(struct monst *);
 
 /* ### mplayer.c ### */
 
+extern struct monst *make_player_monster_at(int pm, struct level *lev,
+                                            xchar x, xchar y, boolean dopet,
+                                            enum rng rng);
 extern struct monst *mk_mplayer(const struct permonst *ptr, struct level *lev,
                                 xchar x, xchar y, boolean special, enum rng);
 extern void create_mplayers(int, boolean);

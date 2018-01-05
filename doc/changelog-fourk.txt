@@ -62,8 +62,16 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Gehennom filler levels now sometimes contain an optional
+   "challenge area".  These areas are populated by various
+   groups of monsters and contain rewards:  large quantities
+   of consumable goods, a single weapon (which is typically
+   overenchanted) and a single piece of armor (likewise), plus
+   whatever the monsters are carrying.
+
  * The "fake wizard towers" are now embedded in Gehennom-style
-   cavern levels (aiscav), rather than in mazes.
+   cavern levels (aiscav), rather than in mazes.  There can also
+   be more than two of them, in some cases.
 
  * "Permanent" alignment conversion (using a cross-aligned altar)
    is no longer irreversible:  finding an altar of your original

@@ -145,11 +145,6 @@
 ▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
 ▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
 ▒▒▒
-▒▒▒ * Make the aiscav generator sometimes randomly embed an optional-challenge area (surrounded
-▒▒▒   by wall surrounded by floor, so guaranteed possible to go around, probably with just one
-▒▒▒   locked door) filled with strong monsters and meaningful rewards.  Come up with a better
-▒▒▒   name for it than "optional challenge area" or, worse, "greater vault".
-▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
