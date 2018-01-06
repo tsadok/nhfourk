@@ -40,6 +40,7 @@
 # define SPFX_XRAY   0x2000000L /* gives X-RAY vision to player */
 # define SPFX_REFLECT 0x4000000L/* Reflection */
 # define SPFX_STRM   0x8000000L /*  non-hostile things attack you anyway */
+# define SPFX_FREEA 0x10000000L /* free action */
 
 struct artifact {
     const char *name;

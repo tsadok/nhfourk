@@ -143,3 +143,13 @@ particular interest is the ability to make potions of healing more
 potent.  However, this process is not without risk. Some combinations
 of potions can explode, and others can have unreliable results.
 -----
+When the great hero Diodorus sought the forge of Hephaestus, in order
+to remake his father's sword, the path of his journey passed through
+the land of the fire dragons.  Fearing that his father's instructions
+for remaking the sword, being written on a parchment scroll, might be
+burnt up in the flames of a dragon's breath, he held the scroll aloft
+in his hand, pretending that it was his sword, and performed a ritual
+for making a weapon proof against fire and rust.  They say that even
+the god Hephaestus was confused by this gesture, and found himself
+unable or unwilling to burn the scroll thereafter.
+-----

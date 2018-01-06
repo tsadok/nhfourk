@@ -1,12 +1,12 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2017-09-20 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-06 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
 
 static void dofiretrap(struct obj *);
-static void domagictrap(void);
+static void domagictrap(struct trap *trap);
 static boolean emergency_disrobe(boolean *);
 static int untrap_prob(struct trap *ttmp);
 static void move_into_trap(struct trap *);
@@ -1202,17 +1202,7 @@ dotrap(struct trap *trap, unsigned trflags)
 
     case MAGIC_TRAP:   /* A magic trap. */
         seetrap(trap);
-        if (!rn2(30)) {
-            deltrap(level, trap);
-            newsym(u.ux, u.uy); /* update position */
-            pline(msgc_nonmonbad, "You are caught in a magical explosion!");
-            losehp(rnd(10), killer_msg(DIED, "a magical explosion"));
-            pline_implied(msgc_intrgain,
-                          "Your %s absorbs some of the magical energy!",
-                          body_part(BODY));
-            u.uen = (u.uenmax += 2);
-        } else
-            domagictrap();
+        domagictrap(trap);
         steedintrap(trap, NULL);
         break;
 
@@ -2916,15 +2906,22 @@ dofiretrap(struct obj *box)
 }
 
 static void
-domagictrap(void)
+domagictrap(struct trap *trap)
 {
-    int fate = rnd(20);
+    int fate = 21 - rnd(depth(&u.uz));
     struct monst *mtmp;
 
     /* What happened to the poor sucker? */
-
-    if (fate < 10) {
-        /* Most of the time, it creates some monsters. */
+    if (!rn2(30)) {
+        deltrap(level, trap);
+        newsym(u.ux, u.uy); /* update position */
+        pline(msgc_nonmonbad, "You are caught in a magical explosion!");
+        losehp(rnd(10), killer_msg(DIED, "a magical explosion"));
+        pline_implied(msgc_intrgain,
+                      "Your %s absorbs some of the magical energy!",
+                      body_part(BODY));
+        u.uen = (u.uenmax += 2);
+    } else if (fate < 10) {
         int cnt = rnd(4);
 
         /* blindness effects */
@@ -2999,7 +2996,6 @@ domagictrap(void)
             break;
 
             /* very occasionally something nice happens. */
-
         case 19:
             /* tame nearby monsters */
             {
@@ -3246,16 +3242,25 @@ water_damage(struct obj * obj, const char *ostr, boolean force)
     return 0;
 }
 
-void
+/* Returns 0-2 like above for how things are affected. Something being
+   destroyed (returning 3) is treated as 2. */
+int
 water_damage_chain(struct obj *obj, boolean here)
 {
+    int top_res = 0;
+    int res = 0;
     struct obj *otmp;
 
     for (; obj; obj = otmp) {
         otmp = here ? obj->nexthere : obj->nobj;
 
-        water_damage(obj, NULL, FALSE);
+        res = water_damage(obj, NULL, FALSE);
+        top_res = max(top_res, res);
     }
+
+    if (top_res == 3)
+        top_res = 2;
+    return top_res;
 }
 
 /*

@@ -1814,8 +1814,10 @@ dosacrifice(const struct nh_cmd_arg *arg)
             /* Is this a conversion ? */
             /* An unaligned altar in Gehennom will always elicit rejection. */
             if (ugod_is_angry() || (altaralign == A_NONE && Inhell)) {
-                if (u.ualignbase[A_CURRENT] == u.ualignbase[A_ORIGINAL] &&
-                    altaralign != A_NONE) {
+                /* This used to check whether you were still of your original
+                   alignment, and disallow conversion if not, effectively making
+                   conversion one-time-only one-way.  I changed it -- jonadab */
+                if (altaralign != A_NONE) {
                     pline_implied(
                         msgc_alignbad,
                         "You have a strong feeling that %s is angry...",

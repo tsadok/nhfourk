@@ -2327,12 +2327,17 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
         }
         if (canseemon(mtmp) && couldsee(mtmp->mx, mtmp->my) &&
             !Stone_resistance) {
-            pline(msgc_fatal_predone, "You meet %s gaze.",
-                  s_suffix(mon_nam(mtmp)));
-            action_interrupted();
-            instapetrify(killer_msg(
-                             STONING, msgprintf(
-                                 "catching the eye of %s", k_monnam(mtmp))));
+            if (Hallucination) {
+                pline(msgc_playerimmune, "%s, you are so stoned.",
+                      u.ufemale ? "Lady" : "Dude");
+            } else {
+                pline(msgc_fatal_predone, "You meet %s gaze.",
+                      s_suffix(mon_nam(mtmp)));
+                action_interrupted();
+                instapetrify(killer_msg(STONING, msgprintf(
+                                            "catching the eye of %s",
+                                            k_monnam(mtmp))));
+            }
         }
         break;
     case AD_CONF:
@@ -2341,14 +2346,19 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
             int conf = dice(3, 4);
 
             mtmp->mspec_used = mtmp->mspec_used + (conf + rn2(6));
-            if (!Confusion)
-                pline(msgc_statusbad, "%s gaze confuses you!",
-                      s_suffix(Monnam(mtmp)));
-            else
-                pline(msgc_statusbad,
-                      "You are getting more and more confused.");
-            make_confused(HConfusion + conf, FALSE);
-            action_interrupted();
+            if (Hallucination) {
+                pline(msgc_playerimmune,
+                      "Fuzzy Wuzzy was a bear.  Fuzzy Wuzzy had no hair.");
+            } else {
+                if (!Confusion)
+                    pline(msgc_statusbad, "%s gaze confuses you!",
+                          s_suffix(Monnam(mtmp)));
+                else
+                    pline(msgc_statusbad,
+                          "You are getting more and more confused.");
+                make_confused(HConfusion + conf, FALSE);
+                action_interrupted();
+            }
         }
         break;
     case AD_STUN:
@@ -2357,9 +2367,15 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
             int stun = dice(2, 6);
 
             mtmp->mspec_used = mtmp->mspec_used + (stun + rn2(6));
-            pline(msgc_statusbad, "%s stares piercingly at you!", Monnam(mtmp));
-            make_stunned(HStun + stun, TRUE);
-            action_interrupted();
+            if (Hallucination) {
+                pline(msgc_playerimmune,
+                      "%s looks stunningly colorful.", Monnam(mtmp));
+            } else {
+                pline(msgc_statusbad, "%s stares piercingly at you!",
+                      Monnam(mtmp));
+                make_stunned(HStun + stun, TRUE);
+                action_interrupted();
+            }
         }
         break;
     case AD_BLND:
@@ -2367,16 +2383,21 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
             && distu(mtmp->mx, mtmp->my) <= BOLT_LIM * BOLT_LIM) {
             int blnd = dice((int)mattk->damn, (int)mattk->damd);
 
-            pline(msgc_statusbad, "You are blinded by %s radiance!",
-                  s_suffix(mon_nam(mtmp)));
-            make_blinded((long)blnd, FALSE);
-            action_interrupted();
-            /* not blind at this point implies you're wearing the Eyes of the
-               Overworld; make them block this particular stun attack too */
-            if (!Blind)
-                pline(msgc_statusheal, "Your vision quickly clears.");
-            else
-                make_stunned((long)dice(1, 3), TRUE);
+            if (Hallucination) {
+                pline(msgc_playerimmune,
+                      "%s is totally radiant!", Monnam(mtmp));
+            } else {
+                pline(msgc_statusbad, "You are blinded by %s radiance!",
+                      s_suffix(mon_nam(mtmp)));
+                make_blinded((long)blnd, FALSE);
+                action_interrupted();
+                /* not blind at this point implies you're wearing the Eyes; make
+                   them block this particular stun attack too */
+                if (!Blind)
+                    pline(msgc_statusheal, "Your vision quickly clears.");
+                else
+                    make_stunned((long)dice(1, 3), TRUE);
+            }
         }
         break;
     case AD_FIRE:
@@ -2384,47 +2405,34 @@ gazemu(struct monst *mtmp, const struct attack *mattk)
             mtmp->mcansee && !mtmp->mspec_used && rn2(5)) {
             int dmg = dice(2, 6);
 
-            if (Fire_resistance) {
-                pline(combat_msgc(mtmp, &youmonst, cr_immune),
-                      "%s glares at you, but you fail to catch fire.",
-                      Monnam(mtmp));
-                dmg = 0;
-            } else
-                pline(combat_msgc(mtmp, &youmonst, cr_hit),
-                      "%s attacks you with a fiery gaze!", Monnam(mtmp));
-            action_interrupted();
-            burn_away_slime();
-            if ((int)mtmp->m_lev > rn2(20))
-                destroy_item(SCROLL_CLASS, AD_FIRE);
-            if ((int)mtmp->m_lev > rn2(20))
-                destroy_item(POTION_CLASS, AD_FIRE);
-            if ((int)mtmp->m_lev > rn2(25))
-                destroy_item(SPBOOK_CLASS, AD_FIRE);
-            if ((int)mtmp->m_lev > rn2(20))
-                set_candles_afire();
-            if (dmg)
-                mdamageu(mtmp, dmg);
+            if (Hallucination) {
+                pline(msgc_playerimmune,
+                      "%s is so beautiful, %s sets your heart ablaze!",
+                      Monnam(mtmp), mhe(mtmp));
+            } else {
+                if (Fire_resistance) {
+                    pline(combat_msgc(mtmp, &youmonst, cr_immune),
+                          "%s glares at you, but you fail to catch fire.",
+                          Monnam(mtmp));
+                    dmg = 0;
+                } else
+                    pline(combat_msgc(mtmp, &youmonst, cr_hit),
+                          "%s attacks you with a fiery gaze!", Monnam(mtmp));
+                action_interrupted();
+                burn_away_slime();
+                if ((int)mtmp->m_lev > rn2(20))
+                    destroy_item(SCROLL_CLASS, AD_FIRE);
+                if ((int)mtmp->m_lev > rn2(20))
+                    destroy_item(POTION_CLASS, AD_FIRE);
+                if ((int)mtmp->m_lev > rn2(25))
+                    destroy_item(SPBOOK_CLASS, AD_FIRE);
+                if ((int)mtmp->m_lev > rn2(20))
+                    set_candles_afire();
+                if (dmg)
+                    mdamageu(mtmp, dmg);
+            }
         }
         break;
-#ifdef PM_BEHOLDER      /* work in progress */
-    case AD_SLEE:
-        if (!mtmp->mcan && canseemon(mtmp) && couldsee(mtmp->mx, mtmp->my) &&
-            mtmp->mcansee && !u_helpless(hm_all) && !rn2(5) &&
-            !Sleep_resistance) {
-            helpless(rnd(10), hr_asleep, "sleeping", NULL);
-            pline(msgc_statusbad, "%s gaze makes you very sleepy...",
-                  s_suffix(Monnam(mtmp)));
-        }
-        break;
-    case AD_SLOW:
-        if (!mtmp->mcan && canseemon(mtmp) && mtmp->mcansee &&
-            (HFast & (INTRINSIC | TIMEOUT)) && !defends(AD_SLOW, uwep) &&
-            !rn2(4))
-
-            u_slow_down();
-        action_interrupted();
-        break;
-#endif
     default:
         impossible("Gaze attack %d?", mattk->adtyp);
         break;

@@ -93,6 +93,13 @@
 ▒▒▒                      back on though
 ▒▒▒   At this time, I cannot reproduce this issue, even when the shield is cursed.
 ▒▒▒
+▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
+▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
+▒▒▒   23:27 < FIQ > and play a lawful male human monk
+▒▒▒   23:27 < FIQ > load game will crash FIQHack and presumably  other NH4 variants
+▒▒▒   23:27 < FIQ > but not always
+▒▒▒   http://sprunge.us/XhXe
+▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
@@ -105,17 +112,14 @@
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
+▒▒▒ * 03:22 < nht > an oddity in fourk
+▒▒▒   03:22 < nht > as a scurrier I can dig down while wielding a weapon on dungeon floor
+▒▒▒   03:22 < nht > but not when I'm in a pit
+▒▒▒
 ▒▒▒ * Add program icons for the the level and dungeon compilers.
 ▒▒▒
 ▒▒▒ * 10:36 < AmyBSOD\dislex > Oh, and on an unrelated note, trying to move into an undiggable
 ▒▒▒                            wall as a scurrier seems to produce no message at all.
-▒▒▒
-▒▒▒ * 23:26 < FIQ > jonadab: Luxidream seems to have encountered a new version of the name bug
-▒▒▒   23:27 < FIQ > If you name yourself "bassbasskickkickbasskickkick"
-▒▒▒   23:27 < FIQ > and play a lawful male human monk
-▒▒▒   23:27 < FIQ > load game will crash FIQHack and presumably  other NH4 variants
-▒▒▒   23:27 < FIQ > but not always
-▒▒▒   http://sprunge.us/XhXe
 ▒▒▒
 ▒▒▒ * Look at FIQ's multiturn movement fix:  [reverted: 98a9db1], 6a5dcba, 6648540
 ▒▒▒
@@ -127,6 +131,17 @@
 ▒▒▒   2d4/d9+1, scimitar and saber d8/d10, morning star 2d4/d8+1,
 ▒▒▒   flail d6+1/3d3, mace d6+1/2d4, etc.
 ▒▒▒
+▒▒▒ * In challenge mode, turn item destruction up to eleven, complete with rust and
+▒▒▒   corrosion destroying thoroughly rusted/corroded (non-unique) items completely.
+▒▒▒
+▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
+▒▒▒                     speed 24-26 \n no special abilities other than flight
+▒▒▒   18:50 < jonadab+> FIQ: That is not a bad idea.
+▒▒▒   18:54 <  ais523 > would they be tameable with vegetables?
+▒▒▒   18:54 <     FIQ+> I feel like it should be harder \n but preferably possible without magic
+▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
+▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
+▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
@@ -136,8 +151,6 @@
 ▒▒▒
 ▒▒▒ * per rumflump, make #monster <direction> work for digging as a scurrier, so the user
 ▒▒▒   can dig things like a boulder or known-locked door without bumping into it first.
-▒▒▒
-▒▒▒ * Consider making Snickersnee grant free action when wielded, or maybe stun res.
 ▒▒▒
 ▒▒▒ * Look at and consider FIQ's autoswap feature, 719b864d5f
 ▒▒▒
