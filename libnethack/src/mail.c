@@ -1,23 +1,26 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Fredrik Ljungdahl, 2017-12-17 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-05 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>
-#include "extern.h"
+#include "hack.h"
+#include "mail.h"
 
-#ifndef MAILBOXENVVAR
-/* Server admins: you can use -DMAILBOXENVVAR in CFLAGS to set the name of this
-   environment variable.  The game will then check for the variable you specify
-   in the environment at runtime to know where to look for the mailbox file. */
-#define MAILBOXENVVAR "NHMAILBOX"
-#endif
+#ifdef WIN32
+# include "extern.h"
+void
+checkformail(void)
+{
+    return;
+}
+#else
+# include <stdio.h>
+# include <string.h>
+# include <fcntl.h>
+# include "extern.h"
 
 static int mailhashname(const char *str);
 static void delivermail(const char *from, const char *message);
-
 static const char *const maildelivery[] = {
     "You feel as much as hear the booming deep bass rumble of %s belting out, \"%s\"\n",
     "You can clearly recall that %s once told you, \"%s\"\n",
@@ -63,22 +66,23 @@ delivermail(const char *from, const char *message)
 void
 checkformail(void)
 {
-/* No point trying to make this compile on Windows (which doesn't have things
-   like flock), as nobody is going to run dgamelaunch on that platform anyway,
-   so simplemail support is entirely moot anyway. Just ifdef it out. */
-#ifndef AIMAKE_BUILDOS_MSWin32
-
-    char *box, *msg;
+    const char *box;
+    char *msg;
     FILE* mb;
     char curline[102];
     struct flock fl = { 0 };
 
-    if (program_state.followmode != FM_PLAY)
+    if (program_state.followmode != FM_PLAY &&
+        program_state.followmode != FM_WATCH)
         return;
-    if (!flags.servermail)
-        return;
+        if (!flags.servermail) {
+# ifdef MAILOVERRIDE
+            if (strcmpi(who, MAILOVERRIDE))
+# endif
+                return;
+        }
 
-    box = nh_getenv(MAILBOXENVVAR);
+    box = mail_filename(NULL);
     if (!box)
         return;
     
@@ -90,7 +94,7 @@ checkformail(void)
     fl.l_whence = SEEK_SET;
     fl.l_start = 0;
     fl.l_len = 0;
-    
+
     /* Allow this call to block. */
     if (fcntl (fileno (mb), F_SETLKW, &fl) == -1)
         return;
@@ -102,10 +106,10 @@ checkformail(void)
         fl.l_type = F_UNLCK;
         fcntl (fileno(mb), F_UNLCK, &fl);
 
-        msg = strchr(curline, ':');		  
+        msg = strchr(curline, ':');
         if (!msg)
             return;
-		  
+
         *msg = '\0';
         msg++;
         who = msgprintf("%s", curline);
@@ -122,7 +126,10 @@ checkformail(void)
     fcntl(fileno(mb), F_UNLCK, &fl);
 		
     fclose(mb);
-    unlink(box);
-#endif
+
+    if (program_state.followmode == FM_PLAY)
+        unlink(box);
     return;
 }
+
+#endif

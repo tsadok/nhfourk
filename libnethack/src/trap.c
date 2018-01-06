@@ -3188,8 +3188,7 @@ water_damage(struct obj * obj, const char *ostr, boolean force)
                ((obj->otyp != BAG_OF_HOLDING && !Is_box(obj)) ||
                 ((!obj->blessed) && !rn2(obj->cursed ? 2 : 5))) &&
                (obj->otyp != OILSKIN_SACK || (obj->cursed && !rn2(3)))) {
-        water_damage_chain(obj->cobj, FALSE);
-        return 0;
+        return water_damage_chain(obj->cobj, FALSE);
     } else if (!force && (Luck + 5) > rn2(20)) {
         /* chance per item of sustaining damage: max luck (full moon): 5%
             max luck (elsewhen): 10% avg luck (Luck==0): 75% awful luck
