@@ -382,13 +382,13 @@ const struct objclass const_objects[] = {
           ARM_SUIT, MITHRIL, HI_METAL),
 
     ARMOR("bronze plate mail", NULL,
-          1, 0, 1, 0, 25, 5, 500, 400, 3, 0, MZ_MEDIUM, MZ_LARGE,
+          1, 0, 1, 0, 25, 5, 500, 400, 1, 0, MZ_MEDIUM, MZ_LARGE,
           ARM_SUIT, COPPER, HI_COPPER),
     ARMOR("plate mail", NULL,
-          1, 0, 1, 0, 44, 5, 450, 600, 2, 2, MZ_MEDIUM, MZ_LARGE,
+          1, 0, 1, 0, 44, 5, 450, 600, 0, 2, MZ_MEDIUM, MZ_LARGE,
           ARM_SUIT, IRON, HI_METAL),
     ARMOR("crystal plate mail", NULL,
-          1, 0, 1, 0, 10, 5, 600, 1000, 1, 3, MZ_MEDIUM, MZ_LARGE,
+          1, 0, 1, 0, 10, 5, 600, 1000, -1, 3, MZ_MEDIUM, MZ_LARGE,
           ARM_SUIT, GLASS, CLR_WHITE),
 
 /* shirts */
