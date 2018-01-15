@@ -2494,6 +2494,7 @@ log_reset(void)
     program_state.gamestate_location = 0;
     program_state.last_save_backup_location_location = 0;
     program_state.emergency_recover_location = 0;
+    program_state.eof_reached = FALSE;
 }
 
 void
