@@ -509,10 +509,12 @@ const char *
 achievements_filename(void)
 {
     const char *uname;
+#ifdef PUBLIC_SERVER
     uname = nh_getenv("NH4SERVERUSER");
     if (!uname)
         uname = nh_getenv("USER");
     if (!uname)
+#endif
         uname = msgprintf("%d", getuid());
 
     return msgprintf("%sachievements_%s.dat",

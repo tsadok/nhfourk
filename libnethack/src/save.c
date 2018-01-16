@@ -476,6 +476,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->urideturns);
     mwrite32(mf, y->umortality);
     mwrite32(mf, y->ugrave_arise);
+    mwrite32(mf, y->gameidnum);
     mwrite32(mf, y->weapon_slots);
     mwrite32(mf, y->skills_advanced);
     mwrite32(mf, y->initrole);

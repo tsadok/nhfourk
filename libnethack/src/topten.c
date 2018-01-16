@@ -269,6 +269,8 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
     munge_xlstring(buf2, dumpname, sizeof buf2);
     fprintf(rfile, SEP "dumplog=%s", buf2);
 
+    fprintf(rfile, SEP "gameidnum=%d", u.gameidnum);
+
     fprintf(rfile, SEP "conduct=%ld", encode_conduct());
 
     fprintf(rfile, SEP "birthoption=%ld", encode_birthoptions());

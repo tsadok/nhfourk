@@ -87,7 +87,8 @@ livelog_write_event(const char *buffer) {
                                    "align=%s" SEP "birthdate=%ld" SEP
                                    "starttime=%" PRIdLEAST64 SEP
                                    "eventtime=%" PRIdLEAST64 SEP
-                                   "xplevel=%1d" SEP "mode=%s",
+                                   "xplevel=%1d" SEP "mode=%s" SEP
+                                   "gameidnum=%d",
                                    VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL,
                                    buf, u.uplname, moves, depth(&u.uz), buffer,
                                    yyyymmdd(utc_time()), getuid(),
@@ -103,7 +104,8 @@ livelog_write_event(const char *buffer) {
                                               (flags.polyinit_mnum != -1) ?
                                               "polyinit" :
                                               flags.challenge ? "challenge"
-                                              : "normal")));
+                                              : "normal"),
+                                   u.gameidnum));
 }
 
 void

@@ -15,6 +15,8 @@ struct trobj {
     unsigned trbless:2;
 };
 
+static const char * game_id_number_filename(void);
+static int next_game_id_number(void);
 static void ini_inv(const struct trobj *, short nocreate[4], enum rng);
 static void role_ini_inv(const struct trobj *, short nocreate[4]);
 static void race_ini_inv(const struct trobj *, short nocreate[4]);
@@ -27,6 +29,61 @@ static boolean restricted_spell_discipline(int);
 #define UNDEF_TYP       0
 #define UNDEF_SPE       '\177'
 #define UNDEF_BLESS     2
+
+const char *
+game_id_number_filename(void)
+{
+    const char *uname;
+#ifdef PUBLIC_SERVER
+    uname = nh_getenv("NH4SERVERUSER");
+    if (!uname)
+        uname = nh_getenv("USER");
+    if (!uname)
+#endif
+        uname = msgprintf("%d", getuid());
+
+    return msgprintf("%s.maxgameid_%s.dat",
+                     fqn_prefix[SCOREPREFIX], uname);
+}
+
+static int
+next_game_id_number(void)
+{
+    const char *gameidfilename = game_id_number_filename();
+    FILE *idnumfile;
+    int lastnum, nextnum;
+
+    /* First read the last number. */
+    idnumfile = fopen(gameidfilename, "r");
+    if (idnumfile) {
+        if (!fread(&lastnum, sizeof(int), 1, idnumfile)) {
+            impossible("ERROR: failed to read game id sequence number. "
+                       "Game consecutivity and streaks will be untrackable");
+            fclose(idnumfile);
+            return 0;
+        }
+        fclose(idnumfile);
+    } else {
+        pline(msgc_debug, "Could not read game id number; "
+                          "assuming no games have been played.");
+        lastnum = 0;
+    }
+
+    /* The number increases monotonically. */
+    nextnum = lastnum + 1;
+
+    idnumfile = fopen(gameidfilename, "w");
+    if (idnumfile && fwrite(&nextnum, sizeof(int), 1, idnumfile)) {
+        fclose(idnumfile);
+        return nextnum;
+    } else {
+        impossible("ERROR: unable to maintain game id number sequence.  "
+                   "Game consecutivity and streaks will be untrackable.");
+        if (idnumfile)
+            fclose(idnumfile);
+        return 0;
+    }
+}
 
 static int
 rolern2(int x)
@@ -631,6 +688,7 @@ u_init(microseconds birthday)
     u.umoved = FALSE;
     u.umortality = 0;
     u.ugrave_arise = NON_PM;
+    u.gameidnum = next_game_id_number();
 
     u.umonnum = u.umonster = (u.ufemale && urole.femalenum != NON_PM) ?
         urole.femalenum : urole.malenum;
