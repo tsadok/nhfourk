@@ -567,14 +567,10 @@ toofar:
          find_offensive(mtmp, &musable)) &&
         mtmp->mlstmv != moves) {
         struct monst *mtmp2 = mfind_target(mtmp, FALSE);
-        int tx = mtmp2 ? mtmp2->mx : COLNO, ty = mtmp2 ? mtmp2->my : ROWNO;
+        int tx = mtmp2 ? ((mtmp2 == &youmonst) ? mtmp->mux : mtmp2->mx) : COLNO;
+        int ty = mtmp2 ? ((mtmp2 == &youmonst) ? mtmp->muy : mtmp2->my) : ROWNO;
 
-        if (mtmp2 == &youmonst) {
-            /* use muxy */
-            tx = mtmp->mux;
-            ty = mtmp->muy;
-        }
-
+        if (mtmp2) {
             /* Don't fight melee targets here. Doing so might have issues like
                ignoring Elbereth, etc. */
             if (mtmp2 && !monnear(mtmp, tx, ty)) {
