@@ -12,6 +12,7 @@ static boolean restrap(struct monst *);
 static int pick_animal(void);
 static int select_newcham_form(struct monst *);
 static void kill_eggs(struct obj *);
+static int cham_depth_appropriate(struct monst *, struct level *);
 
 #define LEVEL_SPECIFIC_NOCORPSE(mdat) \
          (Is_rogue_level(&u.uz) || \
@@ -607,6 +608,36 @@ mcalcmove(struct monst *mon)
     return mmove;
 }
 
+/* Depth-appropriateness check for shape changers.  This allows
+ * shape changers to hold depth-appropriate forms for much longer
+ * than they can sustain out-of-depth forms.  The rules:
+ *  -   The monster has a 1/n chance to change form each turn,
+ *      where n is the number cham_depth_appropriate() returns.
+ *  -   Werefoo, because their form is predetermined, have the
+ *      same chance regardless of level.  For now, we'll stick
+ *      with n=6, which will give them unchanged/vanilla behavior.
+ *  -   Otherwise, n can range from 1 (form is so out of depth,
+ *      it must immediately change) to 15 (form is completely
+ *      appropriate at this depth and can be held for a while).
+ *  -   Player experience doesn't matter, only level depth.
+ *  -   Rather than calculating minimum and maximum difficulty
+ *      as rndmonst() does, we just have a single target difficulty,
+ *      and being closer to it yields higher chances of holding
+ *      the form for longer.
+ */
+int
+cham_depth_appropriate(struct monst *mon, struct level *lev)
+{
+    int d = (In_endgame(&lev->z) ? depth(&sanctum_level) : depth(&lev->z)) / 2;
+    int s = MONSTR(monsndx(mon->data));
+    int n = 15 - abs(d - s);
+    if (is_were(mon->data))
+        return 6; /* Arbitrary number copied from vanilla. */
+    if (n < 1)
+        return 1;
+    return n;
+}
+
 /* actions that happen once per ``turn'', regardless of each
    individual monster's metabolism; some of these might need to
    be reclassified to occur more in proportion with movement rate */
@@ -632,7 +663,7 @@ mcalcdistress(void)
         mon_regen(mtmp, FALSE);
 
         /* possibly polymorph shapechangers and lycanthropes */
-        if (mtmp->cham && !rn2(6))
+        if (mtmp->cham && !rn2(cham_depth_appropriate(mtmp, level)))
             newcham(mtmp, NULL, FALSE, FALSE);
         were_change(mtmp);
 

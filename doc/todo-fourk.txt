@@ -134,14 +134,6 @@
 ▒▒▒ * In challenge mode, turn item destruction up to eleven, complete with rust and
 ▒▒▒   corrosion destroying thoroughly rusted/corroded (non-unique) items completely.
 ▒▒▒
-▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
-▒▒▒                     speed 24-26 \n no special abilities other than flight
-▒▒▒   18:50 < jonadab+> FIQ: That is not a bad idea.
-▒▒▒   18:54 <  ais523 > would they be tameable with vegetables?
-▒▒▒   18:54 <     FIQ+> I feel like it should be harder \n but preferably possible without magic
-▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
-▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
-▒▒▒
 ▒▒▒ * 20:53 < aosdict > jonadab: also, monsters generating in (not inaccessible) closets could be a part of your
 ▒▒▒                     plan to increase monster generation on level creation and decrease the normal generation rate
 ▒▒▒
@@ -172,9 +164,6 @@
 ▒▒▒   not change form _while_ wielding the item.  (This is true for silver
 ▒▒▒   in .4, and probably upstream even, but I want to fix it in a general way,
 ▒▒▒   not only for silver.)
-▒▒▒
-▒▒▒ * Make chameleons' ability to hold their form depend on how close it is to being
-▒▒▒   level-appropriate:  short duration if it's much too high or low, longer if it's close.
 ▒▒▒
 ▒▒▒ * Make sure monsters can't wear armor too large or small for them.
 ▒▒▒   (Not sure if boots and cloaks and gloves are handled yet.)
@@ -299,6 +288,14 @@
 ▒▒▒
 ▒▒▒ * Conducts:
 ▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.
+▒▒▒
+▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
+▒▒▒                     speed 24-26 \n no special abilities other than flight
+▒▒▒   18:50 < jonadab+> FIQ: That is not a bad idea.
+▒▒▒   18:54 <  ais523 > would they be tameable with vegetables?
+▒▒▒   18:54 <     FIQ+> I feel like it should be harder \n but preferably possible without magic
+▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
+▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
 ▒▒▒
 ▒▒▒ * Consider commit eb85596 (from dnethack), which addresses the 127 level limitation.
 ▒▒▒   This is not even remotely urgent for Fourk, but in principle it would be nice to
