@@ -6,6 +6,7 @@ been maintaining one until that point, but now I am:
  * Elemental resistances reduce damage to 1/3, rather than to 0.
  * HP regeneration is slower (for the player).
  * Sleep attacks put you to sleep for longer.
+ * Unchargeable rings can be destroyed by lightning, as in vanilla.
  * The chances of AD_DRST, AD_DRDX, and AD_DRCO attacks 
    draining the corresponding attribute are higher.
  * The chance of a c attack starting the stoning process is higher.

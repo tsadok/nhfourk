@@ -2359,7 +2359,6 @@ zapyourself(struct obj *obj, boolean ordinary)
             exercise(A_DEX, TRUE);
             HFast |= FROMOUTSIDE;
         }
-        HFast |= FROMOUTSIDE;
         break;
     case WAN_SLEEP:
         makeknown(WAN_SLEEP);
@@ -4544,6 +4543,7 @@ struct destroy_message destroy_messages[num_destroy_msgs] = {
     {"catches fire and burns", "catch fire and burn", "burning book"},
     {"turns to dust and vanishes", "turn to dust and vanish", ""},
     {"breaks apart and explodes", "break apart and explode", "exploding wand"},
+    {"loses a charge", "lose charges", "electric discharge"},
 };
 
 void
@@ -4574,6 +4574,7 @@ set_candles_afire(void)
              the source of damage can be neutralized, _then_ snuff them.
              This is counterintuitive.  Bad programmer, no cookie :-(
              See also the similar case in erode_obj in zap.c
+             See also the similar case for potions of oil in destroy_item()
         } */
     }
 }
@@ -4625,8 +4626,24 @@ destroy_item(int osym, int dmgtyp)
             quan = obj->quan;
             switch (osym) {
             case POTION_CLASS:
-                dindx = destroy_msg_potion_fire;
-                dmg = rnd(6);
+                if (obj->otyp == POT_OIL && !Underwater) {
+                    /* TODO: if already lit, use up some of the oil.
+                       See related comment in set_candles_afire() */
+                    if (!obj->lamplit) {
+                        makeknown(obj->otyp);
+                        if (obj->quan > 1L) {
+                            obj = splitobj(obj, 1L);
+                            begin_burn(obj, FALSE); /* burn before free to get position */
+                            obj_extract_self(obj);  /* free from inv... */
+                            /* then pick it back up (it shouldn't merge now) */
+                            hold_another_object(obj, "You drop %s!", doname(obj), NULL);
+                        } else
+                            begin_burn(obj, FALSE);
+                    }
+                } else /* Other potions can freeze and shatter, so we no longer
+                          subject them to fire damage, because that would make
+                          them doubly vulnerable compared to other objects. */
+                    skip++;
                 break;
             case SCROLL_CLASS:
                 dindx = destroy_msg_scroll_fire;
@@ -4648,18 +4665,26 @@ destroy_item(int osym, int dmgtyp)
             case RING_CLASS:
                 if (obj->otyp == RIN_SHOCK_RESISTANCE) {
                     skip++;
-                    break;
+                } else if (objects[obj->otyp].oc_charged && obj->spe >= -3) {
+                    dindx = lost_charge_msg_elec;
+                    dmg = 0;
+                } else if (challengemode) {
+                    dindx = destroy_msg_ring_elec;
+                    dmg = 0;
+                } else {
+                    skip++;
                 }
-                dindx = destroy_msg_ring_elec;
-                dmg = 0;
                 break;
             case WAND_CLASS:
                 if (obj->otyp == WAN_LIGHTNING) {
                     skip++;
-                    break;
+                } else if (obj->spe >= 1) {
+                    dindx = lost_charge_msg_elec;
+                    dmg = 1;
+                } else {
+                    dindx = destroy_msg_wand_elec;
+                    dmg = rnd(10);
                 }
-                dindx = destroy_msg_wand_elec;
-                dmg = rnd(10);
                 break;
             default:
                 skip++;
@@ -4683,29 +4708,194 @@ destroy_item(int osym, int dmgtyp)
                 mult = "Your";
             else
                 mult = (cnt == 1L) ? "One of your" : "Some of your";
-            pline(msgc_itemloss, "%s %s %s!", mult, xname(obj),
-                  (cnt > 1L) ? destroy_messages[dindx].singular
-                  : destroy_messages[dindx].plural);
-            if (osym == POTION_CLASS && dmgtyp != AD_COLD) {
-                if (!breathless(youmonst.data) || haseyes(youmonst.data))
-                    potionbreathe(obj);
-            }
-            setunequip(obj);
+            if (dindx == lost_charge_msg_elec) {
+                struct monst *mon;
+                pline(msgc_itemloss, "A charge is shocked out of your %s!",
+                      xname(obj));
+                obj->spe--;
+                /* In some cases the charge gets used immediately, rather than
+                   simply being lost as such: */
+                switch (obj->otyp) {
+                case WAN_LIGHT:
+                    litroom(TRUE, obj);
+                    if (!Blind)
+                        makeknown(obj->otyp);
+                    break;
+                case WAN_NOTHING:
+                    /* Nothing happens. */
+                    break;
+                case WAN_DIGGING:
+                    /* TODO: could create a pit, I suppose? */
+                    break;
+                case WAN_ENLIGHTENMENT:
+                    makeknown(obj->otyp);
+                    pline(msgc_info, "You feel self-knowledgeable...");
+                    win_pause_output(P_MESSAGE);
+                    enlightenment(FALSE);
+                    pline_implied(msgc_info, "The feeling subsides.");
+                    break;
+                case WAN_LOCKING:
+                    /* Can't really lock a location, or you. */
+                    break;
+                case WAN_MAGIC_MISSILE:
+                    /* Also not really applicable. */
+                    break;
+                case WAN_MAKE_INVISIBLE: {
+                    if (uarmc->otyp == MUMMY_WRAPPING) {
+                        pline(msgc_playerimmune,
+                              "You feel rather itchy under your %s.",
+                              xname(uarmc));
+                    } else {
+                        incr_itimeout(&HInvis, dice(2, 10));
+                    }
+                    break; }
+                case WAN_OPENING:
+                    /* Not really applicable to your location or you. */
+                    break;
+                case WAN_PROBING:
+                    /* Meh */
+                    break;
+                case WAN_SECRET_DOOR_DETECTION:
+                    findit(3);
+                    break;
+                case WAN_SLOW_MONSTER:
+                    dmg = youmonst.mslowed;
+                    if (dmg == 0) {
+                        makeknown(obj->otyp);
+                        pline(msgc_statusbad, "%s",
+                              Hallucination ? "The world is so blurry!" :
+                              "You feel yourself slowing down.");
+                    }
+                    dmg += dice(2, 10);
+                    if (dmg > AD_WEBS_MAX_TURNCOUNT)
+                        dmg = AD_WEBS_MAX_TURNCOUNT;
+                    youmonst.mslowed = dmg;
+                    dmg = 0;
+                    break;
+                case WAN_SPEED_MONSTER:
+                    incr_itimeout(&HFast, dice(2,10));
+                    dmg = 0;
+                    break;
+                case WAN_STRIKING:
+                    /* Not sure what to do here, if anything. */
+                    break;
+                case WAN_UNDEAD_TURNING:
+                    /* TODO: should this have an effect if you are undead? */
+                    break;
+                case WAN_COLD:
+                    switch (level->locations[u.ux][u.uy].typ) {
+                    case PUDDLE:
+                    case POOL:
+                    case MOAT:
+                        level->locations[u.ux][u.uy].icedpool =
+                            (level->locations[u.ux][u.uy].typ == PUDDLE) ?
+                            ICED_PUDDLE :
+                            (level->locations[u.ux][u.uy].typ == POOL) ?
+                            ICED_POOL : ICED_MOAT;
+                        level->locations[u.ux][u.uy].typ = ICE;
+                        makeknown(obj->otyp);
+                        pline(msgc_consequence, "The %s freezes.",
+                              surface(u.ux, u.uy));
+                        spoteffects(FALSE);
+                        break;
+                    case LAVAPOOL:
+                        level->locations[u.ux][u.uy].typ = ROOM;
+                        makeknown(obj->otyp);
+                        pline(msgc_consequence, "The %s freezes.",
+                              surface(u.ux, u.uy));
+                        spoteffects(FALSE);
+                        break;
+                    }
+                    break;
+                case WAN_FIRE:
+                    if (level->locations[u.ux][u.uy].typ == ICE) {
+                        makeknown(obj->otyp);
+                        pline(msgc_consequence, "The ice melts.");
+                        switch (level->locations[u.ux][u.uy].icedpool) {
+                        case ICED_PUDDLE:
+                            level->locations[u.ux][u.uy].typ = PUDDLE;
+                            break;
+                        case ICED_POOL:
+                            level->locations[u.ux][u.uy].typ = PUDDLE;
+                            break;
+                        default:
+                            level->locations[u.ux][u.uy].typ = MOAT;
+                            break;
+                        }
+                        spoteffects(FALSE);
+                    }
+                    break;
+                case WAN_LIGHTNING:
+                    /* can't happen; it's immune. */
+                    break;
+                case WAN_SLEEP:
+                    /* TODO: maybe just a few turns of sleep? */
+                    break;
+                case WAN_CANCELLATION:
+                    /* That would be evil.  Yes, I realize Slash'EM and
+                       GruntHack would totally do it anyway.  I won't. */
+                    break;
+                case WAN_CREATE_MONSTER:
+                    mon = makemon(&mons[PM_ENERGY_VORTEX], level,
+                                  u.ux, u.uy, MM_CREATEMONSTER | MM_ADJACENTOK);
+                    if (mon) {
+                        pline(msgc_consequence, "%s appears.", Monnam(mon));
+                        makeknown(obj->otyp);
+                    }
+                    break;
+                case WAN_POLYMORPH:
+                    /* That would be evil. */
+                    break;
+                case WAN_TELEPORTATION:
+                    tele();
+                    if (Teleport_control || !couldsee(u.ux0, u.uy0) ||
+                        (distu(u.ux0, u.uy0) >= 16))
+                        makeknown(obj->otyp);
+                    break;
+                case WAN_DEATH:
+                    /* That would be evil. */
+                    break;
+                case WAN_WISHING:
+                    if (Luck >= 0 && !challengemode) {
+                        makeknown(obj->otyp);
+                        makewish(1);
+                    }
+                    break;
+                case RIN_ADORNMENT:
+                    exercise(A_CHA, TRUE);
+                    break;
+                case RIN_GAIN_CONSTITUTION:
+                    exercise(A_CON, TRUE);
+                    break;
+                case RIN_GAIN_STRENGTH:
+                    exercise(A_STR, TRUE);
+                    break;
+                }
+            } else {
+                pline(msgc_itemloss, "%s %s %s!", mult, xname(obj),
+                      (cnt > 1L) ? destroy_messages[dindx].singular
+                      : destroy_messages[dindx].plural);
+                if (osym == POTION_CLASS && dmgtyp != AD_COLD) {
+                    if (!breathless(youmonst.data) || haseyes(youmonst.data))
+                        potionbreathe(obj);
+                }
+                setunequip(obj);
 
-            /* If destroying the item that (perhaps indirectly) caused the
-               destruction, we need to notify the caller, but obfree() does that
-               (via modifying turnstate), and obfree() is a better place (it
-               handles more possible reasons that the item might be
-               destroyed). */
-            for (i = 0; i < cnt; i++)
-                useup(obj);
+                /* If destroying the item that (perhaps indirectly) caused the
+                   destruction, we need to notify the caller, but obfree() does
+                   that (via modifying turnstate), and obfree() is a better
+                   place (it handles more possible reasons that the item might
+                   be destroyed). */
+                for (i = 0; i < cnt; i++)
+                    useup(obj);
+            }
             if (dmg) {
                 if (xresist)
                     pline(msgc_noconsequence, "You aren't hurt!");
                 else {
                     const char *how = destroy_messages[dindx].killer;
                     boolean one = (cnt == 1L);
-
+                    
                     losehp(dmg, killer_msg(DIED, one ? an(how) :
                                            makeplural(how)));
                     exercise(A_STR, FALSE);
@@ -4887,6 +5077,7 @@ resist(struct monst *mtmp, char oclass, int damage, int domsg)
 void
 makewish(int wishquality)
 /* wishquality is as follows:
+ *  0 for wishes that result from damage
  *  1 for most sources of wishes
  *  2 for unblessed scroll of wishing
  *  3 for blessed scroll of wishing

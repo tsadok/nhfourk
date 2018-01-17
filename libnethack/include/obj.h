@@ -333,6 +333,7 @@ enum destroy_msg_type {
     destroy_msg_spellbook_fire,
     destroy_msg_ring_elec,
     destroy_msg_wand_elec,
+    lost_charge_msg_elec,
     num_destroy_msgs
 };
 

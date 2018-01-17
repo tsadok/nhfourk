@@ -1970,7 +1970,8 @@ static const struct alt_spellings {
  * making it work on a message rather than buffer would be nice.
  *
  * wishtype values are as follows:
- *  0 readobjnam() was called by something other than makewish()
+ *  0 wish resulting from item damage, or else
+ *    readobjnam() was called by something other than makewish()
  *  1 normal wish
  *  2 uncursed scroll of wishing
  *  3 blessed scroll of wishing
@@ -2749,6 +2750,7 @@ typfnd:
     }
 
     if (cnt > 0 && objects[typ].oc_merge && oclass != SPBOOK_CLASS &&
+        (wishtype > 0) &&
         (wizard || (cnt <= 7 && Is_candle(otmp)) ||
          (cnt <= 20 && ((oclass == WEAPON_CLASS && is_ammo(otmp))
                         || typ == ROCK || is_missile(otmp))) ||
@@ -2767,6 +2769,8 @@ typfnd:
         ;
     else if (oclass == ARMOR_CLASS || oclass == WEAPON_CLASS || is_weptool(otmp)
              || (oclass == RING_CLASS && objects[typ].oc_charged)) {
+        if (wishtype == 0)
+            spe = 0;
         if (spe > ((wishtype > 1) ? 3 : 1) + rn2_on_rng(5, rng_wish_quality))
             spe = 0;
         if (spe > 2 && Luck < 0)
@@ -2896,7 +2900,7 @@ typfnd:
     } else if (uncursed) {
         otmp->blessed = 0;
         otmp->cursed = (Luck < 0 && !wizard);
-    } else if (blessed) {
+    } else if (blessed && wishtype > 0) {
         otmp->blessed = (Luck >= 0 || wizard);
         otmp->cursed = (Luck < 0 && !wizard);
     } else if (spesgn < 0) {
@@ -2928,7 +2932,7 @@ typfnd:
     }
 
     /* set poisoned */
-    if (ispoisoned) {
+    if (ispoisoned && wishtype > 0) {
         if (is_poisonable(otmp))
             otmp->opoisoned = (Luck >= 0);
         else if (Is_box(otmp) || typ == TIN)
@@ -2938,7 +2942,7 @@ typfnd:
             otmp->age = 1L;
     }
 
-    if (isgreased)
+    if (isgreased && wishtype > 0)
         otmp->greased = 1;
 
     if (isdiluted && otmp->oclass == POTION_CLASS && otmp->otyp != POT_WATER)

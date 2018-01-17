@@ -154,19 +154,18 @@
 ▒▒▒
 ▒▒▒ * Look at and consider FIQ's autoswap feature, 719b864d5f
 ▒▒▒
-▒▒▒ * Reduce the weight of mithril armor.
+▒▒▒ * Reconsider item weights:
+▒▒▒   + armor
+▒▒▒   + weapons
+▒▒▒   + tools
+▒▒▒   + books
+▒▒▒   + potions
+▒▒▒   + other
 ▒▒▒
-▒▒▒ * Buff crystal plate mail in some way.
+▒▒▒ * Consider whether crystal plate mail needs further buffs.
 ▒▒▒
 ▒▒▒ * Item destruction rework:
 ▒▒▒   + Make extrinsic resistances protect against item destruction, including erosion.
-▒▒▒   + Double check that fooproofing the item protects against item destruction.
-▒▒▒   + Make sure potions of oil don't freeze in any case (but they can be lit by fire).
-▒▒▒   + Make potions other than oil not boil/explode with fire (because cold shatters them).
-▒▒▒   + Instead of exploding, wands should release a charge when shocked.  Depending on
-▒▒▒     the type of wand, the charge may be activated rather than simply lost.
-▒▒▒   + Instead of exploding, charged rings should lose a charge when shocked (unless at -3 or worse).
-▒▒▒     I'll need to decide what to do about uncharged rings.
 ▒▒▒
 ▒▒▒ * It appears that material-sensitive players can wield weapons made of the
 ▒▒▒   material in question without difficulty or consequence, provided you do
@@ -297,6 +296,13 @@
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
+▒▒▒
+▒▒▒ * Conducts:
+▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.
+▒▒▒
+▒▒▒ * Consider commit eb85596 (from dnethack), which addresses the 127 level limitation.
+▒▒▒   This is not even remotely urgent for Fourk, but in principle it would be nice to
+▒▒▒   not have to worry about that limit, if we decide to introduce some optional branches.
 ▒▒▒
 ▒▒▒ * 12:12 < aosdict > YANI: if this doesn't exist already, add a M2_CLIMB or M3_CLIMB flag for
 ▒▒▒                     monsters that are natural climbers (spiders, ants, monkeys).  Such

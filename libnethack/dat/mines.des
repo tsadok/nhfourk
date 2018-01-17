@@ -774,8 +774,14 @@ DOOR:closed,(51,13)
 DOOR:locked,(58,6)
 DOOR:locked,(58,12)
 
-# Loose floorboard
+# Traps
 TRAP:"board",random
+TRAP:"trap door",random
+TRAP:"teleport",random
+TRAP:"teleport",random
+TRAP:"teleport",random
+TRAP:"teleport",random
+TRAP:"teleport",(08,07)
 
 # Furniture
 OBJECT:'(',"chest",(18,11)
