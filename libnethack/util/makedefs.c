@@ -56,7 +56,6 @@ void do_readonly(const char *);
 void do_permonst(const char *);
 void do_questtxt(const char *, const char *);
 void do_rumors(const char *, const char *, const char *);
-void do_oracles(const char *, const char *);
 
 static void make_version(void);
 static char *version_string(char *);
@@ -65,7 +64,6 @@ static char *xcrypt(const char *);
 static int check_control(char *);
 static char *without_control(char *);
 static boolean d_filter(char *);
-static boolean h_filter(char *);
 
 static boolean qt_comment(char *);
 static boolean qt_control(char *);
@@ -97,7 +95,6 @@ static const char *usage_info[] = {
     "       %s -p [OUT (permonst.h)]\n",
     "       %s -q [IN (quest.txt)] [OUT (quest.dat)]\n",
     "       %s -r [IN (rumors.tru)] [IN (rumors.fal)] [OUT (rumors)]\n",
-    "       %s -h [IN (oracles.txt)] [OUT (oracles)]\n",
 };
 
 static noreturn void
@@ -189,13 +186,6 @@ main(int argc, char *argv[])
         if (argc != 5)
             usage(argv[0], argv[1][1], 5);
         do_rumors(argv[2], argv[3], argv[4]);
-        break;
-
-    case 'h':
-    case 'H':
-        if (argc != 4)
-            usage(argv[0], argv[1][1], 4);
-        do_oracles(argv[2], argv[3]);
         break;
 
     default:
@@ -524,164 +514,6 @@ do_data(const char *infile, const char *outfile)
 
     return;
 }
-
-/* routine to decide whether to discard something from oracles.txt */
-static boolean
-h_filter(char *line)
-{
-    static boolean skip = FALSE;
-    char tag[sizeof in_line];
-
-    if (*line == '#')
-        return TRUE;    /* ignore comment lines */
-    if (sscanf(line, "----- %s", tag) == 1) {
-        skip = FALSE;
-    } else if (skip && !strncmp(line, "-----", 5))
-        skip = FALSE;
-    return skip;
-}
-
-static const char *special_oracle[] = {
-    "\"...it is rather disconcerting to be confronted with the",
-    "following theorem from [Baker, Gill, and Solovay, 1975].",
-    "",
-    "Theorem 7.18  There exist recursive languages A and B such that",
-    "  (1)  P(A) == NP(A), and",
-    "  (2)  P(B) != NP(B)",
-    "",
-    "This provides impressive evidence that the techniques that are",
-    "currently available will not suffice for proving that P != NP or",
-    "that P == NP.\"  [Garey and Johnson, p. 185.]"
-};
-
-/*
-   The oracle file consists of a "do not edit" comment, a decimal count N
-   and set of N+1 hexadecimal fseek offsets, followed by N multiple-line
-   records, separated by "---" lines.  The first oracle is a special case.
-   The input data contains just those multi-line records, separated by
-   "-----" lines.
- */
-
-void
-do_oracles(const char *infile, const char *outfile)
-{
-    char tempfile[256];
-    boolean in_oracle, ok;
-    long txt_offset, offset, fpos;
-    int oracle_cnt;
-    int i;
-
-    snprintf(tempfile, SIZE(tempfile), "%s.%s", outfile, "tmp");
-
-    if (!(ifp = fopen(infile, RDTMODE))) {
-        perror(infile);
-        exit(EXIT_FAILURE);
-    }
-    if (!(ofp = fopen(outfile, WRTMODE))) {
-        perror(outfile);
-        fclose(ifp);
-        exit(EXIT_FAILURE);
-    }
-    if (!(tfp = fopen(tempfile, WRTMODE))) {    /* oracles.tmp */
-        perror(tempfile);
-        fclose(ifp);
-        fclose(ofp);
-        remove(outfile);
-        exit(EXIT_FAILURE);
-    }
-
-    /* output a dummy header record; we'll rewind and overwrite it later */
-    fprintf(ofp, "%s%5d\n", Dont_Edit_Data, 0);
-
-    /* handle special oracle; it must come first */
-    fputs("---\n", tfp);
-    fprintf(ofp, "%05lx\n", ftell(tfp));        /* start pos of special oracle */
-    for (i = 0; i < SIZE(special_oracle); i++) {
-        fputs(xcrypt(special_oracle[i]), tfp);
-        fputc('\n', tfp);
-    }
-
-    oracle_cnt = 1;
-    fputs("---\n", tfp);
-    fprintf(ofp, "%05lx\n", ftell(tfp));        /* start pos of first oracle */
-    in_oracle = FALSE;
-
-    while (fgets(in_line, sizeof in_line, ifp)) {
-
-        if (h_filter(in_line))
-            continue;
-        if (!strncmp(in_line, "-----", 5)) {
-            if (!in_oracle)
-                continue;
-            in_oracle = FALSE;
-            oracle_cnt++;
-            fputs("---\n", tfp);
-            fprintf(ofp, "%05lx\n", ftell(tfp));
-            /* start pos of this oracle */
-        } else {
-            in_oracle = TRUE;
-            fputs(xcrypt(in_line), tfp);
-        }
-    }
-
-    if (in_oracle) {    /* need to terminate last oracle */
-        oracle_cnt++;
-        fputs("---\n", tfp);
-        fprintf(ofp, "%05lx\n", ftell(tfp));    /* eof position */
-    }
-
-    /* record the current position */
-    txt_offset = ftell(ofp);
-    fclose(ifp);        /* all done with original input file */
-
-    /* reprocess the scratch file; 1st format an error msg, just in case */
-    snprintf(in_line, SIZE(in_line), "rewind of \"%s\"", tempfile);
-    if (rewind(tfp) != 0)
-        goto dead_data;
-    /* copy all lines of text from the scratch file into the output file */
-    while (fgets(in_line, sizeof in_line, tfp))
-        fputs(in_line, ofp);
-
-    /* finished with scratch file */
-    fclose(tfp);
-    remove(tempfile);   /* remove it */
-
-    /* update the first record of the output file; prepare error msg 1st */
-    snprintf(in_line, SIZE(in_line), "rewind of \"%s\"", outfile);
-    ok = (rewind(ofp) == 0);
-    if (ok) {
-        snprintf(in_line, SIZE(in_line), "header rewrite of \"%s\"", outfile);
-        ok = (fprintf(ofp, "%s%5d\n", Dont_Edit_Data, oracle_cnt) >= 0);
-    }
-    if (ok) {
-        snprintf(in_line, SIZE(in_line), "data rewrite of \"%s\"", outfile);
-        for (i = 0; i <= oracle_cnt; i++) {
-            if (!(ok = (fpos = ftell(ofp)) >= 0))
-                break;
-            if (!(ok = (fseek(ofp, fpos, SEEK_SET) >= 0)))
-                break;
-            if (!(ok = (fscanf(ofp, "%5lx", &offset) == 1)))
-                break;
-            if (!(ok = (fseek(ofp, fpos, SEEK_SET) >= 0)))
-                break;
-            if (!(ok = (fprintf(ofp, "%05lx\n", offset + txt_offset) >= 0)))
-                break;
-        }
-    }
-    if (!ok) {
-    dead_data:perror(in_line); /* report the problem */
-        /* close and kill the aborted output file, then give up */
-        fclose(ofp);
-        remove(outfile);
-        exit(EXIT_FAILURE);
-    }
-
-    /* all done */
-    fclose(ofp);
-
-    return;
-}
-
 
 static struct deflist {
 

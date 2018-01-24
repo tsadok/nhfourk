@@ -442,7 +442,7 @@ build_role_spec(void)
     if (role_spec.choices)
         return;
 
-    int i, j, k;
+    int i, j = 0, k = 0;
     struct nh_listitem *choices;
 
     /* build list of roles */

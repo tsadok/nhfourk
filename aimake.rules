@@ -315,13 +315,6 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
                         "optpath::bpath:libnethack/dat/quest.dat"],
             output => 'bpath:libnethack/dat/quest.dat',
         },
-        _makedefs_oracles => {
-            object => "path:libnethack/dat/oracles.txt",
-            command => ["bpath:libnethack/util/makedefs.c/makedefs$exeext",
-                        "optpath:-h :",
-                        "optpath::bpath:libnethack/dat/oracles"],
-            output => 'bpath:libnethack/dat/oracles',
-        },
         _makedefs_rumors => {
             # We rely on the fact that optpath: options given
             # explicitly always stay in the same order.
@@ -355,13 +348,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
                         "bpath:libnethack/dat/data",
                         "bpath:libnethack/dat/dungeon",
                         "bpath:libnethack/dat/history",
-                        "bpath:libnethack/dat/oracles",
                         "bpath:libnethack/dat/quest.dat",
                         "bpath:libnethack/dat/rumors",
                         "optpath::bpath:libnethack/dat/data",
                         "optpath::bpath:libnethack/dat/dungeon",
                         "optpath::bpath:libnethack/dat/history",
-                        "optpath::bpath:libnethack/dat/oracles",
                         "optpath::bpath:libnethack/dat/quest.dat",
                         "optpath::bpath:libnethack/dat/rumors"],
             in_subdir => "bpath:libnethack/dat",
