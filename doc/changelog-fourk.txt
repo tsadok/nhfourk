@@ -62,6 +62,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Crysknives now have only a 1/5 chance of reverting to regular
+   worm teeth, and only if not fixed.
+
  * The ability for a shapechanger to hold its form now depends on
    how level-appropriate the form is for the current dungeon level.
    Wildly out-of-depth forms will only be held briefly; forms on
