@@ -112,6 +112,10 @@
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
+▒▒▒ * Make gnome lords sometimes get a touchstone in inventory.
+▒▒▒
+▒▒▒ * Make hardware stores and lighting stores carry potions of oil.
+▒▒▒
 ▒▒▒ * 03:22 < nht > an oddity in fourk
 ▒▒▒   03:22 < nht > as a scurrier I can dig down while wielding a weapon on dungeon floor
 ▒▒▒   03:22 < nht > but not when I'm in a pit
@@ -172,8 +176,8 @@
 ▒▒▒   hallucinatory actions, such as singing, dancing, etc.
 ▒▒▒
 ▒▒▒ * Makedefs must die.  Triage when to refactor each of the things it does:
-▒▒▒   + DONE: monstr[]
-▒▒▒   + oracles.txt => oracles
+▒▒▒   + DONE (.4): monstr[]
+▒▒▒   + DONE (.5): oracles.txt => oracles (breaks save compat)
 ▒▒▒   + rumors.tru + rumors.fal => rumors
 ▒▒▒   + data.base => data
 ▒▒▒   + quest.txt => quest.dat

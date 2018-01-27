@@ -911,12 +911,22 @@ you_moved(void)
             /* turn boundary handling starts here */
             /**************************************/
 
-            int pwregentime =
-                abs(25 / ((ACURR(A_WIS) > 10) ? ACURR(A_WIS) - 10 : 1))
-                / (Energy_regeneration ? 2 : 1);
-
-            if (pwregentime < 1)
-                pwregentime = 1;
+            int pwregen_t; /* Power regen follows a 16-turn cycle. */
+            int pw_percycle = 1 + (u.ulevel * ACURR(A_WIS) *
+                                   (Race_if(PM_SYLPH) ? 3 : 2) /
+                                   (Energy_regeneration ? 4 : 8));
+            switch (moves % 16) {
+                /* This ordering spreads out the "extra" points so they don't
+                   all hit at the beginning of the sixteen-turn cycle. */
+            case 1:   pwregen_t = 1; break;   case 9:   pwregen_t = 2; break;
+            case 5:   pwregen_t = 3; break;   case 13:  pwregen_t = 4; break;
+            case 3:   pwregen_t = 5; break;   case 11:  pwregen_t = 6; break;
+            case 7:   pwregen_t = 7; break;   case 15:  pwregen_t = 8; break;
+            case 2:   pwregen_t = 9; break;   case 10:  pwregen_t = 10; break;
+            case 6:   pwregen_t = 11; break;  case 14:  pwregen_t = 12; break;
+            case 4:   pwregen_t = 13; break;  case 12:  pwregen_t = 14; break;
+            case 8:   pwregen_t = 15; break;  default:  pwregen_t = 16; break;
+            }
 
             mcalcdistress();    /* adjust monsters' trap, blind, etc */
 
@@ -1041,17 +1051,14 @@ you_moved(void)
             }
 
             if ((u.uen < u.uenmax) &&
-                ((wtcap < MOD_ENCUMBER && !Race_if(PM_SYLPH) &&
-                  !(moves % pwregentime))
+                ((wtcap < MOD_ENCUMBER && !Race_if(PM_SYLPH))
                  || (can_draw_from_environment(&youmonst, FALSE) &&
                      !(u.uhs >= WEAK)))) {
                 int olduen = u.uen;
-                u.uen += Race_if(PM_SYLPH) ? 
-                    /* Sylphs keep the old formula */
-                    rn1((int)(ACURR(A_WIS) + ACURR(A_INT)) / 15 + 1, 1) :
-                    /* everyone else gets the new formula */
-                    1 + ((u.ulevel / 3) / rne(2 + (u.ulevel / 5))) *
-                    (Energy_regeneration ? 2 : 1);
+                int addpw  = pw_percycle / 16;
+                if (pwregen_t <= (pw_percycle - (addpw * 16)))
+                    addpw++;
+                u.uen += addpw;
                 if (u.uen > u.uenmax)
                     u.uen = u.uenmax;
                 if (Race_if(PM_SYLPH) && (u.uen > olduen) &&
