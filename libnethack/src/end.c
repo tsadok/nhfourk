@@ -470,7 +470,7 @@ sort_valuables(struct valuable_data list[],
 
 /* called twice; first to calculate total, then to list relevant items */
 static int artifact_score(struct obj *list,
-                          boolean counting,  /* true => add up points;
+                          boolean counting,  /* true => add up (for points)
                                                 false => display them */
                           struct nh_menulist *menu) {
     const char *pbuf;
@@ -501,8 +501,8 @@ static int artifact_score(struct obj *list,
                 add_menutext(menu, pbuf);
             }
         }
-        if (Has_contents(otmp))
-            artifact_score(otmp->cobj, counting, menu);
+        if (Has_contents(otmp) && counting)
+            total += artifact_score(otmp->cobj, counting, menu);
     }
     return total;
 }
@@ -775,7 +775,7 @@ calc_score(int how, boolean show, long umoney)
 
         if (show) {
             buf = msgprintf(
-                "Artifact value:  %10ld                    (%5ld points)",
+                "Artifacts:       %10ld                    (%5ld points)",
                 category_raw, category_points);
             add_menutext(&menu, buf);
         }
