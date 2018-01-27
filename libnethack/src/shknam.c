@@ -241,7 +241,7 @@ const struct shclass shtypes[] = {
      {{90, WAND_CLASS}, {5, -LEATHER_GLOVES}, {5, -ELVEN_CLOAK}, {0, 0}},
      shkwands},
     {"hardware store", TOOL_CLASS, 3, D_SHOP,
-     {{100, TOOL_CLASS}, {0, 0}, {0, 0}}, shktools},
+     {{97, TOOL_CLASS}, {3, -POT_OIL}, {0, 0}, {0, 0}}, shktools},
     /* Actually shktools is ignored; the code specifically chooses a random
        implementor name (along with candle shops having random shopkeepers) */
     {"rare books", SPBOOK_CLASS, 3, D_SHOP,

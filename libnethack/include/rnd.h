@@ -63,7 +63,7 @@ enum rng {
     rng_survive_dbridge, /* chance of you surviving drawbridge explosion */
     rng_crystal_ball,    /* crystal ball results */
     rng_boulder_bridge,  /* boulders forming a bridge over water */
-    rng_unfix_crysknife, /* crysknives reverting */
+    rng_crysknife,       /* crysknives reverting to worm teeth */
     rng_role_alignment,  /* role-specific alignment record handling */
     rng_helm_alignment,  /* helm of opposite alignment effect on a neutral */
     rng_u_create_monster,/* "create monster" effects used by player */

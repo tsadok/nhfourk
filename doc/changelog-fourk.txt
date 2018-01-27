@@ -62,6 +62,21 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Hardware stores can now sell oil.
+
+ * Gnome lords occasionally carry touchstones.
+
+ * The player's ability to regenerate magical power (for spell
+   casting and so forth) has been rebalanced again.
+
+ * Crysknives now have only a 1/5 chance of reverting to regular
+   worm teeth, and only if not fixed.
+
+ * The ability for a shapechanger to hold its form now depends on
+   how level-appropriate the form is for the current dungeon level.
+   Wildly out-of-depth forms will only be held briefly; forms on
+   par with the current dungeon level can be held longer.
+
  * The plate mails (bronze, regular, and crystal) provide more
    defense than before.
 
