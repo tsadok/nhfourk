@@ -62,6 +62,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Hardware stores can now sell oil.
+
+ * Gnome lords occasionally carry touchstones.
+
+ * The player's ability to regenerate magical power (for spell
+   casting and so forth) has been rebalanced again.
+
  * Crysknives now have only a 1/5 chance of reverting to regular
    worm teeth, and only if not fixed.
 
