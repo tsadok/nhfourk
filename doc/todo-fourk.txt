@@ -112,8 +112,6 @@
 ▒▒▒
 ▒▒▒ * Differentiate ancient dragons in DawnHack.
 ▒▒▒
-▒▒▒ * Make gnome lords sometimes get a touchstone in inventory.
-▒▒▒
 ▒▒▒ * Make hardware stores and lighting stores carry potions of oil.
 ▒▒▒
 ▒▒▒ * 03:22 < nht > an oddity in fourk

@@ -729,6 +729,10 @@ m_initinv(struct monst *mtmp, enum rng rng)
             mongets(mtmp, POT_OIL, rng);
         }
         break;
+    case S_GNOME:
+        if (ptr == &mons[PM_GNOME_LORD] && !rn2_on_rng(7, rng))
+            mongets(mtmp, TOUCHSTONE, rng);
+        break;
     case S_NYMPH:
         if (!rn2_on_rng(2, rng))
             mongets(mtmp, MIRROR, rng);
