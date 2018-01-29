@@ -142,6 +142,7 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
 
     if (oclass == RANDOM_CLASS) {
         impossible("mkobj_of_class called with RANDOM_CLASS");
+        oclass = GEM_CLASS; /* This class is least-disruptive to balance. */
     }
 
     if (oclass == GEM_CLASS) {
@@ -181,6 +182,17 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
 
         i = j + bases[GEM_CLASS];
     } else {
+        i = bases[(int)oclass];
+        while ((prob -= objects[i].oc_prob) > 0)
+            i++;
+    }
+
+    /* On early dungeon levels, random spellbooks now try to be ones for
+       low-level spells, most of the time. */
+    while (oclass == SPBOOK_CLASS &&
+           ((objects[i].oc_level - 1) * 3 > depth(&lev->z)) &&
+           rn2_on_rng((objects[i].oc_level - 1) * 3 - depth(&lev->z), rng)) {
+        prob = 1 + rn2_on_rng(1000, rng);
         i = bases[(int)oclass];
         while ((prob -= objects[i].oc_prob) > 0)
             i++;

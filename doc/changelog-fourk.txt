@@ -62,6 +62,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Randomly generated spellbooks are less likely to contain high-level
+   spells when generated on early dungeon levels.
+
  * Hardware stores can now sell oil.
 
  * Gnome lords occasionally carry touchstones.

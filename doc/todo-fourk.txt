@@ -191,7 +191,7 @@
 ▒▒▒
 ▒▒▒ * Figure out what further buffs to do to martial arts, if any.
 ▒▒▒
-▒▒▒ * Rebalance the regeneration of HP and Pw.
+▒▒▒ * Rebalance the regeneration of HP.
 ▒▒▒
 ▒▒▒ * More special Level Versions:
 ▒▒▒   + Garden of Temptation
@@ -253,9 +253,6 @@
 ▒▒▒
 ▒▒▒ * Allow scurriers to outright move _onto_ a tree tile, and give them a movement
 ▒▒▒   point discount/rebate (maybe NORMAL_SPEED * 2 / 3) when they do so.
-▒▒▒
-▒▒▒ * Perhaps randomly-generated spellbooks should be biased toward low
-▒▒▒   spell levels if generated on a low dungeon level.
 ▒▒▒
 ▒▒▒ * 08:12 < FIQ > jonadab, certain forms of resistances should be foolproof in challenge mode too...
 ▒▒▒   08:12 < FIQ > e.g. taking fire damage as a fire vortex makes no sense
