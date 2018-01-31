@@ -96,6 +96,8 @@ setuwep(struct obj *obj)
         u.bashmsg = !is_wep(obj);
     } else
         u.bashmsg = TRUE;        /* for "bare hands" message */
+    if (uwep && uwep->oartifact)
+        break_conduct(conduct_equippedartifact);
     update_inventory();
 }
 

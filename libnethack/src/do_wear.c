@@ -207,6 +207,8 @@ setequip(enum objslot slot, struct obj *otmp, enum equipmsg msgtype)
             break_conduct(conduct_clothing);
         else if (slot <= os_last_worn)
             break_conduct(conduct_jewelry);
+        if (o->oartifact)
+            break_conduct(conduct_equippedartifact);
         if (msgtype != em_silent)
             on_msg(o);
         if (o->cursed && !o->bknown) {

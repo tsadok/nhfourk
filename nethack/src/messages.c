@@ -72,7 +72,6 @@ static const int channel_color[] = {
     [msgc_uiprompt] = CLR_BRIGHT_BLUE,
     [msgc_curprompt] = CLR_BRIGHT_BLUE,
     [msgc_reminder] = CLR_BRIGHT_BLUE,    /* fades to dark blue immediately */
-    [msgc_mail] = CLR_BRIGHT_BLUE,
     [msgc_unpaid] = CLR_BRIGHT_BLUE,
 
     /* CLR_BRIGHT_MAGENTA: permanent non-spammy bad things, urgent warnings */

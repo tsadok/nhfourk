@@ -1154,6 +1154,50 @@ show_conduct(int final)
             you_have_X(&menu, buf);
         }
     }
+    if (!(u.uconduct[conduct_equippedartifact] ||
+          u.uconduct[conduct_appliedartifact] ||
+          u.uconduct[conduct_carriedartifact])) {
+        enl_msg(&menu, You_, "have not used", "did not use",
+                " any artifacts");
+    } else {
+        int saidsomething = 0;
+        if (!u.uconduct[conduct_equippedartifact]) {
+            enl_msg(&menu, You_, "have not worn or wielded",
+                    "did not wear or wield",
+                    " any artifacts");
+            saidsomething++;
+        }
+        if (!u.uconduct[conduct_appliedartifact]) {
+            enl_msg(&menu, You_, "have not applied or invoked",
+                    "did not apply or invoke",
+                    " any artifacts");
+            saidsomething++;
+        }
+        if (!u.uconduct[conduct_carriedartifact]) {
+            enl_msg(&menu, You_, "have not moved while",
+                    "did not move while",
+                    " carrying any artifacts");
+            saidsomething++;
+        }
+        if (!saidsomething) {
+            int when = u.uconduct_time[conduct_equippedartifact];
+            const char *what = "equipped";
+            if (when == 0 || (when > u.uconduct_time[conduct_appliedartifact] &&
+                              u.uconduct_time[conduct_appliedartifact] > 0)) {
+                when = u.uconduct_time[conduct_appliedartifact];
+                what = "applied or invoked";
+            }
+            if (when == 0 || (when > u.uconduct_time[conduct_carriedartifact] &&
+                              u.uconduct_time[conduct_carriedartifact] > 0)) {
+                when = u.uconduct_time[conduct_carriedartifact];
+                what = "carried";
+            }
+            if (when > 0) {
+                enl_msg(&menu, You_, what, what,
+                        msgprintf(" an artifact on turn %d", when));
+            }
+        }
+    }
 
     if (!u.uconduct[conduct_puddingsplit])
         you_have_never(&menu, "split a pudding");

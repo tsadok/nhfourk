@@ -282,6 +282,11 @@ enum player_conduct {
     conduct_reflection,                  /* had reflection */
     conduct_boughtprotection,            /* "donated" gold for protection */
     conduct_donation,                    /* donated to a temple at all */
+    conduct_equippedartifact,            /* wore or wielded an artifact */
+    conduct_appliedartifact,             /* applied or invoked an artifact. */
+    conduct_carriedartifact,             /* carried an artifact in open
+                                            inventory; picking one up and
+                                            immediately bagging it is ok. */
     num_conducts,
 };
 

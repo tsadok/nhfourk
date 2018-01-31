@@ -16,6 +16,7 @@ static boolean findtravelpath(boolean(*)(int, int), schar *, schar *);
 static struct monst *monstinroom(const struct permonst *, int);
 static boolean check_interrupt(struct monst *mtmp);
 static boolean couldsee_func(int, int);
+static void check_movement_conducts(void);
 
 static void move_update(boolean);
 
@@ -1455,6 +1456,23 @@ couldsee_func(int x, int y)
     return couldsee(x, y);
 }
 
+/* Called each time the player moves in any direction, this function is
+   responsible to check movement-related conducts.  The first one I added it for
+   was "You never carried an artifact", which wants to know about carrying an
+   artifact in open inventory _while moving_, so that picking one up and bagging
+   it before going anywhere is acceptable.  (This allows you e.g. to take your
+   quest artifact and show it to your quest leader without violating the conduct
+   by carrying it around in open inventory.) */
+static void
+check_movement_conducts(void)
+{
+    struct obj *o;
+    for (o = invent; o; o = o->nobj) {
+        if (o->oartifact)
+            break_conduct(conduct_carriedartifact);
+    }
+}
+
 /* Note: thismove is occ_none for the single-space movement commands, even if
    they were command-repeated; its purpose is to distinguish between commands */
 int
@@ -1475,6 +1493,8 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     enum u_interaction_attempt uia;
     struct test_move_cache cache;
     struct nh_cmd_arg newarg;
+
+    check_movement_conducts();
 
     init_test_move_cache(&cache);
 

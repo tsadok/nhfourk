@@ -3149,9 +3149,14 @@ doapply(const struct nh_cmd_arg *arg)
 
     if (obj->oclass == WAND_CLASS) {
         pline(msgc_controlhelp,
+              "Wands can be used by zapping, breaking, or engraving.");
+        pline(msgc_controlhelp,
               "To break wands, use the 'invoke' command (typically on 'V').");
         return 0;
     }
+
+    if (obj->oartifact)
+        break_conduct(conduct_appliedartifact);
 
     switch (obj->otyp) {
     case BLINDFOLD:

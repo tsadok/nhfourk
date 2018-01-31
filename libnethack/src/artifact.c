@@ -1410,6 +1410,12 @@ arti_invoke(struct obj *obj)
     }
 
     const struct artifact *oart = get_artifact(obj);
+    if (!oart) {
+        impossible("arti_invoke() called for a non-artifact (%s)",
+                   xname(obj));
+        return 0;
+    }
+    break_conduct(conduct_appliedartifact);
 
     if (oart->inv_prop > LAST_PROP) {
         /* It's a special power, not "just" a property */

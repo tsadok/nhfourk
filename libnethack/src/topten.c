@@ -209,9 +209,9 @@ encode_birthoptions(void)
     return c;
 }
 
-static_assert(num_conducts <= 32,
+static_assert(num_conducts <= 64,
               "Too many conducts for encode_conduct to encode");
-unsigned long
+unsigned long long
 encode_conduct(void)
 {
     enum player_conduct cond = conduct_first;
@@ -271,7 +271,7 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
 
     fprintf(rfile, SEP "gameidnum=%d", u.gameidnum);
 
-    fprintf(rfile, SEP "conduct=%ld", encode_conduct());
+    fprintf(rfile, SEP "conduct=%lld", encode_conduct());
 
     fprintf(rfile, SEP "birthoption=%ld", encode_birthoptions());
 

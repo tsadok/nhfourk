@@ -286,9 +286,6 @@
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
-▒▒▒ * Conducts:
-▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.
-▒▒▒
 ▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
 ▒▒▒                     speed 24-26 \n no special abilities other than flight
 ▒▒▒   18:50 < jonadab+> FIQ: That is not a bad idea.
