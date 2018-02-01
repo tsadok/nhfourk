@@ -2009,6 +2009,9 @@ peace_minded(const struct permonst *ptr)
         return TRUE;
     if (race_peaceful(ptr))
         return TRUE;
+    if (URACEDATA == &mons[PM_GNOME] &&
+        monsndx(ptr) == PM_EARTH_ELEMENTAL)
+        return TRUE;
     if (always_hostile(ptr))
         return FALSE;
     if (race_hostile(ptr))

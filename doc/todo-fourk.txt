@@ -318,15 +318,8 @@
 ▒▒▒ * Consider FIQ's changes to spellbook mechanics, 5f81af2.  Be advised this will absolutely
 ▒▒▒   necessitate a fullwise balance check on spellbook availability.
 ▒▒▒
-▒▒▒ * Consider whether FIQ's more-binary-save-checkpoints change might should be cherry-picked.
-▒▒▒   commits 1117745, e7c193d
-▒▒▒
 ▒▒▒ * Redo the colors for the Dawnlike tiles for all the keys,
 ▒▒▒   and maybe the violet potion as well.
-▒▒▒
-▒▒▒ * 23:38 < FIQ > jonadab: shouldn't earth E be always-peaceful to gnomes?
-▒▒▒   Yes, but this should go in after the rodent change.  So => 4.3.0.5
-▒▒▒   (It'll be a special case in peace_minded().)
 ▒▒▒
 ▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
