@@ -117,6 +117,8 @@ static const char *const shktools[] = {
 #ifdef WIN32
     "Lechaim", "Lexa", "Niod",
 #endif
+    "Drengk Fhuilldraj", "K Rho", "Sar-ching", "Cheed Hadak", "Tenor Tolan",
+    "Morreck Boto", "Lyn Edovig", "V Ryghm", "Novet Chin", "Shillib Maceniki",
     0
 };
 

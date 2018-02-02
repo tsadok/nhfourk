@@ -62,15 +62,18 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
- * Lycanthropy triggers its changes less often now, especially in
-   the daytime, especially when the moon isn't full.
-
  * Valkyrie is now a playable race.  The former role has been renamed
    Shieldmaiden ("Hoplite" if male).  Shieldmaidens and Hoplites can
    be humans, dwarves, giants, or valkyries, can be either gender, and
    can be lawful or neutral.  All shieldmaidens start with cold
    resistance, but only the Valkyries can fly.  Valkyries always start
    neutral but can be either shieldmaidens or priestesses.
+
+ * Lycanthropy triggers its changes less often now, especially in
+   the daytime, especially when the moon isn't full.
+
+ * Randomly generated spellbooks are less likely to contain high-level
+   spells when generated on early dungeon levels.
 
  * Hardware stores can now sell oil.
 
