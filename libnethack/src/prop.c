@@ -24,6 +24,7 @@ m_has_property(const struct monst *mon, enum youprop property,
 {
     unsigned rv = 0;
     struct obj *otmp;
+    const struct permonst *pm = mon->data;
 
     /* The general case for equipment */
     rv |= mworn_extrinsic(mon, property);
@@ -53,6 +54,9 @@ m_has_property(const struct monst *mon, enum youprop property,
         if (property == UNCHANGING && flags.polyinit_mnum != -1)
             rv |= W_MASK(os_birthopt);
 
+        /* Use your race if in natural form, NOT your role, to determine
+           form-determined properties.  (If polymorphed, use polyform.) */
+        pm = URACEDATA;
     } else {
         /* Monster tempraries are boolean flags.
 
@@ -64,7 +68,7 @@ m_has_property(const struct monst *mon, enum youprop property,
         if (property == FAST && mon->mspeed == MFAST)
             rv |= (mon->permspeed == FAST ?
                    W_MASK(os_polyform) : W_MASK(os_outside));
-        if (property == INVIS && mon->perminvis && !pm_invisible(mon->data))
+        if (property == INVIS && mon->perminvis && !pm_invisible(pm))
             rv |= W_MASK(os_outside);
         if (property == STUNNED && mon->mstun)
             rv |= W_MASK(os_timeout);
@@ -85,31 +89,31 @@ m_has_property(const struct monst *mon, enum youprop property,
         property == SHOCK_RES    ? resists_elec(mon)                     :
         property == POISON_RES   ? resists_poison(mon)                   :
         property == DRAIN_RES    ? resists_drli(mon)                     :
-        property == SICK_RES     ? mon->data->mlet == S_FUNGUS ||
-                                   mon->data == &mons[PM_GHOUL]          :
+        property == SICK_RES     ? pm->mlet == S_FUNGUS ||
+                                   pm == &mons[PM_GHOUL]                 :
         property == ANTIMAGIC    ? resists_magm(mon)                     :
         property == ACID_RES     ? resists_acid(mon)                     :
         property == STONE_RES    ? resists_ston(mon)                     :
-        property == STUNNED      ? u.umonnum == PM_STALKER ||
-                                   mon->data->mlet == S_BAT              :
-        property == BLINDED      ? !haseyes(mon->data)                   :
-        property == HALLUC       ? Upolyd && dmgtype(mon->data, AD_HALU) :
-        property == SEE_INVIS    ? perceives(mon->data)                  :
-        property == TELEPAT      ? telepathic(mon->data)                 :
-        property == INFRAVISION  ? infravision(mon->data)                :
-        property == XRAY_VISION  ? has_xray_vision(mon->data)            :
+        property == STUNNED      ? pm == &mons[PM_STALKER] ||
+                                   pm->mlet == S_BAT                     :
+        property == BLINDED      ? !haseyes(pm)                          :
+        property == HALLUC       ? dmgtype(pm, AD_HALU)                  :
+        property == SEE_INVIS    ? perceives(pm)                         :
+        property == TELEPAT      ? telepathic(pm)                        :
+        property == INFRAVISION  ? infravision(pm)                       :
+        property == XRAY_VISION  ? has_xray_vision(pm)                   :
         /* Note: This one assumes that there's no way to permanently turn
            visible when you're in stalker form (i.e. mummy wrappings only). */
-        property == INVIS        ? pm_invisible(mon->data)               :
-        property == TELEPORT     ? can_teleport(mon->data)               :
-        property == LEVITATION   ? is_floater(mon->data)                 :
-        property == FLYING       ? is_flyer(mon->data)                   :
-        property == SWIMMING     ? is_swimmer(mon->data)                 :
-        property == PASSES_WALLS ? passes_walls(mon->data)               :
-        property == REGENERATION ? regenerates(mon->data)                :
-        property == REFLECTING   ? mon->data == &mons[PM_SILVER_DRAGON]  :
-        property == TELEPORT_CONTROL  ? control_teleport(mon->data)      :
-        property == MAGICAL_BREATHING ? amphibious(mon->data)            :
+        property == INVIS        ? pm_invisible(pm)                      :
+        property == TELEPORT     ? can_teleport(pm)                      :
+        property == LEVITATION   ? is_floater(pm)                        :
+        property == FLYING       ? is_flyer(pm)                          :
+        property == SWIMMING     ? is_swimmer(pm)                        :
+        property == PASSES_WALLS ? passes_walls(pm)                      :
+        property == REGENERATION ? regenerates(pm)                       :
+        property == REFLECTING   ? pm == &mons[PM_SILVER_DRAGON]         :
+        property == TELEPORT_CONTROL  ? control_teleport(pm)             :
+        property == MAGICAL_BREATHING ? amphibious(pm)                   :
         0)
         rv |= W_MASK(os_polyform);
 

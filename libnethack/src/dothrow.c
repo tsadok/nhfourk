@@ -961,7 +961,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
         bhitpos.x = mon->mx;
         bhitpos.y = mon->my;
     } else if (dz) {
-        if (dz < 0 && Role_if(PM_VALKYRIE) && obj->oartifact == ART_MJOLLNIR &&
+        if (dz < 0 && Role_if(PM_HOPLITE) && obj->oartifact == ART_MJOLLNIR &&
             !impaired) {
             pline(msgc_yafm, "%s the %s and returns to your %s!",
                   Tobjnam(obj, "hit"), ceiling(u.ux, u.uy), body_part(HAND));
@@ -1089,14 +1089,14 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             mpickobj(u.ustuck, obj);
     } else {
         /* the code following might become part of dropy() */
-        if (obj->oartifact == ART_MJOLLNIR && Role_if(PM_VALKYRIE)) {
+        if (obj->oartifact == ART_MJOLLNIR && Role_if(PM_HOPLITE)) {
             /* we must be wearing Gauntlets of Power to get here */
             sho_obj_return_to_u(obj, dx, dy);   /* display its flight */
 
             if (rn2_on_rng(100, rng_mjollnir_return) && !impaired) {
                 pline(msgc_actionok, "%s to your %s!",
                       Tobjnam(obj, "return"), body_part(HAND));
-                if (Role_if(PM_VALKYRIE) && !rn2_on_rng(50, rng_role_alignment))
+                if (Role_if(PM_HOPLITE) && !rn2_on_rng(50, rng_role_alignment))
                     adjalign(1);
                 obj = addinv(obj);
                 encumber_msg();

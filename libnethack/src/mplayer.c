@@ -333,9 +333,12 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
         case PM_TOURIST:
             ammo = DART;
             break;
-        case PM_VALKYRIE:
+        case PM_SHIELDMAIDEN:
+        case PM_HOPLITE:
             if (!rn2_on_rng(3, rng))
                 weapon = WAR_HAMMER;
+            else if (!rn2_on_rng(3, rng))
+                weapon = SPEAR;
             if (rn2_on_rng(2, rng))
                 armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
             break;
@@ -399,7 +402,8 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 mk_mplayer_armor(mtmp, rnd_class(LEATHER_GLOVES,
                                                  GAUNTLETS_OF_DEXTERITY, rng),
                                  rng);
-            if ((monsndx(ptr) == PM_VALKYRIE) && rn2_on_rng(4, rng))
+            if ((monsndx(ptr) == PM_HOPLITE || (monsndx(ptr)==PM_SHIELDMAIDEN))
+                 && rn2_on_rng(4, rng))
                 mk_mplayer_armor(mtmp, SPEED_BOOTS, rng);
             else if (rn2_on_rng(8, rng))
                 mk_mplayer_armor(mtmp, rnd_class(LOW_BOOTS,

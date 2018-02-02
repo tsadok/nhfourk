@@ -3329,12 +3329,12 @@ maybe_wail(void)
         return;
 
     wailmsg = moves;
-    if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Role_if(PM_VALKYRIE)) {
+    if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Race_if(PM_VALKYRIE)) {
         const char *who;
         int i, powercnt;
 
         who = (Role_if(PM_WIZARD) ||
-               Role_if(PM_VALKYRIE)) ? urole.name.m : "Elf";
+               Race_if(PM_VALKYRIE)) ? urace.individual.f : "Elf";
         if (u.uhp == 1) {
             pline(msgc_fatal, "%s is about to die.", who);
         } else {

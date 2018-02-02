@@ -40,7 +40,7 @@
 #define UNLOCKFEAT_ROLE_PRIEST       0x00000080UL
 #define UNLOCKFEAT_ROLE_CAVEMAN      0x00000100UL
 #define UNLOCKFEAT_ROLE_HEALER       0x00000200UL
-#define UNLOCKFEAT_ROLE_VALKYRIE     0x00000400UL
+#define UNLOCKFEAT_ROLE_SHIELDMAIDEN 0x00000400UL
 #define UNLOCKFEAT_ROLE_ARCHEOLOGIST 0x00000800UL
 #define UNLOCKFEAT_ROLE_SAMURAI      0x00001000UL
 #define UNLOCKFEAT_ROLE_TOURIST      0x00002000UL
@@ -62,11 +62,12 @@
 #define UNLOCKFEAT_RACE_SYLPH        0x00000040UL
 #define UNLOCKFEAT_RACE_GIANT        0x00000080UL
 #define UNLOCKFEAT_RACE_SCURRIER     0x00000100UL
+#define UNLOCKFEAT_RACE_VALKYRIE     0x00000200UL
 /* When adding to this list:
  * 1. implement the playable race
  * 2. update UNLOCKFEAT_RACE_MAX, below.
  */
-#define UNLOCKFEAT_RACE_MAX          UNLOCKFEAT_RACE_SCURRIER
+#define UNLOCKFEAT_RACE_MAX          UNLOCKFEAT_RACE_VALKYRIE
 
 /* Third unlock field: options (and modes) */
 #define UNLOCKFEAT_OPT_PERMABLIND    0x00000002UL
@@ -144,12 +145,12 @@ enum achievement {
     achieve_quest_monk,         /* as a Monk */
     achieve_quest_rogue,        /* as a Rogue */
     achieve_quest_knight,       /* as a Knight */
-    achieve_quest_priest,       /* as a Priest */
-    achieve_quest_caveman,      /* as a Caveman */
+    achieve_quest_priest,       /* as a Priest (or Priestess) */
+    achieve_quest_caveman,      /* as a Caveman (or Cavewoman) */
     achieve_quest_healer,       /* as a Healer */
-    achieve_quest_valkyrie,     /* as a Valkyrie */
+    achieve_quest_shieldmaiden, /* as a Shieldmaiden (or Hoplite) */
     achieve_quest_samurai,      /* as a Samurai */
-    achieve_quest_archeologist, /*as an Archeologist */
+    achieve_quest_archeologist, /* as an Archeologist */
     achieve_quest_tourist,      /* as a Tourist */
     achieve_quest_convict,      /* as a Convict */
     achieve_quest_druid,        /* as a Druid */

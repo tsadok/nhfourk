@@ -147,7 +147,7 @@ makedog(struct newgame_options *ngo)
         return NULL;
 
     pettype = pet_type(ngo);
-    if (pettype == PM_PUPPY)
+    if (pettype == PM_PUPPY || pettype == PM_WINTER_WOLF_CUB)
         petname = ngo->dogname;
     else if (pettype == PM_PONY)
         petname = ngo->horsename;

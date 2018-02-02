@@ -8,7 +8,7 @@
 #	Here you meet your (besieged) class leader, the Norn,
 #	and receive your quest assignment.
 #
-MAZE: "Val-strt",' '
+MAZE: "Shi-strt",' '
 FLAGS: noteleport,hardfloor
 INIT_MAP: '.', 'I', true, true, lit, false, true
 GEOMETRY:center,center
@@ -51,7 +51,7 @@ MONSTER:'@',"Norn",(35,10)
 # OBJECT:'(',"chest",(36,10)
 # But you also get this nice book:
 OBJECT:'+',"cone of cold",(36,10)
-# valkyrie guards for the audience chamber
+# guards for the audience chamber
 MONSTER:'@',"warrior",(27,08)
 MONSTER:'@',"warrior",(27,09)
 MONSTER:'@',"warrior",(27,11)
@@ -90,7 +90,7 @@ MONSTER: 'H',"fire giant",(10,16),hostile
 #	further towards your assigned quest.
 #
 
-MAZE: "Val-loca",' '
+MAZE: "Shi-loca",' '
 FLAGS: hardfloor
 INIT_MAP: '.', 'I', true, true, lit, false, true
 GEOMETRY:center,center
@@ -176,7 +176,7 @@ MONSTER:'H',random,random,hostile
 #	been assigned to retrieve.
 #
 
-MAZE: "Val-goal", 'L'
+MAZE: "Shi-goal", 'L'
 INIT_MAP: '.', 'L', true, true, lit, false, true
 GEOMETRY:center,center
 MAP
@@ -266,7 +266,7 @@ MONSTER:'H',random,random,hostile
 #	and goal levels.
 #
 
-MAZE: "Val-fila" , 'I'
+MAZE: "Shi-fila" , 'I'
 INIT_MAP: '.', 'I', true, true, lit, false, true
 NOMAP
 #
@@ -299,7 +299,7 @@ TRAP: random, random
 TRAP: random, random
 TRAP: random, random
 
-MAZE: "Val-filb" , 'L'
+MAZE: "Shi-filb" , 'L'
 INIT_MAP: '.', 'L', true, true, lit, false, true
 NOMAP
 #

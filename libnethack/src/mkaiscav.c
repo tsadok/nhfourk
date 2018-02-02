@@ -645,11 +645,11 @@ do_aiscav_embed(struct level *lev, char *proto) {
                 (rn2_on_rng(3, rng) ? PM_RANGER : PM_ROGUE),
                 /* First Melee Fighter */
                 ((!rn2_on_rng(3, rng)) ? PM_BARBARIAN :
-                 (!rn2_on_rng(3, rng)) ? PM_VALKYRIE :
+                 (!rn2_on_rng(3, rng)) ? PM_SHIELDMAIDEN :
                  rn2_on_rng(2, rng) ? PM_SAMURAI : PM_KNIGHT),
                 /* Second Melee Fighter */
                 ((!rn2_on_rng(3, rng)) ? PM_BARBARIAN :
-                 (!rn2_on_rng(3, rng)) ? PM_VALKYRIE :
+                 (!rn2_on_rng(3, rng)) ? PM_HOPLITE :
                  rn2_on_rng(2, rng) ? PM_SAMURAI :
                  rn2_on_rng(2, rng) ? PM_CAVEMAN : PM_CAVEWOMAN),
                 /* First Support */

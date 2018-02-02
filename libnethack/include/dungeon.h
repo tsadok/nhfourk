@@ -161,7 +161,7 @@ struct overview_info {
                                  (Is_qstart(x) && (Role_if(PM_ARCHEOLOGIST) || \
                                                    Role_if(PM_MONK) || \
                                                    Role_if(PM_ROGUE) || \
-                                                   Role_if(PM_VALKYRIE))))
+                                                   Role_if(PM_HOPLITE))))
 
 # define within_bounded_area(X,Y,LX,LY,HX,HY)                   \
     ((X) >= (LX) && (X) <= (HX) && (Y) >= (LY) && (Y) <= (HY))

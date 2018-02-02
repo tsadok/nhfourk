@@ -73,7 +73,7 @@ enermod(int en)
     case PM_KNIGHT:
         return (3 * en) / 2;
     case PM_BARBARIAN:
-    case PM_VALKYRIE:
+    case PM_HOPLITE:
         return (3 * en) / 4;
     default:
         return en;

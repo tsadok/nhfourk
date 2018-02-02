@@ -94,11 +94,11 @@ static const struct artifact const_artilist[] = {
       DRLI(5, 2), DRLI(0, 0), NO_CARY, 0, A_CHAOTIC, NON_PM, NON_PM, 8000L),
 /*
  *      Mjollnir will return to the hand of the wielder when thrown
- *      if the wielder is a Valkyrie wearing Gauntlets of Power.
+ *      if the wielder is a Hoplite or Shieldmaiden wearing Gauntlets of Power.
  */
     A("Mjollnir", WAR_HAMMER,   /* Mjo:llnir */
       (SPFX_RESTR | SPFX_ATTK), 0, 0,
-      ELEC(5, 24), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_VALKYRIE, NON_PM, 4000L),
+      ELEC(5, 24), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_HOPLITE, NON_PM, 4000L),
 
     A("Cleaver", BATTLE_AXE,
       SPFX_RESTR, 0, 0,
@@ -272,7 +272,7 @@ static const struct artifact const_artilist[] = {
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_LUCK),
       (SPFX_WARN | SPFX_HSPDAM | SPFX_HPHDAM), 0,
       NO_ATTK, NO_DFNS, NO_CARY,
-      LEV_TELE, A_NEUTRAL, PM_VALKYRIE, NON_PM, 3500L),
+      LEV_TELE, A_NEUTRAL, PM_HOPLITE, NON_PM, 3500L),
 
     A("The Eye of the Aethiopica", AMULET_OF_ESP,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL), (SPFX_EREGEN | SPFX_HSPDAM), 0,

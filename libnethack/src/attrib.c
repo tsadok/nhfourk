@@ -103,7 +103,7 @@ static const struct innate tou_abil[] = {
     {0, 0, 0, 0}
 };
 
-static const struct innate val_abil[] = {
+static const struct innate shi_abil[] = {
     {1, &(HCold_resistance), "", ""},
     {7, &(HFast), "quick", "slow"},
     {0, 0, 0, 0}
@@ -712,8 +712,9 @@ adjabil(int oldlevel, int newlevel)
     case PM_TOURIST:
         abil = tou_abil;
         break;
-    case PM_VALKYRIE:
-        abil = val_abil;
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
+        abil = shi_abil;
         break;
     case PM_WIZARD:
         abil = wiz_abil;

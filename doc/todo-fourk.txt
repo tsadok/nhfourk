@@ -323,16 +323,14 @@
 ▒▒▒
 ▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
-▒▒▒ * Double check that orchain_int() doesn't need a NULL last argument.
-▒▒▒
-▒▒▒ * Rename the Valkyrie role to Shieldmaster/Shieldmaiden, and allow them to be any
-▒▒▒   alignment (subject to race restrictions).  For race they can be human, valkyrie,
-▒▒▒   or dwarf.  Make the valkyrie race always neutral female, dwarf always lawful male.
-▒▒▒   Design the role to have less melee offensive power than e.g. Samurai or Barbarian,
-▒▒▒   but better defense and some casting ability (e.g., cold).  Reflavor the quest text
+▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
 ▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
-▒▒▒   doing so at the behest of the Norn still makes flavor sense).  The cold res and
-▒▒▒   flying are traits specific to valkyrie race: compensate non-valk shieldmasters.
+▒▒▒   doing so at the behest of the Norn still makes flavor sense).
+▒▒▒
+▒▒▒ * Make starting with cold res and a winter wolf cub specific to _valkyrie_ shieldmaidens.
+▒▒▒   Compensate shieldmaidens and hoplites of other races somehow.
+▒▒▒
+▒▒▒ * Add hoplite and shieldmaiden tiles for all tilesets.
 ▒▒▒
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.

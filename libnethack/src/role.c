@@ -142,6 +142,33 @@ const struct Role roles[] = {
      {1, 4, 0, 1, 0, 2}, 20,    /* Energy */
      10, 3, -3, 2, 10, A_INT, SPE_CURE_SICKNESS, -4, achieve_quest_healer,
      UNLOCKFEAT_ROLE_HEALER, UNLOCKFEAT_ROLE_HEALER},
+    {{"Hoplite", "Shieldmaiden"}, {
+                       {"Stripling", 0},
+                       {"Skirmisher", 0},
+                       {"Fighter", 0},
+                       {"Man-at-arms", "Woman-at-arms"},
+                       {"Warrior", 0},
+                       {"Swashbuckler", 0},
+                       {"Hero", "Heroine"},
+                       {"Champion", 0},
+                       {"Lord", "Lady"}},
+     "Tyr", "Odin", "Loki",     /* Norse */
+     "Shi", "the Shrine of Destiny", "the cave of Surtur",
+     PM_HOPLITE, PM_SHIELDMAIDEN, PM_WINTER_WOLF_CUB,
+     PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
+     PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
+     ART_ORB_OF_FATE,
+     MRACE_HUMAN | MRACE_DWARF | MRACE_GIANT | MRACE_VALKYRIE |
+     ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL | ROLE_NEUTRAL,
+     /* Str Int Wis Dex Con Cha */
+     {10, 7, 7, 7, 10, 7},
+     {30, 6, 7, 20, 30, 7},
+     {1, 1, 1, 2, 1, 0},
+     /* Init Lower Higher */
+     {14, 0, 0, 8, 2, 0},       /* Hit points */
+     {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
+     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4, achieve_quest_shieldmaiden,
+     UNLOCKFEAT_ROLE_SHIELDMAIDEN, UNLOCKFEAT_ROLE_SHIELDMAIDEN},
     {{"Knight", 0}, {
                      {"Gallant", 0},
                      {"Esquire", 0},
@@ -212,7 +239,8 @@ const struct Role roles[] = {
      PM_ARCH_PRIEST, PM_ACOLYTE, PM_NALZOK,
      PM_HUMAN_ZOMBIE, PM_WRAITH, S_ZOMBIE, S_WRAITH,
      ART_SCEPTRE_OF_MIGHT,
-     MRACE_HUMAN | MRACE_ELF | MRACE_DWARF | MRACE_SYLPH | ROLE_MALE | ROLE_FEMALE
+     MRACE_HUMAN | MRACE_ELF | MRACE_DWARF | MRACE_SYLPH | MRACE_VALKYRIE
+              | ROLE_MALE | ROLE_FEMALE
               | ROLE_LAWFUL | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {7, 10, 7, 7, 7, 7},
@@ -332,32 +360,6 @@ const struct Role roles[] = {
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
      10, 5, 1, 2, 10, A_INT, SPE_CHARM_MONSTER, -4,
      achieve_quest_tourist, UNLOCKFEAT_ROLE_TOURIST, UNLOCKFEAT_ROLE_TOURIST},
-    {{"Valkyrie", 0}, {
-                       {"Stripling", 0},
-                       {"Skirmisher", 0},
-                       {"Fighter", 0},
-                       {"Man-at-arms", "Woman-at-arms"},
-                       {"Warrior", 0},
-                       {"Swashbuckler", 0},
-                       {"Hero", "Heroine"},
-                       {"Champion", 0},
-                       {"Lord", "Lady"}},
-     "Tyr", "Odin", "Loki",     /* Norse */
-     "Val", "the Shrine of Destiny", "the cave of Surtur",
-     PM_VALKYRIE, NON_PM, NON_PM /* PM_WINTER_WOLF_CUB */ ,
-     PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
-     PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
-     ART_ORB_OF_FATE,
-     MRACE_HUMAN | ROLE_FEMALE | ROLE_NEUTRAL,
-     /* Str Int Wis Dex Con Cha */
-     {10, 7, 7, 7, 10, 7},
-     {30, 6, 7, 20, 30, 7},
-     {1, 1, 1, 2, 1, 0},
-     /* Init Lower Higher */
-     {14, 0, 0, 8, 2, 0},       /* Hit points */
-     {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4, achieve_quest_valkyrie,
-     UNLOCKFEAT_ROLE_VALKYRIE, UNLOCKFEAT_ROLE_VALKYRIE},
     {{"Wizard", 0}, {
                      {"Evoker", 0},
                      {"Conjurer", 0},
@@ -432,7 +434,7 @@ const struct Race races[] = {
      {0, 0},
      10, /* base speed, a bit slow */
      PM_DWARF, NON_PM, PM_DWARF_MUMMY, PM_DWARF_ZOMBIE,
-     MRACE_DWARF | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL,
+     MRACE_DWARF | ROLE_MALE | ROLE_LAWFUL,
      MRACE_DWARF, MRACE_DWARF | MRACE_GNOME, MRACE_ORC,
      /* Str Int Wis Dex Con Cha */
      {3, 3, 3, 3, 3, 3},
@@ -516,6 +518,20 @@ const struct Race races[] = {
      {1, 0, 2, 0, 2, 0},        /* Energy */
      UNLOCKFEAT_RACE_SCURRIER, UNLOCKFEAT_RACE_SCURRIER,
      },
+    {"valkyrie", "valkyrie", "Valhalla", "Val",
+     {"valkyrie", "valkyrie"},
+     12, /* base speed */
+     PM_VALKYRIE, PM_VALKYRIE, NON_PM, NON_PM,
+     MRACE_VALKYRIE | ROLE_FEMALE | ROLE_NEUTRAL,
+     MRACE_VALKYRIE, MRACE_VALKYRIE, MRACE_DWARF | MRACE_GIANT,
+     /* Str Int Wis Dex Con Cha */
+     {3, 2, 4, 2, 4, 3},
+     {STR19(20), 17, 19, 17, 18, 18},
+     /* Init Lower Higher */
+     {2, 0, 1, 0, 1, 0},        /* Hit points */
+     {1, 0, 3, 0, 3, 0},        /* Energy */
+     UNLOCKFEAT_RACE_VALKYRIE, UNLOCKFEAT_RACE_VALKYRIE
+    },
 /* Array terminator */
     {0, 0, 0, 0}
 };
@@ -1321,7 +1337,8 @@ Hello(struct monst *mtmp)
                 "Irasshaimase" : "Konnichi wa");   /* Japanese */
     case PM_TOURIST:
         return "Aloha"; /* Hawaiian */
-    case PM_VALKYRIE:
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
         return "Velkommen";     /* Norse */
     default:
         return "Hello";

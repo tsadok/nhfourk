@@ -2849,9 +2849,9 @@ be spoken by the %gP with awe.  You are truly an inspiration to your
 %sp!"
 %E
 #
-#	Valkyrie
+#	Hoplite/Shieldmaiden
 #
-%Cc Val 00001
+%Cc Shi 00001
 You materialize at the base of a snowy hill.  Atop the hill sits
 a place you know well, %H.  You immediately realize
 that something here is very wrong!
@@ -2861,77 +2861,77 @@ water.  Fumaroles and pools of bubbling lava surround the hill.
 The stench of sulphur is carried through the air, and you %x creatures
 that should not be able to live in this environment moving towards you.
 %E
-%Cp Val 00002
+%Cp Shi 00002
 Once again, you are near the abode of %l.
 %E
-%Cp Val 00003
+%Cp Shi 00003
 Again you materialize near %ls abode.  You have a nagging feeling
 that this may be the last time you come here.
 %E
-%Cp Val 00005
+%Cp Shi 00005
 "Hail, and well met, brave %c."
 %E
-%Cp Val 00006
+%Cp Shi 00006
 "May %d guide your steps, %p."
 %E
-%Cp Val 00007
+%Cp Shi 00007
 "%lC weakens.  Without %o, her foresight is dim."
 %E
-%Cp Val 00008
+%Cp Shi 00008
 "You must hurry, %p, else Ragnarok may well come."
 %E
-%Cp Val 00009
+%Cp Shi 00009
 "I would deal with this foul %n myself, but %d forbids it."
 %E
-%Cp Val 00010
+%Cp Shi 00010
 "Hail, and well met, brave %c."
 %E
-%Cp Val 00011
+%Cp Shi 00011
 "May %d guide your steps, %p."
 %E
-%Cp Val 00012
+%Cp Shi 00012
 "%lC told us you had succeeded!"
 %E
-%Cp Val 00013
+%Cp Shi 00013
 "You recovered %o just in time, %p."
 %E
-%Cp Val 00014
+%Cp Shi 00014
 "Hail %d, for delivering %o back to us."
 %E
-%Cc Val 00015
+%Cc Shi 00015
 "Ah, %p, my %S.  You have returned to %H
 at last.  We are in dire need of your aid, but I must determine if you
 are yet ready for such an undertaking.
 
 "Let me read your fate..."
 %E
-%Cp Val 00016
+%Cp Shi 00016
 "Let me read the future for you now, %p, perhaps you have managed to
 change it enough..."
 %E
-%Cp Val 00017
+%Cp Shi 00017
 "Again, I shall read your fate, my %S.  Let us both hope that you have
 made changes to become ready for this task..."
 %E
-%Cc Val 00018
+%Cc Shi 00018
 "No, %p.  Your fate is sealed.  I must cast about for another
 champion.  Begone from my presence, and never return.  Know this, that
 you shall never succeed in this life, and Valhalla is denied to you."
 %E
-%Cc Val 00019
+%Cc Shi 00019
 "I see you and %n fighting, %p.  But you are not prepared and
 shall die at %ns hand if you proceed.  No.  This will not do.
 Go back out into the world, and grow more experienced at the ways of
 war.  Only when you have returned %Ra will you be able to defeat
 %n."
 %E
-%Cc Val 00020
+%Cc Shi 00020
 "NO!  This is terrible.  I see you becoming an ally of %n, and
 leading his armies in the final great battles.  This must not come to
 pass!  You have strayed from the %a path.  You must purge yourself,
 and return here only when you have regained a state of purity."
 %E
-%Cc Val 00021
+%Cc Shi 00021
 "It is not clear, %p, for my sight is limited without
 %o.  But it is now likely that you can defeat %n,
 and recover %o.
@@ -2951,60 +2951,60 @@ unless %o is returned into my care, %n may start Ragnarok.
 from there and you will find %ns lair.  Defeat him and
 return %o to me."
 %E
-%Cc Val 00022
+%Cc Shi 00022
 "This is outrageous!  You are but a %r!  Will you turn all
 reason on its head and defeat %n in such a state?"
 %E
-%Cp Val 00025
+%Cp Shi 00025
 "Go with the blessings of %d."
 %E
-%Cp Val 00026
+%Cp Shi 00026
 "Call upon %d when you are in need."
 %E
-%Cp Val 00027
+%Cp Shi 00027
 "Use %o if you can.  It will protect you."
 %E
-%Cp Val 00028
+%Cp Shi 00028
 "Magical cold is very effective against %n."
 %E
-%Cp Val 00029
+%Cp Shi 00029
 "To face %n, you will need to be immune to fire."
 %E
-%Cp Val 00030
+%Cp Shi 00030
 "May %d strengthen your sword-arm."
 %E
-%Cp Val 00031
+%Cp Shi 00031
 "Trust in %d.  He will not desert you."
 %E
-%Cp Val 00032
+%Cp Shi 00032
 "It becomes more likely that Ragnarok will come with every passing moment.
 You must hurry, %p."
 %E
-%Cp Val 00033
+%Cp Shi 00033
 "If %n can master %o, he will be powerful enough to
 face %d far earlier than is fated.  This must not be!"
 %E
-%Cp Val 00034
+%Cp Shi 00034
 "Remember your training, %p.  You can succeed."
 %E
-%Cc Val 00035
+%Cc Shi 00035
 The ice and snow gives way to a valley floor.  You %x ahead of you
 a huge round hill surrounded by pools of lava.  This then is the entrance
 to %i.  It looks like you're not going to get in without
 a fight though.
 %E
-%Cp Val 00036
+%Cp Shi 00036
 Once again, you stand before the entrance to %i.
 %E
-%Cc Val 00040
+%Cc Shi 00040
 Through clouds of sulphurous gasses, you %x a rock palisade
 surrounded with a moat of bubbling lava.  You remember the description
 from something that %l said.  This is the lair of %n.
 %E
-%Cp Val 00041
+%Cp Shi 00041
 Once again, you stand in sight of %ns lair.
 %E
-%Cc Val 00050
+%Cc Shi 00050
 "So!  %lC has finally sent %ca to challenge me!
 
 "I thought that mastering %o would enable me to challenge %d,
@@ -3012,60 +3012,60 @@ but it has shown me that first I must kill you!
 So come, little %s.  Once I defeat you, I can at last begin
 the final battle with %d."
 %E
-%Cp Val 00051
+%Cp Shi 00051
 "Again you challenge me, %r.  Good.  I will kill you now."
 %E
-%Cp Val 00052
+%Cp Shi 00052
 "Have you not learned yet?  You cannot defeat %n!"
 %E
-%Cp Val 00053
+%Cp Shi 00053
 "I will kill you, %c, and wrest %o from your mangled hands."
 %E
-%Cp Val 00060
+%Cp Shi 00060
 "I am your death, %c."
 %E
-%Cp Val 00061
+%Cp Shi 00061
 "You cannot prevail, %r.  I have foreseen your every move."
 %E
-%Cp Val 00062
+%Cp Shi 00062
 "With you out of the way, Valhalla will be mine for the taking."
 %E
-%Cp Val 00063
+%Cp Shi 00063
 "I killed scores of %ds best when I took %o.
 Do you really think that one %c can stand against me?"
 %E
-%Cp Val 00064
+%Cp Shi 00064
 "Who bears the souls of %cP to Valhalla, %r?"
 %E
-%Cp Val 00065
+%Cp Shi 00065
 "No, %d cannot help you here."
 %E
-%Cp Val 00066
+%Cp Shi 00066
 "Some instrument of %d you are, %p.  You are a weakling!"
 %E
-%Cp Val 00067
+%Cp Shi 00067
 "Never have I seen %ca so clumsy in battle."
 %E
-%Cp Val 00068
+%Cp Shi 00068
 "You die now, little %s."
 %E
-%Cp Val 00069
+%Cp Shi 00069
 "Your body I destroy now, your soul when my hordes overrun Valhalla!"
 %E
-%Cc Val 00070
+%Cc Shi 00070
 As you pick up %o, your mind is suddenly filled with images,
 and you perceive all of the possibilities of each potential choice you
 could make.  As you begin to control and channel your thoughts, you
 realize that you must return %o to %lC immediately.
 %E
-%Cc Val 00080
+%Cc Shi 00080
 A look of surprise and horror appears on %ns face.
 
     No!!!  %o has lied to me!  I have been misled!
 
 Suddenly, %n grasps his head and screams in agony, then dies.
 %E
-%Cc Val 00081
+%Cc Shi 00081
 As you approach, %lC rises and touches %o.
 
 "You may take %o with you, %p.  I have removed from
@@ -3076,17 +3076,17 @@ have.  Its other abilities, however, you have at your disposal.
 May your steps be guided by %d, my %S."
 %E
 # assumes Orb of Fate (glass object)
-%Cc Val 00082
+%Cc Shi 00082
 "Careful, %p!  %oC might break, and that would be
 a tragic loss.  You are its keeper now, and the time has come to
 resume your search for the Amulet.  %Z await your
 return through the magic portal that brought you here."
 %E
-%Cp Val 00090
+%Cp Shi 00090
 "Greetings, %p.  I have not been able to pay as much attention to
 your search for the Amulet as I have wished.  How do you fare?"
 %E
-%Cc Val 00091
+%Cc Shi 00091
 "Excellent, %p.  I see you have recovered the Amulet!
 
 "You must take the Amulet to the Great Temple of %d, on the Astral

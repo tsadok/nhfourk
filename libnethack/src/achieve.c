@@ -133,8 +133,11 @@ achievement(enum achievement ach)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_PRIEST);
     else if (ach == achieve_altar_sacrifice)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_PRIEST);
-    else if (ach == achieve_altar_convert)
-        achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_VALKYRIE);
+    else if (ach == achieve_altar_convert) {
+        achievement_unlock(ach, UNLOCK_FIELD_ROLE,
+                           UNLOCKFEAT_ROLE_SHIELDMAIDEN);
+        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_VALKYRIE);
+    }
     else if (ach == achieve_soko_stairs)
         unlock_playable_race(ach, UNLOCKFEAT_RACE_ELF);
     else if (ach == achieve_soko_complete) {
@@ -169,8 +172,11 @@ achievement(enum achievement ach)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_AUTOWEAR);
     else if (ach == achieve_holy_water)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_HEALER);
-    else if (ach == achieve_invocation)
-        achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_VALKYRIE);
+    else if (ach == achieve_invocation) {
+        achievement_unlock(ach, UNLOCK_FIELD_ROLE,
+                           UNLOCKFEAT_ROLE_SHIELDMAIDEN);
+        achievement_unlock(ach, UNLOCK_FIELD_RACE, UNLOCKFEAT_RACE_VALKYRIE);
+    }
     else if (ach == achieve_ascend) {
         int i;
         boolean allroles = TRUE, allraces = TRUE;
@@ -240,7 +246,7 @@ achievement(enum achievement ach)
         achievement_unlock(ach, UNLOCK_FIELD_ROLE, UNLOCKFEAT_ROLE_CONVICT);
     else if (ach == achieve_quest_healer)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMABLIND);
-    else if (ach == achieve_quest_valkyrie)
+    else if (ach == achieve_quest_shieldmaiden)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMAHALLU);
     else if (ach == achieve_quest_samurai)
         achievement_unlock(ach, UNLOCK_FIELD_OPT, UNLOCKFEAT_OPT_PERMAGLIB);
@@ -488,8 +494,8 @@ explain_achievement(enum achievement ach)
         return "qualifying for the Caveman quest";
     else if (ach == achieve_quest_healer)
         return "qualifying for the Healer quest";
-    else if (ach == achieve_quest_valkyrie)
-        return "qualifying for the Valkyrie quest";
+    else if (ach == achieve_quest_shieldmaiden)
+        return "qualifying for the Shieldmaiden quest";
     else if (ach == achieve_quest_samurai)
         return "qualifying for the Samurai quest";
     else if (ach == achieve_quest_archeologist)

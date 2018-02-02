@@ -116,7 +116,7 @@ genus(int mndx, int mode)
         mndx = mode ? PM_WIZARD : PM_HUMAN;
         break;
     case PM_WARRIOR:
-        mndx = mode ? PM_VALKYRIE : PM_HUMAN;
+        mndx = mode ? PM_SHIELDMAIDEN : PM_VALKYRIE;
         break;
     default:
         if (mndx >= LOW_PM && mndx < NUMMONS) {

@@ -249,7 +249,7 @@ static const struct trobj Tourist[] = {
     {0, 0, 0, 0, 0}
 };
 
-static const struct trobj Valkyrie[] = {
+static const struct trobj Shieldmaiden[] = {
 #define V_SPEAR  0
 #define V_DAGGER 1
 #define V_SHIELD 2
@@ -291,6 +291,9 @@ static const struct trobj GnomeStuff[] = {
 
 static const struct trobj GiantStuff[] = {
     {BOULDER, 0, ROCK_CLASS, 1, UNDEF_BLESS},
+    {DENTED_POT, 2, ARMOR_CLASS, 3, UNDEF_BLESS},
+    {LARGE_SHIELD, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {HIGH_BOOTS, 0, ARMOR_CLASS, 3, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -388,6 +391,7 @@ static const struct inv_sub {
     {PM_DWARF, SPEAR, DWARVISH_SPEAR},
     {PM_DWARF, SHORT_SWORD, DWARVISH_SHORT_SWORD},
     {PM_DWARF, HELMET, DWARVISH_IRON_HELM},
+    {PM_DWARF, SMALL_SHIELD, DWARVISH_ROUNDSHIELD},
     /* { PM_DWARF, SMALL_SHIELD, DWARVISH_ROUNDSHIELD }, */
     /* { PM_DWARF, PICK_AXE, DWARVISH_MATTOCK }, */
     {PM_GNOME, BOW, CROSSBOW},
@@ -402,6 +406,7 @@ static const struct inv_sub {
     {PM_SCURRIER, ARROW, DART},
     {PM_SCURRIER, FEDORA, LEATHER_GLOVES},
     /* Giants are too large for a lot of armor */
+    {PM_GIANT, SMALL_SHIELD, LARGE_SHIELD},        /* Hop Gia */
     {PM_GIANT, RING_MAIL, DENTED_POT},             /* Bar Gia */
     {PM_GIANT, LEATHER_ARMOR, FLINT},              /* Cav Gia */
     {PM_GIANT, BOW, SLING},                        /* Ran Gia */
@@ -946,9 +951,10 @@ u_init_inv_skills(void)
         augment_magic_chest_contents(SPE_IDENTIFY, 0, 1);
         augment_magic_chest_contents(0, RANDOM_CLASS, 10);
         break;
-    case PM_VALKYRIE:
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
     {
-        trobj_list = copy_trobj_list(Valkyrie);
+        trobj_list = copy_trobj_list(Shieldmaiden);
         trobj_list[V_WAND].trspe = 3 +
             rne_on_rng(3, rng_charstats_role);
         switch (rolern2(4)) {
@@ -967,6 +973,7 @@ u_init_inv_skills(void)
             trobj_list[V_SPEAR].trquan =
                 2 + rne_on_rng(3, rng_charstats_role);
             trobj_list[V_DAGGER].trquan = 4;
+            trobj_list[V_SHIELD].trotyp = ELVEN_SHIELD;
             break;
         }
         role_ini_inv(trobj_list, nclist);
@@ -1001,6 +1008,7 @@ u_init_inv_skills(void)
 
         /*** Race-specific initializations ***/
     switch (Race_switch) {
+    case PM_VALKYRIE:
     case PM_HUMAN:
         /* Nothing special */
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
@@ -1246,7 +1254,8 @@ restricted_spell_discipline(int otyp)
     case PM_TOURIST:
         skills = Skill_T;
         break;
-    case PM_VALKYRIE:
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
         skills = Skill_V;
         break;
     case PM_WIZARD:

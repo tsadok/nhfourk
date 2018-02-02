@@ -85,6 +85,7 @@
 # define MRACE_RODENT   0x00000200L     /* is a rodent */
 # define MRACE_SCURRIER MRACE_RODENT    /* for clarity in role.c */
 # define MRACE_GIANT    0x00000400L     /* is a giant */
+# define MRACE_VALKYRIE 0x00000800L     /* supernatural being from Valhalla */
 
 # define MP_WANDS        0x00000001L
 # define MP_WAND_BASIC   0x00000001L

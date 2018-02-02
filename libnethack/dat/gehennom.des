@@ -80,8 +80,8 @@ OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"tourist",0
 OBJECT:'%',"corpse",random,"tourist",0
-OBJECT:'%',"corpse",random,"valkyrie",0
-OBJECT:'%',"corpse",random,"valkyrie",0
+OBJECT:'%',"corpse",random,"hoplite",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
 OBJECT:'%',"corpse",random,"wizard",0
 OBJECT:'%',"corpse",random,"wizard",0
 #
@@ -233,8 +233,8 @@ OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"tourist",0
 OBJECT:'%',"corpse",random,"tourist",0
-OBJECT:'%',"corpse",random,"valkyrie",0
-OBJECT:'%',"corpse",random,"valkyrie",0
+OBJECT:'%',"corpse",random,"hoplite",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
 OBJECT:'%',"corpse",random,"wizard",0
 OBJECT:'%',"corpse",random,"wizard",0
 #
@@ -382,8 +382,8 @@ OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"tourist",0
 OBJECT:'%',"corpse",random,"tourist",0
-OBJECT:'%',"corpse",random,"valkyrie",0
-OBJECT:'%',"corpse",random,"valkyrie",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
 OBJECT:'%',"corpse",random,"wizard",0
 OBJECT:'%',"corpse",random,"wizard",0
 #
@@ -533,8 +533,8 @@ OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"tourist",0
 OBJECT:'%',"corpse",random,"tourist",0
-OBJECT:'%',"corpse",random,"valkyrie",0
-OBJECT:'%',"corpse",random,"valkyrie",0
+OBJECT:'%',"corpse",random,"hoplite",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
 OBJECT:'%',"corpse",random,"wizard",0
 OBJECT:'%',"corpse",random,"wizard",0
 #

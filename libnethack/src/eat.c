@@ -2275,10 +2275,11 @@ newuhs(boolean incr)
                       "capabilities.");
             else if (incr &&
                      (Role_if(PM_WIZARD) || Race_if(PM_ELF) ||
-                      Role_if(PM_VALKYRIE)))
+                      Role_if(PM_HOPLITE)))
                 pline(msgc_fatal, "%s needs food, badly!",
-                      (Role_if(PM_WIZARD) ||
-                       Role_if(PM_VALKYRIE)) ? urole.name.m : "Elf");
+                      (Role_if(PM_WIZARD) ? urole.name.m :
+                       Role_if(PM_HOPLITE) ? (u.ufemale ? urole.name.f :
+                                              urole.name.m) : "Elf"));
             else
                 pline(incr ? msgc_fatal : msgc_statusheal,
                       (!incr) ? "You feel less faint." : (u.uhunger < 45) ?
