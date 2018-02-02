@@ -1084,8 +1084,10 @@ you_moved(void)
                 if (Polymorph && !rn2(100))
                     change = 1;
                 else if (u.ulycn >= LOW_PM && !Upolyd &&
-                         !rn2(80 - (20 * night())))
+                         !rn2((50 * ((flags.moonphase == FULL_MOON) ? 10: 20))
+                              - (night() ? 400 : 0))) {
                     change = 2;
+                }
                 if (change && !Unchanging) {
                     if (!u_helpless(hm_all)) {
                         action_interrupted();

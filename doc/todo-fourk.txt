@@ -376,17 +376,14 @@
 ▒▒▒ * new monster: stinking sphere.  A sphere that releases a small-diameter
 ▒▒▒   stinking cloud when it explodes.
 ▒▒▒
-▒▒▒ * Consider adjusting the difficulty of some monsters.
-▒▒▒   + For example, quasits should probably have their difficulty number reduced.
-▒▒▒   + Also manes.
-▒▒▒   + Consider whether any very fast monsters need a bump because of that.
+▒▒▒ * Consider whether any very fast monsters need a bump because of that.
 ▒▒▒
 ▒▒▒ * Ensure that runics interact reasonably with stacking.
 ▒▒▒
 ▒▒▒ * See lycanthropy discussion from 2016 Oct 25 in #nethack-dev, culminating
-▒▒▒   around 20:00.  Short version:  make transformations happen less often,
-▒▒▒   and make you invulnerable for a few turns after turning back to human,
-▒▒▒   flavored as a fear effect.
+▒▒▒   around 20:00.  Short version:  make transformations happen less often
+▒▒▒   (this part is now done), and make you invulnerable for a few turns after
+▒▒▒   turning back to human, flavored as a fear effect (this remains).
 ▒▒▒
 ▒▒▒ * "thunderous voice booms through the caverns" could benefit from some
 ▒▒▒   conditional logic, e.g., outdoor levels should not be called caverns,

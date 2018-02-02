@@ -525,7 +525,7 @@ const struct permonst mons[] = {
         M1_REGEN, M2_WANDER | M2_STALK, M3_INFRAVISIBLE | M3_INFRAVISION,
         0, CLR_ORANGE),
     MON("quasit", S_IMP,
-        SLVL(3, 7, 18, 2, 2, 20, -7), (G_GENO | G_SGROUP | 1),
+        SLVL(2, 5, 18, 2, 2, 20, -7), (G_GENO | G_SGROUP | 1),
         A(ATTK(AT_CLAW, AD_DRDX, 1, 4), ATTK(AT_CLAW, AD_DRDX, 1, 4),
           ATTK(AT_BITE, AD_PHYS, 1, 4), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(200, 200, 0, MS_SILENT, MZ_SMALL), MR_POISON, MR_POISON,
@@ -2476,7 +2476,7 @@ const struct permonst mons[] = {
  * Wraiths
  */
     MON("manes", S_WRAITH,
-        LVL(1, 3, 3, 7, 0, -7), (G_GENO | G_LGROUP | G_NOCORPSE | 1),
+        LVL(1, 2, 3, 7, 0, -7), (G_GENO | G_LGROUP | G_NOCORPSE | 1),
         A(ATTK(AT_CLAW, AD_PHYS, 1, 3), ATTK(AT_CLAW, AD_PHYS, 1, 3),
           ATTK(AT_BITE, AD_PHYS, 1, 4), NO_ATTK, NO_ATTK, NO_ATTK),
         SIZ(100, 100, 0, MS_SILENT, MZ_SMALL), MR_SLEEP | MR_POISON, 0,
