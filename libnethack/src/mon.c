@@ -632,7 +632,12 @@ cham_depth_appropriate(struct monst *mon, struct level *lev)
     int s = MONSTR(monsndx(mon->data));
     int n = 15 - abs(d - s);
     if (is_were(mon->data))
-        return 6; /* Arbitrary number copied from vanilla. */
+         /* More frequent change than for the player is justified, because the
+            player only observes monsters for short periods of time, relatively.
+            If non-player werecreatures only changed form as often as the player
+            does, you'd basically never see it happen.  If player lycanthropes
+            changed as often as monsters, it'd make the game unplayable. */
+        return (flags.moonphase == FULL_MOON) ? 4 : 10;
     if (n < 1)
         return 1;
     return n;
