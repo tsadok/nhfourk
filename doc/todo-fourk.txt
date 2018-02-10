@@ -104,9 +104,7 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * It seems the artifact spoiler doesn't support SPFX stuff.  Make it so it does.
-▒▒▒
-▒▒▒ * Add the new-to-Fourk artifacts to data.base: QuickPick, Big Stick, Valerian
+▒▒▒ * 17:27 < stenno > FR: you can safely trigger landmines from the distance with polearms
 ▒▒▒
 ▒▒▒ * FMOB tileset issues:
 ▒▒▒   + Grasshopper suggests some weapons (spears, polearms)

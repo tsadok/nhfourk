@@ -695,9 +695,6 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
     return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
                      ((spfx & SPFX_SEEK) ?
-                      /* TODO: currently, the code checks SPFX_SEARCH for both
-                         auto-searching and the +n search bonus and never
-                         checks SPFX_SEEK at all.  Fix that. */
                       "<span class=\"spfx spfxseek\">+n search</span> " : ""),
                      ((spfx & SPFX_WARN) ?
                       "<span class=\"spfx spfxwarn\">warn</span> " : ""),
@@ -778,7 +775,8 @@ spoilartinvoke(struct artifact *art)
         return "<span class=\"invoke invokelev\">levitation</span>";
     case CONFLICT:
         return "<span class=\"invoke invokeconflict\">conflict</span>";
-
+    case UNCURSE_INVK:
+        return "<span class=\"invoke invokeuncurse\">remove curse</span>";
     default:
         return msgprintf("<!-- unknown invoke property -->%d", (int) i);
     }
