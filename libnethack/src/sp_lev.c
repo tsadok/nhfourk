@@ -1000,7 +1000,9 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
 
             /* KMH -- Create piles of gold properly */
             if (oclass == COIN_CLASS)
-                otmp = mkgold(0L, lev, x, y, mrng());
+                otmp = mkfloorgold(0L, lev, x, y, mrng());
+                /* This counts it as being generated on the floor;
+                   if that is not the case, we will correct it below. */
             else
                 otmp = mkobj_at(oclass, lev, x, y, !named, mrng());
         }
@@ -1055,6 +1057,11 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
             remove_object(otmp);
             add_to_container(container, otmp);
             container->owt = weight(container);
+            if (otmp->oclass == COIN_CLASS) {
+                /* Above, we miscategorized this as onfloor gold. */
+                u.generated_gold.onfloor -= otmp->quan;
+                u.generated_gold.contained += otmp->quan;
+            }
             goto o_done;        /* don't stack, but do other cleanup */
             /* container */
         case 2:
@@ -1226,7 +1233,7 @@ create_gold(struct level *lev, gold * g, struct mkroom *croom)
 
     if (g->amount == -1)
         g->amount = 1 + mrn2(200);
-    mkgold((long)g->amount, lev, x, y, mrng());
+    mkfloorgold((long)g->amount, lev, x, y, mrng());
 }
 
 /*
@@ -1556,8 +1563,8 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
         case VAULT:
             for (x = croom->lx; x <= croom->hx; x++)
                 for (y = croom->ly; y <= croom->hy; y++)
-                    mkgold(51 + mrn2(abs(depth(&lev->z)) * 100),
-                           lev, x, y, mrng());
+                    mkvaultgold(51 + mrn2(abs(depth(&lev->z)) * 100),
+                                lev, x, y, mrng());
             break;
         case DRAGONHALL:
             fill_dragonhall(lev, croom, mrng());
@@ -2838,7 +2845,7 @@ load_maze(struct level *lev, dlb * fd)
         }
         for (x = mrn2((int)(15 * mapfact) / 100); x; x--) {
             maze1xy(lev, &mm, DRY);
-            mkgold(0L, lev, mm.x, mm.y, mrng());
+            mkfloorgold(0L, lev, mm.x, mm.y, mrng());
         }
         for (x = mrn2((int)(15 * mapfact) / 100); x; x--) {
             int trytrap;
@@ -3046,7 +3053,7 @@ fixup_special(struct level *lev)
         /* stock the main vault */
         for (x = croom->lx; x <= croom->hx; x++)
             for (y = croom->ly; y <= croom->hy; y++) {
-                mkgold(600 + mrn2(300), lev, x, y, mrng());
+                mkvaultgold(600 + mrn2(300), lev, x, y, mrng());
                 if (!mrn2(3) && !is_pool(lev, x, y)) {
                     maketrap(lev, x, y, (mrn2(3) ? LANDMINE : SPIKED_PIT),
                              mrng());

@@ -599,6 +599,7 @@ mkmonmoney(struct monst *mtmp, long amount, enum rng rng)
     struct obj *gold = mksobj(mtmp->dlevel, GOLD_PIECE, FALSE, FALSE, rng);
 
     gold->quan = amount;
+    u.generated_gold.moninv += amount;
     add_to_minv(mtmp, gold);
 }
 

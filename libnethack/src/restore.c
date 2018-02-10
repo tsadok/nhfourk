@@ -710,6 +710,12 @@ restore_you(struct memfile *mf, struct you *y)
 
     y->lastinvnr = mread32(mf);
     y->pickmovetime = mread64(mf);
+    y->generated_gold.moninv    = mread32(mf);
+    y->generated_gold.vault     = mread32(mf);
+    y->generated_gold.onfloor   = mread32(mf);
+    y->generated_gold.buried    = mread32(mf);
+    y->generated_gold.contained = mread32(mf);
+    y->generated_gold.misc      = mread32(mf);
 }
 
 static void

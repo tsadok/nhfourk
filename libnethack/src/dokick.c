@@ -927,6 +927,7 @@ dokick(const struct nh_cmd_arg *arg)
                 maploc->typ = ROOM;
                 maploc->doormask = 0;   /* don't leave loose ends.. */
                 mkgold(goldamt, level, x, y, rng_main);
+                u.generated_gold.misc += goldamt;
                 if (Blind)
                     pline(msgc_substitute, "CRASH!  You destroy it.");
                 else {
@@ -937,6 +938,7 @@ dokick(const struct nh_cmd_arg *arg)
                 return 1;
             } else if (Luck > 0 && kickedloose && !maploc->looted) {
                 mkgold(goldamt + 301, level, x, y, rng_main);
+                u.generated_gold.misc += (goldamt + 301);
                 i = Luck + 1;
                 if (i > 6)
                     i = 6;

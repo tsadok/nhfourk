@@ -104,9 +104,17 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * The comment above findgold() says it can search containers, but currently it
+▒▒▒   does not actually do so.  Look at everywhere it's called and make a decision on
+▒▒▒   whether it should search containers or not; change either the code or the comment.
+▒▒▒
 ▒▒▒ * It seems the artifact spoiler doesn't support SPFX stuff.  Make it so it does.
 ▒▒▒
 ▒▒▒ * Add the new-to-Fourk artifacts to data.base: QuickPick, Big Stick, Valerian
+▒▒▒
+▒▒▒ * Cherry-pick from xnethack:
+▒▒▒   + 099a3f0 copperwater: Add Dudley as a ghost name
+▒▒▒   + f0c9bde copperwater: Candelabrum now reads "(n/7 candles attached)"...
 ▒▒▒
 ▒▒▒ * FMOB tileset issues:
 ▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
@@ -284,6 +292,8 @@
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * The 4.3.0.5 spoilers are badly out of date.  Regenerate them.
+▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
@@ -403,6 +413,7 @@
 ▒▒▒ * Add bears.
 ▒▒▒
 ▒▒▒ * Sacrifice gifts:  there should be a limit to how many artifact weapons your diety bestows.
+▒▒▒   My instinct says the limit should be 1.
 ▒▒▒
 ▒▒▒ * Create multiple versions of Delphi, with minor subtle differences.
 ▒▒▒

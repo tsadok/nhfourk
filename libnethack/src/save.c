@@ -594,6 +594,12 @@ save_you(struct memfile *mf, struct you *y)
 
     mwrite32(mf, y->lastinvnr);
     mwrite64(mf, y->pickmovetime);
+    mwrite32(mf, y->generated_gold.moninv);
+    mwrite32(mf, y->generated_gold.vault);
+    mwrite32(mf, y->generated_gold.onfloor);
+    mwrite32(mf, y->generated_gold.buried);
+    mwrite32(mf, y->generated_gold.contained);
+    mwrite32(mf, y->generated_gold.misc);
 }
 
 static void

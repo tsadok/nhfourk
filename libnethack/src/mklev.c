@@ -1224,7 +1224,7 @@ skip0:
                 x = somex(croom, mrng());
                 y = somey(croom, mrng());
             }
-            mkgold(0L, lev, x, y, mrng());
+            mkfloorgold(0L, lev, x, y, mrng());
         }
         if (Is_rogue_level(&lev->z))
             goto skip_nonrogue;
@@ -1476,6 +1476,10 @@ mineralize(struct level *lev)
                         otmp->ox = x, otmp->oy = y;
                         otmp->quan = 2L + mrn2(goldprob * 3);
                         otmp->owt = weight(otmp);
+                        /* Because we're putting this in STONE, it counts for
+                           generated_gold purposes as .buried, not .onfloor,
+                           even if it's not buried as such. */
+                        u.generated_gold.buried += otmp->quan;
                         if (!mrn2(3))
                             add_to_buried(otmp);
                         else
@@ -2112,7 +2116,7 @@ mkgrave(struct level *lev, struct mkroom *croom)
 
     /* Possibly fill it with objects */
     if (!mrn2(3))
-        mkgold(0L, lev, m.x, m.y, mrng());
+        mkfloorgold(0L, lev, m.x, m.y, mrng());
     for (tryct = mrn2(5); tryct; tryct--) {
         otmp = mkobj(lev, RANDOM_CLASS, TRUE, mrng());
         if (!otmp)

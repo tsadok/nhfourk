@@ -301,7 +301,7 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
                 if (i >= goldlim)
                     i = 5 * level_difficulty(&lev->z);
                 goldlim -= i;
-                mkgold(10 + rn2_on_rng(i, rng), lev, sx, sy, rng);
+                mkfloorgold(10 + rn2_on_rng(i, rng), lev, sx, sy, rng);
                 break;
             case MORGUE:
                 if (!rn2_on_rng(5, rng))
@@ -346,7 +346,7 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
 
         lev->locations[tx][ty].typ = THRONE;
         somexy(lev, sroom, &mm, rng);
-        mkgold(10 + rn2_on_rng(50 * level_difficulty(&lev->z), rng),
+        mkfloorgold(10 + rn2_on_rng(50 * level_difficulty(&lev->z), rng),
                lev, mm.x, mm.y, rng);
         /* the royal coffers */
         chest = mksobj_at(CHEST, lev, mm.x, mm.y, TRUE, FALSE, rng);
@@ -520,7 +520,7 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     cutoffthree = imax - rn2_on_rng(1 + imax / 10, rng);
     for (i = 0; i <= imax; i++) {
         /* dragons hoard gold */
-        mkgold(10 + rn2_on_rng(7 + 5 * level_difficulty(&lev->z), rng),
+        mkfloorgold(10 + rn2_on_rng(7 + 5 * level_difficulty(&lev->z), rng),
                lev, pos[i].x, pos[i].y, rng);
         /* dragons hoard gems */
         switch(rn2_on_rng(4,rng)) {

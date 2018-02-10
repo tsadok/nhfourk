@@ -1384,6 +1384,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
         if (trop->trclass == COIN_CLASS) {
             /* no "blessed" or "identified" money */
             obj->quan = u.umoney0;
+            u.generated_gold.moninv += obj->quan;
         } else {
             obj->dknown = obj->bknown = obj->rknown = 1;
             if (objects[otyp].oc_uses_known)

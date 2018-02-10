@@ -302,6 +302,7 @@ make_corpse(struct monst *mtmp)
     case PM_GOLD_GOLEM:
         /* Good luck gives more coins */
         obj = mkgold((long)(200 - rnl(101)), level, x, y, rng_main);
+        u.generated_gold.moninv += obj->quan;
         mtmp->mnamelth = 0;
         break;
     case PM_PAPER_GOLEM:

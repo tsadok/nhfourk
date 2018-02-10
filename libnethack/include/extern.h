@@ -1061,6 +1061,8 @@ extern void bill_dummy_object(struct obj *);
 extern int bcsign(struct obj *);
 extern int weight(struct obj *);
 extern struct obj *mkgold(long amount, struct level *, int x, int y, enum rng);
+extern struct obj *mkfloorgold(long amount, struct level *, int x, int y, enum rng);
+extern struct obj *mkvaultgold(long amount, struct level *, int x, int y, enum rng);
 extern struct obj *mkcorpstat(int objtype, struct monst *mtmp,
                               const struct permonst *ptr, struct level *lev,
                               int x, int y, boolean init, enum rng);

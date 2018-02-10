@@ -675,7 +675,7 @@ makemaz(struct level *lev, const char *s, int *smeq)
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--) {
         mazexy(lev, &mm);
-        mkgold(0L, lev, mm.x, mm.y, rng_for_level(&lev->z));
+        mkfloorgold(0L, lev, mm.x, mm.y, rng_for_level(&lev->z));
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--)
         mktrap(lev, 0, 1, NULL, NULL);

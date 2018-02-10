@@ -211,6 +211,17 @@ struct you {
 
     long pickmovetime; /* used by pick_pick_from_container; needs to persist */
 
+    struct {
+        unsigned int moninv;    /* gold generated in monster inventory,
+                                   or dropped when gold golems are killed. */
+        unsigned int onfloor;   /* gold generated on the floor, incl. graves */
+        unsigned int vault;     /* gold generated in vaults (incl. Ludios) */
+        unsigned int buried;    /* gold generated in the ground and in rock */
+        unsigned int contained; /* gold generated in chests and such */
+        unsigned int misc;      /* gold generated any other way; ways this can
+                                   happen include fountain dipping, thrones. */
+    } generated_gold;
+
     /* SAVEBREAK: for avoiding desyncs with old saves */
     unsigned char save_compat_bytes[3];
 

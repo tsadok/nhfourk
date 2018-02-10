@@ -396,6 +396,7 @@ drinkfountain(void)
 void
 dipfountain(struct obj *obj)
 {
+    int goldamt = 0;
     int excaldifficulty = Role_if(PM_KNIGHT) ?
         ((u.ulevel >= 5) ? 1 : 6 - u.ulevel) :
         Role_if(PM_BARBARIAN) ?
@@ -531,8 +532,9 @@ dipfountain(struct obj *obj)
         if (FOUNTAIN_IS_LOOTED(u.ux, u.uy))
             break;
         SET_FOUNTAIN_LOOTED(u.ux, u.uy);
-        mkgold((rnd((dunlevs_in_dungeon(&u.uz) - dunlev(&u.uz) + 1) * 2) + 5),
-               level, u.ux, u.uy, rng_main);
+        goldamt = rnd((dunlevs_in_dungeon(&u.uz) - dunlev(&u.uz) + 1) * 2) + 5;
+        mkfloorgold(goldamt, level, u.ux, u.uy, rng_main);
+        u.generated_gold.misc += goldamt;
         if (!Blind)
             pline(msgc_youdiscover,
                   "Far below you, you see coins glistening in the water.");

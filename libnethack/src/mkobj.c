@@ -1075,16 +1075,13 @@ rnd_treefruit_at(int x, int y)
                      FALSE, rng_main);
 }
 
+/* This is a low-level function; the caller MUST set amount and also
+   the caller MUST update u.generated_gold as appropriate. */
 struct obj *
 mkgold(long amount, struct level *lev, int x, int y, enum rng rng)
 {
     struct obj *gold = gold_at(lev, x, y);
 
-    if (amount <= 0L) {
-        amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
-        amount *= 1 + rn2_on_rng(30, rng);
-        amount++;
-    }
     if (gold) {
         gold->quan += amount;
     } else {
@@ -1093,6 +1090,30 @@ mkgold(long amount, struct level *lev, int x, int y, enum rng rng)
     }
     gold->owt = weight(gold);
     return gold;
+}
+
+struct obj *
+mkvaultgold(long amount, struct level *lev, int x, int y, enum rng rng)
+{
+    if (amount <= 0L) {
+        amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
+        amount *= 1 + rn2_on_rng(30, rng);
+        amount++;
+        u.generated_gold.vault += amount;
+    }
+    return mkgold(amount, lev, x, y, rng);    
+}
+
+struct obj *
+mkfloorgold(long amount, struct level *lev, int x, int y, enum rng rng)
+{
+    if (amount <= 0L) {
+        amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
+        amount *= 1 + rn2_on_rng(30, rng);
+        amount++;
+        u.generated_gold.onfloor += amount;
+    }
+    return mkgold(amount, lev, x, y, rng);
 }
 
 
