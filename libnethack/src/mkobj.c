@@ -139,6 +139,9 @@ struct obj *
 mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
 {
     int i, prob = 1 + rn2_on_rng(1000, rng);
+    int levdepth = (lev && &lev->z) ? depth(&lev->z) : 1;
+    if (levdepth < 1)
+        levdepth = 1;
 
     if (oclass == RANDOM_CLASS) {
         impossible("mkobj_of_class called with RANDOM_CLASS");
@@ -190,8 +193,8 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
     /* On early dungeon levels, random spellbooks now try to be ones for
        low-level spells, most of the time. */
     while (oclass == SPBOOK_CLASS &&
-           ((objects[i].oc_level - 1) * 3 > depth(&lev->z)) &&
-           rn2_on_rng((objects[i].oc_level - 1) * 3 - depth(&lev->z), rng)) {
+           ((objects[i].oc_level - 1) * 3 > levdepth) &&
+           rn2_on_rng((objects[i].oc_level - 1) * 3 - levdepth, rng)) {
         prob = 1 + rn2_on_rng(1000, rng);
         i = bases[(int)oclass];
         while ((prob -= objects[i].oc_prob) > 0)
