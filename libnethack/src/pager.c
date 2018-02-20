@@ -495,8 +495,8 @@ add_mon_info(struct nh_menulist *menu, const struct permonst *pm)
     /* unsigned int mflag3 = pm->mflags3; */
 
     /* Misc */
-    buf = msgprintf("Difficulty %d, Def %d, willpower %d.",
-                    diff, (10 - pm->ac), pm->mr);
+    buf = msgprintf("Difficulty %d, Def %d, Mov %d, willpower %d.",
+                    diff, (10 - pm->ac), pm->mmove, pm->mr);
     add_menutext(menu, buf);
 
     /* Generation */

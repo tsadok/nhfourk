@@ -111,8 +111,6 @@
 ▒▒▒   where the player can dig.  This is not intended.  (It should land on floor.)
 ▒▒▒   I suspect I am using deliver_object() in an unanticipated way.
 ▒▒▒
-▒▒▒ * Make the monster lookup thing show movement rate.
-▒▒▒
 ▒▒▒ * FMOB tileset issues:
 ▒▒▒   + Grasshopper suggests some weapons (spears, polearms)
 ▒▒▒     don't need their full haft length, could do with more
