@@ -62,6 +62,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Polearms can now be used to trigger (known) traps at a distance.
+
  * Lycanthropy triggers its changes less often now, especially in
    the daytime, especially when the moon isn't full.
 

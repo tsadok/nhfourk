@@ -1470,6 +1470,133 @@ blow_up_landmine(struct trap *trap)
     }
 }
 
+void
+trigger_trap_with_polearm(struct trap *trap, coord cc, struct obj *pole)
+{
+    struct obj *otmp;
+    if (trap->tseen
+        /* TODO: even if not tseen, should poking around with the polearm have
+           a chance of revealing the trap anyway? */) {
+        switch (trap->ttyp) {
+        case ARROW_TRAP:
+        case DART_TRAP:
+        case ROCKTRAP:
+            if (trap->once && !rn2(15)) {
+                if (trap->ttyp == ROCKTRAP) {
+                    pline(msgc_nonmongood,
+                          "A trap door in %s opens, but nothing falls out.",
+                          the(ceiling(cc.x, cc.y)));
+                } else {
+                    You_hear(msgc_nonmongood, (trap->ttyp == DART_TRAP) ?
+                             "a soft click" : "a loud click.");
+                }
+                deltrap (level, trap);
+            } else {
+                trap->once = 1;
+                otmp = mksobj(level,
+                              (trap->ttyp == ROCKTRAP) ? ROCK :
+                              (trap->ttyp == DART_TRAP) ? DART :
+                              ((Inhell && !rn2(3)) ? SILVER_ARROW : ARROW),
+                              TRUE, FALSE, rng_main);
+                otmp->quan = 1L;
+                otmp->owt = weight(otmp);
+                if (trap->ttyp == ROCKTRAP)
+                    pline(msgc_consequence,
+                          "A trap door in %s opens and %s falls out.",
+                          the(ceiling(cc.x,cc.y)), an(xname(otmp)));
+                else
+                    pline(msgc_consequence, "%s shoots out at your %s.",
+                          (trap->ttyp == DART_TRAP) ? "A little dart" :
+                          "An arrow", xname(pole));
+                if (trap->ttyp != DART_TRAP)
+                    otmp->opoisoned = 0;
+                place_object(otmp, level, cc.x, cc.y);
+                stackobj(otmp);
+            }
+            newsym(cc.x, cc.y);
+            break;
+        case SQKY_BOARD:
+            pline(msgc_consequence, "You prod the squeaky board.");
+            wake_nearby(TRUE);
+            break;
+        case BEAR_TRAP:
+        case WEB:
+            pline(msgc_nonmonbad, "Your %s gets caught.", xname(pole));
+            setuwep(NULL);
+            obj_extract_self(pole);
+            place_object(pole, level, cc.x, cc.y);
+            update_inventory();
+            if (trap->ttyp == BEAR_TRAP) {
+                makeknown(BEARTRAP);
+                cnv_trap_obj(level, BEARTRAP, 1, trap);
+            }
+            newsym(cc.x, cc.y);
+            break;
+        case LANDMINE:
+            trap->ttyp = PIT;
+            pline(msgc_consequence, "KAABLAMM!!!");
+            newsym(cc.x, cc.y);
+            break;
+        case RUST_TRAP:
+            pline_implied(msgc_consequence, "%s your %s!",
+                          A_gush_of_water_hits, xname(pole));
+            water_damage(pole, xname(pole), TRUE);
+            update_inventory();
+            break;
+        case TELEP_TRAP: {
+            int tx, ty, tryct = 200;
+            do {
+                tx = rn2(COLNO);
+                ty = rn2(ROWNO);
+            } while (tryct-- && !goodpos(level, tx, ty, NULL, 0));
+            pline(msgc_consequence, "Your %s disappears!", xname(pole));
+            setuwep(NULL);
+            obj_extract_self(pole);
+            place_object(pole, level, tx, ty);
+            break;
+        }
+     /* case MAGIC_PORTAL: */
+        case LEVEL_TELEP: {
+            coord cc;
+            /* Weird use of coord:  we must set x to a dnum, y to a dlevel */
+            cc.x = level->z.dnum;
+            cc.y = random_teleport_level();
+            if (cc.y) {
+                pline(msgc_consequence, "Your %s disappears!", xname(pole));
+                setuwep(NULL);
+                obj_extract_self(pole);
+                deliver_object(pole, cc.x, cc.y, MIGR_RANDOM);
+            }
+            break;
+        }
+        case ROLLING_BOULDER_TRAP:
+            pline(msgc_consequence, "Click.");
+            if (!launch_obj(BOULDER, trap->launch.x, trap->launch.y,
+                            trap->launch2.x, trap->launch2.y,
+                            ROLL | LAUNCH_KNOWN)) {
+                deltrap(level, trap);
+                newsym(cc.x, cc.y);
+                pline(msgc_noconsequence, "No boulder was released.");
+            }
+            break;
+        case STATUE_TRAP:
+            activate_statue_trap(trap, cc.x, cc.y, FALSE);
+            break;
+        case STINKING_TRAP:
+            pline(msgc_consequence, (Blind && Hallucination) ?
+                  "You smell breakfast!" : (Blind) ?
+                  "You smell rotten eggs." : (Hallucination) ?
+                  "A colorful cloud billows up from the trap." :
+                  "A noxious cloud billows up from the trap.");
+            create_gas_cloud(level, cc.x, cc.y, 2 + rn2(3), 3 + rne(3));
+            break;
+        default:
+            pline(msgc_notarget, "Nothing seems to happen.");
+        }
+    } else {
+        pline(msgc_notarget, "Nothing seems to happen.");
+    }
+}
 
 /*
  * Move obj from (x1,y1) to (x2,y2)
@@ -1835,7 +1962,6 @@ isclearpath(struct level *lev, coord * cc, int distance, schar dx, schar dy)
     cc->y = y;
     return TRUE;
 }
-
 
 int
 mintrap(struct monst *mtmp)

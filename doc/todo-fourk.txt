@@ -104,7 +104,14 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * 17:27 < stenno > FR: you can safely trigger landmines from the distance with polearms
+▒▒▒ * When applying polearms, the player may be prompted twice for a destination.
+▒▒▒
+▒▒▒ * When triggering a level teleporter with a polearm, the polearm can end up
+▒▒▒   embedded in solid stone on the target level, possibly beyond the edges of
+▒▒▒   where the player can dig.  This is not intended.  (It should land on floor.)
+▒▒▒   I suspect I am using deliver_object() in an unanticipated way.
+▒▒▒
+▒▒▒ * Make the monster lookup thing show movement rate.
 ▒▒▒
 ▒▒▒ * FMOB tileset issues:
 ▒▒▒   + Grasshopper suggests some weapons (spears, polearms)

@@ -1852,6 +1852,7 @@ extern struct trap *t_at(struct level *lev, int x, int y);
 extern void b_trapped(const char *, int);
 extern boolean lava_effects(void);
 extern void blow_up_landmine(struct trap *);
+extern void trigger_trap_with_polearm(struct trap *, coord, struct obj *);
 extern void cnv_trap_obj(struct level *lev, int otyp, int cnt,
                          struct trap *ttmp);
 
