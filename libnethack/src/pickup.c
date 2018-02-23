@@ -71,7 +71,7 @@ check_here(boolean picked_some)
 
     /* If there are objects here, take a look unless autoexploring or travelling
        a previously explored space. */
-    if (ct && !((autoexploring || travelling) &&
+    if (ct && !((autoexploring || travelling()) &&
                 level->locations[u.ux][u.uy].mem_stepped)) {
         if (flags.occupation == occ_move)
             action_completed();

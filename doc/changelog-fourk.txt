@@ -62,6 +62,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Equipment that provides extrinsic resistance to fire, cold, or
+   shock now also protects your inventory items from being instantly
+   destroyed by fire, cold, or shock effects, respectively.  (It is
+   possible that I may have missed some cases that don't go through
+   the destroy item function.  These should be reported as bugs if
+   discovered.)
+
  * Polearms can now be used to trigger (known) traps at a distance.
 
  * Lycanthropy triggers its changes less often now, especially in

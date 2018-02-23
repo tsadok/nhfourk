@@ -4589,6 +4589,7 @@ destroy_item(int osym, int dmgtyp)
 
         switch (dmgtyp) {
         case AD_COLD:
+            if (worn_extrinsic(COLD_RES)) return;
             if (osym == POTION_CLASS && obj->otyp != POT_OIL) {
                 quan = obj->quan;
                 dindx = destroy_msg_potion_cold;
@@ -4597,6 +4598,7 @@ destroy_item(int osym, int dmgtyp)
                 skip++;
             break;
         case AD_FIRE:
+            if (worn_extrinsic(FIRE_RES)) return;
             xresist = (Fire_resistance && obj->oclass != POTION_CLASS);
 
             if (obj->otyp == SCR_FIRE || obj->otyp == SPE_FIREBALL)
@@ -4644,6 +4646,7 @@ destroy_item(int osym, int dmgtyp)
             }
             break;
         case AD_ELEC:
+            if (worn_extrinsic(SHOCK_RES)) return;
             xresist = (Shock_resistance && obj->oclass != RING_CLASS);
             quan = obj->quan;
             switch (osym) {

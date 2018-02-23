@@ -164,7 +164,7 @@
 ▒▒▒ * Consider whether crystal plate mail needs further buffs.
 ▒▒▒
 ▒▒▒ * Item destruction rework:
-▒▒▒   + Make extrinsic resistances protect against item destruction, including erosion.
+▒▒▒   + Make extrinsic resistances protect against erosion from that element.
 ▒▒▒
 ▒▒▒ * It appears that material-sensitive players can wield weapons made of the
 ▒▒▒   material in question without difficulty or consequence, provided you do
