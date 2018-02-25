@@ -94,6 +94,9 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * K2 says he got "Sparks fly as you whack the boulder. The axe-handle vibrates violently!"
+▒▒▒   while wielding a bullwhip and digging as a scurrier arc.
+▒▒▒
 ▒▒▒ * When applying polearms, the player may be prompted twice for a destination.
 ▒▒▒
 ▒▒▒ * When triggering a level teleporter with a polearm, the polearm can end up
