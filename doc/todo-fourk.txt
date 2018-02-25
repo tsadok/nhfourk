@@ -535,6 +535,11 @@
 ▒▒▒   Fooproofed items should be entirely protected from elemental damage
 ▒▒▒   (wetting/blanking, shock, fire, cold, etc.)
 ▒▒▒
+▒▒▒ * Consider adding a physician's head mirror as an armor item that can be worn
+▒▒▒   by small monsters (including gnomes) and provides reflection, but no defense.
+▒▒▒   Maybe make small the _maximum_ size that can wear it, so humans cannot.  Let
+▒▒▒   gnomish healers start with one, to offset their dearth of other armor.
+▒▒▒
 ▒▒▒ * Make some (limited) armor that gnomes and scurriers can wear;
 ▒▒▒   consider doing the same for giants.
 ▒▒▒

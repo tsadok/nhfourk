@@ -457,7 +457,13 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
                           otyp == SPE_EXTRA_HEALING ? " much" : "");
             }
             if (yours && (mtmp->mtame || mtmp->mpeaceful)) {
-                adjalign(Role_if(PM_HEALER) ? 1 : sgn(u.ualign.type));
+                if (Role_if(PM_HEALER))
+                    adjalign(1);
+                else if (!mtmp->mtame)
+                    adjalign(sgn(u.ualign.type));
+                else if (sgn(u.ualign.type > 0))
+                    adjalign(sgn(u.ualign.type));
+                /* Don't penalize chaotic players for healing their pets. */
             }
         } else {        /* Pestilence */
             /* Pestilence will always resist; damage is half of 3d{4,8} */
