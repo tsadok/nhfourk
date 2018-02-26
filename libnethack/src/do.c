@@ -155,7 +155,7 @@ flooreffects(struct obj * obj, int x, int y, const char *verb)
             if (mtmp) {
                 if (!passes_walls(mtmp->data) && !throws_rocks(mtmp->data)) {
                     int dieroll = rnd(20);
-                    if (hmon(mtmp, obj, TRUE, dieroll) &&
+                    if (hmon(mtmp, obj, TRUE, dieroll, NULL) &&
                         !is_whirly(mtmp->data))
                         return FALSE;   /* still alive */
                 }

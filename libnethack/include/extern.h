@@ -451,9 +451,10 @@ extern void hitfloor(struct obj *);
 extern void hurtle(int, int, int, boolean);
 extern void mhurtle(struct monst *, int, int, int);
 extern boolean throwing_weapon(const struct obj *);
-extern void throwit(struct obj *, long, boolean, schar, schar, schar);
+extern void throwit(struct obj *, long, boolean, schar, schar, schar,
+                    struct obj *);
 extern int omon_adj(struct monst *, struct obj *, boolean);
-extern int thitmonst(struct monst *, struct obj *);
+extern int thitmonst(struct monst *, struct obj *, struct obj *);
 extern int hero_breaks(struct obj *, xchar, xchar, boolean);
 extern int breaks(struct obj *, xchar, xchar);
 extern boolean breaktest(struct obj *);
@@ -1866,7 +1867,7 @@ extern void u_init_inv_skills(void);
 extern void check_caitiff(struct monst *);
 extern schar find_roll_to_hit(struct monst *);
 extern enum attack_check_status attack(struct monst *, schar, schar, boolean);
-extern boolean hmon(struct monst *, struct obj *, int, int);
+extern boolean hmon(struct monst *, struct obj *, int, int, struct obj *);
 extern int damageum(struct monst *, const struct attack *);
 extern void do_web_attack(struct level *, struct monst *, struct monst *,
                           int, boolean);
