@@ -493,7 +493,7 @@ spoilmrace(int i)
 static const char *
 spoilmonflagone(unsigned long mflags)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"
+    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s"
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s",
                      /* M1 least significant byte */
                      ((mflags & M1_FLY)       ? "<span class=\"flgfly\">Fly</span> " : ""),
@@ -511,8 +511,12 @@ spoilmonflagone(unsigned long mflags)
                      ((mflags & M1_BREATHLESS) ? "<span class=\"flgbreathless\">Breathless</span> " : ""),
                      ((mflags & M1_NOTAKE)     ? "<span class=\"flgnotake\">NoTake</span> " : ""),
                      ((mflags & M1_NOEYES)     ? "<span class=\"flgnoeyes\">NoEyes</span> " : ""),
-                     ((mflags & M1_NOHANDS)    ? "<span class=\"flgfly\">NoHands</span> " : ""),
-                     ((mflags & M1_NOLIMBS)    ? "<span class=\"flgfly\">NoLimbs</span> " : ""),
+                     /* special handling for M1_NOLIMBS because of wonky bit
+                        usage inherited from vanilla, wherein two bits are used
+                        non-independently to hold two binary properties */
+                     (((mflags & M1_NOLIMBS) == M1_NOLIMBS)
+                                               ? "<span class=\"flgfly\">NoLimbs</span> " :
+                      ((mflags & M1_NOHANDS)   ? "<span class=\"flgfly\">NoHands</span> " : "")),
                      ((mflags & M1_NOHEAD)     ? "<span class=\"flgnohead\">NoHead</span> " : ""),
                      /* M1 third byte */
                      ((mflags & M1_MINDLESS)   ? "<span class=\"flgmindless\">Mindless</span> " : ""),
