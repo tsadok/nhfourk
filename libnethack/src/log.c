@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2016-07-07 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-15 */
 /* Copyright (c) Daniel Thaler, 2011.                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -1751,10 +1751,22 @@ log_replay_command(struct nh_cmd_and_arg *cmd)
         return FALSE;
 
     if (*logline < 'a' || *logline > 'z') {
-        c = *logline;
-        free(logline);
-        log_desync(c, 'a');
+        if (program_state.eof_reached) {
+            program_state.eof_reached = FALSE;
+            log_replay_save_line();
+            logline = start_replaying_logfile(0);
+            if (!logline)
+                return FALSE;
+        }
+
+        if (*logline < 'a' || *logline > 'z') {
+            c = *logline;
+            free(logline);
+            log_desync(c, 'a');
+        }
     }
+
+    program_state.eof_reached = FALSE;
 
     lp = strchr(logline, ' ');
     cmd->cmd = lp ?
@@ -2430,9 +2442,11 @@ log_replay_save_line(void)
 
     } while (!logline && tries--);
 
-    if (!logline)
-        return; /* will probably cause an error if watching but that's what we
-                   want */
+    if (!logline) {
+        /* maybe we find a diff/binary save later */
+        program_state.eof_reached = TRUE;
+        return;
+    }
 
     if (*logline == '~') {
 
@@ -2480,6 +2494,7 @@ log_reset(void)
     program_state.gamestate_location = 0;
     program_state.last_save_backup_location_location = 0;
     program_state.emergency_recover_location = 0;
+    program_state.eof_reached = FALSE;
 }
 
 void

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2017-09-20 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-13 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -175,7 +175,7 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
        wall. Again, this can be overriden using "moveonly". */
     if (!last_command_was("moveonly")) {
         boolean lava = l->mem_bg == S_lava;
-        boolean pool = l->mem_bg == S_pool;
+        boolean pool = (l->mem_bg == S_pool || l->mem_bg == S_water);
 
         if (!Levitation && !Flying && !is_clinger(youmonst.data) &&
             (lava || (pool && !HSwimming)) &&

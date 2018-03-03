@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-05-22 */
+/* Last modified by Alex Smith, 2018-01-15 */
 /* Copyright (c) 2013 Alex Smith. */
 /* The 'uncursed' rendering library may be distributed under either of the
  * following licenses:
@@ -103,8 +103,8 @@ uncursed_load_plugin(const char *plugin_name)
 #if defined(AIMAKE_BUILDOS_linux) || defined(AIMAKE_BUILDOS_darwin) || \
     defined(AIMAKE_BUILDOS_freebsd)
 
-    /* dlopen() uses much the same search path rules as ld.so, so this will
-       look for the plugins in the rpath, which includes the libdir where they
+    /* dlopen() uses much the same search path rules as ld.so, so this will look
+       for the plugins in the runpath, which includes the libdir where they
        should have been installed. */
     handle = dlopen(fname, RTLD_NOW);
     if (!handle)
