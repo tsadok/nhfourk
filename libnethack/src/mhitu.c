@@ -1325,7 +1325,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
                 pline(msgc_statusheal, "%s hits!  (I hope you don't mind.)",
                       Monnam(mtmp));
             else
-                pline(msgc_monneutral, "%s hits!  (But nothing happpened?)",
+                pline(msgc_monneutral, "%s hits!  (But nothing happened?)",
                       Monnam(mtmp));
             
             if (!rn2(3))
