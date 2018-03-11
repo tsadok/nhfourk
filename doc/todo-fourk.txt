@@ -94,8 +94,35 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * 04:40 #hardfought: < LarienTelrunya > !tell jonadab [...] is it intentional that a
+▒▒▒   scroll of remove curse doesn't uncurse the cursed luckstone in my open inventory?
+▒▒▒   am I supposed to actually wield it to make the scroll work???
+▒▒▒
+▒▒▒ * 04:43 #hardfought: < LarienTelrunya > !tell jonadab "You destroy the lich!
+▒▒▒   Something's body crumbles into dust." didn't you fix that thrice already? it
+▒▒▒   still happens!
+▒▒▒
+▒▒▒ * 05:38 #hardfought: < LarienTelrunya > !tell jonadab your weird stinking cloud traps
+▒▒▒   don't reveal themselves when triggered! intentional?
+▒▒▒
+▒▒▒ * Make elder and ancient dragons not a valid polyform.  Because chameleons.
+▒▒▒   And credit LT with noticing.
+▒▒▒
+▒▒▒ * 06:02 #hardfought: < LarienTelrunya > !tell jonadab " b - 36 tsurugis {60}"
+▒▒▒   found on one of the samurai player monsters on the quest
+▒▒▒
 ▒▒▒ * K2 says he got "Sparks fly as you whack the boulder. The axe-handle vibrates violently!"
 ▒▒▒   while wielding a bullwhip and digging as a scurrier arc.
+▒▒▒
+▒▒▒ * Look over xnethack commit a2d98d2614ef and consider the whole table of spell
+▒▒▒   school skill levels and such.
+▒▒▒
+▒▒▒ * Consider letting most roles get Basic in more spell schools.
+▒▒▒
+▒▒▒ * Look over fnethack (a fork of 343-nao; I added it as a remote to my nao repo),
+▒▒▒   see if it has any commits I want to cherry-pick.
+▒▒▒
+▒▒▒ * Regarding spell failure rates, look at eecdabc and 0245ad4 for inspiration.
 ▒▒▒
 ▒▒▒ * When applying polearms, the player may be prompted twice for a destination.
 ▒▒▒
