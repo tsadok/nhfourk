@@ -94,6 +94,20 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * Tangles reports that young dragon (Ḋ) renders double-wide on his setup.  This is
+▒▒▒   obviously not desirable, need to try to track down why that is happening or what
+▒▒▒   can be done about it.
+▒▒▒
+▒▒▒ * 08:46 < bhaak > in unnethack, you get auto-id e.g. for sleep or death if you know the other already
+▒▒▒
+▒▒▒ * Why do unicorn horns randomly do nothing half the time?  Does this serve any
+▒▒▒   purpose other than requiring the player to tediously apply it repeatedly?
+▒▒▒
+▒▒▒ * LarienTelrunya > jonadab: "Yeenoghu casts a spell at you! A magic missile bounces off
+▒▒▒   the samurai!" gee, the samurai is me...
+▒▒▒
+▒▒▒ * LarienTelrunya > also this pit fiend just made a hole *on the staircase*
+▒▒▒
 ▒▒▒ * 04:40 #hardfought: < LarienTelrunya > !tell jonadab [...] is it intentional that a
 ▒▒▒   scroll of remove curse doesn't uncurse the cursed luckstone in my open inventory?
 ▒▒▒   am I supposed to actually wield it to make the scroll work???
