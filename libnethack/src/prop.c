@@ -1136,13 +1136,18 @@ show_conduct(int final)
 
     if (!u.uconduct[conduct_lostalign])
         enl_msg(&menu, You_, "have never violated", "never violated",
-                " your personal moral code");
+                (Role_if(PM_SAMURAI) ? "bushido" :
+                 Role_if(PM_KNIGHT) ? "the code of chivalry" :
+                 " your personal moral code"));
     else {
-        buf = msgprintf(" your moral code, losing %u point%s of alignment, "
-                "starting on turn %d",
-                u.uconduct[conduct_lostalign],
-                plur(u.uconduct[conduct_lostalign]),
-                u.uconduct_time[conduct_lostalign]);
+        buf = msgprintf(" %s, losing %u point%s of alignment, "
+                        "starting on turn %d",
+                        (Role_if(PM_SAMURAI) ? "bushido" :
+                         Role_if(PM_KNIGHT) ? "the code of chivalry" :
+                         "your moral code"),
+                        u.uconduct[conduct_lostalign],
+                        plur(u.uconduct[conduct_lostalign]),
+                        u.uconduct_time[conduct_lostalign]);
         enl_msg(&menu, You_, "have violated", "violated", buf);
     }
 
