@@ -230,12 +230,69 @@ const char *
 spoildamage(int i, boolean large, struct artifact *art)
 {
     int dmg = large ? objects[i].oc_wldam : objects[i].oc_wsdam;
-    const char *bonus = (art) ?
+    const char *dmgval_bonus = ""; /* Must be kept in sync with dmgval(). */
+    const char *artibonus = (art) ?
         (art->attk.damd ? msgprintf("<span class=\"dbon\">+%s%d</span>",
                                     ((art->attk.damd == 1) ? "" : "d"),
                                     art->attk.damd)
                         : ("<span class=\"dbon dbldam\">x2</span>")) : "";
-    return msgprintf("d%d%s", dmg, bonus);
+    if (large) {
+        switch (i) {
+        case IRON_CHAIN:
+        case CROSSBOW_BOLT:
+        case MORNING_STAR:
+        case PARTISAN:
+        case RUNESWORD:
+        case ELVEN_BROADSWORD:
+        case BROADSWORD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1</span>";
+        break;
+
+        case FLAIL:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d4</span>";
+            break;
+
+        case ACID_VENOM:
+        case HALBERD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d6</span>";
+            break;
+
+        case BATTLE_AXE:
+        case TRIDENT:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+2d4</span>";
+            break;
+
+        case TSURUGI:
+        case DWARVISH_MATTOCK:
+        case TWO_HANDED_SWORD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+2d6</span>";
+        }
+    } else {
+        switch (i) {
+        case IRON_CHAIN:
+        case CROSSBOW_BOLT:
+        case MACE:
+        case WAR_HAMMER:
+        case FLAIL:
+        case TRIDENT:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1</span>";
+            break;
+
+        case BATTLE_AXE:
+        case LUCERN_HAMMER:
+        case MORNING_STAR:
+        case BROADSWORD:
+        case ELVEN_BROADSWORD:
+        case RUNESWORD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d4</span>";
+            break;
+
+        case ACID_VENOM:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d6</span>";
+            break;
+        }
+    }
+    return msgprintf("d%d%s%s", dmg, dmgval_bonus, artibonus);
 }
 
 const char *
