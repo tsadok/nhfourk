@@ -1136,8 +1136,8 @@ show_conduct(int final)
 
     if (!u.uconduct[conduct_lostalign])
         enl_msg(&menu, You_, "have never violated", "never violated",
-                (Role_if(PM_SAMURAI) ? "bushido" :
-                 Role_if(PM_KNIGHT) ? "the code of chivalry" :
+                (Role_if(PM_SAMURAI) ? " bushido" :
+                 Role_if(PM_KNIGHT) ? " the code of chivalry" :
                  " your personal moral code"));
     else {
         buf = msgprintf(" %s, losing %u point%s of alignment, "
