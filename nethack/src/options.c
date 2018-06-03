@@ -1328,10 +1328,11 @@ read_config_line(char *line)
 
     optval = nhlib_string_to_optvalue(option, value);
     curses_set_option(name, optval);
-    if (option->type == OPTTYPE_AUTOPICKUP_RULES &&
-        optval.ar) {
-        free(optval.ar->rules);
-        free(optval.ar);
+    if (option->type == OPTTYPE_AUTOPICKUP_RULES) {
+        if (optval.ar && optval.ar->rules)
+            free(optval.ar->rules);
+        if (optval.ar)
+            free(optval.ar);
     }
 
     if (optlist)
