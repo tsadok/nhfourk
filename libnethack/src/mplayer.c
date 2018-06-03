@@ -215,7 +215,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 shield = STRANGE_OBJECT;
             }
             if (rn2_on_rng(2, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             if (helm == HELM_OF_BRILLIANCE)
                 helm = HELMET;
             if (rn2_on_rng(3, rng))
