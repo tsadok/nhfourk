@@ -1158,7 +1158,7 @@ list_vanquished(char defquery, boolean ask)
                             if (nkilled > 1) {
                                 switch (nkilled) {
                                 case 2:
-                                    buf = msgcat(buf, " (twice");
+                                    buf = msgcat(buf, " (twice)");
                                     break;
                                 case 3:
                                     buf = msgcat(buf, " (thrice)");
