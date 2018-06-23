@@ -107,9 +107,15 @@ static const struct Jitem Japanese_items[] = {
     {POT_BOOZE, "sake"},
     {0, ""}
 };
+static const struct Jitem Tourist_item_names[] = {
+    {LOW_BOOTS, "sneakers"},
+    {0, ""}
+};
+static const struct Jitem no_special_item_names[] = {
+    {0, ""}
+};
 
-
-static const char *Japanese_item_name(int i);
+static const char *Role_item_name(int i);
 
 /* e.g. "[rustproof] [+2] dagger" => "[rustproof +2 dagger]" */
 const char *
@@ -219,8 +225,8 @@ obj_typename(int otyp)
     const char *un = ocl->oc_uname;
     int nn = ocl->oc_name_known;
 
-    if (Role_if(PM_SAMURAI) && Japanese_item_name(otyp))
-        actualn = Japanese_item_name(otyp);
+    if (Role_item_name(otyp))
+        actualn = Role_item_name(otyp);
     switch (ocl->oc_class) {
     case COIN_CLASS:
         buf = "coin";
@@ -392,8 +398,8 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
     boolean bknown = obj->bknown;
     boolean dump   = turnstate.generating_dump;
 
-    if (Role_if(PM_SAMURAI) && Japanese_item_name(typ))
-        actualn = Japanese_item_name(typ);
+    if (Role_item_name(typ))
+        actualn = Role_item_name(typ);
 
     buf = "";
 
@@ -2436,8 +2442,18 @@ srch:
         i++;
     }
     if (actualn) {
+        /* If we add a third set of race- or role-specific item names, we should
+           probably make a list of the lists and turn this code duplication into
+           a loop.  But I didn't bother with it just being two so far. */
         const struct Jitem *j = Japanese_items;
-
+        while (j->item) {
+            if (actualn && !strcmpi(actualn, j->name)) {
+                typ = j->item;
+                goto typfnd;
+            }
+            j++;
+        }
+        j = Tourist_item_names;
         while (j->item) {
             if (actualn && !strcmpi(actualn, j->name)) {
                 typ = j->item;
@@ -2983,9 +2999,13 @@ rnd_class(int first, int last, enum rng rng)
 }
 
 static const char *
-Japanese_item_name(int i)
+Role_item_name(int i)
 {
-    const struct Jitem *j = Japanese_items;
+    const struct Jitem *j = no_special_item_names;
+    if (Role_if(PM_SAMURAI))
+        j = Japanese_items;
+    else if (Role_if(PM_TOURIST))
+        j = Tourist_item_names;
 
     while (j->item) {
         if (i == j->item)

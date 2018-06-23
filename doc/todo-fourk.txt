@@ -94,7 +94,13 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Generate fresh master-branch spoilers before Junethack.
+▒▒▒ * aosdict\ito+> jonadab: major bug: I'm losing alignment (hesitating for just a moment) because
+▒▒▒   some quest guardian blew up a wand nowhere near me and other guardians caught in the blast 
+▒▒▒   got angered. There goes my no-alignment-penalty conduct :/
+▒▒▒
+▒▒▒ * aosdict\ito+> FIQ: Is there any way to force the options in an existing game to be overridden
+▒▒▒   by the ones set globally? I just configured my autopickup rules globally because I actually
+▒▒▒   didn't last time, and now I have a game where I apparently have to do them again :/
 ▒▒▒
 ▒▒▒ * Tangles reports that young dragon (Ḋ) renders double-wide on his setup.  This is
 ▒▒▒   obviously not desirable, need to try to track down why that is happening or what
