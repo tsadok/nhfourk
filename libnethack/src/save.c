@@ -235,7 +235,12 @@ save_flags(struct memfile *mf)
 static void
 save_autopickup_rules(struct memfile *mf, struct nh_autopickup_rules *ar)
 {
-    int len = ar->num_rules, i;
+    int len, i;
+    if (!ar) {
+        mwrite32(mf, 0);
+        return;
+    }
+    len = ar->num_rules;
     mwrite32(mf, len);
     for (i = 0; i < len; ++i) {
         /* ar->rules[i].pattern is a char array, so this is safe */
