@@ -234,7 +234,8 @@ hitval(struct obj *otmp, struct monst *mon)
 
 /*
  * dmgval returns an integer representing the damage bonuses
- * of "otmp" against the monster.
+ * of "otmp" against the monster.  Note that any special-casing
+ * here needs to be duplicated in spoiler.c
  */
 int
 dmgval(struct obj *otmp, struct monst *mon)

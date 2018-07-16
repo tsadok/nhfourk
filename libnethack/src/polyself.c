@@ -1133,7 +1133,7 @@ dospit(const struct nh_cmd_arg *arg)
     }
 
     otmp->spe = 1;      /* to indicate it's yours */
-    throwit(otmp, 0L, FALSE, dx, dy, dz);
+    throwit(otmp, 0L, FALSE, dx, dy, dz, NULL);
     return 1;
 }
 

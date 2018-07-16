@@ -138,12 +138,16 @@ mkobj(struct level *lev, char oclass, boolean artif, enum rng rng)
 struct obj *
 mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
 {
+    int i, prob, maxprob = 0;
+    int levdepth = (lev && &lev->z) ? depth(&lev->z) : 1;
+    if (levdepth < 1)
+        levdepth = 1;
+
     if (oclass == RANDOM_CLASS) {
         impossible("mkobj_of_class called with RANDOM_CLASS");
         oclass = GEM_CLASS; /* This class is least-disruptive to balance. */
     }
 
-    int i;
     int first_id = bases[(int) oclass];
     int final_id = bases[oclass + 1] - 1;
 
@@ -154,11 +158,11 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
             first_id += (9 - z);
     }
 
-    int prob = 0;
+    /* Calculate the total probability of all items in the class */
     for (i = first_id; i <= final_id; i++)
-        prob += objects[i].oc_prob;
+        maxprob += objects[i].oc_prob;
 
-    prob = 1 + rn2_on_rng(prob, rng);
+    prob = 1 + rn2_on_rng(maxprob, rng);
     i = bases[(int)oclass];
     while ((prob -= objects[i].oc_prob) > 0)
         i++;
@@ -166,9 +170,9 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
     /* On early dungeon levels, random spellbooks now try to be ones for
        low-level spells, most of the time. */
     while (oclass == SPBOOK_CLASS &&
-           ((objects[i].oc_level - 1) * 3 > depth(&lev->z)) &&
-           rn2_on_rng((objects[i].oc_level - 1) * 3 - depth(&lev->z), rng)) {
-        prob = 1 + rn2_on_rng(1000, rng);
+           ((objects[i].oc_level - 1) * 3 > levdepth) &&
+           rn2_on_rng((objects[i].oc_level - 1) * 3 - levdepth, rng)) {
+        prob = 1 + rn2_on_rng(maxprob, rng);
         i = bases[(int)oclass];
         while ((prob -= objects[i].oc_prob) > 0)
             i++;

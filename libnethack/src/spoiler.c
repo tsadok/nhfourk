@@ -220,12 +220,69 @@ const char *
 spoildamage(int i, boolean large, struct artifact *art)
 {
     int dmg = large ? objects[i].oc_wldam : objects[i].oc_wsdam;
-    const char *bonus = (art) ?
+    const char *dmgval_bonus = ""; /* Must be kept in sync with dmgval(). */
+    const char *artibonus = (art) ?
         (art->attk.damd ? msgprintf("<span class=\"dbon\">+%s%d</span>",
                                     ((art->attk.damd == 1) ? "" : "d"),
                                     art->attk.damd)
                         : ("<span class=\"dbon dbldam\">x2</span>")) : "";
-    return msgprintf("d%d%s", dmg, bonus);
+    if (large) {
+        switch (i) {
+        case IRON_CHAIN:
+        case CROSSBOW_BOLT:
+        case MORNING_STAR:
+        case PARTISAN:
+        case RUNESWORD:
+        case ELVEN_BROADSWORD:
+        case BROADSWORD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1</span>";
+        break;
+
+        case FLAIL:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d4</span>";
+            break;
+
+        case ACID_VENOM:
+        case HALBERD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d6</span>";
+            break;
+
+        case BATTLE_AXE:
+        case TRIDENT:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+2d4</span>";
+            break;
+
+        case TSURUGI:
+        case DWARVISH_MATTOCK:
+        case TWO_HANDED_SWORD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+2d6</span>";
+        }
+    } else {
+        switch (i) {
+        case IRON_CHAIN:
+        case CROSSBOW_BOLT:
+        case MACE:
+        case WAR_HAMMER:
+        case FLAIL:
+        case TRIDENT:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1</span>";
+            break;
+
+        case BATTLE_AXE:
+        case LUCERN_HAMMER:
+        case MORNING_STAR:
+        case BROADSWORD:
+        case ELVEN_BROADSWORD:
+        case RUNESWORD:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d4</span>";
+            break;
+
+        case ACID_VENOM:
+            dmgval_bonus = "<span class=\"dmgval_bonus\">+1d6</span>";
+            break;
+        }
+    }
+    return msgprintf("d%d%s%s", dmg, dmgval_bonus, artibonus);
 }
 
 const char *
@@ -483,7 +540,7 @@ spoilmrace(int i)
 static const char *
 spoilmonflagone(unsigned long mflags)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s"
+    return msgprintf("%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s"
                      "%s%s%s%s%s%s%s%s" "%s%s%s%s%s%s%s%s%s",
                      /* M1 least significant byte */
                      ((mflags & M1_FLY)       ? "<span class=\"flgfly\">Fly</span> " : ""),
@@ -501,8 +558,12 @@ spoilmonflagone(unsigned long mflags)
                      ((mflags & M1_BREATHLESS) ? "<span class=\"flgbreathless\">Breathless</span> " : ""),
                      ((mflags & M1_NOTAKE)     ? "<span class=\"flgnotake\">NoTake</span> " : ""),
                      ((mflags & M1_NOEYES)     ? "<span class=\"flgnoeyes\">NoEyes</span> " : ""),
-                     ((mflags & M1_NOHANDS)    ? "<span class=\"flgfly\">NoHands</span> " : ""),
-                     ((mflags & M1_NOLIMBS)    ? "<span class=\"flgfly\">NoLimbs</span> " : ""),
+                     /* special handling for M1_NOLIMBS because of wonky bit
+                        usage inherited from vanilla, wherein two bits are used
+                        non-independently to hold two binary properties */
+                     (((mflags & M1_NOLIMBS) == M1_NOLIMBS)
+                                               ? "<span class=\"flgfly\">NoLimbs</span> " :
+                      ((mflags & M1_NOHANDS)   ? "<span class=\"flgfly\">NoHands</span> " : "")),
                      ((mflags & M1_NOHEAD)     ? "<span class=\"flgnohead\">NoHead</span> " : ""),
                      /* M1 third byte */
                      ((mflags & M1_MINDLESS)   ? "<span class=\"flgmindless\">Mindless</span> " : ""),
@@ -685,9 +746,6 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
     return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
                      ((spfx & SPFX_SEEK) ?
-                      /* TODO: currently, the code checks SPFX_SEARCH for both
-                         auto-searching and the +n search bonus and never
-                         checks SPFX_SEEK at all.  Fix that. */
                       "<span class=\"spfx spfxseek\">+n search</span> " : ""),
                      ((spfx & SPFX_WARN) ?
                       "<span class=\"spfx spfxwarn\">warn</span> " : ""),
@@ -768,7 +826,8 @@ spoilartinvoke(struct artifact *art)
         return "<span class=\"invoke invokelev\">levitation</span>";
     case CONFLICT:
         return "<span class=\"invoke invokeconflict\">conflict</span>";
-
+    case UNCURSE_INVK:
+        return "<span class=\"invoke invokeuncurse\">remove curse</span>";
     default:
         return msgprintf("<!-- unknown invoke property -->%d", (int) i);
     }

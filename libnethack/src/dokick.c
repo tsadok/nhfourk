@@ -434,6 +434,7 @@ kick_object(xchar x, xchar y, schar dx, schar dy, struct obj **kickobj_p)
     int range;
     struct monst *mon, *shkp;
     struct trap *trap;
+    struct obj *appraisestack = NULL;
     char bhitroom;
     boolean costly, isgold, slide = FALSE, air = FALSE;
 
@@ -584,8 +585,10 @@ kick_object(xchar x, xchar y, schar dx, schar dy, struct obj **kickobj_p)
         return !rn2(3) || martial();
     }
 
-    if (kickobj->quan > 1L && !isgold)
+    if (kickobj->quan > 1L && !isgold) {
+        appraisestack = kickobj;
         kickobj = splitobj(kickobj, 1L);
+    }
 
     if (slide && !Blind)
         pline(msgc_actionok, "Whee!  %s %s %s the %s.", Doname2(kickobj),
@@ -604,7 +607,7 @@ kick_object(xchar x, xchar y, schar dx, schar dy, struct obj **kickobj_p)
             return 1;   /* alert shk caught it */
         notonhead = (mon->mx != bhitpos.x || mon->my != bhitpos.y);
         if (isgold ? ghitm(mon, kickobj) :      /* caught? */
-            thitmonst(mon, kickobj))    /* hit && used up? */
+            thitmonst(mon, kickobj, appraisestack))  /* hit && used up? */
             return 1;
     }
 

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2018-02-20 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -69,10 +69,11 @@ check_here(boolean picked_some)
             ct++;
     }
 
-    /* If there are objects here, take a look unless autoexploring a previously
-       explored space. */
-    if (ct && !(autoexploring && level->locations[u.ux][u.uy].mem_stepped)) {
-        if (flags.occupation == occ_move || travelling())
+    /* If there are objects here, take a look unless autoexploring or travelling
+       a previously explored space. */
+    if (ct && !((autoexploring || travelling()) &&
+                level->locations[u.ux][u.uy].mem_stepped)) {
+        if (flags.occupation == occ_move)
             action_completed();
         flush_screen();
         look_here(ct, picked_some, FALSE, Blind);
@@ -301,7 +302,8 @@ menu_pickup:
 
     /* Stop autoexplore if this pile hasn't been explored or auto-pickup (tried 
        to) pick up anything. */
-    if (flags.occupation == occ_autoexplore &&
+    if ((flags.occupation == occ_autoexplore ||
+         flags.occupation == occ_travel) &&
         (!level->locations[u.ux][u.uy].mem_stepped ||
          (autopickup && n_tried > 0)))
         action_completed();

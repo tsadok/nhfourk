@@ -457,7 +457,13 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
                           otyp == SPE_EXTRA_HEALING ? " much" : "");
             }
             if (yours && (mtmp->mtame || mtmp->mpeaceful)) {
-                adjalign(Role_if(PM_HEALER) ? 1 : sgn(u.ualign.type));
+                if (Role_if(PM_HEALER))
+                    adjalign(1);
+                else if (!mtmp->mtame)
+                    adjalign(sgn(u.ualign.type));
+                else if (sgn(u.ualign.type > 0))
+                    adjalign(sgn(u.ualign.type));
+                /* Don't penalize chaotic players for healing their pets. */
             }
         } else {        /* Pestilence */
             /* Pestilence will always resist; damage is half of 3d{4,8} */
@@ -4604,6 +4610,7 @@ destroy_item(int osym, int dmgtyp)
 
         switch (dmgtyp) {
         case AD_COLD:
+            if (worn_extrinsic(COLD_RES)) return;
             if (osym == POTION_CLASS && obj->otyp != POT_OIL) {
                 quan = obj->quan;
                 dindx = destroy_msg_potion_cold;
@@ -4612,6 +4619,7 @@ destroy_item(int osym, int dmgtyp)
                 skip++;
             break;
         case AD_FIRE:
+            if (worn_extrinsic(FIRE_RES)) return;
             xresist = (Fire_resistance && obj->oclass != POTION_CLASS);
 
             if (obj->otyp == SCR_FIRE || obj->otyp == SPE_FIREBALL)
@@ -4659,6 +4667,7 @@ destroy_item(int osym, int dmgtyp)
             }
             break;
         case AD_ELEC:
+            if (worn_extrinsic(SHOCK_RES)) return;
             xresist = (Shock_resistance && obj->oclass != RING_CLASS);
             quan = obj->quan;
             switch (osym) {

@@ -16,7 +16,7 @@ static int throw_gold(struct obj *, schar, schar, schar);
 static void check_shop_obj(struct obj *, xchar, xchar, boolean);
 static void breakobj(struct obj *, xchar, xchar, boolean, boolean);
 static void breakmsg(struct obj *, boolean);
-static boolean toss_up(struct obj *, boolean);
+static boolean toss_up(struct obj *, boolean, struct obj *);
 static void sho_obj_return_to_u(struct obj *obj, schar, schar);
 static boolean mhurtle_step(void *, int, int);
 
@@ -201,7 +201,8 @@ throw_obj(struct obj *obj, const struct nh_cmd_arg *arg,
                 remove_worn_item(otmp, FALSE);
         }
         freeinv(otmp);
-        throwit(otmp, wep_mask, twoweap, dx, dy, dz);
+        throwit(otmp, wep_mask, twoweap, dx, dy, dz,
+                ((otmp == obj) ? NULL : obj));
     }
     m_shot.n = m_shot.i = 0;
     m_shot.o = STRANGE_OBJECT;
@@ -735,7 +736,7 @@ check_shop_obj(struct obj *obj, xchar x, xchar y, boolean broken)
  * Returns FALSE if the object is gone.
  */
 static boolean
-toss_up(struct obj *obj, boolean hitsroof)
+toss_up(struct obj *obj, boolean hitsroof, struct obj *stack)
 {
     const char *almost;
     const char *vhelmp;
@@ -908,7 +909,8 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
                                          */
         boolean twoweap,        /* used to restore twoweapon mode if wielded
                                    weapon returns */
-        schar dx, schar dy, schar dz)
+        schar dx, schar dy, schar dz,
+        struct obj *appraisestack)
 {
     struct monst *mon;
     int range, urange;
@@ -971,7 +973,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             u.twoweap = twoweap;
         } else if (dz < 0 && !Is_airlevel(&u.uz) && !Underwater &&
                    !Is_waterlevel(&u.uz)) {
-            toss_up(obj, rn2(5));
+            toss_up(obj, rn2(5), appraisestack);
         } else {
             hitfloor(obj);
         }
@@ -1069,7 +1071,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
         }
         snuff_candle(obj);
         notonhead = (bhitpos.x != mon->mx || bhitpos.y != mon->my);
-        obj_gone = thitmonst(mon, obj);
+        obj_gone = thitmonst(mon, obj, appraisestack);
         /* Monster may have been tamed; this frees old mon */
         mon = m_at(level, bhitpos.x, bhitpos.y);
 
@@ -1241,7 +1243,7 @@ tmiss(struct obj *obj, struct monst *mon)
  * 0 if caller must take care of it.
  */
 int
-thitmonst(struct monst *mon, struct obj *obj)
+thitmonst(struct monst *mon, struct obj *obj, struct obj *appraisestack)
 {
     int tmp;    /* Base chance to hit */
     int disttmp;        /* distance modifier */
@@ -1399,7 +1401,8 @@ thitmonst(struct monst *mon, struct obj *obj)
         }
 
         if (tmp >= dieroll) {
-            if (hmon(mon, obj, 1, dieroll)) {    /* mon still alive */
+            if (hmon(mon, obj, 1, dieroll, appraisestack)) {
+                /* mon still alive */
                 cutworm(mon, bhitpos.x, bhitpos.y, obj);
             }
             exercise(A_DEX, TRUE);
@@ -1453,7 +1456,7 @@ thitmonst(struct monst *mon, struct obj *obj)
             int was_swallowed = guaranteed_hit;
 
             exercise(A_DEX, TRUE);
-            if (!hmon(mon, obj, 1, dieroll)) {   /* mon killed */
+            if (!hmon(mon, obj, 1, dieroll, NULL)) { /* mon killed */
                 if (was_swallowed && !Engulfed && obj == uball)
                     return 1;   /* already did placebc() */
             }
@@ -1465,7 +1468,7 @@ thitmonst(struct monst *mon, struct obj *obj)
         exercise(A_STR, TRUE);
         if (tmp >= dieroll) {
             exercise(A_DEX, TRUE);
-            hmon(mon, obj, 1, dieroll);
+            hmon(mon, obj, 1, dieroll, NULL);
         } else {
             tmiss(obj, mon);
         }
@@ -1473,7 +1476,7 @@ thitmonst(struct monst *mon, struct obj *obj)
     } else if ((otyp == EGG || otyp == CREAM_PIE || otyp == BLINDING_VENOM ||
                 otyp == ACID_VENOM || otyp == VAMPIRE_BLOOD)) {
         if ((guaranteed_hit || ACURR(A_DEX) > rnd(25))) {
-            hmon(mon, obj, 1, dieroll);
+            hmon(mon, obj, 1, dieroll, NULL);
             return 1;   /* hmon used it up */
         }
         tmiss(obj, mon);

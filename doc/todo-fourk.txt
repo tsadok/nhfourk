@@ -25,16 +25,6 @@
 ▒▒▒   2016 May 13th, starting at 8:30am.  Pay special attention to
 ▒▒▒   what we noticed around 9:31.
 ▒▒▒
-▒▒▒ * 05:22 < FIQ > didyou fix tele prompt
-▒▒▒   05:29 < FIQ > jonadab: msg not showing until you pick target xy
-▒▒▒   05:29 < FIQ > to what poston would you lke to teleport
-▒▒▒   The pline() is clearly called before the getpos(), so if this is actually
-▒▒▒   happening, the UI must be doing some weird behind-the-scenes cache thing.
-▒▒▒   Probably related:
-▒▒▒ * 17:26 < hothraxxa+> jonadab: when i try to pay the sk in minetown, i don't get the "Pay whom?" prompt showing. it
-▒▒▒                       should be prompting because i have esp and can see other shopkeepers
-▒▒▒   17:26 < hothraxxa+> so nothing seems to happen, but it is waiting for me to move the cursor to the sk
-▒▒▒
 ▒▒▒ * 04:58 <        Mandevil > jonadab: Another suspected bug: I couldn't eat tin from ground.
 ▒▒▒   04:58 <        Mandevil > jonadab: It just did nothing when I tried.
 ▒▒▒   04:58 <        Mandevil > jonadab: Eating from inventory was OK.
@@ -110,7 +100,66 @@
 ▒▒▒
 ▒▒▒ * It seems the artifact spoiler doesn't support SPFX stuff.  Make it so it does.
 ▒▒▒
-▒▒▒ * Add the new-to-Fourk artifacts to data.base: QuickPick, Big Stick, Valerian
+▒▒▒ * aosdict\ito+> jonadab: major bug: I'm losing alignment (hesitating for just a moment) because
+▒▒▒   some quest guardian blew up a wand nowhere near me and other guardians caught in the blast 
+▒▒▒   got angered. There goes my no-alignment-penalty conduct :/
+▒▒▒
+▒▒▒ * aosdict\ito+> FIQ: Is there any way to force the options in an existing game to be overridden
+▒▒▒   by the ones set globally? I just configured my autopickup rules globally because I actually
+▒▒▒   didn't last time, and now I have a game where I apparently have to do them again :/
+▒▒▒
+▒▒▒ * Tangles reports that young dragon (Ḋ) renders double-wide on his setup.  This is
+▒▒▒   obviously not desirable, need to try to track down why that is happening or what
+▒▒▒   can be done about it.
+▒▒▒
+▒▒▒ * Jitterbugs interact meaningfully with Sokoban.  Consider.  (Thanks to tsukumogami for reporting.)
+▒▒▒
+▒▒▒ * 08:46 < bhaak > in unnethack, you get auto-id e.g. for sleep or death if you know the other already
+▒▒▒
+▒▒▒ * Why do unicorn horns randomly do nothing half the time?  Does this serve any
+▒▒▒   purpose other than requiring the player to tediously apply it repeatedly?
+▒▒▒
+▒▒▒ * LarienTelrunya > jonadab: "Yeenoghu casts a spell at you! A magic missile bounces off
+▒▒▒   the samurai!" gee, the samurai is me...
+▒▒▒
+▒▒▒ * LarienTelrunya > also this pit fiend just made a hole *on the staircase*
+▒▒▒
+▒▒▒ * 04:40 #hardfought: < LarienTelrunya > !tell jonadab [...] is it intentional that a
+▒▒▒   scroll of remove curse doesn't uncurse the cursed luckstone in my open inventory?
+▒▒▒   am I supposed to actually wield it to make the scroll work???
+▒▒▒
+▒▒▒ * 04:43 #hardfought: < LarienTelrunya > !tell jonadab "You destroy the lich!
+▒▒▒   Something's body crumbles into dust." didn't you fix that thrice already? it
+▒▒▒   still happens!
+▒▒▒
+▒▒▒ * 05:38 #hardfought: < LarienTelrunya > !tell jonadab your weird stinking cloud traps
+▒▒▒   don't reveal themselves when triggered! intentional?
+▒▒▒
+▒▒▒ * Make elder and ancient dragons not a valid polyform.  Because chameleons.
+▒▒▒   And credit LT with noticing.
+▒▒▒
+▒▒▒ * 06:02 #hardfought: < LarienTelrunya > !tell jonadab " b - 36 tsurugis {60}"
+▒▒▒   found on one of the samurai player monsters on the quest
+▒▒▒
+▒▒▒ * K2 says he got "Sparks fly as you whack the boulder. The axe-handle vibrates violently!"
+▒▒▒   while wielding a bullwhip and digging as a scurrier arc.
+▒▒▒
+▒▒▒ * Look over xnethack commit a2d98d2614ef and consider the whole table of spell
+▒▒▒   school skill levels and such.
+▒▒▒
+▒▒▒ * Consider letting most roles get Basic in more spell schools.
+▒▒▒
+▒▒▒ * Look over fnethack (a fork of 343-nao; I added it as a remote to my nao repo),
+▒▒▒   see if it has any commits I want to cherry-pick.
+▒▒▒
+▒▒▒ * Regarding spell failure rates, look at eecdabc and 0245ad4 for inspiration.
+▒▒▒
+▒▒▒ * When applying polearms, the player may be prompted twice for a destination.
+▒▒▒
+▒▒▒ * When triggering a level teleporter with a polearm, the polearm can end up
+▒▒▒   embedded in solid stone on the target level, possibly beyond the edges of
+▒▒▒   where the player can dig.  This is not intended.  (It should land on floor.)
+▒▒▒   I suspect I am using deliver_object() in an unanticipated way.
 ▒▒▒
 ▒▒▒ * Cherry-pick from xnethack:
 ▒▒▒   + 099a3f0 copperwater: Add Dudley as a ghost name
@@ -169,7 +218,7 @@
 ▒▒▒ * Consider whether crystal plate mail needs further buffs.
 ▒▒▒
 ▒▒▒ * Item destruction rework:
-▒▒▒   + Make extrinsic resistances protect against item destruction, including erosion.
+▒▒▒   + Make extrinsic resistances protect against erosion from that element.
 ▒▒▒
 ▒▒▒ * It appears that material-sensitive players can wield weapons made of the
 ▒▒▒   material in question without difficulty or consequence, provided you do
@@ -530,6 +579,11 @@
 ▒▒▒   of enchant weapon, in the same way as it is done for a weapon.
 ▒▒▒   Fooproofed items should be entirely protected from elemental damage
 ▒▒▒   (wetting/blanking, shock, fire, cold, etc.)
+▒▒▒
+▒▒▒ * Consider adding a physician's head mirror as an armor item that can be worn
+▒▒▒   by small monsters (including gnomes) and provides reflection, but no defense.
+▒▒▒   Maybe make small the _maximum_ size that can wear it, so humans cannot.  Let
+▒▒▒   gnomish healers start with one, to offset their dearth of other armor.
 ▒▒▒
 ▒▒▒ * Make some (limited) armor that gnomes and scurriers can wear;
 ▒▒▒   consider doing the same for giants.

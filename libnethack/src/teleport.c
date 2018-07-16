@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2017-11-18 */
+/* Last modified by Fredrik Ljungdahl, 2017-12-21 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -435,7 +435,7 @@ tele_impl(boolean wizard_tele, boolean run_next_to_u)
         if (u_helpless(hm_unconscious)) {
             pline(msgc_notresisted,
                   "Being unconscious, you cannot control your teleport.");
-        } else if (Uhave_amulet) {
+        } else if (Uhave_amulet && !wizard_tele) {
             pline(msgc_notresisted,
                   "A mysterious force disrupts your control.");
         } else {
@@ -444,6 +444,10 @@ tele_impl(boolean wizard_tele, boolean run_next_to_u)
                   u.usteed ? msgcat(" and ", mon_nam(u.usteed)) : "");
             cc.x = u.ux;
             cc.y = u.uy;
+
+            if (flags.travelcc.x != COLNO && flags.travelcc.y != ROWNO)
+                cc = flags.travelcc;
+
             if (getpos(&cc, FALSE, "the teleport target", FALSE)
                 == NHCR_CLIENT_CANCEL)
                 return 0; /* abort */

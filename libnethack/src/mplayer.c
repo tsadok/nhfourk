@@ -231,7 +231,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 shield = STRANGE_OBJECT;
             }
             if (rn2_on_rng(2, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             if (helm == HELM_OF_BRILLIANCE)
                 helm = HELMET;
             if (rn2_on_rng(3, rng))
@@ -367,7 +367,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
         }
 
         if (weapon != STRANGE_OBJECT) {
-            otmp = mksobj(level, weapon, TRUE, FALSE, rng);
+            otmp = mksobj(lev, weapon, TRUE, FALSE, rng);
             otmp->spe = (special ? 4 + rn2_on_rng(5, rng) : rn2_on_rng(4, rng));
             if (!rn2_on_rng(3, rng))
                 otmp->oerodeproof = 1;
@@ -381,7 +381,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             mpickobj(mtmp, otmp);
         }
         if (ammo != STRANGE_OBJECT) {
-            otmp = mksobj(level, weapon, TRUE, FALSE, rng);
+            otmp = mksobj(lev, weapon, TRUE, FALSE, rng);
             if (otmp->oclass == WEAPON_CLASS) {
                 otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
                              rn2_on_rng(3, rng));
@@ -419,7 +419,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             mkmonmoney(mtmp, rn2_on_rng(1000, rng), rng);
             quan = rn2_on_rng(10, rng);
             while (quan--)
-                mpickobj(mtmp, mkobj(level, RANDOM_CLASS, FALSE, rng));
+                mpickobj(mtmp, mkobj(lev, RANDOM_CLASS, FALSE, rng));
         }
         quan = 1 + rn2_on_rng(3, rng);
         while (quan--)

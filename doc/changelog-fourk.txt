@@ -69,6 +69,15 @@ Changes in 4.3.0.5:
    resistance, but only the Valkyries can fly.  Valkyries always start
    neutral but can be either shieldmaidens or priestesses.
 
+ * Equipment that provides extrinsic resistance to fire, cold, or
+   shock now also protects your inventory items from being instantly
+   destroyed by fire, cold, or shock effects, respectively.  (It is
+   possible that I may have missed some cases that don't go through
+   the destroy item function.  These should be reported as bugs if
+   discovered.)
+
+ * Polearms can now be used to trigger (known) traps at a distance.
+
  * Lycanthropy triggers its changes less often now, especially in
    the daytime, especially when the moon isn't full.
 
