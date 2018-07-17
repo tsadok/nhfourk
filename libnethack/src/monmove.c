@@ -1140,7 +1140,15 @@ postmov:
             cansee(mtmp->mx, mtmp->my);
 
         if (mmoved == 1) {
-            newsym(omx, omy);   /* update the old position */
+            if (!isok(omx, omy)) {
+                impossible("Monster moved from impossible position (%d,%d): %s",
+                           omx, omy, k_monnam(mtmp));
+                if (teleport_pet(mtmp, TRUE))
+                    rloc(mtmp, TRUE, mtmp->dlevel);
+                return -1;
+            }
+            else
+                newsym(omx, omy);   /* update the old position */
             if (mintrap(mtmp) >= 2) {
                 if (mtmp->mx != COLNO)
                     newsym(mtmp->mx, mtmp->my);

@@ -780,7 +780,10 @@ newsym_core(int x, int y, boolean reroll_hallucinated_appearances)
 void
 newsym(int x, int y)
 {
-    newsym_core(x, y, FALSE);
+    if (!isok(x,y))
+        impossible("newsym() called with non-ok position: (%d,%d)", x, y);
+    else
+        newsym_core(x, y, FALSE);
 }
 
 /*
