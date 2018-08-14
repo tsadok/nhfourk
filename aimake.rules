@@ -1,4 +1,4 @@
-# Last modified by Alex Smith, 2017-12-07
+# Last modified by Alex Smith, 2018-08-14
 # Copyright (c) Alex Smith, 2013.
 # NetHack may be freely redistributed.  See license for details.
 # NetHack 4: aimake configuration.
@@ -23,6 +23,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
         AM_CPPFLAGS => '-DNETCLIENT -D_REENTRANT',
         CFLAGS      => '-Wall -Wextra -fdiagnostics-show-option -O2 -g',
         AM_CFLAGS   => '-Wno-missing-field-initializers '.
+                       '-Wno-format-truncation '.
                        # These warnings are probably worth fixing eventually,
                        # but have too many false positives to be able to show
                        # them right now
