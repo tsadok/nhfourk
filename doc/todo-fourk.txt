@@ -5,7 +5,7 @@
 ▒▒▒                                                   ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒   Unreproducable / Unconformed / Problematic :
+▒▒▒   Unreproducable / Unconfirmed / Problematic :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * FIQ says he shot a watchman in the face because f1<direction> fired two darts.
@@ -343,9 +343,6 @@
 ▒▒▒
 ▒▒▒ * The 4.3.0.5 spoilers are badly out of date.  Regenerate them.
 ▒▒▒
-▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
-▒▒▒   the current situation with old-version saves.
-▒▒▒
 ▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
 ▒▒▒                     speed 24-26 \n no special abilities other than flight
 ▒▒▒   18:50 < jonadab+> FIQ: That is not a bad idea.
@@ -635,7 +632,6 @@
 ▒▒▒   14:47 < FIQ > since otherwise, your rare cases of bad luck (mirrors, killing a peaceful before angering, etc)
 ▒▒▒   14:47 < FIQ > would accumulate
 ▒▒▒
-<<<<<<< HEAD
 ▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
 ▒▒▒   Also, should it be the Caveman first sac gift?  Discuss.
 ▒▒▒
@@ -878,6 +874,22 @@
 ▒▒▒   and review the existing ones for continued accuracy.
 ▒▒▒
 ▒▒▒ * Update the guidebook.
+▒▒▒
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   Post-Rebase
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * A clear "This save file is from 4.3.0.5 or earlier" would be much better than
+▒▒▒   the current situation with old-version saves.
+▒▒▒
+▒▒▒ * defined monster groups for level generation, similar to what Brogue has, but
+▒▒▒   possibly with items in some cases.  A small number of examples:
+▒▒▒   + One orc-captain and 5-10 other o
+▒▒▒   + One troll and 5-10 o
+▒▒▒   + One of each color of unicorn
+▒▒▒   + 3-5 black light and 10-20 manes
+▒▒▒   + One purple worm and 5-10 shriekers
+▒▒▒   + Three n and a wand of make invisible
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
