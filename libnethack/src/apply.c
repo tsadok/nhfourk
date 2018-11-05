@@ -322,8 +322,10 @@ use_whistle(struct obj *obj)
         pline(msgc_cancelled, "You are incapable of blowing the whistle!");
         return 0;
     }
-    pline(msgc_actionok, whistle_str, obj->cursed ? "shrill" : "high");
-    makeknown(obj->otyp);
+    if (canhear()) {
+        pline(msgc_actionok, whistle_str, obj->cursed ? "shrill" : "high");
+        makeknown(obj->otyp);
+    }
     wake_nearby(TRUE);
 
     struct monst *mtmp;
@@ -345,10 +347,13 @@ use_magic_whistle(struct obj *obj)
     }
 
     if (obj->cursed && !rn2(2)) {
-        pline(msgc_substitute, "You produce a high-pitched humming noise.");
+        if (canhear())
+            pline(msgc_substitute, "You produce a high-pitched humming noise.");
         wake_nearby(FALSE);
     } else {
-        pline(msgc_actionok, whistle_str, Hallucination ? "normal" : "strange");
+        if (canhear())
+            pline(msgc_actionok, whistle_str,
+                  Hallucination ? "normal" : "strange");
         for (mtmp = level->monlist; mtmp; mtmp = nextmon) {
             nextmon = mtmp->nmon;       /* trap might kill mon */
             if (DEADMONSTER(mtmp))
@@ -365,7 +370,8 @@ use_magic_whistle(struct obj *obj)
             }
         }
     }
-    makeknown(obj->otyp);
+    if (canhear())
+        makeknown(obj->otyp);
     return 1;
 }
 
