@@ -247,7 +247,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(4, rng))
                 weapon = LONG_SWORD;
             if (!rn2_on_rng(3, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             if (rn2_on_rng(3, rng))
                 ammo = STRANGE_OBJECT;
             break;
@@ -266,7 +266,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(2, rng))
                 weapon = rn2_on_rng(3, rng) ? MACE : FLAIL;
             if (rn2_on_rng(2, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             if (rn2_on_rng(4, rng))
                 cloak = ROBE;
             if (rn2_on_rng(4, rng))
@@ -311,7 +311,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (!rn2_on_rng(3, rng))
                 weapon = WAR_HAMMER;
             if (rn2_on_rng(2, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             break;
         case PM_WIZARD:
             if (rn2_on_rng(4, rng))
