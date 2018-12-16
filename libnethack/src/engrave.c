@@ -1434,7 +1434,7 @@ del_engr(struct engr *ep, struct level *lev)
                 ept->nxt_engr = ep->nxt_engr;
                 break;
             }
-        if (!ept) {
+        if (!ep) {
             impossible("Error in del_engr?");
             return;
         }
