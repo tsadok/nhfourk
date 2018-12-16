@@ -353,13 +353,15 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
         }
         if (ammo != STRANGE_OBJECT) {
             otmp = mksobj(lev, weapon, TRUE, FALSE, rng);
-            if (otmp->oclass == WEAPON_CLASS) {
-                otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
-                             rn2_on_rng(3, rng));
-                otmp->quan = (5 + rn2_on_rng(5, rng)) *
-                    (1 + rne_on_rng(3, rng));
+            if (otmp) {
+                if (otmp->oclass == WEAPON_CLASS) {
+                    otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
+                                 rn2_on_rng(3, rng));
+                    otmp->quan = (5 + rn2_on_rng(5, rng)) *
+                        (1 + rne_on_rng(3, rng));
+                }
+                mpickobj(mtmp, otmp);
             }
-            mpickobj(mtmp, otmp);
         }
 
         if (special) {
