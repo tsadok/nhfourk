@@ -352,7 +352,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             mpickobj(mtmp, otmp);
         }
         if (ammo != STRANGE_OBJECT) {
-            otmp = mksobj(lev, weapon, TRUE, FALSE, rng);
+            otmp = mksobj(lev, ammo, TRUE, FALSE, rng);
             if (otmp) {
                 if (otmp->oclass == WEAPON_CLASS) {
                     otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
@@ -363,7 +363,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                 mpickobj(mtmp, otmp);
             } else/* if (wizard) */
                 impossible("Failed to create %s for mplayer monster (%s).",
-                           OBJ_NAME(objects[weapon]), ptr->mname);
+                           OBJ_NAME(objects[ammo]), ptr->mname);
         }
 
         if (special) {
