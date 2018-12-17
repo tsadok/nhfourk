@@ -361,7 +361,9 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
                         (1 + rne_on_rng(3, rng));
                 }
                 mpickobj(mtmp, otmp);
-            }
+            } else/* if (wizard) */
+                impossible("Failed to create %s for mplayer monster (%s).",
+                           OBJ_NAME(objects[weapon]), ptr->mname);
         }
 
         if (special) {

@@ -94,6 +94,10 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * @Luxcalibur says the advcal doors can be kicked down in Fourk.
+▒▒▒
+▒▒▒ * @Luxcalibur says the advcal numbers aren't in front of the doors.
+▒▒▒
 ▒▒▒ * aosdict\ito+> jonadab: major bug: I'm losing alignment (hesitating for just a moment) because
 ▒▒▒   some quest guardian blew up a wand nowhere near me and other guardians caught in the blast 
 ▒▒▒   got angered. There goes my no-alignment-penalty conduct :/
@@ -333,6 +337,11 @@
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
+▒▒▒
+▒▒▒ * Give every major struct (including things like the engraving struct) a struct-type-ID
+▒▒▒   field that is always set to a specific unique constant, so for debugging purposes we
+▒▒▒   can recognize when the struct is not actually what it's supposed to be (broken pointer)
+▒▒▒   Maybe (ASCII value for) 'E' for engraving, 'O' for object, 'M' for monster, etc.
 ▒▒▒
 ▒▒▒ * Conducts:
 ▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.

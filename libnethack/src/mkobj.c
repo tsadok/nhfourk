@@ -836,8 +836,9 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
         case COIN_CLASS:
             break;      /* do nothing */
         default:
-            impossible("impossible mkobj %d, sym '%c'.", otmp->otyp,
-                       objects[otmp->otyp].oc_class);
+            impossible("impossible mksobj(lev,%d,%d,%d,%d) made %d, sym '%c'.",
+                       otyp, init, artif, rng,
+                       otmp->otyp, objects[otmp->otyp].oc_class);
             return NULL;
         }
     }
