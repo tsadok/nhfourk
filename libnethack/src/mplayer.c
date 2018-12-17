@@ -267,7 +267,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(4, rng))
                 weapon = LONG_SWORD;
             if (!rn2_on_rng(3, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             if (rn2_on_rng(3, rng))
                 ammo = STRANGE_OBJECT;
             break;
@@ -286,7 +286,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             if (rn2_on_rng(2, rng))
                 weapon = rn2_on_rng(3, rng) ? MACE : FLAIL;
             if (rn2_on_rng(2, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             else if (rn2_on_rng(3, rng))
                 armor = STUDDED_LEATHER_ARMOR;
             else if (rn2_on_rng(2, rng))
@@ -340,7 +340,7 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             else if (!rn2_on_rng(3, rng))
                 weapon = SPEAR;
             if (rn2_on_rng(2, rng))
-                armor = rnd_class(PLATE_MAIL, CHAIN_MAIL, rng);
+                armor = rnd_class(CHAIN_MAIL, PLATE_MAIL, rng);
             break;
         case PM_WIZARD:
             if (rn2_on_rng(4, rng))
@@ -381,14 +381,18 @@ mk_mplayer(const struct permonst *ptr, struct level *lev, xchar x, xchar y,
             mpickobj(mtmp, otmp);
         }
         if (ammo != STRANGE_OBJECT) {
-            otmp = mksobj(lev, weapon, TRUE, FALSE, rng);
-            if (otmp->oclass == WEAPON_CLASS) {
-                otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
-                             rn2_on_rng(3, rng));
-                otmp->quan = (5 + rn2_on_rng(5, rng)) *
-                    (1 + rne_on_rng(3, rng));
-            }
-            mpickobj(mtmp, otmp);
+            otmp = mksobj(lev, ammo, TRUE, FALSE, rng);
+            if (otmp) {
+                if (otmp->oclass == WEAPON_CLASS) {
+                    otmp->spe = (special ? 3 + rn2_on_rng(4, rng) :
+                                 rn2_on_rng(3, rng));
+                    otmp->quan = (5 + rn2_on_rng(5, rng)) *
+                        (1 + rne_on_rng(3, rng));
+                }
+                mpickobj(mtmp, otmp);
+            } else/* if (wizard) */
+                impossible("Failed to create %s for mplayer monster (%s).",
+                           OBJ_NAME(objects[ammo]), ptr->mname);
         }
 
         if (special) {

@@ -512,6 +512,10 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
     int mndx, tryct;
     struct obj *otmp;
     const char let = objects[otyp].oc_class;
+    if (!otyp) {
+        impossible("mksobj was asked to create a strange object (%d)", otyp);
+        return NULL;
+    }
 
     otmp = mksobj_basic(lev, otyp);
     if (!otmp)
@@ -827,8 +831,9 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
         case COIN_CLASS:
             break;      /* do nothing */
         default:
-            impossible("impossible mkobj %d, sym '%c'.", otmp->otyp,
-                       objects[otmp->otyp].oc_class);
+            impossible("impossible mksobj(lev,%d,%d,%d,%d) made %d, sym '%c'.",
+                       otyp, init, artif, rng,
+                       otmp->otyp, objects[otmp->otyp].oc_class);
             return NULL;
         }
     }

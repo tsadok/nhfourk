@@ -94,6 +94,10 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * @Luxcalibur says the advcal doors can be kicked down in Fourk.
+▒▒▒
+▒▒▒ * @Luxcalibur says the advcal numbers aren't in front of the doors.
+▒▒▒
 ▒▒▒ * The comment above findgold() says it can search containers, but currently it
 ▒▒▒   does not actually do so.  Look at everywhere it's called and make a decision on
 ▒▒▒   whether it should search containers or not; change either the code or the comment.
@@ -341,7 +345,18 @@
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * The 4.3.0.5 spoilers are badly out of date.  Regenerate them.
+▒▒▒ * Regenerate the 4.3.0.5 spoilers.
+▒▒▒
+▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
+▒▒▒   the current situation with old-version saves.
+▒▒▒
+▒▒▒ * Give every major struct (including things like the engraving struct) a struct-type-ID
+▒▒▒   field that is always set to a specific unique constant, so for debugging purposes we
+▒▒▒   can recognize when the struct is not actually what it's supposed to be (broken pointer)
+▒▒▒   Maybe (ASCII value for) 'E' for engraving, 'O' for object, 'M' for monster, etc.
+▒▒▒
+▒▒▒ * Conducts:
+▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.
 ▒▒▒
 ▒▒▒ * 18:48 <     FIQ+> jonadab: yani for 4k \n pegasus, a flying horse slightly higher base level than warhorse
 ▒▒▒                     speed 24-26 \n no special abilities other than flight

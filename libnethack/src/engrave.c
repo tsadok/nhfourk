@@ -1439,7 +1439,10 @@ del_engr(struct engr *ep, struct level *lev)
                 break;
             }
         if (!ept) {
-            impossible("Error in del_engr?");
+            impossible("del_engr: %s: {'%s'; tim: %ld; (%d,%d); typ %d}, %d.%d",
+                       "not found on the level's engraving chain",
+                       ep->engr_txt, ep->engr_time, ep->engr_x, ep->engr_y,
+                       ep->engr_type, lev->z.dnum, lev->z.dlevel);
             return;
         }
     }
