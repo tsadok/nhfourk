@@ -523,7 +523,7 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
     const char let = objects[otyp].oc_class;
     if (!otyp) {
         impossible("mksobj was asked to create a strange object (%d)", otyp);
-        return;
+        return NULL;
     }
 
     otmp = mksobj_basic(lev, otyp);
