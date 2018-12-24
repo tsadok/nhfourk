@@ -270,7 +270,7 @@ mon_arrive(struct monst *mtmp, boolean with_you)
             timer_element *tmr;
             int fixed = 0;
             for (tmr = &level->lev_timers; tmr; tmr = tmr->next) {
-                if ((struct obj *) tmr->arg == otmp) {
+                if (tmr->arg == (void *) otmp) {
                     otmp->olev = level;
                     fixed++;
                 }
