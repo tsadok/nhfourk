@@ -505,11 +505,6 @@ save_you(struct memfile *mf, struct you *y)
     mwrite8(mf, y->uy0);
     mwrite8(mf, y->uz.dnum);
     mwrite8(mf, y->uz.dlevel);
-    /* Padding to replace utolev/utotype, which were removed. */
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): remove the next three lines. */
-    mwrite8(mf, y->save_compat_bytes[0]);
-    mwrite8(mf, y->save_compat_bytes[1]);
-    mwrite8(mf, y->save_compat_bytes[2]);
     mwrite8(mf, y->umoved);
     mwrite8(mf, y->ualign.type);
     mwrite8(mf, y->ualignbase[0]);

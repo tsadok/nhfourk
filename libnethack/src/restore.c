@@ -606,11 +606,6 @@ restore_you(struct memfile *mf, struct you *y)
     y->uy0 = mread8(mf);
     y->uz.dnum = mread8(mf);
     y->uz.dlevel = mread8(mf);
-    /* Padding to replace utolev/utotype, which was removed. */
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): delete the next few lines. */
-    y->save_compat_bytes[0] = mread8(mf);
-    y->save_compat_bytes[1] = mread8(mf);
-    y->save_compat_bytes[2] = mread8(mf);
     y->umoved = mread8(mf);
     y->ualign.type = mread8(mf);
     y->ualignbase[0] = mread8(mf);
@@ -1103,23 +1098,6 @@ restore_dest_area(struct memfile *mf, dest_area *a)
     a->nly = mread8(mf);
     a->nhx = mread8(mf);
     a->nhy = mread8(mf);
-
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2)
-
-       A level region spanning the entire level is saved with eight zeroes
-       in -beta1. It should be using COLNO/ROWNO sentinels. */
-    if (!a->lx && !a->ly && !a->hx && !a->hy) {
-        a->lx = COLNO;
-        a->ly = ROWNO;
-        a->hx = COLNO;
-        a->hy = ROWNO;
-    }
-    if (!a->nlx && !a->nly && !a->nhx && !a->nhy) {
-        a->nlx = COLNO;
-        a->nly = ROWNO;
-        a->nhx = COLNO;
-        a->nhy = ROWNO;
-    }
 }
 
 

@@ -2339,21 +2339,11 @@ restore_mon(struct memfile *mf, struct level *l)
     mon->xyflags = mread8(mf);
     mon->xlocale = mread8(mf);
     mon->ylocale = mread8(mf);
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): remove this */
-    (void) mread32(mf);
     mon->orig_mnum = mread16(mf);
     mon->mx = mread8(mf);
     mon->my = mread8(mf);
     mon->mux = mread8(mf);
     mon->muy = mread8(mf);
-    /* SAVEBREAK (4.3-beta2alpha -> 4.3-beta2): this is for reading old saves
-       that used a different encoding for mux/muy, we no longer generate saves
-       in that format; be careful not to munge the migrating monsters chain like
-       this (determinable via l being NULL) */
-    if (mon->mux == mon->mx && mon->muy == mon->my && l) {
-        mon->mux = COLNO;
-        mon->muy = ROWNO;
-    }
     mon->m_lev = mread8(mf);
     mon->malign = mread8(mf);
     mon->moveoffset = mread16(mf);
@@ -2596,8 +2586,6 @@ save_mon(struct memfile *mf, struct monst *mon, const struct level *l)
     mhint_mon_coordinates(mf); /* savemap: ignore */
     mwrite8(mf, mon->xlocale);
     mwrite8(mf, mon->ylocale);
-    /* SAVEBREAK (4.3-beta1 -> 4.3beta2): remove this */
-    mwrite32(mf, 0);
     mwrite16(mf, mon->orig_mnum);
     mhint_mon_coordinates(mf); /* savemap: ignore */
     mwrite8(mf, mon->mx);

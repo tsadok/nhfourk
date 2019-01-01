@@ -222,9 +222,6 @@ struct you {
                                    happen include fountain dipping, thrones. */
     } generated_gold;
 
-    /* SAVEBREAK: for avoiding desyncs with old saves */
-    unsigned char save_compat_bytes[3];
-
 };      /* end of `struct you' */
 
 # define Upolyd (u.umonnum != u.umonster)
