@@ -342,7 +342,8 @@ read_engr_at(int x, int y)
             if (!Blind) {
                 sensed = 1;
                 pline(msgc_info, "Something is written here in the %s.",
-                      is_ice(level, x, y) ? "frost" : "dust");
+                      is_ice(level, x, y) ? "frost" :
+                      is_puddle(level, x, y) ? "mud" : "dust");
             }
             break;
         case ENGRAVE:
@@ -910,7 +911,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                     else
                         pline(msgc_yafm, "Your %s %s %s.", xname(otmp),
                               otense(otmp, "get"),
-                              is_ice(level, u.ux, u.uy) ? "frosty" : "dusty");
+                              is_ice(level, u.ux, u.uy) ? "frosty" :
+                              is_puddle(level, u.ux, u.uy) ? "muddy" : "dusty");
                     dengr = TRUE;
                 } else
                     pline(msgc_cancelled1,
@@ -919,7 +921,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             else
                 pline(msgc_yafm, "Your %s %s %s.", xname(otmp),
                       otense(otmp, "get"),
-                      is_ice(level, u.ux, u.uy) ? "frosty" : "dusty");
+                      is_ice(level, u.ux, u.uy) ? "frosty" :
+                      is_puddle(level, u.ux, u.uy) ? "muddy" : "dusty");
             break;
         default:
             break;
@@ -983,7 +986,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
             pline(msgc_yafm,
                   "You are not going to get anywhere trying to write in the "
                   "%s with your dust.",
-                  is_ice(level, u.ux, u.uy) ? "frost" : "dust");
+                  is_ice(level, u.ux, u.uy) ? "frost" :
+                  is_puddle(level, u.ux, u.uy) ? "mud" : "dust");
         useup(otmp);
         ptext = FALSE;
     }
@@ -1028,9 +1032,12 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 if (!Blind) {
                     pline(msgc_actionok,
                           "You wipe out the message that was %s here.",
-                          ((oep->engr_type == DUST) ? "written in the dust" :
-                           ((oep->engr_type == ENGR_BLOOD) ?
-                            "scrawled in blood" : "written")));
+                          (oep->engr_type == DUST) ? (
+                              is_ice(level, u.ux, u.uy) ? "written in the frost" :
+                              is_puddle(level, u.ux, u.uy) ? "written in the mud" :
+                              "written in the dust") :
+                          ((oep->engr_type == ENGR_BLOOD) ?
+                           "scrawled in blood" : "written"));
                     del_engr(oep, level);
                     oep = NULL;
                 } else
@@ -1073,7 +1080,8 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         break;
     case DUST:
         everb = (oep && !eow ? "add to the writing in" : "write in");
-        eloc = is_ice(level, u.ux, u.uy) ? "frost" : "dust";
+        eloc = is_ice(level, u.ux, u.uy) ? "frost" :
+            is_puddle(level, u.ux, u.uy) ? "mud" : "dust";
         break;
     case HEADSTONE:
         everb = (oep && !eow ? "add to the epitaph on" : "engrave on");
@@ -1208,7 +1216,12 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
         helpless_endmsg = "You finish your weird engraving.";
         break;
     case DUST:
-        helpless_endmsg = "You finish writing in the dust.";
+        if (is_ice(level, u.ux, u.uy))
+            helpless_endmsg = "You finish writing in the frost.";
+        else if (is_puddle(level, u.ux, u.uy))
+            helpless_endmsg = "You finish writing in the mud.";
+        else
+            helpless_endmsg = "You finish writing in the dust.";
         break;
     case HEADSTONE:
     case ENGRAVE:

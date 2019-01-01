@@ -117,8 +117,6 @@
 ▒▒▒  18:42 <   jonadab+> I don't recall the details of how the code for that works, will have to 
 ▒▒▒                      find the relevant commit.
 ▒▒▒
-▒▒▒ * Engravings (e.g., ad aerarium) can be "written in the dust" in shallow water.
-▒▒▒
 ▒▒▒ * aosdict\ito+> jonadab: major bug: I'm losing alignment (hesitating for just a moment) because
 ▒▒▒   some quest guardian blew up a wand nowhere near me and other guardians caught in the blast 
 ▒▒▒   got angered. There goes my no-alignment-penalty conduct :/
