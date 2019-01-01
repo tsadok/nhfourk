@@ -98,6 +98,27 @@
 ▒▒▒
 ▒▒▒ * @Luxcalibur says the advcal numbers aren't in front of the doors.
 ▒▒▒
+▒▒▒ * 8:39 < hothraxxa > jonadab: i'm seeing an odd bug with teleportitis
+▒▒▒  18:40 <   jonadab+> Oh?
+▒▒▒  18:40 < hothraxxa > when it asks me if i want to be teleported, it places the cursor in some 
+▒▒▒                      odd position usually well away from me
+▒▒▒  18:40 < hothraxxa > no pattern that i can discern
+▒▒▒  18:40 <   jonadab+> It's theoretically supposed to place the cursor in your last travel 
+▒▒▒                      destination, if you are in the middle of an incomplete travel.
+▒▒▒  18:41 <   jonadab+> Your location otherwise, IIRC?
+▒▒▒  18:41 <   jonadab+> Perhaps the "if" part is going wrong somehow?
+▒▒▒  18:41 < hothraxxa > i thought as much but it seems to persist even though i'm not ravelling 
+▒▒▒                      on that level
+▒▒▒  18:41 < hothraxxa > +t
+▒▒▒  18:41 <   jonadab+> Hmm, maybe it has failed to notice that your incomplete travel was on a 
+▒▒▒                      different level?
+▒▒▒  18:41 <   jonadab+> That's a plausible oversight.
+▒▒▒  18:42 < hothraxxa > could be. i could be worng but i think this a new bug
+▒▒▒  18:42 <   jonadab+> I don't recall the details of how the code for that works, will have to 
+▒▒▒                      find the relevant commit.
+▒▒▒
+▒▒▒ * Engravings (e.g., ad aerarium) can be "written in the dust" in shallow water.
+▒▒▒
 ▒▒▒ * aosdict\ito+> jonadab: major bug: I'm losing alignment (hesitating for just a moment) because
 ▒▒▒   some quest guardian blew up a wand nowhere near me and other guardians caught in the blast 
 ▒▒▒   got angered. There goes my no-alignment-penalty conduct :/
@@ -106,11 +127,17 @@
 ▒▒▒   by the ones set globally? I just configured my autopickup rules globally because I actually
 ▒▒▒   didn't last time, and now I have a game where I apparently have to do them again :/
 ▒▒▒
+▒▒▒ * Quasits are still boring.  Do something.  Maybe give them a range-two tailwhip attack
+▒▒▒   and have them run away (maybe even with mnitro) after doing it.
+▒▒▒
 ▒▒▒ * Tangles reports that young dragon (Ḋ) renders double-wide on his setup.  This is
 ▒▒▒   obviously not desirable, need to try to track down why that is happening or what
 ▒▒▒   can be done about it.
 ▒▒▒
 ▒▒▒ * Jitterbugs interact meaningfully with Sokoban.  Consider.  (Thanks to tsukumogami for reporting.)
+▒▒▒
+▒▒▒ * 12:47 < nooodle > yani: anti-magic field traps should end magic effects such as haste self. I don't think that's evil,
+▒▒▒                     seems like it would make people actually care about this otherwise pretty meaningless trap
 ▒▒▒
 ▒▒▒ * 08:46 < bhaak > in unnethack, you get auto-id e.g. for sleep or death if you know the other already
 ▒▒▒
@@ -343,6 +370,9 @@
 ▒▒▒   can recognize when the struct is not actually what it's supposed to be (broken pointer)
 ▒▒▒   Maybe (ASCII value for) 'E' for engraving, 'O' for object, 'M' for monster, etc.
 ▒▒▒
+▒▒▒ * Add a variable to monsters that puddings can use as a split-count, and replace the
+▒▒▒   broken level-based mechanic for blood pudding generation with a splitcount-based one.
+▒▒▒
 ▒▒▒ * Conducts:
 ▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.
 ▒▒▒
@@ -550,8 +580,6 @@
 ▒▒▒   pieces don't fit goether correctly), and probably some others.  Additionally,
 ▒▒▒   the BingeHack castles and one of the 3.6 Medusa levels trigger a place_lregion
 ▒▒▒   bug, and limiting their size might solve that too.
-▒▒▒
-▒▒▒ * Quasits are still boring.  Do something.
 ▒▒▒
 ▒▒▒ * 21:18 <             FIQ > jonadab: you should make a flying monster with a displacement attack
 ▒▒▒   21:18 <             FIQ > and have them like using it over water or traps
