@@ -2076,6 +2076,9 @@ split_mon(struct monst *mon,    /* monster being split */
         if (mtmp2) {
             mtmp2->mhpmax = mon->mhpmax / 2;
             mon->mhpmax -= mtmp2->mhpmax;
+            if (mon->msplitcount + 1 < 65535)
+                mon->msplitcount++;
+            mtmp2->msplitcount = mon->msplitcount;
             if (canspotmon(mon))
                 pline(combat_msgc(mon, NULL, cr_hit),
                       "%s multiplies%s!", Monnam(mon), reason);
