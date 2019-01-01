@@ -279,7 +279,6 @@ spoildamage(int i, boolean large, struct artifact *art)
             break;
 
         case BATTLE_AXE:
-        case LUCERN_HAMMER:
         case MORNING_STAR:
         case BROADSWORD:
         case ELVEN_BROADSWORD:

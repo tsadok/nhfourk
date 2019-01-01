@@ -302,7 +302,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
             case PM_SOLDIER:
                 if (!rn2_on_rng(3, rng)) {
                     w1 = PARTISAN +
-                        rn2_on_rng(LUCERN_HAMMER - PARTISAN + 1, rng);
+                        rn2_on_rng(HALBERD - PARTISAN + 1, rng);
                     w2 = rn2_on_rng(2, rng) ? DAGGER : KNIFE;
                 } else
                     w1 = rn2_on_rng(2, rng) ? SPEAR : SHORT_SWORD;
@@ -474,7 +474,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
         if (!rn2_on_rng(2, rng))
             switch (rn2_on_rng(3, rng)) {
             case 0:
-                mongets(mtmp, LUCERN_HAMMER, rng);
+                mongets(mtmp, HALBERD, rng);
                 break;
             case 1:
                 mongets(mtmp, PARTISAN, rng);
@@ -582,7 +582,7 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 break;
             case 5:
                 if (strongmonst(ptr))
-                    mongets(mtmp, LUCERN_HAMMER, rng);
+                    mongets(mtmp, HALBERD, rng);
                 else
                     mongets(mtmp, AKLYS, rng);
                 break;
