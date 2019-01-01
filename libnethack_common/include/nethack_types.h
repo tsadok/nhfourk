@@ -41,7 +41,8 @@
  *     other than the intended fashion.
  *  3. Smaller values than the default, for either number,
  *     are likely to cause all manner of bizarre problems.
- *     I want to fix this eventually, but I haven't yet. */
+ *     I want to fix this eventually, but I haven't yet.
+ *  4. Even numbers may cause more problems than odd numbers. */
 #ifndef COLNO
 # define COLNO          79
 #endif

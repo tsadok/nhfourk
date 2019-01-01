@@ -298,7 +298,6 @@ dmgval(struct obj *otmp, struct monst *mon)
             break;
 
         case BATTLE_AXE:
-        case LUCERN_HAMMER:
         case MORNING_STAR:
         case BROADSWORD:
         case ELVEN_BROADSWORD:
@@ -402,7 +401,7 @@ static const int rwep[] =
 };
 
 static const int pwep[] =
-    { HALBERD, GLAIVE, LUCERN_HAMMER, PARTISAN, LANCE
+    { HALBERD, GLAIVE, PARTISAN, LANCE
 };
 
 boolean

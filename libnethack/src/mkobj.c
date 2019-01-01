@@ -1341,7 +1341,7 @@ place_object(struct obj *otmp, struct level *lev, int x, int y)
     if (otmp->where != OBJ_FREE)
         panic("place_object: obj not free");
     if (!isok(x, y))
-        panic("placing object at bad position");
+        panic("placing object at bad position (%d,%d)", x, y);
 
     obj_no_longer_held(otmp);
     if (otmp->otyp == BOULDER && lev == level)

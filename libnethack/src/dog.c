@@ -266,9 +266,20 @@ mon_arrive(struct monst *mtmp, boolean with_you)
     ylocale = mtmp->ylocale;
 
     for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj) {
-        if (!otmp->olev && otmp->timed)
-            panic("Unhandled timed obj %s carried by %s, try again "
-                  "later", killer_xname(otmp), k_monnam(mtmp));
+        if (!otmp->olev && otmp->timed) {
+            timer_element *tmr;
+            int fixed = 0;
+            for (tmr = &level->lev_timers; tmr; tmr = tmr->next) {
+                if (tmr->arg == (void *) otmp) {
+                    otmp->olev = level;
+                    fixed++;
+                }
+            }
+            if (otmp->timed > fixed) {
+                panic("Unhandled timed obj %s carried by %s, try again "
+                      "later", killer_xname(otmp), k_monnam(mtmp));
+            }
+        }
     }
 
     if (mtmp == u.usteed)
