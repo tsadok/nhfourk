@@ -329,8 +329,6 @@
 ▒▒▒
 ▒▒▒ * Rebalance the formula for when you can squeeze past or not.
 ▒▒▒
-▒▒▒ * Allow elves to squeeze past trees, regardless of what they're carrying.
-▒▒▒
 ▒▒▒ * Allow scurriers to outright move _onto_ a tree tile, and give them a movement
 ▒▒▒   point discount/rebate (maybe NORMAL_SPEED * 2 / 3) when they do so.
 ▒▒▒
@@ -367,9 +365,6 @@
 ▒▒▒   field that is always set to a specific unique constant, so for debugging purposes we
 ▒▒▒   can recognize when the struct is not actually what it's supposed to be (broken pointer)
 ▒▒▒   Maybe (ASCII value for) 'E' for engraving, 'O' for object, 'M' for monster, etc.
-▒▒▒
-▒▒▒ * Add a variable to monsters that puddings can use as a split-count, and replace the
-▒▒▒   broken level-based mechanic for blood pudding generation with a splitcount-based one.
 ▒▒▒
 ▒▒▒ * Conducts:
 ▒▒▒   You never used/wore/wielded/applied/invoked/carried an artifact.

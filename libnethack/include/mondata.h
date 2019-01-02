@@ -94,6 +94,7 @@
 # define is_orc(ptr)            (((ptr)->mflagsr & MRACE_ORC) != 0L)
 # define is_human(ptr)          (((ptr)->mflagsr & MRACE_HUMAN) != 0L)
 # define is_fairy(ptr)          (((ptr)->mflagsr & MRACE_FAIRY) != 0L)
+# define likes_trees(ptr)       (is_elf(ptr) || ((ptr) == &mons[PM_SCURRIER]))
 # define your_race(ptr)         (((ptr)->mflagsr & urace.selfmask) != 0L)
 # define is_bat(ptr)            ((ptr) == &mons[PM_BAT] || \
                                  (ptr) == &mons[PM_GIANT_BAT] || \

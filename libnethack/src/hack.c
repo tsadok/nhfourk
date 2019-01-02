@@ -928,6 +928,11 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
                 pline(msgc_cancelled, "You cannot pass that way.");
             return FALSE;
         }
+        if ((IS_TREE(level->locations[ux][y].typ) ||
+             IS_TREE(level->locations[x][uy].typ)) &&
+            likes_trees(URACEDATA)) {
+            return TRUE;
+        }
         if (bigmonst(URACEDATA) && !can_ooze(&youmonst)) {
             if (mode == DO_MOVE)
                 pline(msgc_cancelled, "Your %s is too large to fit through.",
