@@ -102,6 +102,7 @@ struct monst {
     uchar mslowed;      /* turns of temporary slowness */
 
     unsigned int mappearance;   /* for undetected mimics and the wiz */
+#define msplitcount mappearance
 
     unsigned female:1;  /* is female */
     unsigned minvis:1;  /* currently invisible */

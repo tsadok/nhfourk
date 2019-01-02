@@ -68,6 +68,8 @@ Changes in 4.3.0.5:
    can be lawful or neutral.  All shieldmaidens start with cold
    resistance, but only the Valkyries can fly.  Valkyries always start
    neutral but can be either shieldmaidens or priestesses.
+   
+ * Elves and scurriers can always "squeeze past" trees diagonally.
 
  * Equipment that provides extrinsic resistance to fire, cold, or
    shock now also protects your inventory items from being instantly
