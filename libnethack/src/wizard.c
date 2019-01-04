@@ -297,8 +297,9 @@ strategy(struct monst *mtmp, boolean magical_target)
     struct obj *lepgold, *ygold;
     int lepescape = FALSE;
     if (monsndx(mtmp->data) == PM_LEPRECHAUN &&
-        ((lepgold = findgold(mtmp->minvent)) &&
-         (lepgold->quan > ((ygold = findgold(invent)) ? ygold->quan : 0L))))
+        ((lepgold = findgold(mtmp->minvent, TRUE)) &&
+         (lepgold->quan >
+          ((ygold = findgold(invent, TRUE)) ? ygold->quan : 0L))))
         lepescape = TRUE;
 
     /* Below half health, or when fleeing, we ignore what we were previously

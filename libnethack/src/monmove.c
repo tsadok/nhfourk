@@ -597,8 +597,8 @@ toofar:
     /* Now the actual movement phase */
 
     if (mtmp->data == &mons[PM_LEPRECHAUN]) {
-        ygold = findgold(invent);
-        lepgold = findgold(mtmp->minvent);
+        ygold = findgold(invent, challengemode);
+        lepgold = findgold(mtmp->minvent, TRUE);
     }
 
     /* We have two AI branches: "immediately attack the player's apparent

@@ -38,10 +38,18 @@ May search containers too.
 Deals in gold only, as leprechauns don't care for lesser coins.
 */
 struct obj *
-findgold(struct obj *chain)
+findgold(struct obj *chain, boolean takebag)
 {
+    struct obj *ochain = chain;
     while (chain && chain->otyp != GOLD_PIECE)
         chain = chain->nobj;
+    if (takebag && !chain) {
+        chain = ochain;
+        while (chain) {
+            if (Has_contents(chain) && findgold(chain->cobj, takebag))
+                return chain;
+            chain = chain->nobj;
+        }}
     return chain;
 }
 
@@ -60,7 +68,7 @@ stealgold(struct monst *mtmp)
         fgold = fgold->nexthere;
 
     /* Do you have real gold? */
-    ygold = findgold(invent);
+    ygold = findgold(invent, challengemode);
 
     if (fgold && (!ygold || fgold->quan > ygold->quan || !rn2(5))) {
         obj_extract_self(fgold);
@@ -84,7 +92,8 @@ stealgold(struct monst *mtmp)
         unwield_silently(ygold);
         freeinv(ygold);
         add_to_minv(mtmp, ygold);
-        pline(msgc_itemloss, "Your purse feels lighter.");
+        pline(msgc_itemloss, (ygold->otyp == GOLD_PIECE) ?
+              "Your purse feels lighter." : "Your pack feels lighter.");
         if (!tele_restrict(mtmp))
             rloc(mtmp, TRUE, level);
         monflee(mtmp, 0, FALSE, FALSE);

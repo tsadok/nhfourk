@@ -1334,7 +1334,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         /* technically incorrect; no check for stealing gold from between
            mdef's feet... */
         {
-            struct obj *gold = findgold(mdef->minvent);
+            struct obj *gold = findgold(mdef->minvent, challengemode);
 
             if (!gold)
                 break;

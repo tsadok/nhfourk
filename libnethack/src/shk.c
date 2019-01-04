@@ -80,7 +80,7 @@ static const char *angrytexts[] = {"quite upset", "ticked off", "furious"};
 long
 money2mon(struct monst *mon, long amount)
 {
-    struct obj *ygold = findgold(invent);
+    struct obj *ygold = findgold(invent, FALSE);
 
     if (amount <= 0) {
         impossible("%s payment in money2mon!", amount ? "negative" : "zero");
@@ -109,7 +109,7 @@ money2mon(struct monst *mon, long amount)
 void
 money2u(struct monst *mon, long amount)
 {
-    struct obj *mongold = findgold(mon->minvent);
+    struct obj *mongold = findgold(mon->minvent, FALSE);
 
     if (amount <= 0) {
         impossible("%s payment in money2u!", amount ? "negative" : "zero");

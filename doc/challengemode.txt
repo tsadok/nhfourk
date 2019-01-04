@@ -1,5 +1,4 @@
-A player asked for a list of differences in challenge mode.  I hadn't
-been maintaining one until that point, but now I am:
+Differences in challenge mode (versus normal mode):
  * Effective minimum monster difficulty is 1 higher than in normal mode,
    and maximium is 1.25 times as high.
  * Death drops are six times less common than in normal mode.
@@ -23,6 +22,8 @@ been maintaining one until that point, but now I am:
  * Regaining lost levels (via potion of full healing or via prayer)
    works as in vanilla:  you can only ever regain half of them
    (rounded up).  In normal mode, you can regain all of them.
+ * Monsters that steal gold coins will also steal containers that
+   have gold coins in them.
  * The conduct list says you face/faced a greater challenge.
  * There's a score multiplier.
  * Killing anything disqualifies you from entering the quest at

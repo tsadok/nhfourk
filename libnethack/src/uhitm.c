@@ -1566,7 +1566,7 @@ damageum(struct monst *mdef, const struct attack *mattk)
     case AD_SGLD:
         /* This you as a leprechaun, so steal real gold only, no lesser coins */
         {
-            struct obj *mongold = findgold(mdef->minvent);
+            struct obj *mongold = findgold(mdef->minvent, TRUE);
 
             if (mongold) {
                 obj_extract_self(mongold);

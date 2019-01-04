@@ -829,7 +829,8 @@ m_initinv(struct monst *mtmp, enum rng rng)
         mongets(mtmp, rnd_defensive_item(mtmp, rng), rng);
     if ((int)mtmp->m_lev > rn2_on_rng(100, rng))
         mongets(mtmp, rnd_misc_item(mtmp, rng), rng);
-    if (likes_gold(ptr) && !findgold(mtmp->minvent) && !rn2_on_rng(5, rng))
+    if (likes_gold(ptr) && !findgold(mtmp->minvent, FALSE) &&
+        !rn2_on_rng(5, rng))
         mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z),
                                     mtmp->minvent ? 5 : 10), rng);
 }

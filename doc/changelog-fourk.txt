@@ -62,6 +62,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Gold detection will now find gold that is inside a container in a
+   monster's inventory.
+
+ * In challenge mode only, leprechauns will steal a container that has
+   gold in it, if they don't find other gold.
+
  * Valkyrie is now a playable race.  The former role has been renamed
    Shieldmaiden ("Hoplite" if male).  Shieldmaidens and Hoplites can
    be humans, dwarves, giants, or valkyries, can be either gender, and
