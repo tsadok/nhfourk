@@ -232,6 +232,7 @@ static const struct nh_option_desc const_options[] = {
      nh_birth_ingame, OPTTYPE_BOOL, {.b = FALSE}},
     {"server_messages", "Messages and Menus",
      "deliver messages from other players",
+     nh_lockopt_always_available,
      nh_birth_ingame, OPTTYPE_BOOL, {.b = TRUE}},
     {"show_uncursed", "Messages and Menus",
      "always show uncursed status",
