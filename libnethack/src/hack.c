@@ -178,7 +178,7 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
        wall. Again, this can be overriden using "moveonly". */
     if (!last_command_was("moveonly")) {
         boolean lava = l->mem_bg == S_lava;
-        boolean pool = l->mem_bg == S_pool;
+        boolean pool = (l->mem_bg == S_pool || l->mem_bg == S_water);
 
         if (!Levitation && !Flying && !is_clinger(URACEDATA) &&
             (lava || (pool && !HSwimming)) &&
