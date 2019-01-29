@@ -94,6 +94,8 @@
 ▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * Have a look at commits 988ee945a7d9f8506 and 271319cf6ea4ed5fe
+▒▒▒
 ▒▒▒ * @Luxcalibur says the advcal doors can be kicked down in Fourk.
 ▒▒▒
 ▒▒▒ * @Luxcalibur says the advcal numbers aren't in front of the doors.
@@ -312,8 +314,7 @@
 ▒▒▒ * Perhaps cursed gain level should simply deposit you on the down stairs
 ▒▒▒   (of the level above) if you have the Amulet.
 ▒▒▒
-▒▒▒ * Improve the spoilers for playable races and roles, even if it means
-▒▒▒   having a section written by hand.
+▒▒▒ * Further improve the spoilers for playable races and roles.
 ▒▒▒
 ▒▒▒ * Racial-weapon chest contents (e.g., dwarvish spears if you are a dwarf)
 ▒▒▒   should probably be substituted out for something else if you are
