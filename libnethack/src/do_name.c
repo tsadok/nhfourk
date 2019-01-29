@@ -1250,6 +1250,9 @@ static struct {
     {"cylon", FALSE},
         /* King Arthur */
     {"questing beast", FALSE},
+        /* general-purpose words for monsters */
+    {"bogey", FALSE},
+    {"whangdoodle", FALSE},
         /* common pests */
     {"mother-in-law", FALSE},
     {"hyperactive child", FALSE},

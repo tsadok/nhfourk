@@ -71,6 +71,8 @@ static const char * spoilspellpenalty(const char *class, const char *label,
                                       int p);
 static const char * spoilrolespellcasting(int i);
 static const char * spoilquestart(int i);
+static const char * spoilracenotes(int i);
+static const char * spoilrolenotes(int i);
 static void makehtmlspoilers(void);
 static void makepinobotyaml(void);
 
@@ -1008,6 +1010,83 @@ spoilquestart(int i)
     return art->name;
 }
 
+const char *
+spoilracenotes(int i)
+{
+    int num = races[i].malenum ? races[i].malenum : races[i].malenum;
+    switch (num) {
+    case PM_HUMAN:
+        return "A largely unremarkable but surprisingly flexible race,\n"
+            "found throughout the overworld, capable of most tasks.";
+    case PM_ELF:
+        return "Intelligent and long-lived forest dwellers.";
+    case PM_DWARF:
+        /* A reference to another game: */
+        return "A short, sturdy creature fond of drink and industry.";
+    case PM_GNOME:
+        return "Small but intelligent creatures of the earth, able to see \n"
+            "   in the dark places underground.";
+    case PM_GIANT:
+        return "So large they can hurl giant boulders around, and wield in\n"
+            "   one hand weapons that would require two hands for anyone else.";
+    case PM_ORC:
+        return "Crude humanoid creatures, notably resistant to poison.";
+    case PM_SYLPH:
+        return "Creatures of faerie, able to regenerate by drawing power \n"
+            "   from the world around them, not easily fooled by appearances.";
+    case PM_SCURRIER:
+        return "Intelligent rodents, fast and able to dig without tools,\n"
+            "   but too small to wear most armor.";
+    default:
+        return "<!-- This space unintentionally left blank -->";
+    }
+}
+
+const char *
+spoilrolenotes(int i)
+{
+    int num = (roles[i].malenum) ? (roles[i].malenum) : (roles[i].femalenum);
+    switch (num) {
+    case PM_ARCHEOLOGIST:
+        return "Excavators, seeking lost treasures and clues about former\n"
+            "   inhabitants of the dungeon.";
+    case PM_BARBARIAN:
+        return "Mighty warriors, good with heavy weapons but averse to\n"
+            "   books and magic.";
+    case PM_CAVEMAN:
+        return "Use sling, make stones hit bad thing on head.\n"
+            "   Hit bad thing with stick.  Bam.";
+    case PM_HEALER:
+        return "Students of the medicinal arts, able to heal themselves,\n"
+            "   others, and even animals.";
+    case PM_KNIGHT:
+        return "Formally enlisted warriors, well equipped by their patrons\n"
+            "   but bound by the standards of chivalry.";
+    case PM_MONK:
+        return "Students of mysticism, martial arts, and magic.";
+    case PM_PRIEST:
+        return "Clerics, trained by the temple, are able to sense blessings\n"
+            "as well as curses but are not skilled with edged weapons.";
+    case PM_ROGUE:
+        return "Skirting the law makes these thieves skilled in the art of\n"
+            "hiding.  Good with daggers.";
+    case PM_RANGER:
+        return "Wandering hunters from the wild lands, skilled at archery.";
+    case PM_SAMURAI:
+        return "Brave followers of the 'bushido' code of warrior conduct,\n"
+            "   capable of using both the katana and the yumi, a long bow.";
+    case PM_TOURIST:
+        return "Visitors from far away, seeking adventure, eager to\n"
+            "experience many new things.";
+    case PM_VALKYRIE:
+        return "Shield-bearing warriors from the frozen white north.";
+    case PM_WIZARD:
+        return "Students of the magical arts, seeking power and knowledge.";
+    default:
+        return "<!-- This space unintentionally left blank -->";
+    }
+}
+
 void
 makehtmlspoilers(void)
 {
@@ -1386,7 +1465,7 @@ makehtmlspoilers(void)
 
         for (i = 0; races[i].filecode; i++) {
             fprintf(outfile, "<tr class=\"newsection\">"
-                    "    <th rowspan=\"2\" class=\"filecode\">%s</th>"
+                    "    <th rowspan=\"3\" class=\"filecode\">%s</th>"
                     "    <td class=\"player race\">%s</td>"
                     "    <td class=\"size\">%s</td>"
                     "    <td class=\"numeric speed\">%d</td>\n"
@@ -1394,7 +1473,8 @@ makehtmlspoilers(void)
                     "    <td class=\"attr\" rowspan=\"2\">%s</td>\n"
                     "    <td class=\"advance\" rowspan=\"2\">%s</td></tr>\n"
                     "<tr><td class=\"player roles\" colspan=\"3\">%s</td>\n"
-                    "    <td class=\"align\">%s</td></tr>\n",
+                    "    <td class=\"align\">%s</td></tr>\n"
+                    "<tr><td class=\"notes\" colspan=\"6\">%s</td></tr>\n",
                     races[i].filecode, races[i].noun,
                     spoilmonsize(mons[(races[i].malenum ? races[i].malenum :
                                        races[i].femalenum)].msize),
@@ -1402,7 +1482,8 @@ makehtmlspoilers(void)
                     spoilattributes("min", races[i].attrmin,
                                     "max", races[i].attrmax, "", NULL),
                     spoiladvance("HP", &races[i].hpadv, "Pw", &races[i].enadv, 0),
-                    spoilraceroles(races[i].selfmask), spoilaligns(races[i].allow));
+                    spoilraceroles(races[i].selfmask), spoilaligns(races[i].allow),
+                    spoilracenotes(i));
         }
         fprintf(outfile, "</tbody></table>\n");
 
@@ -1410,39 +1491,44 @@ makehtmlspoilers(void)
         fprintf(outfile, "<table class=\"roles\"><thead>\n"
                 "  <tr><th rowspan=\"3\" class=\"filecode\">TLA</th>\n"
                 "      <th class=\"player role\">Role</th>\n"
-                "      <th class=\"gender\">Gender</th>\n"
+                "      <th class=\"questart\">Artifact</th>\n"
                 "      <th rowspan=\"3\" class=\"attr\">Attributes</th>\n"
                 "      <th rowspan=\"3\" class=\"advance\">Advance</th>\n"
                 "  </tr>\n"
                 "  <tr><th class=\"race\">Races</th>\n"
-                "      <th class=\"align\">Aligns</th></tr>\n"
-                "  <tr><th class=\"spellcasting\">Spell Penalties</th>\n"
-                "      <th class=\"questart\">Artifact</th></tr>"
+                "      <th class=\"spellcasting\">Spell Penalties</th></tr>\n"
+                "  <tr><th><div class=\"gender\">Gend</div>\n"
+                "          <div class=\"align\">Align</div></th>\n"
+                "      <th class=\"notes\">Notes</th>\n"
+                "      </tr>"
                 "</thead><tbody>");
         for (i = 0; roles[i].filecode; i++) {
             fprintf(outfile, "  <tr class=\"newsection\">"
                     "      <th rowspan=\"3\" class=\"filecode\">%s</th>\n"
                     "      <td class=\"player role\">%s%s%s</td>\n"
-                    "      <td class=\"gender\">%s</td>\n"
+                    "      <td class=\"questart\">%s</td>\n"
                     "      <td rowspan=\"3\" class=\"attr\">%s</td>\n"
                     "      <td rowspan=\"3\" class=\"advance\">%s</td>\n"
                     "  </tr>\n"
                     "  <tr><td class=\"races\">%s</td>\n"
-                    "      <td class=\"align\">%s</td></tr>\n"
-                    "  <tr><td class=\"spellcasting\">%s</td>\n"
-                    "      <td class=\"questart\">%s</td></tr>",
+                    "      <td class=\"spellcasting\">%s</td></tr>\n"
+                    "  <tr><td><div class=\"gender\">%s</div>\n"
+                    "          <div class=\"align\">%s</div></td>\n"
+                    "      <td class=\"notes\">%s</td></tr>",
                     roles[i].filecode,
                     roles[i].name.m, (roles[i].name.f ? "/" : ""),
                                     (roles[i].name.f ? roles[i].name.f : ""),
-                    spoilgenders(roles[i].allow),
+                    spoilquestart(i),
                     spoilattributes("base", roles[i].attrbase,
                                     "dist", roles[i].attrdist,
                                     "max",  roles[i].attrmaxm),
                     spoiladvance("HP", &roles[i].hpadv, "Pw", &roles[i].enadv,
                                  roles[i].xlev),
                     spoilroleraces(roles[i].allow),
+                    spoilrolespellcasting(i),
+                    spoilgenders(roles[i].allow),
                     spoilaligns(roles[i].allow),
-                    spoilrolespellcasting(i), spoilquestart(i));
+                    spoilrolenotes(i));
         }
         fprintf(outfile, "</tbody></table>\n");
 
