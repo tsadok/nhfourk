@@ -1037,6 +1037,8 @@ spoilracenotes(int i)
     case PM_SCURRIER:
         return "Intelligent rodents, fast and able to dig without tools,\n"
             "   but too small to wear most armor.";
+    case PM_VALKYRIE:
+        return "Winged warriors from the frozen white north.";
     default:
         return "<!-- This space unintentionally left blank -->";
     }
@@ -1059,8 +1061,12 @@ spoilrolenotes(int i)
     case PM_HEALER:
         return "Students of the medicinal arts, able to heal themselves,\n"
             "   others, and even animals.";
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
+        return "Shield-bearing, spear-wielding warriors, smart enough to\n"
+            "   make limited use of books and magic.";
     case PM_KNIGHT:
-        return "Formally enlisted warriors, well equipped by their patrons\n"
+        return "Formally enlisted cavalry, well equipped by their patrons\n"
             "   but bound by the standards of chivalry.";
     case PM_MONK:
         return "Students of mysticism, martial arts, and magic.";
@@ -1078,8 +1084,6 @@ spoilrolenotes(int i)
     case PM_TOURIST:
         return "Visitors from far away, seeking adventure, eager to\n"
             "experience many new things.";
-    case PM_VALKYRIE:
-        return "Shield-bearing warriors from the frozen white north.";
     case PM_WIZARD:
         return "Students of the magical arts, seeking power and knowledge.";
     default:
