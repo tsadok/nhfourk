@@ -1038,7 +1038,8 @@ spoilracenotes(int i)
         return "Intelligent rodents, fast and able to dig without tools,\n"
             "   but too small to wear most armor.";
     case PM_VALKYRIE:
-        return "Winged warriors from the frozen white north.";
+        return "Winged warrior maidens, formerly charged with selecting the\n"
+            "   souls of brave warriors for Valhalla.";
     default:
         return "<!-- This space unintentionally left blank -->";
     }
@@ -1063,8 +1064,8 @@ spoilrolenotes(int i)
             "   others, and even animals.";
     case PM_SHIELDMAIDEN:
     case PM_HOPLITE:
-        return "Shield-bearing, spear-wielding warriors, smart enough to\n"
-            "   make limited use of books and magic.";
+        return "Shield-bearing, spear-wielding warriors from the frozen white\n"
+            "   north, smart enough to make limited use of books and magic.";
     case PM_KNIGHT:
         return "Formally enlisted cavalry, well equipped by their patrons\n"
             "   but bound by the standards of chivalry.";
