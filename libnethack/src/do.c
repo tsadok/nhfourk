@@ -933,8 +933,11 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     if (dunlev(newlevel) > dunlevs_in_dungeon(newlevel))
         newlevel->dlevel = dunlevs_in_dungeon(newlevel);
     if (newdungeon && In_endgame(newlevel)) {   /* 1st Endgame Level !!! */
+        d_level newlev;
+        newlev.dnum = astral_level.dnum;
+        newlev.dlevel = gamestate.dungeons[astral_level.dnum].entry_lev;
         if (Uhave_amulet)
-            assign_level(newlevel, &earth_level);
+            assign_level(newlevel, &newlev);
         else
             return;
     }
@@ -1262,6 +1265,12 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
         }
         if (mesg)
             pline(msgc_levelwarning, "%s", mesg);
+    }
+
+    if (newdungeon && In_endgame(newlevel)) {
+        pline(msgc_branchchange, "Well done, mortal!");
+        pline(msgc_branchchange, "But now thou must face the final Test...");
+        pline(msgc_branchchange, "Prove thyself worthy or perish!");
     }
 
     if (new && Is_rogue_level(&u.uz)) {

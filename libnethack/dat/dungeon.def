@@ -182,8 +182,8 @@ DESCRIPTION:	mazelike
 ALIGNMENT:	unaligned
 ENTRY:		-2
 LEVEL:		"astral" "none" @ (1, 0)
-LEVEL:		"water"  "W" @ (2, 0)
-LEVEL:		"fire"   "F" @ (3, 0)
-LEVEL:		"air"    "A" @ (4, 0)
-LEVEL:		"earth"  "E" @ (5, 0)
+LEVEL:		"water"  "W" @ (2, 4)
+LEVEL:		"fire"   "F" @ (2, 4)
+LEVEL:		"air"    "A" @ (2, 4)
+LEVEL:		"earth"  "E" @ (2, 4)
 LEVEL:		"dummy"  "none" @ (6, 0)

@@ -862,7 +862,10 @@ mkportal(struct level *lev, xchar x, xchar y, xchar todnum, xchar todlevel)
         return;
     }
     ttmp->dst.dnum = todnum;
-    ttmp->dst.dlevel = todlevel;
+    if (In_endgame(&u.uz))
+        ttmp->dst.dlevel = u.uz.dlevel - 1;
+    else
+        ttmp->dst.dlevel = todlevel;
     return;
 }
 

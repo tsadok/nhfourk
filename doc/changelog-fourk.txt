@@ -1,5 +1,5 @@
 About this document:
-Written 2014-2015 by Nathan Eady.
+Written 2014-2019 by Nathan Eady.
 
 This document (i.e., this specific file, changelog-fourk.txt) is in
 the public domain.  The author has specifically released it to the
@@ -61,6 +61,8 @@ Chronological Changelog (most recent at top):
 
 Changes in 4.3.0.5:
 -------------------
+
+ * The first four elemental planes can occur in any order.
 
  * Gold detection will now find gold that is inside a container in a
    monster's inventory.
