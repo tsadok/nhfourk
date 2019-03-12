@@ -154,7 +154,7 @@ const struct Role roles[] = {
                        {"Lord", "Lady"}},
      "Tyr", "Odin", "Loki",     /* Norse */
      "Shi", "the Shrine of Destiny", "the cave of Surtur",
-     PM_HOPLITE, PM_SHIELDMAIDEN, PM_WINTER_WOLF_CUB,
+     PM_HOPLITE, PM_SHIELDMAIDEN, PM_PUPPY, /* Valks are special cased. */
      PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
      PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
      ART_ORB_OF_FATE,

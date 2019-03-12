@@ -104,7 +104,11 @@ static const struct innate tou_abil[] = {
 };
 
 static const struct innate shi_abil[] = {
-    {1, &(HCold_resistance), "", ""},
+    {5, &(HFast), "quick", "slow"},
+    {10, &(HCold_resistance), "temperate", "chilly"},
+    {0, 0, 0, 0}
+};
+static const struct innate shi_abil_valk[] = {
     {7, &(HFast), "quick", "slow"},
     {0, 0, 0, 0}
 };
@@ -137,6 +141,12 @@ static const struct innate sylph_abil[] = {
     {16, &(HDetect_monsters), "perceptive", "dull"},
     {0, 0, 0, 0}
 };
+
+static const struct innate valk_abil[] = {
+    {1, &(HCold_resistance), "", ""},
+    {0, 0, 0, 0}
+};
+
 
 static void exerper(void);
 static void postadjabil(unsigned int *);
@@ -733,6 +743,10 @@ adjabil(int oldlevel, int newlevel)
         break;
     case PM_SYLPH:
         rabil = sylph_abil;
+        break;
+    case PM_VALKYRIE:
+        abil = shi_abil_valk;
+        rabil = valk_abil;
         break;
     case PM_HUMAN:
     case PM_DWARF:

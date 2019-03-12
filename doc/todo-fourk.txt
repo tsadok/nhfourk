@@ -363,6 +363,10 @@
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * < aosdict+> jonadab: This could be one of those uses for potions
+▒▒▒               like sleeping: what if you could coat your ammo in sleeping
+▒▒▒               potions? Instant tranquilizer darts!
+▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
@@ -422,9 +426,6 @@
 ▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
 ▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
 ▒▒▒   doing so at the behest of the Norn still makes flavor sense).
-▒▒▒
-▒▒▒ * Make starting with cold res and a winter wolf cub specific to _valkyrie_ shieldmaidens.
-▒▒▒   Compensate shieldmaidens and hoplites of other races somehow.
 ▒▒▒
 ▒▒▒ * Add hoplite and shieldmaiden tiles for all tilesets.
 ▒▒▒
