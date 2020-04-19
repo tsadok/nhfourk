@@ -1473,11 +1473,11 @@ read_config_file(const fnchar * filename)
 
     /* each option is expected to have the following format: * name=value\n */
     line = strtok(buf, "\n");
-    do {
+    while (line) {
         read_config_line(line);
 
         line = strtok(NULL, "\n");
-    } while (line);
+    }
 }
 
 
