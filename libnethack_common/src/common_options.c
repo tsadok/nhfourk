@@ -208,6 +208,8 @@ nhlib_parse_autopickup_rules(const char *str)
     strcpy(copy, str);
 
     while ((semi = strchr(start, ';')) && i < rcount) {
+        int len;
+
         *semi++ = '\0';
         /* This memset is mostly unnecessary, but it ensures that pattern is
            fully initialized, thus allowing us to copy the spare bytes into
@@ -217,7 +219,9 @@ nhlib_parse_autopickup_rules(const char *str)
                &out->rules[i].oclass, &buc, &action);
         /* since %[ in sscanf requires a nonempty match, we allowed it to match
            the closing '"' of the rule. Remove that now. */
-        out->rules[i].pattern[strlen(out->rules[i].pattern) - 1] = '\0';
+        len = strlen(out->rules[i].pattern);
+        if (len > 0)
+            out->rules[i].pattern[len - 1] = '\0';
         out->rules[i].buc = (enum nh_bucstatus)buc;
         out->rules[i].action = (enum autopickup_action)action;
         i++;
