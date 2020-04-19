@@ -1054,6 +1054,7 @@ static struct {
     {"butterfly", FALSE},
     {"gnu", FALSE},
     {"capybara", FALSE},
+    {"echidna", FALSE},
     {"numbat", FALSE},
     {"quoll", FALSE},
     {"giant cockroach", FALSE},
@@ -1260,6 +1261,7 @@ static struct {
     {"grumpy old man", FALSE},
     {"surly teenager", FALSE},
     {"telemarketer", FALSE},
+    {"middle manager", FALSE},
     {"politician", FALSE},
     {"attorney", FALSE},
 };
