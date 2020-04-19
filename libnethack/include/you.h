@@ -38,6 +38,8 @@ struct u_event {
 
 /*** Information about the player ***/
 struct you {
+    char *struct_type;          /* Should always be 'Y' for this struct.
+                                   See doc/struct_types.txt for the list. */
     xchar ux, uy;
     xchar tx, ty;       /* destination of travel */
     xchar ux0, uy0;     /* initial position of a move */

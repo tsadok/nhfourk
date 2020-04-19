@@ -64,6 +64,7 @@ newmonst(int extyp, int namelen)
 
     mon = malloc(sizeof (struct monst) + namelen + xlen);
     memset(mon, 0, sizeof (struct monst) + namelen + xlen);
+    mon->struct_type = 'M'; /* See doc/struct_types.txt */
     mon->mxtyp = extyp;
     mon->mxlth = xlen;
     mon->mnamelth = namelen;

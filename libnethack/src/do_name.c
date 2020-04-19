@@ -1049,6 +1049,7 @@ static struct {
     {"lion-dog", FALSE},
     {"rat-ant", FALSE},
     {"lllama", FALSE}, /* a big fire */
+    {"suicidal mouse", FALSE}, /* terrifying */
         /* Real animals, past and present: */
     {"butterfly", FALSE},
     {"gnu", FALSE},

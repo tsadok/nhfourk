@@ -12,6 +12,8 @@
 /* mkroom.h - types and structures for room and shop initialization */
 
 struct mkroom {
+    char *struct_type;          /* Should always be 'R' for this struct.
+                                   See doc/struct_types.txt for the list. */
     schar lx, hx, ly, hy;       /* usually xchar, but hx may be -1 */
     schar rtype;        /* type of room (zoo, throne, etc...) */
     schar rlit; /* is the room lit ? */

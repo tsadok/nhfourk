@@ -1715,6 +1715,11 @@ newobj(int extra_bytes, struct obj *initfrom)
     struct obj *otmp = malloc((unsigned)extra_bytes + sizeof(struct obj));
     *otmp = *initfrom;
     /* note: extra data not copied by newobj */
+    otmp->struct_type = 'O'; /* See doc/struct/types.txt
+                                TODO: Not sure this is actually the right place
+                                to set this; shouldn't copying from a valid
+                                initfrom result in a valid value here, and
+                                otherwise not? */
     otmp->where = OBJ_FREE;
     otmp->nobj = turnstate.floating_objects;
     turnstate.floating_objects = otmp;

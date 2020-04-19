@@ -64,6 +64,8 @@
 #define STRAT(w, x, y, typ) (w | ((long)(x)<<16) | ((long)(y)<<8) | (long)typ)
 
 struct monst {
+    char *struct_type;  /* Should always be 'M' for this struct.
+                           See doc/struct_types.txt for the list. */
     struct monst *nmon;
     const struct permonst *data;
     struct level *dlevel;       /* pointer to the level this monster is on */

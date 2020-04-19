@@ -40,7 +40,7 @@
  */
 #define DEFAULT_STEALTH 1
 #define MON(nam,sym,lvl,gen,atk,siz,mr1,mr2,rac,flg1,flg2,flg3,mp,col)     \
-           {nam,sym,lvl,gen,atk,siz,rac,flg1,flg2,flg3,mp,mr1,mr2,col}
+           {'P',nam,sym,lvl,gen,atk,siz,rac,flg1,flg2,flg3,mp,mr1,mr2,col}
 /* LVL() and SIZ() collect several fields to cut down on # of args for MON() */
 #define LVL(lvl,str,mov,ac,mr,aln) lvl,str,mov,ac,DEFAULT_STEALTH,mr,aln
 #define SLVL(lvl,str,mov,ac,st,mr,aln) lvl,str,mov,ac,st,mr,aln

@@ -925,6 +925,7 @@ alloc_level(d_level *levnum)
     struct level *lev = malloc(sizeof (struct level));
 
     memset(lev, 0, sizeof (struct level));
+    lev->struct_type = 'L'; /* See doc/struct_types.txt */
     if (levnum)
         lev->z = *levnum;
     lev->subrooms = &lev->rooms[MAXNROFROOMS + 1];      /* compat */
