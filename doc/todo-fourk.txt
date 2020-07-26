@@ -25,8 +25,6 @@
 ▒▒▒                     monsters can do things like get out of pits in one turn.
 ▒▒▒   Perhaps such monsters should also be able to enter tree tiles.
 ▒▒▒
-▒▒▒ * 15:46 < jonadab > YANI: werebane provides protection from shape changers when wielded.
-▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Consider FIQ's changes to spellbook mechanics, 5f81af2.  Be advised this will absolutely

@@ -153,7 +153,7 @@ static const struct artifact const_artilist[] = {
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 2500L),
 
     A("Werebane", SILVER_SABER,
-      (SPFX_RESTR | SPFX_DFLAG2), 0, M2_WERE,
+      (SPFX_RESTR | SPFX_DFLAG2 | SPFX_PSHCH), 0, M2_WERE,
       PHYS(5, 0), DFNS(AD_WERE), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 1500L),
 
     A("Grayswandir", SILVER_SABER,

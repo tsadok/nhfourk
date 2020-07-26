@@ -62,6 +62,8 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Werebane now grants protection from shape changers when wielded.
+
  * The first four elemental planes can occur in any order.
 
  * Gold detection will now find gold that is inside a container in a

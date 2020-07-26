@@ -41,6 +41,7 @@
 # define SPFX_REFLECT 0x4000000L/* Reflection */
 # define SPFX_STRM   0x8000000L /*  non-hostile things attack you anyway */
 # define SPFX_FREEA 0x10000000L /* free action */
+# define SPFX_PSHCH 0x20000000L /* protection from shape changers */
 
 struct artifact {
     const char *name;

@@ -745,7 +745,7 @@ spoilartalign(struct artifact *art)
 static const char *
 spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
+    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s%s",
                      ((spfx & SPFX_SEEK) ?
                       "<span class=\"spfx spfxseek\">+n search</span> " : ""),
                      ((spfx & SPFX_WARN) ?
@@ -783,9 +783,11 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
                      ((spfx & SPFX_REFLECT) ?
                       "<span class=\"spfx spfxreflect\">reflect</span> " : ""),
                      ((spfx & SPFX_STRM) ?
-                      "<span class=\"spfx spfxstrm\">storm</span>" : ""),
+                      "<span class=\"spfx spfxstrm\">storm</span> " : ""),
                      ((spfx & SPFX_FREEA) ?
-                      "<span class=\"spfx spfxfreea\">free act.</span>" : ""),
+                      "<span class=\"spfx spfxfreea\">free act.</span> " : ""),
+                     ((spfx & SPFX_PSHCH) ?
+                      "<span class=\"spfx spfxprotshch\"><abbr title=\"protection from shape changers\">PSCH</abbr></span> " : ""),
                      msgprintf("<span class=\"artattk\">%s</span>",
                                /* TODO: handle attk.damn and attk.damd */
                                (attk.adtyp && attk.adtyp == AD_MAGM) ? "MR" :

@@ -504,7 +504,8 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         (spfx & SPFX_REFLECT && extrinsic == REFLECTING) ||
         (spfx & SPFX_STRM    && extrinsic == STORMPRONE) ||
         (spfx & SPFX_FREEA   && extrinsic == FREE_ACTION) ||
-        (spfx & SPFX_XRAY    && extrinsic == XRAY_VISION))
+        (spfx & SPFX_XRAY    && extrinsic == XRAY_VISION) ||
+        (spfx & SPFX_PSHCH   && extrinsic == PROT_FROM_SHAPE_CHANGERS))
         return mask;
 
     if (spfx & SPFX_WARN) {
