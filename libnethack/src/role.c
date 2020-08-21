@@ -130,7 +130,7 @@ const struct Role roles[] = {
      "Hea", "the Temple of Epidaurus", "the Temple of Coeus",
      PM_HEALER, NON_PM, NON_PM,
      PM_HIPPOCRATES, PM_ATTENDANT, PM_CYCLOPS,
-     PM_GIANT_RAT, PM_SNAKE, S_RODENT, S_YETI,
+     PM_GIANT_RAT, PM_PIT_VIPER, S_RODENT, S_YETI,
      ART_STAFF_OF_AESCULAPIUS,
      MRACE_HUMAN | MRACE_GNOME | MRACE_SYLPH | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */

@@ -25,7 +25,7 @@ dowatersnakes(void)
     int num = 2 + rn2_on_rng(5, rng_fountain_result);
     struct monst *mtmp;
 
-    if (!(mvitals[PM_WATER_MOCCASIN].mvflags & G_GONE)) {
+    if (!(mvitals[PM_PIT_VIPER].mvflags & G_GONE)) {
         if (!Blind)
             pline(msgc_levelwarning, "An endless stream of %s pours forth!",
                   Hallucination ? makeplural(monnam_for_index(rndmonidx())) :
@@ -34,7 +34,7 @@ dowatersnakes(void)
             You_hear(msgc_levelwarning, "something hissing!");
         while (num-- > 0)
             if ((mtmp =
-                 makemon(&mons[PM_WATER_MOCCASIN], level, u.ux, u.uy,
+                 makemon(&mons[PM_PIT_VIPER], level, u.ux, u.uy,
                          NO_MM_FLAGS)) && t_at(level, mtmp->mx, mtmp->my))
                 mintrap(mtmp);
     } else

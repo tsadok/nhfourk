@@ -1069,6 +1069,7 @@ static struct {
     {"hologram", FALSE},
     {"radioactive spider", FALSE},
     {"rhinovirus", FALSE},
+    {"coronavirus", FALSE},
     {"robot", FALSE},
     {"nanobot", FALSE},
     {"battlemech", FALSE},
@@ -1133,7 +1134,7 @@ static struct {
         /* Minecraft */
     {"creeper", FALSE},
     {"enderman", FALSE},
-        /* Keen */
+        /* Commander Keen series */
     {"garg", FALSE}, /* Keen 1 */
     {"poison slug", FALSE}, /* Keen 4 */
     {"dopefish", FALSE}, /* Keen 4 */
@@ -1255,8 +1256,11 @@ static struct {
         /* general-purpose words for monsters */
     {"bogey", FALSE},
     {"whangdoodle", FALSE},
+        /* conspiracy theory */
+    {"reptilian overlord", FALSE},
         /* common pests */
     {"mother-in-law", FALSE},
+    {"millennial", FALSE},
     {"hyperactive child", FALSE},
     {"grumpy old man", FALSE},
     {"surly teenager", FALSE},

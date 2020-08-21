@@ -77,7 +77,7 @@ doread(const struct nh_cmd_arg *arg)
             "Don't Panic",      /* HHGTTG */
             "Furinkan High School Athletic Dept.",      /* Ranma 1/2 */
             "Hel-LOOO, Nurse!", /* Animaniacs */
-            "=^.^=",
+            "=^.^=", /* Japanese-style (non-sideways) emoticon. */
             "100% goblin hair - do not wash",
             "Aberzombie and Fitch",
             "Don't ask me, I only adventure here",
@@ -115,6 +115,7 @@ doread(const struct nh_cmd_arg *arg)
             "FREE HUGS",
             "Serial Ascender",
             "Real men are valkyries",
+            "Real men play with the Evil Patch applied",
             "Young Men's Cavedigging Association",
             "Occupy Fort Ludios",
             "I couldn't afford this T-shirt so I stole it!",
