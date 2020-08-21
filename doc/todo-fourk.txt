@@ -59,10 +59,6 @@
 ▒▒▒   (this part is now done), and make you invulnerable for a few turns after
 ▒▒▒   turning back to human, flavored as a fear effect (this remains).
 ▒▒▒
-▒▒▒ * "thunderous voice booms through the caverns" could benefit from some
-▒▒▒   conditional logic, e.g., outdoor levels should not be called caverns,
-▒▒▒   nor likely should mazes...
-▒▒▒
 ▒▒▒ * Fix the bug wherein going into the options causes crashes.
 ▒▒▒   (This is believed to be related to achievement unlocking.)
 ▒▒▒

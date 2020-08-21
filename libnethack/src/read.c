@@ -2131,9 +2131,16 @@ do_genocide(int how)
 
             if (!(ptr->geno & G_GENO)) {
                 if (canhear())
-                    /* fixme: unconditional "caverns" will be silly in some
-                       circumstances */
                     pline(msgc_npcvoice,
+                          (In_endgame(&u.uz)) ?
+                          "A thunderous voice booms through the plane:" :
+                          (In_quest(&u.uz) &&
+                           (Role_if(PM_ROGUE) || Role_if(PM_TOURIST))) ?
+                          "A thunderous voice booms through the city:" :
+                          Is_outdoors(&u.uz) ?
+                          "A thunderous voice booms throughout the land:" :
+                          Underwater ?
+                          "A thunderous voice booms through the depths:" :
                           "A thunderous voice booms through the caverns:");
                 /* This part you can hear in your mind even if deaf: */
                 verbalize(msgc_hint, "No, %s!  That will not be done.",
