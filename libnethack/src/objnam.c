@@ -3030,7 +3030,10 @@ rnd_class(int first, int last, enum rng rng)
         sum += objects[i].oc_prob;
     if (!sum)   /* all zero */
         return first + rn2_on_rng(last - first + 1, rng);
-    x = rn2_on_rng(sum, rng) + 1;
+    if (sum == 1)
+        x = 1;
+    else
+        x = rn2_on_rng(sum, rng) + 1;
     for (i = first; i <= last; i++)
         if (objects[i].oc_prob && (x -= objects[i].oc_prob) <= 0)
             return i;

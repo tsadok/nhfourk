@@ -960,8 +960,8 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
     }
 
     /* First determine the base damage done */
-    dmg = dice((int)mattk->damn, (int)mattk->damd);
-    if (is_undead(mdat) && midnight())
+    dmg = mattk->damd ? dice((int)mattk->damn, (int)mattk->damd) : 0;
+    if (is_undead(mdat) && midnight() && mattk->damd)
         dmg += dice((int)mattk->damn, (int)mattk->damd); /* extra damage */
 
     /* Next a cancellation factor. Use uncancelled when the cancellation factor

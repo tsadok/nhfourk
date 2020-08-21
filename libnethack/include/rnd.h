@@ -176,6 +176,10 @@ static inline int
 dice(int n, int x)
 {
     int tmp = n;
+    /* Unfortunately, impossible() is not available here.
+    if (x < 1)
+        impossible("dice(%d,%d): not enough sides.", n, x);
+    */
 
     while (n--)
         tmp += rn2(x);

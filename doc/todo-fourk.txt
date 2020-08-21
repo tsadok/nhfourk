@@ -6,14 +6,11 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   MASTER: Changes that could happen on the master branch any time after 4.3.0.4 releases:
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒
-▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * "A hail of magic missiles narrowly misses you" happens frequently, when it should not.
 ▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
@@ -32,14 +29,7 @@
 ▒▒▒
 ▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
-▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
-▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
-▒▒▒   doing so at the behest of the Norn still makes flavor sense).
-▒▒▒
 ▒▒▒ * Add hoplite and shieldmaiden tiles for all tilesets.
-▒▒▒
-▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
-▒▒▒   This is bad and not at all what I want.  Fix it.
 ▒▒▒
 ▒▒▒ * Your conscious should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
@@ -360,10 +350,21 @@
 ▒▒▒
 ▒▒▒ * Make Valerian (and sleep in general) less OP somehow.
 ▒▒▒
+▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
+▒▒▒   This is bad and not at all what I want.  Fix it.
+▒▒▒
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   Things that can happen AFTER a save-compat freeze:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
+▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
+▒▒▒   doing so at the behest of the Norn still makes flavor sense).
+▒▒▒
+▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
+▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;
+▒▒▒   doing so at the behest of the Norn still makes flavor sense).
 ▒▒▒
 ▒▒▒ * Create multiple versions of Delphi, with minor subtle differences.
 ▒▒▒

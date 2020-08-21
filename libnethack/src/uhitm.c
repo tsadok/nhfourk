@@ -2640,7 +2640,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
             break;      /* try this one */
     }
     /* Note: tmp not always used */
-    if (ptr->mattk[i].damn)
+    if (ptr->mattk[i].damn && ptr->mattk[i].damd)
         tmp = dice((int)ptr->mattk[i].damn, (int)ptr->mattk[i].damd);
     else if (ptr->mattk[i].damd)
         tmp = dice((int)mon->m_lev + 1, (int)ptr->mattk[i].damd);
