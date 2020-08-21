@@ -30,8 +30,8 @@ enum mon_extypes {
  */
 
 struct attack {
-    char *struct_type;  /* Should always be 'a' for this struct.
-                           See doc/struct_types.txt for the list. */
+    char struct_type;  /* Should always be 'a' for this struct.
+                          See doc/struct_types.txt for the list. */
     uchar aatyp;
     uchar adtyp, damn, damd;
 };
@@ -53,7 +53,7 @@ struct attack {
 # include "monflag.h"
 
 struct permonst {
-    char *struct_type;  /* Should always be 'P' for this struct.
+    char struct_type;  /* Should always be 'P' for this struct.
                            See doc/struct_types.txt for the list. */
     const char *mname;  /* full name */
     char mlet;  /* symbol */

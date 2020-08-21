@@ -9,8 +9,8 @@
 # include "global.h"
 
 struct engr {
-    char *struct_type;  /* Should always be 'E' for this struct.
-                           See doc/struct_types.txt for the list. */
+    char struct_type;  /* Should always be 'E' for this struct.
+                          See doc/struct_types.txt for the list. */
     struct engr *nxt_engr;
     char *engr_txt;
     unsigned engr_lth;  /* for save & restore; not length of text */

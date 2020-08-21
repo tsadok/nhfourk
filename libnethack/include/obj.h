@@ -29,8 +29,8 @@ enum erode_type {
 };
 
 struct obj {
-    char *struct_type; /* Should always be 'O' for this struct.
-                          See doc/struct_types.txt for the list. */
+    char struct_type; /* Should always be 'O' for this struct.
+                         See doc/struct_types.txt for the list. */
     struct obj *nobj;
     union {
         struct obj *nexthere;     /* floor location lists */

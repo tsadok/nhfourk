@@ -330,8 +330,8 @@ enum dungeon_symbols {
  * the size of temporary files and save files.
  */
 struct rm {
-    char *struct_type;          /* Should always be 't' for this struct.
-                                   See doc/struct_types.txt for the list. */
+    char struct_type;          /* Should always be 't' for this struct.
+                                  See doc/struct_types.txt for the list. */
     unsigned mem_bg:6;          /* remembered background */
     unsigned mem_trap:5;        /* remembered trap (0 = no trap) */
     unsigned mem_obj:10;        /* remembered object, +1 (0 = no object) */
@@ -481,8 +481,8 @@ struct wseg {
 
 struct ls_t;
 struct level {
-    char *struct_type;  /* Should always be 'L' for this struct.
-                           See doc/struct_types.txt for the list. */
+    char struct_type;  /* Should always be 'L' for this struct.
+                          See doc/struct_types.txt for the list. */
     char levname[64];   /* as given by the player via donamelevel */
     struct rm locations[COLNO][ROWNO];
     struct obj *objects[COLNO][ROWNO];
