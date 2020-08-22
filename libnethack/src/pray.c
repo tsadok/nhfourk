@@ -1476,21 +1476,46 @@ sacrifice_gift(void)
         }
     }
     /* The usual case is to give an artifact, which is typically a weapon: */
-    otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy), rng_altar_gift);
-    if (otmp) {
-        if (otmp->spe < 0)
-            otmp->spe = 0;
-        if (otmp->cursed)
-            uncurse(otmp);
-        otmp->oerodeproof = TRUE;
-
-        /* make sure we can use this weapon */
-        unrestrict_weapon_skill(weapon_type(otmp));
-        if (!Hallucination && !Blind) {
-            otmp->dknown = 1;
-            makeknown(otmp->otyp);
-            discover_artifact(otmp->oartifact);
+    if (u.gotartgifts < (challengemode ? 1 : 3)) {
+        otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy), rng_altar_gift);
+        if (otmp) {
+            u.gotartgifts++;
+            if (otmp->spe < 0)
+                otmp->spe = 0;
+            if (otmp->cursed)
+                uncurse(otmp);
+            otmp->oerodeproof = TRUE;
+            
+            /* make sure we can use this weapon */
+            unrestrict_weapon_skill(weapon_type(otmp));
+            if (!Hallucination && !Blind) {
+                otmp->dknown = 1;
+                makeknown(otmp->otyp);
+                discover_artifact(otmp->oartifact);
+            }
         }
+        return otmp;
+    }
+    /* Already got the max number of artifact gifts; give trinket. */
+    switch (rn2_on_rng(9, rng_altar_gift)) {
+    case 1:
+        otmp = mksobj(level, CAN_OF_GREASE, TRUE, TRUE, rng_altar_gift);
+        break;
+    case 2:
+        otmp = mksobj(level, TOWEL, TRUE, TRUE, rng_altar_gift);
+        break;
+    case 3:
+        otmp = mksobj(level, WAX_CANDLE, TRUE, TRUE, rng_altar_gift);
+        break;
+    case 4:
+        otmp = mksobj(level, POT_WATER, TRUE, TRUE, rng_altar_gift);
+        bless(otmp);
+        break;
+    case 5:
+        otmp = mkobj(level, AMULET_CLASS, TRUE, rng_altar_gift);
+        break;
+    default:
+        otmp = mkobj(level, FOOD_CLASS, TRUE, rng_altar_gift);
     }
     return otmp;
 }
@@ -1967,6 +1992,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
                                 rng_altar_gift)) {
                     otmp = sacrifice_gift();
                     if (otmp) {
+                        u.gotsacgifts++;
                         dropy(otmp);
                         at_your_feet("An object");
                         godvoice(msgc_aligngood, u.ualign.type,

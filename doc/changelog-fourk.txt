@@ -62,6 +62,9 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Your diety will now only grant you a maximum of 3 artifact gifts
+   (1 in challenge mode) in response to sacrifice.
+
  * Werebane now grants protection from shape changers when wielded.
 
  * The first four elemental planes can occur in any order.
@@ -193,7 +196,8 @@ Changes in 4.3.0.5:
    K (mnemonic: Kraken) instead of ;
 
  * The Kops have been replaced with the National Guard, i..e.,
-   Yendorian army troops get called in.
+   Yendorian army troops get called in.  I made this change before
+   all the 2020 political stuff happened, honest.  Totally unrelated.
 
  * The maximum number of points of divine protection you can buy from
    a temple is now 10.  The low (and diminishing) probability that you

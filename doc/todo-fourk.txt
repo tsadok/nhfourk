@@ -62,9 +62,6 @@
 ▒▒▒ * Fix the bug wherein going into the options causes crashes.
 ▒▒▒   (This is believed to be related to achievement unlocking.)
 ▒▒▒
-▒▒▒ * Sacrifice gifts:  there should be a limit to how many artifact weapons your diety bestows.
-▒▒▒   My instinct says the limit should be 1.
-▒▒▒
 ▒▒▒ * Consider implementing a couple of plants.  Look at the
 ▒▒▒   ones in dnethack and pick out the most interesting.
 ▒▒▒

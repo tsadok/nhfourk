@@ -36,6 +36,8 @@ Differences in challenge mode (versus normal mode):
    (rather than a higher enchantment).
  * Charged rings generated at random are slightly more likely to be
    negatively, rather than positively, enchanted.
+ * The maximum number of artifact gifts you can receive from
+   sacrifice, is 1.  (In normal mode, it is 3.)
  * The gift that the Advent Calendar level unlocks on December 24th
    cannot be a scroll of wishing, a magic lamp, a bag of holding, a
    horn of plenty, a magic harp, or an amulet of flying; instead it

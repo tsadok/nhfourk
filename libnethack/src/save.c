@@ -458,6 +458,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->ulycn);
     mwrite32(mf, save_encode_32(y->utrap, -moves, -moves));
     mwrite32(mf, y->utraptype);
+    mwrite32(mf, y->gotsacgifts);
     mwrite32(mf, y->ucramps);
     mwrite32(mf, save_encode_32(y->uhunger, -moves, -moves));
     mwrite32(mf, y->uhs);
@@ -520,6 +521,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite8(mf, y->twoweap);
     mwrite8(mf, y->bashmsg);
     mwrite8(mf, y->moveamt);
+    mwrite8(mf, y->gotartgifts);
 
     /* Padding to allow character information to be added without breaking save
        compatibility: add new options just before the padding, then remove the

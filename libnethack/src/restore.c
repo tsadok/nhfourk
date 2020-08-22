@@ -560,6 +560,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->ulycn = mread32(mf);
     y->utrap = save_decode_32(mread32(mf), -moves, -moves);
     y->utraptype = mread32(mf);
+    y->gotsacgifts = mread32(mf);
     y->ucramps = mread32(mf);
     y->uhunger = save_decode_32(mread32(mf), -moves, -moves);
     y->uhs = mread32(mf);
@@ -621,6 +622,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->twoweap = mread8(mf);
     y->bashmsg = mread8(mf);
     y->moveamt = mread8(mf);
+    y->gotartgifts = mread8(mf);
 
     /* Ignore the padding added in save.c */
     for (i = 0; i < 511; i++)
