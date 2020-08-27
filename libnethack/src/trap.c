@@ -2471,7 +2471,6 @@ mintrap(struct monst *mtmp)
                 /* this list is fairly arbitrary; it deliberately excludes
                    wumpus & giant/ettin zombies/mummies */
             case PM_TITANOTHERE:
-            case PM_BALUCHITHERIUM:
             case PM_PURPLE_WORM:
             case PM_JABBERWOCK:
             case PM_IRON_GOLEM:

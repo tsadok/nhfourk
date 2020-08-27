@@ -62,17 +62,12 @@
 ▒▒▒ * Fix the bug wherein going into the options causes crashes.
 ▒▒▒   (This is believed to be related to achievement unlocking.)
 ▒▒▒
-▒▒▒ * Consider implementing a couple of plants.  Look at the
-▒▒▒   ones in dnethack and pick out the most interesting.
-▒▒▒
-▒▒▒ * Are all the q really distinctive enough to stay?
-▒▒▒
 ▒▒▒ * There really ought to be a second viable strategy (other than reflection)
 ▒▒▒   for dealing with an early black dragon.
 ▒▒▒
 ▒▒▒ * Implement banshees
 ▒▒▒
-▒▒▒ * Replace scroll of food detection with scroll of silence.
+▒▒▒ * Implement the scroll of silence.
 ▒▒▒
 ▒▒▒ * Track how much gold is generated, and diminish the amounts
 ▒▒▒   generated as the total increases.  Be stingier with monster
@@ -90,13 +85,6 @@
 ▒▒▒   a possible strategy, but there should be other reasonable options.
 ▒▒▒
 ▒▒▒ * 16:51 < FIQ > jonadab: your method of exposing traps with magic mapping will not work correctly on plane of water
-▒▒▒
-▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
-▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,
-▒▒▒   and lawful druid seems weird to me for some reason.)
-▒▒▒
-▒▒▒ * Should orcs have hooves, rather than feet?  (If so, should they be able to wear boots?)
-▒▒▒   Should they have snouts, rather than noses?
 ▒▒▒
 ▒▒▒ * Make strange object m (in an otherwise unused color), then repurpose their
 ▒▒▒   former symbol for instruments.  Rework tools to avoid reusing colors more
@@ -234,6 +222,13 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
 ▒▒▒ * Nuke magic cancellation.  Test late-game balance with this change.
+▒▒▒
+▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
+▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,
+▒▒▒   and lawful druid seems weird to me for some reason.)
+▒▒▒
+▒▒▒ * Consider implementing a couple of plants.  Look at the
+▒▒▒   ones in dnethack and pick out the most interesting.
 ▒▒▒
 ▒▒▒ * K-Mod commits I might consider cherry picking:
 ▒▒▒   + Resistance vs Immunity, see also (part of) fac2c6dd7dd for poison res.

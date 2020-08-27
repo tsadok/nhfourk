@@ -132,7 +132,7 @@ make_player_monster_at(int pm, struct level *lev, xchar x, xchar y,
     struct monst *mon = mk_mplayer(&mons[pm], lev, x, y, TRUE, rng);
     int steedpm[] = { PM_WARHORSE, PM_WARHORSE, PM_WARHORSE, PM_WARHORSE,
                       PM_JABBERWOCK, PM_GRYPHON, PM_KI_RIN,
-                      PM_BALUCHITHERIUM, PM_TITANOTHERE, PM_MOUNTAIN_CENTAUR,
+                      PM_TITANOTHERE, PM_MOUNTAIN_CENTAUR,
                       PM_ANCIENT_BLACK_DRAGON, PM_ANCIENT_YELLOW_DRAGON,
                       PM_ANCIENT_SILVER_DRAGON, PM_ANCIENT_GRAY_DRAGON };
     if (dopet) {

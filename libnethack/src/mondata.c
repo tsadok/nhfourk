@@ -500,7 +500,7 @@ name_to_mon(const char *in_str)
             { "succubi", PM_SUCCUBUS },
             { "violet fungi", PM_VIOLET_FUNGUS },
             { "homunculi", PM_HOMUNCULUS },
-            { "baluchitheria", PM_BALUCHITHERIUM },
+            /* { "baluchitheria", PM_BALUCHITHERIUM }, */
             { "lurkers above", PM_LURKER_ABOVE },
             { "cavemen", PM_CAVEMAN },
             { "cavewomen", PM_CAVEWOMAN },
