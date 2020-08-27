@@ -325,6 +325,16 @@ const struct permonst mons[] = {
         M1_FLY | M1_BREATHLESS | M1_AMORPHOUS | M1_NOEYES | M1_NOLIMBS |
         M1_NOHEAD | M1_MINDLESS | M1_UNSOLID | M1_SEE_INVIS | M1_NOTAKE,
         M2_HOSTILE | M2_NEUTER, M3_SEEINDARK | M3_EMITSLIGHT, 0, CLR_BLACK),
+    MON("stinking sphere", S_EYE,
+        LVL(6, 8, 13, 4, 0, 0), (G_NOCORPSE | G_GENO | 2),
+        A(ATTK(AT_EXPL, AD_SCLD, 4, 6), NO_ATTK, NO_ATTK,
+          NO_ATTK, NO_ATTK, NO_ATTK),
+        SIZ(10, 10, 0, MS_SILENT, MZ_SMALL), 0, 0, MRACE_NONE,
+        M1_FLY | M1_BREATHLESS | M1_NOLIMBS | M1_NOHEAD | M1_MINDLESS |
+        M1_NOTAKE,
+        M2_HOSTILE | M2_NEUTER,
+        M3_XRAY_VISION, /* let them see through/in stinking cloud */
+        0, CLR_GREEN),
     MON("freezing sphere", S_EYE,
         LVL(6, 8, 13, 4, 0, 0), (G_NOCORPSE | G_NOHELL | G_GENO | 2),
         A(ATTK(AT_EXPL, AD_COLD, 4, 6),

@@ -666,6 +666,10 @@ mattacku(struct monst *mtmp)
             break;
 
         case AT_EXPL:
+            if (mattk->adtyp == AD_SCLD) {
+                create_gas_cloud(level, u.ux, u.uy, 1 + mattk->damn, 1 + mattk->damd);
+                sum[i] = 0;
+            } else
             /* explmu does hit calculations, but we have to check range */
             if (!range2)
                 sum[i] = explmu(mtmp, mattk);
