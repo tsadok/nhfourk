@@ -58,6 +58,7 @@
 ▒▒▒   around 20:00.  Short version:  make transformations happen less often
 ▒▒▒   (this part is now done), and make you invulnerable for a few turns after
 ▒▒▒   turning back to human, flavored as a fear effect (this remains).
+▒▒▒   Fear effect can be factored out from case SPE_CAUSE_FEAR in read.c
 ▒▒▒
 ▒▒▒ * Fix the bug wherein going into the options causes crashes.
 ▒▒▒   (This is believed to be related to achievement unlocking.)

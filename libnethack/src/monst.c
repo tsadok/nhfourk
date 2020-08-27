@@ -12,7 +12,7 @@
 #include "epri.h"
 #include "color.h"
 
-#define NO_ATTK {0,0,0,0}
+#define NO_ATTK {'a',0,0,0,0}
 
 #define WT_ELF     800
 #define WT_DRAGON 4500
@@ -46,7 +46,7 @@
 #define SLVL(lvl,str,mov,ac,st,mr,aln) lvl,str,mov,ac,st,mr,aln
 #define SIZ(wt,nut,pxl,snd,siz) wt,nut,pxl,snd,siz
 /* ATTK() and A() are to avoid braces and commas within args to MON() */
-#define ATTK(at,ad,n,d) {at,ad,n,d}
+#define ATTK(at,ad,n,d) {'a',at,ad,n,d}
 #define A(a1,a2,a3,a4,a5,a6) {a1,a2,a3,a4,a5,a6}
 
 
