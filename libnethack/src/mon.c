@@ -2496,7 +2496,7 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
         plural = (string[strlen(string) - 1] == 's') ? 1 : 0;
         /* avoid "The" Orcus's sting was poisoned... */
         pline(Poison_resistance ? msgc_playerimmune :
-              i == 0 ? msgc_fatal_predone : msgc_fatalavoid,
+              (i == 0) ? msgc_intrloss_level : msgc_fatalavoid,
               "%s%s %s poisoned%s",
               isupper(*string) ? "" : "The ", string,
               plural ? "were" : "was",
