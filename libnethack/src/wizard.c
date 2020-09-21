@@ -943,7 +943,11 @@ cuss(struct monst *mtmp)
                       random_insult[rn2(SIZE(random_insult))]);
         else if (mtmp->mhp < 5 && !rn2(2))      /* Parthian shot */
             verbalize(msgc_npcvoice,
-                      rn2(2) ? "I shall return." : "I'll be back.");
+                      rn2(2) ? "I shall return." :
+                      Hallucination ? "I'll be Bach" : "I'll be back.");
+        else if (!rn2(5))
+            verbalize(msgc_npcvoice, "Your mother was a Hittite, and "
+                      "your father was an Amorite!");
         else
             verbalize(msgc_npcvoice, "%s %s!",
                       random_malediction[rn2(SIZE(random_malediction))],
