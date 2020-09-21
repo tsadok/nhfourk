@@ -10,8 +10,6 @@
 ▒▒▒   4.3.0.5 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * "A hail of magic missiles narrowly misses you" happens frequently, when it should not.
-▒▒▒
 ▒▒▒ * 14:57 < aosdict@> but won't destroy the scaled armor, which will meld with you
 ▒▒▒   14:57 < aosdict@> actually jonadab I think I discovered a bug in fourk's implementation
 ▒▒▒   14:58 < aosdict@> you do polyself(FALSE) for the case where you enchant scales directly onto your body, but with poly control
