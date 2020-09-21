@@ -5031,6 +5031,10 @@ resist(struct monst *mtmp, char oclass, int damage, int domsg)
 
     /* attack level */
     switch (oclass) {
+    case VENOM_CLASS:
+        /* fear effect from lycanthropy */
+        alev = 50;
+        break;
     case WAND_CLASS:
         alev = 12;
         break;

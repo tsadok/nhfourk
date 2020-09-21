@@ -12,6 +12,12 @@
 ▒▒▒
 ▒▒▒ * "A hail of magic missiles narrowly misses you" happens frequently, when it should not.
 ▒▒▒
+▒▒▒ * 14:57 < aosdict@> but won't destroy the scaled armor, which will meld with you
+▒▒▒   14:57 < aosdict@> actually jonadab I think I discovered a bug in fourk's implementation
+▒▒▒   14:58 < aosdict@> you do polyself(FALSE) for the case where you enchant scales directly onto your body, but with poly control
+▒▒▒                     this lets you become anything
+▒▒▒   14:59 < aosdict@> control should let you decline to become a dragon imo, but shouldn't be able to turn you into anything else
+▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
@@ -50,12 +56,6 @@
 ▒▒▒   not actually the seed that was used.
 ▒▒▒
 ▒▒▒ * Ensure that runics interact reasonably with stacking.
-▒▒▒
-▒▒▒ * See lycanthropy discussion from 2016 Oct 25 in #nethack-dev, culminating
-▒▒▒   around 20:00.  Short version:  make transformations happen less often
-▒▒▒   (this part is now done), and make you invulnerable for a few turns after
-▒▒▒   turning back to human, flavored as a fear effect (this remains).
-▒▒▒   Fear effect can be factored out from case SPE_CAUSE_FEAR in read.c
 ▒▒▒
 ▒▒▒ * Fix the bug wherein going into the options causes crashes.
 ▒▒▒   (This is believed to be related to achievement unlocking.)

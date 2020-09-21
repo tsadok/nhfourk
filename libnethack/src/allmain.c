@@ -1091,9 +1091,10 @@ you_moved(void)
                 if (change && !Unchanging) {
                     if (!u_helpless(hm_all)) {
                         action_interrupted();
-                        if (change == 1)
+                        if (change == 1) {
                             polyself(FALSE);
-                        else
+                            feareffect(FALSE, VENOM_CLASS);
+                        } else
                             you_were();
                         change = 0;
                     }

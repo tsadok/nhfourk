@@ -96,6 +96,10 @@ Changes in 4.3.0.5:
  * Lycanthropy triggers its changes less often now, especially in
    the daytime, especially when the moon isn't full.
 
+ * When a player with lycanthropy returns from were-animal form to
+   human form, nearby monsters may be (temporarily) frightened and
+   turn to flee.
+
  * Randomly generated spellbooks are less likely to contain high-level
    spells when generated on early dungeon levels.
 

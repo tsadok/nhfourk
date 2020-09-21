@@ -1202,22 +1202,7 @@ seffects(struct obj *sobj, boolean *known)
     case SCR_SCARE_MONSTER:
     case SPE_CAUSE_FEAR:
         {
-            int ct = 0;
-            struct monst *mtmp;
-
-            for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
-                if (DEADMONSTER(mtmp))
-                    continue;
-                if (cansee(mtmp->mx, mtmp->my)) {
-                    if (confused || sobj->cursed) {
-                        mtmp->mflee = mtmp->mfrozen = mtmp->msleeping = 0;
-                        mtmp->mcanmove = 1;
-                    } else if (!resist(mtmp, sobj->oclass, 0, NOTELL))
-                        monflee(mtmp, 0, FALSE, FALSE);
-                    if (!mtmp->mtame)
-                        ct++;   /* pets don't laugh at you */
-                }
-            }
+            int ct = feareffect((confused || sobj->cursed), sobj->oclass);
             if (!ct)
                 You_hear(msgc_levelsound, "%s in the distance.",
                          (confused || sobj->cursed) ?
@@ -1748,6 +1733,27 @@ seffects(struct obj *sobj, boolean *known)
         impossible("What weird effect is this? (%u)", sobj->otyp);
     }
     return 0;
+}
+
+int
+feareffect(boolean reverse, char itemclass)
+{
+    int count = 0;
+    struct monst *mtmp;
+    for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
+        if (DEADMONSTER(mtmp))
+            continue;
+        if (cansee(mtmp->mx, mtmp->my)) {
+            if (reverse) {
+                mtmp->mflee = mtmp->mfrozen = mtmp->msleeping = 0;
+                mtmp->mcanmove = 1;
+            } else if (!resist(mtmp, itemclass, 0, NOTELL))
+                monflee(mtmp, 0, FALSE, FALSE);
+            if (!mtmp->mtame)
+                count++;   /* pets don't laugh at you */
+        }
+    }
+    return count;
 }
 
 static void
