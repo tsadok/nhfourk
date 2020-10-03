@@ -436,7 +436,75 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         if (objects[scale].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
             return mask & W_EQUIP;
     }
-
+    /* Handle runics: */
+    if (otmp->orune && equipped) {
+        boolean weapondamage = !!(is_wep(otmp) && equipped);
+        switch (otmp->orune) {
+        case RUNE_NOTHING:
+        case RUNE_NONE:
+            break;
+        case RUNE_FIRE:
+            /*if (weapondamage) return !!(extrinsic == FIRE_DAMAGE_PROPERTY);*/
+            return !!(extrinsic == FIRE_RES);
+        case RUNE_COLD:
+            /*if (weapondamage) return !!(extrinsic == COLD_DAMAGE_PROPERTY);*/
+            return !!(extrinsic == COLD_RES);
+        case RUNE_SLEEP:
+            /*if (weapondamage) return !!(extrinsic == SLEEP_DAMAGE_PROP);*/
+            /* Yes, both.  Double-edged sword.  Take it or leave it. */
+            return !!((extrinsic == SLEEP_RES) || (SLEEPING));
+        case RUNE_POISON:
+            /*if (weapondamage) return !!(extrinsic == POIS_DAMAGE_PROP);*/
+            return !!(extrinsic == POISON_RES);
+        case RUNE_LIGHTNING:
+            /*if (weapondamage) return !!(extrinsic == SHOCK_DAMAGE_PROP);*/
+            return !!(extrinsic == SHOCK_RES);
+        case RUNE_ACID:
+            /*if (weapondamage) return !!(extrinsic == ACID_DAMAGE_PROP);*/
+            return !!(extrinsic == ACID_RES);
+        case RUNE_MAGIC:
+            /*if (weapondamage) return !!(extrinsic == MAGIC_DAMAGE_PROP);*/
+            return !!(extrinsic == ANTIMAGIC);
+        case RUNE_STORM:
+            /* Double-edged sword, take it or leave it. */
+            return !!((extrinsic == CONFLICT) || (extrinsic == STORMPRONE));
+        case RUNE_BLESSING:
+            /* TODO */
+            break;
+        case RUNE_CURSE:
+            /* TODO */
+            break;
+        case RUNE_ACTION:
+            return !!(extrinsic == FREE_ACTION);
+        case RUNE_DAMAGE:
+            /* handled in spec_dbon(), below */
+            break;
+        case RUNE_CANCELLATION:
+            /* TODO */
+            break;
+        case RUNE_AWARENESS:
+            /* TODO: add small-radius see-invisible */
+            return !!(extrinsic == SEARCHING);
+        case RUNE_POLYMORPH:
+            return !!((extrinsic == POLYMORPH) ||
+                      (extrinsic == POLYMORPH_CONTROL));
+        case RUNE_TELEPORT:
+            return !!((extrinsic == TELEPORT) ||
+                      (extrinsic == TELEPORT_CONTROL));
+        case RUNE_DRAIN:
+            /*if (weapondamage) return !!(extrinsic == DRAIN_DAMAGE_PROP);*/
+            return !!(extrinsic == DRAIN_RES);
+        case RUNE_WARNING:
+            return !!(extrinsic == WARNING);
+        case RUNE_ACCURACY:
+            /* handled in spec_abon(), below */
+            break;
+        case RUNE_PEACE:
+            /* TODO */
+            break;
+        }
+    }
+    
     /* Non-artifact item properties go here. At the present:
 
        - the Amulet of Yendor is not an artifact but grants clairvoyance when
@@ -704,6 +772,10 @@ spec_abon(struct obj *otmp, struct monst *mon)
 
     if (weap && weap->attk.damn && spec_applies(weap, mon))
         return rnd((int)weap->attk.damn);
+    if (otmp->orune && otmp->orune == RUNE_ACCURACY)
+        return 20;
+    if (otmp->orune && otmp->orune == RUNE_PEACE)
+        return -50;
     return 0;
 }
 
@@ -712,6 +784,17 @@ int
 spec_dbon(struct obj *otmp, struct monst *mon, int tmp)
 {
     const struct artifact *weap = get_artifact(otmp);
+
+    if (otmp->orune && otmp->orune == RUNE_DAMAGE) {
+        int dmg = objects[otmp->otyp].oc_wldam;
+        if (objects[otmp->otyp].oc_wsdam > dmg)
+            dmg = objects[otmp->otyp].oc_wsdam;
+        dmg += otmp->spe;
+        /* No need to check spec_dbon_applies here, because the Rune of Damage
+           is not limited in that way. */
+        if (dmg > 2)
+            return rnd((1 + dmg) / 2);
+    }
 
     if (!weap || (weap->attk.adtyp == AD_PHYS &&       /* check for `NO_ATTK' */
                   weap->attk.damn == 0 && weap->attk.damd == 0))
@@ -1663,9 +1746,12 @@ arti_invoke(struct obj *obj)
 boolean
 artifact_light(const struct obj * obj)
 {
-    return get_artifact(obj) &&
-        (/*obj->oartifact == ART_SUNSWORD || */
-            obj->oartifact == ART_TROLLSBANE);
+    return ((get_artifact(obj) &&
+             (/*obj->oartifact == ART_SUNSWORD || */
+                 obj->oartifact == ART_TROLLSBANE))
+            || (obj->orune && !strncmpi(
+                    rune_appearance_pool[u.rune_appearance[obj->orune]],
+                    "glowing", 7)));
 }
 
 /* KMH -- Talking artifacts are finally implemented */

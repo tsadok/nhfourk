@@ -739,7 +739,7 @@ u_init(microseconds birthday)
     boolean rune_appearance_used[(rune_appearance_pool_size + 1)];
     for (i = 0; i < rune_appearance_pool_size; i++)
         rune_appearance_used[i] = FALSE;
-    for (r = RUNE_NONE; r <= RUNE_MAX; r++) {
+    for (r = RUNE_NONE; r <= RUNE_SAVEMAX; r++) {
         int tries = 99;
         int app = rn2(rune_appearance_pool_size);
         while (rune_appearance_used[app] && tries--)

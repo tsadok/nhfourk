@@ -14,6 +14,26 @@
    are rather hard to iterate over, and make it even harder to work with the
    game's logic. */
 
+boolean
+m_resists_damage_type(const struct monst *mon,
+                      xchar adtype) {
+    switch (adtype) {
+    default:
+    case AD_PHYS:
+        return FALSE;;
+    case AD_MAGM:
+        return resists_magm(mon);
+    case AD_FIRE:
+        return resists_fire(mon);
+    case AD_COLD:
+        return resists_cold(mon);
+    case AD_SLEE:
+        return resists_sleep(mon);
+    case AD_DISN:
+        return resists_disint(mon);
+    }
+}
+
 /* Returns an object slot mask giving all the reasons why the given
    player/monster might have the given property, limited by "reasons", an object
    slot mask (W_EQUIP, INTRINSIC, and ANY_PROPERTY are the most likely values
