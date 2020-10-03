@@ -9,19 +9,26 @@
 
 /* These MUST be in the same order as enum rune in runes.h: */
 const char *const rune_name[] = {
-    0,
+    0, /* no rune at all, or Elvish runes on "runed" things */
+    "Nothing", /* An actual rune, symbolizing the concept of Nothing */
     "Fire", "Cold", "Sleep", "Poison", "Lightning",
     "Acid", "Magic", "Storm", "Blessing", "Curse",
     "Action", "Damage", "Cancellation", "Awareness", "Polymorph",
     "Teleportation", "Draining", "Warning", "Accuracy", "Peace",
-    "Nothing",
+    /* If any TBA runes are generated, it's an error. */
+    "Error 1", "Error 2", "Error 3", "Error 4", "Error 5",
+    "Error 6", "Error 7", "Error 8", "Error 9", "Error 10",
+    "Error 11", "Error 12", "Error 13", "Error 14", "Error 15",
+    "Error 16", "Error 17", "Error 18", "Error 19", "Error 20",
 };
 
 const char *const rune_appearance_pool[] = {
     "ancient rune",
     "angled rune",
+    "animated rune",
     "beautiful rune",
     "bifurcated rune",
+    "changing rune",
     "circumscribed rune",
     "complex rune",
     "convoluted rune",
@@ -29,6 +36,8 @@ const char *const rune_appearance_pool[] = {
     "cryptic rune",
     "curved rune",
     "dark rune",
+    "decorative rune",
+    "demibold rune",
     "dwarvish rune",
     "elaborate rune",
     "embossed rune",
@@ -42,15 +51,23 @@ const char *const rune_appearance_pool[] = {
     "gilded rune",
     "glowing rune",
     "gnomic rune",
+    "gothic rune",
     "graphic rune",
     "grotesque rune",
+    "horrific rune",
     "intricate rune",
+    "impressive rune",
     "limned rune",
+    "logographic rune",
     "looping rune",
     "magnificent rune",
+    "medieval rune",
+    "memorable rune",
     "milled rune",
     "morbid rune",
+    "multidimensional rune",
     "narrow rune",
+    "oblique rune",
     "obscure rune",
     "occidental rune",
     "occult rune",
@@ -61,20 +78,58 @@ const char *const rune_appearance_pool[] = {
     "plain rune",
     "portentous rune",
     "raised rune",
+    "random emoji",
     "recondite rune",
+    "rotating rune",
     "rounded rune",
     "seriffed rune",
+    "shifting rune",
     "simple rune",
     "square rune",
+    "static rune",
     "straight rune",
     "strange rune",
     "stylized rune",
+    "subtle rune",
     "symetrical rune",
+    "torpid rune",
     "traditional rune",
     "ugly rune",
+    "unchanging rune",
     "weird rune",
+    "whimsical rune",
     0
 };
+
+xchar
+rune_damage_type(enum rune r)
+{
+    switch (r) {
+    case RUNE_FIRE:
+        return AD_FIRE;
+    case RUNE_COLD:
+        return AD_COLD;
+    case RUNE_SLEEP:
+        return AD_SLEE;
+    case RUNE_POISON:
+        return AD_DRST;
+    case RUNE_LIGHTNING:
+        return AD_ELEC;
+    case RUNE_ACID:
+        return AD_ACID;
+    case RUNE_MAGIC:
+        return AD_MAGM;
+    case RUNE_DRAIN:
+        return AD_DRLI;
+    case RUNE_PEACE:
+        return AD_HEAL;
+    case RUNE_CANCELLATION:  /* fall through */
+    case RUNE_DAMAGE:        /* fall through */
+    case RUNE_ACCURACY:      /* fall through */
+    default:
+        return AD_PHYS;
+    }
+}
 
 /* Some runes can occur on any (non-artifact, non-magical, non-dragon)
    armor or weapon; some can occur on (non-artifact, non-magical,

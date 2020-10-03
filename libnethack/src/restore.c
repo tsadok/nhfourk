@@ -670,7 +670,7 @@ restore_you(struct memfile *mf, struct you *y)
     for (i = 0; i <= LAST_PROP; i++) {
         y->uintrinsic[i] = mread32(mf);
     }
-    for (i = 0; i <= RUNE_MAX; i++) {
+    for (i = 0; i <= RUNE_SAVEMAX; i++) {
         y->rune_appearance[i] = mread8(mf);
     }
     for (i = 0; i < P_NUM_SKILLS; i++) {

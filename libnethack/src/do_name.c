@@ -343,7 +343,7 @@ oname_random_weapon(struct obj *wpn, enum rng rng)
     /* Don't randomly name stacks. */
     if (wpn->quan > 1)
         return wpn;
-    switch(rn2_on_rng(35, rng)) {
+    switch(rn2_on_rng(52, rng)) {
     case 1:
         return oname(wpn, msgprintf("%s of Justice", basename));
     case 2:
@@ -395,19 +395,59 @@ oname_random_weapon(struct obj *wpn, enum rng rng)
     case 25:
         return oname(wpn, msgprintf("%s of Torment", basename));
     case 26:
-        return oname(wpn, "Due Process");
+        return oname(wpn, msgprintf("%s of Conviction", basename));
     case 27:
-        return oname(wpn, "Puddingbane");
+        return oname(wpn, msgprintf("%s of Liberty", basename));
     case 28:
-        return oname(wpn, "Vladsbane");
+        return oname(wpn, msgprintf("%s of the %s", basename,
+                                    u.initgend > 1 ? "Personhood" :
+                                    u.initgend ? "Sisterhood" : "Brotherhood"));
     case 29:
-        return oname(wpn, "Newtsbane");
+        return oname(wpn, msgprintf("%s of Fortune", basename));
     case 30:
-        return oname(wpn, "Monster Slayer");
+        return oname(wpn, msgprintf("%s of Regret", basename));
     case 31:
-        return oname(wpn, "Aggressive Negotiation");
+        return oname(wpn, msgprintf("%s of the Philosopher", basename));
     case 32:
+        return oname(wpn, msgprintf("%s of Heroism", basename));
+    case 33:
+        return oname(wpn, msgprintf("%s of Fame", basename));
+    case 34:
+        return oname(wpn, msgprintf("%s of Judgement", basename));
+    case 35:
+        return oname(wpn, msgprintf("%s of Empathy", basename));
+    case 36:
+        return oname(wpn, "Due Process");
+    case 37:
+        return oname(wpn, "Puddingbane");
+    case 38:
+        return oname(wpn, "Vladsbane");
+    case 39:
+        return oname(wpn, "Newtsbane");
+    case 40:
+        return oname(wpn, "Monster Slayer");
+    case 41:
+        return oname(wpn, "Aggressive Negotiation");
+    case 42:
         return oname(wpn, "Orphan Maker");
+    case 43:
+        return oname(wpn, "End of Days");
+    case 44:
+        return oname(wpn, "Final Solution");
+    case 45:
+        return oname(wpn, "Lifereaper");
+    case 46:
+        return oname(wpn, "Piece Maker");
+    case 47:
+        return oname(wpn, "Farmseller");
+    case 48:
+        return oname(wpn, "Helping Hand");
+    case 49:
+        return oname(wpn, "Walloper");
+    case 50:
+        return oname(wpn, "Hopecrusher");
+    case 51:
+        return oname(wpn, "Appointment with Destiny");
     default:
         return wpn;
     }

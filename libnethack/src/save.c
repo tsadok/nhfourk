@@ -561,7 +561,7 @@ save_you(struct memfile *mf, struct you *y)
     for (i = 0; i <= LAST_PROP; i++) {
         mwrite32(mf, y->uintrinsic[i]);
     }
-    for (i = 0; i <= RUNE_MAX; i++) {
+    for (i = 0; i <= RUNE_SAVEMAX; i++) {
         mwrite8(mf, y->rune_appearance[i]);
     }
     for (i = 0; i < P_NUM_SKILLS; i++) {

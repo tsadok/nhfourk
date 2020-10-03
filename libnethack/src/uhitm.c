@@ -545,6 +545,9 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                     if (tmp == 0)
                         return TRUE;
                     hittxt = TRUE;
+                } else if (obj->orune) {
+                    xchar effect = rune_damage_type(obj->orune);
+                    
                 }
                 if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                     silvermsg = TRUE;
@@ -570,6 +573,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                             tmp++;
                     }
                     if (obj->opoisoned && is_poisonable(obj))
+                        ispoisoned = TRUE;
+                    if (obj->orune && obj->orune == RUNE_POISON)
                         ispoisoned = TRUE;
                 }
                 if (is_axe(obj) && !obj->axeinuse && !Engulfed && !thrown &&
