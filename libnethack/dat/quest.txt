@@ -119,7 +119,7 @@ vain.  Begone!  Your tenure at this college has been revoked!
 %E
 %Cc Arc 00019
 "%p, you are yet too inexperienced to undertake such a demanding
-quest.  A mere %r could not possibly face the rigors demanded and
+quest.  You could not possibly face the rigors demanded and
 survive.  Go forth, and come here again when your adventures have further
 taught you."
 %E
@@ -244,7 +244,7 @@ falter!"
 "%d has forsaken you!  You are lost now!"
 %E
 %Cp Arc 00067
-"A mere %r cannot hope to defeat me!"
+"You cannot hope to defeat me!"
 %E
 %Cp Arc 00068
 "If you are the best %l can send, I have nothing to fear."
@@ -372,8 +372,8 @@ me and destroy all who once called you %s.  Now begone!"
 %E
 %Cc Bar 00019
 "%p, I fear that you are as yet too inexperienced to face
-%n.  Only %Ra with the help of %d could ever hope to
-defeat him."
+%n.  Only a very experienced %R with the help of %d could
+ever hope to defeat him."
 %E
 %Cc Bar 00020
 "%pC!  You have wandered from the path of the %a!
@@ -634,7 +634,7 @@ path of %C over true path of %L.
 %Cc Cav 00019
 "No, %p, you not ready to go on such hard quest as what I give you.
 
-"%rA could not do what it take to find
+"You could not do what it take to find
 %i, could not fight %n, could not bring back %o.
 
 "Go do more things.  You learn stuff you need.
@@ -751,7 +751,7 @@ Now I shall kill you."
 "Your mentor, %l has failed.  You are nothing to fear."
 %E
 %Cp Cav 00065
-"You shall die here, %c.  %rA cannot hope to defeat me."
+"You shall die here, %c.  You cannot hope to defeat me."
 %E
 %Cp Cav 00066
 "You, a mere %r challenge the might of %n?  Hah!"
@@ -1148,11 +1148,11 @@ Begone from Our sight!"
 %Cc Kni 00019
 "Verily, %p, thou hast done well.  That thou hast survived thus
 far is a credit to thy valor, but thou art yet unprepared for
-the demands required as Our Champion.  %rA, no matter how
-pure, could never hope to defeat the foul %n.
+the demands required as Our Champion.  You, no matter how
+pure you are, cannot hope to defeat the foul %n.
 
 "Journey forth from this place, and hone thy skills.  Return to
-Our presence when thou hast attained the noble title of %R."
+Our presence when thou hast attained a higher level of experience."
 %E
 %Cc Kni 00020
 "Thou dishonourest Us, %p!  Thou hast strayed from the path of
@@ -1397,9 +1397,9 @@ teachings of %d?  Begone from this temple.  You are no longer
 as you have failed us utterly."
 %E
 %Cc Mon 00019
-"Alas, %p, it is not yet to be.  A mere %r could never
+"Alas, %p, it is not yet to be.  You could never
 withstand the might of %n.  Go forth, again into the world, and return
-when you have attained the post of %R."
+when you have attained a higher degree of experience."
 %E
 %Cc Mon 00020
 "This is terrible, %p.  You have deviated from the true path!
@@ -1641,9 +1641,9 @@ teachings of %d?  Begone from this temple.  You are no longer
 as you have failed us utterly."
 %E
 %Cc Pri 00019
-"Alas, %p, it is not yet to be.  A mere %r could never
+"Alas, %p, it is not yet to be.  You could never
 withstand the might of %n.  Go forth, again into the world, and return
-when you have attained the post of %R."
+when you have attained a higher degree of experience."
 %E
 %Cc Pri 00020
 "This is terrible, %p.  You have deviated from the true path!
@@ -1894,9 +1894,8 @@ and weaken the power we have raised in this grove as a result!
 %E
 %Cc Ran 00019
 "%p, you are yet too inexperienced to withstand the demands of that
-which we need you to do.  %RA might just be able to do this thing.
-
-"Return to us when you have learned more, my %S."
+which we need you to do.  Return to us when you have learned more,
+my %S.  Then perhaps you might just be able to do this thing."
 %E
 %Cc Ran 00020
 "You have strayed, %p!  You know that %d requires that
@@ -2000,7 +1999,7 @@ Once again, you enter the distorted castle of %n.
 "Well, I shall keep that bauble.  It pleases me.  You, %c, shall die."
 %E
 %Cp Ran 00051
-"Back again, eh?  Well, a mere %r is no threat to me!  Die, %c!"
+"Back again, eh?  Well, you are no threat to me!  Die, %c!"
 %E
 %Cp Ran 00052
 "You haven't learned your lesson, %c.  You can't kill me!  You shall die now."
@@ -2410,7 +2409,7 @@ become a monk.  Your fief and family are forfeit.  Wakarimasu ka?"
 %E
 %Cc Sam 00019
 "%p-san, you have learned well and honored your family.
-I require the skills of %Ra in order to defeat %n.
+I require the skills of a more experienced %R in order to defeat %n.
 Go and seek out teachers.  Learn what they have learned.  When you
 are ready, return to me."
 %E
@@ -2463,7 +2462,7 @@ hate, adoration, joy, anxiety, anger, grief, and fear."
 "Your kami must be strong in order to succeed."
 %E
 %Cp Sam 00031
-"You are indeed a worthy %R, but now you must be a worthy samurai."
+"You have experience, but now you must be a worthy samurai."
 %E
 %Cp Sam 00032
 "If you fail, %n will be like a tai-fun on the land."
@@ -2922,7 +2921,7 @@ you shall never succeed in this life, and Valhalla is denied to you."
 "I see you and %n fighting, %p.  But you are not prepared and
 shall die at %ns hand if you proceed.  No.  This will not do.
 Go back out into the world, and grow more experienced at the ways of
-war.  Only when you have returned %Ra will you be able to defeat
+war.  Only when you have returned, %r, will you be able to defeat
 %n."
 %E
 %Cc Shi 00020
@@ -2952,7 +2951,7 @@ from there and you will find %ns lair.  Defeat him and
 return %o to me."
 %E
 %Cc Shi 00022
-"This is outrageous!  You are but a %r!  Will you turn all
+"This is outrageous!  You are but a child!  Will you turn all
 reason on its head and defeat %n in such a state?"
 %E
 %Cp Shi 00025
@@ -3170,9 +3169,9 @@ the esoteric arts?  Get out of here!  I shall find another."
 %E
 %Cc Wiz 00019
 "Alas, %p, you have not yet shown your proficiency as a worthy
-spellcaster.  As %ra, you would surely be overcome in the challenge
-ahead.  Go, now, expand your horizons, and return when you have attained
-renown as %Ra."
+spellcaster.  You would surely be overcome in the challenge
+ahead.  Go, now, expand your horizons, and return when you have
+attained renown."
 %E
 %Cc Wiz 00020
 "You amaze me, %p!  How many times did I tell you that the way of a mage
@@ -3207,7 +3206,7 @@ find and overcome %n, and return %o to me.
 "Go now, with %d, and complete this quest before it is too late."
 %E
 %Cc Wiz 00022
-"Astonishing!  You show up as a mere %r and expect to take on %n?"
+"Astonishing!  You show up and expect to take on %n?"
 %E
 %Cp Wiz 00025
 "Beware, for %n is immune to most magical attacks."

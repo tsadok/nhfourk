@@ -539,8 +539,6 @@ name_to_mon(const char *in_str)
             }
         }
     }
-    if (mntmp == NON_PM)
-        mntmp = title_to_mon(str, NULL, NULL);
     return mntmp;
 }
 

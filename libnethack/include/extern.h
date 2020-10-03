@@ -193,7 +193,6 @@ extern int getbones(d_level * levnum);
 /* ### botl.c ### */
 
 extern void bot(void);
-extern int title_to_mon(const char *, int *, int *);
 extern void max_rank_sz(void);
 extern const char *rank_of(int, short, boolean);
 extern int describe_level(char *);

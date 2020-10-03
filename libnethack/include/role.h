@@ -35,7 +35,6 @@ struct RoleAdvance {
 struct Role {
         /*** Strings that name various things ***/
     struct RoleName name;       /* the role's name (from u_init.c) */
-    struct RoleName rank[9];    /* names for experience levels (from botl.c) */
     const char *lgod, *ngod, *cgod;     /* god names (from pray.c) */
     const char *filecode;       /* abbreviation for use in file names */
     const char *homebase;       /* quest leader's location (from questpgr.c) */

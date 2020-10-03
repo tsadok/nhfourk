@@ -27,7 +27,7 @@
 ▒▒▒
 ▒▒▒ * Add hoplite and shieldmaiden tiles for all tilesets.
 ▒▒▒
-▒▒▒ * Your conscious should not "bother you a little less" if your alignment
+▒▒▒ * Your conscience should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
 ▒▒▒
@@ -90,11 +90,6 @@
 ▒▒▒ * Jackals won't wade into shallow water to reach and attack me.  _Maybe_
 ▒▒▒   that's ok for jackals, but check that it doesn't happen for larger foes.
 ▒▒▒
-▒▒▒ * For 4.3.0.4, I bumped monster HP regen from every 20 turns to every 8
-▒▒▒   turns (commit 61efee7b811a93).  After .4 gets some play testing, evaluate
-▒▒▒   whether this is enough (see FIQ's comments lower down about pets attacking
-▒▒▒   floating eyes).
-▒▒▒
 ▒▒▒ * Allow any random object to be fooproofed when wielded, using a scroll
 ▒▒▒   of enchant weapon, in the same way as it is done for a weapon.
 ▒▒▒   Fooproofed items should be entirely protected from elemental damage
@@ -125,7 +120,7 @@
 ▒▒▒ * Make charged ring of searching increase your search radius.
 ▒▒▒
 ▒▒▒ * Look at how the lamp charging code manages to allow charging a lit
-▒▒▒   lamp; use a similar toechnique to fix the issue of lit candles
+▒▒▒   lamp; use a similar technique to fix the issue of lit candles
 ▒▒▒   being impervious to fire damage.
 ▒▒▒
 ▒▒▒ * Really really should enable highlighting of peacefuls to be disabled
@@ -155,63 +150,14 @@
 ▒▒▒   which can be e.g. a level drain, curse items, punishment, a hostile minion, etc.
 ▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
-▒▒▒   + Runics can be wished for in wizmode only.
-▒▒▒   + Randomly generated weapons that are allowed to be artifacts but the
-▒▒▒     RNG doesn't make them such, get a second chance to be runic instead.
-▒▒▒     Any given weapon can have at most one rune.  Most have none, obviously.
-▒▒▒   + Possible runes might include:
-▒▒▒     - rune of fire (provides fire res when wielded; does fire damage; when dipped in shallow water, evaporates it)
-▒▒▒     - rune of cold (provides cold res when wielded; does cold damage; when #dipped in a pool, moat, or shallow water, turns it to ice)
-▒▒▒     - rune of poison (weapon is permanently poisoned and provides poison res when wielded)
-▒▒▒     - rune of acid (weapon does acid damage and provides acid res when wielded and cannot be corroded)
-▒▒▒     - rune of lightning (weapon does shock damage and provides shock res when wielded)
-▒▒▒     - rune of accuracy (weapon never misses)
-▒▒▒     - rune of peace (weapon always misses but also improves the odds that enemies/projectiles miss you, when wielded)
-▒▒▒     - rune of magic (weapon does magic damage, like magic missile, and provides MR when wielded)
-▒▒▒     - rune of action (weapon provides free action when wielded)
-▒▒▒     - rune of blessing (weapon is permanently blessed and blocks the curse-items monster spell effect)
-▒▒▒     - rune of damage (weapon does 1.5 times as much damage as it otherwise would)
-▒▒▒     - rune of cancellation (weapon cancels monsters when it hits them, cancels potions when dipped in them, not using them up, except for holy/unholy water)
-▒▒▒     - rune of rune of awareness (weapon grants automatic searching when wielded)
-▒▒▒   + At game start, an array (probably in struct you) is populated providing a random rune appearance for
-▒▒▒     each type of rune.  Identification of these is tracked: when you see a runic weapon activate, or if
-▒▒▒     you formally identify one, its rune is identified.
-▒▒▒     - Possible rune appearances include:
-▒▒▒          glowing rune*, square rune, curved rune, angled rune, complex rune,
-▒▒▒          strange rune, simple rune, elaborate rune, ornate rune, ancient rune,
-▒▒▒          dwarvish rune*, gnomic rune*, dark rune, ominous rune, explicit rune,
-▒▒▒          embossed rune, raised rune, seriffed rune, stylized rune, ugly rune,
-▒▒▒          beautiful rune, straight rune, looping rune, unfamiliar rune, plain rune,
-▒▒▒          circumscribed rune, obscure rune, gilded rune, magnificent rune, fancy rune,
-▒▒▒          gaudy rune, convoluted rune, florid rune, portentious rune, grotesque rune
-▒▒▒     - A weapon with a glowing rune provides light, with a small radius.
-▒▒▒     - The identity of the dwarvish rune (if this appearance is assigned to a rune)
-▒▒▒       is known from game start by dwarvish players.
-▒▒▒     - The identity of the gnomic rune (same caveat) is known from game start by gnomish players.
-▒▒▒   + Any weapon with a rune is described as "runed" normally, and the player can (attempt to) read it.
-▒▒▒     (The player can also now attempt to read runed daggers, runed broadswords, and any other "runed" weapon.)
-▒▒▒     - If the weapon has a rune that is known, reading the weapon tells the player something like
-▒▒▒       "The rune signifies fire."
-▒▒▒       This _does_ break illiterate conduct.
-▒▒▒     - If the weapon has a rune that is unknown, reading the weapon tells the player something like
-▒▒▒       "There is a glowing rune, but you do not know what it signifies."
-▒▒▒       This does NOT break illiterate conduct.
-▒▒▒     - If the weapon has no rune as such but is "runed" because Elven, and you ARE elvish by race,
-▒▒▒       then reading the weapon tells the player something like this:
-▒▒▒       "The runes mark this weapon as the craftsmanship of [Elven-sounding name]."
-▒▒▒       This _does_ break illiterate conduct.
-▒▒▒       The name of the craftsman can be determined by object ID and modular arithmetic, given a list.
-▒▒▒     - If the weapon has no rune as such but is "runed" because Elven, and you are NOT elvish by race,
-▒▒▒       the attempting to read the weapon tells the player something like this:
-▒▒▒       "Elven runes run down the blade.  You cannot decipher their meaning."
-▒▒▒       (The word "blade" may need to be %s if there are runed spears or whatnot.)
-▒▒▒     - Weapons that do not have a rune and are not "runed" elven weapons cannot be read, as before.
-▒▒▒   + 
+▒▒▒   + Make runic weapons do special damage where appropriate.
+▒▒▒   + Implement the runes of blessing and curse.
+▒▒▒   + Implement the rune of cancellation.
+▒▒▒   + Add small-radius see invisible to the rune of awareness.
+▒▒▒   + Implement the rune of peace.
+▒▒▒   + Test that the runics actually work.  On weapons, on armor, all the runes.
+▒▒▒   + Merge the runics branch into bleeding-edge.
 ▒▒▒
-▒▒▒ * Make the silly player-character ranks go away.  They don't add anything, and they
-▒▒▒   confuse new players, needlessly, and they're so badly constructed (in terms of what
-▒▒▒   the ranks are for each role) that they need a complete overhaul, which would only be
-▒▒▒   worth doing if they contributed anything meaningful to the game, which they don't.
 ▒▒▒
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   4.3.0.6 (before save-compat-freeze) :
@@ -336,6 +282,11 @@
 ▒▒▒
 ▒▒▒ * Monsters with the M3_CLIMBER flag should be able to get out of pits in one turn.
 ▒▒▒   Also double-check that M1_FLY is handled correctly.
+▒▒▒
+▒▒▒ * For 4.3.0.4, I bumped monster HP regen from every 20 turns to every 8
+▒▒▒   turns (commit 61efee7b811a93).  After .4 gets some play testing, evaluate
+▒▒▒   whether this is enough (see FIQ's comments lower down about pets attacking
+▒▒▒   floating eyes).
 ▒▒▒
 ▒▒▒ * Monsters with the M3_CLIMBER flag, and scurriers, should be able to enter tree tiles.
 ▒▒▒   Scurriers should get a movement-points discount when doing so.

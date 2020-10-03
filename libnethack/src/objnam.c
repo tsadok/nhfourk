@@ -2262,13 +2262,8 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
                     if (strncmpi(bp, "magenta", 7)) /* not the "mage" rank */
                         if (mntmp < LOW_PM && strlen(bp) > 2 &&
                             (mntmp = name_to_mon(bp)) >= LOW_PM) {
-                            int mntmptoo, mntmplen;     /* double check for
-                                                           rank title */
                             char *obp = bp;
-
-                            mntmptoo = title_to_mon(bp, NULL, &mntmplen);
-                            bp += mntmp != mntmptoo ?
-                                (int)strlen(mons[mntmp].mname) : mntmplen;
+                            bp += (int)strlen(mons[mntmp].mname);
                             if (*bp == ' ')
                                 bp++;
                             else if (!strncmpi(bp, "s ", 2))

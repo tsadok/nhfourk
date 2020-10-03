@@ -62,6 +62,11 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The game is more consistent about what it calls player characters.
+
+ * New monster:  stinking sphere.  When broken/killed, it releases
+   a small cloud of noxious gas.
+
  * Your diety will now only grant you a maximum of 3 artifact gifts
    (1 in challenge mode) in response to sacrifice.
 
@@ -80,7 +85,7 @@ Changes in 4.3.0.5:
    be humans, dwarves, giants, or valkyries, can be either gender, and
    can be lawful or neutral.  All shieldmaidens start with cold
    resistance, but only the Valkyries can fly.  Valkyries always start
-   neutral but can be either shieldmaidens or priestesses.
+   neutral and female but can be either shieldmaidens or priestesses.
    
  * Elves and scurriers can always "squeeze past" trees diagonally.
 

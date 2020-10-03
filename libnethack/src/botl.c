@@ -37,23 +37,18 @@ static const char *const trap_stat[] = {
 static int mrank_sz = 0;        /* loaded by max_rank_sz (from u_init) */
 
 static const char *rank(void);
-static int xlev_to_rank(int);
 static long botl_score(void);
 
-
-/* convert experience level (1..30) to rank index (0..8) */
-static int
-xlev_to_rank(int xlev)
-{
-    return (xlev <= 2) ? 0 : (xlev <= 30) ? ((xlev + 2) / 4) : 8;
-}
-
+/* Historically, this returned a named rank, such as "Preegrinatrix" or
+   "Man-at-arms", which were deterministic based on level and role but both the
+   assignment of ranks to roles, and the ordering of the ranks for each role,
+   were so arbitrary and meaningless that nobody could remember them.  Also,
+   the rank titles added nothing at all to the game.
+*/
 const char *
 rank_of(int lev, short monnum, boolean female)
 {
     const struct Role *role;
-    int i;
-
 
     /* Find the role */
     for (role = roles; role->name.m; role++)
@@ -62,15 +57,6 @@ rank_of(int lev, short monnum, boolean female)
     if (!role->name.m)
         role = &urole;
 
-    /* Find the rank */
-    for (i = xlev_to_rank((int)lev); i >= 0; i--) {
-        if (female && role->rank[i].f)
-            return role->rank[i].f;
-        if (role->rank[i].m)
-            return role->rank[i].m;
-    }
-
-    /* Try the role name, instead */
     if (female && role->name.f)
         return role->name.f;
     else if (role->name.m)
@@ -85,50 +71,12 @@ rank(void)
     return rank_of(u.ulevel, Role_switch, u.ufemale);
 }
 
-int
-title_to_mon(const char *str, int *rank_indx, int *title_length)
-{
-    int i, j;
-
-
-    /* Loop through each of the roles */
-    for (i = 0; roles[i].name.m; i++)
-        for (j = 0; j < 9; j++) {
-            if (roles[i].rank[j].m &&
-                !strncmpi(str, roles[i].rank[j].m,
-                          strlen(roles[i].rank[j].m))) {
-                if (rank_indx)
-                    *rank_indx = j;
-                if (title_length)
-                    *title_length = strlen(roles[i].rank[j].m);
-                return roles[i].malenum;
-            }
-            if (roles[i].rank[j].f &&
-                !strncmpi(str, roles[i].rank[j].f,
-                          strlen(roles[i].rank[j].f))) {
-                if (rank_indx)
-                    *rank_indx = j;
-                if (title_length)
-                    *title_length = strlen(roles[i].rank[j].f);
-                return ((roles[i].femalenum !=
-                         NON_PM) ? roles[i].femalenum : roles[i].malenum);
-            }
-        }
-    return NON_PM;
-}
-
-
 void
 max_rank_sz(void)
 {
-    int i, r, maxr = 0;
-
-    for (i = 0; i < 9; i++) {
-        if (urole.rank[i].m && (r = strlen(urole.rank[i].m)) > maxr)
-            maxr = r;
-        if (urole.rank[i].f && (r = strlen(urole.rank[i].f)) > maxr)
-            maxr = r;
-    }
+    int r, maxr = strlen(urole.name.m);
+    r = strlen(urole.name.f);
+    if (r > maxr) maxr = r;
     mrank_sz = maxr;
     return;
 }
