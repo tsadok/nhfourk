@@ -732,8 +732,10 @@ close_drawbridge(int x, int y)
     do_entity(&(occupants[0])); /* Do set_entity after first */
     set_entity(x2, y2, &(occupants[1]));        /* do_entity for worm tail */
     do_entity(&(occupants[1]));
-    if (OBJ_AT(x, y))
+    if (OBJ_AT(x, y)) {
+        level->heardsound[levsound_drawbridge] = TRUE;
         You_hear(msgc_levelsound, "smashing and crushing.");
+    }
     revive_nasty(x, y, NULL);
     revive_nasty(x2, y2, NULL);
     delallobj(x, y);

@@ -918,9 +918,10 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
            boolean portal)
 {
     xchar new_ledger;
-    boolean up = (depth(newlevel) < depth(&u.uz)), newdungeon =
-        (u.uz.dnum != newlevel->dnum), was_in_W_tower =
-        In_W_tower(u.ux, u.uy, &u.uz), familiar = FALSE;
+    boolean up = (depth(newlevel) < depth(&u.uz)),
+        newdungeon = (u.uz.dnum != newlevel->dnum),
+        was_in_W_tower = In_W_tower(u.ux, u.uy, &u.uz),
+        familiar = FALSE;
     boolean new = FALSE;        /* made a new level? */
     struct monst *mtmp, *mtmp2;
     struct obj *otmp;
@@ -1300,8 +1301,10 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     }
 
     if ((getmonth()==12) && (getmday() < 25)) {
-        if (mk_advcal_portal(level))
+        if (mk_advcal_portal(level)) {
+            level->heardsound[levsound_portal_advent] = TRUE;
             pline(msgc_levelsound, "You smell chocolate!");
+        }
     }
     if (Is_advent_calendar(&u.uz)) {
         fill_advent_calendar(level, FALSE);

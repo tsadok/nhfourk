@@ -1982,6 +1982,22 @@ overview_scan(const struct level *lev, struct overview_info *oi)
                 oi->portal_dst_known = FALSE;
             }
         }
+
+    /* Can we infer unseen features from tracked level sounds? */
+    if (lev->heardsound[levsound_fountain])
+        if (!(oi->fountains)) oi->fountains = 1;
+    if (lev->heardsound[levsound_sink])
+        if (!(oi->sinks)) oi->sinks = 1;
+    if (lev->heardsound[levsound_throne])
+        if (!(oi->thrones)) oi->thrones = 1;
+    if (lev->heardsound[levsound_temple]) {
+        if (!(oi->altars))  oi->altars  = 1;
+        if (!(oi->temples)) oi->temples = 1;
+    }
+    if (lev->heardsound[levsound_shop] && !(oi->shopcount)) {
+        oi->shopcount = 1;
+        oi->shoptype  = -1; /* player has no way to know the type */
+    }
 }
 
 
@@ -2141,6 +2157,9 @@ overview_print_info(const struct overview_info *oi)
 
     if (oi->shopcount > 1)
         ADDNTOBUF("shop", oi->shopcount);
+    else if ((oi->shopcount == 1) && (oi->shoptype == -1))
+        /* buf = msgcat_many(buf, COMMA, "a shop", NULL); */
+        ADDNTOBUF("shop", 1);
     else if (oi->shopcount == 1)
         buf = msgcat_many(buf, COMMA, shopnames[oi->shoptype], NULL);
 

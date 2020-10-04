@@ -18,6 +18,7 @@ static void save_utracked(struct memfile *mf, struct you *you);
 static void savelevchn(struct memfile *mf);
 static void savedamage(struct memfile *mf, struct level *lev);
 static void freedamage(struct level *lev);
+static void save_heardsounds(struct memfile *mf, struct level *lev);
 static void saveobjchn(struct memfile *mf, struct obj *);
 static void free_objchn(struct obj *otmp);
 static void savemonchn(struct memfile *mf, struct monst *, struct level *lev);
@@ -727,6 +728,7 @@ savelev(struct memfile *mf, xchar levnum)
     save_engravings(mf, lev);
     savedamage(mf, lev);
     save_regions(mf, lev);
+    save_heardsounds(mf, lev);
 }
 
 
@@ -780,6 +782,14 @@ savelevchn(struct memfile *mf)
     }
 }
 
+static void
+save_heardsounds(struct memfile *mf, struct level *lev)
+{
+    enum tracked_levelsound snd;
+    for (snd = levsound_none; snd <= LAST_TRACKED_LEVELSOUND; snd++) {
+        mwrite8(mf, (xchar) (lev->heardsound[snd] ? 42 : 0));
+    }
+}
 
 static void
 savedamage(struct memfile *mf, struct level *lev)

@@ -3169,8 +3169,10 @@ remove_damage(struct monst *shkp, boolean croaked)
         else if (saw_untrap)
             pline(msgc_monneutral,
                   "Suddenly, the trap is removed from the floor!");
-        else if (inside_shop(level, u.ux, u.uy) == ESHK(shkp)->shoproom)
+        else if (inside_shop(level, u.ux, u.uy) == ESHK(shkp)->shoproom) {
+            level->heardsound[levsound_shop] = TRUE;
             pline(msgc_levelsound, "You feel more claustrophobic than before.");
+        }
         else if (canhear() && !rn2(10))
             pline_once(msgc_levelsound,
                        "The dungeon acoustics noticeably change.");

@@ -478,6 +478,41 @@ struct wseg {
     xchar wx, wy;       /* the segment's position */
 };
 
+enum tracked_levelsound {
+    levsound_none = 0,
+    levsound_fountain,
+    levsound_sink,
+    levsound_throne,
+    levsound_vault,
+    levsound_vaultempty,
+    levsound_shop,
+    levsound_temple,
+    levsound_barracks,
+    levsound_graveyard,
+    levsound_zoo,
+    levsound_hive,
+    levsound_dragonhall,
+    levsound_swamp,
+
+    levsound_delphi,
+    levsound_portal_quest,
+    levsound_portal_advent,
+    levsound_drawbridge,
+    levsound_vibsquare,
+
+    levsound_unused_01,
+    levsound_unused_02,
+    levsound_unused_03,
+    levsound_unused_04,
+    levsound_unused_05,
+    levsound_unused_06,
+    levsound_unused_07,
+    levsound_unused_08,
+    levsound_unused_09,
+    levsound_unused_10,
+};
+#define LAST_TRACKED_LEVELSOUND levsound_unused_10
+#define NUM_OF_TRACKED_LEVELSOUNDS (1 + (int) levsound_unused_10)
 
 struct ls_t;
 struct level {
@@ -493,6 +528,7 @@ struct level {
     struct monst *monlist;
     struct damage *damagelist;
     struct levelflags flags;
+    boolean heardsound[NUM_OF_TRACKED_LEVELSOUNDS];
 
     timer_element *lev_timers;
     struct ls_t *lev_lights;

@@ -4421,8 +4421,10 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
                       (type < 0) ? "the" : "your",
                       (abs(type) < ZT_SPELL(0))  ? "bolt" :
                       (abs(type) < ZT_BREATH(0)) ? "spell" : "blast");
-            } else
+            } else {
+                level->heardsound[levsound_vibsquare] = TRUE;
                 pline(msgc_levelsound, "You feel vibrations.");
+            }
             break;
         }
         if (new_doormask >= 0) {        /* door gets broken */

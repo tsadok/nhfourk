@@ -146,9 +146,11 @@ awaken_soldiers(struct monst *culprit)
                 pline(culprit == &youmonst ? msgc_actionok :
                       msgc_moncombatbad, "%s is now ready for battle!",
                       Monnam(mtmp));
-            else
+            else if (canhear()) {
+                level->heardsound[levsound_barracks] = TRUE;
                 pline_once(msgc_levelsound,
                            "You hear the rattle of battle gear being readied.");
+            }
         }
     }
 }

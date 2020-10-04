@@ -31,17 +31,8 @@
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
 ▒▒▒
-▒▒▒ * 18:35 <        rumflump > would it be possible for floors that contain a vault, to auto-annotate when you see
-▒▒▒                             "coins being counted"?
-▒▒▒   18:36 <             FIQ > jonadab: ^
-▒▒▒   18:36 <             FIQ > also for other kind of special [rooms]
-▒▒▒   Answer: the obvious and clean way to do that is by tracking which level "sounds"
-▒▒▒   the player has "heard", in the level data structure.
-▒▒▒   07:13 <             FIQ > 5c3f742f18fdd791c91b0232cc413183ac23952b
-▒▒▒   07:14 <             FIQ > adds a flag, and there was free space there
-▒▒▒   07:14 <             FIQ > so I didn't even have to saveshim
-▒▒▒   The FIQHack fix is for vault sounds only; I'd like to handle other level sounds
-▒▒▒   in the same way.
+▒▒▒ * Unset lev->heardsound[foo] whenever a level feature is destroyed,
+▒▒▒   also when a shopkeeper or aligned priest is killed or taken off-level.
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
@@ -292,6 +283,9 @@
 ▒▒▒   Scurriers should get a movement-points discount when doing so.
 ▒▒▒
 ▒▒▒ * The M3_CLIMBER flag should change the message when you go up ladders or stairs.
+▒▒▒
+▒▒▒ * Look at commit 94ea00a1a3, from 3.6, and implement temple sounds.
+▒▒▒   Don't forget to set lev->heardsound[levsound_temple]
 ▒▒▒
 ▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
 ▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;

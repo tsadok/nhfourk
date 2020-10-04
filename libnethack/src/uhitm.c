@@ -2041,6 +2041,7 @@ do_iceblock(struct monst * mdef, int dmg)
             pline(mdef->mtame ? msgc_petcombatbad : msgc_monneutral,
                   "%s is momentarily encased in a block of ice.",
                   Monnam(mdef));
+            level->heardsound[levsound_vibsquare] = TRUE;
             pline(t->tseen ? msgc_levelsound : msgc_discoverportal,
                   "The block of ice vibrates strangely and shatters.");
         }

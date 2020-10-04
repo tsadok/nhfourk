@@ -14,6 +14,8 @@ static void restore_utracked(struct memfile *mf, struct you *you);
 static void find_lev_obj(struct level *lev);
 static void restlevchn(struct memfile *mf);
 static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly);
+static void rest_heardsounds(struct memfile *mf, struct level *lev,
+                             boolean ghostly);
 static void restobjchn(struct memfile *mf, struct level *lev,
                        boolean ghostly, boolean frozen, struct obj **chain,
                        struct trietable **table);
@@ -137,6 +139,15 @@ restlevchn(struct memfile *mf)
     }
 }
 
+static void
+rest_heardsounds(struct memfile *mf, struct level *lev, boolean ghostly)
+{
+    enum tracked_levelsound snd;
+    for (snd = levsound_none; snd <= LAST_TRACKED_LEVELSOUND; snd++) {
+        boolean heardit = ((mread8(mf) > 0) ? TRUE : FALSE);
+        lev->heardsound[snd] = (ghostly ? FALSE : heardit);
+    }
+}
 
 static void
 restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
@@ -1249,6 +1260,8 @@ getlev(struct memfile *mf, xchar levnum, boolean ghostly)
     restdamage(mf, lev, ghostly);
 
     rest_regions(mf, lev, ghostly);
+    rest_heardsounds(mf, lev, ghostly);
+
     if (ghostly) {
         /* assert(lev->z == u.uz); */
 
