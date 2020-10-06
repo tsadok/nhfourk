@@ -12871,7 +12871,7 @@ Q = (223, 239, 215)
   AABBBBBABOPKBAAA
   AAAAAAAABBBBBAAA
 }
-# tile 672 (sub dwarf valkyrie)
+# tile 672 (sub dwarf valkyrie; sub dwarf hoplite)
 {
   AACQBCCBBBBACQBA
   AACPCMNNIIFCPQBA
@@ -23663,3 +23663,4 @@ Q = (223, 239, 215)
   AAAAAAAAAAAAAAAA
   AAAAAAAAAAAAAAAA
 }
+
