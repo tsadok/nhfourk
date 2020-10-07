@@ -318,7 +318,7 @@ splitobj(struct obj *obj, long num)
     if (obj->cobj && num <= 1L && obj->quan == 1L)
         return obj;
     if (obj->cobj || num <= 0L || obj->quan <= num) /* can't split containers */
-        panic("splitobj, %1ld of %1ld", num, obj->quan);
+        panic("splitobj, %1ld of %1d", num, obj->quan);
     otmp = newobj(obj->oxlth + obj->onamelth, obj);
     extract_nobj(otmp, &turnstate.floating_objects, NULL, 0);
     otmp->nobj = obj->nobj;
