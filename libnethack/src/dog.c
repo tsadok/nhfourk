@@ -269,9 +269,9 @@ mon_arrive(struct monst *mtmp, boolean with_you)
 
     for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj) {
         if (!otmp->olev && otmp->timed) {
-            timer_element *tmr;
+            struct timer_element *tmr;
             int fixed = 0;
-            for (tmr = &level->lev_timers; tmr; tmr = tmr->next) {
+            for (tmr = level->lev_timers; tmr; tmr = tmr->next) {
                 if (tmr->arg == (void *) otmp) {
                     otmp->olev = level;
                     fixed++;
