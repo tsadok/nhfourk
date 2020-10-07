@@ -925,6 +925,7 @@ movebubbles(void)
     struct trap *btrap;
 
     static const struct rm water_pos = {
+        't', /* struct_type */
         S_water, 0, 0, 0, 0, 0, WATER /* typ */ ,
         0, 0, 0, 0, 0, 0, 0, 0, 0
     };
