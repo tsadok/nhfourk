@@ -62,6 +62,13 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * The scroll of fire is now worth 200zm, the same value as the
+   scrolls of water and earth.
+
+ * The overview now shows level features that the player has not seen,
+   in some cases, if they can be inferred from atmospheric messages
+   about sounds, smells, smoke, and such.
+
  * The game is more consistent about what it calls player characters.
 
  * New monster:  stinking sphere.  When broken/killed, it releases
