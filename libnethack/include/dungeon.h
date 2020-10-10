@@ -93,6 +93,7 @@ typedef struct branch {
 
 /* dungeon overview information, generated and used by dooverview */
 struct overview_info {
+    char vaultstate; /* 0 = none; 1 = non-empty; 2 = empty */
     char fountains, magic_chests, sinks, benches, thrones, trees, temples;
     char altars;              /* number of non-high altars */
     char high_altars;         /* number of high altars */
