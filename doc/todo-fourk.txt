@@ -25,7 +25,7 @@
 ▒▒▒
 ▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
 ▒▒▒
-▒▒▒ * Add hoplite and shieldmaiden tiles for all tilesets.
+▒▒▒ * Add hoplite, shieldmaiden, stinking sphere tiles for geoduck.
 ▒▒▒
 ▒▒▒ * Your conscience should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
@@ -55,6 +55,15 @@
 ▒▒▒ * Implement banshees
 ▒▒▒
 ▒▒▒ * Implement the scroll of silence.
+▒▒▒   Scroll Price Category Notes:
+▒▒▒    20 - Identify
+▒▒▒    50 - light
+▒▒▒    60 - ench.weap., (blank)
+▒▒▒    80 - ench.arm., rem.curse
+▒▒▒   100 - destroy armor, confuse monster, scare monster,
+▒▒▒         teleportation, gold detection, magic mapping
+▒▒▒   200 - create monster, taming, water, earth, fire
+▒▒▒   300 - genocide, punishment, charging, stinking cloud, consecration
 ▒▒▒
 ▒▒▒ * Track how much gold is generated, and diminish the amounts
 ▒▒▒   generated as the total increases.  Be stingier with monster
