@@ -2137,7 +2137,7 @@ overview_print_gods(const struct overview_info *oi)
         god_names[num_gods] = "Moloch";
         num_gods++;
     }
-    if (i == 0) {
+    if (num_gods == 0) {
         /* Men of Athens, I see that you are very religious. */
         buf = msgcat(buf, "an unknown god");
         return buf;
