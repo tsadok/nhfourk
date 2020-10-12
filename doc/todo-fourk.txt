@@ -21,18 +21,20 @@
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
-▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
+▒▒▒ * Add bears.
 ▒▒▒
-▒▒▒ * Check monster (and pet) key usage to make sure it accounts for my multiple-key-types change.
+▒▒▒ * 10:41 < AntiGulp > aosdict: By the way, absolutely stealing [commit b7379f92c6622]. I
+▒▒▒                      was about to implement this myself, and it tuns out you had already done it.
+▒▒▒                      Intrinsic invisibility and intrinsic see invisible are not well balanced imo.
+▒▒▒   I agree.  Cherry-pick that, or do something similar.
+▒▒▒
+▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Add hoplite, shieldmaiden, stinking sphere tiles for geoduck.
 ▒▒▒
 ▒▒▒ * Your conscience should not "bother you a little less" if your alignment
 ▒▒▒   record is as high as it has ever been.  Change the wording in that case.
 ▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
-▒▒▒
-▒▒▒ * Unset lev->heardsound[foo] whenever a level feature is destroyed,
-▒▒▒   also when a shopkeeper or aligned priest is killed or taken off-level.
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
@@ -63,7 +65,8 @@
 ▒▒▒   100 - destroy armor, confuse monster, scare monster,
 ▒▒▒         teleportation, gold detection, magic mapping
 ▒▒▒   200 - create monster, taming, water, earth, fire
-▒▒▒   300 - genocide, punishment, charging, stinking cloud, consecration
+▒▒▒   250 - stinking cloud, silence
+▒▒▒   300 - genocide, punishment, charging, consecration
 ▒▒▒
 ▒▒▒ * Track how much gold is generated, and diminish the amounts
 ▒▒▒   generated as the total increases.  Be stingier with monster
@@ -80,7 +83,8 @@
 ▒▒▒   that could conceivably benefit from being blessed.  This should remain
 ▒▒▒   a possible strategy, but there should be other reasonable options.
 ▒▒▒
-▒▒▒ * 16:51 < FIQ > jonadab: your method of exposing traps with magic mapping will not work correctly on plane of water
+▒▒▒ * 16:51 < FIQ > jonadab: your method of exposing traps with magic mapping
+▒▒▒   will not work correctly on plane of water
 ▒▒▒
 ▒▒▒ * Make strange object m (in an otherwise unused color), then repurpose their
 ▒▒▒   former symbol for instruments.  Rework tools to avoid reusing colors more
@@ -89,11 +93,6 @@
 ▒▒▒
 ▒▒▒ * Jackals won't wade into shallow water to reach and attack me.  _Maybe_
 ▒▒▒   that's ok for jackals, but check that it doesn't happen for larger foes.
-▒▒▒
-▒▒▒ * Allow any random object to be fooproofed when wielded, using a scroll
-▒▒▒   of enchant weapon, in the same way as it is done for a weapon.
-▒▒▒   Fooproofed items should be entirely protected from elemental damage
-▒▒▒   (wetting/blanking, shock, fire, cold, etc.)
 ▒▒▒
 ▒▒▒ * Consider adding a physician's head mirror as an armor item that can be worn
 ▒▒▒   by small monsters (including gnomes) and provides reflection, but no defense.
@@ -113,8 +112,6 @@
 ▒▒▒   status effects (blindness, hallucination, confusion, stunning), similar
 ▒▒▒   to conduct tracking but in a separate field.
 ▒▒▒
-▒▒▒ * Make katanas use a different skill from long swords.
-▒▒▒
 ▒▒▒ * Look into probing schrodinger's cat (see comments below).
 ▒▒▒
 ▒▒▒ * Make charged ring of searching increase your search radius.
@@ -130,24 +127,8 @@
 ▒▒▒   whether something like this might be good (and maybe some roles or races
 ▒▒▒   should get a bonus, or take careful note of healer cha at least).
 ▒▒▒
-▒▒▒ * 14:44 < FIQ > jonadab: when I was new to nethack
-▒▒▒   14:44 < FIQ > I used to think that luck was a lot more complicated than what it actually is
-▒▒▒   14:45 < FIQ > due to the enlightenment message for uncursed luckstones
-▒▒▒   14:45 < FIQ > basically, I thought you had both "good luck" and "bad luck"
-▒▒▒   14:45 < FIQ > which could cancel each other out, but was still 2 seperate scales
-▒▒▒   14:45 < FIQ > and thus if you had any bad luck, you'd be unable to max out your luck
-▒▒▒   14:45 < FIQ > until it timed out
-▒▒▒   14:46 < FIQ > blessing your luckstone would be more important
-▒▒▒   14:47 < FIQ > since otherwise, your rare cases of bad luck (mirrors, killing a peaceful before angering, etc)
-▒▒▒   14:47 < FIQ > would accumulate
-▒▒▒
 ▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
 ▒▒▒   Also, should it be the Caveman first sac gift?  Discuss.
-▒▒▒
-▒▒▒ * Should sacrifice/prayer in Gehennom be subject to the InterHack principle?  (What actually happens?  How bad is it?)
-▒▒▒   Ok, so first you get, "Since you are in Gehennom, [yourdiety] won't help you."  (IMO that should be "can't", but eh.)
-▒▒▒   Then Moloch hits you with a standard you-prayed-with-a-too-high-prayer-timeout response,
-▒▒▒   which can be e.g. a level drain, curse items, punishment, a hostile minion, etc.
 ▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Make runic weapons do special damage where appropriate.
@@ -227,8 +208,6 @@
 ▒▒▒   item's level and the current dungeon level determines the probability
 ▒▒▒   that mkobj (when deciding what to make at random) will reroll.
 ▒▒▒
-▒▒▒ * Add bears.
-▒▒▒
 ▒▒▒ * Separate Def into distinct Arm (Armor) and Ev (Evasiveness) stats.
 ▒▒▒   Make Ev your chance to avoid being hit at all, and make Arm just be damage reduction.
 ▒▒▒   Some (heavy) armor would have an Ev penalty, so it's a trade-off; enchantment might reduce this?
@@ -269,6 +248,17 @@
 ▒▒▒ * Currently, do.c hardcodes the arrival-from-below region for the terminus.
 ▒▒▒   This is bad and not at all what I want.  Fix it.
 ▒▒▒
+▒▒▒ * 14:44 < FIQ > jonadab: when I was new to nethack
+▒▒▒   14:44 < FIQ > I used to think that luck was a lot more complicated than what it actually is
+▒▒▒   14:45 < FIQ > due to the enlightenment message for uncursed luckstones
+▒▒▒   14:45 < FIQ > basically, I thought you had both "good luck" and "bad luck"
+▒▒▒   14:45 < FIQ > which could cancel each other out, but was still 2 seperate scales
+▒▒▒   14:45 < FIQ > and thus if you had any bad luck, you'd be unable to max out your luck
+▒▒▒   14:45 < FIQ > until it timed out
+▒▒▒   14:46 < FIQ > blessing your luckstone would be more important
+▒▒▒   14:47 < FIQ > since otherwise, your rare cases of bad luck (mirrors, killing a peaceful before angering, etc)
+▒▒▒   14:47 < FIQ > would accumulate
+▒▒▒
 ▒▒▒ * Find a way to make zombies interesting, even if it's
 ▒▒▒   unbalanced and terrible and wrong.  They've been boring
 ▒▒▒   for too long, and we must overcome the inertia.  Maybe
@@ -282,6 +272,9 @@
 ▒▒▒
 ▒▒▒ * Monsters with the M3_CLIMBER flag should be able to get out of pits in one turn.
 ▒▒▒   Also double-check that M1_FLY is handled correctly.
+▒▒▒
+▒▒▒ * Unset lev->heardsound[foo] whenever a level feature is destroyed,
+▒▒▒   also when a shopkeeper or aligned priest is killed or taken off-level.
 ▒▒▒
 ▒▒▒ * For 4.3.0.4, I bumped monster HP regen from every 20 turns to every 8
 ▒▒▒   turns (commit 61efee7b811a93).  After .4 gets some play testing, evaluate
