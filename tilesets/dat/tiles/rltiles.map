@@ -2180,3 +2180,15 @@ hoplite
 shieldmaiden
 sub statue hoplite
 sub statue shieldmaiden
+black bear
+brown bear
+grizzly bear
+dire bear
+werebear
+human werebear
+sub statue black bear
+sub statue brown bear
+sub statue grizzly bear
+sub statue dire bear
+sub statue werebear
+sub statue human werebear
