@@ -728,6 +728,10 @@ cpostfx(int pm)
         catch_lycanthropy = TRUE;
         u.ulycn = PM_WEREWOLF;
         break;
+    case PM_HUMAN_WEREBEAR:
+        catch_lycanthropy = TRUE;
+        u.ulycn = PM_WEREBEAR;
+        break;
     case PM_NURSE:
         if (Upolyd)
             u.mh = u.mhmax;
@@ -2275,11 +2279,10 @@ newuhs(boolean incr)
                       "capabilities.");
             else if (incr &&
                      (Role_if(PM_WIZARD) || Race_if(PM_ELF) ||
-                      Role_if(PM_HOPLITE)))
+                      Race_if(PM_VALKYRIE)))
                 pline(msgc_fatal, "%s needs food, badly!",
                       (Role_if(PM_WIZARD) ? urole.name.m :
-                       Role_if(PM_HOPLITE) ? (u.ufemale ? urole.name.f :
-                                              urole.name.m) : "Elf"));
+                       Race_if(PM_VALKYRIE) ? "Valkyrie" : "Elf"));
             else
                 pline(incr ? msgc_fatal : msgc_statusheal,
                       (!incr) ? "You feel less faint." : (u.uhunger < 45) ?

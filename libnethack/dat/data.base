@@ -2791,6 +2791,10 @@ flaming sphere
 shocking sphere
 	A magical kamikaze that attacks by exploding, damaging nearby creatures,
 	including any hapless adventurer who manages to get in the way.
+stinking sphere
+	A magically animated sphere of dark ash and pure stench.  If any of that
+	gets out into the air, it's likely to cause discomfort, coughing fits,
+	and maybe even temporary blindness.
 
 # f - felines
 kitten
@@ -3416,6 +3420,26 @@ olog-hai
 	that they find laying round the dungeon, and they are particularly fond of
 	polearms, which allow them to hit an enemy from more of a distance than would
 	be possible with a sword or mace.
+
+# Ursidae
+black bear
+brown bear
+grizzly bear
+	Bears are large, fast, opportunistic ominovores.  Their size, thick skin,
+	heavy fur, and cleverness make them difficult to kill, but it's their speed
+	that really makes them dangerous to the unwary adventurer.  Bears are usually
+	solitary but are smart enough to work in groups when the opportunity presents
+	or need arises.  Though they mainly live on land, all bears are good swimmers.
+	The smallest bears, which are generally black in color, are generally the
+	slowest but are excellent climbers.  Brown bears are larger, faster, and
+	stronger; and grizzly bears are the largest and strongest natural bear.  As
+	true omnivores, bears can digest nearly anything, from fruits and vegetables
+	to live prey to carrion; and their hunger is insatiable.
+dire bear
+	As if ordinary bears weren't dangerous enough, some powerful mage has
+	seen fit to imbue this one with unnatural enhancements and permanent
+	unquenchable rage.  It seeks only to rend and maul and kill.
+# werebears are covered by the same entry as the other werefoo, above.
 
 vampire
 vampire lord

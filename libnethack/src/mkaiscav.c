@@ -1250,7 +1250,8 @@ mkaiscav(struct level *lev, char *proto)
     case 10:
         for (i = (5 + mrn2(1 + ( RNGSAFEDEPTH / 15))); i > 0; i--) {
             spot = aisplace();
-            makemon(((i % 2) ? &mons[PM_WEREWOLF] :
+            makemon(((!(i % 5)) ? &mons[PM_WEREBEAR] :
+                     (i % 2) ? &mons[PM_WEREWOLF] :
                      (i % 3) ? &mons[PM_WEREJACKAL] : &mons[PM_WERERAT]),
                     lev, spot.x, spot.y, 0);
         }

@@ -1820,6 +1820,8 @@ mondead(struct monst *mtmp)
         set_mon_data(mtmp, &mons[PM_HUMAN_WEREWOLF], -1);
     else if (mtmp->data == &mons[PM_WERERAT])
         set_mon_data(mtmp, &mons[PM_HUMAN_WERERAT], -1);
+    else if (mtmp->data == &mons[PM_WEREBEAR])
+        set_mon_data(mtmp, &mons[PM_HUMAN_WEREBEAR], -1);
 
     /* if MAXMONNO monsters of a given type have died, and it can be done,
        extinguish that monster. mvitals[].died does double duty as total number

@@ -12,7 +12,7 @@
  * NULL character.
  */
 # define S_ANT          1
-# define S_UNUSED_B     2 /* Available */
+# define S_UNUSED_BLOB  2 /* Available */
 # define S_COCKATRICE   3
 # define S_DOG          4
 # define S_EYE          5
@@ -36,7 +36,7 @@
 # define S_WORM         23
 # define S_XAN          24
 # define S_UNUSED_LIGHT 25 /* Available */
-# define S_ZEAMONSTER   26 /* pending */
+# define S_UNUZED_ZRUTY 26 /* Available */
 # define S_ANGEL        27
 # define S_BAT          28
 # define S_CENTAUR      29
@@ -57,7 +57,7 @@
 # define S_RUSTMONST    44
 # define S_SNAKE        45
 # define S_TROLL        46
-# define S_BEAR         47 /* pending */
+# define S_BEAR         47
 # define S_VAMPIRE      48
 # define S_WRAITH       49
 # define S_XORN         50

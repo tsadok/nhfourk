@@ -135,6 +135,8 @@ barehitmsg(struct monst *mtmp)
     boolean thirdperson = !(mtmp == &youmonst);
     if (Hallucination)
         return halluhitverb(!thirdperson);
+    if (mtmp->data->mlet == S_BEAR) /* bearhitmsg */
+        return thirdperson ? "mauls" : "maul";
     if (!strcmp(mbodypart(mtmp, HAND), "claw") ||
         !strcmp(mbodypart(mtmp, HAND), "paw") ||
         !strcmp(mbodypart(mtmp, HAND), "foreclaw") ||

@@ -90,6 +90,7 @@ m_has_property(const struct monst *mon, enum youprop property,
         property == POISON_RES   ? resists_poison(mon)                   :
         property == DRAIN_RES    ? resists_drli(mon)                     :
         property == SICK_RES     ? pm->mlet == S_FUNGUS ||
+                                   pm->mlet == S_BEAR   ||
                                    pm == &mons[PM_GHOUL]                 :
         property == ANTIMAGIC    ? resists_magm(mon)                     :
         property == ACID_RES     ? resists_acid(mon)                     :
