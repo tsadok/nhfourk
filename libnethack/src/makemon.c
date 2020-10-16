@@ -1178,7 +1178,7 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         set_mimic_sym(mtmp, lev, stats_rng);
         break;
     case S_COCKATRICE:
-        if (in_mklev && touch_petrifies(mtmp->data)) {
+        if (in_mklev && touch_petrifies(mtmp->data) && countbirth) {
             /* Place a few random statues around the level. */
             int count, tries;
             for (count = 0; count < 6; count++) {
