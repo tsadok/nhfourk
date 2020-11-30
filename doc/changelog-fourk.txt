@@ -1,5 +1,5 @@
 About this document:
-Written 2014-2019 by Nathan Eady.
+Written 2014-2020 by Nathan Eady.
 
 This document (i.e., this specific file, changelog-fourk.txt) is in
 the public domain.  The author has specifically released it to the
@@ -251,7 +251,7 @@ Changes in 4.3.0.5:
  * Dragon scale mail no longer exists as a distinct type of armor in
    the game.  Instead, any armor that can be worn in the body-armor
    slot (mithril, crystal plate mail, splint mail, chain mail, or even
-   orcish ring mail, can be imbued with the magical properties of the
+   orcish ring mail), can be imbued with the magical properties of the
    dragon scales (only one color per piece of armor, though).  The way
    to do this is to wear the armor you want to enhance, with the
    scales overtop like a cloak, and read a scroll of enchant armor

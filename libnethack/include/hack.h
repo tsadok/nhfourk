@@ -286,6 +286,8 @@ struct test_move_cache {
 # define SKIN             21
 # define BODY             22
 
+# define LAST_BODY_PART   22
+
 /* Flags to control menus */
 # define MENU_PARTIAL     2
 # define MENU_FULL        3

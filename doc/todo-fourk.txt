@@ -18,6 +18,8 @@
 ▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
+▒▒▒ * Altar-BUC-checking an item is supposed to unlock the Priest role.  It doesn't.
+▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
@@ -34,8 +36,6 @@
 ▒▒▒
 ▒▒▒ * Look at FIQ's ace9e3ba, which adds when-worn properties to several
 ▒▒▒   tools and also makes some interesting changes to cameras.
-▒▒▒
-▒▒▒ * Implement the ability for giants to wield two-handed weapons in one hand.
 ▒▒▒
 ▒▒▒ * Make the gameplay mode option not offer challenge mode until it's unlocked.
 ▒▒▒
@@ -67,7 +67,8 @@
 ▒▒▒ * Track how much gold is generated, and diminish the amounts
 ▒▒▒   generated as the total increases.  Be stingier with monster
 ▒▒▒   inventory gold than floor gold (because the number of levels
-▒▒▒   is strictly limited).  Consider also tracking the ultimate
+▒▒▒   is strictly limited).
+▒▒▒ * Consider also tracking the ultimate
 ▒▒▒   fate of gold by category (held by monsters, sitting on the
 ▒▒▒   ground somewhere, in a container, destroyed, etc.)
 ▒▒▒
@@ -145,6 +146,7 @@
 ▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
 ▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,
 ▒▒▒   and lawful druid seems weird to me for some reason.)
+▒▒▒   https://hardfought.org/etherpad/p/Druid_Design_Discussion
 ▒▒▒
 ▒▒▒ * Consider implementing a couple of plants.  Look at the
 ▒▒▒   ones in dnethack and pick out the most interesting.

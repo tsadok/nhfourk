@@ -75,7 +75,7 @@ void
 max_rank_sz(void)
 {
     int r, maxr = strlen(urole.name.m);
-    r = strlen(urole.name.f);
+    r = urole.name.f ? strlen(urole.name.f) : 0;
     if (r > maxr) maxr = r;
     mrank_sz = maxr;
     return;
