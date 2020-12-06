@@ -62,6 +62,15 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Intrinsic invisibility and see-invisible are now more difficult to
+   gain permanently.  Extrinsics (rings, cloak, artifacts) and
+   role-based intrinsics are unchanged.  Stalkers now grant 200+d200
+   turns of both intrinsics.  Random throne and fountain effects now
+   grant 1000 + d1000 turns.  The potions grant 200+d200 turns if
+   cursed, 400+d400 turns if uncursed, 800+d800 turns if blessed.  The
+   precise duration of invisibility you get from the wand, depends on
+   wand skill.
+
  * The scroll of fire is now worth 200zm, the same value as the
    scrolls of water and earth.
 

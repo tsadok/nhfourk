@@ -738,19 +738,18 @@ cpostfx(int pm)
         else
             u.uhp = u.uhpmax;
         break;
-    case PM_STALKER:
-        if (!Invis) {
-            set_itimeout(&HInvis, (long)rn1(100, 50));
-            if (!Blind && !BInvis)
-                self_invis_message();
-        } else {
-            if (!(HInvis & INTRINSIC))
-                pline(msgc_intrgain, "You feel hidden!");
-            HInvis |= FROMOUTSIDE;
-            HSee_invisible |= FROMOUTSIDE;
+    case PM_STALKER: {
+        boolean was_invis = !!Invis;
+        incr_itimeout(&HInvis, (long) rn1(200, 200));
+        if (!was_invis && !Blind && !BInvis) {
+            self_invis_message();
+        }
+        if (was_invis) {
+            incr_itimeout(&HSee_invisible, (long) rn1(200, 600));
         }
         newsym(u.ux, u.uy);
         /* fall into next case */
+    }
     case PM_YELLOW_LIGHT:
         /* fall into next case */
     case PM_GIANT_BAT:

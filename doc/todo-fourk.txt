@@ -23,11 +23,6 @@
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
-▒▒▒ * 10:41 < AntiGulp > aosdict: By the way, absolutely stealing [commit b7379f92c6622]. I
-▒▒▒                      was about to implement this myself, and it tuns out you had already done it.
-▒▒▒                      Intrinsic invisibility and intrinsic see invisible are not well balanced imo.
-▒▒▒   I agree.  Cherry-pick that, or do something similar.
-▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Your conscience should not "bother you a little less" if your alignment

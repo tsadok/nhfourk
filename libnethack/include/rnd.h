@@ -89,6 +89,7 @@ enum rng {
     rng_intrinsic_poison,/* ditto poison resistance */
     rng_intrinsic_itis,  /* ditto teleportitis */
     rng_intrinsic_tc,    /* ditto teleport control */
+    rng_potion_duration, /* durations of certain potion effects */
     rng_newt_pw_boost,   /* Pw boost from newts */
     rng_50percent_a_int, /* 50% chance of gaining intelligence */
     rng_ddeath_d10p9,    /* d10+9 rolls for delayed instadeath timeouts */
@@ -111,7 +112,7 @@ enum rng {
     rng_slow_stoning,    /* d10+d3=2 chance of being slow-stoned */
     rng_eel_drowning,    /* 10% chance of a 1-turn drown timer */
     rng_deathtouch,      /* touch of death used by Death */
-    rng_foocubus_results,/* d35, d5, d25: result of foocubus sedution */
+    rng_foocubus_results,/* d35, d5, d25: result of foocubus seduction */
     rng_dragonscales,    /* chance of a dragon leaving scales */
     rng_deadlypoison_8,  /* deadly poision results, fatal = 8 */
     rng_deadlypoison_10, /* deadly poision results, fatal = 10 */

@@ -609,10 +609,12 @@ peffects(struct obj *otmp)
         } else {
             self_invis_message();
         }
-        if (otmp->blessed)
-            HInvis |= FROMOUTSIDE;
-        else
-            incr_itimeout(&HInvis, rn1(15, 31));
+        {
+            int num = 200
+                * ((!(otmp->cursed)) ? 2 : 1)
+                * ((otmp->blessed) ? 2 : 1);
+            incr_itimeout(&HInvis, num + rn2_on_rng(num, rng_potion_duration));
+        }
         newsym(u.ux, u.uy);     /* update position */
         if (otmp->cursed) {
             pline(msgc_levelwarning,
@@ -648,12 +650,17 @@ peffects(struct obj *otmp)
                 make_hallucinated(0L, FALSE);
             }
             if (otmp->blessed) {
-                /* HSee_invisible |= FROMOUTSIDE; */
-                incr_itimeout(&HSee_invisible, rn1(2500, 7500));
-                incr_itimeout(&HXray_vision, rn1(50,150));
-            } else
-                incr_itimeout(&HSee_invisible, rn1(otmp->cursed ? 100 : 500,
-                                                   otmp->cursed ? 400 : 2000));
+                incr_itimeout(&HSee_invisible,
+                              800 + rn2_on_rng(800, rng_potion_duration));
+                incr_itimeout(&HXray_vision,
+                              150 + rn2_on_rng(50, rng_potion_duration));
+            } else {
+                int num = 200
+                    * ((!(otmp->cursed)) ? 2 : 1)
+                    * ((otmp->blessed) ? 2 : 1);
+                incr_itimeout(&HSee_invisible,
+                              num + rn2_on_rng(num, rng_potion_duration));
+            }
             set_mimic_blocking();       /* do special mimic handling */
             see_monsters(FALSE);        /* see invisible monsters */
             newsym(u.ux, u.uy);         /* see yourself! */

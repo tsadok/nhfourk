@@ -318,7 +318,7 @@ drinkfountain(void)
                       "You see an image of someone stalking you.");
                 pline_implied(msgc_intrgain, "But it disappears.");
             }
-            HSee_invisible |= FROMOUTSIDE;
+            incr_itimeout(&HSee_invisible, rn1(1000, 1000));
             newsym(u.ux, u.uy);
             break;
         case 18:       /* See monsters */

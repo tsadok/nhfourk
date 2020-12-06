@@ -360,13 +360,13 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
                     break;
                 }
                 if (!invis_outside) { /* setting invis */
-                    HInvis |= FROMOUTSIDE;
+                    incr_itimeout(&HInvis, dice(wandlevel, 250));
                     if (msg && !invis) {
                         known = TRUE;
                         newsym(u.ux, u.uy);
                         self_invis_message();
                     }
-                } else if (wandlevel >= P_SKILLED) { /* unsetting invis */
+                } else if (wandlevel >= P_EXPERT) { /* unsetting invis */
                     HInvis &= ~FROMOUTSIDE;
                     if (msg && !Invis) { /* !Invis in case anything else gives it */
                         known = TRUE;
@@ -2310,17 +2310,7 @@ zapyourself(struct obj *obj, boolean ordinary)
         }
         if (!ordinary || wandlevel < P_SKILLED ||
             !invis_outside) { /* setting invis */
-            if (!rn2(10) || ordinary) { /* permanent */
-                HInvis |= FROMOUTSIDE;
-                if (msg && !invis) {
-                    makeknown(WAN_MAKE_INVISIBLE);
-                    newsym(u.ux, u.uy);
-                    self_invis_message();
-                    msg = FALSE;
-                }
-            } else { /* temporary */
-                incr_itimeout(&HInvis, dice(obj->spe, 250));
-            }
+            incr_itimeout(&HInvis, dice(wandlevel, 200));
             if (msg && !invis) {
                 makeknown(WAN_MAKE_INVISIBLE);
                 newsym(u.ux, u.uy);
