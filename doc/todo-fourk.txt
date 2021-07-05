@@ -18,6 +18,9 @@
 ▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
+▒▒▒ * 20:09 < Tangles_@> jonadab: Fourk bug - If you're stuck in a pit and get displaced by a jitterbug, you are still
+▒▒▒                                trapped in the pit, but no longer actually in the location of the pit.
+▒▒▒
 ▒▒▒ * Altar-BUC-checking an item is supposed to unlock the Priest role.  It doesn't.
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than

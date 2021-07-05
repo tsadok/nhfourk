@@ -20,7 +20,6 @@ static boolean toss_up(struct obj *, boolean, struct obj *);
 static void sho_obj_return_to_u(struct obj *obj, schar, schar);
 static boolean mhurtle_step(void *, int, int);
 
-
 static const char toss_objs[] =
     { ALLOW_COUNT, ALL_CLASSES, COIN_CLASS, WEAPON_CLASS, 0 };
 /* different default choices when wielding a sling (gold must be included) */
@@ -342,7 +341,7 @@ dofire(const struct nh_cmd_arg *arg)
         /* For rocks, only warn if the player has a sling: */
         (!(uquiver->otyp == ROCK) || carrying(SLING)))
         pline(msgc_yafm, "You attempt to fire %s with your %s %s.",
-              an(xname(uquiver)), (uarmg ? "gloved" : "bare"),
+              an(cxname2(uquiver)), (uarmg ? "gloved" : "bare"),
               makeplural(body_part(HAND)));
 
     return throw_obj(uquiver, arg, cancel_unquivers);
