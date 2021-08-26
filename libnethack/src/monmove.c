@@ -190,6 +190,8 @@ disturb(struct monst *mtmp)
         alertness++;
 
     if (mtmp->data->mflags3 & M3_SCENT) {
+        /* Don't divide by zero if mtmp is the player's steed. */
+        if (distance < 1) distance = 1;
         alertness += 9 / distance;
     } else if (Invisible && !perceives(mtmp->data)) {
         stealth = (stealth + 1) * 2;
