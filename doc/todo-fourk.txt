@@ -26,6 +26,8 @@
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
+▒▒▒ * 09:10 #hardfought: < FIQ+> !tell jonadab fiqhack commit ec123a29700ea5d31079fe04ad47a09b0e87dbed might interest you for 4k and nh4
+▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
 ▒▒▒ * Your conscience should not "bother you a little less" if your alignment

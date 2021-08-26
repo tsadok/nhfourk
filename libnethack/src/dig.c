@@ -1726,7 +1726,14 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
                         (lev->locations[x][y].typ == ICE))) && 
                      (tries++ < 25));
         }
-        if (tries >= 25) {
+        if ((tries >= 25) ||
+            /* is_ok returns true for some terrain types that we don't want to
+               make pits on; the do/while loop above filters them out, but the
+               i==0 case, taking the defender's coordinates, does not.  Do so: */
+            (lev->locations[x][y].typ == STAIRS) ||
+            (lev->locations[x][y].typ == LADDER) ||
+            (lev->locations[x][y].typ == ALTAR)  ||
+            (lev->locations[x][y].typ == MAGIC_CHEST)) {
             no_pit_message(magr, mdef);
             return;
         } else if (isok(x, y)) {
