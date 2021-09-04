@@ -230,6 +230,29 @@ newman(void)
 }
 
 void
+dragonscale_polyself(void)
+{
+    int mntmp = armor_to_dragon(uarmc, uarm);
+    int old_light = emits_light(URACEDATA);
+    int new_light = FALSE;
+    boolean was_floating = (Levitation || Flying);
+    if (!(mvitals[mntmp].mvflags & G_GENOD)) {
+        /* allow G_EXTINCT */
+        pline(msgc_statusbad, "You merge with your scaly armor.");
+        polymon(mntmp, TRUE);
+        new_light = emits_light(URACEDATA);
+        if (old_light && !new_light) {
+            del_light_source(level, LS_MONSTER, &youmonst);
+        } else if (new_light && !old_light) {
+            new_light_source(level, u.ux, u.uy, new_light, LS_MONSTER, &youmonst);
+        }
+        if (is_pool(level, u.ux, u.uy) && was_floating && !(Levitation || Flying) &&
+            !breathless(youmonst.data) && !amphibious(youmonst.data) && !Swimming)
+            drown();
+    }
+}
+
+void
 polyself(boolean forcecontrol)
 {
     const char *buf;

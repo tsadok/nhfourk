@@ -1402,6 +1402,7 @@ extern void self_invis_message(void);
 
 extern void set_uasmon(void);
 extern void change_sex(void);
+extern void dragonscale_polyself(void);
 extern void polyself(boolean);
 extern int polymon(int, boolean);
 extern int domonability(const struct nh_cmd_arg *);

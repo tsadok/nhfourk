@@ -1076,11 +1076,18 @@ seffects(struct obj *sobj, boolean *known)
             if (s < 0 && otmp->unpaid)
                 costly_damage_obj(otmp);
             if (s >= 0 && otmp->otyp >= FIRST_DRAGON_SCALES &&
-                otmp->otyp <= LAST_DRAGON_SCALES) {
+                otmp->otyp <= LAST_DRAGON_SCALES && !uskin()) {
                 /* If there were body armor under the scales, we'd have handled
                    things up above.  Ergo, this is the other case, wherein the
                    scales get applied to the wearer as a polymorph. */
-                polyself(FALSE);
+                //polyself(FALSE);
+                /* If we just call polyself(), polymorph control would let the
+                   player become anything; but we're not reading a scroll of
+                   polymorph, the only source of polymorphing here is the
+                   scales; ergo, the player should only be able to become a
+                   dragon of the appropriate color, by this method.  So instead
+                   of calling polyself, we handle things at a lower level... */
+                dragonscale_polyself();
                 break;
             }
             pline((otmp->known && s == 0) ? msgc_failrandom :
