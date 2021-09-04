@@ -438,7 +438,8 @@ Changes in 4.3.0.5:
    + Rogue:        use branch stairs, steal gold from a vault,
                    or enter a leprechaun hall
    + Monk:         enter the Minetown temple
-   + Priest:       use an altar to identify an item's beatitude
+   + Priest:       use an altar to identify an item's beatitude;
+                   the unlock only happens when you see a flash
    + Valkyrie:     convert an altar, or perform the invocation
    + Knight:       enter a treasure zoo (the one in Sokoban counts)
    + Healer:       kill Medusa, or make holy water via prayer

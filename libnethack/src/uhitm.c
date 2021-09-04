@@ -2861,18 +2861,21 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
         {
             const char *nambuf = Monnam(mon);
             xchar tx = mon->mx, ty = mon->my;
+            struct trap *trap;
             mon->mtrapped = 0;
             remove_monster(level, tx, ty);
             u.ux0 = u.ux; u.uy0 = u.uy;
             u.ux = tx;    u.uy = ty;
             if (u.usteed) {
                 u.usteed->mx = u.ux; u.usteed->my = u.uy; }
-            /* TODO: handle you getting displaced into trap. */
+            u.utrap = 0;
+            trap = t_at(level, u.ux, u.uy);
             place_monster(mon, u.ux0, u.uy0);
             newsym(u.ux, u.uy);
             newsym(mon->mx, mon->my);
             pline_once(combat_msgc(mon, &youmonst, cr_hit),
                        "%s displaces you!", nambuf);
+            if (trap) { dotrap(trap, 0); }
             break;
         }
         case AD_SCLD:
