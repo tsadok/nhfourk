@@ -145,6 +145,7 @@ struct you {
             atime;      /* used for loss/gain countdown */
     int next_attr_check; /* number of turns until exerchk can run again */
     align ualign;       /* character alignment */
+    int ualignmax;      /* highest alignment record value yet achieved */
 # define CONVERT        2
 # define A_ORIGINAL     1
 # define A_CURRENT      0

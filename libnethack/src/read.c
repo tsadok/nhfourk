@@ -4,6 +4,7 @@
 /* NetHack may be freely redistributed.  See license for details. */
 
 #include "hack.h"
+#include "alignrec.h" /* for mood rings */
 
 /* KMH -- Copied from pray.c; this really belongs in a header file */
 #define DEVOUT 14
@@ -163,9 +164,11 @@ doread(const struct nh_cmd_arg *arg)
             } else {
                 pline(msgc_info, "The stone is %s.", hcolor(
                           scroll->cursed ? "purple" :
-                          u.ualign.record >= 14 ? "green"  :
-                          u.ualign.record >=  4 ? "yellow" :
-                          u.ualign.record >=  1 ? "orange" : "red"));
+                          u.ualign.record >= PIOUS     ? "blue"   :
+                          u.ualign.record >= DEVOUT    ? "green"  :
+                          u.ualign.record >= STRIDENT  ? "yellow" :
+                          u.ualign.record >= HALTINGLY ? "orange" :
+                          u.ualign.record >= NOMINALLY ? "red"    : "black"));
             }
             return 1;
         } else if (!strcmp(dscr, "class")) {

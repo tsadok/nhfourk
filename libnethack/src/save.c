@@ -475,6 +475,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->udg_cnt);
     mwrite32(mf, y->next_attr_check);
     mwrite32(mf, y->ualign.record);
+    mwrite32(mf, y->ualignmax);
     mwrite32(mf, y->ugangr);
     mwrite32(mf, y->ugifts);
     mwrite32(mf, y->ublessed);

@@ -587,6 +587,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->udg_cnt = mread32(mf);
     y->next_attr_check = mread32(mf);
     y->ualign.record = mread32(mf);
+    y->ualignmax = mread32(mf);
     y->ugangr = mread32(mf);
     y->ugifts = mread32(mf);
     y->ublessed = mread32(mf);

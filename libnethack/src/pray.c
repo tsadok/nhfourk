@@ -2128,8 +2128,13 @@ dopray(const struct nh_cmd_arg *arg)
             u.ublesscnt = 0;
             if (u.uluck < 0)
                 u.uluck = 0;
-            if (u.ualign.record <= 0)
+            if (u.ualign.record <= 0) {
                 u.ualign.record = 1;
+                if (u.ualign.record > u.ualignmax) {
+                    historic_alignment();
+                    u.ualignmax = u.ualign.record;
+                }
+            }
             u.ugangr = 0;
             turnstate.pray.type = pty_favour;
         }

@@ -827,6 +827,7 @@ newhp(void)
         /* NetHack Fourk balance adjustment:  lawful characters start with a
            lower alignment record, chaotics higher.  */
         u.ualign.record = urole.initrecord + INIT_ALIGNREC(u.ualign.type);
+        u.ualignmax = u.ualign.record;
 
         return hp;
     } else {
@@ -1035,6 +1036,21 @@ get_player_ac(void)
     return (schar)player_ac;
 }
 
+void
+historic_alignment(void)
+{
+    if ((u.ualign.record >= PIOUS) && u.ualignmax < PIOUS)
+        historic_event(FALSE, TRUE, "became pious.");
+    else if ((u.ualign.record >= DEVOUT) && u.ualignmax < DEVOUT)
+        historic_event(FALSE, FALSE, "became devout.");
+    else if ((u.ualign.record >= FERVENT) && u.ualignmax < FERVENT)
+        historic_event(FALSE, FALSE, "became fervent.");
+    else if ((u.ualign.record >= STRIDENT) && u.ualignmax < STRIDENT)
+        historic_event(FALSE, FALSE, "became strident.");
+    else if ((u.ualign.record >= 1) && u.ualignmax < 1)
+        historic_event(FALSE, FALSE, "became positively aligned.");
+}
+
 /* Avoid possible problems with alignment overflow, and provide a centralized
    location for any future alignment limits. */
 void
@@ -1077,6 +1093,10 @@ adjalign(int n)
                (u.ualign.record < (urole.initrecord +
                                 INIT_ALIGNREC((aligns[u.initalign]).value)))) {
         u.ualign.record = newalign;
+        if (u.ualign.record > u.ualignmax) {
+            historic_alignment();
+            u.ualignmax = u.ualign.record;
+        }
         if (u.uconduct[conduct_lostalign]) {
             if (UALIGNREC < SINNED) {
                 ; /* No message -- let 'em sweat a bit. */
@@ -1092,6 +1112,10 @@ adjalign(int n)
         }
     } else if (!(u.ualign.record == newalign)) {
         u.ualign.record = newalign;
+        if (u.ualign.record > u.ualignmax) {
+            historic_alignment();
+            u.ualignmax = u.ualign.record;
+        }
         if (UALIGNREC == PIOUS) {
             pline(msgc_aligngood, "Your conscience is clear.");
         }

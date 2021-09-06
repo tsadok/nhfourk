@@ -168,6 +168,7 @@ extern schar acurr(int);
 extern schar acurrstr(void);
 extern schar get_stealth(struct monst *);
 extern schar get_player_ac(void);
+extern void historic_alignment(void);
 extern void adjalign(int);
 extern void calc_attr_bonus(void);
 extern const char *beautiful(void);
