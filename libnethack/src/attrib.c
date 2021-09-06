@@ -1090,13 +1090,8 @@ adjalign(int n)
             }
         }
     } else if ((newalign > u.ualign.record) &&
-               (u.ualign.record < (urole.initrecord +
-                                INIT_ALIGNREC((aligns[u.initalign]).value)))) {
+               (u.ualign.record < u.ualignmax)) {
         u.ualign.record = newalign;
-        if (u.ualign.record > u.ualignmax) {
-            historic_alignment();
-            u.ualignmax = u.ualign.record;
-        }
         if (u.uconduct[conduct_lostalign]) {
             if (UALIGNREC < SINNED) {
                 ; /* No message -- let 'em sweat a bit. */

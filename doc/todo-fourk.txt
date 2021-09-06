@@ -15,15 +15,6 @@
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
 ▒▒▒
-▒▒▒ * Your conscience should not "bother you a little less" if your alignment
-▒▒▒   record is as high as it has ever been.  Change the wording in that case.
-▒▒▒   Perhaps "You feel somewhat more [lawful/neutral/chaotic]."
-▒▒▒
-▒▒▒ * Make the gameplay mode option not offer challenge mode until it's unlocked.
-▒▒▒
-▒▒▒ * Bug: for non-setseed games, the seed reported in the xlogfile and dumplog is
-▒▒▒   not actually the seed that was used.
-▒▒▒
 ▒▒▒ * Implement the scroll of silence.
 ▒▒▒   Scroll Price Category Notes:
 ▒▒▒    20 - Identify

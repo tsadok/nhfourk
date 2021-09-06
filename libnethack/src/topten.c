@@ -247,8 +247,11 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
             (unsigned long)tt->birthdate, tt->uid);
 
     get_initial_rng_seed(rngseedbuf);
-
-    fprintf(rfile, SEP "rngseed=%.*s", RNG_SEED_SIZE_BASE64, rngseedbuf);
+    if (flags.setseed) {
+        fprintf(rfile, SEP "rngseed=%.*s", RNG_SEED_SIZE_BASE64, rngseedbuf);
+    } else {
+        fprintf(rfile, SEP "rngseed=%s", flags.setseed);
+    }
 
     fprintf(rfile, SEP "role=%s" SEP "race=%s" SEP "gender=%s" SEP "align=%s",
             tt->plrole, tt->plrace, tt->plgend, tt->plalign);
