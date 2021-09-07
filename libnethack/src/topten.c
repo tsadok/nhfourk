@@ -325,9 +325,10 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
              flags.polyinit_mnum != -1 ? "polyinit" :
              flags.challenge ? "challenge" : "normal"));
 
-    fprintf(rfile, SEP "gengold=m:%d" SUBSEP "f:%d" SUBSEP "v:%d"
-                        SUBSEP "b:%d" SUBSEP "c:%d" SUBSEP "m:%d",
-            u.generated_gold.moninv,    u.generated_gold.onfloor,
+    fprintf(rfile, SEP "gengold=m:%d" SUBSEP "z:%d" SUBSEP "f:%d"
+            SUBSEP "v:%d" SUBSEP "b:%d" SUBSEP "c:%d" SUBSEP "m:%d",
+            u.generated_gold.moninv,
+            u.generated_gold.zoo,       u.generated_gold.onfloor,
             u.generated_gold.vault,     u.generated_gold.buried,
             u.generated_gold.contained, u.generated_gold.misc);
 

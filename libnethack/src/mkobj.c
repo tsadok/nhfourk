@@ -1115,6 +1115,8 @@ mkvaultgold(long amount, struct level *lev, int x, int y, enum rng rng)
     return mkgold(amount, lev, x, y, rng);    
 }
 
+/* In practice, this gold doesn't actually all belong in the "floor" category,
+   so the caller must update u.generated_gold.foo as appropriate. */
 struct obj *
 mkfloorgold(long amount, struct level *lev, int x, int y, enum rng rng)
 {
@@ -1122,7 +1124,6 @@ mkfloorgold(long amount, struct level *lev, int x, int y, enum rng rng)
         amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
         amount *= 1 + rn2_on_rng(30, rng);
         amount++;
-        u.generated_gold.onfloor += amount;
     }
     return mkgold(amount, lev, x, y, rng);
 }

@@ -27,14 +27,6 @@
 ▒▒▒   250 - stinking cloud, silence
 ▒▒▒   300 - genocide, punishment, charging, consecration
 ▒▒▒
-▒▒▒ * Track how much gold is generated, and diminish the amounts
-▒▒▒   generated as the total increases.  Be stingier with monster
-▒▒▒   inventory gold than floor gold (because the number of levels
-▒▒▒   is strictly limited).
-▒▒▒ * Consider also tracking the ultimate
-▒▒▒   fate of gold by category (held by monsters, sitting on the
-▒▒▒   ground somewhere, in a container, destroyed, etc.)
-▒▒▒
 ▒▒▒ * Jackals won't wade into shallow water to reach and attack me.  _Maybe_
 ▒▒▒   that's ok for jackals, but check that it doesn't happen for larger foes.
 ▒▒▒
@@ -100,6 +92,10 @@
 ▒▒▒ * Add xlog and dumplog tracking for how many turns you suffered various
 ▒▒▒   status effects (blindness, hallucination, confusion, stunning), similar
 ▒▒▒   to conduct tracking but in a separate field.
+▒▒▒
+▒▒▒ * Consider tracking the ultimate fate of gold by category
+▒▒▒   (held by monsters, sitting on the ground somewhere, in a container,
+▒▒▒   eaten, destroyed, etc.)
 ▒▒▒
 ▒▒▒ * Look into probing schrodinger's cat.
 ▒▒▒

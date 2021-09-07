@@ -2350,6 +2350,7 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
         otmp = mksobj(level, GOLD_PIECE, FALSE, FALSE, rng_main);
         otmp->quan = cnt;
         otmp->owt = weight(otmp);
+        u.generated_gold.misc += otmp->quan;
         return otmp;
     }
     if (strlen(bp) == 1 && (i = def_char_to_objclass(*bp)) < MAXOCLASSES &&

@@ -1225,7 +1225,8 @@ skip0:
                 x = somex(croom, mrng());
                 y = somey(croom, mrng());
             }
-            mkfloorgold(0L, lev, x, y, mrng());
+            struct obj *gld = mkfloorgold(0L, lev, x, y, mrng());
+            u.generated_gold.onfloor += gld->quan;
         }
         if (Is_rogue_level(&lev->z))
             goto skip_nonrogue;

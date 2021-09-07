@@ -219,12 +219,17 @@ struct you {
     struct {
         unsigned int moninv;    /* gold generated in monster inventory,
                                    or dropped when gold golems are killed. */
-        unsigned int onfloor;   /* gold generated on the floor, incl. graves */
+        unsigned int zoo;       /* gold generated on the floor in leprechaun
+                                   halls, dragon halls, David's Treasure Zoo */
+        unsigned int throneroom;/* gold generated on floor in throne rooms */
         unsigned int vault;     /* gold generated in vaults (incl. Ludios) */
+        unsigned int onfloor;   /* gold generated on the floor elsewhere,
+                                   including graves */
         unsigned int buried;    /* gold generated in the ground and in rock */
         unsigned int contained; /* gold generated in chests and such */
         unsigned int misc;      /* gold generated any other way; ways this can
-                                   happen include fountain dipping, thrones. */
+                                   happen include fountain dipping, thrones,
+                                   wishes, ... */
     } generated_gold;
 
 };      /* end of `struct you' */

@@ -999,11 +999,12 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
                 panic("create_object:  unexpected object class '%c'", c);
 
             /* KMH -- Create piles of gold properly */
-            if (oclass == COIN_CLASS)
+            if (oclass == COIN_CLASS) {
                 otmp = mkfloorgold(0L, lev, x, y, mrng());
+                u.generated_gold.onfloor += otmp->quan;
                 /* This counts it as being generated on the floor;
                    if that is not the case, we will correct it below. */
-            else
+            } else
                 otmp = mkobj_at(oclass, lev, x, y, !named, mrng());
         }
 
@@ -1233,7 +1234,9 @@ create_gold(struct level *lev, gold * g, struct mkroom *croom)
 
     if (g->amount == -1)
         g->amount = 1 + mrn2(200);
-    mkfloorgold((long)g->amount, lev, x, y, mrng());
+    struct obj *gld =
+        mkfloorgold((long)g->amount, lev, x, y, mrng());
+    u.generated_gold.onfloor += gld->quan;
 }
 
 /*
@@ -2845,7 +2848,8 @@ load_maze(struct level *lev, dlb * fd)
         }
         for (x = mrn2((int)(15 * mapfact) / 100); x; x--) {
             maze1xy(lev, &mm, DRY);
-            mkfloorgold(0L, lev, mm.x, mm.y, mrng());
+            struct obj *gld = mkfloorgold(0L, lev, mm.x, mm.y, mrng());
+            u.generated_gold.onfloor += gld->quan;
         }
         for (x = mrn2((int)(15 * mapfact) / 100); x; x--) {
             int trytrap;
