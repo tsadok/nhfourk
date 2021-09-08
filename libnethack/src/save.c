@@ -459,6 +459,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->ulycn);
     mwrite32(mf, save_encode_32(y->utrap, -moves, -moves));
     mwrite32(mf, y->utraptype);
+    mwrite32(mf, y->usilence);
     mwrite32(mf, y->gotsacgifts);
     mwrite32(mf, y->ucramps);
     mwrite32(mf, save_encode_32(y->uhunger, -moves, -moves));

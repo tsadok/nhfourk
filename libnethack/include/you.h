@@ -56,6 +56,7 @@ struct you {
 # define TT_LAVA        3
 # define TT_INFLOOR     4
 # define TT_ICEBLOCK    5
+    unsigned int usilence; /* remaining duration of silence */
     int  gotsacgifts;   /* how many gifts you have received from sacrifice */
     char gotartgifts;   /* how many _artifact_ gifts you have received from sacrifice */
     unsigned int ucramps; /* how crampy your writing hand is */

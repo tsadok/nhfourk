@@ -821,33 +821,39 @@ const struct objclass const_objects[] = {
 #define SCROLL(name,text,mgc,prob,cost) OBJECT( \
         OBJ(name,text), BITS(0,1,0,0,mgc,0,0,0,0,0,0,P_NONE,PAPER), 0, \
             SCROLL_CLASS, prob, 0, 5, cost, 0, 0, 0, 0, 6, HI_PAPER )
+    /* Cheap scrolls with effectively unique prices: */
+    SCROLL("identify", "KERNOD WEL", 1, 180, 20),
+    SCROLL("light", "VERR YED HORRE", 1, 90, 50),
+    SCROLL("enchant weapon", "DAIYEN FOOELS", 1, /* 75 */ 80, 60),
+    /* 80zm */
     SCROLL("enchant armor", "ZELGO MER", 1, 63, 80),
+    SCROLL("remove curse", "PRATYAVAYAH", 1, 65, 80),
+    /* 100zm */
     SCROLL("destroy armor", "JUYED AWK YACC", 1, 45, 100),
     SCROLL("confuse monster", "NR 9", 1, 53, 100),
     SCROLL("scare monster", "XIXAXA XOXAXA XUXAXA", 1, 50, 100),
-    SCROLL("remove curse", "PRATYAVAYAH", 1, 65, 80),
-    SCROLL("enchant weapon", "DAIYEN FOOELS", 1, 80, 60),
-    SCROLL("create monster", "LEP GEX VEN ZEA", 1, 45, 200),
-    SCROLL("taming", "PRIRUTSENIE", 1, 15, 200),
-    SCROLL("genocide", "ELBIB YLOH", 1, 15, 300),
-    SCROLL("light", "VERR YED HORRE", 1, 90, 50),
     SCROLL("teleportation", "VENZAR BORGAVVE", 1, 55, 100),
     SCROLL("gold detection", "THARR", 1, 40, 100),
-    SCROLL("identify", "KERNOD WEL", 1, 180, 20),
     SCROLL("magic mapping", "ELAM EBOW", 1, 45, 100),
+    /* 200 zm */
+    SCROLL("create monster", "LEP GEX VEN ZEA", 1, 45, 200),
+    SCROLL("taming", "PRIRUTSENIE", 1, 15, 200),
     SCROLL("water", "DUAM XNAHT", 1, 35, 200),
     SCROLL("fire", "ANDOVA BEGARIN", 1, 30, 200),
     SCROLL("earth", "KIRJE", 1, 18, 200),
+    /* 250zm */
+    SCROLL("silence", "FOOBIE BLETCH", 1, /* 5 */0, 250),
+    SCROLL("stinking cloud", "VELOX NEB", 1, 18, 250),
+    /* 300zm */
+    SCROLL("genocide", "ELBIB YLOH", 1, 15, 300),
     SCROLL("punishment", "VE FORBRYDERNE", 1, 15, 300),
     SCROLL("charging", "HACKEM MUCHE", 1, 15, 300),
-    SCROLL("stinking cloud", "VELOX NEB", 1, 18, 300),
     SCROLL("consecration", "YUM YUM", 1, 0, 300),
     //SCROLL("wishing", "RATSANOPU", 1, 0, 9000),
     OBJECT(OBJ("wishing","RATSANOPU"),
            BITS(0,1,0,0,1,0,0,1,0,0,0,P_NONE,PAPER),
            0, SCROLL_CLASS, 0, 0, 5, 9000,
            0, 0, 0, 0, 6, HI_PAPER ),
-    SCROLL(NULL, "FOOBIE BLETCH", 1, 0, 100),
     SCROLL(NULL, "TEMOV", 1, 0, 100),
     SCROLL(NULL, "GARVEN DEH", 1, 0, 100),
     SCROLL(NULL, "READ ME", 1, 0, 100),

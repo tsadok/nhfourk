@@ -73,6 +73,10 @@ doread(const struct nh_cmd_arg *arg)
             "Yendor Academy of Alchemy, Class of '47",
             "Zombies aren't so tough. I'm more scared of an archon apocalypse.",
             "Owlbears:  All they want is a hug.  Is that so bad?",
+            "Lycanthropy Gives Me the Right To Bear Arms.", /* werebear arms */
+            "I am the Very Model of a Pious Individual", /* Gilbert & Sullivan
+                                                            via Yakko Warner */
+            "I'm a Gnome Lord.  Wanna Touch My Stone?",
             "Frobozz Magic Shirt Company", /* Quendor */
             "It's All About the Flatheads", /* i.e., the zorkmids */
             "Don't Panic",      /* HHGTTG */
@@ -1461,6 +1465,11 @@ seffects(struct obj *sobj, boolean *known)
             pline(msgc_substitute,
                   "Unfortunately, you can't grasp the details.");
         }
+        break;
+    case SCR_SILENCE:
+        /* This scroll isn't actually _implemented_ yet; I just needed
+           to get the save-breaking parts done first. */
+        pline(msgc_statusbad, "You hear nothing.");
         break;
     case SCR_CONSECRATION:
     {

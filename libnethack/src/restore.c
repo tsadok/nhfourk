@@ -571,6 +571,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->ulycn = mread32(mf);
     y->utrap = save_decode_32(mread32(mf), -moves, -moves);
     y->utraptype = mread32(mf);
+    y->usilence = mread32(mf);
     y->gotsacgifts = mread32(mf);
     y->ucramps = mread32(mf);
     y->uhunger = save_decode_32(mread32(mf), -moves, -moves);
