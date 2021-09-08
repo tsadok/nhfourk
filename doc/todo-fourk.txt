@@ -12,20 +12,10 @@
 ▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
+▒▒▒ * Need Slash'EM-32 human werebear.
+▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
-▒▒▒
-▒▒▒ * Implement the scroll of silence.
-▒▒▒   Scroll Price Category Notes:
-▒▒▒    20 - Identify
-▒▒▒    50 - light
-▒▒▒    60 - ench.weap., (blank)
-▒▒▒    80 - ench.arm., rem.curse
-▒▒▒   100 - destroy armor, confuse monster, scare monster,
-▒▒▒         teleportation, gold detection, magic mapping
-▒▒▒   200 - create monster, taming, water, earth, fire
-▒▒▒   250 - stinking cloud, silence
-▒▒▒   300 - genocide, punishment, charging, consecration
 ▒▒▒
 ▒▒▒ * Jackals won't wade into shallow water to reach and attack me.  _Maybe_
 ▒▒▒   that's ok for jackals, but check that it doesn't happen for larger foes.
@@ -232,6 +222,8 @@
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒   Things that can happen AFTER a save-compat freeze:
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒
+▒▒▒ * Finish implementing the scroll of silence.
 ▒▒▒
 ▒▒▒ * 10:45 < FIQ > jonadab: 8ff02c11d9979497396d4921bf0d7cf81808c5d1 3.6.1 commit might be relevant for you
 ▒▒▒
