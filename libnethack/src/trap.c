@@ -3047,7 +3047,7 @@ domagictrap(struct trap *trap)
                       body_part(BODY));
         u.uen = (u.uenmax += 2);
     } else if (fate < 10) {
-        int cnt = rnd(4);
+        int cnt = rnd(11 - fate);
 
         /* blindness effects */
         if (!resists_blnd(&youmonst)) {
