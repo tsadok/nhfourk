@@ -12,13 +12,11 @@
 ▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
-▒▒▒ * Need Slash'EM-32 human werebear.
+▒▒▒ * Tame cats should teleport near to the player (like the magic whistle effect)
+▒▒▒   any time the player opens a tin.  Thanks to paxed for the idea.
 ▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
 ▒▒▒   the current situation with old-version saves.
-▒▒▒
-▒▒▒ * Jackals won't wade into shallow water to reach and attack me.  _Maybe_
-▒▒▒   that's ok for jackals, but check that it doesn't happen for larger foes.
 ▒▒▒
 ▒▒▒ * Look at how the lamp charging code manages to allow charging a lit
 ▒▒▒   lamp; use a similar technique to fix the issue of lit candles
@@ -26,9 +24,6 @@
 ▒▒▒
 ▒▒▒ * Really really should enable highlighting of peacefuls to be disabled
 ▒▒▒   without turning off highlighting of pets.
-▒▒▒
-▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
-▒▒▒   Also, should it be the Caveman first sac gift?  Discuss.
 ▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Make runic weapons do special damage where appropriate.
@@ -51,6 +46,9 @@
 ▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,
 ▒▒▒   and lawful druid seems weird to me for some reason.)
 ▒▒▒   https://hardfought.org/etherpad/p/Druid_Design_Discussion
+▒▒▒
+▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
+▒▒▒   Also, should it be the Caveman first sac gift?  Discuss.
 ▒▒▒
 ▒▒▒ * Put serious thought into giving the negative potions more uses than
 ▒▒▒   blanking.  After midgame, you always have far more holy water than you

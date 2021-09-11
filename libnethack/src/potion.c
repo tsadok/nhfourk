@@ -561,8 +561,11 @@ peffects(struct obj *otmp)
         pline(msgc_statusbad, "Ooph!  This tastes like %s%s!",
               otmp->odiluted ? "watered down " : "",
               Hallucination ? "dandelion wine" : "liquid fire");
-        if (!otmp->blessed)
-            make_confused(itimeout_incr(HConfusion, dice(3, 8)), FALSE);
+        if (!otmp->blessed) {
+            /* per entrez via PatR (e44de714), booze hits harder if drinking on
+               an empty stomach */
+            make_confused(itimeout_incr(HConfusion, dice(2 + u.uhs, otmp->odiluted ? 5 : 8)), FALSE);
+        }
         /* the whiskey makes us feel better */
         if (!otmp->odiluted)
             healup(1, 0, FALSE, FALSE);

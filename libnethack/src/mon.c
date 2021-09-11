@@ -1162,7 +1162,7 @@ mfndpos(struct monst *mon, coord * poss,        /* coord poss[9] */
     int cnt = 0;
     uchar ntyp;
     uchar nowtyp;
-    boolean wantpool, poolok, lavaok, nodiag;
+    boolean wantpool, poolok, puddleok, lavaok, nodiag;
     boolean rockok = FALSE, treeok = FALSE, thrudoor;
     int maxx, maxy;
     int swarmcount = 0;
@@ -1178,6 +1178,39 @@ mfndpos(struct monst *mon, coord * poss,        /* coord poss[9] */
         (is_swimmer(mdat) && !wantpool);
     lavaok = is_flyer(mdat) || is_clinger(mdat) || likes_lava(mdat);
     thrudoor = ((flag & (ALLOW_WALL | BUSTDOOR)) != 0L);
+    puddleok = (poolok /* anything that can handle deep water, can also handle
+                          shallow water (wantpool being a separate question) */
+                || (/* shallowness doesn't help tiny creatures */
+                    (mdat->msize >= MZ_SMALL) &&
+                    /* many undead creatures hate crossing water */
+                    (mdat->mlet != S_LICH) &&
+                    (mdat->mlet != S_MUMMY) &&
+                    (mdat->mlet != S_VAMPIRE) &&
+                    (mdat->mlet != S_WRAITH) &&
+                    (mdat != &mons[PM_SKELETON]) &&
+                    /* most kinds of spiders are afraid of water */
+                    (mdat->mlet != S_SPIDER) &&
+                    /* cats don't like to get their paws wet */
+                    (mdat->mlet != S_FELINE) &&
+                    /* long worms avoid water for lore reasons */
+                    (!is_longworm(mon->data)) &&
+                    /* some things would dissolve */
+                    (mdat->mlet != S_JELLY) &&
+                    (mdat->mlet != S_PUDDING) &&
+                    (mdat->mlet != S_FUNGUS) &&
+                    (mdat != &mons[PM_PAPER_GOLEM]) &&
+                    /* iron golems would rust */
+                    (mdat != &mons[PM_IRON_GOLEM]) &&
+                    /* Honestly I put trappers on this list just because I
+                       don't want to debug their interactions with puddles;
+                       but we can pretend it's because they'd drown if they
+                       posed as part of the floor when it's flooded. */
+                    (mdat != &mons[PM_TRAPPER]) &&
+                    /* fire-dependent creatures don't like it either,
+                       though red dragons are powerful enough to handle
+                       it (and can fly in any case) */
+                    (mdat != &mons[PM_FIRE_VORTEX]) &&
+                    (mdat != &mons[PM_FIRE_ELEMENTAL])));
     if (flag & ALLOW_DIG) {
         struct obj *mw_tmp;
 
@@ -1235,12 +1268,14 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                    ((mlevel->locations[nx][ny].doormask & ~D_BROKEN) ||
                     Is_rogue_level(&u.uz))))))
                 continue;
-            if ((poolok || (wantpool == (is_pool(mlevel, nx,ny) ||
-                                         (is_puddle(mlevel, nx, ny) &&
-                                          !bigmonst(mon->data))))) &&
+            if ((poolok ||
+                 (puddleok && is_puddle(mlevel, nx, ny)) ||
+                 (wantpool == (is_pool(mlevel, nx,ny) ||
+                               (is_puddle(mlevel, nx, ny) &&
+                                (mon->data->msize < MZ_HUGE))))) &&
                 (lavaok || !is_lava(mlevel, nx,ny)) &&
-		/* iron golems and longworms avoid shallow water */
-		((mon->data != &mons[PM_IRON_GOLEM] && !is_longworm(mon->data))
+                /* iron golems and longworms avoid shallow water */
+                ((mon->data != &mons[PM_IRON_GOLEM] && !is_longworm(mon->data))
                  || !is_puddle(level, nx, ny))) {
                 int dispx, dispy;
                 boolean checkobj = OBJ_AT(nx, ny);
