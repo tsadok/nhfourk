@@ -438,7 +438,7 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
     }
     /* Handle runics: */
     if (otmp->orune && equipped) {
-        boolean weapondamage = !!(is_wep(otmp) && equipped);
+        /* boolean weapondamage = !!(is_wep(otmp) && equipped); */
         switch (otmp->orune) {
         case RUNE_NOTHING:
         case RUNE_NONE:
@@ -501,6 +501,12 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
             break;
         case RUNE_PEACE:
             /* TODO */
+            break;
+        default:
+            /* This is only intended to catch the TBA runes, which shouldn't
+               actually generate.  Any other rune should have a case above,
+               even if it doesn't DO anything. */
+            pline(msgc_debug, "Unknown rune: %d", otmp->orune);
             break;
         }
     }

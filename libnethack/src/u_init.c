@@ -1217,9 +1217,9 @@ augment_magic_chest_contents(int otyp, int oclass, int count)
 {
     int class = oclass;
     int i, tprob;
-    struct obj *otmp;
+    struct obj *otmp = NULL;
     for (i = 1; i <= count; i++) {
-        if (oclass == RANDOM_CLASS) {
+        if ((oclass == RANDOM_CLASS) && !otyp) {
             const struct icp *iprobs = magicchestprobs;
             for (tprob = rn2_on_rng(100, rng_main) + 1;
                  (tprob -= iprobs->iprob) > 0; iprobs++)
@@ -1244,8 +1244,10 @@ augment_magic_chest_contents(int otyp, int oclass, int count)
             otmp = (otyp) ? mksobj(level, otyp, TRUE, FALSE, rng_main) :
                             mkobj(level, class, FALSE, rng_main);
         }
-        obj_extract_self(otmp);
-        add_to_magic_chest(otmp);
+        if (otmp) {
+            obj_extract_self(otmp);
+            add_to_magic_chest(otmp);
+        }
     }
 }
 

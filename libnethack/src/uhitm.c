@@ -6,6 +6,7 @@
 #include "hack.h"
 #include "eshk.h"
 #include "alignrec.h"
+#include "runics.h"
 
 static boolean known_hitum(struct monst *, int *, const struct attack *, schar,
                            schar, int);
@@ -392,6 +393,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
     boolean get_dmg_bonus = TRUE;
     boolean ispoisoned = FALSE, needpoismsg = FALSE, poiskilled = FALSE;
     boolean silvermsg = FALSE, silverobj = FALSE, silvermaterial = SILVER;
+    boolean runemsg = FALSE, runetype = FALSE;
     boolean valid_weapon_attack = FALSE;
     boolean unarmed = !uwep && (!uarm || uskin()) && !uarms;
     int jousting = 0;
@@ -547,7 +549,54 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                     hittxt = TRUE;
                 } else if (obj->orune) {
                     xchar effect = rune_damage_type(obj->orune);
-                    
+                    if (!m_resists_damage_type(mon, effect)) {
+                        runemsg = TRUE;
+                        runetype = effect;
+                        switch(obj->orune) {
+                        case RUNE_FIRE:
+                        case RUNE_COLD:
+                            tmp = tmp * 5 / 3;
+                            break;
+                        case RUNE_SLEEP:
+                            sleep_monst(mon, rnd(10), -1);
+                            slept_monst(mon);
+                            break;
+                        case RUNE_POISON:
+                            tmp += rn1(10, 6);
+                            break;
+                        case RUNE_LIGHTNING:
+                            tmp = tmp * 9 / 4;
+                            break;
+                        case RUNE_ACID:
+                            tmp = (tmp + rn2(5)) * 3 / 2;
+                            break;
+                        case RUNE_MAGIC:
+                            tmp = tmp + dice(5,6);
+                            break;
+                        case RUNE_DRAIN:
+                            mon->mhpmax -= tmp;
+                            if (mon->mhpmax < 1)
+                                mon->mhpmax = 1;
+                            break;
+                        case RUNE_PEACE:
+                            tmp = 0;
+                            break;
+                        case RUNE_CANCELLATION:
+                            cancel_monst(mon, obj, &youmonst, TRUE, FALSE);
+                            break;
+                        case RUNE_DAMAGE:
+                        case RUNE_ACCURACY:
+                        case RUNE_NOTHING:
+                            break;
+                        default:
+                            /* This is only intended to catch the TBA runes,
+                               which shouldn't actually generate.  Any other
+                               rune should have a case above, even if it
+                               doesn't DO anything. */
+                            pline(msgc_debug, "Unknown rune: %d", obj->orune);
+                            break;
+                        }
+                    }
                 }
                 if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                     silvermsg = TRUE;
@@ -1164,6 +1213,85 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
         if (!noncorporeal(mdat))
             whom = msgcat(s_suffix(whom), " flesh");
         pline(combat_msgc(&youmonst, mon, cr_hit), fmt, whom);
+    }
+    if (runemsg && !Blind) {
+        const char *whom = mon_nam(mon);
+        if (Hallucination) {
+            pline(combat_msgc(&youmonst, mon, cr_hit),
+                  "The rune glows %s.  %s dances imicably.",
+                  hcolor("black"), msgupcasefirst(whom));
+        } else {
+            u.rune_known[runetype] = 1;
+            switch (runetype) {
+            case RUNE_FIRE:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows red.  %s burns.",
+                      msgupcasefirst(whom)); 
+                break;
+            case RUNE_COLD:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows blue.  %s freezes.",
+                      msgupcasefirst(whom)); 
+                break;
+            case RUNE_SLEEP:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows orange.  %s falls asleep.",
+                      msgupcasefirst(whom)); 
+                break;
+            case RUNE_POISON:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows yellowish green.  %s seems unwell.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_LIGHTNING:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows white.  %s is shocked.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_ACID:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows yellow.  %s is covered with goo.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_MAGIC:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows magenta.  A hail of magic missiles hits %s.",
+                      whom);
+                break;
+            case RUNE_DRAIN:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows dark purple.  %s seems less experienced.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_PEACE:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows light pink.  %s seems less hostile.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_CANCELLATION:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune does not glow.  %s does not notice.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_DAMAGE:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows brightly.  %s seems to be injured.",
+                      msgupcasefirst(whom));
+                break;
+            case RUNE_ACCURACY:
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows briefly.  %s fails to dodge.",
+                      msgupcasefirst(whom));
+                break;
+            default:
+                /* If I goof up and forget to include a rune on the list,
+                   still give the player a more-or-less coherent message,
+                   though it may not fit the effect as well as we'd like. */
+                pline(combat_msgc(&youmonst, mon, cr_hit),
+                      "The rune glows a strange color.  %s seems odd, somehow.",
+                      msgupcasefirst(whom));
+            }
+        }
     }
 
     if (needpoismsg)

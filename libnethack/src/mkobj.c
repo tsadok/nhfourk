@@ -559,9 +559,9 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
             if (artif && !rn2_on_rng(20, rng))
                 otmp = mk_artifact(lev, otmp, (aligntyp) A_NONE, rng);
             else if (artif && !rn2_on_rng(20, rng)) {
-                enum rune or = rn2_on_rng(RUNE_MAX + 1, rng);
-                if (rune_can_occur(or, runeslot(otmp))) {
-                    otmp->orune = or;
+                enum rune orun = rn2_on_rng(RUNE_MAX + 1, rng);
+                if (rune_can_occur(orun, runeslot(otmp))) {
+                    otmp->orune = orun;
                 }
             }
             else if ((otmp->spe > (1 + rn2_on_rng(5, rng))) && (!otmp->cursed))

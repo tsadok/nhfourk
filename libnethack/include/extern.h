@@ -1481,6 +1481,7 @@ extern boolean inhistemple(struct monst *);
 
 /* ### prop.c ### */
 
+extern boolean m_resists_damage_type(const struct monst *, xchar);
 extern unsigned m_has_property(const struct monst *, enum youprop,
                                unsigned, boolean);
 extern unsigned u_have_property(enum youprop, unsigned, boolean);

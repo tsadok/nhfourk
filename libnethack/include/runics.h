@@ -11,6 +11,7 @@
 
 extern boolean rune_can_occur(enum rune, enum objslot);
 extern enum objslot runeslot(struct obj *);
+extern xchar rune_damage_type(enum rune);
 
 #endif /* RUNICS_H */
 

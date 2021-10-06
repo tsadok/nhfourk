@@ -2219,6 +2219,14 @@ stackobj(struct obj *obj)
 static boolean
 mergable(struct obj *otmp, struct obj *obj)
 {
+    if (!obj) {
+        impossible("Attempting to merge non-existant object onto stack");
+        return FALSE;
+    }
+    if (!otmp) {
+        impossible("Attempting to merge object onto non-existant stack");
+        return FALSE;
+    }
     if (obj->otyp != otmp->otyp)
         return FALSE;
 

@@ -1655,7 +1655,8 @@ mbag_explodes(struct obj *obj, int depthin)
  * The input obj may be deleted in the process.
  * Based on the implementation of add_to_container.
  */
-struct obj *add_to_magic_chest(struct obj *obj)
+struct obj *
+add_to_magic_chest(struct obj *obj)
 {
     struct obj *otmp;
 
@@ -1667,7 +1668,7 @@ struct obj *add_to_magic_chest(struct obj *obj)
 
     /* merge if possible */
     for (otmp = magic_chest_objs; otmp; otmp = otmp->nobj)
-	if (merged(&otmp, &obj))
+	if (otmp && merged(&otmp, &obj))
             return otmp;
 
     extract_nobj(obj, &turnstate.floating_objects,
