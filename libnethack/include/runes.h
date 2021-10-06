@@ -60,7 +60,7 @@ enum rune {
     RUNE_TBA20,
 };
 /* Runes up to RUNE_MAX can actually be generated at present. */
-#define RUNE_MAX RUNE_PEACE
+#define RUNE_MAX RUNE_NOTHING
 #define RUNE_SAVEMAX RUNE_TBA20
 /* Some weapons are described by the game as "runed" even if they
    don't have any of the above special runes.  In that case we just
