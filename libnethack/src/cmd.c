@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Alex Smith, 2017-07-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -28,6 +28,7 @@ static int dospoilers(const struct nh_cmd_arg *);
 static int doquit(const struct nh_cmd_arg *);
 static int wiz_wish(const struct nh_cmd_arg *);
 static int wiz_identify(const struct nh_cmd_arg *);
+static int wiz_intrinsic(const struct nh_cmd_arg *);
 static int wiz_map(const struct nh_cmd_arg *);
 static int wiz_genesis(const struct nh_cmd_arg *);
 static int wiz_levelcide(const struct nh_cmd_arg *);
@@ -252,6 +253,8 @@ const struct cmd_desc cmdlist[] = {
      wiz_identify, CMD_DEBUG | CMD_EXT},
     {"impossible", "(DEBUG) test nonfatal error handling", 0, 0, TRUE,
      wiz_impossible, CMD_DEBUG | CMD_EXT},
+    {"intrinsic", "(DEBUG) set player character intrinsics", 0, 0, TRUE,
+     wiz_intrinsic, CMD_DEBUG | CMD_EXT},
     {"levelchange", "(DEBUG) change experience level", 0, 0, TRUE,
      wiz_level_change, CMD_DEBUG | CMD_EXT},
     {"levelcide", "(DEBUG) kill all other monsters on the level", 0, 0, TRUE,
@@ -370,6 +373,44 @@ wiz_identify(const struct nh_cmd_arg *arg)
 
     identify_pack(0);
 
+    return 0;
+}
+
+static int
+wiz_intrinsic(const struct nh_cmd_arg *arg)
+{
+    (void) arg;
+    struct nh_menulist menu;
+    const int *selected;
+    int i, accelerator;
+
+    static const char *const intrinsics[] = {
+        "deafness",
+        "blindness",
+    };
+
+    if (!wizard) {
+        impossible("wiz_intrinsic outside of debug mode?");
+        return 0;
+    }
+    init_menulist(&menu);
+
+    for (i = 0; i < SIZE(intrinsics); i++) {
+        const char *intrname = intrinsics[i];
+        accelerator = intrname[0];
+        add_menuitem(&menu, i, intrname, accelerator, FALSE);
+    }
+
+    display_menu(&menu, "Which intrinsic?", PICK_ONE,
+                 PLHINT_ANYWHERE, &selected);
+
+    if (!strcmp(intrinsics[*selected],"deafness")) {
+        pline(msgc_statusbad, "You go deaf.");
+        incr_itimeout(&HDeaf, 30);
+    } else if (!strcmp(intrinsics[*selected],"blindness")) {
+        pline(msgc_statusbad, "You go blind.");
+        incr_itimeout(&Blinded, 30);
+    }
     return 0;
 }
 
@@ -659,7 +700,7 @@ wiz_show_vision(const struct nh_cmd_arg *arg)
 {
     struct nh_menulist menu;
     int x, y, v;
-    char row[COLNO + 1];
+    char row[COLNO + 1] = {0};
 
     (void) arg;
 
@@ -869,7 +910,7 @@ doattributes(const struct nh_cmd_arg *arg)
     add_menutext(&menu, buf);
 
     wc = weight_cap();
-    buf = msgprintf("%-10s: %ld (", "burden", wc + (long) inv_weight());
+    buf = msgprintf("%-10s: %d (", "burden", inv_weight_total());
 
     switch (calc_capacity(wc / 4)) {
     case UNENCUMBERED:
@@ -1103,6 +1144,9 @@ nh_get_object_commands(int *count, char invlet)
     else if (obj->otyp == CAN_OF_GREASE)
         SET_OBJ_CMD('a', "apply", "Use %s to grease an item", 0);
     else if (obj->otyp == LOCK_PICK || obj->otyp == CREDIT_CARD ||
+             obj->otyp == IRON_KEY  || obj->otyp == STURDY_KEY ||
+             obj->otyp == DOOR_KEY  || obj->otyp == BRONZE_KEY ||
+             obj->otyp == BRASS_KEY || obj->otyp == SILVER_KEY ||
              obj->otyp == SKELETON_KEY)
         SET_OBJ_CMD('a', "apply", "Use %s to pick a lock", 0);
     else if (obj->otyp == TINNING_KIT)

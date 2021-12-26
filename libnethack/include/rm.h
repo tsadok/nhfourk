@@ -330,6 +330,8 @@ enum dungeon_symbols {
  * the size of temporary files and save files.
  */
 struct rm {
+    char struct_type;          /* Should always be 't' for this struct.
+                                  See doc/struct_types.txt for the list. */
     unsigned mem_bg:6;          /* remembered background */
     unsigned mem_trap:5;        /* remembered trap (0 = no trap) */
     unsigned mem_obj:10;        /* remembered object, +1 (0 = no object) */
@@ -476,9 +478,46 @@ struct wseg {
     xchar wx, wy;       /* the segment's position */
 };
 
+enum tracked_levelsound {
+    levsound_none = 0,
+    levsound_fountain,
+    levsound_sink,
+    levsound_throne,
+    levsound_vault,
+    levsound_vaultempty,
+    levsound_shop,
+    levsound_temple,
+    levsound_barracks,
+    levsound_graveyard,
+    levsound_zoo,
+    levsound_hive,
+    levsound_dragonhall,
+    levsound_swamp,
+
+    levsound_delphi,
+    levsound_portal_quest,
+    levsound_portal_advent,
+    levsound_drawbridge,
+    levsound_vibsquare,
+
+    levsound_unused_01,
+    levsound_unused_02,
+    levsound_unused_03,
+    levsound_unused_04,
+    levsound_unused_05,
+    levsound_unused_06,
+    levsound_unused_07,
+    levsound_unused_08,
+    levsound_unused_09,
+    levsound_unused_10,
+};
+#define LAST_TRACKED_LEVELSOUND levsound_unused_10
+#define NUM_OF_TRACKED_LEVELSOUNDS (1 + (int) levsound_unused_10)
 
 struct ls_t;
 struct level {
+    char struct_type;  /* Should always be 'L' for this struct.
+                          See doc/struct_types.txt for the list. */
     char levname[64];   /* as given by the player via donamelevel */
     struct rm locations[COLNO][ROWNO];
     struct obj *objects[COLNO][ROWNO];
@@ -489,6 +528,7 @@ struct level {
     struct monst *monlist;
     struct damage *damagelist;
     struct levelflags flags;
+    boolean heardsound[NUM_OF_TRACKED_LEVELSOUNDS];
 
     timer_element *lev_timers;
     struct ls_t *lev_lights;

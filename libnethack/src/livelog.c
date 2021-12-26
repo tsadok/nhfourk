@@ -79,7 +79,7 @@ livelog_write_event(const char *buffer) {
     if (!uname)
         uname = "";
     munge_llstring(buf, uname, ENTRYSIZE + 1);
-    livelog_write_string(msgprintf("version=%d.%d.%d" SEP "variant=Fourk" SEP
+    livelog_write_string(msgprintf("version=4.%d.%d.%d" SEP "variant=Fourk" SEP
                                    "player=%s" SEP "charname=%s" SEP
                                    "turns=%1d" SEP "depth=%1d" SEP "%s" SEP
                                    "eventdate=%ld" SEP "uid=%d" SEP
@@ -87,7 +87,8 @@ livelog_write_event(const char *buffer) {
                                    "align=%s" SEP "birthdate=%ld" SEP
                                    "starttime=%" PRIdLEAST64 SEP
                                    "eventtime=%" PRIdLEAST64 SEP
-                                   "xplevel=%1d" SEP "mode=%s",
+                                   "xplevel=%1d" SEP "mode=%s" SEP
+                                   "gameidnum=%d",
                                    VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL,
                                    buf, u.uplname, moves, depth(&u.uz), buffer,
                                    yyyymmdd(utc_time()), getuid(),
@@ -103,7 +104,8 @@ livelog_write_event(const char *buffer) {
                                               (flags.polyinit_mnum != -1) ?
                                               "polyinit" :
                                               flags.challenge ? "challenge"
-                                              : "normal")));
+                                              : "normal"),
+                                   u.gameidnum));
 }
 
 void

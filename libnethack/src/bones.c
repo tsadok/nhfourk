@@ -48,10 +48,13 @@ no_bones_level(d_level * lev)
 
     return (boolean) (((sptr = Is_special(lev)) != 0 && !sptr->boneid)
                       || !find_dungeon(lev).boneid
-                      /* no bones on the last or multiway branch levels */
+                      /* no bones on the multiway branch levels */
                       /* in any dungeon (level 1 isn't multiway).  */
-                      || Is_botlevel(lev)
                       || (Is_branchlev(lev) && lev->dlevel > 1)
+                      /* No bones at the Castle, for the time being, because
+                         it's undiggable and the pits can be filled, and
+                         requiring levelport into Gehennom every time is no. */
+                      || (Is_stronghold(lev))
                       /* no bones in the invocation level */
                       || (In_hell(lev) &&
                           lev->dlevel == dunlevs_in_dungeon(lev) - 1)
@@ -424,7 +427,9 @@ getbones(d_level *levnum)
 
     /* save bones files for real games; also turn them off in set-seed play
        because they wouldn't be the same for different players */
-    if (discover || !flags.bones_enabled || *flags.setseed)
+    if (discover || (flags.bones_enabled == bones_disabled) ||
+        (flags.bones_enabled == bones_normal && Is_special(levnum)) ||
+        *flags.setseed)
         goto fail;
 
     /* note: this rn2 call has to be before we check to see if a bones file

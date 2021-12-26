@@ -23,20 +23,20 @@ static const int nasties[] = {
     PM_BLACK_DRAGON, PM_GREEN_DRAGON, PM_OWLBEAR, PM_PURPLE_WORM,
     PM_ROCK_TROLL, PM_XAN, PM_GREMLIN, PM_UMBER_HULK, PM_VAMPIRE_LORD,
     PM_XORN, PM_ELF_LORD, PM_ELVENKING, PM_YELLOW_DRAGON, PM_LEOCROTTA,
-    PM_BALUCHITHERIUM, PM_FIRE_GIANT, PM_COUATL, PM_CAPTAIN, 
+    PM_MAMMOTH, PM_FIRE_GIANT, PM_COUATL, PM_CAPTAIN,
     PM_WINGED_GARGOYLE, PM_MASTER_MIND_FLAYER, PM_FIRE_ELEMENTAL, 
     PM_JABBERWOCK, PM_ARCH_LICH, PM_OGRE_KING, PM_OLOG_HAI,
     PM_IRON_GOLEM, PM_OCHRE_JELLY, PM_GREEN_SLIME, PM_DISENCHANTER,
-    PM_ISLAND_NYMPH
+    PM_ISLAND_NYMPH, PM_DIRE_BEAR
 };
 
 static const unsigned wizapp[] = {
     PM_HUMAN, PM_WATER_DEMON, PM_VAMPIRE,
-    PM_RED_DRAGON, PM_TROLL, PM_UMBER_HULK,
+    PM_ANCIENT_RED_DRAGON, PM_TROLL, PM_UMBER_HULK,
     PM_XORN, PM_XAN, PM_COCKATRICE,
-    PM_FLOATING_EYE,
+    PM_FLOATING_EYE, PM_DEEP_ETTIN,
     PM_GUARDIAN_NAGA,
-    PM_TRAPPER
+    PM_TRAPPER, PM_DIRE_BEAR, PM_DEEP_ETTIN
 };
 
 
@@ -297,8 +297,9 @@ strategy(struct monst *mtmp, boolean magical_target)
     struct obj *lepgold, *ygold;
     int lepescape = FALSE;
     if (monsndx(mtmp->data) == PM_LEPRECHAUN &&
-        ((lepgold = findgold(mtmp->minvent)) &&
-         (lepgold->quan > ((ygold = findgold(invent)) ? ygold->quan : 0L))))
+        ((lepgold = findgold(mtmp->minvent, TRUE)) &&
+         (lepgold->quan >
+          ((ygold = findgold(invent, TRUE)) ? ygold->quan : 0L))))
         lepescape = TRUE;
 
     /* Below half health, or when fleeing, we ignore what we were previously
@@ -825,7 +826,11 @@ resurrect(void)
     if (mtmp) {
         mtmp->msleeping = 0;
         msethostility(mtmp, TRUE, TRUE);
-        pline(msgc_npcvoice, "A voice booms out...");
+        if (canhear())
+            pline(msgc_npcvoice, "A voice booms out...");
+        /* In vanilla, you only get this if you can hear; but the Wizard of
+           Yendor is a sufficiently powerful entity, it seems to me he ought to
+           have a way to speak directly into your mind -- NAE */
         verbalize(msgc_npcanger,
                   "So thou thought thou couldst %s me, fool.", verb);
     }
@@ -923,6 +928,8 @@ static const char *const random_malediction[] = {
 void
 cuss(struct monst *mtmp)
 {
+    if (Deaf)
+        return;
     if (mtmp->iswiz) {
         if (!rn2(5))    /* typical bad guy action */
             pline(msgc_npcvoice, "%s laughs fiendishly.", Monnam(mtmp));
@@ -936,7 +943,11 @@ cuss(struct monst *mtmp)
                       random_insult[rn2(SIZE(random_insult))]);
         else if (mtmp->mhp < 5 && !rn2(2))      /* Parthian shot */
             verbalize(msgc_npcvoice,
-                      rn2(2) ? "I shall return." : "I'll be back.");
+                      rn2(2) ? "I shall return." :
+                      Hallucination ? "I'll be Bach" : "I'll be back.");
+        else if (!rn2(5))
+            verbalize(msgc_npcvoice, "Your mother was a Hittite, and "
+                      "your father was an Amorite!");
         else
             verbalize(msgc_npcvoice, "%s %s!",
                       random_malediction[rn2(SIZE(random_malediction))],

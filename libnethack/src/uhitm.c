@@ -391,7 +391,7 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
     boolean hittxt = FALSE, destroyed = FALSE, already_killed = FALSE;
     boolean get_dmg_bonus = TRUE;
     boolean ispoisoned = FALSE, needpoismsg = FALSE, poiskilled = FALSE;
-    boolean silvermsg = FALSE, silverobj = FALSE;
+    boolean silvermsg = FALSE, silverobj = FALSE, silvermaterial = SILVER;
     boolean valid_weapon_attack = FALSE;
     boolean unarmed = !uwep && (!uarm || uskin()) && !uarms;
     int jousting = 0;
@@ -419,13 +419,16 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
         /* So do silver rings.  Note: rings are worn under gloves, so you don't
            get both bonuses. */
         if (!uarmg) {
-            if (uleft && objects[uleft->otyp].oc_material == SILVER)
+            int hated_material = hates_material(mdat, SILVER) ? SILVER :
+                hates_material(mdat, IRON) ? IRON : 0;
+            if (uleft && objects[uleft->otyp].oc_material == hated_material)
                 barehand_silver_rings++;
-            if (uright && objects[uright->otyp].oc_material == SILVER)
+            if (uright && objects[uright->otyp].oc_material == hated_material)
                 barehand_silver_rings++;
-            if (barehand_silver_rings && hates_silver(mdat)) {
-                tmp += rnd(20);
+            if (barehand_silver_rings && hates_material(mdat, hated_material)) {
+                tmp += rnd(material_damage(hated_material));
                 silvermsg = TRUE;
+                silvermaterial = hated_material;
             }
         }
     } else {
@@ -451,11 +454,11 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                 /* need to duplicate this check for silver arrows: they aren't
                    caught below as they're weapons, and aren't caught in dmgval
                    as they aren't melee weapons. */
-                if (objects[obj->otyp].oc_material == SILVER &&
-                    hates_silver(mdat)) {
+                if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                     silvermsg = TRUE;
                     silverobj = TRUE;
-                    tmp += rnd(20);
+                    silvermaterial = objects[obj->otyp].oc_material;
+                    tmp += rnd(material_damage(silvermaterial));
                 }
                 if (!thrown && obj == uwep && obj->otyp == BOOMERANG &&
                     rnl(4) == 4 - 1) {
@@ -498,7 +501,8 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                     if ((wtype = uwep_skill_type()) != P_NONE)
                         tmp += rnd(1 + (3 * P_SKILL(wtype) * P_SKILL(wtype) / 2));
                     hittxt = TRUE;
-                } else if (dieroll == 2 && obj == uwep &&
+                } else if (dieroll == 2 &&
+                           (obj == uwep || (obj == uswapwep && u.twoweap)) &&
                            obj->oclass == WEAPON_CLASS &&
                            /* No penalty for being a giant: two-handed weapons
                               count as two-handed for this regardless of whether
@@ -542,10 +546,10 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                         return TRUE;
                     hittxt = TRUE;
                 }
-                if (objects[obj->otyp].oc_material == SILVER &&
-                    hates_silver(mdat)) {
+                if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                     silvermsg = TRUE;
                     silverobj = TRUE;
+                    silvermaterial = objects[obj->otyp].oc_material;
                 }
                 if (u.usteed && !thrown && tmp > 0 &&
                     obj->otyp == LANCE && mon != u.ustuck) {
@@ -917,11 +921,11 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                      * Things like silver wands can arrive here so
                      * so we need another silver check.
                      */
-                    if (objects[obj->otyp].oc_material == SILVER &&
-                        hates_silver(mdat)) {
-                        tmp += rnd(20);
+                    if (hates_material(mdat, objects[obj->otyp].oc_material)) {
                         silvermsg = TRUE;
                         silverobj = TRUE;
+                        silvermaterial = objects[obj->otyp].oc_material;
+                        tmp += rnd(material_damage(silvermaterial));
                     }
                 }
             }
@@ -1141,10 +1145,13 @@ hmon_hitmon(struct monst *mon, struct obj *obj, int thrown, int dieroll,
                 fmt = "Your silver rings sear %s!";
             else if (silverobj && *saved_oname) {
                 fmt = msgprintf("Your %s%s %s %%s!",
-                                strstri(saved_oname, "silver") ? "" : "silver ",
+                                strstri(saved_oname,
+                                        material_name(silvermaterial)) ? "" :
+                                msgprintf("%s ", material_name(silvermaterial)),
                                 saved_oname, vtense(saved_oname, "sear"));
             } else
-                fmt = "The silver sears %s!";
+                fmt = msgprintf("The %s sears %%s!",
+                                material_name(silvermaterial));
         } else {
             whom = msgupcasefirst(whom);       /* "it" -> "It" */
             fmt = "%s is seared!";
@@ -1559,7 +1566,7 @@ damageum(struct monst *mdef, const struct attack *mattk)
     case AD_SGLD:
         /* This you as a leprechaun, so steal real gold only, no lesser coins */
         {
-            struct obj *mongold = findgold(mdef->minvent);
+            struct obj *mongold = findgold(mdef->minvent, TRUE);
 
             if (mongold) {
                 obj_extract_self(mongold);
@@ -2034,6 +2041,7 @@ do_iceblock(struct monst * mdef, int dmg)
             pline(mdef->mtame ? msgc_petcombatbad : msgc_monneutral,
                   "%s is momentarily encased in a block of ice.",
                   Monnam(mdef));
+            level->heardsound[levsound_vibsquare] = TRUE;
             pline(t->tseen ? msgc_levelsound : msgc_discoverportal,
                   "The block of ice vibrates strangely and shatters.");
         }
@@ -2633,7 +2641,7 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
             break;      /* try this one */
     }
     /* Note: tmp not always used */
-    if (ptr->mattk[i].damn)
+    if (ptr->mattk[i].damn && ptr->mattk[i].damd)
         tmp = dice((int)ptr->mattk[i].damn, (int)ptr->mattk[i].damd);
     else if (ptr->mattk[i].damd)
         tmp = dice((int)mon->m_lev + 1, (int)ptr->mattk[i].damd);
@@ -2853,18 +2861,21 @@ passive(struct monst *mon, boolean mhit, int malive, uchar aatyp)
         {
             const char *nambuf = Monnam(mon);
             xchar tx = mon->mx, ty = mon->my;
+            struct trap *trap;
             mon->mtrapped = 0;
             remove_monster(level, tx, ty);
             u.ux0 = u.ux; u.uy0 = u.uy;
             u.ux = tx;    u.uy = ty;
             if (u.usteed) {
                 u.usteed->mx = u.ux; u.usteed->my = u.uy; }
-            /* TODO: handle you getting displaced into trap. */
+            u.utrap = 0;
+            trap = t_at(level, u.ux, u.uy);
             place_monster(mon, u.ux0, u.uy0);
             newsym(u.ux, u.uy);
             newsym(mon->mx, mon->my);
             pline_once(combat_msgc(mon, &youmonst, cr_hit),
                        "%s displaces you!", nambuf);
+            if (trap) { dotrap(trap, 0); }
             break;
         }
         case AD_SCLD:

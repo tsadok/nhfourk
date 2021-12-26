@@ -6,6 +6,7 @@
 # include "global.h"
 # include "attrib.h"
 # include "align.h"
+# include "achieve.h"
 
 /* Flags to control pick_[race,role,gend,align] routines in role.c */
 # define PICK_RANDOM    0
@@ -34,7 +35,6 @@ struct RoleAdvance {
 struct Role {
         /*** Strings that name various things ***/
     struct RoleName name;       /* the role's name (from u_init.c) */
-    struct RoleName rank[9];    /* names for experience levels (from botl.c) */
     const char *lgod, *ngod, *cgod;     /* god names (from pray.c) */
     const char *filecode;       /* abbreviation for use in file names */
     const char *homebase;       /* quest leader's location (from questpgr.c) */
@@ -82,6 +82,12 @@ struct Role {
     int spelstat;       /* which stat (A_) is used */
     int spelspec;       /* spell (SPE_) the class excels at */
     int spelsbon;       /* penalty (-bonus) for that spell */
+
+    enum achievement questach;
+    int unlocked;       /* this is the constant that's checked to decide
+                           if the role is unlocked for use or not */
+    int unlockconst;    /* here, use the allroles one if always-unlocked,
+                           to keep it unique for each role */
 
         /*** Properties in variable-length arrays ***/
     /* intrinsics (see attrib.c) */
@@ -131,6 +137,11 @@ struct Race {
     xchar attrmax[A_MAX];       /* maximum allowable attribute */
     struct RoleAdvance hpadv;   /* hit point advancement */
     struct RoleAdvance enadv;   /* energy advancement */
+
+    int unlockedrace;   /* this is the constant that's checked to decide
+                           if the role is unlocked for use or not */
+    int raceunlconst;   /* here, use the allroles one if always-unlocked,
+                           to keep it unique for each role */
 
         /*** Properties in variable-length arrays ***/
     /* intrinsics (see attrib.c) */

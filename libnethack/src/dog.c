@@ -35,7 +35,9 @@ pet_type(struct newgame_options *ngo)
 {
     int which_pet = rn2(2);
 
-    if (urole.petnum != NON_PM)
+    if (Race_if(PM_VALKYRIE))
+        return PM_WINTER_WOLF;
+    else if (urole.petnum != NON_PM)
         return urole.petnum;
     else if (ngo && ngo->preferred_pet == 'c')
         return PM_KITTEN;
@@ -147,7 +149,7 @@ makedog(struct newgame_options *ngo)
         return NULL;
 
     pettype = pet_type(ngo);
-    if (pettype == PM_PUPPY)
+    if (pettype == PM_PUPPY || pettype == PM_WINTER_WOLF_CUB)
         petname = ngo->dogname;
     else if (pettype == PM_PONY)
         petname = ngo->horsename;
@@ -267,9 +269,9 @@ mon_arrive(struct monst *mtmp, boolean with_you)
 
     for (otmp = mtmp->minvent; otmp; otmp = otmp->nobj) {
         if (!otmp->olev && otmp->timed) {
-            timer_element *tmr;
+            struct timer_element *tmr;
             int fixed = 0;
-            for (tmr = &level->lev_timers; tmr; tmr = tmr->next) {
+            for (tmr = level->lev_timers; tmr; tmr = tmr->next) {
                 if (tmr->arg == (void *) otmp) {
                     otmp->olev = level;
                     fixed++;
@@ -784,7 +786,7 @@ dogfood(const struct monst *mon, struct obj *obj)
         if (obj->otyp == AMULET_OF_STRANGULATION ||
             obj->otyp == RIN_SLOW_DIGESTION)
             return TABU;
-        if (hates_silver(mon->data) && objects[obj->otyp].oc_material == SILVER)
+        if (hates_material(mon->data, objects[obj->otyp].oc_material))
             return TABU;
         if (mon->data == &mons[PM_GELATINOUS_CUBE] && is_organic(obj))
             return ACCFOOD;

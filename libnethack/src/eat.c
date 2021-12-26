@@ -270,7 +270,10 @@ touchfood(void)
         if ((!carried(*uttf) && costly_spot((*uttf)->ox, (*uttf)->oy) &&
              !(*uttf)->no_charge) || (*uttf)->unpaid) {
             /* create a dummy duplicate to put on bill */
-            verbalize(msgc_unpaid, "You bit it, you bought it!");
+            if (Deaf)
+                pline(msgc_unpaid, "Your meal is placed on your bill.");
+            else
+                verbalize(msgc_unpaid, "You bit it, you bought it!");
             bill_dummy_object(*uttf);
         }
         nutrition_calculations(*uttf, &((*uttf)->oeaten), NULL, NULL);
@@ -350,6 +353,9 @@ done_eating(boolean message)
 
     if (message)
         pline(msgc_actionok, "You finish eating %s.", food_xname(otmp, TRUE));
+
+    if (otmp->otyp == SLIME_MOLD)
+        achievement(achieve_eat_slimemold);
 
     if (otmp->otyp == CORPSE)
         cpostfx(otmp->corpsenm);
@@ -722,25 +728,28 @@ cpostfx(int pm)
         catch_lycanthropy = TRUE;
         u.ulycn = PM_WEREWOLF;
         break;
+    case PM_HUMAN_WEREBEAR:
+        catch_lycanthropy = TRUE;
+        u.ulycn = PM_WEREBEAR;
+        break;
     case PM_NURSE:
         if (Upolyd)
             u.mh = u.mhmax;
         else
             u.uhp = u.uhpmax;
         break;
-    case PM_STALKER:
-        if (!Invis) {
-            set_itimeout(&HInvis, (long)rn1(100, 50));
-            if (!Blind && !BInvis)
-                self_invis_message();
-        } else {
-            if (!(HInvis & INTRINSIC))
-                pline(msgc_intrgain, "You feel hidden!");
-            HInvis |= FROMOUTSIDE;
-            HSee_invisible |= FROMOUTSIDE;
+    case PM_STALKER: {
+        boolean was_invis = !!Invis;
+        incr_itimeout(&HInvis, (long) rn1(200, 200));
+        if (!was_invis && !Blind && !BInvis) {
+            self_invis_message();
+        }
+        if (was_invis) {
+            incr_itimeout(&HSee_invisible, (long) rn1(200, 600));
         }
         newsym(u.ux, u.uy);
         /* fall into next case */
+    }
     case PM_YELLOW_LIGHT:
         /* fall into next case */
     case PM_GIANT_BAT:
@@ -879,8 +888,11 @@ costly_tin(const char *verb /* if 0, the verb is "open" */ )
           costly_spot(u.utracked[tos_tin]->ox, u.utracked[tos_tin]->oy) &&
           !u.utracked[tos_tin]->no_charge)
          || u.utracked[tos_tin]->unpaid)) {
-        verbalize(msgc_unpaid, "You %s it, you bought it!",
-                  verb ? verb : "open");
+        if (Deaf)
+            pline(msgc_unpaid, "The cost of the tin is placed on your bill.");
+        else
+            verbalize(msgc_unpaid, "You %s it, you bought it!",
+                      verb ? verb : "open");
         if (u.utracked[tos_tin]->quan > 1L)
             u.utracked[tos_tin] = splitobj(u.utracked[tos_tin], 1L);
         bill_dummy_object(u.utracked[tos_tin]);
@@ -901,6 +913,8 @@ eat_tin_one_turn(void)
     const char *what;
     int which, mnum;
     int foodwarn;
+    struct monst *mtmp;
+    struct monst *nextmon;
 
     /* The !u.utracked[tos_tin] case can't happen in the current codebase
        (there's no need for special handling to identify which object is being
@@ -1020,6 +1034,7 @@ eat_tin_one_turn(void)
 
         u.utracked[tos_tin]->dknown = u.utracked[tos_tin]->known = TRUE;
         cprefx(mnum, FALSE);
+
         /* We call action_completed() here directly, so that the action is not
          * interruped if the player becomes helpless due to cpostfx. */
         action_completed();
@@ -1068,6 +1083,22 @@ eat_tin_one_turn(void)
         break_conduct(conduct_food);
     }
 use_me:
+    for (mtmp = level->monlist; mtmp; mtmp = nextmon) {
+        nextmon = mtmp->nmon;       /* trap might kill kitty */
+        if (DEADMONSTER(mtmp))
+            continue;
+        if ((mtmp->mtame) && (mtmp->data->mlet == S_FELINE)) {
+            if (mtmp->mtrapped) {
+                /* no longer in previous trap (affects mintrap) */
+                mtmp->mtrapped = 0;
+                fill_pit(level, mtmp->mx, mtmp->my);
+            }
+            mnexto(mtmp);
+            if (mintrap(mtmp) == 2)
+                change_luck(-1);
+        }
+    }
+
     if (carried(u.utracked[tos_tin]))
         useup(u.utracked[tos_tin]);
     else
@@ -1171,6 +1202,7 @@ rottenfood(struct obj *obj)
                 (u.usteed) ? "saddle" : surface(u.ux, u.uy);
         pline(msgc_statusbad, "The world spins and %s %s.", what, where);
         if (!Levitation && !Flying && !u.usteed &&
+            !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE) &&
             is_damp_terrain(level, u.ux, u.uy))
             water_damage_chain(invent, FALSE);
         helpless(rnd(10), hr_fainted, "unconscious from rotten food", NULL);
@@ -1602,7 +1634,8 @@ eatspecial(int nutrition, struct obj *otmp)
 }
 
 /* NOTE: the order of these words exactly corresponds to the
-   order of oc_material values #define'd in objclass.h. */
+   order of oc_material values #define'd in objclass.h.
+   Some entries are different from matname[] in objnam.c */
 static const char *const foodwords[] = {
     "meal", "liquid", "wax", "food", "meat",
     "paper", "cloth", "leather", "wood", "bone", "scale",
@@ -2263,10 +2296,10 @@ newuhs(boolean incr)
                       "capabilities.");
             else if (incr &&
                      (Role_if(PM_WIZARD) || Race_if(PM_ELF) ||
-                      Role_if(PM_VALKYRIE)))
+                      Race_if(PM_VALKYRIE)))
                 pline(msgc_fatal, "%s needs food, badly!",
-                      (Role_if(PM_WIZARD) ||
-                       Role_if(PM_VALKYRIE)) ? urole.name.m : "Elf");
+                      (Role_if(PM_WIZARD) ? urole.name.m :
+                       Race_if(PM_VALKYRIE) ? "Valkyrie" : "Elf"));
             else
                 pline(incr ? msgc_fatal : msgc_statusheal,
                       (!incr) ? "You feel less faint." : (u.uhunger < 45) ?

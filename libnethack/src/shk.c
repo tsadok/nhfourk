@@ -60,11 +60,15 @@ static boolean rob_shop(struct monst *);
 static struct obj *find_oid_lev(struct level *lev, unsigned id);
 static const char *cad(void);
 
+#define muteshk(shkp)   ((shkp)->msleeping || !(shkp)->mcanmove || \
+                         (shkp)->data->msound <= MS_ANIMAL)
+
 /*
     invariants: obj->unpaid iff onbill(obj) [unless bp->useup]
         obj->quan <= bp->bquan
  */
 
+static const char *angrytexts[] = {"quite upset", "ticked off", "furious"};
 
 /* Transfer money from inventory to monster when paying shopkeepers, priests,
    oracle, succubus, & other demons. Simple with only gold coins. This routine
@@ -76,7 +80,7 @@ static const char *cad(void);
 long
 money2mon(struct monst *mon, long amount)
 {
-    struct obj *ygold = findgold(invent);
+    struct obj *ygold = findgold(invent, FALSE);
 
     if (amount <= 0) {
         impossible("%s payment in money2mon!", amount ? "negative" : "zero");
@@ -105,7 +109,7 @@ money2mon(struct monst *mon, long amount)
 void
 money2u(struct monst *mon, long amount)
 {
-    struct obj *mongold = findgold(mon->minvent);
+    struct obj *mongold = findgold(mon->minvent, FALSE);
 
     if (amount <= 0) {
         impossible("%s payment in money2u!", amount ? "negative" : "zero");
@@ -297,10 +301,10 @@ call_kops(struct monst *shkp, boolean nearshop)
     if (canhear())
         pline(msgc_levelwarning, "An alarm sounds!");
 
-    nokops = ((mvitals[PM_KEYSTONE_KOP].mvflags & G_GONE) &&
-              (mvitals[PM_KOP_SERGEANT].mvflags & G_GONE) &&
-              (mvitals[PM_KOP_LIEUTENANT].mvflags & G_GONE) &&
-              (mvitals[PM_KOP_KAPTAIN].mvflags & G_GONE));
+    nokops = ((mvitals[PM_SOLDIER].mvflags & G_GONE) &&
+              (mvitals[PM_SERGEANT].mvflags & G_GONE) &&
+              (mvitals[PM_LIEUTENANT].mvflags & G_GONE) &&
+              (mvitals[PM_CAPTAIN].mvflags & G_GONE));
 
     if (!angry_guards(!canhear()) && nokops) {
         if (canhear())
@@ -317,14 +321,14 @@ call_kops(struct monst *shkp, boolean nearshop)
         if (nearshop) {
             /* Create swarm around you, if you merely "stepped out" */
             if (flags.verbose)
-                pline_implied(msgc_levelwarning, "The Keystone Kops appear!");
+                pline_implied(msgc_levelwarning, "The National Guard appears!");
             mm.x = u.ux;
             mm.y = u.uy;
             makekops(&mm);
             return;
         }
 
-        pline_implied(msgc_levelwarning, "The Keystone Kops are after you!");
+        pline_implied(msgc_levelwarning, "The National Guard is after you!");
 
         /* Create swarm near down staircase (hinders return to level) */
         if (isok(level->dnstair.sx, level->dnstair.sy)) {
@@ -386,9 +390,15 @@ u_left_shop(char *leavestring, boolean newlev)
          * Player just stepped onto shop-boundary (known from above logic).
          * Try to intimidate him into paying his bill
          */
-        verbalize(msgc_npcvoice,
+        if (!Deaf && !muteshk(shkp))
+            verbalize(msgc_npcvoice,
                   NOTANGRY(shkp) ? "%s!  Please pay before leaving." :
                   "%s!  Don't you leave without paying!", u.uplname);
+        else
+            pline(msgc_npcvoice,
+                  "%s %s that you need to pay before leaving%s", shkname(shkp),
+                  ((NOTANGRY(shkp)) ? "points out" : "makes it clear"),
+                  ((NOTANGRY(shkp)) ? "." : "!"));
         return;
     }
 
@@ -507,23 +517,45 @@ u_entered_shop(char *enterstring)
     if (Invis) {
         pline_implied(msgc_notresisted, "%s senses your presence.",
                       shkname(shkp));
-        verbalize(msgc_npcvoice, "Invisible customers are not welcome!");
+        if (!Deaf && !muteshk(shkp))
+            verbalize(msgc_npcvoice, "Invisible customers are not welcome!");
+        else
+            pline(msgc_notresisted,
+                  "%s stands firm as if %s knows you are there.",
+                  shkname(shkp), mhe(shkp));
         return;
     }
 
     rt = level->rooms[*enterstring - ROOMOFFSET].rtype;
 
     if (ANGRY(shkp)) {
-        verbalize(msgc_npcvoice,
-                  "So, %s, you dare return to %s %s?!", u.uplname,
-                  s_suffix(shkname(shkp)), shtypes[rt - SHOPBASE].name);
+        if (!Deaf && !muteshk(shkp))
+            verbalize(msgc_npcvoice,
+                      "So, %s, you dare return to %s %s?!", u.uplname,
+                      s_suffix(shkname(shkp)), shtypes[rt - SHOPBASE].name);
+            else
+                pline(msgc_npcanger, "%s seems %s over your return to %s %s!",
+                      shkname(shkp),
+                      angrytexts[rn2(SIZE(angrytexts))],
+                      mhis(shkp),
+                      (shtypes[rt - SHOPBASE].name));
     } else if (eshkp->robbed) {
-        pline(msgc_npcvoice, "%s mutters imprecations against shoplifters.",
-              shkname(shkp));
+        if (!Deaf)
+            pline(msgc_npcvoice, "%s mutters imprecations against shoplifters.",
+                  shkname(shkp));
+        else
+            pline(msgc_monneutral, "%s is combing through %s inventory list.",
+                  shkname(shkp), mhis(shkp));
     } else {
-        verbalize(msgc_npcvoice, "%s, %s!  Welcome%s to %s %s!", Hello(shkp),
-                  u.uplname, eshkp->visitct++ ? " again" : "",
-                  s_suffix(shkname(shkp)), shtypes[rt - SHOPBASE].name);
+        if (!Deaf && !muteshk(shkp)) {
+            verbalize(msgc_npcvoice, "%s, %s!  Welcome%s to %s %s!",
+                      Hello(shkp), u.uplname, eshkp->visitct++ ? " again" : "",
+                      s_suffix(shkname(shkp)), shtypes[rt - SHOPBASE].name);
+        } else
+            pline(msgc_levelsound, "You enter %s %s%s!",
+                  s_suffix(shkname(shkp)),
+                  shtypes[rt - SHOPBASE].name,
+                  eshkp->visitct++ ? " again" : "");
     }
     /* can't do anything about blocking if teleported in */
     if (!inside_shop(level, u.ux, u.uy)) {
@@ -544,23 +576,40 @@ u_entered_shop(char *enterstring)
                 while ((pick = pick->nobj) != 0)
                     if (pick->otyp == PICK_AXE)
                         ++cnt;
-            } else {    /* assert(mattock != 0) */
-                tool = "mattock";
+            } else {
+                if (!Deaf && !muteshk(shkp)) {
+                    tool = "mattock";
+                    /* [ALI] Shopkeeper identifies mattock(s) */
+                    if (!Blind)
+                        makeknown(DWARVISH_MATTOCK);
+                } else {    /* assert(mattock != 0) */
+                    tool = "pick";
+                }
                 while ((mattock = mattock->nobj) != 0)
                     if (mattock->otyp == DWARVISH_MATTOCK)
                         ++cnt;
-                /* [ALI] Shopkeeper identifies mattock(s) */
-                if (!Blind)
-                    makeknown(DWARVISH_MATTOCK);
             }
-            verbalize(msgc_hint, NOTANGRY(shkp) ?
-                      "Will you please leave your %s%s outside?" :
-                      "Leave the %s%s outside.", tool, plur(cnt));
+            if (!Deaf && !muteshk(shkp)) {
+                verbalize(msgc_hint, NOTANGRY(shkp) ?
+                          "Will you please leave your %s%s outside?" :
+                          "Leave the %s%s outside.", tool, plur(cnt));
+            } else {
+                pline(msgc_hint, "%s %s to let you in with %s%s%s.",
+                      shkname(shkp),
+                      NOTANGRY(shkp) ? "is hesitant" : "refuses",
+                      ((cnt == 1) ? "" : "a "), tool, plur(cnt));
+            }
             should_block = TRUE;
         } else if (u.usteed) {
-            verbalize(msgc_hint, NOTANGRY(shkp) ?
-                      "Will you please leave %s outside?" :
-                      "Leave %s outside.", y_monnam(u.usteed));
+            if (!Deaf && !muteshk(shkp))
+                verbalize(msgc_hint, NOTANGRY(shkp) ?
+                          "Will you please leave %s outside?" :
+                          "Leave %s outside.", y_monnam(u.usteed));
+            else pline(msgc_hint,
+                       "%s %s to let you in while you're riding %s.",
+                       shkname(shkp),
+                       NOTANGRY(shkp) ? "doesn't want" : "refuses",
+                       y_monnam(u.usteed));
             should_block = TRUE;
         } else {
             should_block = (Fast &&
@@ -573,9 +622,6 @@ u_entered_shop(char *enterstring)
     return;
 }
 
-#define muteshk(shkp)   ((shkp)->msleeping || !(shkp)->mcanmove || \
-                         (shkp)->data->msound <= MS_ANIMAL)
-
 void
 pick_pick_from_container(struct obj *obj)
 {
@@ -584,13 +630,19 @@ pick_pick_from_container(struct obj *obj)
     if (obj->unpaid || !is_pick(obj)) return;
     if (*u.ushops) {
         shkp = shop_keeper(level, *u.ushops);
-        if (shkp && inhishop(shkp) && !muteshk(shkp)) {
+        if (shkp && inhishop(shkp)) {
             /* if you bring a sack of N picks into a shop to sell,
                don't repeat this N times when they're taken out */
-            if (moves != u.pickmovetime)
-                verbalize(msgc_npcvoice,
-                          "You sneaky %s!  Get out of here with that pick!",
-                          cad());
+            if (moves != u.pickmovetime) {
+                if (!Deaf && !muteshk(shkp))
+                    verbalize(msgc_npcvoice,
+                              "You sneaky %s!  Get out of here with that pick!",
+                              cad());
+                else if (!Blind)
+                    pline(msgc_hint, "%s %s your pick!", shkname(shkp),
+                          haseyes(shkp->data) ? "glares at"
+                                              : "is dismayed because of");
+            }
             u.pickmovetime = moves;
         }
     }
@@ -1457,10 +1509,15 @@ proceed:
         if (!itemize)
             update_inventory(); /* Done in dopayobj() if itemize. */
     }
-    if (!ANGRY(shkp) && paid)
-        verbalize(msgc_npcvoice, "Thank you for shopping in %s %s!",
-                  s_suffix(shkname(shkp)),
-                  shtypes[eshkp->shoptype - SHOPBASE].name);
+    if (!ANGRY(shkp) && paid) {
+        if (!Deaf && !muteshk(shkp))
+            verbalize(msgc_npcvoice, "Thank you for shopping in %s %s!",
+                      s_suffix(shkname(shkp)),
+                      shtypes[eshkp->shoptype - SHOPBASE].name);
+        else
+            pline(msgc_npcvoice, "%s nods appreciatively at you.",
+                  shkname(shkp));
+    }
     return 1;
 }
 
@@ -1517,9 +1574,20 @@ dopayobj(struct monst *shkp, struct bill_x *bp, struct obj **obj_p,
             buy = PAY_SKIP;     /* don't want to buy */
         } else if (quan < bp->bquan && !consumed) {     /* partly used goods */
             obj->quan = bp->bquan - save_quan;  /* used up amount */
-            verbalize(msgc_hint, "%s for the other %s before buying %s.",
-                      ANGRY(shkp) ? "Pay" : "Please pay", xname(obj),
-                      save_quan > 1L ? "these" : "this one");
+            if (!Deaf && !muteshk(shkp)) {
+                verbalize(msgc_hint, "%s for the other %s before buying %s.",
+                          ANGRY(shkp) ? "Pay" : "Please pay", xname(obj),
+                          save_quan > 1L ? "these" : "this one");
+            } else {
+                pline(msgc_hint, "%s %s%s your bill for the other %s.",
+	              shkname(shkp),
+                      (ANGRY(shkp) && !Blind) ? "angrily " : "",
+                      (Blind && ANGRY(shkp)) ? "seems more upset about about" :
+	              Blind ? "seems more interested in" :
+                      nolimbs(shkp->data) ? "motions to" : "points out",
+                      ((obj->quan == 1) ? simple_typename(obj->otyp) :
+                       makeplural(simple_typename(obj->otyp))));
+            }
             buy = PAY_SKIP;     /* shk won't sell */
         }
     }
@@ -2312,7 +2380,7 @@ addtobill(struct obj *obj, boolean ininv, boolean dummy, boolean silent)
     } else      /* i.e., !container */
         add_one_tobill(obj, dummy);
 speak:
-    if (shkp->mcanmove && !shkp->msleeping && !silent) {
+    if (!Deaf && !muteshk(shkp) && !silent) {
         const char *buf;
 
         if (!ltmp) {
@@ -2643,7 +2711,10 @@ sellobj(struct obj *obj, xchar x, xchar y)
     eshkp = ESHK(shkp);
 
     if (ANGRY(shkp)) {  /* they become shop-objects, no pay */
-        verbalize(msgc_substitute, "Thank you, scum!");
+        if (!Deaf && !muteshk(shkp))
+            verbalize(msgc_substitute, "Thank you, scum!");
+        else
+            pline(msgc_badidea, "%s smirks with satisfaction.", shkname(shkp));
         subfrombill(obj, shkp);
         return;
     }
@@ -2655,7 +2726,7 @@ sellobj(struct obj *obj, xchar x, xchar y)
             offer += cgold;
         if ((eshkp->robbed -= offer < 0L))
             eshkp->robbed = 0L;
-        if (offer)
+        if (offer && !Deaf && !muteshk(shkp))
             verbalize(msgc_actionok, "Thank you for your contribution "
                       "to restock this recently plundered shop.");
         subfrombill(obj, shkp);
@@ -2959,7 +3030,7 @@ shkcatch(struct obj *obj, xchar x, xchar y)
         && dist2(shkp->mx, shkp->my, x, y) < 3 &&
         /* if it is the shk's pos, you hit and anger him */
         (shkp->mx != x || shkp->my != y)) {
-        if (mnearto(shkp, x, y, TRUE))
+        if (mnearto(shkp, x, y, TRUE) && !Deaf && !muteshk(shkp))
             verbalize(msgc_npcvoice, "Out of my way, scum!");
         if (cansee(x, y)) {
             pline(msgc_itemloss, "%s nimbly%s catches %s.", Monnam(shkp),
@@ -3098,8 +3169,10 @@ remove_damage(struct monst *shkp, boolean croaked)
         else if (saw_untrap)
             pline(msgc_monneutral,
                   "Suddenly, the trap is removed from the floor!");
-        else if (inside_shop(level, u.ux, u.uy) == ESHK(shkp)->shoproom)
+        else if (inside_shop(level, u.ux, u.uy) == ESHK(shkp)->shoproom) {
+            level->heardsound[levsound_shop] = TRUE;
             pline(msgc_levelsound, "You feel more claustrophobic than before.");
+        }
         else if (canhear() && !rn2(10))
             pline_once(msgc_levelsound,
                        "The dungeon acoustics noticeably change.");
@@ -3197,7 +3270,8 @@ repair_damage(struct level *lev, struct monst *shkp, struct damage *tmp_dam,
              *
              * Take the easy way out and put ball&chain under hero.
              */
-            verbalize(msgc_npcvoice, "Get your junk out of my wall!");
+            if (!Deaf && !muteshk(shkp))
+                verbalize(msgc_npcvoice, "Get your junk out of my wall!");
             unplacebc();        /* pick 'em up */
             placebc();  /* put 'em down */
         }
@@ -3277,14 +3351,20 @@ shk_move(struct monst *shkp)
         }
         if (eshkp->following) {
             if (strncmp(eshkp->customer, u.uplname, PL_NSIZ)) {
-                verbalize(msgc_npcvoice, "%s, %s!  I was looking for %s.",
-                          Hello(shkp), u.uplname, eshkp->customer);
+                if (!Deaf && !muteshk(shkp))
+                    verbalize(msgc_npcvoice, "%s, %s!  I was looking for %s.",
+                              Hello(shkp), u.uplname, eshkp->customer);
                 eshkp->following = 0;
                 return 0;
             }
             if (moves > followmsg + 4) {
-                verbalize(msgc_npcvoice, "%s, %s!  Didn't you forget to pay?",
-                          Hello(shkp), u.uplname);
+                if (!Deaf && !muteshk(shkp))
+                    verbalize(msgc_npcvoice,
+                              "%s, %s!  Didn't you forget to pay?",
+                              Hello(shkp), u.uplname);
+                else if (!Blind)
+                    pline(msgc_hint, "%s holds out %s upturned %s.",
+                          shkname(shkp), mhis(shkp), mbodypart(shkp, HAND));
                 followmsg = moves;
                 if (!rn2(9)) {
                     pline(msgc_npcanger,
@@ -3408,12 +3488,16 @@ shopdig(int fall)
 
     if (!fall) {
         if (lang == 2) {
-            if (u.utraptype == TT_PIT)
-                verbalize(msgc_npcvoice, "Be careful, %s, or you might fall "
-                          "through the floor.", u.ufemale ? "madam" : "sir");
-            else
-                verbalize(msgc_npcvoice, "%s, do not damage the floor here!",
-                          u.ufemale ? "Madam" : "Sir");
+            if (!Deaf && !muteshk(shkp)) {
+                if (u.utraptype == TT_PIT)
+                    verbalize(msgc_npcvoice,
+                              "Be careful, %s, or you might fall through "
+                              "the floor.", u.ufemale ? "madam" : "sir");
+                else
+                    verbalize(msgc_npcvoice,
+                              "%s, do not damage the floor here!",
+                              u.ufemale ? "Madam" : "Sir");
+            }
         }
         if (Role_if(PM_KNIGHT)) {
             pline(msgc_alignchaos, "You feel like a common thief.");
@@ -3465,14 +3549,14 @@ static void
 makekops(coord * mm)
 {
     static const short k_mndx[4] = {
-        PM_KEYSTONE_KOP, PM_KOP_SERGEANT, PM_KOP_LIEUTENANT, PM_KOP_KAPTAIN
+        PM_SOLDIER, PM_SERGEANT, PM_LIEUTENANT, PM_CAPTAIN
     };
     int k_cnt[4], cnt, mndx, k;
 
     k_cnt[0] = cnt = abs(depth(&u.uz)) + rnd(5);
     k_cnt[1] = (cnt / 3) + 1;   /* at least one sarge */
     k_cnt[2] = (cnt / 6);       /* maybe a lieutenant */
-    k_cnt[3] = (cnt / 9);       /* and maybe a kaptain */
+    k_cnt[3] = (cnt / 9);       /* and maybe a captain */
 
     for (k = 0; k < 4; k++) {
         if ((cnt = k_cnt[k]) == 0)
@@ -3483,7 +3567,7 @@ makekops(coord * mm)
 
         while (cnt--)
             if (enexto(mm, level, mm->x, mm->y, &mons[mndx]))
-                makemon(&mons[mndx], level, mm->x, mm->y, NO_MM_FLAGS);
+                makemon(&mons[mndx], level, mm->x, mm->y, MM_KOP);
     }
 }
 
@@ -3581,9 +3665,10 @@ pay_for_damage(const char *dmgstr, boolean cant_mollify)
            doorway, have the hero hear the shopkeeper yell a bit, pause, then
            have the shopkeeper appear at the door, having yanked the hapless
            critter out of the way. */
-        if (MON_AT(level, x, y)) {
+        if (MON_AT(level, x, y) && !muteshk(shkp)) {
             You_hear(msgc_monneutral, "an angry voice:");
-            verbalize(msgc_monneutral, "Out of my way, scum!");
+            if (canhear())
+                verbalize(msgc_monneutral, "Out of my way, scum!");
         }
         mnearto(shkp, x, y, TRUE);
     }
@@ -3591,13 +3676,22 @@ pay_for_damage(const char *dmgstr, boolean cant_mollify)
     if ((um_dist(x, y, 1) && !uinshp) || cant_mollify ||
         (money_cnt(invent) + ESHK(shkp)->credit) < cost_of_damage || !rn2(50)) {
         if (um_dist(x, y, 1) && !uinshp) {
-            pline(msgc_npcvoice, "%s shouts:", shkname(shkp));
-            verbalize(msgc_npcanger, "Who dared %s my %s?",
-                      dmgstr, dugwall ? "shop" : "door");
+            if (!Deaf && !muteshk(shkp)) {
+                pline(msgc_npcvoice, "%s shouts:", shkname(shkp));
+                verbalize(msgc_npcanger, "Who dared %s my %s?",
+                          dmgstr, dugwall ? "shop" : "door");
+            } else {
+                pline(msgc_npcanger, "%s becomes %s!", shkname(shkp),
+                      angrytexts[rn2(SIZE(angrytexts))]);
+            }
         } else {
         getcad:
-            verbalize(msgc_npcanger, "How dare you %s my %s?", dmgstr,
-                      dugwall ? "shop" : "door");
+            if (!Deaf && !muteshk(shkp))
+                verbalize(msgc_npcanger, "How dare you %s my %s?", dmgstr,
+                          dugwall ? "shop" : "door");
+            else
+                pline(msgc_npcanger, "%s becomes %s!",
+                      shkname(shkp), angrytexts[rn2(SIZE(angrytexts))]);
         }
         hot_pursuit(shkp);
         return;
@@ -3617,7 +3711,12 @@ pay_for_damage(const char *dmgstr, boolean cant_mollify)
         home_shk(shkp, FALSE);
         pacify_shk(shkp);
     } else {
-        verbalize(msgc_npcanger, "Oh, yes!  You'll pay!");
+        if (!Deaf && !muteshk(shkp))
+            verbalize(msgc_npcanger, "Oh, yes!  You'll pay!");
+        else
+            pline(msgc_npcanger, "%s lunges, %s %s reaching toward your %s!",
+                  shkname(shkp), mhis(shkp), mbodypart(shkp, HAND),
+                  body_part(NECK));
         hot_pursuit(shkp);
         adjalign(-sgn(u.ualign.type));
     }
@@ -3790,23 +3889,36 @@ shk_chat(struct monst *shkp)
 
     eshk = ESHK(shkp);
     if (ANGRY(shkp))
-        pline(msgc_npcvoice, "%s mentions how much %s dislikes %s customers.",
-              shkname(shkp), mhe(shkp), eshk->robbed ? "non-paying" : "rude");
+        pline(msgc_npcvoice, "%s %s how much %s dislikes %s customers.",
+              shkname(shkp),
+              ((!Deaf && !muteshk(shkp)) ? "mentions" : "indicates"),
+              /* It is possible to indicate such things via gesture, or, in
+                 case the audience is blind AND deaf, via direct physical
+                 tactile contact, at varying levels of emphaticness -- NAE */
+              mhe(shkp), eshk->robbed ? "non-paying" : "rude");
     else if (eshk->following) {
         if (strncmp(eshk->customer, u.uplname, PL_NSIZ)) {
-            verbalize(msgc_npcvoice, "%s %s!  I was looking for %s.",
-                      Hello(shkp), u.uplname, eshk->customer);
+            if (!Deaf && !muteshk(shkp))
+                verbalize(msgc_npcvoice, "%s %s!  I was looking for %s.",
+                          Hello(shkp), u.uplname, eshk->customer);
             eshk->following = 0;
         } else {
-            verbalize(msgc_npcvoice, "%s %s!  Didn't you forget to pay?",
-                      Hello(shkp), u.uplname);
+            if (!Deaf && !muteshk(shkp))
+                verbalize(msgc_npcvoice, "%s %s!  Didn't you forget to pay?",
+                          Hello(shkp), u.uplname);
+            else
+                pline(msgc_hint, "%s taps you on the %s.",
+                      shkname(shkp), body_part(ARM));
         }
     } else if (eshk->billct) {
         long total = addupbill(shkp) + eshk->debit;
 
-        pline(msgc_info, "%s says that your bill comes to %ld %s.",
-              shkname(shkp), total, currency(total));
+        pline(msgc_info, "%s %s that your bill comes to %ld %s.",
+              shkname(shkp),
+              ((!Deaf && !muteshk(shkp)) ? "says" : "indicates"),
+              total, currency(total));
     } else if (eshk->debit)
+        /* Reminding, like indicating, can be done non-verbally. */
         pline(msgc_info, "%s reminds you that you owe %s %ld %s.",
               shkname(shkp), mhim(shkp), (long)eshk->debit,
               currency(eshk->debit));
@@ -3814,19 +3926,29 @@ shk_chat(struct monst *shkp)
         pline(msgc_info, "%s encourages you to use your %ld %s of credit.",
               shkname(shkp), (long)eshk->credit, currency(eshk->credit));
     else if (eshk->robbed)
-        pline(msgc_npcvoice, "%s complains about a recent robbery.",
-              shkname(shkp));
+        pline(msgc_npcvoice, "%s %s about a recent robbery.",
+              shkname(shkp),
+              ((!Deaf && !muteshk(shkp)) ? "complains" : "indicates concern"));
     else if ((shkmoney = money_cnt(shkp->minvent)) < 50)
-        pline(msgc_npcvoice, "%s complains that business is bad.",
-              shkname(shkp));
+        pline(msgc_npcvoice, "%s %s that business is bad.",
+              shkname(shkp),
+              ((!Deaf && !muteshk(shkp)) ? "complains" : "indicates"));
     else if (shkmoney > 4000)
-        pline(msgc_npcvoice, "%s says that business is good.", shkname(shkp));
+        pline(msgc_npcvoice, "%s %s that business is good.", shkname(shkp),
+              ((!Deaf && !muteshk(shkp)) ? "says" : "indicates"));
     else if (strcmp(shkname(shkp), "Izchak") == 0)
         pline(msgc_rumor, Izchak_speaks[rn2(SIZE(Izchak_speaks))],
-              shkname(shkp));
-    else
+              shkname(shkp),
+              ((!Deaf && !muteshk(shkp)) ? "says" : "indicates"));
+    else if (!Deaf && !muteshk(shkp))
         pline(msgc_npcvoice, "%s talks about the problem of shoplifters.",
               shkname(shkp));
+    else if (Deaf && !Blind)
+        pline(msgc_hint,
+              "%s appears to be saying something, but you cannot hear.",
+              shkname(shkp));
+    else
+        pline(msgc_hint, "%s seems non-communicative.", shkname(shkp));
 }
 
 
@@ -3838,7 +3960,7 @@ kops_gone(boolean silent)
 
     for (mtmp = level->monlist; mtmp; mtmp = mtmp2) {
         mtmp2 = mtmp->nmon;
-        if (mtmp->data->mlet == S_KOP) {
+        if (mtmp->iskop) {
             if (canspotmon(mtmp))
                 cnt++;
             mongone(mtmp);
@@ -3846,7 +3968,7 @@ kops_gone(boolean silent)
     }
     if (cnt && !silent)
         pline(msgc_monneutral,
-              "The Kop%s (disappointed) vanish%s into thin air.",
+              "The national guard trooper%s vanish%s into thin air.",
               plur(cnt), cnt == 1 ? "es" : "");
 }
 
@@ -3937,7 +4059,7 @@ check_unpaid_usage(struct obj *otmp, boolean altusage)
             arg2 = "Ahem.  ";
     }
 
-    if (shkp->mcanmove || !shkp->msleeping)
+    if (!Deaf && !muteshk(shkp))
         verbalize(msgc_unpaid, fmt, arg1, arg2, tmp, currency(tmp));
     ESHK(shkp)->debit += tmp;
 }

@@ -1,8 +1,9 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-05 */
 /* Copyright (c) Daniel Thaler, 2011.                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
+#include "mail.h"
 #include "nhcurses.h"
 #include <signal.h>
 #include <locale.h>
@@ -404,7 +405,9 @@ init_curses_ui(const char *dataprefix)
     }
 
     tileprefix = strdup(dataprefix);
-    set_font_file("font14.png");
+    char font_file[BUFSZ];
+    snprintf(font_file, BUFSZ, "font%s.png", settings.fontfile);
+    set_font_file(font_file);
     setup_tiles();
 
     setup_palette();
@@ -572,7 +575,7 @@ nh_mvwaddch(WINDOW *win, int y, int x, enum framechars which)
     mvwadd_wch(win, y, x, &c);
 }
 
-static void
+void
 draw_frame(void)
 {
     int framewidth = !!ui_flags.draw_outer_frame_lines;
@@ -614,6 +617,7 @@ draw_frame(void)
 
         y += ui_flags.msgheight;
         nh_mvwhline(basewin, y, x, ui_flags.mapwidth);
+
         if (connectends) {
             nh_mvwaddch(basewin, y, 0, FC_LTEE);
             nh_mvwaddch(basewin, y, ui_flags.mapwidth + 1, FC_RTEE);
@@ -621,6 +625,42 @@ draw_frame(void)
 
         y += 1 + ui_flags.mapheight;
         nh_mvwhline(basewin, y, x, ui_flags.mapwidth);
+        if (ui_flags.current_followmode == FM_WATCH) {
+            wattron(basewin, A_BOLD | COLOR_PAIR(4));
+            mvwprintw(basewin, y, 2, "WATCH MODE");
+
+            const char *delim = " (";
+            const char *player = getenv("NH4SERVERUSER");
+            if (!player || !*player)
+                player = getenv("USER");
+            if (player && *player) {
+                wprintw(basewin, "%swatching %s", delim, player);
+                delim = ", ";
+            }
+
+            char keybind[BUFSZ];
+            if (mail_filename(NULL) &&
+                (get_command_key("mail", keybind, FALSE) ||
+                 get_command_key("moveonly", keybind, FALSE))) {
+                wprintw(basewin, "%s'%s' to mail", delim, keybind);
+                delim = ", ";
+            }
+
+            if (get_command_key("save", keybind, FALSE) ||
+                get_command_key("drink", keybind, FALSE)) {
+                wprintw(basewin, "%s'%s' to stop watching", delim, keybind);
+                delim = ", ";
+            }
+
+            /* end parenthesis */
+            if (!strcmp(delim, ", "))
+                wprintw(basewin, ")");
+            wattroff(basewin, A_BOLD | COLOR_PAIR(4));
+        } else if (ui_flags.current_followmode == FM_REPLAY) {
+            wattron(basewin, A_BOLD | COLOR_PAIR(4));
+            mvwprintw(basewin, y, 2, "REPLAY MODE");
+            wattroff(basewin, A_BOLD | COLOR_PAIR(4));
+        }
         if (connectends) {
             nh_mvwaddch(basewin, y, 0, FC_LTEE);
             nh_mvwaddch(basewin, y, ui_flags.mapwidth + 1, FC_RTEE);
@@ -1207,6 +1247,13 @@ redraw_game_windows(void)
 void
 rebuild_ui(void)
 {
+    if (tileprefix) {
+        char font_file[BUFSZ];
+        snprintf(font_file, BUFSZ, "font%s.png", settings.fontfile);
+        set_font_file(font_file);
+        refresh();
+    }
+
     if (ui_flags.ingame) {
         wclear(basewin);
         resize_game_windows();

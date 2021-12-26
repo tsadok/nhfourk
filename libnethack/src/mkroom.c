@@ -139,10 +139,13 @@ mkshop(struct level *lev)
         for (styp = 0; (j -= shtypes[styp].prob) > 0; styp++)
             continue;
 
-        /* big rooms cannot be wand or book shops, so make them general stores
-           */
+        /* past a certain point, a deli ceases to be interesting */
+        if ((shtypes[styp].symb == FOOD_CLASS) && (depth(&lev->z) > 12))
+            styp = ((depth(&lev->z) > 16) ? RARESHOP : SHOPBASE) - SHOPBASE;
+        /* big rooms cannot be wand or book shops: make them general stores */
         if (isbig(sroom) &&
             (shtypes[styp].symb == WAND_CLASS ||
+             shtypes[styp].symb == CHAIN_CLASS || /* rare item shop */
              shtypes[styp].symb == SPBOOK_CLASS))
             styp = 0;
     }
@@ -298,7 +301,9 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
                 if (i >= goldlim)
                     i = 5 * level_difficulty(&lev->z);
                 goldlim -= i;
-                mkgold(10 + rn2_on_rng(i, rng), lev, sx, sy, rng);
+                struct obj *gld =
+                    mkfloorgold(10 + rn2_on_rng(i, rng), lev, sx, sy, rng);
+                u.generated_gold.zoo += gld->quan;
                 break;
             case MORGUE:
                 if (!rn2_on_rng(5, rng))
@@ -343,8 +348,10 @@ fill_zoo(struct level *lev, struct mkroom *sroom, enum rng rng)
 
         lev->locations[tx][ty].typ = THRONE;
         somexy(lev, sroom, &mm, rng);
-        mkgold(10 + rn2_on_rng(50 * level_difficulty(&lev->z), rng),
-               lev, mm.x, mm.y, rng);
+        struct obj *gld = mkfloorgold(10 + rn2_on_rng(50 *
+                                               level_difficulty(&lev->z), rng),
+                                      lev, mm.x, mm.y, rng);
+        u.generated_gold.throneroom += gld->quan;
         /* the royal coffers */
         chest = mksobj_at(CHEST, lev, mm.x, mm.y, TRUE, FALSE, rng);
         chest->spe = 2;     /* so it can be found later */
@@ -361,12 +368,13 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemone, gemtwo, glass,
         itemone, itemtwo, itemthree, itemfour;
     int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
-    int color = rn2_on_rng(6, rng);
-    const char *ifourdesc = "nosuchitem";
+    int color = rn2_on_rng(14, rng);
     struct monst *mon;
+    struct obj *otmp;
     imax = 0;
     switch (color) {
-    case 1: /* blue */
+    case 1:
+    case 2: /* blue */
         babypm    = harder ? PM_YOUNG_BLUE_DRAGON : PM_BABY_BLUE_DRAGON;
         adultpm   = PM_BLUE_DRAGON;
         ancientpm = harder ? PM_ANCIENT_BLUE_DRAGON : PM_ELDER_BLUE_DRAGON;
@@ -374,11 +382,21 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = AQUAMARINE;
         glass     = WORTHLESS_PIECE_OF_BLUE_GLASS;
         itemone   = RIN_SHOCK_RESISTANCE;
-        itemtwo   = CORNUTHAUM;
-        itemthree = WAN_LIGHTNING;
-        ifourdesc = "sapphire";
+        itemtwo   = orchain_int(
+            find_objnum_by_appearance(POTION_CLASS, "blue"),
+            find_objnum_by_appearance(RING_CLASS, "sapphire"),
+            find_objnum_by_appearance(POTION_CLASS, "brilliant blue"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "dark blue"),
+            find_objnum_by_appearance(POTION_CLASS, "deep blue"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "light blue"),
+            find_objnum_by_appearance(POTION_CLASS, "sky blue"),
+            itemone);
+        itemthree = CORNUTHAUM;
+        itemfour  = WAN_LIGHTNING;
         break;
-    case 2: /* green */
+    case 3:
+    case 4:
+    case 5: /* green */
         babypm    = harder ? PM_YOUNG_GREEN_DRAGON : PM_BABY_GREEN_DRAGON;
         adultpm   = PM_GREEN_DRAGON;
         ancientpm = harder ? PM_ANCIENT_GREEN_DRAGON : PM_ELDER_GREEN_DRAGON;
@@ -387,10 +405,18 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         glass     = WORTHLESS_PIECE_OF_GREEN_GLASS;
         itemone   = RIN_POISON_RESISTANCE;
         itemtwo   = POT_SICKNESS;
-        itemthree = AMULET_VERSUS_POISON;
-        ifourdesc = "emerald";
+        itemthree = orchain_int(
+            find_objnum_by_appearance(POTION_CLASS, "dark green"),
+            find_objnum_by_appearance(RING_CLASS, "jade"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "dark green"),
+            find_objnum_by_appearance(POTION_CLASS, "emerald"),
+            find_objnum_by_appearance(RING_CLASS, "emerald"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "light green"),
+            PEAR);
+        itemfour  = AMULET_VERSUS_POISON;
         break;
-    case 3: /* white */
+    case 6:
+    case 7: /* white */
         babypm    = harder ? PM_YOUNG_WHITE_DRAGON : PM_BABY_WHITE_DRAGON;
         adultpm   = PM_WHITE_DRAGON;
         ancientpm = harder ? PM_ANCIENT_WHITE_DRAGON : PM_ELDER_WHITE_DRAGON;
@@ -398,11 +424,18 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = OPAL;
         glass     = WORTHLESS_PIECE_OF_WHITE_GLASS;
         itemone   = RIN_COLD_RESISTANCE;
-        itemtwo   = ICE_BOX;
-        itemthree = WAN_COLD;
-        ifourdesc = "diamond";
+        itemtwo   = orchain_int(
+            find_objnum_by_appearance(POTION_CLASS, "white"),
+            find_objnum_by_appearance(RING_CLASS, "diamond"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "white"),
+            find_objnum_by_appearance(POTION_CLASS, "milky"),
+            find_objnum_by_appearance(RING_CLASS, "pearl"),
+            find_objnum_by_appearance(RING_CLASS, "ivory"),
+            FROST_HORN);
+        itemthree = ICE_BOX;
+        itemfour  = WAN_COLD;
         break;
-    case 4: /* orange */
+    case 8: /* orange */
         babypm    = harder ? PM_YOUNG_ORANGE_DRAGON : PM_BABY_ORANGE_DRAGON;
         adultpm   = PM_ORANGE_DRAGON;
         ancientpm = harder ? PM_ANCIENT_ORANGE_DRAGON : PM_ELDER_ORANGE_DRAGON;
@@ -410,9 +443,46 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = AGATE;
         glass     = WORTHLESS_PIECE_OF_ORANGE_GLASS;
         itemone   = AMULET_OF_RESTFUL_SLEEP;
-        itemtwo   = ORANGE;
-        itemthree = WAN_SLEEP;
-        ifourdesc = "agate";
+        itemtwo   = orchain_int(
+            find_objnum_by_appearance(POTION_CLASS, "orange"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "orange"),
+            CARROT);
+        itemthree = ORANGE;
+        itemfour  = WAN_SLEEP;
+        break;
+    case 9: /* yellow */
+        babypm    = harder ? PM_YOUNG_YELLOW_DRAGON : PM_BABY_YELLOW_DRAGON;
+        adultpm   = PM_YELLOW_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_YELLOW_DRAGON : PM_ELDER_YELLOW_DRAGON;
+        gemone    = CITRINE;
+        gemtwo    = CHRYSOBERYL;
+        glass     = WORTHLESS_PIECE_OF_YELLOW_GLASS;
+        itemone   = POT_ACID;
+        itemtwo   = orchain_int(
+            find_objnum_by_appearance(POTION_CLASS, "yellow"),
+            find_objnum_by_appearance(SPBOOK_CLASS, "yellow"),
+            find_objnum_by_appearance(POTION_CLASS, "golden"),
+            find_objnum_by_appearance(POTION_CLASS, "amber"),
+            AMBER);
+        itemthree = SCR_TAMING; /* Why do yellow dragons hoard these?
+                                 * It's a mystery. */
+        itemfour  = BANANA;
+        break;
+    case 10: /* black */
+        babypm    = harder ? PM_YOUNG_BLACK_DRAGON : PM_BABY_BLACK_DRAGON;
+        adultpm   = PM_BLACK_DRAGON;
+        ancientpm = harder ? PM_ANCIENT_BLACK_DRAGON : PM_ELDER_BLACK_DRAGON;
+        gemone    = BLACK_OPAL;
+        gemtwo    = OBSIDIAN;
+        glass     = WORTHLESS_PIECE_OF_BLACK_GLASS;
+        itemone   = orchain_int(
+            find_objnum_by_appearance(RING_CLASS, "black onyx"),
+            find_objnum_by_appearance(POTION_CLASS, "black"),
+            find_objnum_by_appearance(POTION_CLASS, "dark"),
+            JET);
+        itemtwo   = BLINDFOLD;
+        itemthree = SPE_FINGER_OF_DEATH;
+        itemfour  = WAN_DEATH;
         break;
     default: /* red */
         babypm    = harder ? PM_YOUNG_RED_DRAGON : PM_BABY_RED_DRAGON;
@@ -423,15 +493,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         glass     = WORTHLESS_PIECE_OF_RED_GLASS;
         itemone   = RIN_FIRE_RESISTANCE;
         itemtwo   = SCR_FIRE;
-        itemthree = WAN_FIRE;
-        ifourdesc = "ruby";
+        itemthree = APPLE;
+        itemfour  = WAN_FIRE;
         break;
-    }
-    itemfour = itemone;
-    for (i = RIN_ADORNMENT; i <= RIN_PROTECTION_FROM_SHAPE_CHANGERS; i++) {
-        const char *s;
-        if ((s = OBJ_DESCR(objects[i])) != 0 && !strcmp(s, ifourdesc))
-            itemfour = i;
     }
     i = 0;
     /* Add all the viable floor positions in the room to a list: */
@@ -460,8 +524,10 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     cutoffthree = imax - rn2_on_rng(1 + imax / 10, rng);
     for (i = 0; i <= imax; i++) {
         /* dragons hoard gold */
-        mkgold(10 + rn2_on_rng(7 + 5 * level_difficulty(&lev->z), rng),
+        struct obj *gld =
+        mkfloorgold(10 + rn2_on_rng(7 + 5 * level_difficulty(&lev->z), rng),
                lev, pos[i].x, pos[i].y, rng);
+        u.generated_gold.zoo += gld->quan;
         /* dragons hoard gems */
         switch(rn2_on_rng(4,rng)) {
         case 1:
@@ -475,9 +541,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
             break;
         }
         /* dragons hoard things they like */
-        switch(rn2_on_rng(12, rng)) {
+        switch(rn2_on_rng(19, rng)) {
         case 1:
-            mksobj_at(itemthree, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            mksobj_at(itemfour, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
             break;
         case 2:
             mksobj_at(CHEST, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
@@ -485,14 +551,17 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         case 3:
         case 4:
         case 5:
-            mksobj_at(itemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            mksobj_at(itemthree, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
             break;
         case 6:
         case 7:
         case 8:
-            mksobj_at(itemfour, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
-            break;
         case 9:
+        case 10:
+            mksobj_at(itemtwo, lev, pos[i].x, pos[i].y, TRUE, FALSE, rng);
+            break;
+        case 11:
+        case 12:
             mkobj_at(RING_CLASS, lev, pos[i].x, pos[i].y, FALSE, rng);
             break;
         default:
@@ -502,6 +571,19 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         /* here be dragons */
         if (i <= cutoffone) {
             mon = makemon(&mons[ancientpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
+            if (mon && mon->female) {
+                /* The big momma dragons guard the eggs. */
+                otmp = mksobj(lev, EGG, TRUE, FALSE, rng);
+                if (otmp) {
+                    otmp->corpsenm = adultpm;
+                    otmp->quan = 1 + rn2_on_rng(3, rng);
+                    if (dead_species(adultpm, TRUE))
+                        kill_egg(otmp); /* make sure nothing hatches */
+                    else
+                        attach_egg_hatch_timeout(otmp);
+                    place_object(otmp, lev, pos[i].x, pos[i].y);
+                }
+            }
         } else if (i <= cutofftwo) {
             mon = makemon(&mons[adultpm], lev, pos[i].x, pos[i].y, MM_ANGRY);
         } else if (i <= cutoffthree) {

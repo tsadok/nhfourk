@@ -75,10 +75,10 @@ thitu(int tlev, int dam, struct obj *obj, const char *name)
         else
             pline(msgc_nonmonbad, "You are hit by %s%s", onm, exclam(dam));
 
-        if (obj && objects[obj->otyp].oc_material == SILVER &&
-            hates_silver(youmonst.data)) {
-            dam += rnd(20);
-            pline(msgc_statusbad, "The silver sears your flesh!");
+        if (obj && hates_material(URACEDATA, objects[obj->otyp].oc_material)) {
+            dam += rnd(material_damage(objects[obj->otyp].oc_material));
+            pline(msgc_statusbad, "The %s sears your flesh!",
+                  material_name(objects[obj->otyp].oc_material));
             exercise(A_CON, FALSE);
         }
         if (is_acid && Acid_resistance)
@@ -214,11 +214,12 @@ ohitmon(struct monst *mtmp, /* accidental target */
                 }
             }
         }
-        if (objects[otmp->otyp].oc_material == SILVER &&
-            hates_silver(mtmp->data)) {
+        if (hates_material(mtmp->data, objects[otmp->otyp].oc_material)) {
             if (vis)
                 pline(combat_msgc(magr, mtmp, cr_hit),
-                      "The silver sears %s flesh!", s_suffix(mon_nam(mtmp)));
+                      "The %s sears %s flesh!",
+                      material_name(objects[otmp->otyp].oc_material),
+                      s_suffix(mon_nam(mtmp)));
             else if (spoil_unseen)
                 pline(combat_msgc(magr, mtmp, cr_hit),
                       "Its flesh is seared!");
@@ -1021,6 +1022,28 @@ lined_up(struct monst *mtmp)
     return linedup(mtmp->mux, mtmp->muy, mtmp->mx, mtmp->my);
 }
 
+struct obj *
+m_carrying_key(const struct monst *mtmp, boolean forchest)
+{
+    struct obj *key;
+    /* Three kinds of keys open both doors and chests: */
+    key = m_carrying(mtmp, STURDY_KEY);
+    if (key) return key;
+    key = m_carrying(mtmp, IRON_KEY);
+    if (key) return key;
+    key = m_carrying(mtmp, SKELETON_KEY);
+    if (key) return key;
+    if (!forchest) {
+        /* Two kinds of keys are for doors only: */
+        key = m_carrying(mtmp, DOOR_KEY);
+        return key ? key : m_carrying(mtmp, BRONZE_KEY);
+    } else {
+        /* Two kinds are for chests only: */
+        key = m_carrying(mtmp, SILVER_KEY);
+        return key ? key : m_carrying(mtmp, BRASS_KEY);
+    }
+}
+
 /* Check if a monster is carrying a particular item. */
 struct obj *
 m_carrying(const struct monst *mtmp, int type)
@@ -1061,6 +1084,9 @@ hits_bars(struct obj ** obj_p, /* *obj_p will be set to NULL if object breaks */
             break;
         case TOOL_CLASS:
             hits = (obj_type != SKELETON_KEY && obj_type != LOCK_PICK &&
+                    obj_type != STURDY_KEY && obj_type != IRON_KEY &&
+                    obj_type != DOOR_KEY && obj_type != BRONZE_KEY &&
+                    obj_type != SILVER_KEY && obj_type != BRASS_KEY &&
                     obj_type != CREDIT_CARD && obj_type != TALLOW_CANDLE &&
                     obj_type != WAX_CANDLE && obj_type != LENSES &&
                     obj_type != TIN_WHISTLE && obj_type != MAGIC_WHISTLE);

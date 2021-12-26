@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by FIQ, 2015-08-23 */
+/* Last modified by Alex Smith, 2017-06-29 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -15,6 +15,8 @@ struct trobj {
     unsigned trbless:2;
 };
 
+static const char * game_id_number_filename(void);
+static int next_game_id_number(void);
 static void ini_inv(const struct trobj *, short nocreate[4], enum rng);
 static void role_ini_inv(const struct trobj *, short nocreate[4]);
 static void race_ini_inv(const struct trobj *, short nocreate[4]);
@@ -27,6 +29,61 @@ static boolean restricted_spell_discipline(int);
 #define UNDEF_TYP       0
 #define UNDEF_SPE       '\177'
 #define UNDEF_BLESS     2
+
+const char *
+game_id_number_filename(void)
+{
+    const char *uname;
+#ifdef PUBLIC_SERVER
+    uname = nh_getenv("NH4SERVERUSER");
+    if (!uname)
+        uname = nh_getenv("USER");
+    if (!uname)
+#endif
+        uname = msgprintf("%d", getuid());
+
+    return msgprintf("%s.maxgameid_%s.dat",
+                     fqn_prefix[SCOREPREFIX], uname);
+}
+
+static int
+next_game_id_number(void)
+{
+    const char *gameidfilename = game_id_number_filename();
+    FILE *idnumfile;
+    int lastnum, nextnum;
+
+    /* First read the last number. */
+    idnumfile = fopen(gameidfilename, "r");
+    if (idnumfile) {
+        if (!fread(&lastnum, sizeof(int), 1, idnumfile)) {
+            impossible("ERROR: failed to read game id sequence number. "
+                       "Game consecutivity and streaks will be untrackable");
+            fclose(idnumfile);
+            return 0;
+        }
+        fclose(idnumfile);
+    } else {
+        pline(msgc_debug, "Could not read game id number; "
+                          "assuming no games have been played.");
+        lastnum = 0;
+    }
+
+    /* The number increases monotonically. */
+    nextnum = lastnum + 1;
+
+    idnumfile = fopen(gameidfilename, "w");
+    if (idnumfile && fwrite(&nextnum, sizeof(int), 1, idnumfile)) {
+        fclose(idnumfile);
+        return nextnum;
+    } else {
+        impossible("ERROR: unable to maintain game id number sequence.  "
+                   "Game consecutivity and streaks will be untrackable.");
+        if (idnumfile)
+            fclose(idnumfile);
+        return 0;
+    }
+}
 
 static int
 rolern2(int x)
@@ -192,7 +249,7 @@ static const struct trobj Tourist[] = {
     {0, 0, 0, 0, 0}
 };
 
-static const struct trobj Valkyrie[] = {
+static const struct trobj Shieldmaiden[] = {
 #define V_SPEAR  0
 #define V_DAGGER 1
 #define V_SHIELD 2
@@ -234,6 +291,9 @@ static const struct trobj GnomeStuff[] = {
 
 static const struct trobj GiantStuff[] = {
     {BOULDER, 0, ROCK_CLASS, 1, UNDEF_BLESS},
+    {DENTED_POT, 2, ARMOR_CLASS, 3, UNDEF_BLESS},
+    {LARGE_SHIELD, 1, ARMOR_CLASS, 1, UNDEF_BLESS},
+    {HIGH_BOOTS, 0, ARMOR_CLASS, 3, UNDEF_BLESS},
     {0, 0, 0, 0, 0}
 };
 
@@ -331,6 +391,7 @@ static const struct inv_sub {
     {PM_DWARF, SPEAR, DWARVISH_SPEAR},
     {PM_DWARF, SHORT_SWORD, DWARVISH_SHORT_SWORD},
     {PM_DWARF, HELMET, DWARVISH_IRON_HELM},
+    {PM_DWARF, SMALL_SHIELD, DWARVISH_ROUNDSHIELD},
     /* { PM_DWARF, SMALL_SHIELD, DWARVISH_ROUNDSHIELD }, */
     /* { PM_DWARF, PICK_AXE, DWARVISH_MATTOCK }, */
     {PM_GNOME, BOW, CROSSBOW},
@@ -345,6 +406,7 @@ static const struct inv_sub {
     {PM_SCURRIER, ARROW, DART},
     {PM_SCURRIER, FEDORA, LEATHER_GLOVES},
     /* Giants are too large for a lot of armor */
+    {PM_GIANT, SMALL_SHIELD, LARGE_SHIELD},        /* Hop Gia */
     {PM_GIANT, RING_MAIL, DENTED_POT},             /* Bar Gia */
     {PM_GIANT, LEATHER_ARMOR, FLINT},              /* Cav Gia */
     {PM_GIANT, BOW, SLING},                        /* Ran Gia */
@@ -374,6 +436,7 @@ static const struct def_skill Skill_B[] = {
     {P_DAGGER, P_BASIC}, {P_AXE, P_MASTER},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_EXPERT},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_EXPERT},
+    {P_KATANA, P_BASIC},
     {P_TWO_HANDED_SWORD, P_EXPERT}, {P_SCIMITAR, P_EXPERT},
     {P_SABER, P_SKILLED}, {P_CLUB, P_EXPERT},
     {P_MACE, P_EXPERT}, {P_MORNING_STAR, P_EXPERT},
@@ -421,7 +484,7 @@ static const struct def_skill Skill_K[] = {
     {P_AXE, P_SKILLED}, {P_PICK_AXE, P_BASIC},
     {P_SHORT_SWORD, P_SKILLED}, {P_BROAD_SWORD, P_SKILLED},
     {P_LONG_SWORD, P_EXPERT}, {P_TWO_HANDED_SWORD, P_SKILLED},
-    {P_SCIMITAR, P_BASIC}, {P_SABER, P_SKILLED},
+    {P_SCIMITAR, P_BASIC}, {P_SABER, P_SKILLED}, {P_KATANA, P_BASIC},
     {P_CLUB, P_BASIC}, {P_MACE, P_SKILLED},
     {P_MORNING_STAR, P_SKILLED}, {P_FLAIL, P_BASIC},
     {P_HAMMER, P_BASIC}, {P_POLEARMS, P_EXPERT},
@@ -468,7 +531,7 @@ static const struct def_skill Skill_R[] = {
     {P_DAGGER, P_EXPERT}, {P_KNIFE, P_EXPERT},
     {P_SHORT_SWORD, P_EXPERT}, {P_BROAD_SWORD, P_SKILLED},
     {P_LONG_SWORD, P_SKILLED}, {P_TWO_HANDED_SWORD, P_BASIC},
-    {P_SCIMITAR, P_SKILLED}, {P_SABER, P_SKILLED},
+    {P_SCIMITAR, P_SKILLED}, {P_SABER, P_SKILLED}, {P_KATANA, P_SKILLED},
     {P_CLUB, P_SKILLED}, {P_MACE, P_SKILLED},
     {P_MORNING_STAR, P_BASIC}, {P_FLAIL, P_BASIC},
     {P_HAMMER, P_BASIC}, {P_POLEARMS, P_BASIC},
@@ -506,8 +569,7 @@ static const struct def_skill Skill_Ran[] = {
 static const struct def_skill Skill_S[] = {
     {P_DAGGER, P_BASIC}, {P_KNIFE, P_SKILLED},
     {P_SHORT_SWORD, P_EXPERT}, {P_BROAD_SWORD, P_SKILLED},
-    {P_LONG_SWORD, P_EXPERT}, /* Temporary stand-in for katana.  In the next
-                                 version, it'll be a separate skill. */
+    {P_LONG_SWORD, P_BASIC}, {P_KATANA, P_EXPERT},
     {P_TWO_HANDED_SWORD, P_SKILLED},
     {P_SCIMITAR, P_BASIC}, {P_SABER, P_BASIC},
     {P_FLAIL, P_SKILLED}, {P_QUARTERSTAFF, P_BASIC},
@@ -515,7 +577,7 @@ static const struct def_skill Skill_S[] = {
     {P_JAVELIN, P_BASIC}, {P_BOW, P_EXPERT}, {P_SHURIKEN, P_EXPERT},
     {P_ATTACK_SPELL, P_SKILLED}, {P_CLERIC_SPELL, P_SKILLED},
     {P_RIDING, P_SKILLED},
-    {P_TWO_WEAPON_COMBAT, P_SKILLED},
+    {P_TWO_WEAPON_COMBAT, P_EXPERT},
     {P_MARTIAL_ARTS, P_MASTER},  {P_SHIELD, P_SKILLED},
     {P_STEALTH, P_BASIC}, {P_WANDS, P_SKILLED},
     {P_NONE, 0}
@@ -526,7 +588,7 @@ static const struct def_skill Skill_T[] = {
     {P_AXE, P_BASIC}, {P_PICK_AXE, P_BASIC},
     {P_SHORT_SWORD, P_EXPERT}, {P_BROAD_SWORD, P_BASIC},
     {P_LONG_SWORD, P_BASIC}, {P_TWO_HANDED_SWORD, P_BASIC},
-    {P_SCIMITAR, P_EXPERT}, {P_SABER, P_SKILLED},
+    {P_SCIMITAR, P_EXPERT}, {P_SABER, P_SKILLED}, {P_KATANA, P_BASIC},
     {P_MACE, P_BASIC}, {P_MORNING_STAR, P_BASIC},
     {P_FLAIL, P_BASIC}, {P_HAMMER, P_BASIC},
     {P_QUARTERSTAFF, P_BASIC}, {P_POLEARMS, P_BASIC},
@@ -548,6 +610,7 @@ static const struct def_skill Skill_V[] = {
     {P_DAGGER, P_EXPERT}, {P_AXE, P_SKILLED},
     {P_PICK_AXE, P_SKILLED}, {P_SHORT_SWORD, P_SKILLED},
     {P_BROAD_SWORD, P_EXPERT}, {P_LONG_SWORD, P_SKILLED},
+    {P_KATANA, P_BASIC},
     {P_TWO_HANDED_SWORD, P_BASIC}, {P_SCIMITAR, P_SKILLED},
     {P_SABER, P_BASIC}, {P_HAMMER, P_EXPERT},
     {P_QUARTERSTAFF, P_BASIC}, {P_POLEARMS, P_SKILLED},
@@ -630,6 +693,7 @@ u_init(microseconds birthday)
     u.umoved = FALSE;
     u.umortality = 0;
     u.ugrave_arise = NON_PM;
+    u.gameidnum = next_game_id_number();
 
     u.umonnum = u.umonster = (u.ufemale && urole.femalenum != NON_PM) ?
         urole.femalenum : urole.malenum;
@@ -839,6 +903,9 @@ u_init_inv_skills(void)
         u.umoney0 = 0;
         role_ini_inv(trobj_list, nclist);
         knows_object(SACK);
+        knows_object(STURDY_KEY);
+        knows_object(DOOR_KEY);
+        knows_object(IRON_KEY);
         skill_init(Skill_R);
         /* TODO:  confer basic skill in P_STEALTH */
         augment_magic_chest_contents(DAGGER, 0, 3);
@@ -884,9 +951,10 @@ u_init_inv_skills(void)
         augment_magic_chest_contents(SPE_IDENTIFY, 0, 1);
         augment_magic_chest_contents(0, RANDOM_CLASS, 10);
         break;
-    case PM_VALKYRIE:
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
     {
-        trobj_list = copy_trobj_list(Valkyrie);
+        trobj_list = copy_trobj_list(Shieldmaiden);
         trobj_list[V_WAND].trspe = 3 +
             rne_on_rng(3, rng_charstats_role);
         switch (rolern2(4)) {
@@ -905,6 +973,7 @@ u_init_inv_skills(void)
             trobj_list[V_SPEAR].trquan =
                 2 + rne_on_rng(3, rng_charstats_role);
             trobj_list[V_DAGGER].trquan = 4;
+            trobj_list[V_SHIELD].trotyp = ELVEN_SHIELD;
             break;
         }
         role_ini_inv(trobj_list, nclist);
@@ -939,6 +1008,7 @@ u_init_inv_skills(void)
 
         /*** Race-specific initializations ***/
     switch (Race_switch) {
+    case PM_VALKYRIE:
     case PM_HUMAN:
         /* Nothing special */
         augment_magic_chest_contents(0, RANDOM_CLASS, 3);
@@ -1080,7 +1150,7 @@ u_init_inv_skills(void)
         }
 
     /* make sure you can carry all you have - especially for Tourists */
-    while (inv_weight() > 0) {
+    while (inv_weight_over_cap() > 0) {
         if (adjattrib(A_STR, 1, TRUE))
             continue;
         if (adjattrib(A_CON, 1, TRUE))
@@ -1184,7 +1254,8 @@ restricted_spell_discipline(int otyp)
     case PM_TOURIST:
         skills = Skill_T;
         break;
-    case PM_VALKYRIE:
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
         skills = Skill_V;
         break;
     case PM_WIZARD:
@@ -1313,6 +1384,7 @@ ini_inv(const struct trobj *trop, short nocreate[4], enum rng rng)
         if (trop->trclass == COIN_CLASS) {
             /* no "blessed" or "identified" money */
             obj->quan = u.umoney0;
+            u.generated_gold.moninv += obj->quan;
         } else {
             obj->dknown = obj->bknown = obj->rknown = 1;
             if (objects[otyp].oc_uses_known)

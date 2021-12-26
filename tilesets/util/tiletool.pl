@@ -14,7 +14,7 @@ die "This script is designed to be run from the main tilesets directory in the s
 my $tileset = 'slashem-16'; # by default
 my @arg = @ARGV;
 my (@show, $edit, $debug);
-my ($autoadvance, $wrap, $check, $palettemode) = (0, 0, 0);
+my ($autoadvance, $wrap, $check, $ignorehighnumbers, $palettemode) = (0, 0, 0, 0);
 while (@arg) {
   my $x = shift @arg;
   if ($x eq 'tileset') {
@@ -31,6 +31,8 @@ while (@arg) {
     $autoadvance = 1;
   } elsif ($x eq 'checknums') {
     $check = 1;
+  } elsif ($x eq 'statuesat') {
+    $ignorehighnumbers = shift @arg;
   }
 }
 
@@ -79,7 +81,9 @@ for my $tf (@tilefile) {
       $palette{$tf}{$char} = [$r, $g, $b];
     } elsif ($line =~ /^\s*#\s*tile\s+(\d+)\s+[(]([^)]+)[)]/) {
       ($tilenum, $tilename) = ($1, $2);
-      $maxtilenum ||= $tilenum; $maxtilenum = $tilenum if $tilenum > $maxtilenum;
+      if ((not $ignorehighnumbers) || ($tilenum < $ignorehighnumbers)) {
+        $maxtilenum ||= $tilenum; $maxtilenum = $tilenum if $tilenum > $maxtilenum;
+      }
       if ($numidx{$tilenum}) {
         push @badnum, $tilenum;
         warn "Duplicate tile number: $tilenum ($numidx{$tilenum}) ($tilename)\n"

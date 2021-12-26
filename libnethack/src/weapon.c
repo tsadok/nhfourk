@@ -38,7 +38,7 @@ static const short skill_names_indices[P_NUM_SKILLS] = {
     TWO_HANDED_SWORD, SCIMITAR, PN_SABER, CLUB,
     MACE, MORNING_STAR, FLAIL,
     PN_HAMMER, QUARTERSTAFF, PN_POLEARMS, SPEAR,
-    JAVELIN, TRIDENT, LANCE, BOW,
+    JAVELIN, TRIDENT, KATANA, BOW,
     SLING, CROSSBOW, DART,
     SHURIKEN, BOOMERANG, PN_WHIP, UNICORN_HORN,
     PN_ATTACK_SPELL, PN_HEALING_SPELL,
@@ -189,7 +189,7 @@ hitval(struct obj *otmp, struct monst *mon)
     if (otmp->otyp == TRIDENT && is_swimmer(ptr)) {
         if (is_pool(level, mon->mx, mon->my))
             tmp += 4;
-        else if (ptr->mlet == S_EEL || ptr->mlet == S_SNAKE)
+        else if (ptr->mlet == S_KRAKEN || ptr->mlet == S_SNAKE)
             tmp += 2;
     }
 
@@ -344,8 +344,8 @@ dmgval(struct obj *otmp, struct monst *mon)
             bonus += rnd(4);
         if (is_axe(otmp) && is_wooden(ptr))
             bonus += rnd(4);
-        if (objects[otyp].oc_material == SILVER && hates_silver(ptr))
-            bonus += rnd(20);
+        if (hates_material(ptr, objects[otyp].oc_material))
+            bonus += rnd(material_damage(objects[otyp].oc_material));
 
         /* if the weapon is going to get a double damage bonus, adjust this
            bonus so that effectively it's added after the doubling */
@@ -418,11 +418,6 @@ would_prefer_rwep(const struct monst *mtmp, struct obj *otmp)
         if (wep->oartifact)
             return FALSE;
 
-        if (mtmp->data->mlet == S_KOP && wep->otyp == CREAM_PIE)
-            return FALSE;
-        if (mtmp->data->mlet == S_KOP && otmp->otyp == CREAM_PIE)
-            return TRUE;
-
         if (throws_rocks(mtmp->data) && wep->otyp == BOULDER)
             return FALSE;
         if (throws_rocks(mtmp->data) && otmp->otyp == BOULDER)
@@ -432,7 +427,7 @@ would_prefer_rwep(const struct monst *mtmp, struct obj *otmp)
     if (((strongmonst(mtmp->data) &&
           (mtmp->misc_worn_check & W_MASK(os_arms)) == 0)
          || !objects[pwep[i]].oc_bimanual) &&
-        (objects[pwep[i]].oc_material != SILVER || !hates_silver(mtmp->data))) {
+        (!hates_material(mtmp->data, objects[pwep[i]].oc_material))) {
         for (i = 0; i < SIZE(pwep); i++) {
             if (wep && wep->otyp == pwep[i] &&
                 !(otmp->otyp == pwep[i] &&
@@ -472,12 +467,8 @@ select_rwep(const struct monst *mtmp)
     struct obj *mwep = MON_WEP(mtmp);
     struct obj *tmpprop = &zeroobj;
 
-    char mlet = mtmp->data->mlet;
-
     propellor = &zeroobj;
     Oselect(EGG);       /* cockatrice egg */
-    if (mlet == S_KOP)  /* pies are first choice for Kops */
-        Oselect(CREAM_PIE);
     if (throws_rocks(mtmp->data))       /* ...boulders for giants */
         Oselect(BOULDER);
 
@@ -506,8 +497,7 @@ select_rwep(const struct monst *mtmp)
             if (((strongmonst(mtmp->data) &&
                   (mtmp->misc_worn_check & W_MASK(os_arms)) == 0)
                  || !objects[pwep[i]].oc_bimanual) &&
-                (objects[pwep[i]].oc_material != SILVER ||
-                 !hates_silver(mtmp->data))) {
+                (!hates_material(mtmp->data, objects[pwep[i]].oc_material))) {
                 if (((otmp = oselect(mtmp, pwep[i])) != 0) &&
                     (otmp == mwep || !mweponly)) {
                     propellor = otmp;   /* force the monster to wield it */
@@ -597,7 +587,7 @@ static const short hwep[] = {
     MORNING_STAR, ELVEN_SHORT_SWORD, DWARVISH_SHORT_SWORD, SHORT_SWORD,
     ORCISH_SHORT_SWORD, MACE, AXE, DWARVISH_SPEAR, SILVER_SPEAR,
     ELVEN_SPEAR, SPEAR, ORCISH_SPEAR, FLAIL, BULLWHIP, QUARTERSTAFF,
-    JAVELIN, AKLYS, CLUB, PICK_AXE, RUBBER_HOSE,
+    JAVELIN, AKLYS, CLUB, PICK_AXE,
     WAR_HAMMER, SILVER_DAGGER, ELVEN_DAGGER, DAGGER, ORCISH_DAGGER,
     ATHAME, SCALPEL, KNIFE, WORM_TOOTH
 };
@@ -667,8 +657,7 @@ select_hwep(const struct monst *mtmp)
             continue;
         if (((strong && !wearing_shield)
              || !objects[hwep[i]].oc_bimanual) &&
-            (objects[hwep[i]].oc_material != SILVER ||
-             !hates_silver(mtmp->data)))
+            (!hates_material(mtmp->data, objects[hwep[i]].oc_material)))
             Oselect(hwep[i]);
     }
 

@@ -535,7 +535,7 @@ Here is an example of a description file (a very simple one):
  # 3 out of 4 chance for a random trap in the EAST end
  TRAP[75%]: random, (6,4)
  # an electric eel below the SOUTH end
- MONSTER: ';', "electric eel", (4,8)
+ MONSTER: 'K', "electric eel", (4,8)
  # make the walls non-diggable
  NON_DIGGABLE: (0,0,8,8)
  TELEPORT_REGION: levregion(0,0,79,20), (0,0,8,8)

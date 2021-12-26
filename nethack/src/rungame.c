@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-03-13 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-05 */
 /* Copyright (c) Daniel Thaler, 2011.                             */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -21,20 +21,24 @@
 nh_bool
 get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 {
+    const char *overrider = override_userdir;
+    if ((dirtype == SAVE_DIR || dirtype == LOG_DIR) && override_savedir)
+        overrider = override_savedir;
+
     wchar_t *subdir;
     wchar_t appPath[MAX_PATH], nhPath[MAX_PATH];
 
-    if (override_userdir) {
+    if (overrider) {
         /* TODO: make override_userdir a wchar_t on Windows. (This means using
            an alternative command line parser.) */
         wchar_t *r1 = nhPath;
-        char *r2 = override_userdir;
+        char *r2 = overrider;
 
         while (*r2)
             *r1++ = *r2++;
     } else {
         /* Get the location of "AppData\Roaming" (Vista, 7) or "Application
-           Data" (XP). The returned Path does not include a trailing backslash. 
+           Data" (XP). The returned Path does not include a trailing backslash.
          */
         if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appPath)))
             return FALSE;
@@ -76,14 +80,18 @@ get_gamedir(enum game_dirs dirtype, wchar_t *buf)
 nh_bool
 get_gamedirA(enum game_dirs dirtype, char *buf)
 {
+    const char *overrider = override_userdir;
+    if ((dirtype == SAVE_DIR || dirtype == LOG_DIR) && override_savedir)
+        overrider = override_savedir;
+
     char *subdir;
     char appPath[MAX_PATH], nhPath[MAX_PATH];
 
-    if (override_userdir) {
-        strncpy(nhPath, override_userdir, MAX_PATH);
+    if (overrider) {
+        strncpy(nhPath, overrider, MAX_PATH);
     } else {
         /* Get the location of "AppData\Roaming" (Vista, 7) or "Application
-           Data" (XP). The returned Path does not include a trailing backslash. 
+           Data" (XP). The returned Path does not include a trailing backslash.
          */
         if (!SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL, 0, appPath)))
             return FALSE;
@@ -124,6 +132,10 @@ get_gamedirA(enum game_dirs dirtype, char *buf)
 nh_bool
 get_gamedir(enum game_dirs dirtype, char *buf)
 {
+    const char *overrider = override_userdir;
+    if ((dirtype == SAVE_DIR || dirtype == LOG_DIR) && override_savedir)
+        overrider = override_savedir;
+
     const char *envval, *subdir;
     mode_t mask;
 
@@ -147,8 +159,8 @@ get_gamedir(enum game_dirs dirtype, char *buf)
         return FALSE;
     }
 
-    if (override_userdir && getgid() == getegid()) {
-        snprintf(buf, BUFSZ, "%s/%s", override_userdir, subdir);
+    if (overrider && getgid() == getegid()) {
+        snprintf(buf, BUFSZ, "%s/%s", overrider, subdir);
     } else {
         /* look in regular location */
         envval = getenv("XDG_CONFIG_HOME");
@@ -495,6 +507,11 @@ rungame(nh_bool net)
             curses_raw_print("Could not create the logfile.");
             goto cleanup;
         }
+        /*
+#ifdef DEBUG_GAME_CREATION
+        curses_raw_print(filename);
+#endif
+        */
     }
 
     create_game_windows();
@@ -508,20 +525,27 @@ rungame(nh_bool net)
     /* Create the game, then immediately load it. */
     ret = ERR_CREATE_FAILED;
 #ifdef NETCLIENT
-    if (net) {
-        fd = nhnet_create_game(new_opts);
-        if (fd >= 0)
-            ret = playgame(fd, FM_PLAY);
-    } else {
-        if (nh_create_game(fd, new_opts) == NHCREATE_OK)
-            ret = playgame(fd, FM_PLAY);
-    }
-#else
-    if (nh_create_game(fd, new_opts) == NHCREATE_OK)
-        ret = playgame(fd, FM_PLAY);
+    /*
+#ifdef DEBUG_GAME_CREATION
+        curses_raw_print("Gimmel");
 #endif
+    */
+    if (nh_create_game(fd, new_opts) == NHCREATE_OK) {
+        ret = playgame(fd, FM_PLAY);
+        /*
+#ifdef DEBUG_GAME_CREATION
+        else
+            curses_raw_print("Daleth");
+#endif
+        */
 
-    close(fd);
+#else /* (not NETCLIENT) */
+    if (nh_create_game(fd, new_opts) == NHCREATE_OK) {
+        ret = playgame(fd, FM_PLAY);
+#endif /* NETCLIENT */
+
+        close(fd);
+    }
 
     destroy_game_windows();
     discard_message_history(0);
@@ -684,7 +708,7 @@ list_gamefiles(char *dir, int *count)
 
 
 nh_bool
-loadgame(void)
+loadgame(nh_bool autoload)
 {
     char buf[BUFSZ];
     fnchar savedir[BUFSZ], filename[1024], **files;
@@ -699,9 +723,60 @@ loadgame(void)
     }
 
     files = list_gamefiles(savedir, &size);
-    if (!size) {
+    if (!autoload && !size) {
         curses_msgwin("No saved games found.", krc_notification);
         return FALSE;
+    }
+
+    struct nh_menulist wmenu;
+    int attempt = 0;
+    nh_bool in_load = !!size;
+    while (autoload) {
+        attempt++;
+        char notyet[BUFSZ];
+        const char *uname = getenv("NH4SERVERUSER");
+        if (!uname || !*uname)
+            uname = getenv("USER");
+
+        files = list_gamefiles(savedir, &size);
+        if (size && in_load) {
+            fd = sys_open(files[0], O_RDONLY, FILE_OPEN_MASK);
+            create_game_windows();
+
+            ret = playgame(fd, FM_WATCH);
+
+            close(fd);
+
+            destroy_game_windows();
+            discard_message_history(0);
+            game_ended(ret, filename, FALSE);
+            return FALSE;
+        }
+
+        if (in_load)
+            snprintf(notyet, BUFSZ, "(Attempt %d) "
+                     "No saves found for %s", attempt, uname);
+        else {
+            snprintf(notyet, BUFSZ, "Watching %s", uname);
+            attempt = 0;
+        }
+
+        init_menulist(&wmenu);
+        add_menu_item(&wmenu, 1, !in_load ? "load game" : "retry",
+                      'l', FALSE);
+        add_menu_item(&wmenu, 2, "quit", 'q', FALSE);
+        curses_display_menu(&wmenu, notyet, PICK_ONE, PLHINT_ANYWHERE,
+                            pick, curses_menu_callback);
+
+        switch (pick[0]) {
+        case CURSES_MENU_CANCELLED:
+        case 2:
+            return FALSE;
+        default:
+            in_load = TRUE;
+            files = list_gamefiles(savedir, &size);
+            break;
+        }
     }
 
     init_menulist(&menu);
@@ -745,6 +820,18 @@ loadgame(void)
     return TRUE;
 }
 
+/* Set followmode in ui flags. Made into a function because it may need
+   refreshing of the frame. */
+void
+set_uifollowmode(enum nh_followmode followmode, nh_bool avail_too)
+{
+    ui_flags.current_followmode = followmode;
+    if (avail_too)
+        ui_flags.available_followmode = followmode;
+    draw_frame();
+    redraw_game_windows();
+}
+
 
 enum nh_play_status
 playgame(int fd_or_gameno, enum nh_followmode followmode)
@@ -752,8 +839,7 @@ playgame(int fd_or_gameno, enum nh_followmode followmode)
     enum nh_play_status ret;
     int reconnect_tries_upon_network_error = 3;
 
-    ui_flags.current_followmode =
-        ui_flags.available_followmode = followmode;
+    set_uifollowmode(followmode, TRUE);
     ui_flags.gameload_message = NULL;
 
     game_is_running = TRUE;
@@ -778,7 +864,7 @@ playgame(int fd_or_gameno, enum nh_followmode followmode)
                                  "but weren't replaying?");
                 ret = GAME_DETACHED;
             } else if (ui_flags.available_followmode != FM_REPLAY) {
-                ui_flags.current_followmode = ui_flags.available_followmode;
+                set_uifollowmode(ui_flags.available_followmode, FALSE);
                 if (ui_flags.current_followmode == FM_PLAY)
                     ui_flags.gameload_message =
                         "The replay has caught up to the current situation of "
@@ -795,7 +881,7 @@ playgame(int fd_or_gameno, enum nh_followmode followmode)
         } else if (ret == GAME_DETACHED && ui_flags.current_followmode !=
                    ui_flags.available_followmode) {
             /* Exiting a replay that was nested inside a play or watch. */
-            ui_flags.current_followmode = ui_flags.available_followmode;
+            set_uifollowmode(ui_flags.available_followmode, FALSE);
             ret = RESTART_PLAY;
         }
 

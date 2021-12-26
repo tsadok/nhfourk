@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Fredrik Ljungdahl, 2017-10-14 */
+/* Last modified by Alex Smith, 2019-01-03 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -294,9 +294,8 @@ nh_timeout(void)
                 done(POISONING, delayed_killer(POISONING));
                 break;
             case FAST:
-                if (!Very_fast)
-                    pline(msgc_statusend, "You feel yourself slowing down%s.",
-                          Fast ? " a bit" : "");
+                pline(msgc_statusend, "You feel yourself slowing down%s.",
+                      (Very_fast || Fast) ? " a bit" : "");
                 break;
             case CONFUSION:
                 HConfusion = 1; /* So make_confused works properly */
@@ -311,6 +310,11 @@ nh_timeout(void)
             case BLINDED:
                 Blinded = 1;
                 make_blinded(0L, TRUE);
+                action_interrupted();
+                break;
+            case DEAF:
+                if (!Deaf)
+                    pline(msgc_statusheal, "You can hear again.");
                 action_interrupted();
                 break;
             case INVIS:
@@ -368,7 +372,7 @@ nh_timeout(void)
                     /* The more you are carrying the more likely you are to
                        make noise when you fumble.  Adjustments to this number
                        must be thoroughly play tested. */
-                    if ((inv_weight() > -500)) {
+                    if ((inv_weight_over_cap() > -500)) {
                         pline(msgc_levelwarning, "You make a lot of noise!");
                         wake_nearby(FALSE);
                     }
@@ -498,12 +502,14 @@ hatch_egg(void *arg, long timeout)
             else
                 pline(msgc_youdiscover, "You see %s %s out of your pack!",
                       monnambuf, locomotion(mon->data, "drop"));
-            if (yours) {
-                pline(msgc_petneutral, "%s cries sound like \"%s%s\"",
-                      siblings ? "Their" : "Its",
-                      u.ufemale ? "mommy" : "daddy", egg->spe ? "." : "?");
-            } else if (mon->data->mlet == S_DRAGON) {
-                verbalize(msgc_npcvoice, "Gleep!");    /* Mything eggs :-) */
+            if (canhear()) {
+                if (yours) {
+                    pline(msgc_petneutral, "%s cries sound like \"%s%s\"",
+                          siblings ? "Their" : "Its",
+                          u.ufemale ? "mommy" : "daddy", egg->spe ? "." : "?");
+                } else if (mon->data->mlet == S_DRAGON) {
+                    verbalize(msgc_npcvoice, "Gleep!"); /* Mything eggs :-) */
+                }
             }
             break;
 
@@ -1185,8 +1191,10 @@ do_storms(void)
     }
 
     if (level->locations[u.ux][u.uy].typ == CLOUD) {
-        /* inside a cloud during a thunder storm is deafening */
+        /* Being inside  a cloud during a  thunder storm is deafening.
+           Even if already deaf, we sense the thunder's vibrations. */
         pline(msgc_statusbad, "Kaboom!!!  Boom!!  Boom!!");
+        incr_itimeout(&HDeaf, rn1(20,30));
         if (!u.uinvulnerable)
             helpless(3, hr_afraid, "hiding from a thunderstorm", NULL);
     } else
@@ -1703,6 +1711,8 @@ transfer_timers(struct level *oldlev, struct level *newlev,
 
     if (newlev == oldlev)
         return;
+    if (newlev == NULL || oldlev == NULL)
+        panic("Attempting to transfer timers to/from NULL");
 
     for (curr = oldlev->lev_timers; curr; curr = next_timer) {
         next_timer = curr->next;        /* in case curr is removed */

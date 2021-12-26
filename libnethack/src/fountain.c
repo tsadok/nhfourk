@@ -25,7 +25,7 @@ dowatersnakes(void)
     int num = 2 + rn2_on_rng(5, rng_fountain_result);
     struct monst *mtmp;
 
-    if (!(mvitals[PM_WATER_MOCCASIN].mvflags & G_GONE)) {
+    if (!(mvitals[PM_PIT_VIPER].mvflags & G_GONE)) {
         if (!Blind)
             pline(msgc_levelwarning, "An endless stream of %s pours forth!",
                   Hallucination ? makeplural(monnam_for_index(rndmonidx())) :
@@ -34,7 +34,7 @@ dowatersnakes(void)
             You_hear(msgc_levelwarning, "something hissing!");
         while (num-- > 0)
             if ((mtmp =
-                 makemon(&mons[PM_WATER_MOCCASIN], level, u.ux, u.uy,
+                 makemon(&mons[PM_PIT_VIPER], level, u.ux, u.uy,
                          NO_MM_FLAGS)) && t_at(level, mtmp->mx, mtmp->my))
                 mintrap(mtmp);
     } else
@@ -201,9 +201,19 @@ dryup(xchar x, xchar y, boolean isyou)
                 if ((mtmp->data == &mons[PM_WATCHMAN] ||
                      mtmp->data == &mons[PM_WATCH_CAPTAIN]) &&
                     couldsee(mtmp->mx, mtmp->my) && mtmp->mpeaceful) {
-                    pline(msgc_npcvoice, "%s yells:", Amonnam(mtmp));
-                    verbalize(msgc_npcvoice,
-                              "Hey, stop using that fountain!");
+                    if (!Deaf) {
+                        pline(msgc_npcvoice, "%s yells:", Amonnam(mtmp));
+                        verbalize(msgc_npcvoice,
+                                  "Hey, stop using that fountain!");
+                    } else {
+                        pline(msgc_hint, "%s earnestly %s %s %s!",
+                              Amonnam(mtmp),
+                              nolimbs(mtmp->data) ? "shakes" : "waves",
+                              mhis(mtmp),
+                              nolimbs(mtmp->data)
+                                      ? mbodypart(mtmp, HEAD)
+                                      : makeplural(mbodypart(mtmp, ARM)));
+                    }
                     break;
                 }
             }
@@ -308,7 +318,7 @@ drinkfountain(void)
                       "You see an image of someone stalking you.");
                 pline_implied(msgc_intrgain, "But it disappears.");
             }
-            HSee_invisible |= FROMOUTSIDE;
+            incr_itimeout(&HSee_invisible, rn1(1000, 1000));
             newsym(u.ux, u.uy);
             break;
         case 18:       /* See monsters */
@@ -386,6 +396,7 @@ drinkfountain(void)
 void
 dipfountain(struct obj *obj)
 {
+    int goldamt = 0;
     int excaldifficulty = Role_if(PM_KNIGHT) ?
         ((u.ulevel >= 5) ? 1 : 6 - u.ulevel) :
         Role_if(PM_BARBARIAN) ?
@@ -521,8 +532,9 @@ dipfountain(struct obj *obj)
         if (FOUNTAIN_IS_LOOTED(u.ux, u.uy))
             break;
         SET_FOUNTAIN_LOOTED(u.ux, u.uy);
-        mkgold((rnd((dunlevs_in_dungeon(&u.uz) - dunlev(&u.uz) + 1) * 2) + 5),
-               level, u.ux, u.uy, rng_main);
+        goldamt = rnd((dunlevs_in_dungeon(&u.uz) - dunlev(&u.uz) + 1) * 2) + 5;
+        mkfloorgold(goldamt, level, u.ux, u.uy, rng_main);
+        u.generated_gold.misc += goldamt;
         if (!Blind)
             pline(msgc_youdiscover,
                   "Far below you, you see coins glistening in the water.");

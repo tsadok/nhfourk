@@ -93,18 +93,31 @@ struct Jitem {
 
 
 static const struct Jitem Japanese_items[] = {
+    /* Some of these translations are a bit loose.  Particularly egregious
+       ones are noted with specific comments. */
     {SHORT_SWORD, "wakizashi"},
     {BROADSWORD, "ninja-to"},
     {FLAIL, "nunchaku"},
     {GLAIVE, "naginata"},
     {LOCK_PICK, "osaku"},
     {WOODEN_HARP, "koto"},
-    {KNIFE, "shito"},
+    {KNIFE, "shito"}, /* This word is formed by using the wrong readings for
+                         both of the kanji in the word for knife. */
+    {ROCK, "giri"},
     {PLATE_MAIL, "tanko"},
     {HELMET, "kabuto"},
     {LEATHER_GLOVES, "yugake"},
-    {FOOD_RATION, "gunyoki"},
+    {LOW_BOOTS, "kutsu"},
+    {SACK, "kaban"},
+    {FOOD_RATION, "gunyoki"}, /* This word is entirely original to NetHack. */
     {POT_BOOZE, "sake"},
+    {KELP_FROND, "nori"},
+    {APPLE, "ringo"},
+    {EGG, "tamago"},
+    {CANDY_BAR, "kittokatto"},
+    {ROBE, "kimono"},
+    {PEAR, "uma"}, /* There's really no English translation for "uma".
+                      It's sometimes translated "plum" or "apricot". */
     {0, ""}
 };
 static const struct Jitem Tourist_item_names[] = {
@@ -114,6 +127,22 @@ static const struct Jitem Tourist_item_names[] = {
 static const struct Jitem no_special_item_names[] = {
     {0, ""}
 };
+
+/* NOTE: the order of these words exactly corresponds to the
+   order of oc_material values #define'd in objclass.h.
+   See also foodwords[] in eat.c, which is similar. */
+static const char *const matname[] = {
+    "matter", "liquid", "wax", "vegetable", "meat",
+    "paper", "cloth", "leather", "wood", "bone", "scale",
+    "iron", "metal", "copper", "silver", "gold", "platinum",
+    "mithril", "plastic", "glass", "gemstone", "mineral"
+};
+
+const char *
+material_name(const int material)
+{
+    return matname[material];
+}
 
 static const char *Role_item_name(int i);
 
@@ -463,8 +492,7 @@ xname2(const struct obj *obj, boolean ignore_oquan, boolean mark_user)
         break;
 
     case ARMOR_CLASS:
-        /* depends on order of the dragon scales objects */
-        if (typ >= GRAY_DRAGON_SCALES && typ <= YELLOW_DRAGON_SCALES) {
+        if (typ >= FIRST_DRAGON_SCALES && typ <= LAST_DRAGON_SCALES) {
             buf = msgcat("set of ", actualn);
             break;
         }
@@ -692,7 +720,8 @@ add_erosion_words(const struct obj *obj, const char *prefix)
 {
     boolean iscrys = (obj->otyp == CRYSKNIFE);
 
-    if (!is_damageable(obj) && !iscrys && !obj->oerodeproof)
+    if (!is_damageable(obj) && !iscrys && !(obj->scalecolor) &&
+        !obj->oerodeproof)
         return prefix;
 
     /* The only cases where any of these bits do double duty are for rotted
@@ -721,13 +750,16 @@ add_erosion_words(const struct obj *obj, const char *prefix)
     }
     if ((obj->rknown || turnstate.generating_dump) && obj->oerodeproof)
         return msgprintf("%s%s%s%s", prefix, (obj->rknown ? "" : "["),
+                         (Is_dragon_mail(obj) ? (msgprintf("%s-scaled",
+                                          DRAGONCOLOR_NAME(obj->scalecolor))) :
                           (obj->oclass == POTION_CLASS) ? "indilutable" :
-                         (iscrys ? "fixed" :
+                          iscrys ? "fixed" :
                           is_rustprone(obj) ? "rustproof" :
                           (objects[obj->otyp].oc_material == METAL) ?
-                          "stainless" :
+                             "stainless" :
                           is_corrodeable(obj) ? "corrodeproof" :
-                          is_flammable(obj) ? "fireproof" : "durable"),
+                          is_flammable(obj) ? "fireproof" :
+                          is_rottable(obj) ? "rotproof" : "durable"),
                          (obj->rknown ? " " : "] "));
     return prefix;
 }
@@ -914,7 +946,7 @@ doname_base(const struct obj *obj, boolean with_price)
             goto charges;
         break;
     case SPBOOK_CLASS:
-        if (dump && (obj->spestudied > 3)) /* MAX_SPELL_STUDY */
+        if (dump && (obj->spestudied > MAX_SPELL_STUDY))
             prefix = msgcat(prefix, "[faint] ");
         break;
     case WAND_CLASS:
@@ -1502,20 +1534,29 @@ static const char *plurals_dictionary[][2] = {
     {"^ya", "ya"},
     {"poisoned ya", "poisoned ya"},
     {"ai", "ai"},             /* e.g. "samurai" */
+    {"uma", "uma"},
     {"fish", "fish"},
     {"tuna", "tuna"},
     {"deer", "deer"},
+    {"giri", "giri"},
+    {"nori", "nori"},
+    {"sake", "sake"},
     {"yaki", "yaki"},
+    {"ringo", "ringo"},
+    {"kaban", "kaban"},
     {"sheep", "sheep"},
     {"ninja", "ninja"},
     {"ronin", "ronin"},
     {"shito", "shito"},
     {"tengu", "tengu"},
     {"manes", "manes"},
+    {"kimono", "kimono"},
+    {"tamago", "tamago"},
     {"ki-rin", "ki-rin"},
     {"Nazgul", "Nazgul"},
     {"gunyoki", "gunyoki"},
     {"shuriken", "shuriken"},
+    {"kittokatto", "kittokatto"},
 
     /* Irregular endings */
     {"shaman", "shamans"},    /* -man exception */
@@ -1712,10 +1753,7 @@ static const struct o_range o_ranges[] = {
     {"shoes", ARMOR_CLASS, LOW_BOOTS, IRON_SHOES},
     {"cloak", ARMOR_CLASS, MUMMY_WRAPPING, CLOAK_OF_DISPLACEMENT},
     {"shirt", ARMOR_CLASS, HAWAIIAN_SHIRT, T_SHIRT},
-    {"dragon scales",
-     ARMOR_CLASS, GRAY_DRAGON_SCALES, YELLOW_DRAGON_SCALES},
-    {"dragon scale mail",
-     ARMOR_CLASS, GRAY_DRAGON_SCALE_MAIL, YELLOW_DRAGON_SCALE_MAIL},
+    {"dragon scales", ARMOR_CLASS, FIRST_DRAGON_SCALES, LAST_DRAGON_SCALES},
     {"sword", WEAPON_CLASS, SHORT_SWORD, KATANA},
     {"gray stone", GEM_CLASS, LUCKSTONE, FLINT},
     {"grey stone", GEM_CLASS, LUCKSTONE, FLINT},
@@ -1894,7 +1932,6 @@ static const struct alt_spellings {
     {"saber", SILVER_SABER},
     {"silver sabre", SILVER_SABER},
     {"smooth shield", SHIELD_OF_REFLECTION},
-    {"grey dragon scale mail", GRAY_DRAGON_SCALE_MAIL},
     {"grey dragon scales", GRAY_DRAGON_SCALES},
     {"enchant armour", SCR_ENCHANT_ARMOR},
     {"destroy armour", SCR_DESTROY_ARMOR},
@@ -2220,17 +2257,13 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
     if (strncmpi(bp, "samurai sword", 13))      /* not the "samurai" monster! */
         if (strncmpi(bp, "wizard lock", 11))    /* not the "wizard" monster! */
             if (strncmpi(bp, "ninja-to", 8))    /* not the "ninja" rank */
-                if (strncmpi(bp, "master key", 10)) /* not the "master" rank */
+                if (strncmpi(bp, "master key", 10) &&/* not the "master" rank */
+                    (strncmpi(bp, "skeleton key", 12))) /* nor this monster */
                     if (strncmpi(bp, "magenta", 7)) /* not the "mage" rank */
                         if (mntmp < LOW_PM && strlen(bp) > 2 &&
                             (mntmp = name_to_mon(bp)) >= LOW_PM) {
-                            int mntmptoo, mntmplen;     /* double check for
-                                                           rank title */
                             char *obp = bp;
-
-                            mntmptoo = title_to_mon(bp, NULL, &mntmplen);
-                            bp += mntmp != mntmptoo ?
-                                (int)strlen(mons[mntmp].mname) : mntmplen;
+                            bp += (int)strlen(mons[mntmp].mname);
                             if (*bp == ' ')
                                 bp++;
                             else if (!strncmpi(bp, "s ", 2))
@@ -2317,6 +2350,7 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
         otmp = mksobj(level, GOLD_PIECE, FALSE, FALSE, rng_main);
         otmp->quan = cnt;
         otmp->owt = weight(otmp);
+        u.generated_gold.misc += otmp->quan;
         return otmp;
     }
     if (strlen(bp) == 1 && (i = def_char_to_objclass(*bp)) < MAXOCLASSES &&
@@ -2787,6 +2821,12 @@ typfnd:
         otmp->spe = ftype;
         /* Fall through */
     case SKELETON_KEY:
+    case STURDY_KEY:
+    case IRON_KEY:
+    case DOOR_KEY:
+    case BRONZE_KEY:
+    case SILVER_KEY:
+    case BRASS_KEY:
     case CHEST:
     case LARGE_BOX:
     case HEAVY_IRON_BALL:
@@ -2862,11 +2902,6 @@ typfnd:
             if (Has_contents(otmp) && verysmall(&mons[mntmp]))
                 delete_contents(otmp);  /* no spellbook */
             otmp->spe = ishistoric ? STATUE_HISTORIC : 0;
-            break;
-        case SCALE_MAIL:
-            /* Dragon mail - depends on the order of objects & dragons. */
-            if (mntmp >= PM_GRAY_DRAGON && mntmp <= PM_YELLOW_DRAGON)
-                otmp->otyp = GRAY_DRAGON_SCALE_MAIL + mntmp - PM_GRAY_DRAGON;
             break;
         }
     }
@@ -2991,7 +3026,10 @@ rnd_class(int first, int last, enum rng rng)
         sum += objects[i].oc_prob;
     if (!sum)   /* all zero */
         return first + rn2_on_rng(last - first + 1, rng);
-    x = rn2_on_rng(sum, rng) + 1;
+    if (sum == 1)
+        x = 1;
+    else
+        x = rn2_on_rng(sum, rng) + 1;
     for (i = first; i <= last; i++)
         if (objects[i].oc_prob && (x -= objects[i].oc_prob) <= 0)
             return i;

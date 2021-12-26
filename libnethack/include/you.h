@@ -38,6 +38,8 @@ struct u_event {
 
 /*** Information about the player ***/
 struct you {
+    char struct_type;          /* Should always be 'Y' for this struct.
+                                  See doc/struct_types.txt for the list. */
     xchar ux, uy;
     xchar tx, ty;       /* destination of travel */
     xchar ux0, uy0;     /* initial position of a move */
@@ -54,6 +56,9 @@ struct you {
 # define TT_LAVA        3
 # define TT_INFLOOR     4
 # define TT_ICEBLOCK    5
+    unsigned int usilence; /* remaining duration of silence */
+    int  gotsacgifts;   /* how many gifts you have received from sacrifice */
+    char gotartgifts;   /* how many _artifact_ gifts you have received from sacrifice */
     unsigned int ucramps; /* how crampy your writing hand is */
     char urooms[5];     /* rooms (roomno + 3) occupied now */
     char urooms0[5];    /* ditto, for previous position */
@@ -141,13 +146,14 @@ struct you {
             atime;      /* used for loss/gain countdown */
     int next_attr_check; /* number of turns until exerchk can run again */
     align ualign;       /* character alignment */
+    int ualignmax;      /* highest alignment record value yet achieved */
 # define CONVERT        2
 # define A_ORIGINAL     1
 # define A_CURRENT      0
     aligntyp ualignbase[CONVERT];       /* for ualign conversion record */
     int upantheon;
     schar uluck, moreluck;      /* luck and luck bonus */
-# define Luck   (u.uluck + u.moreluck)
+# define Luck   (flags.permabadluck ? -10 : (u.uluck + u.moreluck))
 # define LUCKADD        3
     /* added value when carrying luck stone */
 # define LUCKMAX        10
@@ -177,6 +183,9 @@ struct you {
     int umortality;     /* how many times you died */
     int ugrave_arise;   /* you die and become something aside from a ghost */
     microseconds ubirthday;         /* real world UTC time when game began */
+    int gameidnum;      /* monotonically increasing game ID number, can be used
+                           to verify whether two games were consecutive, in
+                           terms of when they were started */
 
     int weapon_slots;   /* unused skill slots */
     int skills_advanced;        /* # of advances made so far */
@@ -208,8 +217,21 @@ struct you {
 
     long pickmovetime; /* used by pick_pick_from_container; needs to persist */
 
-    /* SAVEBREAK: for avoiding desyncs with old saves */
-    unsigned char save_compat_bytes[3];
+    struct {
+        unsigned int moninv;    /* gold generated in monster inventory,
+                                   or dropped when gold golems are killed. */
+        unsigned int zoo;       /* gold generated on the floor in leprechaun
+                                   halls, dragon halls, David's Treasure Zoo */
+        unsigned int throneroom;/* gold generated on floor in throne rooms */
+        unsigned int vault;     /* gold generated in vaults (incl. Ludios) */
+        unsigned int onfloor;   /* gold generated on the floor elsewhere,
+                                   including graves */
+        unsigned int buried;    /* gold generated in the ground and in rock */
+        unsigned int contained; /* gold generated in chests and such */
+        unsigned int misc;      /* gold generated any other way; ways this can
+                                   happen include fountain dipping, thrones,
+                                   wishes, ... */
+    } generated_gold;
 
 };      /* end of `struct you' */
 

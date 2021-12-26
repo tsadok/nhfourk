@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-06-19 */
+/* Last modified by Alex Smith, 2018-08-14 */
 /* Copyright (c) 2013 Alex Smith. */
 /* The 'uncursed' rendering library may be distributed under either of the
  * following licenses:
@@ -478,9 +478,9 @@ platform_specific_getkeystring(int timeout_ms, int ignore_signals)
             }
 
         } else {
-            /* Ignore the selfpipe; wait 200ms for the rest of the key */
+            /* Ignore the selfpipe; wait 10ms for the rest of the key */
             t.tv_sec = 0;
-            t.tv_usec = 200000;
+            t.tv_usec = 10000;
         }
 
         if (max < watchfd_max)
@@ -1188,7 +1188,14 @@ getkeyorcodepoint_inner(int timeout_ms, int ignore_signals)
                 (KEY_FUNCTION | args[0] | KEY_SHIFT * (args[1] - 1));
         } else {
             /* A keypad key. */
-            return KEY_BIAS + (KEY_KEYPAD | *r | KEY_SHIFT * (args[1] - 1));
+            unsigned char dr = *r;
+            /* Some terminals send alternative codes for some keypad buttons */
+            switch (dr) {
+            case 86: dr = (unsigned char) KEY_A3; break;
+            case 75: dr = (unsigned char) KEY_C1; break;
+            case 85: dr = (unsigned char) KEY_C3; break;
+            }
+            return KEY_BIAS + (KEY_KEYPAD | dr | KEY_SHIFT * (args[1] - 1));
         }
     }
 

@@ -333,6 +333,7 @@ chat_with_leader(void)
             qt_pager(QT_ASSIGNQUEST);
             Qstat(got_quest) = TRUE;
             historic_event(FALSE, FALSE, "embarked upon an epic quest.");
+            achievement(urole.questach);
         }
     }
 }
@@ -403,9 +404,13 @@ prisoner_speaks(struct monst *mtmp)
     if (mtmp->data == &mons[PM_PRISONER] &&
         (mtmp->mstrategy & STRAT_WAITMASK)) {
         /* Awaken the prisoner */
-        if (canseemon(mtmp))
-            pline(msgc_npcvoice, "%s speaks:", Monnam(mtmp));
-        verbalize(msgc_aligngood, "I'm finally free!");
+        if (!Deaf) {
+            if (canseemon(mtmp))
+                pline(msgc_npcvoice, "%s speaks:", Monnam(mtmp));
+            verbalize(msgc_aligngood, "I'm finally free!");
+        } else if (canseemon(mtmp)) {
+            pline(msgc_monneutral, "%s seems quite pleased.", Monnam(mtmp));
+        }
         mtmp->mstrategy &= ~STRAT_WAITMASK;
         msethostility(mtmp, FALSE, FALSE); /* TODO: reset alignment? */
 

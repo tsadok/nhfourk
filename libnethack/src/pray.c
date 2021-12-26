@@ -23,6 +23,7 @@ static void gods_upset(aligntyp);
 static void consume_offering(struct obj *);
 static struct obj *sacrifice_gift(void);
 static boolean water_prayer(boolean);
+static boolean is_nontrivial_conduct(enum player_conduct);
 static boolean blocked_boulder(int, int);
 
 /* simplify a few tests */
@@ -1112,6 +1113,9 @@ water_prayer(boolean bless_water)
               ((other || changed > 1L) ? "s" : ""), (changed > 1L ? "" : "s"),
               (bless_water ? hcolor("light blue") : hcolor("black")));
     }
+    if (bless_water && changed > 0L) {
+        achievement(achieve_holy_water);
+    }
     return (boolean) (changed > 0L);
 }
 
@@ -1472,21 +1476,46 @@ sacrifice_gift(void)
         }
     }
     /* The usual case is to give an artifact, which is typically a weapon: */
-    otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy), rng_altar_gift);
-    if (otmp) {
-        if (otmp->spe < 0)
-            otmp->spe = 0;
-        if (otmp->cursed)
-            uncurse(otmp);
-        otmp->oerodeproof = TRUE;
-
-        /* make sure we can use this weapon */
-        unrestrict_weapon_skill(weapon_type(otmp));
-        if (!Hallucination && !Blind) {
-            otmp->dknown = 1;
-            makeknown(otmp->otyp);
-            discover_artifact(otmp->oartifact);
+    if (u.gotartgifts < (challengemode ? 1 : 3)) {
+        otmp = mk_artifact(level, NULL, a_align(u.ux, u.uy), rng_altar_gift);
+        if (otmp) {
+            u.gotartgifts++;
+            if (otmp->spe < 0)
+                otmp->spe = 0;
+            if (otmp->cursed)
+                uncurse(otmp);
+            otmp->oerodeproof = TRUE;
+            
+            /* make sure we can use this weapon */
+            unrestrict_weapon_skill(weapon_type(otmp));
+            if (!Hallucination && !Blind) {
+                otmp->dknown = 1;
+                makeknown(otmp->otyp);
+                discover_artifact(otmp->oartifact);
+            }
         }
+        return otmp;
+    }
+    /* Already got the max number of artifact gifts; give trinket. */
+    switch (rn2_on_rng(9, rng_altar_gift)) {
+    case 1:
+        otmp = mksobj(level, CAN_OF_GREASE, TRUE, TRUE, rng_altar_gift);
+        break;
+    case 2:
+        otmp = mksobj(level, TOWEL, TRUE, TRUE, rng_altar_gift);
+        break;
+    case 3:
+        otmp = mksobj(level, WAX_CANDLE, TRUE, TRUE, rng_altar_gift);
+        break;
+    case 4:
+        otmp = mksobj(level, POT_WATER, TRUE, TRUE, rng_altar_gift);
+        bless(otmp);
+        break;
+    case 5:
+        otmp = mkobj(level, AMULET_CLASS, TRUE, rng_altar_gift);
+        break;
+    default:
+        otmp = mkobj(level, FOOD_CLASS, TRUE, rng_altar_gift);
     }
     return otmp;
 }
@@ -1697,6 +1726,8 @@ dosacrifice(const struct nh_cmd_arg *arg)
                       hcolor("orange"));
                 done(ESCAPED, NULL); /* "in celestial disgrace" added later */
             } else {    /* super big win */
+                int numconducts = 0, hardconducts = 0;
+                enum player_conduct pcond;
                 adjalign(10);
                 pline(msgc_outrogood,
                       "An invisible choir sings, and you are bathed in "
@@ -1718,6 +1749,40 @@ dosacrifice(const struct nh_cmd_arg *arg)
                                "offered the Amulet of Yendor to %s and ascended"
                                " to the status of Demigod%s!", u_gname(),
                                u.ufemale ? "dess" : "");
+                achievement(achieve_ascend);
+                for (pcond = conduct_first; pcond < num_conducts; pcond++) {
+                    if (!u.uconduct[pcond]) {
+                        achievement (achieve_ascend_conduct);
+                        if (is_nontrivial_conduct(pcond)) {
+                            achievement(achieve_ascend_conduct_med);
+                            hardconducts++;
+                        }
+                    }
+                }
+                if (challengemode) {
+                    achievement(achieve_ascend_challenge);
+                }
+                if (flags.permablind || flags.permahallu || flags.permaconf ||
+                    flags.permastun  || flags.permaglib  || flags.permafumble ||
+                    flags.permalame  || flags.permabadluck) {
+                    achievement(achieve_ascend_impaired);
+                }
+                if ((hardconducts > 3) || (numconducts > 10) ||
+                    (!u.uconduct[conduct_food] && /* foodless atheist */
+                     !u.uconduct[conduct_gnostic]) ||
+                    (!u.uconduct[conduct_killer] && /* foodless pacifist */
+                     !u.uconduct[conduct_food]) ||
+                    (!u.uconduct[conduct_killer] && /* illit. pacifist */
+                     !u.uconduct[conduct_illiterate]) ||
+                    (!u.uconduct[conduct_clothing] && /* nude atheist */
+                     !u.uconduct[conduct_gnostic]) ||
+                    (!u.uconduct[conduct_killer] && /* pacifist speedrun */
+                     (moves <= 10000))) {
+                    achievement(achieve_ascend_conduct_hard);
+                }
+                if (moves <= 10000) {
+                    achievement(achieve_ascend_speedrun);
+                }
                 done(ASCENDED, NULL);
             }
         }
@@ -1833,6 +1898,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
                             msgc_info, "The altar glows %s.",
                             hcolor(u.ualign.type == A_LAWFUL ? "white" :
                                    u.ualign.type ? "black" : "gray"));
+                    achievement(achieve_altar_convert);
 
                     if (rnl(u.ulevel) > 6 && UALIGNREC > 0 &&
                         rnd(UALIGNREC) > (3 * ALIGNLIM) / 4)
@@ -1926,6 +1992,7 @@ dosacrifice(const struct nh_cmd_arg *arg)
                                 rng_altar_gift)) {
                     otmp = sacrifice_gift();
                     if (otmp) {
+                        u.gotsacgifts++;
                         dropy(otmp);
                         at_your_feet("An object");
                         godvoice(msgc_aligngood, u.ualign.type,
@@ -1966,6 +2033,22 @@ dosacrifice(const struct nh_cmd_arg *arg)
     return 1;
 }
 
+/* Return TRUE if the conduct in question is, subjectively, one of the harder
+   ones to manage for players who are (barely) good enough to ascend. */
+static boolean
+is_nontrivial_conduct(enum player_conduct c) {
+    if ((c == conduct_vegan)     || (c == conduct_vegetarian) ||
+        (c == conduct_weaphit)   || (c == conduct_polypile) ||
+        (c == conduct_polyself)  || (c == conduct_wish) ||
+        (c == conduct_artiwish)  || (c == conduct_genocide) ||
+        (c == conduct_elbereth)  || (c == conduct_puddingsplit) ||
+        (c == conduct_lostalign) || (c == conduct_sokoban_guilt) ||
+        (c == conduct_conflict)  || (c == conduct_invisible) ||
+        (c == conduct_displacement)) {
+        return FALSE;
+    }
+    return TRUE;
+}
 
 /* determine prayer results in advance; also used for enlightenment */
 /* praying: false means no messages should be given */
@@ -2045,8 +2128,13 @@ dopray(const struct nh_cmd_arg *arg)
             u.ublesscnt = 0;
             if (u.uluck < 0)
                 u.uluck = 0;
-            if (u.ualign.record <= 0)
+            if (u.ualign.record <= 0) {
                 u.ualign.record = 1;
+                if (u.ualign.record > u.ualignmax) {
+                    historic_alignment();
+                    u.ualignmax = u.ualign.record;
+                }
+            }
             u.ugangr = 0;
             turnstate.pray.type = pty_favour;
         }

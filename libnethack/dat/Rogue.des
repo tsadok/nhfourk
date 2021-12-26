@@ -461,10 +461,10 @@ MONSTER: 'l',"chameleon",random,hostile
 MONSTER: 'l',"chameleon",random,hostile
 MONSTER: 'l',"chameleon",random,hostile
 MONSTER: 'l',"chameleon",random,hostile
-MONSTER:';',"shark",(51,13),hostile
-MONSTER:';',"shark",(53,08),hostile
-MONSTER:';',"shark",(55,14),hostile
-MONSTER:';',"shark",(58,09),hostile
+MONSTER:'K',"shark",(51,13),hostile
+MONSTER:'K',"shark",(53,08),hostile
+MONSTER:'K',"shark",(55,14),hostile
+MONSTER:'K',"shark",(58,09),hostile
 
 #
 #	The "fill" level for the quest.

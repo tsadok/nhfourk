@@ -753,7 +753,7 @@ dog_move(struct monst *mtmp, int after)
 
             /* Guardian angel refuses to be conflicted; rather, it disappears,
                angrily, and sends in some nasties */
-            if (canspotmon(mtmp)) {
+            if (canspotmon(mtmp) && !Deaf) {
                 pline(msgc_npcvoice, "%s rebukes you, saying:", Monnam(mtmp));
                 verbalize(msgc_petfatal,
                           "Since you desire conflict, have some more!");
@@ -821,7 +821,7 @@ dog_move(struct monst *mtmp, int after)
 
     if (!nohands(mtmp->data) && !verysmall(mtmp->data)) {
         allowflags |= OPENDOOR;
-        if (m_carrying(mtmp, SKELETON_KEY))
+        if (m_carrying_key(mtmp, FALSE))
             allowflags |= BUSTDOOR;
     }
     if (is_giant(mtmp->data))

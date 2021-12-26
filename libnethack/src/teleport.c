@@ -64,7 +64,7 @@ goodpos(struct level *lev, int x, int y, struct monst *mtmp, unsigned gpflags)
                           Amphibious);
             else
                 return (is_flyer(mdat) || is_swimmer(mdat) || is_clinger(mdat));
-        } else if (mdat->mlet == S_EEL && !ignorewater &&
+        } else if (mdat->mlet == S_KRAKEN && !ignorewater &&
                    (!is_puddle(lev, x, y) || bigmonst(mdat))) {
             return FALSE;
         } else if (is_lava(lev, x, y)) {
@@ -281,7 +281,7 @@ teleds(int nux, int nuy, boolean allow_drag)
 
     if (hides_under(youmonst.data))
         u.uundetected = OBJ_AT(nux, nuy);
-    else if (youmonst.data->mlet == S_EEL)
+    else if (youmonst.data->mlet == S_KRAKEN)
         u.uundetected = is_pool(level, nux, nuy);
     else {
         u.uundetected = 0;
@@ -813,6 +813,7 @@ domagicportal(struct trap *ttmp)
     schedule_goto(&target_level, FALSE, FALSE, 1,
                   "You feel dizzy for a moment, but the sensation passes.",
                   NULL);
+    achievement(achieve_portal);
 }
 
 void
@@ -880,7 +881,7 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
             return ((yy & 2) != 0) ^    /* inside xor not within */
                 !within_bounded_area(x, y, mdl->dndest.nlx, mdl->dndest.nly,
                                      mdl->dndest.nhx, mdl->dndest.nhy);
-        if (mdl->updest.lx && (yy & 1) != COLNO)  /* moving up */
+        if (lev->updest.lx && (yy & 1) != COLNO)  /* moving up */
             return (within_bounded_area
                     (x, y, mdl->updest.lx, mdl->updest.ly,
                      mdl->updest.hx, mdl->updest.hy) &&
@@ -896,7 +897,16 @@ rloc_pos_ok(int x, int y,       /* coordinates of candidate location */
                      !within_bounded_area(
                          x, y, mdl->dndest.nlx, mdl->dndest.nly,
                          mdl->dndest.nhx, mdl->dndest.nhy)));
-    } else {
+    } else { /* [try to] prevent a shopkeeper or temple priest from being
+                sent out of his room (caller might resort to goodpos() if
+                we report failure here, so this isn't full prevention) */
+        if (mtmp->isshk && inhishop(mtmp)) {
+            if (mdl->locations[x][y].roomno != ESHK(mtmp)->shoproom)
+                return FALSE;
+        } else if (mtmp->ispriest && inhistemple(mtmp)) {
+            if (mdl->locations[x][y].roomno != EPRI(mtmp)->shroom)
+                return FALSE;
+        }
         /* current location is <xx,yy> */
         if (!tele_jump_ok(mdl, xx, yy, x, y))
             return FALSE;
@@ -928,8 +938,8 @@ rloc_to(struct monst *mtmp, int x, int y, struct level *lev)
         if (mtmp->wormno)
             remove_worm(mtmp, lev);
         else {
-            remove_monster(lev, oldx, oldy);
-            if (lev == level)
+            remove_monster(mtmp->dlevel, oldx, oldy);
+            if (mtmp->dlevel == level)
                 newsym(oldx, oldy); /* update old location */
         }
     }
@@ -941,7 +951,7 @@ rloc_to(struct monst *mtmp, int x, int y, struct level *lev)
     if (mtmp->wormno)   /* now put down tail */
         place_worm_tail_randomly(mtmp, x, y, rng_main);
 
-    if (u.ustuck == mtmp) { /* implying mtmp is on the current level */
+    if (u.ustuck == mtmp) { /* implies mtmp->dlevel == level */
         if (Engulfed) {
             u.ux = x;
             u.uy = y;
@@ -950,9 +960,12 @@ rloc_to(struct monst *mtmp, int x, int y, struct level *lev)
             u.ustuck = 0;
     }
 
-    if (lev == level) {
+    if (mtmp->dlevel == level) {
         newsym(x, y);       /* update new location */
         set_apparxy(mtmp);  /* orient monster */
+    } else {
+        mtmp->mux = COLNO;
+        mtmp->muy = ROWNO;
     }
 
     /* In some cases involving migration, the player and monster are currently
@@ -1095,7 +1108,7 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
         do {
             x = rn2(COLNO);
             y = rn2(ROWNO);
-            if ((trycount < 500) ? rloc_pos_ok(x, y, mtmp, mdl)
+            if ((trycount < 500) ? rloc_pos_ok(x, y, mtmp, lev)
                 : goodpos(mdl, x, y, mtmp, gpflags))
                 goto found_xy;
         } while (++trycount < 1000);

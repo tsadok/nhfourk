@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-05 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -14,6 +14,8 @@ static void restore_utracked(struct memfile *mf, struct you *you);
 static void find_lev_obj(struct level *lev);
 static void restlevchn(struct memfile *mf);
 static void restdamage(struct memfile *mf, struct level *lev, boolean ghostly);
+static void rest_heardsounds(struct memfile *mf, struct level *lev,
+                             boolean ghostly);
 static void restobjchn(struct memfile *mf, struct level *lev,
                        boolean ghostly, boolean frozen, struct obj **chain,
                        struct trietable **table);
@@ -137,6 +139,15 @@ restlevchn(struct memfile *mf)
     }
 }
 
+static void
+rest_heardsounds(struct memfile *mf, struct level *lev, boolean ghostly)
+{
+    enum tracked_levelsound snd;
+    for (snd = levsound_none; snd <= LAST_TRACKED_LEVELSOUND; snd++) {
+        boolean heardit = ((mread8(mf) > 0) ? TRUE : FALSE);
+        lev->heardsound[snd] = (ghostly ? FALSE : heardit);
+    }
+}
 
 static void
 restdamage(struct memfile *mf, struct level *lev, boolean ghostly)
@@ -560,6 +571,8 @@ restore_you(struct memfile *mf, struct you *y)
     y->ulycn = mread32(mf);
     y->utrap = save_decode_32(mread32(mf), -moves, -moves);
     y->utraptype = mread32(mf);
+    y->usilence = mread32(mf);
+    y->gotsacgifts = mread32(mf);
     y->ucramps = mread32(mf);
     y->uhunger = save_decode_32(mread32(mf), -moves, -moves);
     y->uhs = mread32(mf);
@@ -575,6 +588,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->udg_cnt = mread32(mf);
     y->next_attr_check = mread32(mf);
     y->ualign.record = mread32(mf);
+    y->ualignmax = mread32(mf);
     y->ugangr = mread32(mf);
     y->ugifts = mread32(mf);
     y->ublessed = mread32(mf);
@@ -585,6 +599,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->urideturns = mread32(mf);
     y->umortality = mread32(mf);
     y->ugrave_arise = mread32(mf);
+    y->gameidnum = mread32(mf);
     y->weapon_slots = mread32(mf);
     y->skills_advanced = mread32(mf);
     y->initrole = mread32(mf);
@@ -605,11 +620,6 @@ restore_you(struct memfile *mf, struct you *y)
     y->uy0 = mread8(mf);
     y->uz.dnum = mread8(mf);
     y->uz.dlevel = mread8(mf);
-    /* Padding to replace utolev/utotype, which was removed. */
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): delete the next few lines. */
-    y->save_compat_bytes[0] = mread8(mf);
-    y->save_compat_bytes[1] = mread8(mf);
-    y->save_compat_bytes[2] = mread8(mf);
     y->umoved = mread8(mf);
     y->ualign.type = mread8(mf);
     y->ualignbase[0] = mread8(mf);
@@ -625,6 +635,7 @@ restore_you(struct memfile *mf, struct you *y)
     y->twoweap = mread8(mf);
     y->bashmsg = mread8(mf);
     y->moveamt = mread8(mf);
+    y->gotartgifts = mread8(mf);
 
     /* Ignore the padding added in save.c */
     for (i = 0; i < 511; i++)
@@ -709,6 +720,12 @@ restore_you(struct memfile *mf, struct you *y)
 
     y->lastinvnr = mread32(mf);
     y->pickmovetime = mread64(mf);
+    y->generated_gold.moninv    = mread32(mf);
+    y->generated_gold.vault     = mread32(mf);
+    y->generated_gold.onfloor   = mread32(mf);
+    y->generated_gold.buried    = mread32(mf);
+    y->generated_gold.contained = mread32(mf);
+    y->generated_gold.misc      = mread32(mf);
 }
 
 static void
@@ -800,6 +817,12 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->occupation = mread8(mf);
     f->permablind = mread8(mf);
     f->permahallu = mread8(mf);
+    f->permaconf = mread8(mf);
+    f->permastun = mread8(mf);
+    f->permaglib = mread8(mf);
+    f->permafumble = mread8(mf);
+    f->permalame = mread8(mf);
+    f->permabadluck = mread8(mf);
     f->pickup = mread8(mf);
     f->pickup_thrown = mread8(mf);
     f->prayconfirm = mread8(mf);
@@ -826,9 +849,11 @@ restore_flags(struct memfile *mf, struct flag *f)
     f->actions = mread8(mf);
     f->save_encoding = mread8(mf);
     f->hide_implied = mread8(mf);
+    f->servermail = mread8(mf);
+    f->autounlock = mread8(mf);
 
     /* Ignore the padding added in save.c */
-    for (i = 0; i < 109; i++)
+    for (i = 0; i < 107; i++)
         (void) mread8(mf);
 
     mread(mf, f->setseed, sizeof (f->setseed));
@@ -1088,23 +1113,6 @@ restore_dest_area(struct memfile *mf, dest_area *a)
     a->nly = mread8(mf);
     a->nhx = mread8(mf);
     a->nhy = mread8(mf);
-
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2)
-
-       A level region spanning the entire level is saved with eight zeroes
-       in -beta1. It should be using COLNO/ROWNO sentinels. */
-    if (!a->lx && !a->ly && !a->hx && !a->hy) {
-        a->lx = COLNO;
-        a->ly = ROWNO;
-        a->hx = COLNO;
-        a->hy = ROWNO;
-    }
-    if (!a->nlx && !a->nly && !a->nhx && !a->nhy) {
-        a->nlx = COLNO;
-        a->nly = ROWNO;
-        a->nhx = COLNO;
-        a->nhy = ROWNO;
-    }
 }
 
 
@@ -1254,6 +1262,8 @@ getlev(struct memfile *mf, xchar levnum, boolean ghostly)
     restdamage(mf, lev, ghostly);
 
     rest_regions(mf, lev, ghostly);
+    rest_heardsounds(mf, lev, ghostly);
+
     if (ghostly) {
         /* assert(lev->z == u.uz); */
 

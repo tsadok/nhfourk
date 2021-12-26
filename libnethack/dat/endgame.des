@@ -11,9 +11,9 @@
 
 MAZE:"earth",' '
 FLAGS: noteleport,hardfloor,shortsighted
-MESSAGE: "Well done, mortal!"
-MESSAGE: "But now thou must face the final Test..."
-MESSAGE: "Prove thyself worthy or perish!"
+#MESSAGE: "Well done, mortal!"
+#MESSAGE: "But now thou must face the final Test..."
+#MESSAGE: "Prove thyself worthy or perish!"
 
 GEOMETRY:center,center
 # The player lands, upon arrival, in the
@@ -45,7 +45,7 @@ MAP
 ENDMAP
 #  Since there are no stairs, this forces the hero's initial placement
 TELEPORT_REGION:(69,16,69,16),(0,0,0,0)
-PORTAL:(0,0,75,19),(65,13,75,19),"air"
+PORTAL:(0,0,75,19),(65,13,75,19),"earth"
 #  Some helpful monsters.  Making sure a
 #  pick axe and at least one wand of digging
 #  are available.
@@ -169,7 +169,7 @@ ENDMAP
 # the preceding level; the exit portal is placed inside the down region.
 TELEPORT_REGION:levregion(00,00,23,20),levregion(24,00,78,20),up
 TELEPORT_REGION:levregion(55,00,78,20),levregion(00,00,54,20),down
-PORTAL:levregion(56,01,78,19),levregion(),"fire"
+PORTAL:levregion(56,01,78,19),levregion(),"air"
 REGION:(00,00,75,19),lit,"ordinary"
 MONSTER:'E',"air elemental",random,hostile
 MONSTER:'E',"air elemental",random,hostile
@@ -261,7 +261,7 @@ MAP
 .................................LL....................LL...................
 ENDMAP
 TELEPORT_REGION:(69,16,69,16),(0,0,0,0)
-PORTAL:(0,0,75,19),(65,13,75,19),"water"
+PORTAL:(0,0,75,19),(65,13,75,19),"fire"
 
 TRAP:"fire",random
 TRAP:"fire",random
@@ -413,49 +413,49 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
 ENDMAP
 TELEPORT_REGION:(0,0,25,19),levregion()
-PORTAL:(51,0,75,19),levregion(),"astral"
+PORTAL:(51,0,75,19),levregion(),"water"
 # A fisherman's dream...
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"giant eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"electric eel",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"kraken",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"shark",random
-MONSTER:';',"piranha",random
-MONSTER:';',"piranha",random
-MONSTER:';',"piranha",random
-MONSTER:';',"piranha",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
-MONSTER:';',random,random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"giant eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"electric eel",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"kraken",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"shark",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"piranha",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
 # These guys feel like home here
 MONSTER:'E',"water elemental",random,hostile
 MONSTER:'E',"water elemental",random,hostile

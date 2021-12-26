@@ -20,14 +20,20 @@ mon_in_room(struct monst *mon, int rmtyp)
     return level->rooms[rno - ROOMOFFSET].rtype == rmtyp;
 }
 
+/* Note that besides sounds as such, this function also handles other
+   atmospheric effects, e.g., smells.  These still go on msgc_levelsound
+   but can be noticed even if you are deaf.  Most of the actual sounds
+   go through You_hear(), which checks for deafness; but there are
+   several that use pline() instead, hence the sounds boolean. */
 void
 dosounds(void)
 {
     struct mkroom *sroom;
     int hallu, vx, vy;
     struct monst *mtmp;
+    boolean sounds = canhear();
 
-    if (!canhear() || Engulfed || Underwater)
+    if (Engulfed || Underwater)
         return;
 
     hallu = Hallucination ? 1 : 0;
@@ -39,6 +45,7 @@ dosounds(void)
             "the splashing of a naiad.",
             "a soda fountain!",
         };
+        if (sounds) level->heardsound[levsound_fountain] = TRUE;
         You_hear(msgc_levelsound, "%s", fountain_msg[rn2(3) + hallu]);
     }
 
@@ -48,6 +55,7 @@ dosounds(void)
             "a gurgling noise.",
             "dishes being washed!",
         };
+        if (sounds) level->heardsound[levsound_sink] = TRUE;
         You_hear(msgc_levelsound, "%s", sink_msg[rn2(2) + hallu]);
     }
 
@@ -67,9 +75,12 @@ dosounds(void)
                 /* finding one is enough, at least for now */
                 int which = rn2(3) + hallu;
 
+                if (sounds || (which == 2))
+                    level->heardsound[levsound_throne] = TRUE;
+
                 if (which != 2)
                     You_hear(msgc_levelsound, "%s", throne_msg[which]);
-                else
+                else if (sounds)
                     pline(msgc_levelsound, throne_msg[2], uhis());
                 return;
             }
@@ -81,7 +92,11 @@ dosounds(void)
             "You smell marsh gas!",     /* so it's a smell... */
             "You hear Donald Duck!",
         };
-        pline(msgc_levelsound, "%s", swamp_msg[rn2(2) + hallu]);
+        int idx = rn2(2) + hallu;
+        if (sounds || (idx == 1)) {
+            level->heardsound[levsound_swamp] = TRUE;
+            pline(msgc_levelsound, "%s", swamp_msg[idx]);
+        }
         return;
     }
     if ((sroom = search_special(level, VAULT)) && !rn2(200)) {
@@ -96,21 +111,27 @@ dosounds(void)
                                 gold_in_vault = TRUE;
                     if (vault_occupied(u.urooms) !=
                         (ROOM_INDEX(sroom) + ROOMOFFSET)) {
-                        if (gold_in_vault)
+                        if (gold_in_vault) {
+                            level->heardsound[levsound_vault] = TRUE;
                             You_hear(msgc_levelsound,
                                      !hallu ? "someone counting money." :
                                      "the quarterback calling the play.");
-                        else
+                        } else {
+                            level->heardsound[levsound_vault] = TRUE;
+                            level->heardsound[levsound_vaultempty] = TRUE;
                             You_hear(msgc_levelsound, "someone searching.");
+                        }
                         break;
                     }
                     /* fall into... (yes, even for hallucination) */
                 }
             case 0:
+                if (sounds) level->heardsound[levsound_vault] = TRUE;
                 You_hear(msgc_levelsound,
                          "the footsteps of a guard on patrol.");
                 break;
             case 2:
+                if (sounds) level->heardsound[levsound_vault] = TRUE;
                 You_hear(msgc_levelsound, "Ebenezer Scrooge!");
                 break;
             }
@@ -124,12 +145,15 @@ dosounds(void)
                 mon_in_room(mtmp, BEEHIVE)) {
                 switch (rn2(2) + hallu) {
                 case 0:
+                    if (sounds) level->heardsound[levsound_hive] = TRUE;
                     You_hear(msgc_levelsound, "a low buzzing.");
                     break;
                 case 1:
+                    if (sounds) level->heardsound[levsound_hive] = TRUE;
                     You_hear(msgc_levelsound, "an angry drone.");
                     break;
                 case 2:
+                    if (sounds) level->heardsound[levsound_hive] = TRUE;
                     You_hear(msgc_levelsound, "bees in your %sbonnet!",
                              uarmh ? "" : "(nonexistent) ");
                     break;
@@ -144,6 +168,7 @@ dosounds(void)
                 continue;
             if (mon_in_room(mtmp, DRAGONHALL)) {
                 if (monsndx(mtmp->data) == PM_RED_DRAGON) {
+                    level->heardsound[levsound_dragonhall] = TRUE;
                     if (Hallucination)
                         pline(msgc_levelsound,
                               "Someone is having a barbecue!");
@@ -158,18 +183,24 @@ dosounds(void)
                         pline(msgc_levelsound, "You smell smoke.");
                     return;
                 } else if (monsndx(mtmp->data) == PM_GREEN_DRAGON) {
-                    if (Hallucination)
+                    if (Hallucination) {
+                        level->heardsound[levsound_dragonhall] = TRUE;
                         pline(msgc_levelsound, "Are you jealous?");
-                    else if (!(moves %3)) {
-                        if (!Blind)
+                    } else if (!(moves %3)) {
+                        if (!Blind) {
+                            level->heardsound[levsound_dragonhall] = TRUE;
                             pline(msgc_levelsound,
                                   "Out of the corner of your %s you spot "
                                   "a faint zephyr of strange fumes.",
                                   body_part(EYE));
-                    } else
+                        }
+                    } else {
+                        level->heardsound[levsound_dragonhall] = TRUE;
                         pline(msgc_levelsound, "The air seems toxic here.");
+                    }
                     return;
                 } else if (monsndx(mtmp->data) == PM_WHITE_DRAGON) {
+                    level->heardsound[levsound_dragonhall] = TRUE;
                     if (Hallucination)
                         pline(msgc_levelsound, "You see %s.",
                               (moves % 2) ? "penguins" : "a polar bear");
@@ -181,16 +212,18 @@ dosounds(void)
                                         "teeth"));
                     return;
                 } else if (monsndx(mtmp->data) == PM_ORANGE_DRAGON) {
+                    level->heardsound[levsound_dragonhall] = TRUE;
                     if (Hallucination)
-                        pline(msgc_levelsound,
-                              "You hear someone reading actuarial tables.");
+                        You_hear(msgc_levelsound,
+                                 "someone reading actuarial tables.");
                     else if (Sleep_resistance)
                         pline(msgc_levelsound, "You yawn.");
                     else
                         pline(msgc_levelsound, "You hear gentle snoring.");
                     return;
                 } else if (monsndx(mtmp->data) == PM_BLUE_DRAGON) {
-                        pline(msgc_levelsound, "You tingle all over.");
+                    level->heardsound[levsound_dragonhall] = TRUE;
+                    pline(msgc_levelsound, "You tingle all over.");
                     return;
                 }
             }
@@ -204,6 +237,7 @@ dosounds(void)
                 switch (rn2(2) + hallu) {
                 case 1:
                     if (!strcmp(body_part(HAIR), "hair")) {
+                        level->heardsound[levsound_graveyard] = TRUE;
                         pline(msgc_levelsound,
                               "The %s on the back of your %s stands up.",
                               body_part(HAIR), body_part(NECK));
@@ -212,6 +246,7 @@ dosounds(void)
                     /* fall through */
                 case 2:
                     if (!strcmp(body_part(HAIR), "hair")) {
+                        level->heardsound[levsound_graveyard] = TRUE;
                         pline(msgc_levelsound,
                               "The %s on your %s seems to stand up.",
                               body_part(HAIR), body_part(HEAD));
@@ -219,8 +254,11 @@ dosounds(void)
                     }
                     /* fall through */
                 case 0:
-                    pline(msgc_levelsound,
-                          "You suddenly realize it is unnaturally quiet.");
+                    if (sounds) {
+                        level->heardsound[levsound_graveyard] = TRUE;
+                        pline(msgc_levelsound,
+                              "You suddenly realize it is unnaturally quiet.");
+                    }
                     break;
                 }
                 return;
@@ -242,6 +280,7 @@ dosounds(void)
             if (is_mercenary(mtmp->data) && mon_in_room(mtmp, BARRACKS) &&
                 /* sleeping implies not-yet-disturbed (usually) */
                 (mtmp->msleeping || ++count > 5)) {
+                if (sounds) level->heardsound[levsound_barracks] = TRUE;
                 You_hear(msgc_levelsound, "%s", barracks_msg[rn2(3) + hallu]);
                 return;
             }
@@ -258,6 +297,7 @@ dosounds(void)
                 continue;
             if ((mtmp->msleeping || is_animal(mtmp->data)) &&
                 mon_in_room(mtmp, ZOO)) {
+                if (sounds) level->heardsound[levsound_zoo] = TRUE;
                 You_hear(msgc_levelsound, "%s", zoo_msg[rn2(2) + hallu]);
                 return;
             }
@@ -279,6 +319,7 @@ dosounds(void)
                 "the chime of a cash register.",
                 "Neiman and Marcus arguing!",
             };
+            if (sounds) level->heardsound[levsound_shop] = TRUE;
             You_hear(msgc_levelsound, shop_msg[rn2(2) + hallu], name);
         }
         return;
@@ -297,6 +338,7 @@ dosounds(void)
                 "someone say \"No more woodchucks!\"",
                 "a loud ZOT!"   /* both rec.humor.oracle */
             };
+            if (sounds) level->heardsound[levsound_delphi] = TRUE;
             You_hear(msgc_levelsound, "%s", ora_msg[rn2(3) + hallu * 2]);
         }
         return;
@@ -389,23 +431,23 @@ yelp(struct monst *mtmp)
     else
         switch (mtmp->data->msound) {
         case MS_MEW:
-            yelp_verb = "yowl";
+            yelp_verb = (!Deaf) ? "yowl" : "arch";
             break;
         case MS_BARK:
         case MS_GROWL:
-            yelp_verb = "yelp";
+            yelp_verb = (!Deaf) ? "yelp" : "recoil";
             break;
         case MS_ROAR:
-            yelp_verb = "snarl";
+            yelp_verb = (!Deaf) ? "snarl" : "bluff";
             break;
         case MS_SQEEK:
-            yelp_verb = "squeal";
+            yelp_verb = (!Deaf) ? "squeal" : "quiver";
             break;
         case MS_SQAWK:
-            yelp_verb = "screak";
+            yelp_verb = (!Deaf) ? "screak" : "thrash";
             break;
         case MS_WAIL:
-            yelp_verb = "wail";
+            yelp_verb = (!Deaf) ? "wail" : "cringe";
             break;
         }
     if (yelp_verb) {
@@ -465,7 +507,12 @@ beg(struct monst *mtmp)
     else if (mtmp->data->msound >= MS_HUMANOID) {
         if (!canspotmon(mtmp))
             map_invisible(mtmp->mx, mtmp->my);
-        verbalize(msgc_petwarning, "I'm hungry.");
+        if (!Deaf)
+            verbalize(msgc_petwarning, "I'm hungry.");
+        else
+            pline(msgc_petwarning,
+                  "%s seems to be saying something, but you cannot hear.",
+                  Monnam(mtmp));
     }
 }
 
@@ -935,6 +982,11 @@ dotalk(const struct nh_cmd_arg *arg)
     if (Underwater) {
         pline(msgc_cancelled, "Your speech is unintelligible underwater.");
         return 0;
+    }
+    if (Deaf) {
+	pline(msgc_cancelled,
+              "How can you hold a conversation when you cannot hear?");
+	return 0;
     }
 
     if (!Blind && (otmp = shop_object(u.ux, u.uy)) != NULL) {

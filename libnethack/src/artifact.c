@@ -425,16 +425,22 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
        warned against. */
     if (objects[otmp->otyp].oc_oprop == extrinsic && extrinsic != WARN_OF_MON)
         return mask & W_EQUIP;
+    if (objects[otmp->otyp].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
+        return mask & W_EQUIP;
+
+    /* Handle dragon-scaled armor: */
+    if ((objects[otmp->otyp].oc_armcat == os_arm) && (otmp->scalecolor)) {
+        int scale = FIRST_DRAGON_SCALES + otmp->scalecolor - DRAGONCOLOR_FIRST;
+        if (objects[scale].oc_oprop == extrinsic && extrinsic != WARN_OF_MON)
+            return mask & W_EQUIP;
+        if (objects[scale].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
+            return mask & W_EQUIP;
+    }
 
     /* Non-artifact item properties go here. At the present:
 
-       - alchemy smocks give two extrinsics, and so only one can be placed in
-         its item property field, with the other one being special-cased;
-
        - the Amulet of Yendor is not an artifact but grants clairvoyance when
          carried */
-    if (otmp->otyp == ALCHEMY_SMOCK && extrinsic == ACID_RES)
-        return mask & W_EQUIP;
     if (otmp->otyp == AMULET_OF_YENDOR && extrinsic == CLAIRVOYANT)
         return mask | W_MASK(os_carried);
 
@@ -498,7 +504,8 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         (spfx & SPFX_REFLECT && extrinsic == REFLECTING) ||
         (spfx & SPFX_STRM    && extrinsic == STORMPRONE) ||
         (spfx & SPFX_FREEA   && extrinsic == FREE_ACTION) ||
-        (spfx & SPFX_XRAY    && extrinsic == XRAY_VISION))
+        (spfx & SPFX_XRAY    && extrinsic == XRAY_VISION) ||
+        (spfx & SPFX_PSHCH   && extrinsic == PROT_FROM_SHAPE_CHANGERS))
         return mask;
 
     if (spfx & SPFX_WARN) {
@@ -1404,6 +1411,12 @@ arti_invoke(struct obj *obj)
     }
 
     const struct artifact *oart = get_artifact(obj);
+    if (!oart) {
+        impossible("arti_invoke() called for a non-artifact (%s)",
+                   xname(obj));
+        return 0;
+    }
+    break_conduct(conduct_appliedartifact);
 
     if (oart->inv_prop > LAST_PROP) {
         /* It's a special power, not "just" a property */
@@ -1674,7 +1687,8 @@ arti_speak(struct obj *obj)
     */
     if (!*line)
         line = "NetHack rumors file closed for renovation.";
-    pline_implied(msgc_npcvoice, "%s:", Tobjnam(obj, "whisper"));
+    pline_implied(msgc_npcvoice, "%s%s:", Tobjnam(obj, "whisper"),
+                  (Deaf ? " in your mind" : ""));
     verbalize(msgc_rumor, "%s", line);
     return;
 }
@@ -1711,8 +1725,9 @@ retouch_object(struct obj **objp, boolean loseit)
     
     if (touch_artifact(obj, &youmonst)) {
         /* nothing to do if hero can successfully handle this object */
-        if (!(objects[obj->otyp].oc_material == SILVER &&
-              (u.ulycn >= LOW_PM || hates_silver(youmonst.data))))
+        if (!((objects[obj->otyp].oc_material == SILVER &&
+               u.ulycn >= LOW_PM) ||
+              hates_material(URACEDATA, objects[obj->otyp].oc_material)))
             return 1;
         /* we didn't get "<obj> evades your grasp" message; give alt message */
         pline(msgc_consequence, "You can't handle %s anymore!",

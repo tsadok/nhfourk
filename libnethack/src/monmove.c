@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2016-06-14 */
+/* Last modified by Alex Smith, 2017-12-19 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,7 +19,8 @@ boolean
 mb_trapped(struct monst *mtmp)
 {
     if (cansee(mtmp->mx, mtmp->my))
-        pline(msgc_levelsound, "KABOOM!!  You see a door explode.");
+        pline(msgc_levelsound, "%sYou see a door explode.",
+              (canhear() ? "KABOOM!!  " : ""));
     else
         You_hear(msgc_levelsound, "a distant explosion.");
     wake_nearto(mtmp->mx, mtmp->my, 7 * 7);
@@ -35,6 +36,27 @@ mb_trapped(struct monst *mtmp)
     return FALSE;
 }
 
+void
+mon_yells(struct monst *mon, enum msg_channel shout_msgc, const char *shout) {
+    if (Deaf) {
+        if (canspotmon(mon)) {
+            /* Sidenote on "A watchman angrily waves her arms!"  A female being
+               called a watchman is valid (because it's a career name). */
+            pline(shout_msgc, "%s angrily %s %s %s!",
+                Amonnam(mon),
+                nolimbs(mon->data) ? "shakes" : "waves",
+                mhis(mon),
+                nolimbs(mon->data) ? mbodypart(mon, HEAD)
+                                   : makeplural(mbodypart(mon, ARM)));
+        }
+    } else {
+        if (canspotmon(mon))
+            pline(msgc_npcvoice, "%s yells:", Amonnam(mon));
+        else
+            You_hear(msgc_npcvoice, "someone yell:");
+        verbalize(shout_msgc, shout);
+    }
+}
 
 /* Called every turn by the Watch to see if they notice any misbehaviour.
    Currently this only handles occupations. (There are other behaviours
@@ -547,15 +569,10 @@ toofar:
          find_offensive(mtmp, &musable)) &&
         mtmp->mlstmv != moves) {
         struct monst *mtmp2 = mfind_target(mtmp, FALSE);
+        int tx = mtmp2 ? ((mtmp2 == &youmonst) ? mtmp->mux : mtmp2->mx) : COLNO;
+        int ty = mtmp2 ? ((mtmp2 == &youmonst) ? mtmp->muy : mtmp2->my) : ROWNO;
 
         if (mtmp2) {
-            int tx = mtmp2->mx, ty = mtmp2->my;
-            if (mtmp2 == &youmonst) {
-                /* use muxy */
-                tx = mtmp->mux;
-                ty = mtmp->muy;
-            }
-
             /* Don't fight melee targets here. Doing so might have issues like
                ignoring Elbereth, etc. */
             if (mtmp2 && !monnear(mtmp, tx, ty)) {
@@ -582,8 +599,8 @@ toofar:
     /* Now the actual movement phase */
 
     if (mtmp->data == &mons[PM_LEPRECHAUN]) {
-        ygold = findgold(invent);
-        lepgold = findgold(mtmp->minvent);
+        ygold = findgold(invent, challengemode);
+        lepgold = findgold(mtmp->minvent, TRUE);
     }
 
     /* We have two AI branches: "immediately attack the player's apparent
@@ -804,7 +821,7 @@ m_move(struct monst *mtmp, int after)
     if (!Is_rogue_level(&u.uz))
         can_tunnel = tunnels(ptr);
     can_open = !(nohands(ptr) || verysmall(ptr));
-    can_unlock = ((can_open && m_carrying(mtmp, SKELETON_KEY)) || mtmp->iswiz ||
+    can_unlock = ((can_open && m_carrying_key(mtmp, FALSE)) || mtmp->iswiz ||
                   is_rider(ptr));
     doorbuster = is_giant(ptr);
     if (mtmp->wormno)
@@ -1221,7 +1238,8 @@ postmov:
                     } else {
                         if (canseeit)
                             pline(msgc_monneutral,
-                                  "You see a door crash open.");
+                                  "You see a door %s open.",
+                                  (canhear() ? "crash" : "suddenly"));
                         else
                             You_hear(msgc_levelsound, "a door crash open.");
                         if (here->doormask & D_LOCKED && !rn2(2))
@@ -1292,13 +1310,13 @@ postmov:
         }
 
         if (isok(mtmp->mx, mtmp->my) &&
-            (hides_under(ptr) || ptr->mlet == S_EEL)) {
+            (hides_under(ptr) || ptr->mlet == S_KRAKEN)) {
             /* Always set--or reset--mundetected if it's already hidden (just
                in case the object it was hiding under went away); usually set
                mundetected unless monster can't move.  */
             if (mtmp->mundetected ||
                 (mtmp->mcanmove && !mtmp->msleeping && rn2(5)))
-                mtmp->mundetected = (ptr->mlet != S_EEL) ?
+                mtmp->mundetected = (ptr->mlet != S_KRAKEN) ?
                     OBJ_AT(mtmp->mx, mtmp->my) :
                     (is_pool(level, mtmp->mx, mtmp->my) &&
                      !Is_waterlevel(&u.uz));
@@ -1532,6 +1550,8 @@ can_ooze(struct monst *mtmp)
 
             if (typ == STETHOSCOPE || typ == TIN_WHISTLE || typ == MAGIC_WHISTLE ||
                 typ == MAGIC_MARKER || typ == TIN_OPENER || typ == SKELETON_KEY ||
+                typ == STURDY_KEY || typ == IRON_KEY || typ == DOOR_KEY ||
+                typ == BRONZE_KEY || typ == SILVER_KEY || typ == BRASS_KEY ||
                 typ == LOCK_PICK || typ == CREDIT_CARD)
                 break;
 

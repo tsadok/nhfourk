@@ -94,11 +94,11 @@ static const struct artifact const_artilist[] = {
       DRLI(5, 2), DRLI(0, 0), NO_CARY, 0, A_CHAOTIC, NON_PM, NON_PM, 8000L),
 /*
  *      Mjollnir will return to the hand of the wielder when thrown
- *      if the wielder is a Valkyrie wearing Gauntlets of Power.
+ *      if the wielder is a Hoplite or Shieldmaiden wearing Gauntlets of Power.
  */
     A("Mjollnir", WAR_HAMMER,   /* Mjo:llnir */
       (SPFX_RESTR | SPFX_ATTK), 0, 0,
-      ELEC(5, 24), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_VALKYRIE, NON_PM, 4000L),
+      ELEC(5, 24), NO_DFNS, NO_CARY, 0, A_NEUTRAL, PM_HOPLITE, NON_PM, 4000L),
 
     A("Cleaver", BATTLE_AXE,
       SPFX_RESTR, 0, 0,
@@ -136,16 +136,16 @@ static const struct artifact const_artilist[] = {
       (SPFX_RESTR | SPFX_INTEL | SPFX_DEFN | SPFX_ATTK ), 0, 0,
       SLEE(1,1), DFNS(AD_SLEE), NO_CARY, 0, A_CHAOTIC, PM_ROGUE, NON_PM, 700L),
 
-    A("Frost Brand", LONG_SWORD,
+    A("Frost Brand", SHORT_SWORD,
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       COLD(5, 0), COLD(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
 
-    A("Fire Brand", LONG_SWORD,
+    A("Fire Brand", SHORT_SWORD,
       (SPFX_RESTR | SPFX_ATTK | SPFX_DEFN), 0, 0,
       FIRE(5, 0), FIRE(0, 0), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 3000L),
 
     A("Dragonbane", LANCE,
-      (SPFX_RESTR | SPFX_DCLAS), 0, S_DRAGON,
+      (SPFX_RESTR | SPFX_DCLAS | SPFX_REFLECT), 0, S_DRAGON,
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, PM_KNIGHT, NON_PM, 500L),
 
     A("Demonbane", LONG_SWORD,
@@ -153,7 +153,7 @@ static const struct artifact const_artilist[] = {
       PHYS(5, 0), NO_DFNS, NO_CARY, 0, A_LAWFUL, NON_PM, NON_PM, 2500L),
 
     A("Werebane", SILVER_SABER,
-      (SPFX_RESTR | SPFX_DFLAG2), 0, M2_WERE,
+      (SPFX_RESTR | SPFX_DFLAG2 | SPFX_PSHCH), 0, M2_WERE,
       PHYS(5, 0), DFNS(AD_WERE), NO_CARY, 0, A_NONE, NON_PM, NON_PM, 1500L),
 
     A("Grayswandir", SILVER_SABER,
@@ -272,7 +272,7 @@ static const struct artifact const_artilist[] = {
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL | SPFX_LUCK),
       (SPFX_WARN | SPFX_HSPDAM | SPFX_HPHDAM), 0,
       NO_ATTK, NO_DFNS, NO_CARY,
-      LEV_TELE, A_NEUTRAL, PM_VALKYRIE, NON_PM, 3500L),
+      LEV_TELE, A_NEUTRAL, PM_HOPLITE, NON_PM, 3500L),
 
     A("The Eye of the Aethiopica", AMULET_OF_ESP,
       (SPFX_NOGEN | SPFX_RESTR | SPFX_INTEL), (SPFX_EREGEN | SPFX_HSPDAM), 0,

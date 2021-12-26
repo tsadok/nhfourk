@@ -4,9 +4,11 @@
 # NetHack may be freely redistributed.  See license for details.
 #
 
-MAZE: "valley", ' '
+MAZE: "valley-1", ' '
 FLAGS: noteleport,hardfloor,nommap
 GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#123456789012345678901234567890123456789012345678901234567890123456789012345
 MAP
 ----------------------------------------------------------------------------
 |...S.|..|.....|  |.....-|      |................|   |...............| |...|
@@ -78,8 +80,8 @@ OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"samurai",0
 OBJECT:'%',"corpse",random,"tourist",0
 OBJECT:'%',"corpse",random,"tourist",0
-OBJECT:'%',"corpse",random,"valkyrie",0
-OBJECT:'%',"corpse",random,"valkyrie",0
+OBJECT:'%',"corpse",random,"hoplite",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
 OBJECT:'%',"corpse",random,"wizard",0
 OBJECT:'%',"corpse",random,"wizard",0
 #
@@ -157,6 +159,460 @@ MONSTER:'M',random,random
 MONSTER:'M',random,random
 MONSTER:'M',random,random
 MONSTER:'M',random,random
+
+MAZE: "valley-2", ' '
+FLAGS: noteleport,hardfloor,nommap
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+  ----------   ------------                     -------------- -------------
+---........-----..........----------           --............--|...........|
+|..................................------     --..............||...........|
+|........------..........---.--.........----- |..............--|...........|
+--.....---    ----..------....---...........---..............| |...........|
+ --..---     --......--....----..............|...............| |...........|
+--.....--   --......--....--.................|...............| |...........|
+|..--...|   |.....---.....|..................|BBBBBBBBBBBBBB---------+-----|
+|.----..|   |......-......|.................--.........................S...|
+|..--...------............|................--............BBBBBB........|...|
+|...........|--...........--.....-----------.......BBBBBBB....---------|(..|
+|.....--....| ---.......-----...........---.......}|...........---     |...|
+|....----...|   --....---...---.......---........}--............--     |...|
+|BBBBB--....-.---------............---..........}}|..............| ------+-|
+|......BBB---S--....|-........-----...........}}}-|..............| |.......|
+|...................|......---...............}}}--|.............-- |-S-----|
+|...................|......................}}}}-- --...........--  |...|...|
+|...................|--................}}}}}----   --.........--   |...+...|
+|...................| ------....}}}}}}}}}----       --......---    |...|...|
+---------------------      ---------------           --------      ---------
+ENDMAP
+# Dungeon Description
+# The shrine to Moloch.
+REGION:(64,01,74,06),lit,"temple"
+# The Morgues
+REGION:(49,01,60,06),unlit,"morgue",filled,true
+REGION:(01,14,19,18),unlit,"morgue",filled,true
+REGION:(52,11,61,17),unlit,"morgue",filled,true
+# Stairs
+STAIR:(73,17),down
+# Branch location
+BRANCH:(02,02,04,03),levregion()
+TELEPORT_REGION:(01,02,11,13),levregion(),down
+
+# Dooors
+DOOR:locked,(69,07)
+DOOR:locked,(71,08)
+DOOR:locked,(73,13)
+DOOR:locked,(69,15)
+DOOR:locked,(71,17)
+DOOR:locked,(13,14)
+
+# The altar of Moloch.
+ALTAR:(69,02),noalign,shrine
+
+# Non diggable walls
+NON_DIGGABLE:(00,00,75,19)
+
+# Objects
+OBJECT:'%',"corpse",random,"archeologist",0
+OBJECT:'%',"corpse",random,"archeologist",0
+OBJECT:'%',"corpse",random,"barbarian",0
+OBJECT:'%',"corpse",random,"barbarian",0
+OBJECT:'%',"corpse",random,"caveman",0
+OBJECT:'%',"corpse",random,"cavewoman",0
+OBJECT:'%',"corpse",random,"healer",0
+OBJECT:'%',"corpse",random,"healer",0
+OBJECT:'%',"corpse",random,"knight",0
+OBJECT:'%',"corpse",random,"knight",0
+OBJECT:'%',"corpse",random,"ranger",0
+OBJECT:'%',"corpse",random,"ranger",0
+OBJECT:'%',"corpse",random,"rogue",0
+OBJECT:'%',"corpse",random,"rogue",0
+OBJECT:'%',"corpse",random,"samurai",0
+OBJECT:'%',"corpse",random,"samurai",0
+OBJECT:'%',"corpse",random,"tourist",0
+OBJECT:'%',"corpse",random,"tourist",0
+OBJECT:'%',"corpse",random,"hoplite",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
+OBJECT:'%',"corpse",random,"wizard",0
+OBJECT:'%',"corpse",random,"wizard",0
+#
+# Some random weapons and armor.
+#
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+#
+# Some random loot.
+#
+OBJECT:'*',"ruby",random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'/',random,random
+OBJECT:'/',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'+',random,random
+OBJECT:'+',random,random
+OBJECT:'(',random,random
+OBJECT:'(',random,random
+OBJECT:'(',random,random
+OBJECT:'+',random,(13,13)
+OBJECT:'+',random,(13,13)
+OBJECT:'+',random,(13,13)
+
+# (Not so) Random traps.
+TRAP:"spiked pit", random
+TRAP:"spiked pit", random
+TRAP:"sleep gas", random
+TRAP:"board", (63,08)
+TRAP:"board", (63,09)
+TRAP:"dart", random
+TRAP:"dart", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"magic", random
+TRAP:"magic", random
+
+# Random monsters.
+# The ghosts.
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+# Add a few bats for atmosphere.
+MONSTER:'B',"vampire bat",random
+MONSTER:'B',"vampire bat",random
+MONSTER:'B',"vampire bat",random
+# And a lich for good measure.
+MONSTER:'L',random,random
+# Some undead nasties for good measure
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+
+MAZE: "valley-3", ' '
+FLAGS: noteleport,hardfloor,nommap
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+                  ----------------------------------------------------------
+      -------------...........|...............|.........|..................|
+ ------................--.....|...............|-+----...|..................|
+--.................---.||.--..|...............|.....|...|..................|
+|...---.........----...--.||..|...............|.(...|-+-|..................|
+|.....----.....--.........--BB|B..............|---.-|...|..................|
+|........----....--------BB....B..............S.....|...|..................|
+|...........------.............B--------------|.....|...|--BB---------------
+--...........-|.................|.............--BB-------...........|       
+ ---...}}.....|.................|..................|................|       
+ --...}}}....-|.................|..................|................--      
+--...}}}....--|.................|-------------.....|........------...--     
+|.....}}...-- --S--------------------........------|....... |.|  |....---   
+|...........----.   ---------.................---  |--...----.-- |-.....----
+|..............------...........................-- |.----......---.........|
+--....................----.......................---.....----...........----
+ --..........----------  --------....................----  |.........----   
+  ---..-------                  --------.........-----     |.|........|     
+    ----                               -----------         ------------     
+ENDMAP
+# Dungeon Description
+# The shrine to Moloch.
+REGION:(33,08,45,10),lit,"temple"
+# The Morgues
+REGION:(15,08,31,11),unlit,"morgue",filled,true
+REGION:(31,01,45,06),unlit,"morgue",filled,true
+REGION:(57,01,74,06),unlit,"morgue",filled,true
+# Stairs
+STAIR:(54,06),down
+# Branch location
+BRANCH:(64,15,69,17),levregion()
+TELEPORT_REGION:(61,08,69,17),levregion(),down
+
+# Dooors
+DOOR:locked,(48,02)
+DOOR:locked,(54,04)
+DOOR:locked,(16,12)
+
+# The altar of Moloch.
+ALTAR:(41,09),noalign,shrine
+
+# Non diggable walls
+NON_DIGGABLE:(00,00,75,18)
+
+# Objects
+OBJECT:'%',"corpse",random,"archeologist",0
+OBJECT:'%',"corpse",random,"archeologist",0
+OBJECT:'%',"corpse",random,"barbarian",0
+OBJECT:'%',"corpse",random,"barbarian",0
+OBJECT:'%',"corpse",random,"caveman",0
+OBJECT:'%',"corpse",random,"cavewoman",0
+OBJECT:'%',"corpse",random,"healer",0
+OBJECT:'%',"corpse",random,"healer",0
+OBJECT:'%',"corpse",random,"knight",0
+OBJECT:'%',"corpse",random,"knight",0
+OBJECT:'%',"corpse",random,"ranger",0
+OBJECT:'%',"corpse",random,"ranger",0
+OBJECT:'%',"corpse",random,"rogue",0
+OBJECT:'%',"corpse",random,"rogue",0
+OBJECT:'%',"corpse",random,"samurai",0
+OBJECT:'%',"corpse",random,"samurai",0
+OBJECT:'%',"corpse",random,"tourist",0
+OBJECT:'%',"corpse",random,"tourist",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
+OBJECT:'%',"corpse",random,"wizard",0
+OBJECT:'%',"corpse",random,"wizard",0
+#
+# Some random weapons and armor.
+#
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+#
+# Some random loot.
+#
+OBJECT:'*',"ruby",random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'/',random,random
+OBJECT:'/',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'+',random,random
+OBJECT:'+',random,random
+OBJECT:'(',random,random
+OBJECT:'(',random,random
+OBJECT:'(',random,random
+OBJECT:'+',random,(16,13)
+OBJECT:'+',random,(16,13)
+OBJECT:'+',random,(16,13)
+
+# (Not so) Random traps.
+TRAP:"spiked pit", random
+TRAP:"spiked pit", random
+TRAP:"sleep gas", random
+TRAP:"board", (45,06)
+TRAP:"board", random
+TRAP:"dart", random
+TRAP:"dart", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"magic", random
+TRAP:"magic", random
+
+# Random monsters.
+# The ghosts.
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+# Add a few bats for atmosphere.
+MONSTER:'B',"vampire bat",random
+MONSTER:'B',"vampire bat",random
+MONSTER:'B',"vampire bat",random
+# And a lich for good measure.
+MONSTER:'L',random,random
+# Some undead nasties for good measure
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+
+MAZE: "valley-4", ' '
+FLAGS: noteleport,hardfloor,nommap
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#123456789012345678901234567890123456789012345678901234567890123456789012345
+MAP
+  ----------   ------------                          -------   -------------
+---........-----..........----------             -----.....-----.....+.|...|
+|..................................------     ----.............--S---|.|...|
+|........------..........---.--..BBB....-------......................|.|...|
+--.....---    ------------ -S-----..........------.................--|.+...|
+ --..---     --...---....---. --...............------...........---- |(|...|
+--.....--   --.....---.....- --...................-----....----------------|
+|..--...|   |.......-.....-- -......................- --...|...............|
+|.----..|   |........-.....-----...................----....|...............|
+|..--...--- -.........--....-- ---...............----......B...............|
+|.........----......--.......------------......-----.......|...............|
+|.....................---.............----------   --......|...............|
+--......................---......---.........----- ---BBB-------------------
+ --.BBBBB........................| |.............---.................---    
+  ---...---................---...---............BB.....................---  
+ --.......-----............| |...............----........................-- 
+--............------.......---............----  ---.....................--  
+|...............------.................----       ----..............-----   
+----...........--    ---.........--------            -----........---       
+   -------------       -----------                       ----------         
+ENDMAP
+# Dungeon Description
+# The shrine to Moloch.
+REGION:(60,07,74,11),lit,"temple"
+# The Morgues
+REGION:(03,05,14,08),unlit,"morgue",filled,true
+REGION:(34,04,47,09),unlit,"morgue",filled,true
+REGION:(52,03,67,08),unlit,"morgue",filled,true
+# Stairs
+STAIR:(73,02),down
+# Branch location
+BRANCH:(03,02,07,03),levregion()
+TELEPORT_REGION:(03,01,19,11),levregion(),down
+
+# Dooors
+DOOR:locked,(65,02)
+DOOR:locked,(69,01)
+DOOR:locked,(71,04)
+DOOR:locked,(28,04)
+
+# The altar of Moloch.
+ALTAR:(70,09),noalign,shrine
+
+# Non diggable walls
+NON_DIGGABLE:(00,00,75,19)
+
+# Objects
+OBJECT:'%',"corpse",random,"archeologist",0
+OBJECT:'%',"corpse",random,"archeologist",0
+OBJECT:'%',"corpse",random,"barbarian",0
+OBJECT:'%',"corpse",random,"barbarian",0
+OBJECT:'%',"corpse",random,"caveman",0
+OBJECT:'%',"corpse",random,"cavewoman",0
+OBJECT:'%',"corpse",random,"healer",0
+OBJECT:'%',"corpse",random,"healer",0
+OBJECT:'%',"corpse",random,"knight",0
+OBJECT:'%',"corpse",random,"knight",0
+OBJECT:'%',"corpse",random,"ranger",0
+OBJECT:'%',"corpse",random,"ranger",0
+OBJECT:'%',"corpse",random,"rogue",0
+OBJECT:'%',"corpse",random,"rogue",0
+OBJECT:'%',"corpse",random,"samurai",0
+OBJECT:'%',"corpse",random,"samurai",0
+OBJECT:'%',"corpse",random,"tourist",0
+OBJECT:'%',"corpse",random,"tourist",0
+OBJECT:'%',"corpse",random,"hoplite",0
+OBJECT:'%',"corpse",random,"shieldmaiden",0
+OBJECT:'%',"corpse",random,"wizard",0
+OBJECT:'%',"corpse",random,"wizard",0
+#
+# Some random weapons and armor.
+#
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+#
+# Some random loot.
+#
+OBJECT:'*',"ruby",random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'/',random,random
+OBJECT:'/',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'+',random,random
+OBJECT:'+',random,random
+OBJECT:'(',random,random
+OBJECT:'(',random,random
+OBJECT:'(',random,random
+OBJECT:'+',random,(28,05)
+OBJECT:'+',random,(28,05)
+OBJECT:'+',random,(28,05)
+
+# (Not so) Random traps.
+TRAP:"spiked pit", random
+TRAP:"spiked pit", random
+TRAP:"sleep gas", random
+TRAP:"board", random
+TRAP:"board", random
+TRAP:"dart", random
+TRAP:"dart", random
+TRAP:"anti magic", random
+TRAP:"anti magic", random
+TRAP:"magic", random
+TRAP:"magic", random
+
+# Random monsters.
+# The ghosts.
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+MONSTER:'W',"ghost",random
+# Add a few bats for atmosphere.
+MONSTER:'B',"vampire bat",random
+MONSTER:'B',"vampire bat",random
+MONSTER:'B',"vampire bat",random
+# And a lich for good measure.
+MONSTER:'L',random,random
+# Some undead nasties for good measure
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'Z',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+MONSTER:'M',random,random
+
 #
 # The Juiblex level
 #
@@ -257,8 +713,8 @@ MONSTER:'F',random,random
 MONSTER:'F',random,random
 MONSTER:'m',random,random
 MONSTER:'m',random,random
-MONSTER:';',"jellyfish",random
-MONSTER:';',"jellyfish",random
+MONSTER:'K',"jellyfish",random
+MONSTER:'K',"jellyfish",random
 # Some random objects
 OBJECT:'!',random,random
 OBJECT:'!',random,random
@@ -1520,7 +1976,7 @@ OBJECT:'(',"chest",(22,18)
 #
 # The Sanctum Level
 #
-MAZE:"sanctum", ' '
+MAZE:"sanctu-1", ' '
 FLAGS: noteleport,hardfloor,nommap
 GEOMETRY:center,center
 MAP
@@ -1639,3 +2095,394 @@ MONSTER:'V',random,random
 MONSTER:'V',random,random
 MONSTER:'V',random,random
 STAIR:(63,15),up
+
+MAZE:"sanctu-2", ' '
+FLAGS: noteleport,hardfloor,nommap
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#12345678901234567890123456789012345678901234567890123456789012345678901
+MAP
+------------------------------------------------------------------------
+|            --------------                                            |
+|            |............|               -----                        |
+|      -------............-----         ---...--                       |
+|      |......................|        --......---         --------    |
+|   ----......................---      |.........--        |......|    |
+|   |...........................|      |..........| ---------+--..|    |
+| ---.......---------...........----   |..........| |..........|..|    |
+| |.........|.......|..............|   |..........----+--S------+--    |
+| |.........|.......|...........-S--   |..........+....|..|......|     |
+| |.........|.......|...........|..|   --.......--------S---S--..|     |
+| |.........|.......|...........|..|    ---.....|.............|..|     |
+| ---.......|.......|...........|..----   ---+----S-------------S--    |
+|   |.......---------...........|.....---  |...---....|      |....|--  |
+|   ----.....................--------...----.....-----|    ---......|  |
+|      |.....................|      ---...............|    |.....----  |
+|      -------...........-----        ----..........---    |.....|     |
+|            |...........|               ----......--      |.....|     |
+|            -------------                  --------       -------     |
+------------------------------------------------------------------------
+ENDMAP
+REGION:(13,08,19,12),lit,"temple"
+ALTAR:(16,10),noalign,sanctum
+REGION:(40,06,49,09),unlit,"morgue",filled,true
+# Non diggable walls
+NON_DIGGABLE:(00,00,71,19)
+# Invisible barrier separating the left & right halves of the level
+NON_PASSWALL:(36,00,38,19)
+# Doors
+DOOR:locked,(33,09)
+DOOR:closed,(45,12)
+DOOR:random,(50,09)
+DOOR:locked,(50,12)
+DOOR:closed,(54,08)
+DOOR:locked,(57,08)
+DOOR:locked,(56,10)
+DOOR:locked,(60,10)
+DOOR:locked,(61,06)
+DOOR:random,(64,08)
+DOOR:locked,(64,12)
+# Surround the temple with fire
+TRAP:"fire",(11,06)
+TRAP:"fire",(12,06)
+TRAP:"fire",(13,06)
+TRAP:"fire",(14,06)
+TRAP:"fire",(15,06)
+TRAP:"fire",(16,06)
+TRAP:"fire",(17,06)
+TRAP:"fire",(18,06)
+TRAP:"fire",(19,06)
+TRAP:"fire",(20,06)
+TRAP:"fire",(21,06)
+TRAP:"fire",(11,14)
+TRAP:"fire",(12,14)
+TRAP:"fire",(13,14)
+TRAP:"fire",(14,14)
+TRAP:"fire",(15,14)
+TRAP:"fire",(16,14)
+TRAP:"fire",(17,14)
+TRAP:"fire",(18,14)
+TRAP:"fire",(19,14)
+TRAP:"fire",(20,14)
+TRAP:"fire",(21,14)
+TRAP:"fire",(11,07)
+TRAP:"fire",(11,08)
+TRAP:"fire",(11,09)
+TRAP:"fire",(11,10)
+TRAP:"fire",(11,11)
+TRAP:"fire",(11,12)
+TRAP:"fire",(11,13)
+TRAP:"fire",(21,07)
+TRAP:"fire",(21,08)
+TRAP:"fire",(21,09)
+TRAP:"fire",(21,10)
+TRAP:"fire",(21,11)
+TRAP:"fire",(21,12)
+TRAP:"fire",(21,13)
+# Some traps.
+TRAP:"land mine", random
+TRAP:"fire", random
+TRAP:"stinking cloud", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"magic", random
+# Some random objects
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+# Some monsters.
+MONSTER:'&',"horned devil",(14,12),hostile
+MONSTER:'&',"barbed devil",(18,08),hostile
+MONSTER:'&',"hezrou",(10,04),hostile
+MONSTER:'&',"marilith",(07,09),hostile
+MONSTER:'&',"nalfeshnee",(27,08),hostile
+# Moloch's horde
+MONSTER:'@',"aligned priest",(20,03),noalign,hostile
+MONSTER:'@',"aligned priest",(15,04),noalign,hostile
+MONSTER:'@',"aligned priest",(11,05),noalign,hostile
+MONSTER:'@',"aligned priest",(10,07),noalign,hostile
+MONSTER:'@',"aligned priest",(10,09),noalign,hostile
+MONSTER:'@',"aligned priest",(10,12),noalign,hostile
+MONSTER:'@',"aligned priest",(15,14),noalign,hostile
+MONSTER:'@',"aligned priest",(17,14),noalign,hostile
+MONSTER:'@',"aligned priest",(21,14),noalign,hostile
+# A few nasties
+MONSTER:'L',random,random
+MONSTER:'L',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+MONSTER:'V',random,random
+STAIR:(62,16),up
+
+
+MAZE:"sanctu-3", ' '
+FLAGS: noteleport,hardfloor,nommap
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#12345678901234567890123456789012345678901234567890123456789012345678901
+MAP
+------------------------------------------------------------------------
+|            --------------                                            |
+|            |............|             -------------                  |
+|      -------............-----         |...........|---------------   |
+|      |......................|         |...........+..............|   |
+|   ----......................---       |...........|-------------+--  |
+|   |...........................|       ----.....----    |...|..||..|  |
+| ---.......---------...........-------    |.....|       |...S..--..|  |
+| |.........|.......|..............S..| ------+------    ----|......|  |
+| |.........|.......|...........----..| |...........----   |.+......|  |
+| |.........|.......|...........|  |..| |..............--  |.|-------  |
+| |.........|.......|...........|  |..|--...............|  |.|....|    |
+| ---.......|.......|...........|  |..||................|  |.--S---    |
+|   |.......---------...........|  |..--................|  |.|....|--  |
+|   ----.....................----  |..B.................|  |S-......|  |
+|      |.....................|     ---B................--  |.....----  |
+|      -------...........-----       ----...........----   |.....|     |
+|            |...........|              -----...-----      |.....|     |
+|            -------------                  -----          -------     |
+------------------------------------------------------------------------
+ENDMAP
+REGION:(13,08,19,12),lit,"temple"
+ALTAR:(16,10),noalign,sanctum
+REGION:(41,09,51,18),unlit,"morgue",filled,true
+# Non diggable walls
+NON_DIGGABLE:(00,00,71,19)
+# Invisible barrier separating the left & right halves of the level
+NON_PASSWALL:(35,00,38,19)
+# Doors
+DOOR:locked,(35,08)
+DOOR:closed,(46,08)
+DOOR:random,(52,04)
+DOOR:random,(66,05)
+DOOR:locked,(61,07)
+DOOR:random,(61,09)
+DOOR:locked,(63,12)
+DOOR:locked,(60,14)
+# Surround the temple with fire
+TRAP:"fire",(11,06)
+TRAP:"fire",(12,06)
+TRAP:"fire",(13,06)
+TRAP:"fire",(14,06)
+TRAP:"fire",(15,06)
+TRAP:"fire",(16,06)
+TRAP:"fire",(17,06)
+TRAP:"fire",(18,06)
+TRAP:"fire",(19,06)
+TRAP:"fire",(20,06)
+TRAP:"fire",(21,06)
+TRAP:"fire",(11,14)
+TRAP:"fire",(12,14)
+TRAP:"fire",(13,14)
+TRAP:"fire",(14,14)
+TRAP:"fire",(15,14)
+TRAP:"fire",(16,14)
+TRAP:"fire",(17,14)
+TRAP:"fire",(18,14)
+TRAP:"fire",(19,14)
+TRAP:"fire",(20,14)
+TRAP:"fire",(21,14)
+TRAP:"fire",(11,07)
+TRAP:"fire",(11,08)
+TRAP:"fire",(11,09)
+TRAP:"fire",(11,10)
+TRAP:"fire",(11,11)
+TRAP:"fire",(11,12)
+TRAP:"fire",(11,13)
+TRAP:"fire",(21,07)
+TRAP:"fire",(21,08)
+TRAP:"fire",(21,09)
+TRAP:"fire",(21,10)
+TRAP:"fire",(21,11)
+TRAP:"fire",(21,12)
+TRAP:"fire",(21,13)
+# Some traps.
+TRAP:"bear", random
+TRAP:"fire", random
+TRAP:"stinking cloud", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"magic", random
+# Some random objects
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+# Some monsters.
+MONSTER:'&',"horned devil",(14,12),hostile
+MONSTER:'&',"barbed devil",(18,08),hostile
+MONSTER:'&',"ice devil",(10,04),hostile
+MONSTER:'&',"marilith",(07,09),hostile
+MONSTER:'&',"nalfeshnee",(27,08),hostile
+# Moloch's horde
+MONSTER:'@',"aligned priest",(20,03),noalign,hostile
+MONSTER:'@',"aligned priest",(15,04),noalign,hostile
+MONSTER:'@',"aligned priest",(11,05),noalign,hostile
+MONSTER:'@',"aligned priest",(10,07),noalign,hostile
+MONSTER:'@',"aligned priest",(10,09),noalign,hostile
+MONSTER:'@',"aligned priest",(10,12),noalign,hostile
+MONSTER:'@',"aligned priest",(15,14),noalign,hostile
+MONSTER:'@',"aligned priest",(17,14),noalign,hostile
+MONSTER:'@',"aligned priest",(21,14),noalign,hostile
+# A few nasties
+MONSTER:'&',random,random
+MONSTER:'&',random,random
+MONSTER:'J',random,random
+MONSTER:'U',random,random
+MONSTER:'U',random,random
+STAIR:(62,16),up
+
+
+MAZE:"sanctu-4", ' '
+FLAGS: noteleport,hardfloor,nommap
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#12345678901234567890123456789012345678901234567890123456789012345678901
+MAP
+------------------------------------------------------------------------
+|            --------------                                            |
+|            |............|             -------------                  |
+|      -------............-----         |...........|---------------   |
+|      |......................|         |...........+..............|   |
+|   ----......................---       |...........|-------+-----+--  |
+|   |...........................|       ----.....----    |...|..||..|  |
+| ---.........---------.........-------    |.....|       |...S..----|  |
+| |...........|.......|............S..| ------+------    ----|......|  |
+| |...........|.......|.........----..| |...........---- |.S.|......|  |
+| |...........|.......|.........|  |..| |..............--|.|.|-------  |
+| |...........|.......|.........|  |..|--...............S..|.|....|    |
+| ---.........|.......|.........|  |..||................|--|.--S---    |
+|   |.........---------.........|  |..--................|  |.|....|--  |
+|   ----.....................----  |..B.................|  |S-......|  |
+|      |.....................|     ---B................--  |.....----  |
+|      -------...........-----       ----...........----   |.....|     |
+|            |...........|              -----...-----      |.....|     |
+|            -------------                  -----          -------     |
+------------------------------------------------------------------------
+ENDMAP
+REGION:(15,08,21,12),lit,"temple"
+ALTAR:(18,10),noalign,sanctum
+REGION:(41,09,51,18),unlit,"morgue",filled,true
+# Non diggable walls
+NON_DIGGABLE:(00,00,71,19)
+# Invisible barrier separating the left & right halves of the level
+NON_PASSWALL:(35,00,38,19)
+# Doors
+DOOR:locked,(35,08)
+DOOR:closed,(46,08)
+DOOR:random,(52,04)
+DOOR:locked,(56,11)
+DOOR:random,(60,05)
+DOOR:random,(66,05)
+DOOR:locked,(61,07)
+DOOR:closed,(59,09)
+DOOR:locked,(63,12)
+DOOR:locked,(60,14)
+# Surround the temple with fire
+TRAP:"fire",(13,06)
+TRAP:"fire",(14,06)
+TRAP:"fire",(15,06)
+TRAP:"fire",(16,06)
+TRAP:"fire",(17,06)
+TRAP:"fire",(18,06)
+TRAP:"fire",(19,06)
+TRAP:"fire",(20,06)
+TRAP:"fire",(21,06)
+TRAP:"fire",(22,06)
+TRAP:"fire",(23,06)
+TRAP:"fire",(13,14)
+TRAP:"fire",(14,14)
+TRAP:"fire",(15,14)
+TRAP:"fire",(16,14)
+TRAP:"fire",(17,14)
+TRAP:"fire",(18,14)
+TRAP:"fire",(19,14)
+TRAP:"fire",(20,14)
+TRAP:"fire",(21,14)
+TRAP:"fire",(22,14)
+TRAP:"fire",(23,14)
+TRAP:"fire",(13,07)
+TRAP:"fire",(13,08)
+TRAP:"fire",(13,09)
+TRAP:"fire",(13,10)
+TRAP:"fire",(13,11)
+TRAP:"fire",(13,12)
+TRAP:"fire",(13,13)
+TRAP:"fire",(23,07)
+TRAP:"fire",(23,08)
+TRAP:"fire",(23,09)
+TRAP:"fire",(23,10)
+TRAP:"fire",(23,11)
+TRAP:"fire",(23,12)
+TRAP:"fire",(23,13)
+# Some traps.
+TRAP:"board", random
+TRAP:"fire", random
+TRAP:"stinking cloud", random
+TRAP:"anti magic", random
+TRAP:"fire", random
+TRAP:"polymorph", random
+# Some random objects
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:'[',random,random
+OBJECT:')',random,random
+OBJECT:')',random,random
+OBJECT:'*',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'!',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+OBJECT:'?',random,random
+# Some monsters.
+MONSTER:'&',"horned devil",(12,12),hostile
+MONSTER:'&',"barbed devil",(18,08),hostile
+MONSTER:'&',"succubus",(10,04),hostile
+MONSTER:'&',"incubus",(07,09),hostile
+MONSTER:'&',"nalfeshnee",(27,08),hostile
+# Moloch's horde
+MONSTER:'@',"aligned priest",(20,03),noalign,hostile
+MONSTER:'@',"aligned priest",(15,04),noalign,hostile
+MONSTER:'@',"aligned priest",(11,05),noalign,hostile
+MONSTER:'@',"aligned priest",(10,07),noalign,hostile
+MONSTER:'@',"aligned priest",(10,09),noalign,hostile
+MONSTER:'@',"aligned priest",(10,12),noalign,hostile
+MONSTER:'@',"aligned priest",(15,14),noalign,hostile
+MONSTER:'@',"aligned priest",(17,14),noalign,hostile
+MONSTER:'@',"aligned priest",(21,14),noalign,hostile
+# A few nasties
+MONSTER:'h',random,random
+MONSTER:'h',random,random
+MONSTER:'T',random,random
+MONSTER:'T',random,random
+MONSTER:'&',random,random
+STAIR:(62,16),up

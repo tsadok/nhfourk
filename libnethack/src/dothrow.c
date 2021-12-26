@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-13 */
+/* Last modified by Alex Smith, 2017-06-29 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -19,7 +19,6 @@ static void breakmsg(struct obj *, boolean);
 static boolean toss_up(struct obj *, boolean, struct obj *);
 static void sho_obj_return_to_u(struct obj *obj, schar, schar);
 static boolean mhurtle_step(void *, int, int);
-
 
 static const char toss_objs[] =
     { ALLOW_COUNT, ALL_CLASSES, COIN_CLASS, WEAPON_CLASS, 0 };
@@ -342,7 +341,7 @@ dofire(const struct nh_cmd_arg *arg)
         /* For rocks, only warn if the player has a sling: */
         (!(uquiver->otyp == ROCK) || carrying(SLING)))
         pline(msgc_yafm, "You attempt to fire %s with your %s %s.",
-              an(xname(uquiver)), (uarmg ? "gloved" : "bare"),
+              an(cxname2(uquiver)), (uarmg ? "gloved" : "bare"),
               makeplural(body_part(HAND)));
 
     return throw_obj(uquiver, arg, cancel_unquivers);
@@ -514,7 +513,7 @@ hurtle_step(void *arg, int x, int y)
         }
         if ((u.ux - x) && (u.uy - y) && bad_rock(URACEDATA, u.ux, y) &&
             bad_rock(URACEDATA, x, u.uy)) {
-            boolean too_much = (invent && (inv_weight() + weight_cap() > 600));
+            boolean too_much = (invent && (inv_weight_total() > 600));
 
             /* Move at a diagonal. */
             if (bigmonst(youmonst.data) || too_much) {
@@ -963,7 +962,7 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
         bhitpos.x = mon->mx;
         bhitpos.y = mon->my;
     } else if (dz) {
-        if (dz < 0 && Role_if(PM_VALKYRIE) && obj->oartifact == ART_MJOLLNIR &&
+        if (dz < 0 && Role_if(PM_HOPLITE) && obj->oartifact == ART_MJOLLNIR &&
             !impaired) {
             pline(msgc_yafm, "%s the %s and returns to your %s!",
                   Tobjnam(obj, "hit"), ceiling(u.ux, u.uy), body_part(HAND));
@@ -1091,14 +1090,14 @@ throwit(struct obj *obj, long wep_mask, /* used to re-equip returning boomerang
             mpickobj(u.ustuck, obj);
     } else {
         /* the code following might become part of dropy() */
-        if (obj->oartifact == ART_MJOLLNIR && Role_if(PM_VALKYRIE)) {
+        if (obj->oartifact == ART_MJOLLNIR && Role_if(PM_HOPLITE)) {
             /* we must be wearing Gauntlets of Power to get here */
             sho_obj_return_to_u(obj, dx, dy);   /* display its flight */
 
             if (rn2_on_rng(100, rng_mjollnir_return) && !impaired) {
                 pline(msgc_actionok, "%s to your %s!",
                       Tobjnam(obj, "return"), body_part(HAND));
-                if (Role_if(PM_VALKYRIE) && !rn2_on_rng(50, rng_role_alignment))
+                if (Role_if(PM_HOPLITE) && !rn2_on_rng(50, rng_role_alignment))
                     adjalign(1);
                 obj = addinv(obj);
                 encumber_msg();

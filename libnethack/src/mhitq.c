@@ -198,6 +198,8 @@ mattackq(struct monst *mtmp, int x, int y)
 
             /* TODO: Shouldn't there be some 'explosion effect on terrain'
                function? Might the player get caught in the explosion anyway? */
+            if (mattk->adtyp == AD_SCLD)
+                create_gas_cloud(level, x, y, 1 + mattk->damn, 1 + mattk->damd);
             break;
 
         case AT_ENGL:

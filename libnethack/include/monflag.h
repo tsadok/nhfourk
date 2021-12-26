@@ -85,6 +85,7 @@
 # define MRACE_RODENT   0x00000200L     /* is a rodent */
 # define MRACE_SCURRIER MRACE_RODENT    /* for clarity in role.c */
 # define MRACE_GIANT    0x00000400L     /* is a giant */
+# define MRACE_VALKYRIE 0x00000800L     /* supernatural being from Valhalla */
 
 # define MP_WANDS        0x00000001L
 # define MP_WAND_BASIC   0x00000001L
@@ -181,6 +182,7 @@
 # define M3_SEEINDARK    0x4000 /* does not require light to see */
 # define M3_EMITSLIGHT   0x8000 /* emits light */
 # define M3_XRAY_VISION  0x10000 /* can see through obstacles */
+# define M3_CLIMBER      0x20000 /* is a natural climber */
 
 # define MZ_TINY         0              /* < 2' */
 # define MZ_SMALL        1              /* 2-4' */

@@ -119,7 +119,7 @@ vain.  Begone!  Your tenure at this college has been revoked!
 %E
 %Cc Arc 00019
 "%p, you are yet too inexperienced to undertake such a demanding
-quest.  A mere %r could not possibly face the rigors demanded and
+quest.  You could not possibly face the rigors demanded and
 survive.  Go forth, and come here again when your adventures have further
 taught you."
 %E
@@ -244,7 +244,7 @@ falter!"
 "%d has forsaken you!  You are lost now!"
 %E
 %Cp Arc 00067
-"A mere %r cannot hope to defeat me!"
+"You cannot hope to defeat me!"
 %E
 %Cp Arc 00068
 "If you are the best %l can send, I have nothing to fear."
@@ -372,8 +372,8 @@ me and destroy all who once called you %s.  Now begone!"
 %E
 %Cc Bar 00019
 "%p, I fear that you are as yet too inexperienced to face
-%n.  Only %Ra with the help of %d could ever hope to
-defeat him."
+%n.  Only a very experienced %R with the help of %d could
+ever hope to defeat him."
 %E
 %Cc Bar 00020
 "%pC!  You have wandered from the path of the %a!
@@ -634,7 +634,7 @@ path of %C over true path of %L.
 %Cc Cav 00019
 "No, %p, you not ready to go on such hard quest as what I give you.
 
-"%rA could not do what it take to find
+"You could not do what it take to find
 %i, could not fight %n, could not bring back %o.
 
 "Go do more things.  You learn stuff you need.
@@ -751,7 +751,7 @@ Now I shall kill you."
 "Your mentor, %l has failed.  You are nothing to fear."
 %E
 %Cp Cav 00065
-"You shall die here, %c.  %rA cannot hope to defeat me."
+"You shall die here, %c.  You cannot hope to defeat me."
 %E
 %Cp Cav 00066
 "You, a mere %r challenge the might of %n?  Hah!"
@@ -1148,11 +1148,11 @@ Begone from Our sight!"
 %Cc Kni 00019
 "Verily, %p, thou hast done well.  That thou hast survived thus
 far is a credit to thy valor, but thou art yet unprepared for
-the demands required as Our Champion.  %rA, no matter how
-pure, could never hope to defeat the foul %n.
+the demands required as Our Champion.  You, no matter how
+pure you are, cannot hope to defeat the foul %n.
 
 "Journey forth from this place, and hone thy skills.  Return to
-Our presence when thou hast attained the noble title of %R."
+Our presence when thou hast attained a higher level of experience."
 %E
 %Cc Kni 00020
 "Thou dishonourest Us, %p!  Thou hast strayed from the path of
@@ -1397,9 +1397,9 @@ teachings of %d?  Begone from this temple.  You are no longer
 as you have failed us utterly."
 %E
 %Cc Mon 00019
-"Alas, %p, it is not yet to be.  A mere %r could never
+"Alas, %p, it is not yet to be.  You could never
 withstand the might of %n.  Go forth, again into the world, and return
-when you have attained the post of %R."
+when you have attained a higher degree of experience."
 %E
 %Cc Mon 00020
 "This is terrible, %p.  You have deviated from the true path!
@@ -1641,9 +1641,9 @@ teachings of %d?  Begone from this temple.  You are no longer
 as you have failed us utterly."
 %E
 %Cc Pri 00019
-"Alas, %p, it is not yet to be.  A mere %r could never
+"Alas, %p, it is not yet to be.  You could never
 withstand the might of %n.  Go forth, again into the world, and return
-when you have attained the post of %R."
+when you have attained a higher degree of experience."
 %E
 %Cc Pri 00020
 "This is terrible, %p.  You have deviated from the true path!
@@ -1894,9 +1894,8 @@ and weaken the power we have raised in this grove as a result!
 %E
 %Cc Ran 00019
 "%p, you are yet too inexperienced to withstand the demands of that
-which we need you to do.  %RA might just be able to do this thing.
-
-"Return to us when you have learned more, my %S."
+which we need you to do.  Return to us when you have learned more,
+my %S.  Then perhaps you might just be able to do this thing."
 %E
 %Cc Ran 00020
 "You have strayed, %p!  You know that %d requires that
@@ -2000,7 +1999,7 @@ Once again, you enter the distorted castle of %n.
 "Well, I shall keep that bauble.  It pleases me.  You, %c, shall die."
 %E
 %Cp Ran 00051
-"Back again, eh?  Well, a mere %r is no threat to me!  Die, %c!"
+"Back again, eh?  Well, you are no threat to me!  Die, %c!"
 %E
 %Cp Ran 00052
 "You haven't learned your lesson, %c.  You can't kill me!  You shall die now."
@@ -2410,7 +2409,7 @@ become a monk.  Your fief and family are forfeit.  Wakarimasu ka?"
 %E
 %Cc Sam 00019
 "%p-san, you have learned well and honored your family.
-I require the skills of %Ra in order to defeat %n.
+I require the skills of a more experienced %R in order to defeat %n.
 Go and seek out teachers.  Learn what they have learned.  When you
 are ready, return to me."
 %E
@@ -2463,7 +2462,7 @@ hate, adoration, joy, anxiety, anger, grief, and fear."
 "Your kami must be strong in order to succeed."
 %E
 %Cp Sam 00031
-"You are indeed a worthy %R, but now you must be a worthy samurai."
+"You have experience, but now you must be a worthy samurai."
 %E
 %Cp Sam 00032
 "If you fail, %n will be like a tai-fun on the land."
@@ -2849,9 +2848,9 @@ be spoken by the %gP with awe.  You are truly an inspiration to your
 %sp!"
 %E
 #
-#	Valkyrie
+#	Hoplite/Shieldmaiden
 #
-%Cc Val 00001
+%Cc Shi 00001
 You materialize at the base of a snowy hill.  Atop the hill sits
 a place you know well, %H.  You immediately realize
 that something here is very wrong!
@@ -2861,77 +2860,77 @@ water.  Fumaroles and pools of bubbling lava surround the hill.
 The stench of sulphur is carried through the air, and you %x creatures
 that should not be able to live in this environment moving towards you.
 %E
-%Cp Val 00002
+%Cp Shi 00002
 Once again, you are near the abode of %l.
 %E
-%Cp Val 00003
+%Cp Shi 00003
 Again you materialize near %ls abode.  You have a nagging feeling
 that this may be the last time you come here.
 %E
-%Cp Val 00005
+%Cp Shi 00005
 "Hail, and well met, brave %c."
 %E
-%Cp Val 00006
+%Cp Shi 00006
 "May %d guide your steps, %p."
 %E
-%Cp Val 00007
+%Cp Shi 00007
 "%lC weakens.  Without %o, her foresight is dim."
 %E
-%Cp Val 00008
+%Cp Shi 00008
 "You must hurry, %p, else Ragnarok may well come."
 %E
-%Cp Val 00009
+%Cp Shi 00009
 "I would deal with this foul %n myself, but %d forbids it."
 %E
-%Cp Val 00010
+%Cp Shi 00010
 "Hail, and well met, brave %c."
 %E
-%Cp Val 00011
+%Cp Shi 00011
 "May %d guide your steps, %p."
 %E
-%Cp Val 00012
+%Cp Shi 00012
 "%lC told us you had succeeded!"
 %E
-%Cp Val 00013
+%Cp Shi 00013
 "You recovered %o just in time, %p."
 %E
-%Cp Val 00014
+%Cp Shi 00014
 "Hail %d, for delivering %o back to us."
 %E
-%Cc Val 00015
+%Cc Shi 00015
 "Ah, %p, my %S.  You have returned to %H
 at last.  We are in dire need of your aid, but I must determine if you
 are yet ready for such an undertaking.
 
 "Let me read your fate..."
 %E
-%Cp Val 00016
+%Cp Shi 00016
 "Let me read the future for you now, %p, perhaps you have managed to
 change it enough..."
 %E
-%Cp Val 00017
+%Cp Shi 00017
 "Again, I shall read your fate, my %S.  Let us both hope that you have
 made changes to become ready for this task..."
 %E
-%Cc Val 00018
+%Cc Shi 00018
 "No, %p.  Your fate is sealed.  I must cast about for another
 champion.  Begone from my presence, and never return.  Know this, that
 you shall never succeed in this life, and Valhalla is denied to you."
 %E
-%Cc Val 00019
+%Cc Shi 00019
 "I see you and %n fighting, %p.  But you are not prepared and
 shall die at %ns hand if you proceed.  No.  This will not do.
 Go back out into the world, and grow more experienced at the ways of
-war.  Only when you have returned %Ra will you be able to defeat
+war.  Only when you have returned, %r, will you be able to defeat
 %n."
 %E
-%Cc Val 00020
+%Cc Shi 00020
 "NO!  This is terrible.  I see you becoming an ally of %n, and
 leading his armies in the final great battles.  This must not come to
 pass!  You have strayed from the %a path.  You must purge yourself,
 and return here only when you have regained a state of purity."
 %E
-%Cc Val 00021
+%Cc Shi 00021
 "It is not clear, %p, for my sight is limited without
 %o.  But it is now likely that you can defeat %n,
 and recover %o.
@@ -2951,60 +2950,60 @@ unless %o is returned into my care, %n may start Ragnarok.
 from there and you will find %ns lair.  Defeat him and
 return %o to me."
 %E
-%Cc Val 00022
-"This is outrageous!  You are but a %r!  Will you turn all
+%Cc Shi 00022
+"This is outrageous!  You are but a child!  Will you turn all
 reason on its head and defeat %n in such a state?"
 %E
-%Cp Val 00025
+%Cp Shi 00025
 "Go with the blessings of %d."
 %E
-%Cp Val 00026
+%Cp Shi 00026
 "Call upon %d when you are in need."
 %E
-%Cp Val 00027
+%Cp Shi 00027
 "Use %o if you can.  It will protect you."
 %E
-%Cp Val 00028
+%Cp Shi 00028
 "Magical cold is very effective against %n."
 %E
-%Cp Val 00029
+%Cp Shi 00029
 "To face %n, you will need to be immune to fire."
 %E
-%Cp Val 00030
+%Cp Shi 00030
 "May %d strengthen your sword-arm."
 %E
-%Cp Val 00031
+%Cp Shi 00031
 "Trust in %d.  He will not desert you."
 %E
-%Cp Val 00032
+%Cp Shi 00032
 "It becomes more likely that Ragnarok will come with every passing moment.
 You must hurry, %p."
 %E
-%Cp Val 00033
+%Cp Shi 00033
 "If %n can master %o, he will be powerful enough to
 face %d far earlier than is fated.  This must not be!"
 %E
-%Cp Val 00034
+%Cp Shi 00034
 "Remember your training, %p.  You can succeed."
 %E
-%Cc Val 00035
+%Cc Shi 00035
 The ice and snow gives way to a valley floor.  You %x ahead of you
 a huge round hill surrounded by pools of lava.  This then is the entrance
 to %i.  It looks like you're not going to get in without
 a fight though.
 %E
-%Cp Val 00036
+%Cp Shi 00036
 Once again, you stand before the entrance to %i.
 %E
-%Cc Val 00040
+%Cc Shi 00040
 Through clouds of sulphurous gasses, you %x a rock palisade
 surrounded with a moat of bubbling lava.  You remember the description
 from something that %l said.  This is the lair of %n.
 %E
-%Cp Val 00041
+%Cp Shi 00041
 Once again, you stand in sight of %ns lair.
 %E
-%Cc Val 00050
+%Cc Shi 00050
 "So!  %lC has finally sent %ca to challenge me!
 
 "I thought that mastering %o would enable me to challenge %d,
@@ -3012,60 +3011,60 @@ but it has shown me that first I must kill you!
 So come, little %s.  Once I defeat you, I can at last begin
 the final battle with %d."
 %E
-%Cp Val 00051
+%Cp Shi 00051
 "Again you challenge me, %r.  Good.  I will kill you now."
 %E
-%Cp Val 00052
+%Cp Shi 00052
 "Have you not learned yet?  You cannot defeat %n!"
 %E
-%Cp Val 00053
+%Cp Shi 00053
 "I will kill you, %c, and wrest %o from your mangled hands."
 %E
-%Cp Val 00060
+%Cp Shi 00060
 "I am your death, %c."
 %E
-%Cp Val 00061
+%Cp Shi 00061
 "You cannot prevail, %r.  I have foreseen your every move."
 %E
-%Cp Val 00062
+%Cp Shi 00062
 "With you out of the way, Valhalla will be mine for the taking."
 %E
-%Cp Val 00063
+%Cp Shi 00063
 "I killed scores of %ds best when I took %o.
 Do you really think that one %c can stand against me?"
 %E
-%Cp Val 00064
+%Cp Shi 00064
 "Who bears the souls of %cP to Valhalla, %r?"
 %E
-%Cp Val 00065
+%Cp Shi 00065
 "No, %d cannot help you here."
 %E
-%Cp Val 00066
+%Cp Shi 00066
 "Some instrument of %d you are, %p.  You are a weakling!"
 %E
-%Cp Val 00067
+%Cp Shi 00067
 "Never have I seen %ca so clumsy in battle."
 %E
-%Cp Val 00068
+%Cp Shi 00068
 "You die now, little %s."
 %E
-%Cp Val 00069
+%Cp Shi 00069
 "Your body I destroy now, your soul when my hordes overrun Valhalla!"
 %E
-%Cc Val 00070
+%Cc Shi 00070
 As you pick up %o, your mind is suddenly filled with images,
 and you perceive all of the possibilities of each potential choice you
 could make.  As you begin to control and channel your thoughts, you
 realize that you must return %o to %lC immediately.
 %E
-%Cc Val 00080
+%Cc Shi 00080
 A look of surprise and horror appears on %ns face.
 
     No!!!  %o has lied to me!  I have been misled!
 
 Suddenly, %n grasps his head and screams in agony, then dies.
 %E
-%Cc Val 00081
+%Cc Shi 00081
 As you approach, %lC rises and touches %o.
 
 "You may take %o with you, %p.  I have removed from
@@ -3076,17 +3075,17 @@ have.  Its other abilities, however, you have at your disposal.
 May your steps be guided by %d, my %S."
 %E
 # assumes Orb of Fate (glass object)
-%Cc Val 00082
+%Cc Shi 00082
 "Careful, %p!  %oC might break, and that would be
 a tragic loss.  You are its keeper now, and the time has come to
 resume your search for the Amulet.  %Z await your
 return through the magic portal that brought you here."
 %E
-%Cp Val 00090
+%Cp Shi 00090
 "Greetings, %p.  I have not been able to pay as much attention to
 your search for the Amulet as I have wished.  How do you fare?"
 %E
-%Cc Val 00091
+%Cc Shi 00091
 "Excellent, %p.  I see you have recovered the Amulet!
 
 "You must take the Amulet to the Great Temple of %d, on the Astral
@@ -3170,9 +3169,9 @@ the esoteric arts?  Get out of here!  I shall find another."
 %E
 %Cc Wiz 00019
 "Alas, %p, you have not yet shown your proficiency as a worthy
-spellcaster.  As %ra, you would surely be overcome in the challenge
-ahead.  Go, now, expand your horizons, and return when you have attained
-renown as %Ra."
+spellcaster.  You would surely be overcome in the challenge
+ahead.  Go, now, expand your horizons, and return when you have
+attained renown."
 %E
 %Cc Wiz 00020
 "You amaze me, %p!  How many times did I tell you that the way of a mage
@@ -3207,7 +3206,7 @@ find and overcome %n, and return %o to me.
 "Go now, with %d, and complete this quest before it is too late."
 %E
 %Cc Wiz 00022
-"Astonishing!  You show up as a mere %r and expect to take on %n?"
+"Astonishing!  You show up and expect to take on %n?"
 %E
 %Cp Wiz 00025
 "Beware, for %n is immune to most magical attacks."

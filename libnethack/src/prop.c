@@ -24,6 +24,7 @@ m_has_property(const struct monst *mon, enum youprop property,
 {
     unsigned rv = 0;
     struct obj *otmp;
+    const struct permonst *pm = mon->data;
 
     /* The general case for equipment */
     rv |= mworn_extrinsic(mon, property);
@@ -39,9 +40,23 @@ m_has_property(const struct monst *mon, enum youprop property,
             rv |= W_MASK(os_birthopt);
         if (property == HALLUC && flags.permahallu)
             rv |= W_MASK(os_birthopt);
+        if (property == CONFUSION && flags.permaconf)
+            rv |= W_MASK(os_birthopt);
+        if (property == STUNNED && flags.permastun)
+            rv |= W_MASK(os_birthopt);
+        if (property == GLIB && flags.permaglib)
+            rv |= W_MASK(os_birthopt);
+        if (property == FUMBLING && flags.permafumble)
+            rv |= W_MASK(os_birthopt);
+        if ((property == LWOUNDED_LEGS || property == RWOUNDED_LEGS) &&
+            flags.permalame)
+            rv |= W_MASK(os_birthopt);
         if (property == UNCHANGING && flags.polyinit_mnum != -1)
             rv |= W_MASK(os_birthopt);
 
+        /* Use your race if in natural form, NOT your role, to determine
+           form-determined properties.  (If polymorphed, use polyform.) */
+        pm = URACEDATA;
     } else {
         /* Monster tempraries are boolean flags.
 
@@ -53,7 +68,7 @@ m_has_property(const struct monst *mon, enum youprop property,
         if (property == FAST && mon->mspeed == MFAST)
             rv |= (mon->permspeed == FAST ?
                    W_MASK(os_polyform) : W_MASK(os_outside));
-        if (property == INVIS && mon->perminvis && !pm_invisible(mon->data))
+        if (property == INVIS && mon->perminvis && !pm_invisible(pm))
             rv |= W_MASK(os_outside);
         if (property == STUNNED && mon->mstun)
             rv |= W_MASK(os_timeout);
@@ -74,31 +89,32 @@ m_has_property(const struct monst *mon, enum youprop property,
         property == SHOCK_RES    ? resists_elec(mon)                     :
         property == POISON_RES   ? resists_poison(mon)                   :
         property == DRAIN_RES    ? resists_drli(mon)                     :
-        property == SICK_RES     ? mon->data->mlet == S_FUNGUS ||
-                                   mon->data == &mons[PM_GHOUL]          :
+        property == SICK_RES     ? pm->mlet == S_FUNGUS ||
+                                   pm->mlet == S_BEAR   ||
+                                   pm == &mons[PM_GHOUL]                 :
         property == ANTIMAGIC    ? resists_magm(mon)                     :
         property == ACID_RES     ? resists_acid(mon)                     :
         property == STONE_RES    ? resists_ston(mon)                     :
-        property == STUNNED      ? u.umonnum == PM_STALKER ||
-                                   mon->data->mlet == S_BAT              :
-        property == BLINDED      ? !haseyes(mon->data)                   :
-        property == HALLUC       ? Upolyd && dmgtype(mon->data, AD_HALU) :
-        property == SEE_INVIS    ? perceives(mon->data)                  :
-        property == TELEPAT      ? telepathic(mon->data)                 :
-        property == INFRAVISION  ? infravision(mon->data)                :
-        property == XRAY_VISION  ? has_xray_vision(mon->data)            :
+        property == STUNNED      ? pm == &mons[PM_STALKER] ||
+                                   pm->mlet == S_BAT                     :
+        property == BLINDED      ? !haseyes(pm)                          :
+        property == HALLUC       ? dmgtype(pm, AD_HALU)                  :
+        property == SEE_INVIS    ? perceives(pm)                         :
+        property == TELEPAT      ? telepathic(pm)                        :
+        property == INFRAVISION  ? infravision(pm)                       :
+        property == XRAY_VISION  ? has_xray_vision(pm)                   :
         /* Note: This one assumes that there's no way to permanently turn
            visible when you're in stalker form (i.e. mummy wrappings only). */
-        property == INVIS        ? pm_invisible(mon->data)               :
-        property == TELEPORT     ? can_teleport(mon->data)               :
-        property == LEVITATION   ? is_floater(mon->data)                 :
-        property == FLYING       ? is_flyer(mon->data)                   :
-        property == SWIMMING     ? is_swimmer(mon->data)                 :
-        property == PASSES_WALLS ? passes_walls(mon->data)               :
-        property == REGENERATION ? regenerates(mon->data)                :
-        property == REFLECTING   ? mon->data == &mons[PM_SILVER_DRAGON]  :
-        property == TELEPORT_CONTROL  ? control_teleport(mon->data)      :
-        property == MAGICAL_BREATHING ? amphibious(mon->data)            :
+        property == INVIS        ? pm_invisible(pm)                      :
+        property == TELEPORT     ? can_teleport(pm)                      :
+        property == LEVITATION   ? is_floater(pm)                        :
+        property == FLYING       ? is_flyer(pm)                          :
+        property == SWIMMING     ? is_swimmer(pm)                        :
+        property == PASSES_WALLS ? passes_walls(pm)                      :
+        property == REGENERATION ? regenerates(pm)                       :
+        property == REFLECTING   ? pm == &mons[PM_SILVER_DRAGON]         :
+        property == TELEPORT_CONTROL  ? control_teleport(pm)             :
+        property == MAGICAL_BREATHING ? amphibious(pm)                   :
         0)
         rv |= W_MASK(os_polyform);
 
@@ -519,6 +535,8 @@ enlightenment(int final)
         you_are(&menu, "invulnerable");
     if (u.uedibility)
         you_can(&menu, "recognize detrimental food");
+    if (u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
+        you_are(&menu, "protected from water damage");
 
         /*** Troubles ***/
     if (Halluc_resistance)
@@ -532,6 +550,8 @@ enlightenment(int final)
             you_are(&menu, "confused");
         if (Blinded)
             you_are(&menu, "blinded");
+        if (Deaf)
+            you_are(&menu, "deaf");
         if (Sick) {
             if (u.usick_type & SICK_VOMITABLE)
                 you_are(&menu, "sick from food poisoning");
@@ -990,10 +1010,37 @@ show_conduct(int final)
 
     if (!u.uconduct[conduct_gnostic])
         you_have_been(&menu, "an atheist");
-    if (u.uconduct_time[conduct_gnostic] > 1800) {
-        buf = msgprintf("an atheist until turn %d",
-                        u.uconduct_time[conduct_gnostic]);
-        enl_msg(&menu, You_, "were ", "had been ", buf);
+    else {
+        if (u.uconduct_time[conduct_gnostic] > 1800) {
+            buf = msgprintf("an atheist until turn %d",
+                            u.uconduct_time[conduct_gnostic]);
+            enl_msg(&menu, You_, "were ", "had been ", buf);
+        }
+        if (!u.uconduct[conduct_donation])
+            enl_msg(&menu, You_, "have not", "did not",
+                    " donate to any temples.");
+        else {
+            enl_msg(&menu, You_, "have donated", "donated",
+                    msgprintf(" to %stemple%s %d time%s%s, starting on turn %d",
+                              ((u.uconduct[conduct_donation] > 1) ? "" : "a "),
+                              ((u.uconduct[conduct_donation] > 1) ? "s" : ""),
+                              u.uconduct[conduct_donation],
+                              ((u.uconduct[conduct_donation] > 1) ? "s" : ""),
+                              (u.ublessed  ? msgprintf(
+                                  " (receiving %d points of protection)",
+                                  u.ublessed) : ""),
+                              u.uconduct_time[conduct_donation]));
+            if (!u.uconduct[conduct_boughtprotection])
+                enl_msg(&menu, You_, "have not received", "did not receive",
+                        " divine protection from a temple");
+        }
+    }
+    if (u.uconduct_time[conduct_boughtprotection] > 0) {
+        enl_msg(&menu, You_, "have received", "received",
+                msgprintf(" temple protection %d time%s, starting on turn %d",
+                          u.uconduct[conduct_boughtprotection],
+                          ((u.uconduct[conduct_boughtprotection]==1)?"":"s"),
+                          u.uconduct_time[conduct_boughtprotection]));
     }
 
     if (!u.uconduct[conduct_weaphit])
@@ -1112,6 +1159,50 @@ show_conduct(int final)
             you_have_X(&menu, buf);
         }
     }
+    if (!(u.uconduct[conduct_equippedartifact] ||
+          u.uconduct[conduct_appliedartifact] ||
+          u.uconduct[conduct_carriedartifact])) {
+        enl_msg(&menu, You_, "have not used", "did not use",
+                " any artifacts");
+    } else {
+        int saidsomething = 0;
+        if (!u.uconduct[conduct_equippedartifact]) {
+            enl_msg(&menu, You_, "have not worn or wielded",
+                    "did not wear or wield",
+                    " any artifacts");
+            saidsomething++;
+        }
+        if (!u.uconduct[conduct_appliedartifact]) {
+            enl_msg(&menu, You_, "have not applied or invoked",
+                    "did not apply or invoke",
+                    " any artifacts");
+            saidsomething++;
+        }
+        if (!u.uconduct[conduct_carriedartifact]) {
+            enl_msg(&menu, You_, "have not moved while",
+                    "did not move while",
+                    " carrying any artifacts");
+            saidsomething++;
+        }
+        if (!saidsomething) {
+            int when = u.uconduct_time[conduct_equippedartifact];
+            const char *what = "equipped";
+            if (when == 0 || (when > u.uconduct_time[conduct_appliedartifact] &&
+                              u.uconduct_time[conduct_appliedartifact] > 0)) {
+                when = u.uconduct_time[conduct_appliedartifact];
+                what = "applied or invoked";
+            }
+            if (when == 0 || (when > u.uconduct_time[conduct_carriedartifact] &&
+                              u.uconduct_time[conduct_carriedartifact] > 0)) {
+                when = u.uconduct_time[conduct_carriedartifact];
+                what = "carried";
+            }
+            if (when > 0) {
+                enl_msg(&menu, You_, what, what,
+                        msgprintf(" an artifact on turn %d", when));
+            }
+        }
+    }
 
     if (!u.uconduct[conduct_puddingsplit])
         you_have_never(&menu, "split a pudding");
@@ -1152,14 +1243,28 @@ show_conduct(int final)
     }
 
     /* birth options */
-    if (!flags.bones_enabled)
+    if (flags.bones_enabled == bones_disabled)
         you_have_X(&menu, "disabled loading bones files");
+    else if (flags.bones_enabled == bones_anywhere)
+        you_have_X(&menu, "enabled loading special bones files");
     if (!flags.elbereth_enabled)        /* not the same as not /writing/ E */
         you_have_X(&menu, "abstained from Elbereth's help");
     if (flags.permahallu)
         enl_msg(&menu, You_, "are ", "were", "permanently hallucinating");
     if (flags.permablind)
         enl_msg(&menu, You_, "are ", "were ", "permanently blind");
+    if (flags.permaconf)
+        enl_msg(&menu, You_, "are ", "were ", "permanently confused");
+    if (flags.permastun)
+        enl_msg(&menu, You_, "are ", "were ", "permanently stunned");
+    if (flags.permaglib)
+        enl_msg(&menu, You_, "have ", "had ", "permanently greasy fingers");
+    if (flags.permafumble)
+        enl_msg(&menu, You_, "are ", "were ", "permanently fumbling");
+    if (flags.permalame)
+        enl_msg(&menu, You_, "have ", "had ", "permanently wounded legs");
+    if (flags.permabadluck)
+        enl_msg(&menu, You_, "have ", "had ", "permanent bad luck");
 
     /* Pop up the window and wait for a key */
     display_menu(&menu, "Voluntary challenges:", PICK_NONE,

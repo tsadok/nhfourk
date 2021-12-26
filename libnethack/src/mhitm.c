@@ -808,7 +808,9 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
     struct obj *obj;
     const struct permonst *pa = magr->data;
     const struct permonst *pd = mdef->data;
-    int armpro, num, tmp = dice((int)mattk->damn, (int)mattk->damd);
+    int armpro, num, tmp = (mattk->damn >= 2)
+        ? dice((int)mattk->damn, (int)mattk->damd)
+        : (int)mattk->damn * (int)mattk->damd;
     boolean cancelled, protectminvent;
 
     if ((touch_petrifies(pd)
@@ -867,7 +869,8 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
                 pline(msgc_petfatal, brief_feeling, "queasy");
             return MM_AGR_DIED;
         }
-        verbalize(combat_msgc(magr, mdef, cr_hit), "Burrrrp!");
+        if (canhear())
+            verbalize(combat_msgc(magr, mdef, cr_hit), "Burrrrp!");
         tmp = mdef->mhp;
         /* Use up amulet of life saving */
         if ((obj = mlifesaver(mdef)))
@@ -1333,7 +1336,7 @@ mdamagem(struct monst *magr, struct monst *mdef, const struct attack *mattk)
         /* technically incorrect; no check for stealing gold from between
            mdef's feet... */
         {
-            struct obj *gold = findgold(mdef->minvent);
+            struct obj *gold = findgold(mdef->minvent, challengemode);
 
             if (!gold)
                 break;
@@ -1737,7 +1740,7 @@ passivemm(struct monst *magr, struct monst *mdef, boolean mhit, int mdead)
         if (mddat->mattk[i].aatyp == AT_NONE)
             break;
     }
-    if (mddat->mattk[i].damn)
+    if (mddat->mattk[i].damn && mddat->mattk[i].damd)
         tmp = dice((int)mddat->mattk[i].damn, (int)mddat->mattk[i].damd);
     else if (mddat->mattk[i].damd)
         tmp = dice((int)mddat->mlevel + 1, (int)mddat->mattk[i].damd);

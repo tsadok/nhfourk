@@ -675,7 +675,7 @@ makemaz(struct level *lev, const char *s, int *smeq)
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--) {
         mazexy(lev, &mm);
-        mkgold(0L, lev, mm.x, mm.y, rng_for_level(&lev->z));
+        mkfloorgold(0L, lev, mm.x, mm.y, rng_for_level(&lev->z));
     }
     for (x = 7 + mklev_rn2(6, lev); x; x--)
         mktrap(lev, 0, 1, NULL, NULL);
@@ -862,7 +862,10 @@ mkportal(struct level *lev, xchar x, xchar y, xchar todnum, xchar todlevel)
         return;
     }
     ttmp->dst.dnum = todnum;
-    ttmp->dst.dlevel = todlevel;
+    if (In_endgame(&u.uz))
+        ttmp->dst.dlevel = u.uz.dlevel - 1;
+    else
+        ttmp->dst.dlevel = todlevel;
     return;
 }
 
@@ -922,6 +925,7 @@ movebubbles(void)
     struct trap *btrap;
 
     static const struct rm water_pos = {
+        't', /* struct_type */
         S_water, 0, 0, 0, 0, 0, WATER /* typ */ ,
         0, 0, 0, 0, 0, 0, 0, 0, 0
     };

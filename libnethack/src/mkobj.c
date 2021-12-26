@@ -138,7 +138,7 @@ mkobj(struct level *lev, char oclass, boolean artif, enum rng rng)
 struct obj *
 mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
 {
-    int i, prob = 1 + rn2_on_rng(1000, rng);
+    int i, prob, maxprob = 0;
     int levdepth = (lev && &lev->z) ? depth(&lev->z) : 1;
     if (levdepth < 1)
         levdepth = 1;
@@ -148,54 +148,31 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
         oclass = GEM_CLASS; /* This class is least-disruptive to balance. */
     }
 
+    int first_id = bases[(int) oclass];
+    int final_id = bases[oclass + 1] - 1;
+
+    /* Precious gems start off elsewhere depending on dungeon level */
     if (oclass == GEM_CLASS) {
-        int gems = LAST_GEM - bases[GEM_CLASS] + 1, num = gems, total;
-        int z = ledger_no(&lev->z), removed = 0;
-        int j;
-
-        for (j = 0; objects[j + bases[GEM_CLASS]].oc_class == GEM_CLASS; ++j)
-            ;
-
-        total = j;
-
-        int probs[total];
-
-        for (j = 0; j < 9 - z / 3; ++j) {
-            if (j >= gems)
-                panic("Not enough gems: on dlevel %d needed %d gems.", z, j);
-
-            removed += objects[bases[GEM_CLASS] + j].oc_prob;
-            probs[j] = 0;
-            --num;
-        }
-
-        for (; j < gems; ++j)
-            /* Here we redistribute the probability removed. The +1 at the end
-             * is to ensure that we don't round to a sum less than 1000: going
-             * over is ok, but going under might cause a panic. */
-            probs[j] = ((objects[j + bases[GEM_CLASS]].oc_prob * num + removed)
-                         / num) + 1;
-
-        for (; j < total; ++j)
-            probs[j] = objects[j + bases[GEM_CLASS]].oc_prob;
-
-        j = 0;
-        while ((prob -= probs[j]) > 0)
-            j++;
-
-        i = j + bases[GEM_CLASS];
-    } else {
-        i = bases[(int)oclass];
-        while ((prob -= objects[i].oc_prob) > 0)
-            i++;
+        int z = ledger_no(&lev->z) / 3;
+        if (z < 9)
+            first_id += (9 - z);
     }
+
+    /* Calculate the total probability of all items in the class */
+    for (i = first_id; i <= final_id; i++)
+        maxprob += objects[i].oc_prob;
+
+    prob = 1 + rn2_on_rng(maxprob, rng);
+    i = bases[(int)oclass];
+    while ((prob -= objects[i].oc_prob) > 0)
+        i++;
 
     /* On early dungeon levels, random spellbooks now try to be ones for
        low-level spells, most of the time. */
     while (oclass == SPBOOK_CLASS &&
            ((objects[i].oc_level - 1) * 3 > levdepth) &&
            rn2_on_rng((objects[i].oc_level - 1) * 3 - levdepth, rng)) {
-        prob = 1 + rn2_on_rng(1000, rng);
+        prob = 1 + rn2_on_rng(maxprob, rng);
         i = bases[(int)oclass];
         while ((prob -= objects[i].oc_prob) > 0)
             i++;
@@ -205,6 +182,20 @@ mkobj_of_class(struct level *lev, char oclass, boolean artif, enum rng rng)
         panic("probtype error, oclass=%d i=%d", (int)oclass, i);
 
     return mksobj(lev, i, TRUE, artif, rng);
+}
+
+/* Note that this function is expected to return 0 in the event that the
+   random appearance in question is not used this game. */
+extern int
+find_objnum_by_appearance(int oclass, const char *appearance)
+{
+    int i;
+    for (i = bases[oclass]; objects[i].oc_class == oclass; i++) {
+        const char *descr = OBJ_DESCR(objects[i]);
+        if (!strcmp(descr, appearance))
+            return i;
+    }
+    return 0;
 }
 
 static void
@@ -324,8 +315,10 @@ splitobj(struct obj *obj, long num)
 {
     struct obj *otmp;
 
-    if (obj->cobj || num <= 0L || obj->quan <= num)
-        panic("splitobj");      /* can't split containers */
+    if (obj->cobj && num <= 1L && obj->quan == 1L)
+        return obj;
+    if (obj->cobj || num <= 0L || obj->quan <= num) /* can't split containers */
+        panic("splitobj, %1ld of %1d", num, obj->quan);
     otmp = newobj(obj->oxlth + obj->onamelth, obj);
     extract_nobj(otmp, &turnstate.floating_objects, NULL, 0);
     otmp->nobj = obj->nobj;
@@ -1093,16 +1086,13 @@ rnd_treefruit_at(int x, int y)
                      FALSE, rng_main);
 }
 
+/* This is a low-level function; the caller MUST set amount and also
+   the caller MUST update u.generated_gold as appropriate. */
 struct obj *
 mkgold(long amount, struct level *lev, int x, int y, enum rng rng)
 {
     struct obj *gold = gold_at(lev, x, y);
 
-    if (amount <= 0L) {
-        amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
-        amount *= 1 + rn2_on_rng(30, rng);
-        amount++;
-    }
     if (gold) {
         gold->quan += amount;
     } else {
@@ -1111,6 +1101,31 @@ mkgold(long amount, struct level *lev, int x, int y, enum rng rng)
     }
     gold->owt = weight(gold);
     return gold;
+}
+
+struct obj *
+mkvaultgold(long amount, struct level *lev, int x, int y, enum rng rng)
+{
+    if (amount <= 0L) {
+        amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
+        amount *= 1 + rn2_on_rng(30, rng);
+        amount++;
+        u.generated_gold.vault += amount;
+    }
+    return mkgold(amount, lev, x, y, rng);    
+}
+
+/* In practice, this gold doesn't actually all belong in the "floor" category,
+   so the caller must update u.generated_gold.foo as appropriate. */
+struct obj *
+mkfloorgold(long amount, struct level *lev, int x, int y, enum rng rng)
+{
+    if (amount <= 0L) {
+        amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
+        amount *= 1 + rn2_on_rng(30, rng);
+        amount++;
+    }
+    return mkgold(amount, lev, x, y, rng);
 }
 
 
@@ -1297,7 +1312,8 @@ is_flammable(const struct obj * otmp)
     /* Candles can be burned, but it makes no sense for them to be fireproofed. */
     if (Is_candle(otmp))
         return FALSE;
-    if (objects[otyp].oc_oprop == FIRE_RES || otyp == WAN_FIRE)
+    if (objects[otyp].oc_oprop == FIRE_RES ||
+        objects[otyp].oc_oprop2 == FIRE_RES || otyp == WAN_FIRE)
         return FALSE;
 
     return (boolean) ((omat <= WOOD && omat != LIQUID) || omat == PLASTIC);
@@ -1700,6 +1716,11 @@ newobj(int extra_bytes, struct obj *initfrom)
     struct obj *otmp = malloc((unsigned)extra_bytes + sizeof(struct obj));
     *otmp = *initfrom;
     /* note: extra data not copied by newobj */
+    otmp->struct_type = 'O'; /* See doc/struct/types.txt
+                                TODO: Not sure this is actually the right place
+                                to set this; shouldn't copying from a valid
+                                initfrom result in a valid value here, and
+                                otherwise not? */
     otmp->where = OBJ_FREE;
     otmp->nobj = turnstate.floating_objects;
     turnstate.floating_objects = otmp;

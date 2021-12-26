@@ -214,11 +214,14 @@ use_stethoscope(struct obj *obj, const struct nh_cmd_arg *arg)
     boolean interference = (Engulfed && is_whirly(u.ustuck->data) &&
                             !rn2(Role_if(PM_HEALER) ? 10 : 3));
 
-    if (nohands(youmonst.data)) {      /* also check for no ears and/or deaf? */
+    if (nohands(youmonst.data)) {
         pline(msgc_cancelled, "You have no hands!"); /* not `body_part(HAND)' */
         return 0;
     } else if (!freehand()) {
         pline(msgc_cancelled, "You have no free %s.", body_part(HAND));
+        return 0;
+    } else if (Deaf) {
+        pline(msgc_cancelled, "You can't hear anything!");
         return 0;
     }
     if (!getargdir(arg, NULL, &dx, &dy, &dz))
@@ -319,8 +322,10 @@ use_whistle(struct obj *obj)
         pline(msgc_cancelled, "You are incapable of blowing the whistle!");
         return 0;
     }
-    pline(msgc_actionok, whistle_str, obj->cursed ? "shrill" : "high");
-    makeknown(obj->otyp);
+    if (canhear()) {
+        pline(msgc_actionok, whistle_str, obj->cursed ? "shrill" : "high");
+        makeknown(obj->otyp);
+    }
     wake_nearby(TRUE);
 
     struct monst *mtmp;
@@ -342,10 +347,13 @@ use_magic_whistle(struct obj *obj)
     }
 
     if (obj->cursed && !rn2(2)) {
-        pline(msgc_substitute, "You produce a high-pitched humming noise.");
+        if (canhear())
+            pline(msgc_substitute, "You produce a high-pitched humming noise.");
         wake_nearby(FALSE);
     } else {
-        pline(msgc_actionok, whistle_str, Hallucination ? "normal" : "strange");
+        if (canhear())
+            pline(msgc_actionok, whistle_str,
+                  Hallucination ? "normal" : "strange");
         for (mtmp = level->monlist; mtmp; mtmp = nextmon) {
             nextmon = mtmp->nmon;       /* trap might kill mon */
             if (DEADMONSTER(mtmp))
@@ -362,7 +370,8 @@ use_magic_whistle(struct obj *obj)
             }
         }
     }
-    makeknown(obj->otyp);
+    if (canhear())
+        makeknown(obj->otyp);
     return 1;
 }
 
@@ -1035,11 +1044,16 @@ use_candle(struct obj **optr)
         else if (!otmp->lamplit && obj->lamplit)
             pline_implied(msgc_consequence, "%s out.",
                           (obj->quan > 1L) ? "They go" : "It goes");
-        if (obj->unpaid)
-            verbalize(msgc_unpaid, "You %s %s, you bought %s!",
-                      otmp->lamplit ? "burn" : "use",
-                      (obj->quan > 1L) ? "them" : "it",
-                      (obj->quan > 1L) ? "them" : "it");
+        if (obj->unpaid) {
+            if (Deaf)
+                pline(msgc_unpaid, "The %s %s placed on your bill.",
+                      xname(obj), (obj->quan == 1L) ? "is" : "are");
+            else
+                verbalize(msgc_unpaid, "You %s %s, you bought %s!",
+                          otmp->lamplit ? "burn" : "use",
+                          (obj->quan > 1L) ? "them" : "it",
+                          (obj->quan > 1L) ? "them" : "it");
+        }
         if (obj->quan < 7L && otmp->spe == 7)
             pline_implied(msgc_hint, "%s now has seven%s candles attached.",
                           The(xname(otmp)), otmp->lamplit ? " lit" : "");
@@ -1140,7 +1154,8 @@ catch_lit(struct obj * obj)
             obj->where == OBJ_INVENT) {
             /* if it catches while you have it, then it's your tough luck */
             check_unpaid(obj);
-            verbalize(msgc_unpaid,
+            if (!Deaf)
+                verbalize(msgc_unpaid,
                       "That's in addition to the cost of %s %s, of course.",
                       Yname2(obj), obj->quan == 1 ? "itself" : "themselves");
             bill_dummy_object(obj);
@@ -1224,8 +1239,12 @@ use_lamp(struct obj *obj)
                 obj->age == 20L * (long)objects[obj->otyp].oc_cost) {
                 const char *ithem = obj->quan > 1L ? "them" : "it";
 
-                verbalize(msgc_unpaid, "You burn %s, you bought %s!",
-                          ithem, ithem);
+                if (Deaf)
+                    pline(msgc_unpaid, "The %s %s added to your bill.",
+                          xname(obj), (obj->quan == 1L) ? "is" : "are");
+                else
+                    verbalize(msgc_unpaid, "You burn %s, you bought %s!",
+                              ithem, ithem);
                 bill_dummy_object(obj);
             }
         }
@@ -1273,7 +1292,8 @@ light_cocktail(struct obj *obj)
         /* Normally, we shouldn't both partially and fully charge for an item,
            but (Yendorian Fuel) Taxes are inevitable... */
         check_unpaid(obj);
-        verbalize(msgc_unpaid,
+        if (!Deaf)
+            verbalize(msgc_unpaid,
                   "That's in addition to the cost of the potion, of course.");
         bill_dummy_object(obj);
     }
@@ -1582,8 +1602,9 @@ use_tinning_kit(struct obj *obj)
     }
     if (is_rider(&mons[corpse->corpsenm])) {
         revive_corpse(corpse);
-        verbalize(msgc_badidea,
-                  "Yes...  But War does not preserve its enemies...");
+        if (!Deaf)
+            verbalize(msgc_badidea,
+                      "Yes...  But War does not preserve its enemies...");
         return 1;
     }
     if (mons[corpse->corpsenm].cnutrit == 0) {
@@ -1602,12 +1623,22 @@ use_tinning_kit(struct obj *obj)
         can->known = 1;
         can->spe = -1;  /* Mark tinned tins. No spinach allowed... */
         if (carried(corpse)) {
-            if (corpse->unpaid)
-                verbalize(msgc_unpaid, you_buy_it);
+            if (corpse->unpaid) {
+                if (Deaf)
+                    pline(msgc_unpaid, "The %s is placed on your bill.",
+                          xname(corpse));
+                else
+                    verbalize(msgc_unpaid, you_buy_it);
+            }
             useup(corpse);
         } else {
-            if (costly_spot(corpse->ox, corpse->oy) && !corpse->no_charge)
-                verbalize(msgc_unpaid, you_buy_it);
+            if (costly_spot(corpse->ox, corpse->oy) && !corpse->no_charge) {
+                if (Deaf)
+                    pline(msgc_unpaid, "The %s is placed on your bill.",
+                          xname(corpse));
+                else
+                    verbalize(msgc_unpaid, you_buy_it);
+            }
             useupf(corpse, 1L);
         }
         hold_another_object(can, "You make, but cannot pick up, %s.",
@@ -2761,7 +2792,11 @@ use_cream_pie(struct obj **objp)
               body_part(FACE));
     }
     if (obj->unpaid) {
-        verbalize(msgc_unpaid, "You used it, you bought it!");
+        if (Deaf)
+            pline(msgc_unpaid, "The %s %s placed on your bill.",
+                  xname(obj), (obj->quan == 1L) ? "is" : "are");
+        else
+            verbalize(msgc_unpaid, "You used it, you bought it!");
         bill_dummy_object(obj);
     }
     obj_extract_self(obj);
@@ -3122,9 +3157,14 @@ doapply(const struct nh_cmd_arg *arg)
 
     if (obj->oclass == WAND_CLASS) {
         pline(msgc_controlhelp,
+              "Wands can be used by zapping, breaking, or engraving.");
+        pline(msgc_controlhelp,
               "To break wands, use the 'invoke' command (typically on 'V').");
         return 0;
     }
+
+    if (obj->oartifact)
+        break_conduct(conduct_appliedartifact);
 
     switch (obj->otyp) {
     case BLINDFOLD:
@@ -3161,7 +3201,13 @@ doapply(const struct nh_cmd_arg *arg)
         break;
     case LOCK_PICK:
     case CREDIT_CARD:
+    case STURDY_KEY:
+    case IRON_KEY:
     case SKELETON_KEY:
+    case DOOR_KEY:
+    case BRONZE_KEY:
+    case SILVER_KEY:
+    case BRASS_KEY:
         break_conduct(conduct_tools);
         res = pick_lock(obj, arg);
         break;

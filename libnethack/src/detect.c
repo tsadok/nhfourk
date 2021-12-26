@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2016-03-18 */
+/* Last modified by Alex Smith, 2017-11-18 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -163,7 +163,8 @@ gold_detect(struct obj *sobj, boolean *scr_known)
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         if (DEADMONSTER(mtmp))
             continue;   /* probably not needed in this case but... */
-        if (findgold(mtmp->minvent) || monsndx(mtmp->data) == PM_GOLD_GOLEM) {
+        if (findgold(mtmp->minvent, TRUE) ||
+            monsndx(mtmp->data) == PM_GOLD_GOLEM) {
             *scr_known = TRUE;
             goto outgoldmap;    /* skip further searching */
         } else
@@ -234,7 +235,8 @@ outgoldmap:
     for (mtmp = level->monlist; mtmp; mtmp = mtmp->nmon) {
         if (DEADMONSTER(mtmp))
             continue;   /* probably overkill here */
-        if (findgold(mtmp->minvent) || monsndx(mtmp->data) == PM_GOLD_GOLEM) {
+        if (findgold(mtmp->minvent, TRUE) ||
+            monsndx(mtmp->data) == PM_GOLD_GOLEM) {
             struct obj gold;
 
             gold.otyp = GOLD_PIECE;
@@ -453,7 +455,8 @@ object_detect(struct obj *detector,     /* object doing the detecting */
         }
         if ((is_cursed && mtmp->m_ap_type == M_AP_OBJECT &&
              (!class || class == objects[mtmp->mappearance].oc_class)) ||
-            (findgold(mtmp->minvent) && (!class || class == COIN_CLASS))) {
+            (findgold(mtmp->minvent, FALSE) &&
+             (!class || class == COIN_CLASS))) {
             ct++;
             break;
         }
@@ -533,7 +536,8 @@ object_detect(struct obj *detector,     /* object doing the detecting */
             temp.oy = mtmp->my;
             temp.corpsenm = PM_TENGU;   /* if mimicing a corpse */
             map_object(&temp, 1, TRUE);
-        } else if (findgold(mtmp->minvent) && (!class || class == COIN_CLASS)) {
+        } else if (findgold(mtmp->minvent, FALSE) &&
+                   (!class || class == COIN_CLASS)) {
             struct obj gold;
 
             gold.otyp = GOLD_PIECE;
@@ -1081,7 +1085,7 @@ findone(int zx, int zy, void *num)
             (*(int *)num)++;
         }
         if (mtmp->mundetected &&
-            (is_hider(mtmp->data) || mtmp->data->mlet == S_EEL)) {
+            (is_hider(mtmp->data) || mtmp->data->mlet == S_KRAKEN)) {
             mtmp->mundetected = 0;
             newsym(zx, zy);
             (*(int *)num)++;

@@ -809,8 +809,7 @@ create_monster(struct level *lev, monster * m, struct mkroom *croom)
             }
         } else {
             pm = mkclass(&lev->z, class,
-                         ((class == S_KOP) || (class == S_EEL)) ? G_NOGEN : 0,
-                         mrng());
+                         (class == S_KRAKEN) ? G_NOGEN : 0, mrng());
             /* if we can't get a specific monster type (pm == 0) then the class 
                has been genocided, so settle for a random monster */
             if (!pm)
@@ -829,7 +828,7 @@ create_monster(struct level *lev, monster * m, struct mkroom *croom)
         else {
             if (!pm || !is_swimmer(pm))
                 get_location(lev, &x, &y, DRY);
-            else if (pm->mlet == S_EEL)
+            else if (pm->mlet == S_KRAKEN)
                 get_location(lev, &x, &y, WET);
             else
                 get_location(lev, &x, &y, DRY | WET);
@@ -1000,9 +999,12 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
                 panic("create_object:  unexpected object class '%c'", c);
 
             /* KMH -- Create piles of gold properly */
-            if (oclass == COIN_CLASS)
-                otmp = mkgold(0L, lev, x, y, mrng());
-            else
+            if (oclass == COIN_CLASS) {
+                otmp = mkfloorgold(0L, lev, x, y, mrng());
+                u.generated_gold.onfloor += otmp->quan;
+                /* This counts it as being generated on the floor;
+                   if that is not the case, we will correct it below. */
+            } else
                 otmp = mkobj_at(oclass, lev, x, y, !named, mrng());
         }
 
@@ -1034,6 +1036,7 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
         /* assume we wouldn't be given an egg corpsenm unless it was hatchable
            */
         if (otmp->otyp == EGG && otmp->corpsenm != NON_PM) {
+            /* TODO: verify whether otmp->otyp is the correct argument here. */
             if (dead_species(otmp->otyp, TRUE))
                 kill_egg(otmp); /* make sure nothing hatches */
             else
@@ -1055,6 +1058,11 @@ create_object(struct level *lev, object * o, struct mkroom *croom)
             remove_object(otmp);
             add_to_container(container, otmp);
             container->owt = weight(container);
+            if (otmp->oclass == COIN_CLASS) {
+                /* Above, we miscategorized this as onfloor gold. */
+                u.generated_gold.onfloor -= otmp->quan;
+                u.generated_gold.contained += otmp->quan;
+            }
             goto o_done;        /* don't stack, but do other cleanup */
             /* container */
         case 2:
@@ -1226,7 +1234,9 @@ create_gold(struct level *lev, gold * g, struct mkroom *croom)
 
     if (g->amount == -1)
         g->amount = 1 + mrn2(200);
-    mkgold((long)g->amount, lev, x, y, mrng());
+    struct obj *gld =
+        mkfloorgold((long)g->amount, lev, x, y, mrng());
+    u.generated_gold.onfloor += gld->quan;
 }
 
 /*
@@ -1377,6 +1387,12 @@ dig_corridor(struct level * lev, coord * org, coord * dest, boolean nxcor,
         dix = abs(xx - tx);
         diy = abs(yy - ty);
 
+        if ((dix > diy) && diy && !mrn2(dix-diy+1)) {
+            dix = 0;
+        } else if ((diy > dix) && dix && !mrn2(diy-dix+1)) {
+            diy = 0;
+        }
+
         /* do we have to change direction ? */
         if (dy && dix > diy) {
             int ddx = (xx > tx) ? -1 : 1;
@@ -1479,9 +1495,9 @@ create_corridor(struct level *lev, corridor *c, int *smeq)
     coord org, dest;
 
     if (c->src.room == -1) {
-        sort_rooms(lev);
+        sort_rooms(lev, LEVSTYLE_STANDARD);
         fix_stair_rooms(lev);
-        makecorridors(lev, smeq);
+        makecorridors(lev, smeq, LEVSTYLE_STANDARD);
         return;
     }
 
@@ -1550,8 +1566,8 @@ fill_room(struct level *lev, struct mkroom *croom, boolean prefilled)
         case VAULT:
             for (x = croom->lx; x <= croom->hx; x++)
                 for (y = croom->ly; y <= croom->hy; y++)
-                    mkgold(51 + mrn2(abs(depth(&lev->z)) * 100),
-                           lev, x, y, mrng());
+                    mkvaultgold(51 + mrn2(abs(depth(&lev->z)) * 100),
+                                lev, x, y, mrng());
             break;
         case DRAGONHALL:
             fill_dragonhall(lev, croom, mrng());
@@ -2832,7 +2848,8 @@ load_maze(struct level *lev, dlb * fd)
         }
         for (x = mrn2((int)(15 * mapfact) / 100); x; x--) {
             maze1xy(lev, &mm, DRY);
-            mkgold(0L, lev, mm.x, mm.y, mrng());
+            struct obj *gld = mkfloorgold(0L, lev, mm.x, mm.y, mrng());
+            u.generated_gold.onfloor += gld->quan;
         }
         for (x = mrn2((int)(15 * mapfact) / 100); x; x--) {
             int trytrap;
@@ -3040,7 +3057,7 @@ fixup_special(struct level *lev)
         /* stock the main vault */
         for (x = croom->lx; x <= croom->hx; x++)
             for (y = croom->ly; y <= croom->hy; y++) {
-                mkgold(600 + mrn2(300), lev, x, y, mrng());
+                mkvaultgold(600 + mrn2(300), lev, x, y, mrng());
                 if (!mrn2(3) && !is_pool(lev, x, y)) {
                     maketrap(lev, x, y, (mrn2(3) ? LANDMINE : SPIKED_PIT),
                              mrng());

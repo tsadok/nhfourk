@@ -23,6 +23,8 @@ typedef boolean(*callback_proc) (void *, void *);
 # define clear_heros_fault(r) ((r)->player_flags |= REG_NOT_HEROS)
 
 struct region {
+    char struct_type;  /* Should always be 'r' for this struct.
+                          See doc/struct_types.txt for the list. */
     struct level *lev;  /* the level this region is on */
     struct nhrect *rects;       /* Rectangles composing the region */
     struct nhrect bounding_box; /* Bounding box of the region */

@@ -148,16 +148,6 @@ const char *ad[LAST_CONTINUOUS_AD + 1] = {
     [AD_WEBS] = "web",
 };
 
-/* NOTE: the order of these words exactly corresponds to the
-   order of oc_material values #define'd in objclass.h.  I
-   initially copy/pasted it from foodwords[] in eat.c */
-static const char *const material[] = {
-    "meal", "liquid", "wax", "vegetable", "meat",
-    "paper", "cloth", "leather", "wood", "bone", "scale",
-    "iron or steel", "metal", "copper", "silver", "gold",
-    "platinum", "mithril", "plastic", "glass", "gemstone", "mineral"
-};
-
 const char *
 htmlheader(const char * spoilername)
 {
@@ -717,7 +707,7 @@ spoilobjclass(FILE *file, const char * hrname, const char * aname,
                 "<td class=\"numeric weight\">%d</td>"
                 "<td class=\"numeric price\">%d</td>"
                 "</tr>\n",
-                i, spoiloname(i), material[objects[i].oc_material],
+                i, spoiloname(i), material_name(objects[i].oc_material),
                 extravalue, objects[i].oc_weight, objects[i].oc_cost);
     }
 
@@ -755,7 +745,7 @@ spoilartalign(struct artifact *art)
 static const char *
 spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
 {
-    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s",
+    return msgprintf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s%s%s",
                      ((spfx & SPFX_SEEK) ?
                       "<span class=\"spfx spfxseek\">+n search</span> " : ""),
                      ((spfx & SPFX_WARN) ?
@@ -793,9 +783,11 @@ spoilarteffects(struct artifact *art, unsigned long spfx, struct attack attk)
                      ((spfx & SPFX_REFLECT) ?
                       "<span class=\"spfx spfxreflect\">reflect</span> " : ""),
                      ((spfx & SPFX_STRM) ?
-                      "<span class=\"spfx spfxstrm\">storm</span>" : ""),
+                      "<span class=\"spfx spfxstrm\">storm</span> " : ""),
                      ((spfx & SPFX_FREEA) ?
-                      "<span class=\"spfx spfxfreea\">free act.</span>" : ""),
+                      "<span class=\"spfx spfxfreea\">free act.</span> " : ""),
+                     ((spfx & SPFX_PSHCH) ?
+                      "<span class=\"spfx spfxprotshch\"><abbr title=\"protection from shape changers\">PSCH</abbr></span> " : ""),
                      msgprintf("<span class=\"artattk\">%s</span>",
                                /* TODO: handle attk.damn and attk.damd */
                                (attk.adtyp && attk.adtyp == AD_MAGM) ? "MR" :
@@ -1047,6 +1039,9 @@ spoilracenotes(int i)
     case PM_SCURRIER:
         return "Intelligent rodents, fast and able to dig without tools,\n"
             "   but too small to wear most armor.";
+    case PM_VALKYRIE:
+        return "Winged warrior maidens, formerly charged with selecting the\n"
+            "   souls of brave warriors for Valhalla.";
     default:
         return "<!-- This space unintentionally left blank -->";
     }
@@ -1069,8 +1064,12 @@ spoilrolenotes(int i)
     case PM_HEALER:
         return "Students of the medicinal arts, able to heal themselves,\n"
             "   others, and even animals.";
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
+        return "Shield-bearing, spear-wielding warriors from the frozen white\n"
+            "   north, smart enough to make limited use of books and magic.";
     case PM_KNIGHT:
-        return "Formally enlisted warriors, well equipped by their patrons\n"
+        return "Formally enlisted cavalry, well equipped by their patrons\n"
             "   but bound by the standards of chivalry.";
     case PM_MONK:
         return "Students of mysticism, martial arts, and magic.";
@@ -1088,8 +1087,6 @@ spoilrolenotes(int i)
     case PM_TOURIST:
         return "Visitors from far away, seeking adventure, eager to\n"
             "experience many new things.";
-    case PM_VALKYRIE:
-        return "Shield-bearing warriors from the frozen white north.";
     case PM_WIZARD:
         return "Students of the magical arts, seeking power and knowledge.";
     default:
@@ -1145,7 +1142,7 @@ makehtmlspoilers(void)
                     "<td class=\"notes wpnnotes\">%s</td>"
                     "</tr>\n",
                     spoiloname(i), spoilweapskill(i),
-                    material[objects[i].oc_material], spoiltohit(i, NULL),
+                    material_name(objects[i].oc_material), spoiltohit(i, NULL),
                     spoildamage(i, SDAM, NULL), spoildamage(i, LDAM, NULL),
                     objects[i].oc_weight, objects[i].oc_cost,
                     (objects[i].oc_bimanual ?
@@ -1168,7 +1165,7 @@ makehtmlspoilers(void)
                             "<td class=\"notes wpnnotes artinotes\">%s"
                             " <span class=\"versus\">%s</span></td>"
                             "</tr>", art->name, spoilweapskill(i),
-                            material[objects[i].oc_material],
+                            material_name(objects[i].oc_material),
                             spoiltohit(i, art), spoildamage(i, SDAM, art),
                             spoildamage(i, LDAM, art), objects[i].oc_weight,
                             objects[i].oc_cost,
@@ -1237,7 +1234,7 @@ makehtmlspoilers(void)
                     oslotname(objects[i].oc_armcat), i, spoiloname(i),
                     (objects[i].a_can ?
                      msgprintf("MC%d", objects[i].a_can) : ""),
-                    objects[i].a_ac, material[objects[i].oc_material],
+                    objects[i].a_ac, material_name(objects[i].oc_material),
                     spoilarmorsize(&objects[i]),
                     objects[i].oc_weight, objects[i].oc_cost);
         }
@@ -1903,7 +1900,7 @@ makepinobotyaml(void)
                 AT(M3_BLINKAWAY, "FlBlinkAway");
                 AT(M3_VANDMGRDUC, "FlVanDmgRduc");
 #undef AT
-                if (hates_silver(pm)) fprintf(f, ", FlHatesSilver");
+                if (hates_material(pm, SILVER)) fprintf(f, ", FlHatesSilver");
                 if (passes_bars(pm)) fprintf(f, ", FlPassesBars");
                 if (vegan(pm)) fprintf(f, ", FlVegan");
                 else if (vegetarian(pm)) fprintf(f, ", FlVegetarian");

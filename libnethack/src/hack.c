@@ -16,6 +16,7 @@ static boolean findtravelpath(boolean(*)(int, int), schar *, schar *);
 static struct monst *monstinroom(const struct permonst *, int);
 static boolean check_interrupt(struct monst *mtmp);
 static boolean couldsee_func(int, int);
+static void check_movement_conducts(void);
 
 static void move_update(boolean);
 
@@ -177,7 +178,7 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
        wall. Again, this can be overriden using "moveonly". */
     if (!last_command_was("moveonly")) {
         boolean lava = l->mem_bg == S_lava;
-        boolean pool = l->mem_bg == S_pool;
+        boolean pool = (l->mem_bg == S_pool || l->mem_bg == S_water);
 
         if (!Levitation && !Flying && !is_clinger(URACEDATA) &&
             (lava || (pool && !HSwimming)) &&
@@ -228,7 +229,8 @@ resolve_uim(enum u_interaction_mode uim, boolean weird_attack, xchar x, xchar y)
        Another exception: if the door is /known/ to be locked. */
     if ((l->mem_bg == S_hcdoor || l->mem_bg == S_vcdoor) &&
         uim != uim_traditional &&
-        (!l->mem_door_l || (IS_DOOR(l->typ) && !(l->doormask & D_LOCKED))))
+        (!l->mem_door_l || (IS_DOOR(l->typ) &&
+                            (flags.autounlock || !(l->doormask & D_LOCKED)))))
         return uia_opendoor;
 
     /* This is an interactive mode (so autopicking up items is OK if autopickup
@@ -243,6 +245,17 @@ clear_travel_direction(void)
     turnstate.move.dx = 0;
     turnstate.move.dy = 0;
     memset(turnstate.move.stepped_on, FALSE, sizeof(turnstate.move.stepped_on));
+}
+
+struct monst *
+um_at(struct level *lev, int x, int y)
+{
+    struct monst *mon = m_at(lev, x, y);
+    if (mon)
+        return mon;
+    else if (lev == level && x == u.ux && y == u.uy)
+        return &youmonst;
+    return NULL;
 }
 
 boolean
@@ -545,7 +558,7 @@ moverock(schar dx, schar dy)
             }
 
             if (!u.usteed &&
-                (((!invent || inv_weight() <= -850) &&
+                (((!invent || inv_weight_total() <= -850) &&
                   (!dx || !dy || (IS_ROCK(level->locations[u.ux][sy].typ)
                                   && IS_ROCK(level->locations[sx][u.uy].typ))))
                  || verysmall(URACEDATA))) {
@@ -939,7 +952,7 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
                       body_part(BODY));
             return FALSE;
         }
-        if (invent && (inv_weight() + weight_cap() > 600)) {
+        if (invent && (inv_weight_total() > 600)) {
             if (mode == DO_MOVE)
                 pline(msgc_cancelled,
                       "You are carrying too much to get through.");
@@ -991,7 +1004,7 @@ test_move(int ux, int uy, int dx, int dy, int dz, int mode,
     /* Can we be blocked by a boulder? */
     if (!throws_rocks(URACEDATA) &&
         !(verysmall(URACEDATA) && !u.usteed) &&
-        !((!invent || inv_weight() <= -850) && !u.usteed)) {
+        !((!invent || inv_weight_over_cap() <= -850) && !u.usteed)) {
         /* We assume we can move boulders when we're at a distance from them.
            When it comes to actually do the move, resolve_uim() may replace the
            move with a #pushboulder command. If it doesn't, the move fails
@@ -1460,6 +1473,23 @@ couldsee_func(int x, int y)
     return couldsee(x, y);
 }
 
+/* Called each time the player moves in any direction, this function is
+   responsible to check movement-related conducts.  The first one I added it for
+   was "You never carried an artifact", which wants to know about carrying an
+   artifact in open inventory _while moving_, so that picking one up and bagging
+   it before going anywhere is acceptable.  (This allows you e.g. to take your
+   quest artifact and show it to your quest leader without violating the conduct
+   by carrying it around in open inventory.) */
+static void
+check_movement_conducts(void)
+{
+    struct obj *o;
+    for (o = invent; o; o = o->nobj) {
+        if (o->oartifact)
+            break_conduct(conduct_carriedartifact);
+    }
+}
+
 /* Note: thismove is occ_none for the single-space movement commands, even if
    they were command-repeated; its purpose is to distinguish between commands */
 int
@@ -1480,6 +1510,8 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
     enum u_interaction_attempt uia;
     struct test_move_cache cache;
     struct nh_cmd_arg newarg;
+
+    check_movement_conducts();
 
     init_test_move_cache(&cache);
 
@@ -2363,7 +2395,7 @@ domove(const struct nh_cmd_arg *arg, enum u_interaction_mode uim,
 
     if (hides_under(URACEDATA))
         u.uundetected = OBJ_AT(u.ux, u.uy);
-    else if (youmonst.data->mlet == S_EEL)
+    else if (youmonst.data->mlet == S_KRAKEN)
         u.uundetected = is_pool(level, u.ux, u.uy) && !Is_waterlevel(&u.uz);
     else if (turnstate.move.dx || turnstate.move.dy)
         u.uundetected = 0;
@@ -2570,9 +2602,11 @@ stillinwater:
                 pline_implied(msgc_badidea, "The water burns your flesh!");
                 losehp(dam, killer_msg(DIED, "contact with water"));
             }
-            if (verysmall(URACEDATA))
+            if (verysmall(URACEDATA) &&
+                !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
                 water_damage_chain(invent, FALSE);
-            if (!u.usteed)
+            if (!u.usteed &&
+                !u_have_property(PROT_WATERDMG, ANY_PROPERTY, FALSE))
                 (void) water_damage(uarmf, "boots", TRUE);
         }
     }
@@ -2838,6 +2872,9 @@ check_special_room(boolean newlev)
                 if (!u.uconduct[conduct_sokoban_guilt])
                     pluslvl(FALSE);
                 historic_event(FALSE, TRUE, "entered the Sokoban zoo.");
+                achievement(achieve_soko_complete);
+            } else if (!In_sokoban(&u.uz)) {
+                achievement(achieve_sproom_zoo);
             }
             break;
         case SWAMP:
@@ -2846,11 +2883,14 @@ check_special_room(boolean newlev)
             break;
         case COURT:
             pline(msgc_levelsound, "You enter an opulent throne room!");
+            achievement(achieve_sproom_throne);
             break;
         case LEPREHALL:
             pline(msgc_levelsound, "You enter a leprechaun hall!");
+            achievement(achieve_sproom_lephall);
             break;
         case DRAGONHALL:
+            achievement(achieve_sproom_dragons);
             pline(msgc_levelsound, "You enter a dragon hall!");
             break;
         case MORGUE:
@@ -2881,7 +2921,7 @@ check_special_room(boolean newlev)
             break;
         case DELPHI:
             if ((mtmp = monstinroom(&mons[PM_ORACLE], roomno)) &&
-                mtmp->mpeaceful) {
+                mtmp->mpeaceful && !Deaf) {
                 verbalize(msgc_npcvoice, "%s, %s, welcome to Delphi!",
                           Hello(NULL), u.uplname);
             }
@@ -3309,12 +3349,12 @@ maybe_wail(void)
         return;
 
     wailmsg = moves;
-    if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Role_if(PM_VALKYRIE)) {
+    if (Role_if(PM_WIZARD) || Race_if(PM_ELF) || Race_if(PM_VALKYRIE)) {
         const char *who;
         int i, powercnt;
 
         who = (Role_if(PM_WIZARD) ||
-               Role_if(PM_VALKYRIE)) ? urole.name.m : "Elf";
+               Race_if(PM_VALKYRIE)) ? urace.individual.f : "Elf";
         if (u.uhp == 1) {
             pline(msgc_fatal, "%s is about to die.", who);
         } else {
@@ -3401,12 +3441,8 @@ weight_cap(void)
     return (int)carrcap;
 }
 
-static int wc;  /* current weight_cap(); valid after call to inv_weight() */
-
-/* returns how far beyond the normal capacity the player is currently. */
-/* inv_weight() is negative if the player is below normal capacity. */
 int
-inv_weight(void)
+inv_weight_total(void)
 {
     struct obj *otmp = invent;
     int wt = 0;
@@ -3418,9 +3454,17 @@ inv_weight(void)
             wt += otmp->owt;
         otmp = otmp->nobj;
     }
-    wc = weight_cap();
-    return wt - wc;
+    return wt;
 }
+
+/* Returns how far beyond the normal capacity the player is currently. Negative
+   if the player is below normal capacity. */
+int
+inv_weight_over_cap(void)
+{
+    return inv_weight_total() - weight_cap();
+}
+
 
 /*
  * Returns 0 if below normal capacity, or the number of "capacity units"
@@ -3429,7 +3473,8 @@ inv_weight(void)
 int
 calc_capacity(int xtra_wt)
 {
-    int cap, wt = inv_weight() + xtra_wt;
+    int wc = weight_cap();
+    int cap, wt = inv_weight_total() + xtra_wt - wc;
 
     if (wt <= 0)
         return UNENCUMBERED;
@@ -3448,9 +3493,9 @@ near_capacity(void)
 int
 max_capacity(void)
 {
-    int wt = inv_weight();
+    int wt = inv_weight_over_cap();
 
-    return wt - (2 * wc);
+    return wt - (2 * weight_cap());
 }
 
 boolean

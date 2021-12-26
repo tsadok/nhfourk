@@ -113,11 +113,11 @@ MONSTER:'@',"guide",(66,04)
 MONSTER:'@',"watchman",(35,08)
 MONSTER:'@',"watchman",(36,08)
 # river monsters
-MONSTER:';',"giant eel",(62,12)
-MONSTER:';',"piranha",(47,10)
-MONSTER:';',"piranha",(29,11)
-MONSTER:';',"kraken",(34,09)
-MONSTER:';',"kraken",(37,09)
+MONSTER:'K',"giant eel",(62,12)
+MONSTER:'K',"piranha",(47,10)
+MONSTER:'K',"piranha",(29,11)
+MONSTER:'K',"kraken",(34,09)
+MONSTER:'K',"kraken",(37,09)
 # Random traps
 TRAP:random,random
 TRAP:random,random
@@ -434,15 +434,15 @@ MONSTER:'&',"incubus",(08,14)
 MONSTER:'&',"incubus",(02,17)
 MONSTER:'&',"incubus",(08,17)
 # Police station (with drunken prisoners)
-MONSTER:'K',"Kop Kaptain",(24,09),hostile
-MONSTER:'K',"Kop Lieutenant",(20,09),hostile
-MONSTER:'K',"Kop Lieutenant",(22,11),hostile
-MONSTER:'K',"Kop Lieutenant",(22,07),hostile
-MONSTER:'K',"Keystone Kop",(19,07),hostile
-MONSTER:'K',"Keystone Kop",(19,08),hostile
-MONSTER:'K',"Keystone Kop",(22,09),hostile
-MONSTER:'K',"Keystone Kop",(24,11),hostile
-MONSTER:'K',"Keystone Kop",(19,11),hostile
+MONSTER:'@',"captain",(24,09),hostile
+MONSTER:'@',"lieutenant",(20,09),hostile
+MONSTER:'@',"lieutenant",(22,11),hostile
+MONSTER:'@',"lieutenant",(22,07),hostile
+MONSTER:'@',"soldier",(19,07),hostile
+MONSTER:'@',"soldier",(19,08),hostile
+MONSTER:'@',"soldier",(22,09),hostile
+MONSTER:'@',"soldier",(24,11),hostile
+MONSTER:'@',"soldier",(19,11),hostile
 MONSTER:'@',"prisoner",(19,13)
 MONSTER:'@',"prisoner",(21,13)
 MONSTER:'@',"prisoner",(24,13)

@@ -360,13 +360,13 @@ bhitm(struct monst *user, struct monst *mtmp, struct obj *otmp)
                     break;
                 }
                 if (!invis_outside) { /* setting invis */
-                    HInvis |= FROMOUTSIDE;
+                    incr_itimeout(&HInvis, dice(wandlevel, 250));
                     if (msg && !invis) {
                         known = TRUE;
                         newsym(u.ux, u.uy);
                         self_invis_message();
                     }
-                } else if (wandlevel >= P_SKILLED) { /* unsetting invis */
+                } else if (wandlevel >= P_EXPERT) { /* unsetting invis */
                     HInvis &= ~FROMOUTSIDE;
                     if (msg && !Invis) { /* !Invis in case anything else gives it */
                         known = TRUE;
@@ -1094,7 +1094,7 @@ cancel_item(struct obj *obj)
             break;
         case POTION_CLASS:
             costly_cancel(obj);
-            if (obj->otyp == POT_SICKNESS || obj->otyp == POT_SEE_INVISIBLE) {
+            if (obj->otyp == POT_SICKNESS || obj->otyp == POT_SIGHT) {
                 /* sickness is "biologically contaminated" fruit juice; cancel
                    it and it just becomes fruit juice... whereas see invisible
                    tastes like "enchanted" fruit juice, it similarly cancels. */
@@ -1556,8 +1556,17 @@ poly_obj(struct obj *obj, int id)
     case SPBOOK_CLASS:
         while (otmp->otyp == SPE_POLYMORPH)
             otmp->otyp = rnd_class(SPE_DIG, SPE_BLANK_PAPER, rng);
-        /* reduce spellbook abuse */
-        otmp->spestudied = obj->spestudied + 1;
+        /* reduce spellbook abuse; non-blank books degrade */
+        if (otmp->otyp != SPE_BLANK_PAPER) {
+            otmp->spestudied = obj->spestudied + 1;
+            if (otmp->spestudied > MAX_SPELL_STUDY) {
+                otmp->otyp = SPE_BLANK_PAPER;
+                /* writing a new book over it will yield an unstudied one;
+                   re-polymorphing this one as-is may or may not get something
+                   non-blank */
+                otmp->spestudied = rn2(otmp->spestudied);
+            }
+        }
         break;
 
     case GEM_CLASS:
@@ -2301,17 +2310,7 @@ zapyourself(struct obj *obj, boolean ordinary)
         }
         if (!ordinary || wandlevel < P_SKILLED ||
             !invis_outside) { /* setting invis */
-            if (!rn2(10) || ordinary) { /* permanent */
-                HInvis |= FROMOUTSIDE;
-                if (msg && !invis) {
-                    makeknown(WAN_MAKE_INVISIBLE);
-                    newsym(u.ux, u.uy);
-                    self_invis_message();
-                    msg = FALSE;
-                }
-            } else { /* temporary */
-                incr_itimeout(&HInvis, dice(obj->spe, 250));
-            }
+            incr_itimeout(&HInvis, dice(wandlevel, 200));
             if (msg && !invis) {
                 makeknown(WAN_MAKE_INVISIBLE);
                 newsym(u.ux, u.uy);
@@ -3904,6 +3903,7 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
 /* note: worn amulet of life saving must be preserved in order to operate */
 #define oresist_disintegration(obj) \
             (objects[obj->otyp].oc_oprop == DISINT_RES || \
+             objects[obj->otyp].oc_oprop2 == DISINT_RES || \
              obj_resists(obj, 5, 50) || is_quest_artifact(obj) || \
              obj == m_amulet)
 
@@ -4021,8 +4021,12 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
             }
             bounce = 0;
             range--;
-            if (range && isok(lsx, lsy) && cansee(lsx, lsy))
-                pline(msgc_consequence, "%s bounces!", The(fltxt));
+            if (range && isok(lsx, lsy) && cansee(lsx, lsy)) {
+                pline(msgc_consequence, "%s %s!", The(fltxt),
+                      Is_airlevel(&u.uz) ? "vanishes into thin air" :
+                      "bounces");
+                if (Is_airlevel(&u.uz)) goto get_out_buzz;
+            }
             if (!dx || !dy || !rn2(20)) {
                 dx = -dx;
                 dy = -dy;
@@ -4072,6 +4076,7 @@ buzz(int type, int nd, xchar sx, xchar sy, int dx, int dy, int raylevel)
             chain_explode(sx, sy, type, dice(nd, 6),
                           WAND_CLASS, expltype, NULL, raylevel, rnd(5));
     }
+get_out_buzz:
     if (shopdamage)
         pay_for_damage(abstype == ZT_FIRE ? "burn away" : abstype ==
                        ZT_COLD ? "shatter" : abstype ==
@@ -4406,8 +4411,10 @@ zap_over_floor(xchar x, xchar y, int type, boolean * shopdamage)
                       (type < 0) ? "the" : "your",
                       (abs(type) < ZT_SPELL(0))  ? "bolt" :
                       (abs(type) < ZT_BREATH(0)) ? "spell" : "blast");
-            } else
+            } else {
+                level->heardsound[levsound_vibsquare] = TRUE;
                 pline(msgc_levelsound, "You feel vibrations.");
+            }
             break;
         }
         if (new_doormask >= 0) {        /* door gets broken */
@@ -5016,6 +5023,10 @@ resist(struct monst *mtmp, char oclass, int damage, int domsg)
 
     /* attack level */
     switch (oclass) {
+    case VENOM_CLASS:
+        /* fear effect from lycanthropy */
+        alev = 50;
+        break;
     case WAND_CLASS:
         alev = 12;
         break;

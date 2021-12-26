@@ -116,7 +116,7 @@ genus(int mndx, int mode)
         mndx = mode ? PM_WIZARD : PM_HUMAN;
         break;
     case PM_WARRIOR:
-        mndx = mode ? PM_VALKYRIE : PM_HUMAN;
+        mndx = mode ? PM_SHIELDMAIDEN : PM_VALKYRIE;
         break;
     default:
         if (mndx >= LOW_PM && mndx < NUMMONS) {
@@ -195,6 +195,7 @@ make_corpse(struct monst *mtmp)
     int mndx = monsndx(mdat);
 
     switch (mndx) {
+        /* TODO: handle elder and great dragons similarly. */
     case PM_GRAY_DRAGON:
     case PM_SILVER_DRAGON:
     case PM_RED_DRAGON:
@@ -301,6 +302,7 @@ make_corpse(struct monst *mtmp)
     case PM_GOLD_GOLEM:
         /* Good luck gives more coins */
         obj = mkgold((long)(200 - rnl(101)), level, x, y, rng_main);
+        u.generated_gold.moninv += obj->quan;
         mtmp->mnamelth = 0;
         break;
     case PM_PAPER_GOLEM:
@@ -375,7 +377,7 @@ minliquid(struct monst *mtmp)
         (mtmp->mtame || !mtmp->mpeaceful) && rn2(3)) {
         if (split_mon(mtmp, NULL))
             dryup(mtmp->mx, mtmp->my, FALSE);
-        if (inpool)
+        if (inpool && !m_has_property(mtmp, PROT_WATERDMG, ANY_PROPERTY, FALSE))
             water_damage_chain(mtmp->minvent, FALSE);
         return 0;
     } else if (mtmp->data == &mons[PM_IRON_GOLEM] &&
@@ -401,7 +403,9 @@ minliquid(struct monst *mtmp)
                 return 1;
             }
         }
-        if (inshallow)
+        if (m_has_property(mtmp, PROT_WATERDMG, ANY_PROPERTY, FALSE))
+            ;
+        else if (inshallow)
             water_damage(which_armor(mtmp, os_armf), NULL, FALSE);
         else
             water_damage_chain(mtmp->minvent, FALSE);
@@ -483,7 +487,8 @@ minliquid(struct monst *mtmp)
             mondead(mtmp);
             if (!DEADMONSTER(mtmp)) {
                 rloc(mtmp, TRUE, mtmp->dlevel);
-                water_damage_chain(mtmp->minvent, FALSE);
+                if (!m_has_property(mtmp, PROT_WATERDMG, ANY_PROPERTY, FALSE))
+                    water_damage_chain(mtmp->minvent, FALSE);
                 minliquid(mtmp);
                 return 0;
             }
@@ -491,7 +496,7 @@ minliquid(struct monst *mtmp)
         }
     } else {
         /* but eels have a difficult time outside */
-        if (mtmp->data->mlet == S_EEL && !Is_waterlevel(&u.uz) &&
+        if (mtmp->data->mlet == S_KRAKEN && !Is_waterlevel(&u.uz) &&
             !is_puddle(level, mtmp->mx, mtmp->my)) {
             if (mtmp->mhp >= 2)
                 mtmp->mhp--;
@@ -1118,7 +1123,7 @@ can_carry(struct monst *mtmp, struct obj *otmp)
         return FALSE;
     if (otyp == CORPSE && is_rider(&mons[otmp->corpsenm]))
         return FALSE;
-    if (objects[otyp].oc_material == SILVER && hates_silver(mdat) &&
+    if (hates_material(mdat, objects[otyp].oc_material) &&
         (otyp != BELL_OF_OPENING || !is_covetous(mdat)))
         return FALSE;
 
@@ -1157,7 +1162,7 @@ mfndpos(struct monst *mon, coord * poss,        /* coord poss[9] */
     int cnt = 0;
     uchar ntyp;
     uchar nowtyp;
-    boolean wantpool, poolok, lavaok, nodiag;
+    boolean wantpool, poolok, puddleok, lavaok, nodiag;
     boolean rockok = FALSE, treeok = FALSE, thrudoor;
     int maxx, maxy;
     int swarmcount = 0;
@@ -1168,11 +1173,44 @@ mfndpos(struct monst *mon, coord * poss,        /* coord poss[9] */
     nowtyp = mlevel->locations[x][y].typ;
 
     nodiag = (mdat == &mons[PM_GRID_BUG]);
-    wantpool = mdat->mlet == S_EEL;
+    wantpool = mdat->mlet == S_KRAKEN;
     poolok = is_flyer(mdat) || is_clinger(mdat) ||
         (is_swimmer(mdat) && !wantpool);
     lavaok = is_flyer(mdat) || is_clinger(mdat) || likes_lava(mdat);
     thrudoor = ((flag & (ALLOW_WALL | BUSTDOOR)) != 0L);
+    puddleok = (poolok /* anything that can handle deep water, can also handle
+                          shallow water (wantpool being a separate question) */
+                || (/* shallowness doesn't help tiny creatures */
+                    (mdat->msize >= MZ_SMALL) &&
+                    /* many undead creatures hate crossing water */
+                    (mdat->mlet != S_LICH) &&
+                    (mdat->mlet != S_MUMMY) &&
+                    (mdat->mlet != S_VAMPIRE) &&
+                    (mdat->mlet != S_WRAITH) &&
+                    (mdat != &mons[PM_SKELETON]) &&
+                    /* most kinds of spiders are afraid of water */
+                    (mdat->mlet != S_SPIDER) &&
+                    /* cats don't like to get their paws wet */
+                    (mdat->mlet != S_FELINE) &&
+                    /* long worms avoid water for lore reasons */
+                    (!is_longworm(mon->data)) &&
+                    /* some things would dissolve */
+                    (mdat->mlet != S_JELLY) &&
+                    (mdat->mlet != S_PUDDING) &&
+                    (mdat->mlet != S_FUNGUS) &&
+                    (mdat != &mons[PM_PAPER_GOLEM]) &&
+                    /* iron golems would rust */
+                    (mdat != &mons[PM_IRON_GOLEM]) &&
+                    /* Honestly I put trappers on this list just because I
+                       don't want to debug their interactions with puddles;
+                       but we can pretend it's because they'd drown if they
+                       posed as part of the floor when it's flooded. */
+                    (mdat != &mons[PM_TRAPPER]) &&
+                    /* fire-dependent creatures don't like it either,
+                       though red dragons are powerful enough to handle
+                       it (and can fly in any case) */
+                    (mdat != &mons[PM_FIRE_VORTEX]) &&
+                    (mdat != &mons[PM_FIRE_ELEMENTAL])));
     if (flag & ALLOW_DIG) {
         struct obj *mw_tmp;
 
@@ -1230,12 +1268,14 @@ nexttry:       /* eels prefer the water, but if there is no water nearby, they
                    ((mlevel->locations[nx][ny].doormask & ~D_BROKEN) ||
                     Is_rogue_level(&u.uz))))))
                 continue;
-            if ((poolok || (wantpool == (is_pool(mlevel, nx,ny) ||
-                                         (is_puddle(mlevel, nx, ny) &&
-                                          !bigmonst(mon->data))))) &&
+            if ((poolok ||
+                 (puddleok && is_puddle(mlevel, nx, ny)) ||
+                 (wantpool == (is_pool(mlevel, nx,ny) ||
+                               (is_puddle(mlevel, nx, ny) &&
+                                (mon->data->msize < MZ_HUGE))))) &&
                 (lavaok || !is_lava(mlevel, nx,ny)) &&
-		/* iron golems and longworms avoid shallow water */
-		((mon->data != &mons[PM_IRON_GOLEM] && !is_longworm(mon->data))
+                /* iron golems and longworms avoid shallow water */
+                ((mon->data != &mons[PM_IRON_GOLEM] && !is_longworm(mon->data))
                  || !is_puddle(level, nx, ny))) {
                 int dispx, dispy;
                 boolean checkobj = OBJ_AT(nx, ny);
@@ -1815,6 +1855,8 @@ mondead(struct monst *mtmp)
         set_mon_data(mtmp, &mons[PM_HUMAN_WEREWOLF], -1);
     else if (mtmp->data == &mons[PM_WERERAT])
         set_mon_data(mtmp, &mons[PM_HUMAN_WERERAT], -1);
+    else if (mtmp->data == &mons[PM_WEREBEAR])
+        set_mon_data(mtmp, &mons[PM_HUMAN_WEREBEAR], -1);
 
     /* if MAXMONNO monsters of a given type have died, and it can be done,
        extinguish that monster. mvitals[].died does double duty as total number
@@ -1839,7 +1881,7 @@ mondead(struct monst *mtmp)
     if (mtmp->m_id == u.quest_status.leader_m_id)
         u.quest_status.leader_is_dead = TRUE;
 
-    if (mtmp->data->mlet == S_KOP) {
+    if (mtmp->iskop) {
         /* Dead Kops may come back. */
         switch (rnd(5)) {
         case 1:        /* returns near the stairs */
@@ -2202,6 +2244,13 @@ xkilled(struct monst *mtmp, int dest)
         historic_event(FALSE, FALSE, "killed %s %s.",
                        x_monnam(mtmp, ARTICLE_NONE, NULL, EXACT_NAME, TRUE),
                        hist_lev_name(&u.uz, TRUE));
+        if (mtmp->data == &mons[PM_MEDUSA]) {
+            achievement(achieve_kill_medusa);
+        } else if (mtmp->data == &mons[urole.neminum]) {
+            achievement(achieve_kill_nemesis);
+        } else if (mtmp->data == &mons[PM_WIZARD_OF_YENDOR]) {
+            achievement(achieve_kill_rodney);
+        }
     }
 
     mdat = mtmp->data;  /* note: mondead can change mtmp->data */
@@ -2217,7 +2266,7 @@ xkilled(struct monst *mtmp, int dest)
 
     /* might be here after swallowed */
     if (((x != u.ux) || (y != u.uy)) && !rn2(challengemode ? 36 : 6) &&
-        !(mvitals[mndx].mvflags & G_NOCORPSE) && mdat->mlet != S_KOP) {
+        !(mvitals[mndx].mvflags & G_NOCORPSE) && !mtmp->iskop) {
         int typ;
 
         otmp = mkobj_at(RANDOM_CLASS, level, x, y, TRUE, mdat->msize < MZ_HUMAN
@@ -2484,7 +2533,7 @@ poisoned(const char *string, int typ, const char *killer, int fatal)
         plural = (string[strlen(string) - 1] == 's') ? 1 : 0;
         /* avoid "The" Orcus's sting was poisoned... */
         pline(Poison_resistance ? msgc_playerimmune :
-              i == 0 ? msgc_fatal_predone : msgc_fatalavoid,
+              (i == 0) ? msgc_intrloss_level : msgc_fatalavoid,
               "%s%s %s poisoned%s",
               isupper(*string) ? "" : "The ", string,
               plural ? "were" : "was",
@@ -3051,7 +3100,7 @@ newcham(struct monst *mtmp, const struct permonst *mdat,
         mtmp->perminvis = pm_invisible(mdat);
     mtmp->minvis = mtmp->invis_blkd ? 0 : mtmp->perminvis;
     if (!(hides_under(mdat) && OBJ_AT_LEV(mtmp->dlevel, mtmp->mx, mtmp->my)) &&
-        !(mdat->mlet == S_EEL && is_pool(level, mtmp->mx, mtmp->my)))
+        !(mdat->mlet == S_KRAKEN && is_pool(level, mtmp->mx, mtmp->my)))
         mtmp->mundetected = 0;
     if (u.ustuck == mtmp) {
         if (Engulfed) {

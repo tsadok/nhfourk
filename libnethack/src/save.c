@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-05 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -18,6 +18,7 @@ static void save_utracked(struct memfile *mf, struct you *you);
 static void savelevchn(struct memfile *mf);
 static void savedamage(struct memfile *mf, struct level *lev);
 static void freedamage(struct level *lev);
+static void save_heardsounds(struct memfile *mf, struct level *lev);
 static void saveobjchn(struct memfile *mf, struct obj *);
 static void free_objchn(struct obj *otmp);
 static void savemonchn(struct memfile *mf, struct monst *, struct level *lev);
@@ -143,6 +144,9 @@ save_flags(struct memfile *mf)
        debugging easier */
     mtag(mf, 0, MTAG_FLAGS);
 
+    if (flags.mon_moving)
+        panic("flags.mon_moving is nonzero during neutral turnstate?");
+
     mwrite64(mf, flags.turntime);
 
     mwrite32(mf, flags.djinni_count);
@@ -183,6 +187,12 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.occupation);
     mwrite8(mf, flags.permablind);
     mwrite8(mf, flags.permahallu);
+    mwrite8(mf, flags.permaconf);
+    mwrite8(mf, flags.permastun);
+    mwrite8(mf, flags.permaglib);
+    mwrite8(mf, flags.permafumble);
+    mwrite8(mf, flags.permalame);
+    mwrite8(mf, flags.permabadluck);
     mwrite8(mf, flags.pickup);
     mwrite8(mf, flags.pickup_thrown);
     mwrite8(mf, flags.prayconfirm);
@@ -210,11 +220,13 @@ save_flags(struct memfile *mf)
     mwrite8(mf, flags.actions);
     mwrite8(mf, flags.save_encoding);
     mwrite8(mf, flags.hide_implied);
+    mwrite8(mf, flags.servermail);
+    mwrite8(mf, flags.autounlock);
 
     /* Padding to allow options to be added without breaking save compatibility;
        add new options just before the padding, then remove the same amount of
        padding */
-    for (i = 0; i < 109; i++)
+    for (i = 0; i < 107; i++)
         mwrite8(mf, 0);
 
     mwrite(mf, flags.setseed, sizeof (flags.setseed));
@@ -447,6 +459,8 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->ulycn);
     mwrite32(mf, save_encode_32(y->utrap, -moves, -moves));
     mwrite32(mf, y->utraptype);
+    mwrite32(mf, y->usilence);
+    mwrite32(mf, y->gotsacgifts);
     mwrite32(mf, y->ucramps);
     mwrite32(mf, save_encode_32(y->uhunger, -moves, -moves));
     mwrite32(mf, y->uhs);
@@ -462,6 +476,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->udg_cnt);
     mwrite32(mf, y->next_attr_check);
     mwrite32(mf, y->ualign.record);
+    mwrite32(mf, y->ualignmax);
     mwrite32(mf, y->ugangr);
     mwrite32(mf, y->ugifts);
     mwrite32(mf, y->ublessed);
@@ -474,6 +489,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite32(mf, y->urideturns);
     mwrite32(mf, y->umortality);
     mwrite32(mf, y->ugrave_arise);
+    mwrite32(mf, y->gameidnum);
     mwrite32(mf, y->weapon_slots);
     mwrite32(mf, y->skills_advanced);
     mwrite32(mf, y->initrole);
@@ -493,11 +509,6 @@ save_you(struct memfile *mf, struct you *y)
     mwrite8(mf, y->uy0);
     mwrite8(mf, y->uz.dnum);
     mwrite8(mf, y->uz.dlevel);
-    /* Padding to replace utolev/utotype, which were removed. */
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): remove the next three lines. */
-    mwrite8(mf, y->save_compat_bytes[0]);
-    mwrite8(mf, y->save_compat_bytes[1]);
-    mwrite8(mf, y->save_compat_bytes[2]);
     mwrite8(mf, y->umoved);
     mwrite8(mf, y->ualign.type);
     mwrite8(mf, y->ualignbase[0]);
@@ -513,6 +524,7 @@ save_you(struct memfile *mf, struct you *y)
     mwrite8(mf, y->twoweap);
     mwrite8(mf, y->bashmsg);
     mwrite8(mf, y->moveamt);
+    mwrite8(mf, y->gotartgifts);
 
     /* Padding to allow character information to be added without breaking save
        compatibility: add new options just before the padding, then remove the
@@ -587,6 +599,12 @@ save_you(struct memfile *mf, struct you *y)
 
     mwrite32(mf, y->lastinvnr);
     mwrite64(mf, y->pickmovetime);
+    mwrite32(mf, y->generated_gold.moninv);
+    mwrite32(mf, y->generated_gold.vault);
+    mwrite32(mf, y->generated_gold.onfloor);
+    mwrite32(mf, y->generated_gold.buried);
+    mwrite32(mf, y->generated_gold.contained);
+    mwrite32(mf, y->generated_gold.misc);
 }
 
 static void
@@ -712,6 +730,7 @@ savelev(struct memfile *mf, xchar levnum)
     save_engravings(mf, lev);
     savedamage(mf, lev);
     save_regions(mf, lev);
+    save_heardsounds(mf, lev);
 }
 
 
@@ -765,6 +784,14 @@ savelevchn(struct memfile *mf)
     }
 }
 
+static void
+save_heardsounds(struct memfile *mf, struct level *lev)
+{
+    enum tracked_levelsound snd;
+    for (snd = levsound_none; snd <= LAST_TRACKED_LEVELSOUND; snd++) {
+        mwrite8(mf, (xchar) (lev->heardsound[snd] ? 42 : 0));
+    }
+}
 
 static void
 savedamage(struct memfile *mf, struct level *lev)

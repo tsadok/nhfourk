@@ -12,7 +12,7 @@
  * NULL character.
  */
 # define S_ANT          1
-# define S_UNUSED_B     2 /* Available */
+# define S_UNUSED_BLOB  2 /* Available */
 # define S_COCKATRICE   3
 # define S_DOG          4
 # define S_EYE          5
@@ -36,7 +36,7 @@
 # define S_WORM         23
 # define S_XAN          24
 # define S_UNUSED_LIGHT 25 /* Available */
-# define S_ZEAMONSTER   26 /* pending */
+# define S_UNUZED_ZRUTY 26 /* Available */
 # define S_ANGEL        27
 # define S_BAT          28
 # define S_CENTAUR      29
@@ -47,7 +47,7 @@
 # define S_GIANT        34
 
 # define S_JABBERWOCK   36
-# define S_KOP          37
+# define S_KRAKEN       37
 # define S_LICH         38
 # define S_MUMMY        39
 # define S_NAGA         40
@@ -57,7 +57,7 @@
 # define S_RUSTMONST    44
 # define S_SNAKE        45
 # define S_TROLL        46
-# define S_BEAR         47 /* pending */
+# define S_BEAR         47
 # define S_VAMPIRE      48
 # define S_WRAITH       49
 # define S_XORN         50
@@ -66,12 +66,11 @@
 # define S_HUMAN        53
 # define S_GOLEM        54
 # define S_DEMON        55
-# define S_EEL          56
 
-# define S_WORM_TAIL    57
-# define S_MIMIC_DEF    58
+# define S_WORM_TAIL    56
+# define S_MIMIC_DEF    57
 
-# define MAXMCLASSES 59 /* number of monster classes */
+# define MAXMCLASSES 58 /* number of monster classes */
 /* Note that MAXMCLASSES must be one larger than the last class, even though
    S_ANT is 1 not 0.  Relatedly, def_monsyms has a null entry before DEF_ANT. */
 
@@ -114,7 +113,7 @@
 # define DEF_GNOME      'G'
 # define DEF_GIANT      'H'
 # define DEF_JABBERWOCK 'J'
-# define DEF_KOP        'K'
+# define DEF_KRAKEN     'K'
 # define DEF_LICH       'L'
 # define DEF_MUMMY      'M'
 # define DEF_NAGA       'N'
@@ -133,7 +132,6 @@
 # define DEF_HUMAN      '@'
 # define DEF_GOLEM      '\''
 # define DEF_DEMON      '&'
-# define DEF_EEL        ';'
 
 # define DEF_INVISIBLE  'I'
 # define DEF_WORM_TAIL  '~'

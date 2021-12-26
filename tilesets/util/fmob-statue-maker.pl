@@ -3,7 +3,7 @@
 
 my %cmdarg = @ARGV;
 
-my $num = $cmdarg{start_numbers_at} || 2000;
+my $num = $cmdarg{start_numbers_at} || 2020; # Leave room for hand-edited ones at 2000-2019.
 
 my @monsterfile = map {
   "/home/jonadab/git/fourk/tilesets/dat/tiles/$_.txt"
@@ -22,12 +22,18 @@ open OUT, ">", $statuefile or die "Cannot write statue file ($statuefile): $!";
 
 for my $mfile (@monsterfile) {
   open IN, "<", $mfile  or die "Cannot read monster file ($mfile): $!";
+  my $skip = 0;
   while (<IN>) {
     my $line = $_;
     if ($line =~ /^\s*[#]\s*tile\s+\d+\s*[(](.*?)[)]/) {
       my $mname = $1;
-      $num++;
-      $line = qq[# tile $num (sub statue $mname)\n];
+      if ($mname =~ /were/) { # werefoo statues are hand-edited
+        $skip = 1;
+      } else {
+        $num++;
+        $skip = 0;
+        $line = qq[# tile $num (sub statue $mname)\n];
+      }
     } elsif ($line =~ /^\s*([B-O][Bb-z]){24}\s*$/) {
       $line =~ s/[C-O][b-z]/Oe/g;
       $line =~ s/B[c-z]/Oe/g;
@@ -46,7 +52,7 @@ for my $mfile (@monsterfile) {
     } else {
       warn "Unable to parse line: $line";
     }
-    print OUT $line;
+    print OUT $line if ($line and not $skip);
   }
 }
 close OUT;

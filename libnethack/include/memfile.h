@@ -8,22 +8,6 @@
 
 # define MEMFILE_HASHTABLE_SIZE 1009
 
-/* SAVEBREAK (4.3-beta1 -> 4.3-beta2): these constants are only needed to parse
-   the old -beta1 diff format. */
-# define MDIFFOLD_SEEK    0
-# define MDIFFOLD_EDIT    2
-# define MDIFFOLD_COPY    3
-# define MDIFFOLD_INVALID 255
-
-/* SAVEBREAK (4.3-beta2 -> 4.3-beta3): and these commands are only needed to
-   parse the old -beta2 diff format. */
-# define MDIFF_CMDMASK        0xE000u
-# define MDIFF_LARGE_COPYEDIT 0x8000u
-# define MDIFF_LARGE_EDIT     0xA000u
-# define MDIFF_LARGE_SEEK     0xC000u
-# define MDIFF_SEEK           0xE000u
-/* and the other four possibilities are all normal-sized copyedits */
-
 /* Save diff format magic numbers. */
 # define MDIFF_HEADER_0       0x01
 # define MDIFF_HEADER_1_BETA2 0x40 /* SAVEBREAK (4.3-beta2 -> 4.3-beta3) */

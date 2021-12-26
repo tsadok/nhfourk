@@ -55,6 +55,10 @@
 # define SELL_DELIBERATE        (1)
 # define SELL_DONTSELL          (2)
 
+/* spellbook re-use control; used when reading and when polymorphing */
+#define MAX_SPELL_STUDY 3 /* Cf the SPBOOK_CLASS case in doname_base where
+                             it decides whether to say a book was faint. */
+
 /* This is the way the game ends.  If these are rearranged or new entries are
    added, the arrays in end.c will need to be changed. */
 # define DIED            0
@@ -164,6 +168,7 @@ struct distmap_state {
 # define MM_CMONSTER_U    0x1000 /* created by player, or */
 # define MM_CMONSTER_T    0x1800 /* either, but will be tamed after creation */
 # define MM_CHEWROCK      0x4000 /* allow placement on diggable walls */
+# define MM_KOP           0x8000 /* calling in the National Guard */
 
 /* special mhpmax value when loading bones monster to flag as extinct or
    genocided */
@@ -280,6 +285,8 @@ struct test_move_cache {
 # define LIMBS            20
 # define SKIN             21
 # define BODY             22
+
+# define LAST_BODY_PART   22
 
 /* Flags to control menus */
 # define MENU_PARTIAL     2

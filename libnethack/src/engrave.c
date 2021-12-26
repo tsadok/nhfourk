@@ -404,7 +404,6 @@ read_engr_at(int x, int y)
     }
 }
 
-
 void
 make_engr_at(struct level *lev, int x, int y, const char *s, long e_time,
              xchar e_type)
@@ -422,6 +421,7 @@ make_engr_at(struct level *lev, int x, int y, const char *s, long e_time,
     ep = newengr(engr_len + 1);
     memset(ep, 0, sizeof (struct engr) + engr_len + 1);
 
+    ep->struct_type = 'E';
     ep->nxt_engr = lev->lev_engr;
     lev->lev_engr = ep;
     ep->engr_x = x;
@@ -823,8 +823,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                         "Splinters fly up from the bridge." :
                         "Gravel flies up from the floor.";
                 }
-                else
+                else if (!Deaf)
                     post_engr_text = "You hear drilling!";
+                else
+                    post_engr_text = "You feel tremors.";
                 break;
 
                 /* type = BURN wands */
@@ -852,8 +854,10 @@ doengrave_core(const struct nh_cmd_arg *arg, int auto_elbereth)
                 if (!Blind) {
                     post_engr_text = "Lightning arcs from the wand.";
                     doblind = TRUE;
-                } else
+                } else if (!Deaf)
                     post_engr_text = "You hear crackling!";
+                else
+                    post_engr_text = "Your hair stands up!";
                 break;
             
                 /* type = MARK wands */
@@ -1401,6 +1405,7 @@ rest_engravings(struct memfile *mf, struct level *lev)
             break;
 
         ep = newengr(lth);
+        ep->struct_type = 'E';
         ep->engr_lth = lth;
         ep->engr_x = mread8(mf);
         ep->engr_y = mread8(mf);

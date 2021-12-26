@@ -85,6 +85,8 @@
 # define HHallucination         u.uintrinsic[HALLUC]
 # define Hallucination          u_any_property(HALLUC)
 # define Halluc_resistance      u_any_property(HALLUC_RES)
+# define HDeaf                  u.uintrinsic[DEAF]
+# define Deaf                   u_any_property(DEAF)
 # define HFumbling              u.uintrinsic[FUMBLING]
 # define Fumbling               u_any_property(FUMBLING)
 # define HSleeping              u.uintrinsic[SLEEPING]
@@ -93,6 +95,8 @@
 # define Hunger                 u_any_property(HUNGER)
 
 /*** Vision and senses ***/
+# define HXray_vision           u.uintrinsic[XRAY_VISION]
+# define Xray_vision            u_any_property(XRAY_VISION)
 # define HSee_invisible         u.uintrinsic[SEE_INVIS]
 # define See_invisible          u_any_property(SEE_INVIS)
 # define HWarning               u.uintrinsic[WARNING]
@@ -199,7 +203,6 @@
 # define Free_action            u_any_property(FREE_ACTION)
 # define Fixed_abil             u_any_property(FIXED_ABIL)
 # define Lifesaved              u_any_property(LIFESAVED)
-# define Xray_vision            u_any_property(XRAY_VISION)
 
 # define XRAY_RANGE             3
 
@@ -246,6 +249,7 @@ enum FLAG_ENUM helpless_mask {
 /* The game's player conducts.
  * Editing this enum will break save compatibility. */
 enum player_conduct {
+    /* If adding any easy conducts, update is_nontrivial_conduct in pray.c */
     conduct_first = 0,
     conduct_food = conduct_first,        /* eaten any comestible */
     conduct_vegan,                       /* ... or any animal byproduct */
@@ -276,6 +280,13 @@ enum player_conduct {
     conduct_invisible,                   /* were invisible */
     conduct_displacement,                /* were displaced */
     conduct_reflection,                  /* had reflection */
+    conduct_boughtprotection,            /* "donated" gold for protection */
+    conduct_donation,                    /* donated to a temple at all */
+    conduct_equippedartifact,            /* wore or wielded an artifact */
+    conduct_appliedartifact,             /* applied or invoked an artifact. */
+    conduct_carriedartifact,             /* carried an artifact in open
+                                            inventory; picking one up and
+                                            immediately bagging it is ok. */
     num_conducts,
 };
 

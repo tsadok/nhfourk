@@ -1,0 +1,36 @@
+
+21:31 <                     rld+> <@luxidream> jonadab: when I move into this trapped thug, I get an error "RNG value less than 1"
+21:32 <                     rld+> <@luxidream> I also get a crash whenever the priest occupies the same place as the player
+21:39 <                 jonadab+>  @luxidream Wait, is this Fourk?
+21:40 <                     rld+> <@luxidream> Yeah
+21:40 <                     rld+> <@luxidream> it looks like I was trying to displace him out of a trap
+21:40 <                 jonadab+> Did the dialog for the RNG < 1 error give any other information, such as about the caller?
+21:40 <                 jonadab+> Hmm.
+21:40 <                     rld+> <@luxidream> uh, let me dig another pit and find out once I finish the quest
+21:40 <                 jonadab+> Ok.
+21:41 <                 jonadab+> Or, wait, it might be in your ttyrec.
+21:41 <                 jonadab+> What server?
+21:41 <                     rld+> <@luxidream> us
+21:41 <                 jonadab+> current or most recent game?
+21:42 <                 jonadab+> Oh, hmm.  Guess I need to ask username.
+21:42 <                 jonadab+> There's like three that start with lux, and none are luxidream
+21:42 <                     rld+> <@luxidream> Luxidream
+21:42 <                     rld+> <@luxidream> capital L
+21:42 <                 jonadab+> Oh, capital L.
+21:46 <                 jonadab+> Found it.
+rhino:/home/jonadab/2019-06-07.00\:20\:37.ttyrec
+21:46 <                 jonadab+> Location: libnethack/src/newrng.c:504
+21:47 <                 jonadab+> Hmm, that's the actual rng code location.
+21:47 <                 jonadab+> There's a Game ID.
+21:47 <                 jonadab+> And the usual where-to-report info.
+21:48 <                 jonadab+> And it's an impossible()
+21:48 <                 jonadab+> Hmm, but no caller info.  I guess that makes sense, every single place that calls an RNG function would have to pass something.
+21:49 <                 jonadab+> What was the other thing, about the priest occupying the same place as the player?  Any clue how
+                                  THAT came to pass?
+21:49 <                 jonadab+> NetHack tries _really_ hard to avoid that situation.
+21:50 <                     rld+> <@luxidream> it's a nethack4 bug in general
+21:50 <                     rld+> <@luxidream> sometimes the priest just "disappears"
+21:50 <                     rld+> <@luxidream> but it crashes the game in fourk sometimes
+21:50 <                 jonadab+> Huh.
+21:50 <                 jonadab+> Temple priest?
+

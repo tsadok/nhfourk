@@ -310,6 +310,9 @@ dig(void)
     progress += abon();
     progress += (uwep ? (uwep->spe - greatest_erosion(uwep)) : 0);
     progress += u.udaminc;
+
+    achievement(achieve_dig);
+
     if (uwep)
         progress += (P_SKILL(is_pick(uwep) ? P_PICK_AXE : P_AXE) * 5);
     if (progress < 1)
@@ -1185,7 +1188,8 @@ watch_warn(struct monst *mtmp, xchar x, xchar y, boolean zap)
 
             if (zap || mtmp->msuspicious) {
 
-                verbalize(msgc_npcanger, "Halt, vandal!  You're under arrest!");
+                mon_yells(mtmp, msgc_npcanger,
+                          "Halt, vandal!  You're under arrest!");
                 angry_guards(!canhear());
 
             } else {
@@ -1204,11 +1208,8 @@ watch_warn(struct monst *mtmp, xchar x, xchar y, boolean zap)
                 else
                     str = "architecture"; /* should be unreachable */
 
-                pline(msgc_npcvoice,
-                      "%s sees what you're doing, and yells at you.",
-                      Amonnam(mtmp));
-                verbalize(msgc_npcvoice, "Hey, stop messing with that %s!",
-                          str);
+                mon_yells(mtmp, msgc_levelwarning,
+                          msgprintf("Hey, stop messing with that %s!", str));
             }
             action_interrupted();
         }
@@ -1725,7 +1726,14 @@ do_pit_attack(struct level *lev, struct monst *mdef, struct monst *magr)
                         (lev->locations[x][y].typ == ICE))) && 
                      (tries++ < 25));
         }
-        if (tries >= 25) {
+        if ((tries >= 25) ||
+            /* is_ok returns true for some terrain types that we don't want to
+               make pits on; the do/while loop above filters them out, but the
+               i==0 case, taking the defender's coordinates, does not.  Do so: */
+            (lev->locations[x][y].typ == STAIRS) ||
+            (lev->locations[x][y].typ == LADDER) ||
+            (lev->locations[x][y].typ == ALTAR)  ||
+            (lev->locations[x][y].typ == MAGIC_CHEST)) {
             no_pit_message(magr, mdef);
             return;
         } else if (isok(x, y)) {

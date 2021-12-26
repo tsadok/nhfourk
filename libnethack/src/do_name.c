@@ -337,7 +337,6 @@ oname_random_weapon(struct obj *wpn, enum rng rng)
         (wpn->otyp == TWO_HANDED_SWORD) ? "Claymore" :
         is_sword(wpn) ? "Sword" :
         (wpn->otyp == MORNING_STAR) ? "Morning Star" :
-        (wpn->otyp == RUBBER_HOSE) ? "Hose" :
         ((skill == P_POLEARMS) || (skill == P_KNIFE) ||
          (wpn->otyp == ATHAME)) ? OBJ_NAME(objects[wpn->otyp]) :
         weapon_descr(wpn));
@@ -1050,10 +1049,12 @@ static struct {
     {"lion-dog", FALSE},
     {"rat-ant", FALSE},
     {"lllama", FALSE}, /* a big fire */
+    {"suicidal mouse", FALSE}, /* terrifying */
         /* Real animals, past and present: */
     {"butterfly", FALSE},
     {"gnu", FALSE},
     {"capybara", FALSE},
+    {"echidna", FALSE},
     {"numbat", FALSE},
     {"quoll", FALSE},
     {"giant cockroach", FALSE},
@@ -1068,6 +1069,7 @@ static struct {
     {"hologram", FALSE},
     {"radioactive spider", FALSE},
     {"rhinovirus", FALSE},
+    {"coronavirus", FALSE},
     {"robot", FALSE},
     {"nanobot", FALSE},
     {"battlemech", FALSE},
@@ -1132,7 +1134,7 @@ static struct {
         /* Minecraft */
     {"creeper", FALSE},
     {"enderman", FALSE},
-        /* Keen */
+        /* Commander Keen series */
     {"garg", FALSE}, /* Keen 1 */
     {"poison slug", FALSE}, /* Keen 4 */
     {"dopefish", FALSE}, /* Keen 4 */
@@ -1254,12 +1256,16 @@ static struct {
         /* general-purpose words for monsters */
     {"bogey", FALSE},
     {"whangdoodle", FALSE},
+        /* conspiracy theory */
+    {"reptilian overlord", FALSE},
         /* common pests */
     {"mother-in-law", FALSE},
+    {"millennial", FALSE},
     {"hyperactive child", FALSE},
     {"grumpy old man", FALSE},
     {"surly teenager", FALSE},
     {"telemarketer", FALSE},
+    {"middle manager", FALSE},
     {"politician", FALSE},
     {"attorney", FALSE},
 };

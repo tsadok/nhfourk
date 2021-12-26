@@ -67,7 +67,7 @@ const char def_monsyms[MAXMCLASSES] = {
     DEF_GIANT,
     '\0',
     DEF_JABBERWOCK,
-    DEF_KOP,
+    DEF_KRAKEN,
     DEF_LICH,
     DEF_MUMMY,
     DEF_NAGA, /* 40 */
@@ -86,7 +86,6 @@ const char def_monsyms[MAXMCLASSES] = {
     DEF_HUMAN,
     DEF_GOLEM,
     DEF_DEMON,
-    DEF_EEL,
     DEF_WORM_TAIL,
     DEF_MIMIC_DEF,/* 58 */
 };

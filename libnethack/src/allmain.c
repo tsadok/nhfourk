@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Alex Smith, 2018-01-15 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -299,7 +299,7 @@ nh_create_game(int fd, struct nh_option_desc *opts_orig)
     init_data(TRUE);
     startup_common(TRUE);
 
-    struct newgame_options ngo;
+    struct newgame_options ngo = {"", "", "", 0};
 
     /* Set defaults in case list of options from client was incomplete. */
     struct nh_option_desc *defaults = default_options();
@@ -878,8 +878,6 @@ you_moved(void)
         do {
             /* Players have taken 1 more action than the global, monsters have
                taken 0 more actions than the global. */
-            if (flags.servermail)
-                checkformail();
 
             monscanmove = movemon();
 
@@ -928,6 +926,8 @@ you_moved(void)
             case 8:   pwregen_t = 15; break;  default:  pwregen_t = 16; break;
             }
 
+            if (flags.servermail)
+                checkformail();
             mcalcdistress();    /* adjust monsters' trap, blind, etc */
 
             /* No actions have happened yet this turn. (Combined with the change
@@ -975,7 +975,7 @@ you_moved(void)
             if (u.uinvulnerable) {
                 /* for the moment at least, you're in tiptop shape */
                 wtcap = UNENCUMBERED;
-            } else if (Upolyd && youmonst.data->mlet == S_EEL &&
+            } else if (Upolyd && youmonst.data->mlet == S_KRAKEN &&
                        !is_damp_terrain(level, u.ux, u.uy) &&
                        !Is_waterlevel(&u.uz)) {
                 if (u.mh > 1) {
@@ -1091,9 +1091,10 @@ you_moved(void)
                 if (change && !Unchanging) {
                     if (!u_helpless(hm_all)) {
                         action_interrupted();
-                        if (change == 1)
+                        if (change == 1) {
                             polyself(FALSE);
-                        else
+                            feareffect(FALSE, VENOM_CLASS);
+                        } else
                             you_were();
                         change = 0;
                     }
@@ -1467,6 +1468,8 @@ cancel_mimicking(const char* msg)
 boolean
 canhear(void)
 {
+    if (Deaf)
+        return FALSE;
     return !u_helpless(hm_unconscious);
 }
 

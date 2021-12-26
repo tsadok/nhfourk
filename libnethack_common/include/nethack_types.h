@@ -201,6 +201,18 @@
 
 # define SERVERCANCEL_CHAR '\x1c'
 
+/* K-Mod level styles (idea taken from sporkhack, but certainly not the code!)
+   These are all room-and-corridor level styles, but with different types of
+   arrangements in terms of how the rooms are laid out and interconnected. */
+enum levstyle {
+    LEVSTYLE_STANDARD = 0,
+    LEVSTYLE_RING,
+    LEVSTYLE_HUB,
+    LEVSTYLE_MINRAND,
+    /* more to come */
+    LEVSTYLE_TYPES /* total number of different styles */
+};
+
 enum nh_direction {
     DIR_SERVERCANCEL = -2,
     DIR_NONE = -1,
@@ -489,12 +501,19 @@ enum nh_optbirth {
     nh_birth_creation = 2, /* game creation option; no effect from turn 1 on */
 };
 
+enum nh_lockopt {
+    nh_lockopt_always_available = 0, /* does not have to be unlocked */
+    nh_lockopt_unlocked = 1,         /* unlocked and thus available */
+    nh_lockopt_locked = 2,           /* unlockable, but not unlocked */
+};
+
 /* This structure and all its contents should always be dynamically allocated
    so that they can safely be freed with nhlib_free_optlist. */
 struct nh_option_desc {
     const char *name;
     const char *group;
     const char *helptxt;
+    enum nh_lockopt lockstate;
     enum nh_optbirth birth_option;
     enum nh_opttype type;
     union nh_optvalue value;

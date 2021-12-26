@@ -5,7 +5,7 @@
 
 #if defined(AIMAKE_BUILDOS_MSWin32)
 # define WIN32_LEAN_AND_MEAN
-# include <Windows.h> /* must be before compilers.h */
+# include <windows.h> /* must be before compilers.h */
 
 # if !defined(S_IRUSR)
 #  define S_IRUSR _S_IREAD
@@ -1124,15 +1124,15 @@ update_whereis(boolean playing)
 
     int score = calc_score(DIED, FALSE, money_cnt(youmonst.minvent) + hidden_gold());
 
-    const char *buf = msgprintf("player=%s:charname=%s:depth=%d:dnum=%d:dname=%s:"
-                                "hp=%d:maxhp=%d:turns=%d:score=%d:role=%s:race=%s:"
-                                "gender=%s:align=%s:conduct=0x%lx:amulet=%d:playing=%d",
-                                user, charname, depth(&u.uz), u.uz.dnum,
-                                gamestate.dungeons[u.uz.dnum].dname, u.uhp, u.uhpmax,
-                                moves, score, urole.filecode, urace.filecode,
-                                genders[u.ufemale].filecode,
-                                aligns[1 - u.ualign.type].filecode, encode_conduct(),
-                                Uhave_amulet ? 1 : 0, whereis_playstate);
+    const char *buf = msgprintf(
+        "player=%s:charname=%s:depth=%d:dnum=%d:dname=%s:"
+        "hp=%d:maxhp=%d:turns=%d:score=%d:role=%s:race=%s:"
+        "gender=%s:align=%s:conduct=0x%llx:amulet=%d:playing=%d",
+        user, charname, depth(&u.uz), u.uz.dnum,
+        gamestate.dungeons[u.uz.dnum].dname,
+        u.uhp, u.uhpmax, moves, score, urole.filecode, urace.filecode,
+        genders[u.ufemale].filecode, aligns[1 - u.ualign.type].filecode,
+        encode_conduct(), Uhave_amulet ? 1 : 0, whereis_playstate);
 
     const char *whereis = msgprintf("%s.whereis", user);
     int fd = open_datafile(whereis, O_WRONLY | O_CREAT | O_TRUNC, SCOREPREFIX);

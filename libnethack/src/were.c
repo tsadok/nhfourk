@@ -59,6 +59,10 @@ counter_were(int pm)
         return PM_HUMAN_WERERAT;
     case PM_HUMAN_WERERAT:
         return PM_WERERAT;
+    case PM_WEREBEAR:
+        return PM_HUMAN_WEREBEAR;
+    case PM_HUMAN_WEREBEAR:
+        return PM_WEREBEAR;
     default:
         return 0;
     }
@@ -126,6 +130,13 @@ were_summon(struct monst *msummoner,
             typ = rn2(5) ? PM_WOLF : PM_WINTER_WOLF;
             if (genbuf)
                 *genbuf = "wolf";
+            break;
+        case PM_WEREBEAR:
+        case PM_HUMAN_WEREBEAR:
+            typ = rn2(13) ? (rn2(5) ? (rn2(3) ? PM_BROWN_BEAR : PM_BLACK_BEAR)
+                             : PM_GRIZZLY_BEAR) : PM_DIRE_BEAR;
+            if (genbuf)
+                *genbuf = "bear";
             break;
         default:
             continue;

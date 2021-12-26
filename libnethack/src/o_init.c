@@ -62,7 +62,7 @@ shuffle(int o_low, int o_high, boolean domaterial)
 void
 init_objects(void)
 {
-    int i, first, last, sum;
+    int i, j, k, first, last, sum, tries;
     char oclass;
 
     /* initialize object descriptions */
@@ -101,17 +101,29 @@ init_objects(void)
                 break;
             }
         }
+        tries = 0;
     check:
-        sum = 0;
+        sum = j = k = 0;
         for (i = first; i < last; i++)
             sum += objects[i].oc_prob;
-        if (sum == 0) {
-            for (i = first; i < last; i++)
-                objects[i].oc_prob = (1000 + i - first) / (last - first);
+        if ((sum == 0) && (tries++ < 3)) {
+            for (i = first; i < last; i++) {
+                if (!((objects[i].oc_name_idx) &&
+                      (obj_descr[objects[i].oc_name_idx].oc_name) &&
+                      strlen(OBJ_NAME(objects[i]))))
+                    j++;
+            }
+            for (i = first; i < last; i++) {
+                if (objects[i].oc_name_idx &&
+                    obj_descr[objects[i].oc_name_idx].oc_name &&
+                    strlen(OBJ_NAME(objects[i]))) {
+                    objects[i].oc_prob =
+                        (1000 + i - (first + k)) / (last - (first + j));
+                }
+                else k++;
+            }
             goto check;
         }
-        if (sum != 1000)
-            raw_printf("init-prob error for class %d (%d%%)\n", oclass, sum);
 
         first = last;
     }
@@ -246,14 +258,9 @@ saveobjclass(struct memfile *mf, struct objclass *ocl)
     mwrite16(mf, ocl->oc_cost);
     mwrite16(mf, ocl->oc_nutrition);
 
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): to match restobjclass */
-    int oprop = ocl->oc_oprop;
-    if (ocl->oc_class == TOOL_CLASS && ocl->oc_material == CLOTH &&
-        ocl->oc_nutrition == 2)
-        oprop ^= BLINDED;
-
     mwrite8(mf, ocl->oc_subtyp);
-    mwrite8(mf, oprop);
+    mwrite8(mf, ocl->oc_oprop);
+    mwrite8(mf, ocl->oc_oprop2);
     mwrite8(mf, ocl->oc_class);
     mwrite8(mf, ocl->oc_delay);
     mwrite8(mf, ocl->oc_color);
@@ -331,6 +338,7 @@ restobjclass(struct memfile *mf, struct objclass *ocl)
 
     ocl->oc_subtyp = mread8(mf);
     ocl->oc_oprop = mread8(mf);
+    ocl->oc_oprop2 = mread8(mf);
     ocl->oc_class = mread8(mf);
     ocl->oc_delay = mread8(mf);
     ocl->oc_color = mread8(mf);
@@ -338,18 +346,6 @@ restobjclass(struct memfile *mf, struct objclass *ocl)
     ocl->oc_wldam = mread8(mf);
     ocl->oc_oc1 = mread8(mf);
     ocl->oc_oc2 = mread8(mf);
-
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2)
-
-       4.3-beta1 save files have blindfolds recorded as not causing blindness.
-       Thus, we xor the object property for blindfolds and towels with BLINDED,
-       so that it's saved as 0. At this point in the code, we don't directly
-       know what object we're dealing with; however, we can use the description
-       "cloth tools with nutrition 2" instead, which covers blindfolds and
-       towels but nothing else. */
-    if (ocl->oc_class == TOOL_CLASS && ocl->oc_material == CLOTH &&
-        ocl->oc_nutrition == 2)
-        ocl->oc_oprop ^= BLINDED;
 
     ocl->oc_uname = NULL;
     namelen = mread32(mf);

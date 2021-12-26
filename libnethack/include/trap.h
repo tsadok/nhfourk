@@ -17,6 +17,8 @@ union vlaunchinfo {
 };
 
 struct trap {
+    char struct_type;          /* Should always be 'T' for this struct.
+                                  See doc/struct_types.txt for the list. */
     struct trap *ntrap;
     unsigned ttyp:5;
     unsigned tseen:1;

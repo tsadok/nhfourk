@@ -633,14 +633,16 @@ MONSTER:'n',random,random
 DOOR: false, closed, south, random
 DOOR: true, locked, east, random
 
-SUBROOM: "ordinary", random, (15,2), (4,2), "town"
+SUBROOM: "gift shop", random, (15,2), (4,2), "town"
+CHANCE: 5
 DOOR: false, closed, south, 0
 MONSTER: 'n', random, random
 
 SUBROOM: "chestroom", random, (17,5), (2,2), "town"
 DOOR: false, closed, south, random
 
-SUBROOM: "ordinary", unlit, (20,2), (2,2), "town"
+SUBROOM: "music shop", unlit, (20,2), (2,2), "town"
+CHANCE: 10
 DOOR: false, locked, east, random
 MONSTER: 'G',"gnome king",random
 
@@ -821,17 +823,16 @@ MONSTER:'h',"bugbear",random
 MONSTER:'h',"dwarf",random
 
 # River feeders
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[75%]:';',"jellyfish",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-MONSTER[25%]:';',"piranha",random
-
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[75%]:'K',"jellyfish",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
+MONSTER[25%]:'K',"piranha",random
 
 # Mine end level variant 2
 # "Gnome King's Wine Cellar"
@@ -1195,5 +1196,128 @@ TRAP:"board",(70,06)
 TRAP:"board",(71,04)
 TRAP:"board",(71,05)
 TRAP:"board",(71,06)
+
+# "Gnomish Sewer"
+MAZE:"minend-4",' '
+GEOMETRY:center,center
+#         1         2         3         4         5         6         7
+#12345678901234567890123456789012345678901234567890123456789012345678901234
+MAP
+  }w      }ww}        ##            }}}} }#}    }}}w}}      }#####}}  #}  w
+ }}       #}}##w##}} #  ##   ##}}}}#######}}}  }w  #} w   }}#     ##}}}# w}
+ }        #} w}}}w###    w} }}}####}}     ###}}w  #} }}w ### w##   }#  #}} 
+ w#      #}      }w  #####w}###     w      w}##}}}w######}    ww }www }}#} 
+  #}   ##}}}      }w    # ##}      w}}w   #}   ####   w}####   }}w  #}  }#}
+  }# w#}}}}w      ww   #    #}    }###}###}          ww     ####}}##}#  }# 
+  }##}}  # }    }w}    #    w### }# }}#w}}###}      #w    ###   ##w}  #}#  
+ }#      #}w   } }}#       w#####}w   }#w  }}###}###     #w        w}  }#  
+w}w###   w#  ##   w}#     w} ### #}    }}w    }}#}}           #####}}}w#}  
+}#  ####w}######   w}w   }#     } #}}}###}}#    }  }}####  ### }}}}#### }} 
+#w    #w###  }###  ###} }#      #}####}  ##}ww }}####   ###w w}   #}  w# w}
+}#      w}     }}w}}} #}w      ###}}}  }}}  }}####         }}#     #}  }#} 
+ }#      w#      }w###}#}     # w}#  }}   }}##}}       }}}}##}}    }#  }#} 
+ w}}     }##}}     }#}  w#  w##}} }#  }} ###}###}}}# }}   #  ###   }##  }# 
+  w}    }#  ##}}}   w##  }##}}}    }# } #    }}####}}w    #    }#}w }##}}# 
+   #   }}     ###}}  w}}##}}        #}##    #}#}}}w# }}}##      }##w }#} # 
+  #w# w   }###}  ### ###w}#w   }w   }#} #   #}}}w  #}}}#}w#     #}}#w }#w}#
+ #} }#}  ##}}w     }}}}w  }##}}w }w}ww}}w#}#}}      ###}} }#   #}   #  }}#}
+#}   w}}#}w       }} }     }}###}  }}### }#}w          #}} }www# }}}# }w   
+ #}}  ww}       }}}}         }}}#####}}}  #}}}}w     w}}  }}}  ww   }#w    
+       }         }}              }}}   }}}}#  }}w  }}}      }}  www  w     
+ENDMAP
+RANDOM_PLACES:(55,04),(18,06),(58,17),(10,16)
+REGION:(00,00,74,20),unlit,"ordinary"
+STAIR:random,up
+
+OBJECT:'/',"cold",place[0]
+MONSTER:'K',"electric eel",place[0]
+MONSTER:'K',"electric eel",place[1]
+MONSTER:'K',"electric eel",place[2]
+MONSTER:'K',"giant eel",random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER:'K',random,random
+MONSTER[50%]:'K',random,random
+MONSTER[50%]:'K',random,random
+MONSTER[50%]:'K',random,random
+MONSTER:'r',"sewer rat",random
+MONSTER:'r',"sewer rat",random
+MONSTER:'r',"sewer rat",random
+MONSTER:'r',"sewer rat",random
+MONSTER:'r',"sewer rat",random
+MONSTER:'r',"sewer rat",random
+MONSTER:'r',random,random
+MONSTER:'r',random,random
+MONSTER:'F',"shrieker",random
+MONSTER:'F',"shrieker",random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'F',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'S',random,random
+MONSTER:'l',"crocodile",random
+MONSTER:'l',"crocodile",random
+MONSTER[50%]:'l',"chameleon",random
+MONSTER[50%]:'w',"purple worm",random
+MONSTER[5%]:'g',"gremlin",random
+
+
+OBJECT:'*',"luckstone",random
+OBJECT:'*',"loadstone",random
+OBJECT:'*',"amethyst",random
+OBJECT:'*',"amethyst",random
+OBJECT:'*',"ruby",random
+OBJECT:'*',"ruby",random
+OBJECT:'*',"emerald",random
+OBJECT:'*',"emerald",random
+OBJECT:'*',"diamond",random
+OBJECT:'*',"diamond",random
+OBJECT:'*',"fluorite",random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+OBJECT:'*',random,random
+GOLD:random,random
+GOLD:random,random
+GOLD:random,random
+GOLD:random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'=',random,random
+OBJECT:'"',random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+OBJECT:random,random,random
+# I want to make these boots rotted but don't know how to do that in .des
+OBJECT:'[',"high boots",random
+
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:"rust",random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
+TRAP:random,random
 
 # end mines.des

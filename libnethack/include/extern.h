@@ -61,6 +61,13 @@ struct trietable;
 struct version_info;
 struct you;
 
+/* ### achieve.c ### */
+extern void achievement(enum achievement ach);
+extern boolean is_unlocked_role(int i);
+extern boolean is_unlocked_race(int i);
+extern boolean is_unlocked_option(struct nh_option_desc *option);
+extern boolean is_unlocked_feature(int fieldidx, unsigned long fieldbit);
+
 /* ### allmain.c ### */
 
 extern void startup_common(boolean);
@@ -161,6 +168,7 @@ extern schar acurr(int);
 extern schar acurrstr(void);
 extern schar get_stealth(struct monst *);
 extern schar get_player_ac(void);
+extern void historic_alignment(void);
 extern void adjalign(int);
 extern void calc_attr_bonus(void);
 extern const char *beautiful(void);
@@ -186,7 +194,6 @@ extern int getbones(d_level * levnum);
 /* ### botl.c ### */
 
 extern void bot(void);
-extern int title_to_mon(const char *, int *, int *);
 extern void max_rank_sz(void);
 extern const char *rank_of(int, short, boolean);
 extern int describe_level(char *);
@@ -640,6 +647,7 @@ extern void drinksink(void);
 extern enum u_interaction_attempt resolve_uim(
     enum u_interaction_mode, boolean, xchar, xchar);
 extern void clear_travel_direction(void);
+extern struct monst *um_at(struct level *, int, int);
 extern boolean revive_nasty(int, int, const char *);
 extern void movobj(struct obj *, xchar, xchar);
 extern boolean may_dig(struct level *lev, xchar x, xchar y);
@@ -667,7 +675,8 @@ extern int monster_nearby(void);
 extern void losehp(int, const char *);
 extern void xlosehp(int, const char *, boolean);
 extern int weight_cap(void);
-extern int inv_weight(void);
+extern int inv_weight_over_cap(void);
+extern int inv_weight_total(void);
 extern int near_capacity(void);
 extern int calc_capacity(int);
 extern int max_capacity(void);
@@ -993,12 +1002,12 @@ extern void mkaiscav(struct level *lev, char *proto);
 /* ### mklev.c ### */
 
 extern struct level *alloc_level(d_level * levnum);
-extern void sort_rooms(struct level *lev);
+extern void sort_rooms(struct level *lev, enum levstyle style);
 extern void add_room(struct level *lev, int, int, int, int, boolean, schar,
                      boolean, boolean);
 extern void add_subroom(struct level *lev, struct mkroom *, int, int, int, int,
                         boolean, schar, boolean);
-extern void makecorridors(struct level *lev, int *smeq);
+extern void makecorridors(struct level *lev, int *smeq, enum levstyle style);
 extern void add_door(struct level *lev, int, int, struct mkroom *);
 extern struct level *mklev(d_level * levnum);
 extern void topologize(struct level *lev, struct mkroom *croom);
@@ -1046,6 +1055,7 @@ extern struct obj *mksobj(struct level *, int, boolean, boolean, enum rng);
 extern struct obj *mktemp_sobj(struct level *, int);
 extern struct obj *mkobj(struct level *, char, boolean, enum rng);
 extern struct obj *mkobj_of_class(struct level *, char, boolean, enum rng);
+extern int find_objnum_by_appearance(int, const char *);
 extern int rndmonnum(const d_level *, enum rng);
 extern struct obj *splitobj(struct obj *, long);
 extern void replace_object(struct obj *, struct obj *);
@@ -1053,6 +1063,8 @@ extern void bill_dummy_object(struct obj *);
 extern int bcsign(struct obj *);
 extern int weight(struct obj *);
 extern struct obj *mkgold(long amount, struct level *, int x, int y, enum rng);
+extern struct obj *mkfloorgold(long amount, struct level *, int x, int y, enum rng);
+extern struct obj *mkvaultgold(long amount, struct level *, int x, int y, enum rng);
 extern struct obj *mkcorpstat(int objtype, struct monst *mtmp,
                               const struct permonst *ptr, struct level *lev,
                               int x, int y, boolean init, enum rng);
@@ -1179,7 +1191,8 @@ extern boolean resists_magm(const struct monst *);
 extern boolean resists_blnd(const struct monst *);
 extern boolean can_blnd(struct monst *, struct monst *, uchar, struct obj *);
 extern boolean ranged_attk(const struct permonst *);
-extern boolean hates_silver(const struct permonst *);
+extern boolean hates_material(const struct permonst *, const int);
+extern int material_damage(const int);
 extern boolean passes_bars(const struct permonst *);
 extern boolean can_track(const struct permonst *);
 extern boolean breakarm(const struct permonst *, const struct objclass *oc);
@@ -1210,6 +1223,7 @@ extern void mon_regen(struct monst *, boolean);
 extern int dochugw(struct monst *);
 extern boolean onscary(int, int, struct monst *);
 extern void monflee(struct monst *, int, boolean, boolean);
+extern void mon_yells(struct monst *, enum msg_channel, const char *);
 extern boolean monster_would_take_item(struct monst *, struct obj *);
 extern int dochug(struct monst *);
 extern int m_move(struct monst *, int);
@@ -1239,6 +1253,7 @@ extern struct monst *mfind_target(struct monst *, boolean);
 extern boolean m_beam_ok(struct monst *, int, int, struct monst **, boolean);
 extern boolean linedup(xchar, xchar, xchar, xchar);
 extern boolean lined_up(struct monst *);
+extern struct obj *m_carrying_key(const struct monst *, boolean);
 extern struct obj *m_carrying(const struct monst *, int);
 extern void m_useup(struct monst *, struct obj *);
 extern void m_throw(struct monst *, int, int, int, int, int, struct obj *,
@@ -1291,6 +1306,7 @@ extern void count_discovered_objects(int *, int *);
 
 /* ### objnam.c ### */
 
+extern const char *material_name(int);
 extern const char *obj_typename(int);
 extern const char *simple_typename(int);
 extern boolean obj_is_pname(const struct obj *);
@@ -1388,6 +1404,7 @@ extern void self_invis_message(void);
 
 extern void set_uasmon(void);
 extern void change_sex(void);
+extern void dragonscale_polyself(void);
 extern void polyself(boolean);
 extern int polymon(int, boolean);
 extern int domonability(const struct nh_cmd_arg *);
@@ -1501,6 +1518,7 @@ extern boolean is_chargeable(struct obj *);
 extern void recharge(struct obj *, int);
 extern void do_uncurse_effect(boolean, boolean);
 extern int seffects(struct obj *scroll, boolean * known);
+extern int feareffect(boolean reverse, char itemclass);
 extern void litroom(boolean, struct obj *);
 extern void do_level_genocide(void);
 extern void do_genocide(int);
@@ -1718,7 +1736,7 @@ extern int mpickobj(struct monst *, struct obj *);
 extern void stealamulet(struct monst *);
 extern void mdrop_special_objs(struct monst *);
 extern void relobj(struct monst *, int, boolean);
-extern struct obj *findgold(struct obj *);
+extern struct obj *findgold(struct obj *, boolean);
 
 /* ### steed.c ### */
 
@@ -1799,7 +1817,7 @@ extern int wiz_timeout_queue(const struct nh_cmd_arg *);
 /* ### topten.c ### */
 
 extern void munge_xlstring(char *, const char *, int);
-extern unsigned long encode_conduct(void);
+extern unsigned long long encode_conduct(void);
 extern void update_topten(int how, const char *killer,
                           unsigned long carried, const char *dumpname);
 extern struct obj *tt_oname(struct obj *);

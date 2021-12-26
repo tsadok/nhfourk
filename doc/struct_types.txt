@@ -1,0 +1,19 @@
+Asciibetical list of struct_type values:
+
+ 'E' (0x45, decimal  69) - Engraving (struct engr, engrave.h)
+ 'L' (0x4C, decmial  76) - Level (struct level, rm.h)
+ 'M' (0x4D, decimal  77) - Monster (struct monst, monst.h)
+ 'O' (0x4F, decimal  79) - Object (struct obj)
+ 'P' (0x50, decimal  80) - Permonst (struct permonst, permonst.h)
+ 'R' (0x52, decimal  82) - Room (struct mkroom, mkroom.h)
+ 'T' (0x54, decimal  84) - Trap (struct trap, trap.h)
+ 'Y' (0x59, decimal  89) - You (struct you, you.h)
+ 'a' (0x61, decimal  97) - attack (struct attack, permonst.h)
+ 'r' (0x72, decimal 114) - region (struct region, region.h)
+ 't' (0x74, decimal 116) - tile (struct rm, rm.h)
+ 
+This feature exists to make it easier to debug certain types of errors
+(particularly segfaults), by disambiguating between the data in some
+of the fields of a struct being wrong or corrupted in some way, versus
+the pointer being stale or otherwise just not aimed at the right kind
+of struct at all.

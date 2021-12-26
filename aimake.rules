@@ -1,4 +1,4 @@
-# Last modified by Alex Smith, 2015-05-22
+# Last modified by Alex Smith, 2018-08-14
 # Copyright (c) Alex Smith, 2013.
 # NetHack may be freely redistributed.  See license for details.
 # NetHack Fourk: aimake configuration.
@@ -17,7 +17,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
     options => {
         packagename => 'nhfourk',
         packagename_text => 'NetHack Fourk',
-        packageversion => '3.0.4',
+        packageversion => '3.0.5',
         companyname => 'NetHack Fourk DevTeam',
         ignore_directories => qr/^(?:\.git|mingw)/i,
 
@@ -26,9 +26,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
 #        AM_CPPFLAGS => '-D_REENTRANT',
         CFLAGS      => '-Wall -Wextra -fdiagnostics-show-option -O2 -g',
         AM_CFLAGS   => '-Wno-missing-field-initializers '.
+                       '-Wno-format-truncation '.
                        # These warnings are probably worth fixing eventually,
                        # but have too many false positives to be able to show
                        # them right now
+                       '-Wno-implicit-fallthrough '.
                        '-Wno-unused-parameter -Wno-sign-compare '.
                        '-Wold-style-definition -Wstrict-prototypes '.
                        '-Wmissing-prototypes -Wmissing-declarations '.
@@ -314,13 +316,6 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
                         "optpath::bpath:libnethack/dat/quest.dat"],
             output => 'bpath:libnethack/dat/quest.dat',
         },
-        _makedefs_oracles => {
-            object => "path:libnethack/dat/oracles.txt",
-            command => ["bpath:libnethack/util/makedefs.c/makedefs$exeext",
-                        "optpath:-h :",
-                        "optpath::bpath:libnethack/dat/oracles"],
-            output => 'bpath:libnethack/dat/oracles',
-        },
         _makedefs_rumors => {
             # We rely on the fact that optpath: options given
             # explicitly always stay in the same order.
@@ -354,13 +349,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
                         "bpath:libnethack/dat/data",
                         "bpath:libnethack/dat/dungeon",
                         "bpath:libnethack/dat/history",
-                        "bpath:libnethack/dat/oracles",
                         "bpath:libnethack/dat/quest.dat",
                         "bpath:libnethack/dat/rumors",
                         "optpath::bpath:libnethack/dat/data",
                         "optpath::bpath:libnethack/dat/dungeon",
                         "optpath::bpath:libnethack/dat/history",
-                        "optpath::bpath:libnethack/dat/oracles",
                         "optpath::bpath:libnethack/dat/quest.dat",
                         "optpath::bpath:libnethack/dat/rumors"],
             in_subdir => "bpath:libnethack/dat",
@@ -447,12 +440,11 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
             verb => 'merged',
         },
         _build_fonts => {
-            object => qr=^path:tilesets/dat/fonts/font14\.txt=s,
+            object => qr=^path:tilesets/dat/fonts/font\d+\.txt=s,
             command => ["bpath:tilesets/util/tilecompile.c/tilecompile$exeext",
                         "optpath:-o :extend:.png:",
-                        "optstring:-z 8 14", "optstring:-b 0 0 0",
-                        "optstring:-t image", "optstring:-u",
-                        "optpath::"],
+                        "optstring:-b 0 0 0", "optstring:-t image",
+                        "optstring:-u", "optpath::"],
             output_from_optpath => '-o ',
         },
         _readme_dumps => {

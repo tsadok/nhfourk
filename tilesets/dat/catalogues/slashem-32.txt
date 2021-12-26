@@ -10,5 +10,6 @@ s-obj32alg.txt
 s-oth32mi.txt
 s-oth32se.txt
 s-oth32alg.txt
+s-statue32.txt
 n-343-32.txt
 n-4-32.txt

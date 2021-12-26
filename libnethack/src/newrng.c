@@ -501,12 +501,17 @@ int
 rn2_on_rng(int maxplus1, enum rng rng)
 {
     if (maxplus1 <= 0) {
-        impossible("RNG range has less than 1 value");
+        impossible(msgprintf("RNG %d range has less than 1 value", rng));
         return 0;
     }
 
     if (maxplus1 > (int)0x7FFFFFFFL)
-        panic("Randomizing over an unportably large range");
+        /* This used to be a panic, but these days almost all systems
+           in widespread use are 64-bit, except for some 32-bit ARM
+           based mobile devices, which probably aren't supported by
+           NH4 very well anyway due to things like screen size. 
+           So there's an excellent chance the player CAN continue. */
+        impossible("Randomizing over an unportably large range");
 
     if (rng == rng_display) {
 

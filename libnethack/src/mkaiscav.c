@@ -645,11 +645,11 @@ do_aiscav_embed(struct level *lev, char *proto) {
                 (rn2_on_rng(3, rng) ? PM_RANGER : PM_ROGUE),
                 /* First Melee Fighter */
                 ((!rn2_on_rng(3, rng)) ? PM_BARBARIAN :
-                 (!rn2_on_rng(3, rng)) ? PM_VALKYRIE :
+                 (!rn2_on_rng(3, rng)) ? PM_SHIELDMAIDEN :
                  rn2_on_rng(2, rng) ? PM_SAMURAI : PM_KNIGHT),
                 /* Second Melee Fighter */
                 ((!rn2_on_rng(3, rng)) ? PM_BARBARIAN :
-                 (!rn2_on_rng(3, rng)) ? PM_VALKYRIE :
+                 (!rn2_on_rng(3, rng)) ? PM_HOPLITE :
                  rn2_on_rng(2, rng) ? PM_SAMURAI :
                  rn2_on_rng(2, rng) ? PM_CAVEMAN : PM_CAVEWOMAN),
                 /* First Support */
@@ -803,6 +803,7 @@ aisconst_from_mapchar(xchar c, const char *callerinfo) {
                callerinfo, c, c);
     return AIS_UNDECIDED;
 }
+
 void
 mkaiscav(struct level *lev, char *proto)
 {
@@ -1249,7 +1250,8 @@ mkaiscav(struct level *lev, char *proto)
     case 10:
         for (i = (5 + mrn2(1 + ( RNGSAFEDEPTH / 15))); i > 0; i--) {
             spot = aisplace();
-            makemon(((i % 2) ? &mons[PM_WEREWOLF] :
+            makemon(((!(i % 5)) ? &mons[PM_WEREBEAR] :
+                     (i % 2) ? &mons[PM_WEREWOLF] :
                      (i % 3) ? &mons[PM_WEREJACKAL] : &mons[PM_WERERAT]),
                     lev, spot.x, spot.y, 0);
         }

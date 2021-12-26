@@ -239,8 +239,10 @@ doaltarobj(struct obj *obj)
         pline_implied(msgc_hint, "There is %s flash as %s %s the altar.",
                       an(hcolor(obj->blessed ? "amber" : "black")), doname(obj),
                       otense(obj, "hit"));
-        if (!Hallucination)
+        if (!Hallucination) {
             obj->bknown = 1;
+            achievement(achieve_altar_buctest);
+        }
     } else {
         pline_implied(msgc_noconsequence, "%s %s on the altar.", Doname2(obj),
                       otense(obj, "land"));
@@ -782,6 +784,7 @@ dodown(boolean autodig_ok)
                 pline_implied(msgc_branchchange, "So be it.");
         }
         u.uevent.gehennom_entered = 1;  /* don't ask again */
+        achievement(achieve_valley_stairs);
     }
 
     if (!next_to_u()) {
@@ -853,7 +856,7 @@ doup(void)
         return 1;
     }
     if (near_capacity() > SLT_ENCUMBER) {
-        /* No levitation check; inv_weight() already allows for it */
+        /* No levitation check; the weight check already allows for it */
         pline(msgc_cancelled1, "Your load is too heavy to climb the %s.",
               level->locations[u.ux][u.uy].typ == STAIRS ? "stairs" : "ladder");
         return 1;
@@ -915,9 +918,10 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
            boolean portal)
 {
     xchar new_ledger;
-    boolean up = (depth(newlevel) < depth(&u.uz)), newdungeon =
-        (u.uz.dnum != newlevel->dnum), was_in_W_tower =
-        In_W_tower(u.ux, u.uy, &u.uz), familiar = FALSE;
+    boolean up = (depth(newlevel) < depth(&u.uz)),
+        newdungeon = (u.uz.dnum != newlevel->dnum),
+        was_in_W_tower = In_W_tower(u.ux, u.uy, &u.uz),
+        familiar = FALSE;
     boolean new = FALSE;        /* made a new level? */
     struct monst *mtmp, *mtmp2;
     struct obj *otmp;
@@ -930,8 +934,11 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     if (dunlev(newlevel) > dunlevs_in_dungeon(newlevel))
         newlevel->dlevel = dunlevs_in_dungeon(newlevel);
     if (newdungeon && In_endgame(newlevel)) {   /* 1st Endgame Level !!! */
+        d_level newlev;
+        newlev.dnum = astral_level.dnum;
+        newlev.dlevel = gamestate.dungeons[astral_level.dnum].entry_lev;
         if (Uhave_amulet)
-            assign_level(newlevel, &earth_level);
+            assign_level(newlevel, &newlev);
         else
             return;
     }
@@ -1105,6 +1112,15 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
                 selftouch("Falling, you", "falling downstairs while wielding");
             }
         }
+        /* Either way, up or down, works for achievement purposes: */
+        if (newdungeon) {
+            achievement(achieve_stairs_branch);
+            /* achieve_valley_stairs is handled elsewhere */
+        } else if (In_sokoban(&u.uz)) {
+            achievement(achieve_soko_stairs);
+        } else {
+            achievement(achieve_stairs_normal);
+        }
     } else {    /* trap door or level_tele or In_endgame */
         if (was_in_W_tower && On_W_tower_level(&u.uz))
             /* Stay inside the Wizard's tower when feasible. */
@@ -1252,6 +1268,12 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
             pline(msgc_levelwarning, "%s", mesg);
     }
 
+    if (newdungeon && In_endgame(newlevel)) {
+        pline(msgc_branchchange, "Well done, mortal!");
+        pline(msgc_branchchange, "But now thou must face the final Test...");
+        pline(msgc_branchchange, "Prove thyself worthy or perish!");
+    }
+
     if (new && Is_rogue_level(&u.uz)) {
         pline(msgc_branchchange,
               "You enter what seems to be an older, more primitive world.");
@@ -1279,8 +1301,10 @@ goto_level(d_level * newlevel, boolean at_stairs, boolean falling,
     }
 
     if ((getmonth()==12) && (getmday() < 25)) {
-        if (mk_advcal_portal(level))
+        if (mk_advcal_portal(level)) {
+            level->heardsound[levsound_portal_advent] = TRUE;
             pline(msgc_levelsound, "You smell chocolate!");
+        }
     }
     if (Is_advent_calendar(&u.uz)) {
         fill_advent_calendar(level, FALSE);
@@ -1319,8 +1343,10 @@ on_mines_level(const struct level *lev)
     if (!In_mines(&lev->z))
         return;
     if (!can_dig_down(lev)) {
-        if (!historysearch("reached the bottom of the Mines", TRUE))
+        if (!historysearch("reached the bottom of the Mines", TRUE)) {
             historic_event(FALSE, TRUE, "reached the bottom of the Mines.");
+            achievement(achieve_mines_end);
+        }
     }
 }
 

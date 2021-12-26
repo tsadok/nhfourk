@@ -7,6 +7,8 @@
 #include "lev.h"
 #include "dlb.h"
 
+#define MAX_ORACLE_LENGTH 4096
+
 /*  [note: this comment is fairly old, but still accurate for 3.1]
  * Rumors have been entirely rewritten to speed up the access.  This is
  * essential when working from floppies.  Using fseek() the way that's done
@@ -30,15 +32,15 @@
  */
 
 static void init_rumors(dlb *);
-static void init_oracles(dlb *);
+static void init_oracles(void);
+static const char * oracletext(int);
 static void outoracle(boolean, boolean);
 
 static int true_rumor_start, true_rumor_size, true_rumor_end, false_rumor_start,
     false_rumor_size, false_rumor_end;
 static int oracle_flg = 0;      /* -1=>don't use, 0=>need init, 1=>init done */
-static unsigned oracle_cnt = 0;
-static int *oracle_loc = 0;
-
+static int oracle_cnt = 0;
+static int *oracle_idx = 0;
 
 static void
 init_rumors(dlb * fp)
@@ -187,23 +189,202 @@ outrumor(int truth,     /* 1=true, -1=false, 0=either */
     pline(msgc_rumor, "%s", line);
 }
 
-static void
-init_oracles(dlb * fp)
+const char *
+oracletext(int n)
 {
-    int i;
-    char line[BUFSZ]; /* for fgets */
-    unsigned int cnt = 0;
+    static const char * const otext[] = {
+        /* The first one, otext[0], is the special "cheapskate" message. */
+        "\"...it is rather disconcerting to be confronted with the\n"
+        "following theorem from [Baker, Gill, and Solovay, 1975].\n\n"
+        "Theorem 7.18  There exist recursive languages A and B such that\n"
+        "  (1)  P(A) == NP(A), and\n"
+        "  (2)  P(B) != NP(B)\n\n"
+        "This provides impressive evidence that the techniques that are\n"
+        "currently available will not suffice for proving that P != NP or\n"
+        "that P == NP.\"  [Garey and Johnson, p. 185.]",
 
-    /* this assumes we're only called once */
-    dlb_fgets(line, sizeof line, fp);   /* skip "don't edit" comment */
-    dlb_fgets(line, sizeof line, fp);
-    if (sscanf(line, "%5d\n", &cnt) == 1 && cnt > 0) {
-        oracle_cnt = cnt;
-        oracle_loc = malloc(cnt * sizeof (int));
-        for (i = 0; i < cnt; i++) {
-            dlb_fgets(line, sizeof line, fp);
-            sscanf(line, "%5x\n", &oracle_loc[i]);
-        }
+        "If thy wand hath run out of charges, thou mayst zap it again and\n"
+        "again; though naught may happen at first, verily, thy persistence\n"
+        "shall be rewarded, as one last charge may yet be wrested from it!",
+
+        "Though the shopkeepers be wary, thieves have nevertheless stolen much\n"
+        "by using their digging wands to hasten exits through the pavement, or\n"
+        "by training up an animal to act as an accomplice.",
+
+        "If thou hast had trouble with rust on thine armor or weapons, thou\n"
+        "shouldst know that thou canst prevent this by, while in a confused\n"
+        "state, reading the magical parchments which normally are used to\n"
+        "cause their enchantment.  Unguents of lubrication may provide similar\n"
+        "protection, albeit of a transitory nature.",
+
+        "Behold the cockatrice, whose diminutive stature belies its hidden\n"
+        "might.  The cockatrice can petrify any ordinary being it contacts--\n"
+        "save those wise adventurers who eat a dead lizard or blob of acid\n"
+        "when they feel themselves slowly turning to stone.",
+
+        "While some wayfarers rely on scrounging finished armor in the\n"
+        "dungeon, the resourceful know the mystical means by which mail may\n"
+        "be fashioned out of scales from a dragon's hide.",
+
+        "It is customarily known among travelers that extra-healing draughts\n"
+        "may clear thy senses when thou art addled by delusory visions.  But\n"
+        "never forget, the lowly potion which makes one sick may be used for\n"
+        "the same purpose.",
+
+        "While the consumption of lizard flesh or water beloved of the gods\n"
+        "may clear the muddled head, the application of the horn of a creature\n"
+        "of utmost purity can alleviate many other afflictions as well.",
+
+        "If thou wouldst travel quickly between distant locations, thou must\n"
+        "be able to control thy teleports, and in a confused state misread the\n"
+        "scroll which usually teleports thyself locally.  Daring adventurers\n"
+        "have also performed the same feat sans need for scrolls or potions by\n"
+        "stepping into a particular ambuscade.",
+
+        "Almost all adventurers who come this way hope to pass the dread\n"
+        "Medusa.  To do this, the best advice is to keep thine eyes\n"
+        "blindfolded and to cause the creature to espy its own reflection in\n"
+        "a mirror.",
+
+        "And where it is written \"ad aerarium\", diligent searching will\n"
+        "often reveal the way to a trap which sends one to the Magic Memory\n"
+        "Vault, where the riches of Croesus are stored; however, escaping from\n"
+        "the vault with its gold is much harder than getting in.",
+
+        "It is well known that wily shopkeepers raise their prices whene'er\n"
+        "they espy the garish apparel of the approaching tourist or the\n"
+        "countenance of a disfavored patron.  They favor the gentle of manner\n"
+        "and the fair of face.  The boor may expect unprofitable transactions.",
+
+        "The cliche of the kitchen sink swallowing any unfortunate rings that\n"
+        "contact its pernicious surface reflecteth greater truth than many\n"
+        "homilies, yet even so, few have developed the skill to identify\n"
+        "enchanted rings by the transfigurations effected upon the voracious\n"
+        "device's frame.  Fewer still have learned the workman's skills needed\n"
+        "to dismantle said plumbing and recover the lost jewelry.",
+
+        "The meat of enchanted creatures ofttimes conveyeth magical properties\n"
+        "unto the consumer.  A fresh corpse of floating eye doth fetch a high\n"
+        "price among wizards for its utility in conferring Telepathy, by which\n"
+        "the sightless may locate surrounding minds.",
+
+        "The detection of blessings and curses is in the domain of the gods.\n"
+        "They will make this information available to mortals who request it\n"
+        "at their places of worship, or elsewhere for those mortals who devote\n"
+        "themselves to the service of the gods.",
+
+        "At times, the gods may favor worthy supplicants with named blades\n"
+        "whose powers echo throughout legend.  Learned wayfarers can reproduce\n"
+        "blades of elven lineage, hated of the orcs, without the need for such\n"
+        "intervention.",
+
+        "There are many stories of a mighty amulet, the origins of which are\n"
+        "said to be ancient Yendor.  This amulet doth have awesome power, and\n"
+        "the gods desire it greatly.  Mortals mayst tap only portions of its\n"
+        "terrible abilities.  The stories tell of mortals seeing what their\n"
+        "eyes cannot see and seeking places of magical transportation, while\n"
+        "having this amulet in their possession.  Others say a mortal must\n"
+        "wear the amulet to obtain these powers.  But verily, such power comes\n"
+        "at great cost, to preserve the balance.",
+
+        "It is said that thou mayst gain entry to Moloch's sanctuary, if thou\n"
+        "darest, from a place where the ground vibrateth in the deepest depths\n"
+        "of Gehennom.  Thou needs must have the aid of three magical items.\n"
+        "The pure sound of a silver bell shall announce thee.  The terrible\n"
+        "runes, read from Moloch's book, shall cause the earth to tremble\n"
+        "mightily.  The light of an enchanted candelabrum shall show thee the\n"
+        "way.",
+
+        "In the deepest recesses of the Dungeons of Doom, guarding access to\n"
+        "the nether regions, there standeth a castle, wherein lieth a wand of\n"
+        "wishes.  If thou wouldst gain entry, bear with thee an instrument of\n"
+        "music, for the pontlevis may be charmed down with the proper melody.\n"
+        "What notes comprise it only the gods know, but a musical mastermind\n"
+        "may yet succeed by witful improvisation.  However, the less\n"
+        "perspicacious are not without recourse, should they be prepared to\n"
+        "circumambulate the castle to the postern.",
+
+        "The name of Elbereth may strike fear into the hearts of thine\n"
+        "enemies, if thou dost write it upon the ground at thy feet.  If thou\n"
+        "maintainest the utmost calm, thy safety will be aided greatly, but\n"
+        "beware lest thy clumsy feet scuff the inscription in the heat of\n"
+        "battle, cancelling its potence.",
+
+        "There are many creatures in these dungeons whose attacks, in addition\n"
+        "to causing thee injury, may also subject thee, and sometimes also thy\n"
+        "possessions, to various afflictions. Some may even kill thee.  The\n"
+        "likelihood of such misfortunes can be greatly reduced by wearing a\n"
+        "garment that covers not only thy torso but also a larger portion of\n"
+        "thy body, covering thy body and arms fully and extending downward to\n"
+        "the tops of thy boots.  Additionally, a magical spell may provide the\n"
+        "same sort of protection, or perhaps a ring.  It is said that these\n"
+        "protections may even be combined, providing even greater immunity.",
+
+        "It is said that the great hero Jason, when he passed through this\n"
+        "very dungeon, was wont to master even the most devastating whims of\n"
+        "fate and take from them whatever was necessary for his quest.  On one\n"
+        "occasion, having stumbled upon a powerful magical scroll that\n"
+        "promised to rid him of some kind of beast forever, he chose to rid\n"
+        "himself of dragons, fearing their breath; but lo, upon reading the\n"
+        "scroll, he discovered to his horror that there had been a curse upon\n"
+        "it, and the hero soon found himself surrounded by dragons.  It is\n"
+        "said that he slew them all and fashioned powerful armor from their\n"
+        "scales, which he wore ever after.",
+
+        "The greatest of the dwarvish armor smiths have keenly guarded the\n"
+        "secret of making a magical metal with remarkable properties.  Since\n"
+        "the fall of their great stronghold, coats of armor made of this\n"
+        "fantastic metal, never cheap even at the best of times, have become a\n"
+        "rare treasure indeed.  Stronger than iron but light enough to be\n"
+        "comfortable even when worn over most of the body, these mithril coats\n"
+        "are also the equal of even the best enchanted travelers' cloaks in\n"
+        "terms of protection against the bites and stings of pests and the\n"
+        "ravages of the undead children of the night. It is said that some of\n"
+        "the greatest elvish smiths also learned from the dwarves of old the\n"
+        "secret of making these vestments.",
+
+        "Often the magical potions found in the dungeon can be combined in a\n"
+        "way that alters their magical effects. Learning the secret arts of\n"
+        "this process can allow a skilled adventurer to convert large numbers\n"
+        "of common potions into less common and more useful ones.  Of\n"
+        "particular interest is the ability to make potions of healing more\n"
+        "potent.  However, this process is not without risk. Some combinations\n"
+        "of potions can explode, and others can have unreliable results.",
+
+        "When the great hero Diodorus sought the forge of Hephaestus, in order\n"
+        "to remake his father's sword, the path of his journey passed through\n"
+        "the land of the fire dragons.  Fearing that his father's instructions\n"
+        "for remaking the sword, being written on a parchment scroll, might be\n"
+        "burnt up in the flames of a dragon's breath, he held the scroll aloft\n"
+        "in his hand, pretending that it was his sword, and performed a ritual\n"
+        "for making a weapon proof against fire and rust.  They say that even\n"
+        "the god Hephaestus was confused by this gesture, and found himself\n"
+        "unable or unwilling to burn the scroll thereafter.",
+    };
+    const char *answer;
+    if (n == -1)
+        return msgprintf("%d", SIZE(otext));
+    if (n >= SIZE(otext)) {
+        impossible("Invalid oracle number: %d (max %d)", n, SIZE(otext));
+        return msgprintf("%s", otext[0]);
+    }
+    pline(msgc_debug, "oracle_flg=%d; oracle_cnt=%d", oracle_flg, oracle_cnt);
+    pline(msgc_debug, "chooising otext[oracle_idx[%d]]", n);
+    pline(msgc_debug, "chose otext[%d]", oracle_idx[n]);
+    answer = otext[oracle_idx[n]];
+    oracle_idx[n] = oracle_idx[--oracle_cnt];
+    return answer;
+}
+
+static void
+init_oracles(void)
+{
+    const char *count = oracletext(-1);
+    int i;
+    oracle_cnt = atoi(count);
+    oracle_idx = malloc(oracle_cnt * sizeof(int));
+    for (i = 0; i < oracle_cnt; i++) {
+        oracle_idx[i] = i;
     }
     return;
 }
@@ -217,7 +398,7 @@ save_oracles(struct memfile *mf)
     mwrite32(mf, oracle_cnt);
     if (oracle_cnt)
         for (i = 0; i < oracle_cnt; i++)
-            mwrite32(mf, oracle_loc[i]);
+            mwrite32(mf, oracle_idx[i]);
 }
 
 
@@ -225,8 +406,8 @@ void
 free_oracles(void)
 {
     if (oracle_cnt) {
-        free(oracle_loc);
-        oracle_loc = NULL;
+        free(oracle_idx);
+        oracle_idx = NULL;
         oracle_cnt = 0;
         oracle_flg = 0;
     }
@@ -240,9 +421,9 @@ restore_oracles(struct memfile *mf)
 
     oracle_cnt = mread32(mf);
     if (oracle_cnt) {
-        oracle_loc = malloc(oracle_cnt * sizeof (int));
+        oracle_idx = malloc(oracle_cnt * sizeof(int));
         for (i = 0; i < oracle_cnt; i++)
-            oracle_loc[i] = mread32(mf);
+            oracle_idx[i] = mread32(mf);
         oracle_flg = 1; /* no need to call init_oracles() */
     }
 }
@@ -250,60 +431,63 @@ restore_oracles(struct memfile *mf)
 void
 outoracle(boolean special, boolean delphi)
 {
-    char line[COLNO];
-    char *endp;
-    dlb *oracles;
-    int oracle_idx;
+    int idx;
+    char chosentext[MAX_ORACLE_LENGTH];
+    char *nextline;
+    struct nh_menulist menu;
 
     if (oracle_flg < 0 ||       /* couldn't open ORACLEFILE */
         (oracle_flg > 0 && oracle_cnt == 0))    /* oracles already exhausted */
         return;
 
-    oracles = dlb_fopen(ORACLEFILE, "r");
 
-    if (oracles) {
-        struct nh_menulist menu;
-
-        if (oracle_flg == 0) {  /* if this is the first outoracle() */
-            init_oracles(oracles);
-            oracle_flg = 1;
-            if (oracle_cnt == 0)
-                return;
-        }
-        /* oracle_loc[0] is the special oracle; */
-        /* oracle_loc[1..oracle_cnt-1] are normal ones */
-        if (oracle_cnt <= 1 && !special)
-            return;     /* (shouldn't happen) */
-        oracle_idx = special ? 0 : rnd((int)oracle_cnt - 1);
-        dlb_fseek(oracles, oracle_loc[oracle_idx], SEEK_SET);
-        if (!special)
-            oracle_loc[oracle_idx] = oracle_loc[--oracle_cnt];
-
-        init_menulist(&menu);
-
-        if (delphi)
-            add_menutext(
-                &menu, special ?
-                "The Oracle scornfully takes all your money and says:" :
-                "The Oracle meditates for a moment and then intones:");
-        else
-            add_menutext(&menu, "The message reads:");
-        add_menutext(&menu, "");
-
-        while (dlb_fgets(line, COLNO, oracles) && strcmp(line, "---\n")) {
-            if ((endp = strchr(line, '\n')) != 0)
-                *endp = 0;
-            char decrypted_line[strlen(line) + 1];
-            add_menutext(&menu, xcrypt(line, decrypted_line));
-        }
-
-        display_menu(&menu, NULL, PICK_NONE, PLHINT_ANYWHERE,
-                     NULL);
-        dlb_fclose(oracles);
-    } else {
-        pline(msgc_saveload, "Can't open oracles file!");
-        oracle_flg = -1;        /* don't try to open it again */
+    if (oracle_flg == 0) {  /* if this is the first outoracle() */
+        init_oracles();
+        oracle_flg = 1;
+        if (oracle_cnt == 0)
+            return;
     }
+    /* oracle_idx[0] is the special oracle; */
+    /* oracle_idx[1..oracle_cnt-1] are normal ones */
+    if (oracle_cnt <= 1 && !special)
+        return;     /* (shouldn't happen) */
+    idx = special ? 0 : rnd(oracle_cnt - 1);
+
+    init_menulist(&menu);
+
+    if (delphi)
+        add_menutext(
+            &menu, special ?
+            "The Oracle scornfully takes all your money and says:" :
+            "The Oracle meditates for a moment and then intones:");
+    else
+        add_menutext(&menu, "The message reads:");
+    add_menutext(&menu, "");
+
+    strncpy(chosentext, oracletext(idx), MAX_ORACLE_LENGTH);
+    nextline = strtok(chosentext, "\n");
+    while (nextline != NULL) {
+        pline(msgc_debug, "nextline: %s", nextline);
+        add_menutext(&menu, msgprintf("%s", nextline));
+        nextline = strtok(NULL, "\n");
+    }
+    /*
+    while (*chosentext) {
+        const char *lineend = chosentext;
+        const char *line;
+        while (*lineend and !(*lineend == '\n')) {
+            lineend++;
+        }
+        strncpy(line, chosentext, (lineend - chosentext));
+        add_menutext(&menu, line);
+        chosentext = lineend;
+        if (*chosentext == '\n')
+            chosentext++;
+    }
+    */
+
+    display_menu(&menu, NULL, PICK_NONE, PLHINT_ANYWHERE,
+                 NULL);
 }
 
 

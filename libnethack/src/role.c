@@ -32,16 +32,7 @@ static boolean only_sylph_safe_armor(struct monst *, enum objslot);
  * God names use a leading underscore to flag goddesses.
  */
 const struct Role roles[] = {
-    {{"Archeologist", 0}, {
-                           {"Digger", 0},
-                           {"Field Worker", 0},
-                           {"Investigator", 0},
-                           {"Exhumer", 0},
-                           {"Excavator", 0},
-                           {"Spelunker", 0},
-                           {"Speleologist", 0},
-                           {"Collector", 0},
-                           {"Curator", 0}},
+    {{"Archeologist", 0},
      "Quetzalcoatl", "Camaxtli", "Huhetotl",    /* Central American */
      "Arc", "the College of Archeology", "the Tomb of the Toltec Kings",
      PM_ARCHEOLOGIST, NON_PM, NON_PM,
@@ -57,17 +48,11 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
-     10, 5, 0, 2, 10, A_INT, SPE_MAGIC_MAPPING, -4},
-    {{"Barbarian", 0}, {
-                        {"Plunderer", "Plunderess"},
-                        {"Pillager", 0},
-                        {"Bandit", 0},
-                        {"Brigand", 0},
-                        {"Raider", 0},
-                        {"Reaver", 0},
-                        {"Slayer", 0},
-                        {"Chieftain", "Chieftainess"},
-                        {"Conqueror", "Conqueress"}},
+     10, 5, 0, 2, 10, A_INT, SPE_MAGIC_MAPPING, -4, achieve_quest_archeologist,
+     UNLOCKFEAT_ROLE_ARCHEOLOGIST, UNLOCKFEAT_ROLE_ARCHEOLOGIST},
+    /* The fact that Barbarian is at index 1 in this list is mildly significant
+       to player_selection, for pre-initializing randrole. */
+    {{"Barbarian", 0},
      "Mitra", "Crom", "Set",    /* Hyborian */
      "Bar", "the Camp of the Duali Tribe", "the Duali Oasis",
      PM_BARBARIAN, NON_PM, NON_PM,
@@ -84,17 +69,9 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 10, 2, 0},      /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 15, 0, 0, 8, A_INT, SPE_HASTE_SELF, -4},
-    {{"Caveman", "Cavewoman"}, {
-                                {"Cave Boy", "Cave Girl"},
-                                {"Cave Teen", 0},
-                                {"Young Cave Man", "Young Cave Woman"},
-                                {"Cave Man", "Cave Woman"},
-                                {"Cave Elder", 0},
-                                {"Cave Leader", 0},
-                                {"Cave Lord", "Cave Lady"},
-                                {"Cave King", "Cave Queen"},
-                                {"Cave God", 0}},
+     10, 15, 0, 0, 8, A_INT, SPE_HASTE_SELF, -4, achieve_quest_barb,
+     UNLOCKFEAT_ROLE_BARBARIAN, UNLOCKFEAT_ALLROLES_BARB},
+    {{"Caveman", "Cavewoman"},
      "Anu", "_Ishtar", "Anshar",        /* Babylonian */
      "Cav", "Home Cave", "the Dragon's Lair",
      PM_CAVEMAN, PM_CAVEWOMAN, PM_PUPPY,
@@ -110,22 +87,14 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 12, 0, 1, 8, A_INT, SPE_DIG, -4},
-    {{"Healer", 0}, {
-                     {"Rhizotomist", 0},
-                     {"Empiric", 0},
-                     {"Embalmer", 0},
-                     {"Dresser", 0},
-                     {"Medicus ossium", "Medica ossium"},
-                     {"Herbalist", 0},
-                     {"Magister", "Magistra"},
-                     {"Physician", 0},
-                     {"Chirurgeon", 0}},
+     10, 12, 0, 1, 8, A_INT, SPE_DIG, -4, achieve_quest_caveman,
+     UNLOCKFEAT_ROLE_CAVEMAN, UNLOCKFEAT_ROLE_CAVEMAN},
+    {{"Healer", 0},
      "_Athena", "Hermes", "Poseidon",   /* Greek */
      "Hea", "the Temple of Epidaurus", "the Temple of Coeus",
      PM_HEALER, NON_PM, NON_PM,
      PM_HIPPOCRATES, PM_ATTENDANT, PM_CYCLOPS,
-     PM_GIANT_RAT, PM_SNAKE, S_RODENT, S_YETI,
+     PM_GIANT_RAT, PM_PIT_VIPER, S_RODENT, S_YETI,
      ART_STAFF_OF_AESCULAPIUS,
      MRACE_HUMAN | MRACE_GNOME | MRACE_SYLPH | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
      /* Str Int Wis Dex Con Cha */
@@ -135,17 +104,27 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {11, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 20,    /* Energy */
-     10, 3, -3, 2, 10, A_INT, SPE_CURE_SICKNESS, -4},
-    {{"Knight", 0}, {
-                     {"Gallant", 0},
-                     {"Esquire", 0},
-                     {"Bachelor", 0},
-                     {"Sergeant", 0},
-                     {"Knight", 0},
-                     {"Banneret", 0},
-                     {"Chevalier", "Chevaliere"},
-                     {"Seignieur", "Dame"},
-                     {"Paladin", 0}},
+     10, 3, -3, 2, 10, A_INT, SPE_CURE_SICKNESS, -4, achieve_quest_healer,
+     UNLOCKFEAT_ROLE_HEALER, UNLOCKFEAT_ROLE_HEALER},
+    {{"Hoplite", "Shieldmaiden"},
+     "Tyr", "Odin", "Loki",     /* Norse */
+     "Shi", "the Shrine of Destiny", "the cave of Surtur",
+     PM_HOPLITE, PM_SHIELDMAIDEN, PM_PUPPY, /* Valks are special cased. */
+     PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
+     PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
+     ART_ORB_OF_FATE,
+     MRACE_HUMAN | MRACE_DWARF | MRACE_GIANT | MRACE_VALKYRIE |
+     ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL | ROLE_NEUTRAL,
+     /* Str Int Wis Dex Con Cha */
+     {10, 7, 7, 7, 10, 7},
+     {30, 6, 7, 20, 30, 7},
+     {1, 1, 1, 2, 1, 0},
+     /* Init Lower Higher */
+     {14, 0, 0, 8, 2, 0},       /* Hit points */
+     {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
+     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4, achieve_quest_shieldmaiden,
+     UNLOCKFEAT_ROLE_SHIELDMAIDEN, UNLOCKFEAT_ROLE_SHIELDMAIDEN},
+    {{"Knight", 0},
      "Lugh", "_Brigit", "Manannan Mac Lir",     /* Celtic */
      "Kni", "Camelot Castle", "the Isle of Glass",
      PM_KNIGHT, NON_PM, PM_PONY,
@@ -160,17 +139,9 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {14, 0, 0, 8, 2, 0},       /* Hit points */
      {1, 4, 0, 1, 0, 2}, 10,    /* Energy */
-     10, 8, -2, 0, 9, A_INT, SPE_TURN_UNDEAD, -4},
-    {{"Monk", 0}, {
-                   {"Candidate", 0},
-                   {"Novice", 0},
-                   {"Initiate", 0},
-                   {"Student of Stones", 0},
-                   {"Student of Waters", 0},
-                   {"Student of Metals", 0},
-                   {"Student of Winds", 0},
-                   {"Student of Fire", 0},
-                   {"Master", 0}},
+     10, 8, -2, 0, 9, A_INT, SPE_TURN_UNDEAD, -4, achieve_quest_knight,
+     UNLOCKFEAT_ROLE_KNIGHT, UNLOCKFEAT_ROLE_KNIGHT},
+    {{"Monk", 0},
      "Shan Lai Ching", "Chih Sung-tzu", "Huan Ti",      /* Chinese */
      "Mon", "the Monastery of Chan-Sune",
      "the Monastery of the Earth-Lord",
@@ -187,24 +158,17 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {2, 2, 0, 2, 0, 2}, 10,    /* Energy */
-     10, 8, -2, 2, 20, A_INT, SPE_RESTORE_ABILITY, -4},
-    {{"Priest", "Priestess"}, {
-                               {"Aspirant", 0},
-                               {"Acolyte", 0},
-                               {"Adept", 0},
-                               {"Priest", "Priestess"},
-                               {"Curate", 0},
-                               {"Canon", "Canoness"},
-                               {"Lama", 0},
-                               {"Patriarch", "Matriarch"},
-                               {"High Priest", "High Priestess"}},
+     10, 8, -2, 2, 20, A_INT, SPE_RESTORE_ABILITY, -4, achieve_quest_monk,
+     UNLOCKFEAT_ROLE_MONK, UNLOCKFEAT_ROLE_MONK},
+    {{"Priest", "Priestess"},
      0, 0, 0,   /* chosen randomly from among the other roles */
      "Pri", "the Great Temple", "the Temple of Nalzok",
      PM_PRIEST, PM_PRIESTESS, NON_PM,
      PM_ARCH_PRIEST, PM_ACOLYTE, PM_NALZOK,
      PM_HUMAN_ZOMBIE, PM_WRAITH, S_ZOMBIE, S_WRAITH,
      ART_SCEPTRE_OF_MIGHT,
-     MRACE_HUMAN | MRACE_ELF | MRACE_DWARF | MRACE_SYLPH | ROLE_MALE | ROLE_FEMALE
+     MRACE_HUMAN | MRACE_ELF | MRACE_DWARF | MRACE_SYLPH | MRACE_VALKYRIE
+              | ROLE_MALE | ROLE_FEMALE
               | ROLE_LAWFUL | ROLE_NEUTRAL | ROLE_CHAOTIC,
      /* Str Int Wis Dex Con Cha */
      {7, 10, 7, 7, 7, 7},
@@ -213,19 +177,11 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {12, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 2}, 10,    /* Energy */
-     10, 3, -2, 2, 10, A_INT, SPE_REMOVE_CURSE, -4},
+     10, 3, -2, 2, 10, A_INT, SPE_REMOVE_CURSE, -4,
+     achieve_quest_priest, UNLOCKFEAT_ROLE_PRIEST, UNLOCKFEAT_ROLE_PRIEST},
     /* Note: Rogue precedes Ranger so that use of `-R' on the command line
        retains its traditional meaning. */
-    {{"Rogue", 0}, {
-                    {"Footpad", 0},
-                    {"Cutpurse", 0},
-                    {"Rogue", 0},
-                    {"Pilferer", 0},
-                    {"Robber", 0},
-                    {"Burglar", 0},
-                    {"Filcher", 0},
-                    {"Magsman", "Magswoman"},
-                    {"Thief", 0}},
+    {{"Rogue", 0},
      "Issek", "Mog", "Kos",     /* Nehwon */
      "Rog", "the Thieves' Guild Hall", "the Assassins' Guild Hall",
      PM_ROGUE, NON_PM, NON_PM,
@@ -240,17 +196,9 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 11,    /* Energy */
-     10, 8, 0, 1, 9, A_INT, SPE_DETECT_TREASURE, -4},
-    {{"Ranger", 0}, {
-                     {"Tenderfoot", 0},
-                     {"Lookout", 0},
-                     {"Trailblazer", 0},
-                     {"Reconnoiterer", "Reconnoiteress"},
-                     {"Scout", 0},
-                     {"Arbalester", 0}, /* One skilled at crossbows */
-                     {"Archer", 0},
-                     {"Sharpshooter", 0},
-                     {"Marksman", "Markswoman"}},
+     10, 8, 0, 1, 9, A_INT, SPE_DETECT_TREASURE, -4,
+     achieve_quest_rogue, UNLOCKFEAT_ROLE_ROGUE, UNLOCKFEAT_ROLE_ROGUE},
+    {{"Ranger", 0},
      "Mercury", "_Venus", "Mars",       /* Roman/planets */
      "Ran", "Orion's camp", "the cave of the wumpus",
      PM_RANGER, NON_PM, PM_PUPPY /* Orion & canis major */ ,
@@ -267,17 +215,9 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {13, 0, 0, 6, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 12,    /* Energy */
-     10, 9, 2, 1, 10, A_INT, SPE_INVISIBILITY, -4},
-    {{"Samurai", 0}, {
-                      {"Hatamoto", 0},  /* Banner Knight */
-                      {"Ronin", 0},     /* no allegiance */
-                      {"Ninja", "Kunoichi"},    /* secret society */
-                      {"Joshu", 0},     /* heads a castle */
-                      {"Ryoshu", 0},    /* has a territory */
-                      {"Kokushu", 0},   /* heads a province */
-                      {"Daimyo", 0},    /* a samurai lord */
-                      {"Kuge", 0},      /* Noble of the Court */
-                      {"Shogun", 0}},   /* supreme commander, warlord */
+     10, 9, 2, 1, 10, A_INT, SPE_INVISIBILITY, -4,
+     achieve_quest_ranger, UNLOCKFEAT_ROLE_RANGER, UNLOCKFEAT_ROLE_RANGER},
+    {{"Samurai", 0},
      "_Amaterasu Omikami", "Raijin", "Susanowo",        /* Japanese */
      "Sam", "the Castle of the Taro Clan", "the Shogun's Castle",
      PM_SAMURAI, NON_PM, PM_PUPPY,
@@ -292,17 +232,9 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {13, 0, 0, 8, 1, 0},       /* Hit points */
      {1, 0, 0, 1, 0, 1}, 11,    /* Energy */
-     10, 10, 0, 0, 8, A_INT, SPE_CLAIRVOYANCE, -4},
-    {{"Tourist", 0}, {
-                      {"Rambler", 0},
-                      {"Sightseer", 0},
-                      {"Excursionist", 0},
-                      {"Peregrinator", "Peregrinatrix"},
-                      {"Traveler", 0},
-                      {"Journeyer", 0},
-                      {"Voyager", 0},
-                      {"Explorer", 0},
-                      {"Adventurer", 0}},
+     10, 10, 0, 0, 8, A_INT, SPE_CLAIRVOYANCE, -4,
+     achieve_quest_samurai, UNLOCKFEAT_ROLE_SAMURAI, UNLOCKFEAT_ROLE_SAMURAI},
+    {{"Tourist", 0},
      "Blind Io", "_The Lady", "Offler", /* Discworld */
      "Tou", "Ankh-Morpork", "the Thieves' Guild Hall",
      PM_TOURIST, NON_PM, NON_PM,
@@ -318,42 +250,9 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {8, 0, 0, 8, 0, 0},        /* Hit points */
      {1, 0, 0, 1, 0, 1}, 14,    /* Energy */
-     10, 5, 1, 2, 10, A_INT, SPE_CHARM_MONSTER, -4},
-    {{"Valkyrie", 0}, {
-                       {"Stripling", 0},
-                       {"Skirmisher", 0},
-                       {"Fighter", 0},
-                       {"Man-at-arms", "Woman-at-arms"},
-                       {"Warrior", 0},
-                       {"Swashbuckler", 0},
-                       {"Hero", "Heroine"},
-                       {"Champion", 0},
-                       {"Lord", "Lady"}},
-     "Tyr", "Odin", "Loki",     /* Norse */
-     "Val", "the Shrine of Destiny", "the cave of Surtur",
-     PM_VALKYRIE, NON_PM, NON_PM /* PM_WINTER_WOLF_CUB */ ,
-     PM_NORN, PM_WARRIOR, PM_LORD_SURTUR,
-     PM_FIRE_ANT, PM_FIRE_GIANT, S_ANT, S_GIANT,
-     ART_ORB_OF_FATE,
-     MRACE_HUMAN | ROLE_FEMALE | ROLE_NEUTRAL,
-     /* Str Int Wis Dex Con Cha */
-     {10, 7, 7, 7, 10, 7},
-     {30, 6, 7, 20, 30, 7},
-     {1, 1, 1, 2, 1, 0},
-     /* Init Lower Higher */
-     {14, 0, 0, 8, 2, 0},       /* Hit points */
-     {1, 0, 0, 1, 0, 1}, 10,    /* Energy */
-     10, 10, -2, 0, 9, A_INT, SPE_CONE_OF_COLD, -4},
-    {{"Wizard", 0}, {
-                     {"Evoker", 0},
-                     {"Conjurer", 0},
-                     {"Thaumaturge", 0},
-                     {"Magician", 0},
-                     {"Enchanter", "Enchantress"},
-                     {"Sorcerer", "Sorceress"},
-                     {"Necromancer", 0},
-                     {"Wizard", 0},
-                     {"Mage", 0}},
+     10, 5, 1, 2, 10, A_INT, SPE_CHARM_MONSTER, -4,
+     achieve_quest_tourist, UNLOCKFEAT_ROLE_TOURIST, UNLOCKFEAT_ROLE_TOURIST},
+    {{"Wizard", 0},
      "Ptah", "Thoth", "Anhur",  /* Egyptian */
      "Wiz", "the Lonely Tower", "the Tower of Darkness",
      PM_WIZARD, NON_PM, PM_KITTEN,
@@ -369,7 +268,8 @@ const struct Role roles[] = {
      /* Init Lower Higher */
      {10, 0, 0, 8, 1, 0},       /* Hit points */
      {4, 3, 0, 2, 0, 3}, 12,    /* Energy */
-     10, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE, -4},
+     10, 1, 0, 3, 10, A_INT, SPE_MAGIC_MISSILE, -4,
+     achieve_quest_wizard, UNLOCKFEAT_ROLE_WIZARD, UNLOCKFEAT_ALLROLES_WIZARD},
 /* Array terminator */
     {{0, 0}}
 };
@@ -396,7 +296,8 @@ const struct Race races[] = {
      {STR18(100), 18, 18, 18, 18, 18},
      /* Init Lower Higher */
      {2, 0, 0, 2, 1, 0},        /* Hit points */
-     {1, 0, 2, 0, 2, 0} /* Energy */
+     {1, 0, 2, 0, 2, 0},        /* Energy */
+     UNLOCKFEAT_RACE_HUMAN, UNLOCKFEAT_ALLRACES_HUMAN
      },
     {"elf", "elven", "elvenkind", "Elf",
      {0, 0},
@@ -409,20 +310,22 @@ const struct Race races[] = {
      {18, 20, 20, 18, 16, 18},
      /* Init Lower Higher */
      {1, 0, 0, 1, 1, 0},        /* Hit points */
-     {2, 0, 3, 0, 3, 0} /* Energy */
+     {2, 0, 3, 0, 3, 0},        /* Energy */
+     UNLOCKFEAT_RACE_ELF, UNLOCKFEAT_RACE_ELF,
      },
     {"dwarf", "dwarven", "dwarvenkind", "Dwa",
      {0, 0},
      10, /* base speed, a bit slow */
      PM_DWARF, NON_PM, PM_DWARF_MUMMY, PM_DWARF_ZOMBIE,
-     MRACE_DWARF | ROLE_MALE | ROLE_FEMALE | ROLE_LAWFUL,
+     MRACE_DWARF | ROLE_MALE | ROLE_LAWFUL,
      MRACE_DWARF, MRACE_DWARF | MRACE_GNOME, MRACE_ORC,
      /* Str Int Wis Dex Con Cha */
      {3, 3, 3, 3, 3, 3},
      {STR18(100), 16, 16, 20, 20, 16},
      /* Init Lower Higher */
      {4, 0, 0, 3, 2, 0},        /* Hit points */
-     {0, 0, 0, 0, 0, 0} /* Energy */
+     {0, 0, 0, 0, 0, 0},        /* Energy */
+     UNLOCKFEAT_RACE_DWARF, UNLOCKFEAT_RACE_DWARF,
      },
     {"gnome", "gnomish", "gnomehood", "Gno",
      {0, 0},
@@ -435,7 +338,8 @@ const struct Race races[] = {
      {STR18(50), 19, 18, 18, 18, 18},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
-     {2, 0, 2, 0, 2, 0} /* Energy */
+     {2, 0, 2, 0, 2, 0},        /* Energy */
+     UNLOCKFEAT_RACE_GNOME, UNLOCKFEAT_RACE_GNOME,
      },
     {"giant", "giant", "giantdom", "Gia",
      {"giant", "giantess"},
@@ -448,7 +352,8 @@ const struct Race races[] = {
      {STR19(24), 15, 15, 18, 20, 16},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
-     {1, 0, 1, 0, 1, 0} /* Energy */
+     {1, 0, 1, 0, 1, 0},        /* Energy */
+     UNLOCKFEAT_RACE_GIANT, UNLOCKFEAT_RACE_GIANT,
      },
     {"orc", "orcish", "orcdom", "Orc",
      {0, 0},
@@ -461,7 +366,8 @@ const struct Race races[] = {
      {STR18(50), 16, 16, 18, 18, 16},
      /* Init Lower Higher */
      {1, 0, 0, 1, 0, 0},        /* Hit points */
-     {1, 0, 1, 0, 1, 0} /* Energy */
+     {1, 0, 1, 0, 1, 0},        /* Energy */
+     UNLOCKFEAT_RACE_ORC, UNLOCKFEAT_RACE_ORC,
      },
     {"sylph", "sylph", "sylphood", "Syl",
      {0,0},
@@ -473,7 +379,8 @@ const struct Race races[] = {
      {3, 3, 3, 3, 3, 3},
      {16, 18, 19, 19, 17, 20},
      {2, 0, 1, 1, 1, 1},        /* Hit points */
-     {2, 0, 3, 0, 2, 2} /* Energy */
+     {2, 0, 3, 0, 2, 2},        /* Energy */
+     UNLOCKFEAT_RACE_SYLPH, UNLOCKFEAT_RACE_SYLPH,
     },
     {"scurrier", "scurrid", "scurridae", "Scu",
      /* Yes, I am aware that "scurrier" and "sciurid" are etymologically
@@ -485,14 +392,29 @@ const struct Race races[] = {
      16, /* base speed on the fast side (may need tweaked) */
      PM_SCURRIER, NON_PM, NON_PM, NON_PM,
      MRACE_SCURRIER | ROLE_MALE | ROLE_FEMALE | ROLE_NEUTRAL,
-     MRACE_SCURRIER, 0, MRACE_ORC,
+     MRACE_SCURRIER, MRACE_RODENT, MRACE_ORC,
      /* Str Int Wis Dex Con Cha */
      {2, 2, 3, 4, 2, 3},
      {16, 16, 18, 22, 15, 22},
      /* Init Lower Higher */
      {1, 0, 0, 1, 1, 0},        /* Hit points */
-     {1, 0, 2, 0, 2, 0} /* Energy */
+     {1, 0, 2, 0, 2, 0},        /* Energy */
+     UNLOCKFEAT_RACE_SCURRIER, UNLOCKFEAT_RACE_SCURRIER,
      },
+    {"valkyrie", "valkyrie", "Valhalla", "Val",
+     {"valkyrie", "valkyrie"},
+     12, /* base speed */
+     PM_VALKYRIE, PM_VALKYRIE, NON_PM, NON_PM,
+     MRACE_VALKYRIE | ROLE_FEMALE | ROLE_NEUTRAL,
+     MRACE_VALKYRIE, MRACE_VALKYRIE, MRACE_DWARF | MRACE_GIANT,
+     /* Str Int Wis Dex Con Cha */
+     {3, 2, 4, 2, 4, 3},
+     {STR19(20), 17, 19, 17, 18, 18},
+     /* Init Lower Higher */
+     {2, 0, 1, 0, 1, 0},        /* Hit points */
+     {1, 0, 3, 0, 3, 0},        /* Energy */
+     UNLOCKFEAT_RACE_VALKYRIE, UNLOCKFEAT_RACE_VALKYRIE
+    },
 /* Array terminator */
     {0, 0, 0, 0}
 };
@@ -814,6 +736,19 @@ ok_align(int rolenum, int racenum, int gendnum, int alignnum)
     int i;
     short allow;
 
+    // TODO:  XXX YOU ARE HERE
+/*
+    if (rolenum >= 0 && rolenum < SIZE(roles) - 1 &&
+        !is_unlocked_feature(UNLOCK_FIELD_ROLE,
+                             roles[rolenum].unlocked)) {
+        return FALSE;
+    }
+    if (racenum >= 0 && racenum < SIZE(races) - 1 &&
+        !is_unlocked_feature(UNLOCK_FIELD_RACE,
+                             races[racenum].unlockedrace)) {
+        return FALSE;
+    }
+*/
     if (alignnum >= 0 && alignnum < ROLE_ALIGNS) {
         allow = aligns[alignnum].allow;
         if (rolenum >= 0 && rolenum < SIZE(roles) - 1 &&
@@ -1285,7 +1220,8 @@ Hello(struct monst *mtmp)
                 "Irasshaimase" : "Konnichi wa");   /* Japanese */
     case PM_TOURIST:
         return "Aloha"; /* Hawaiian */
-    case PM_VALKYRIE:
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
         return "Velkommen";     /* Norse */
     default:
         return "Hello";

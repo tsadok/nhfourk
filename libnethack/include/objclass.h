@@ -67,6 +67,8 @@ struct objclass {
 # define GLASS          19
 # define GEMSTONE       20
 # define MINERAL        21
+/* If the above list of materials changes, it is necessary to update
+   matname[] in objnam.c and also foodwords[] in eat.c */
 
 # define is_organic(otmp)       (objects[otmp->otyp].oc_material <= WOOD)
 # define is_metallic(otmp)      (objects[otmp->otyp].oc_material >= IRON && \
@@ -97,6 +99,7 @@ struct objclass {
 # define ARM_SUIT       0
 
     uchar oc_oprop;     /* property (invis, &c.) conveyed */
+    uchar oc_oprop2;    /* additional property */
     char oc_class;      /* object class */
     schar oc_delay;     /* delay when using such an object */
     uchar oc_color;     /* color of the object */

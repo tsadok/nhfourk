@@ -113,10 +113,12 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
                 /* I suspect few players will be upset that monsters */
                 /* can't wish for wands of death here.... */
                 if (rn2(2)) {
-                    verbalize(msgc_monneutral, "You freed me!");
+                    if (!Deaf)
+                        verbalize(msgc_monneutral, "You freed me!");
                     msethostility(mtmp, FALSE, TRUE);
                 } else {
-                    verbalize(msgc_monneutral, "It is about time.");
+                    if (!Deaf)
+                        verbalize(msgc_monneutral, "It is about time.");
                     if (vis)
                         pline_implied(msgc_monneutral, "%s vanishes.",
                                       Monnam(mtmp));
@@ -130,15 +132,15 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
         wandlevel = getwandlevel(mon, obj);
         if (wandlevel == P_FAILURE) {
             /* critical failure */
-            if (canhear()) {
-                if (vis)
-                    pline(combat_msgc(NULL, mon, cr_hit),
-                          "%s zaps %s, which suddenly explodes!", Monnam(mon),
-                          an(xname(obj)));
-                else
-                    You_hear(msgc_levelsound,
-                             "a zap and an explosion in the distance.");
-            }
+            /* No canhear() filter: the 'if' message doesn't warrant it, 'else'
+               message doesn't need it since Your_hear() has one of its own. */
+            if (vis)
+                pline(combat_msgc(NULL, mon, cr_hit),
+                      "%s zaps %s, which suddenly explodes!", Monnam(mon),
+                      an(xname(obj)));
+            else
+                You_hear(msgc_levelsound,
+                         "a zap and an explosion in the distance.");
             mon_break_wand(mon, obj);
             m_useup(mon, obj);
             m->has_defense = m->has_offense = m->has_misc = MUSE_NONE;
@@ -152,10 +154,13 @@ precheck(struct monst *mon, struct obj *obj, struct musable *m)
 static void
 mzapmsg(struct monst *mtmp, struct obj *otmp, boolean self)
 {
-    if (!mon_visible(mtmp))
+    if (!mon_visible(mtmp)) {
+        int range = couldsee(mtmp->mx, mtmp->my) /* 9 or 5 in 3.6 */
+            ? (BOLT_LIM + 0) : (BOLT_LIM - 3);   /* 12 or 9 for us. */
         You_hear(msgc_levelsound, "a %s zap.",
                  (distu(mtmp->mx, mtmp->my) <=
-                  (BOLT_LIM + 1) * (BOLT_LIM + 1)) ? "nearby" : "distant");
+                  (range * range)) ? "nearby" : "distant");
+    }
     else if (self)
         pline(combat_msgc(mtmp, NULL, cr_hit), "%s zaps %sself with %s!",
               Monnam(mtmp), mhim(mtmp), doname(otmp));
@@ -931,7 +936,7 @@ rnd_defensive_item(struct monst *mtmp, enum rng rng)
     int trycnt = 0;
 
     if (is_animal(pm) || attacktype(pm, AT_EXPL) || mindless(mtmp->data)
-        || noncorporeal(pm) || pm->mlet == S_KOP)
+        || noncorporeal(pm) || mtmp->iskop)
         return 0;
 try_again:
     switch (rn2_on_rng(8 + (difficulty > 3) + (difficulty > 6) +
@@ -1586,7 +1591,7 @@ rnd_offensive_item(struct monst *mtmp, enum rng rng)
     int difficulty = MONSTR(monsndx(pm));
 
     if (is_animal(pm) || attacktype(pm, AT_EXPL) || mindless(mtmp->data)
-        || noncorporeal(pm) || pm->mlet == S_KOP)
+        || noncorporeal(pm) || mtmp->iskop)
         return 0;
     if (difficulty > 7 && !rn2_on_rng(35, rng))
         return WAN_DEATH;
@@ -2014,8 +2019,8 @@ use_misc(struct monst *mtmp, struct musable *m)
                               "A whip wraps around %s you're wielding!",
                               the_weapon);
 
-            if (where_to == 3 && hates_silver(mtmp->data) &&
-                objects[obj->otyp].oc_material == SILVER) {
+            if (where_to == 3 &&
+                hates_material(mtmp->data, objects[obj->otyp].oc_material)) {
                 /* this monster won't want to catch a silver weapon; drop it at 
                    hero's feet instead */
                 where_to = 2;
@@ -2112,7 +2117,7 @@ rnd_misc_item(struct monst *mtmp, enum rng rng)
     int difficulty = MONSTR(monsndx(pm));
 
     if (is_animal(pm) || attacktype(pm, AT_EXPL) || mindless(mtmp->data)
-        || noncorporeal(pm) || pm->mlet == S_KOP)
+        || noncorporeal(pm) || pm->mlet == mtmp->iskop)
         return 0;
     /* Unlike other rnd_item functions, we only allow _weak_ monsters to have
        this item; after all, the item will be used to strengthen the monster
@@ -2247,7 +2252,7 @@ mon_reflects(struct monst *mon, struct monst *magr,
         return TRUE;
     } else if ((orefl = which_armor(mon, os_arm)) &&
                (orefl->otyp == SILVER_DRAGON_SCALES ||
-                orefl->otyp == SILVER_DRAGON_SCALE_MAIL)) {
+                orefl->scalecolor == DRAGONCOLOR_SILVER)) {
         if (str)
             pline(combat_msgc(magr, mon, cr),
                   str, s_suffix(mon_nam(mon)), "armor");

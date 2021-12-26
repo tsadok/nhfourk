@@ -71,6 +71,8 @@ static char end_killer[DTHSZ + 1] = {0};
 #endif
 #define SEPC (SEP[0])
 
+#define SUBSEP ","
+
 void
 munge_xlstring(char *dest, const char *src, int n)
 {
@@ -183,22 +185,35 @@ encode_birthoptions(void)
         c |= 0x0002UL;
     if (flags.seduce_enabled)
         c |= 0x0004UL;
-    if (flags.bones_enabled)
+    if (flags.bones_enabled != bones_disabled)
         c |= 0x0008UL;
     if (flags.permablind)
         c |= 0x0010UL;
     if (flags.permahallu)
         c |= 0x0020UL;
-    /* leaving bits open here for permaconf and one other impairment */
+    if (flags.permaconf)
+        c |= 0x0040UL;
+    if (flags.permastun)
+        c |= 0x0080UL;
     if (flags.polyinit_mnum != -1)
         c |= 0x0100UL;
+    if (flags.permaglib)
+        c |= 0x0200UL;
+    if (flags.permafumble)
+        c |= 0x0400UL;
+    if (flags.permalame)
+        c |= 0x0800UL;
+    if (flags.permabadluck)
+        c |= 0x1000UL;
+    if (flags.bones_enabled == bones_anywhere)
+        c |= 0x2000UL;
 
     return c;
 }
 
-static_assert(num_conducts <= 32,
+static_assert(num_conducts <= 64,
               "Too many conducts for encode_conduct to encode");
-unsigned long
+unsigned long long
 encode_conduct(void)
 {
     enum player_conduct cond = conduct_first;
@@ -232,8 +247,11 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
             (unsigned long)tt->birthdate, tt->uid);
 
     get_initial_rng_seed(rngseedbuf);
-
-    fprintf(rfile, SEP "rngseed=%.*s", RNG_SEED_SIZE_BASE64, rngseedbuf);
+    if (flags.setseed) {
+        fprintf(rfile, SEP "rngseed=%.*s", RNG_SEED_SIZE_BASE64, rngseedbuf);
+    } else {
+        fprintf(rfile, SEP "rngseed=%s", flags.setseed);
+    }
 
     fprintf(rfile, SEP "role=%s" SEP "race=%s" SEP "gender=%s" SEP "align=%s",
             tt->plrole, tt->plrace, tt->plgend, tt->plalign);
@@ -256,7 +274,9 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
     munge_xlstring(buf2, dumpname, sizeof buf2);
     fprintf(rfile, SEP "dumplog=%s", buf2);
 
-    fprintf(rfile, SEP "conduct=%ld", encode_conduct());
+    fprintf(rfile, SEP "gameidnum=%d", u.gameidnum);
+
+    fprintf(rfile, SEP "conduct=%lld", encode_conduct());
 
     fprintf(rfile, SEP "birthoption=%ld", encode_birthoptions());
 
@@ -304,6 +324,13 @@ write_xlentry(FILE * rfile, const struct toptenentry *tt,
              *flags.setseed ? "setseed" :
              flags.polyinit_mnum != -1 ? "polyinit" :
              flags.challenge ? "challenge" : "normal"));
+
+    fprintf(rfile, SEP "gengold=m:%d" SUBSEP "z:%d" SUBSEP "f:%d"
+            SUBSEP "v:%d" SUBSEP "b:%d" SUBSEP "c:%d" SUBSEP "m:%d",
+            u.generated_gold.moninv,
+            u.generated_gold.zoo,       u.generated_gold.onfloor,
+            u.generated_gold.vault,     u.generated_gold.buried,
+            u.generated_gold.contained, u.generated_gold.misc);
 
     fprintf(rfile, "\n");
 }

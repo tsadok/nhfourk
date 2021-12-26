@@ -103,8 +103,12 @@ static const struct innate tou_abil[] = {
     {0, 0, 0, 0}
 };
 
-static const struct innate val_abil[] = {
-    {1, &(HCold_resistance), "", ""},
+static const struct innate shi_abil[] = {
+    {5, &(HFast), "quick", "slow"},
+    {10, &(HCold_resistance), "temperate", "chilly"},
+    {0, 0, 0, 0}
+};
+static const struct innate shi_abil_valk[] = {
     {7, &(HFast), "quick", "slow"},
     {0, 0, 0, 0}
 };
@@ -137,6 +141,12 @@ static const struct innate sylph_abil[] = {
     {16, &(HDetect_monsters), "perceptive", "dull"},
     {0, 0, 0, 0}
 };
+
+static const struct innate valk_abil[] = {
+    {1, &(HCold_resistance), "", ""},
+    {0, 0, 0, 0}
+};
+
 
 static void exerper(void);
 static void postadjabil(unsigned int *);
@@ -712,8 +722,9 @@ adjabil(int oldlevel, int newlevel)
     case PM_TOURIST:
         abil = tou_abil;
         break;
-    case PM_VALKYRIE:
-        abil = val_abil;
+    case PM_SHIELDMAIDEN:
+    case PM_HOPLITE:
+        abil = shi_abil;
         break;
     case PM_WIZARD:
         abil = wiz_abil;
@@ -732,6 +743,10 @@ adjabil(int oldlevel, int newlevel)
         break;
     case PM_SYLPH:
         rabil = sylph_abil;
+        break;
+    case PM_VALKYRIE:
+        abil = shi_abil_valk;
+        rabil = valk_abil;
         break;
     case PM_HUMAN:
     case PM_DWARF:
@@ -812,6 +827,7 @@ newhp(void)
         /* NetHack Fourk balance adjustment:  lawful characters start with a
            lower alignment record, chaotics higher.  */
         u.ualign.record = urole.initrecord + INIT_ALIGNREC(u.ualign.type);
+        u.ualignmax = u.ualign.record;
 
         return hp;
     } else {
@@ -924,7 +940,7 @@ get_stealth(struct monst *mon)
         }
     }
     if (player) {
-        int iwt = inv_weight();
+        int iwt = inv_weight_total();
         switch (calc_capacity(equipweight)) {
             /* Calling calc_capacity in this way, with equipweight, basically
                causes equipped items such as armor and weapons to count double,
@@ -1020,6 +1036,21 @@ get_player_ac(void)
     return (schar)player_ac;
 }
 
+void
+historic_alignment(void)
+{
+    if ((u.ualign.record >= PIOUS) && u.ualignmax < PIOUS)
+        historic_event(FALSE, TRUE, "became pious.");
+    else if ((u.ualign.record >= DEVOUT) && u.ualignmax < DEVOUT)
+        historic_event(FALSE, FALSE, "became devout.");
+    else if ((u.ualign.record >= FERVENT) && u.ualignmax < FERVENT)
+        historic_event(FALSE, FALSE, "became fervent.");
+    else if ((u.ualign.record >= STRIDENT) && u.ualignmax < STRIDENT)
+        historic_event(FALSE, FALSE, "became strident.");
+    else if ((u.ualign.record >= 1) && u.ualignmax < 1)
+        historic_event(FALSE, FALSE, "became positively aligned.");
+}
+
 /* Avoid possible problems with alignment overflow, and provide a centralized
    location for any future alignment limits. */
 void
@@ -1059,8 +1090,7 @@ adjalign(int n)
             }
         }
     } else if ((newalign > u.ualign.record) &&
-               (u.ualign.record < (urole.initrecord +
-                                INIT_ALIGNREC((aligns[u.initalign]).value)))) {
+               (u.ualign.record < u.ualignmax)) {
         u.ualign.record = newalign;
         if (u.uconduct[conduct_lostalign]) {
             if (UALIGNREC < SINNED) {
@@ -1077,6 +1107,10 @@ adjalign(int n)
         }
     } else if (!(u.ualign.record == newalign)) {
         u.ualign.record = newalign;
+        if (u.ualign.record > u.ualignmax) {
+            historic_alignment();
+            u.ualignmax = u.ualign.record;
+        }
         if (UALIGNREC == PIOUS) {
             pline(msgc_aligngood, "Your conscience is clear.");
         }

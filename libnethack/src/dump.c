@@ -123,7 +123,12 @@ dump_status(void)
 
     get_initial_rng_seed(rngseedbuf);
 
-    fprintf(dumpfp, "Dungeon seed: %.*s\n", RNG_SEED_SIZE_BASE64, rngseedbuf);
+    if (flags.setseed) {
+        fprintf(dumpfp, "Dungeon seed [set]: %s\n", flags.setseed);
+    } else {
+        fprintf(dumpfp, "Dungeon seed: %.*s\n", RNG_SEED_SIZE_BASE64,
+                rngseedbuf);
+    }
     fprintf(dumpfp, "Game ID: %s_%" PRIdLEAST64 "\n\n", u.uplname,
             (int_least64_t)u.ubirthday / 1000000L);
 }

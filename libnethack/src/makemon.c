@@ -64,6 +64,7 @@ newmonst(int extyp, int namelen)
 
     mon = malloc(sizeof (struct monst) + namelen + xlen);
     memset(mon, 0, sizeof (struct monst) + namelen + xlen);
+    mon->struct_type = 'M'; /* See doc/struct_types.txt */
     mon->mxtyp = extyp;
     mon->mxlth = xlen;
     mon->mnamelth = namelen;
@@ -238,7 +239,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
  *      kobolds get darts to throw
  *      centaurs get some sort of bow & arrows or bolts
  *      soldiers get all sorts of things.
- *      kops get clubs & cream pies.
  *      the Wizard of Yendor gets various stuff
  */
     switch (ptr->mlet) {
@@ -416,13 +416,6 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
                 mongets(mtmp, !rn2_on_rng(3, rng) ? PICK_AXE : DAGGER, rng);
             }
         }
-        break;
-    case S_KOP:        /* create Keystone Kops with cream pies to throw. As
-                          suggested by KAA.  [MRS] */
-        if (!rn2_on_rng(4, rng))
-            m_initthrow(mtmp, CREAM_PIE, 2, rng);
-        if (!rn2_on_rng(3, rng))
-            mongets(mtmp, (rn2_on_rng(2, rng)) ? CLUB : RUBBER_HOSE, rng);
         break;
     case S_ORC:
         if (rn2_on_rng(2, rng))
@@ -607,6 +600,7 @@ mkmonmoney(struct monst *mtmp, long amount, enum rng rng)
     struct obj *gold = mksobj(mtmp->dlevel, GOLD_PIECE, FALSE, FALSE, rng);
 
     gold->quan = amount;
+    u.generated_gold.moninv += amount;
     add_to_minv(mtmp, gold);
 }
 
@@ -836,7 +830,8 @@ m_initinv(struct monst *mtmp, enum rng rng)
         mongets(mtmp, rnd_defensive_item(mtmp, rng), rng);
     if ((int)mtmp->m_lev > rn2_on_rng(100, rng))
         mongets(mtmp, rnd_misc_item(mtmp, rng), rng);
-    if (likes_gold(ptr) && !findgold(mtmp->minvent) && !rn2_on_rng(5, rng))
+    if (likes_gold(ptr) && !findgold(mtmp->minvent, FALSE) &&
+        !rn2_on_rng(5, rng))
         mkmonmoney(mtmp, (long)dice(level_difficulty(&lev->z),
                                     mtmp->minvent ? 5 : 10), rng);
 }
@@ -1150,6 +1145,8 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         mtmp->mtrapseen = (1L << (PIT - 1)) | (1L << (HOLE - 1));
     if (ptr->msound == MS_LEADER)       /* leader knows about portal */
         mtmp->mtrapseen |= (1L << (MAGIC_PORTAL - 1));
+    if (mmflags && MM_KOP)
+        mtmp->iskop = 1;
 
     mtmp->dlevel = lev;
     place_monster(mtmp, x, y);
@@ -1181,7 +1178,7 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
         set_mimic_sym(mtmp, lev, stats_rng);
         break;
     case S_COCKATRICE:
-        if (in_mklev && touch_petrifies(mtmp->data)) {
+        if (in_mklev && touch_petrifies(mtmp->data) && countbirth) {
             /* Place a few random statues around the level. */
             int count, tries;
             for (count = 0; count < 6; count++) {
@@ -1218,7 +1215,7 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
             mtmp->minvis = TRUE;
         }
         break;
-    case S_EEL:
+    case S_KRAKEN:
         if (is_pool(lev, x, y))
             mtmp->mundetected = TRUE;
         break;
@@ -1500,6 +1497,8 @@ rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
     boolean hell = In_hell(dlev);
     boolean rogue = Is_rogue_level(dlev);
     boolean elem_plane = In_endgame(dlev) && !Is_astralevel(dlev);
+    boolean isdeep = Is_earthlevel(dlev) ||
+        ((depth(dlev) > 12) && (!Is_outdoors(dlev)));
 
     int geno = ptr ? ptr->geno & ~ignoreflags : 0;
 
@@ -1530,6 +1529,8 @@ rndmonst_inner(const d_level *dlev, char class, int ignoreflags, enum rng rng)
             ptr = NULL;                          /* elementals on wrong plane */
         if (ptr && ((hell && (geno & G_NOHELL)) || (!hell && (geno & G_HELL))))
             ptr = NULL;                       /* flagged to not generate here */
+        if (ptr && (!isdeep) && (ptr->mlet == S_XORN))
+            ptr = NULL;    /* deep rock dwellers don't randomly generate here */
 
         /* Hard player-based checks: stop the monster generating, but change to
            the main RNG if this happens in level generation */
@@ -1805,7 +1806,7 @@ int
 superioritem(struct monst *mon, int original)
 {
     int superioritem = original;
-    int nosilver = (mon && hates_silver(mon->data)) ? 1 : 0;
+    int nosilver = (mon && hates_material(mon->data, SILVER)) ? 1 : 0;
     if (!Inhell)
         return original;
     /* Note: I'm sure some of these probabilities will need tweaked. */
@@ -1871,13 +1872,13 @@ superioritem(struct monst *mon, int original)
             superioritem = T_SHIRT;
             break;
         case 2:
-            superioritem = BLACK_DRAGON_SCALE_MAIL;
+            superioritem = ELVEN_MITHRIL_COAT;
             break;
         case 3:
-            superioritem = SILVER_DRAGON_SCALE_MAIL;
+            superioritem = PLATE_MAIL;
             break;
         case 4:
-            superioritem = GRAY_DRAGON_SCALE_MAIL;
+            superioritem = CRYSTAL_PLATE_MAIL;
             break;
         default:
             superioritem = T_SHIRT;
@@ -1906,6 +1907,11 @@ mongets(struct monst *mtmp, int otyp, enum rng rng)
             if ((otmp->oclass == WEAPON_CLASS) || 
                 (otmp->oclass == ARMOR_CLASS)) {
                 otmp->spe += rn2_on_rng(3, rng);
+            }
+            if ((otmp->oclass == ARMOR_CLASS) &&
+                (objects[otmp->otyp].oc_armcat == os_arm) &&
+                !rn2_on_rng(7, rng)) {
+                /* select and apply scale color */
             }
         }
         if (otmp->otyp == SPEAR || otmp->otyp == DWARVISH_SPEAR ||
@@ -2004,16 +2010,18 @@ peace_minded(const struct permonst *ptr)
 
     if (always_peaceful(ptr))
         return TRUE;
+    if (race_peaceful(ptr))
+        return TRUE;
+    if (URACEDATA == &mons[PM_GNOME] &&
+        monsndx(ptr) == PM_EARTH_ELEMENTAL)
+        return TRUE;
     if (always_hostile(ptr))
+        return FALSE;
+    if (race_hostile(ptr))
         return FALSE;
     if (ptr->msound == MS_LEADER || ptr->msound == MS_GUARDIAN)
         return TRUE;
     if (ptr->msound == MS_NEMESIS)
-        return FALSE;
-
-    if (race_peaceful(ptr))
-        return TRUE;
-    if (race_hostile(ptr))
         return FALSE;
 
     /* the monster is hostile if its alignment is different from the player's */
@@ -2333,21 +2341,11 @@ restore_mon(struct memfile *mf, struct level *l)
     mon->xyflags = mread8(mf);
     mon->xlocale = mread8(mf);
     mon->ylocale = mread8(mf);
-    /* SAVEBREAK (4.3-beta1 -> 4.3-beta2): remove this */
-    (void) mread32(mf);
     mon->orig_mnum = mread16(mf);
     mon->mx = mread8(mf);
     mon->my = mread8(mf);
     mon->mux = mread8(mf);
     mon->muy = mread8(mf);
-    /* SAVEBREAK (4.3-beta2alpha -> 4.3-beta2): this is for reading old saves
-       that used a different encoding for mux/muy, we no longer generate saves
-       in that format; be careful not to munge the migrating monsters chain like
-       this (determinable via l being NULL) */
-    if (mon->mux == mon->mx && mon->muy == mon->my && l) {
-        mon->mux = COLNO;
-        mon->muy = ROWNO;
-    }
     mon->m_lev = mread8(mf);
     mon->malign = mread8(mf);
     mon->moveoffset = mread16(mf);
@@ -2590,8 +2588,6 @@ save_mon(struct memfile *mf, struct monst *mon, const struct level *l)
     mhint_mon_coordinates(mf); /* savemap: ignore */
     mwrite8(mf, mon->xlocale);
     mwrite8(mf, mon->ylocale);
-    /* SAVEBREAK (4.3-beta1 -> 4.3beta2): remove this */
-    mwrite32(mf, 0);
     mwrite16(mf, mon->orig_mnum);
     mhint_mon_coordinates(mf); /* savemap: ignore */
     mwrite8(mf, mon->mx);

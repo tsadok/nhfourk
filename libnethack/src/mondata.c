@@ -228,15 +228,38 @@ ranged_attk(const struct permonst * ptr)
     return FALSE;
 }
 
-/* returns TRUE if monster is especially affected by silver weapons */
+/* returns TRUE if monster is especially affected by weapons made from the
+   material in question.  Note that there's still a hardcoded case in
+   for lycanthropes hating silver in particular, in hmon_hitmon(), because
+   a monster can be a lycanthrope even when its permonst pointer does
+   not clearly indicate that fact.  TODO: It's possible that said special
+   case is not handled correctly elsewhere. */
 boolean
-hates_silver(const struct permonst * ptr)
+hates_material(const struct permonst *ptr, const int material)
 {
+    if (material == SILVER)
     return ((boolean)
             (is_were(ptr) || ptr->mlet == S_VAMPIRE || is_demon(ptr) ||
              ptr == &mons[PM_SHADE] || (ptr->mlet == S_IMP &&
                                         ptr != &mons[PM_TENGU] &&
                                         ptr != &mons[PM_LEPRECHAUN])));
+    if (material == IRON) {
+        return ((boolean) (is_elf(ptr) || ptr == &mons[PM_SYLPH]));
+    }
+    return FALSE;
+}
+
+/* Returns the maximum amount of special damage a material will do to a
+   material-hating monster, above and beyond what the weapon would do in any
+   case.  In practice, the actual damage bonus will be a random number from 1 to
+   this.  This function assumes that it is only called when hates_material() has
+   already returned true for the monster/material combination in question, so it
+   only has to handle materials to which some monster is sensitive. */
+int material_damage(const int material)
+{
+    if (material == SILVER)
+        return 20;
+    return 5;
 }
 
 /* true iff the type of monster pass through iron bars */
@@ -477,7 +500,7 @@ name_to_mon(const char *in_str)
             { "succubi", PM_SUCCUBUS },
             { "violet fungi", PM_VIOLET_FUNGUS },
             { "homunculi", PM_HOMUNCULUS },
-            { "baluchitheria", PM_BALUCHITHERIUM },
+            /* { "baluchitheria", PM_BALUCHITHERIUM }, */
             { "lurkers above", PM_LURKER_ABOVE },
             { "cavemen", PM_CAVEMAN },
             { "cavewomen", PM_CAVEWOMAN },
@@ -516,8 +539,6 @@ name_to_mon(const char *in_str)
             }
         }
     }
-    if (mntmp == NON_PM)
-        mntmp = title_to_mon(str, NULL, NULL);
     return mntmp;
 }
 
@@ -638,9 +659,6 @@ static const short grownups[][2] = {
     {PM_ACOLYTE, PM_PRIEST},
     {PM_APPRENTICE, PM_WIZARD},
     {PM_MANES, PM_IMP},
-    {PM_KEYSTONE_KOP, PM_KOP_SERGEANT},
-    {PM_KOP_SERGEANT, PM_KOP_LIEUTENANT},
-    {PM_KOP_LIEUTENANT, PM_KOP_KAPTAIN},
     {NON_PM, NON_PM}
 };
 

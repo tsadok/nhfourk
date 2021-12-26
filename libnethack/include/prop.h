@@ -85,7 +85,9 @@ enum youprop {
     DETECT_MONSTERS          = 68,
     FAST_DIGGING             = 69,
     STORMPRONE               = 70,
-    LAST_PROP                = STORMPRONE,
+    DEAF                     = 71,
+    PROT_WATERDMG            = 72, /* protection from water-damage to inventory */
+    LAST_PROP                = (PROT_WATERDMG),
 };
 
 /* This enum holds all the equipment that is tracked indirectly in struct you;

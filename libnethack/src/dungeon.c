@@ -718,7 +718,7 @@ static struct level_map {
     {"asmodeus", &asmodeus_level},
     {"astral", &astral_level},
     {"baalz", &baalzebub_level},
-    {"bigroom", &bigroom_level},
+    {"bigrm", &bigroom_level},
     {"castle", &stronghold_level},
     {"earth", &earth_level},
     {"fakewiz1", &portal_level},
@@ -729,7 +729,7 @@ static struct level_map {
     {"oracle", &oracle_level},
     {"orcus", &orcus_level},
     {"rogue", &rogue_level},
-    {"sanctum", &sanctum_level},
+    {"sanctu", &sanctum_level},
     {"valley", &valley_level},
     {"water", &water_level},
     {"wizard1", &wiz1_level},
@@ -1862,7 +1862,7 @@ overview_is_interesting(const struct level *lev, const struct overview_info *oi)
     /* if overview_scan found _anything_ the level is also interesting */
     if (oi->fountains || oi->magic_chests || oi->sinks || oi->thrones ||
         oi->trees || oi->temples || oi->altars || oi->shopcount ||
-        oi->branch || oi->portal || oi->benches)
+        oi->branch || oi->portal || oi->benches || oi->vaultstate)
         return TRUE;
 
     /* "boring" describes this level very well */
@@ -1982,6 +1982,24 @@ overview_scan(const struct level *lev, struct overview_info *oi)
                 oi->portal_dst_known = FALSE;
             }
         }
+
+    /* Can we infer unseen features from tracked level sounds? */
+    if (lev->heardsound[levsound_vault])
+        oi->vaultstate = ((lev->heardsound[levsound_vaultempty]) ? 2 : 1);
+    if (lev->heardsound[levsound_fountain])
+        if (!(oi->fountains)) oi->fountains = 1;
+    if (lev->heardsound[levsound_sink])
+        if (!(oi->sinks)) oi->sinks = 1;
+    if (lev->heardsound[levsound_throne])
+        if (!(oi->thrones)) oi->thrones = 1;
+    if (lev->heardsound[levsound_temple]) {
+        if (!(oi->altars))  oi->altars  = 1;
+        if (!(oi->temples)) oi->temples = 1;
+    }
+    if (lev->heardsound[levsound_shop] && !(oi->shopcount)) {
+        oi->shopcount = 1;
+        oi->shoptype  = -1; /* player has no way to know the type */
+    }
 }
 
 
@@ -2091,6 +2109,9 @@ static const char *const shopnames[] = {
     /* WANDSHOP */ "a wand shop",
     /* TOOLSHOP */ "a hardware shop",
     /* BOOKSHOP */ "a bookstore",
+    /* GIFTSHOP */ "a gift shop",
+    /* MUSICSHOP */ "a music store",
+    /* RARESHOP */ "a rare goods shop",
     /* CANDLESHOP */ "a lighting shop"
 };
 
@@ -2116,6 +2137,11 @@ overview_print_gods(const struct overview_info *oi)
         god_names[num_gods] = "Moloch";
         num_gods++;
     }
+    if (num_gods == 0) {
+        /* Men of Athens, I see that you are very religious. */
+        buf = msgcat(buf, "an unknown god");
+        return buf;
+    }
     for (i = 0; i < num_gods; i++) {
         buf = msgcat(buf, god_names[i]);
         if (i < num_gods - 1) {
@@ -2136,8 +2162,15 @@ overview_print_info(const struct overview_info *oi)
 
     const char *buf = "";
 
+    if (oi->vaultstate == 2)
+        ADDNTOBUF("empty vault", 1);
+    else if (oi->vaultstate == 1)
+        ADDNTOBUF("vault", 1);
     if (oi->shopcount > 1)
         ADDNTOBUF("shop", oi->shopcount);
+    else if ((oi->shopcount == 1) && (oi->shoptype == -1))
+        /* buf = msgcat_many(buf, COMMA, "a shop", NULL); */
+        ADDNTOBUF("shop", 1);
     else if (oi->shopcount == 1)
         buf = msgcat_many(buf, COMMA, shopnames[oi->shoptype], NULL);
 

@@ -1,5 +1,5 @@
 /* vim:set cin ft=c sw=4 sts=4 ts=8 et ai cino=Ls\:0t0(0 : -*- mode:c;fill-column:80;tab-width:8;c-basic-offset:4;indent-tabs-mode:nil;c-file-style:"k&r" -*-*/
-/* Last modified by Alex Smith, 2015-11-11 */
+/* Last modified by Fredrik Ljungdahl, 2018-01-05 */
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
 /* NetHack may be freely redistributed.  See license for details. */
 
@@ -241,6 +241,7 @@ struct flag {
     /* 1 bit values: booleans */
     boolean autodig;    /* MRKR: Automatically dig */
     boolean autodigdown;        /* autodigging works downwadrds */
+    boolean autounlock; /* unlock known-locked doors upon walking into them */
     boolean autoquiver; /* Automatically fill quiver */
     boolean beginner;
     boolean bypasses;   /* bypass flag is set on at least one fobj */
@@ -333,9 +334,19 @@ struct flag {
     boolean elbereth_enabled;   /* should the E-word repel monsters? */
     boolean rogue_enabled;      /* create a rogue level */
     boolean seduce_enabled;     /* succubus seduction */
-    boolean bones_enabled;      /* allow loading bones levels */
+    enum {
+        bones_disabled = 0,     /* do not load bones at all */
+        bones_normal = 1,       /* load bones only on non-special levels */
+        bones_anywhere = 2      /* load bones even on special levels */
+    } bones_enabled;
     boolean permablind;         /* stay permanently blind */
     boolean permahallu;         /* stay permanently hallucinating */
+    boolean permaconf;          /* stay permanently confused */
+    boolean permastun;          /* stay permanently stunned */
+    boolean permaglib;          /* have permanently greasy fingers */
+    boolean permafumble;        /* have permanent fumbling */
+    boolean permalame;          /* have permanently wounded legs */
+    boolean permabadluck;       /* have permanent bad luck */
 };
 
 

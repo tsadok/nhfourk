@@ -136,7 +136,7 @@ vpline(enum msg_channel msgc, boolean norepeat,
 void
 You_hear(enum msg_channel msgc, const char *line, ...)
 {
-    /* You can't hear while unconscious. */
+    /* You can't hear while deaf or unconscious. */
     if (!canhear())
         return;
 
@@ -148,13 +148,13 @@ You_hear(enum msg_channel msgc, const char *line, ...)
     va_end(the_args);
 }
 
+/* Print a message inside double-quotes.
+   The caller is responsible for checking deafness, because
+   the gods can speak directly to you in spite of deafness. */
 void
 verbalize(enum msg_channel msgc, const char *line, ...)
 {
     va_list the_args;
-
-    if (!canhear())
-        return;
 
     va_start(the_args, line);
     vpline(msgc, FALSE, msgcat_many("\"", line, "\"", NULL), the_args);

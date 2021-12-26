@@ -13,6 +13,9 @@
 int
 network_motd(void)
 {
+#ifndef NETCLIENT
+    return 0;
+#endif
 #ifdef MOTD_SERVER
     char errmsg[256];
 #endif
@@ -23,6 +26,7 @@ network_motd(void)
 
 #ifndef MOTD_SERVER
         strcpy(motdmsg, "There is no Message of the Day server available.");
+        return 1;
 #else
         fd = connect_server(MOTD_SERVER, MOTD_PORT, FALSE,
                             errmsg, sizeof errmsg);
