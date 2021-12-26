@@ -913,6 +913,8 @@ eat_tin_one_turn(void)
     const char *what;
     int which, mnum;
     int foodwarn;
+    struct monst *mtmp;
+    struct monst *nextmon;
 
     /* The !u.utracked[tos_tin] case can't happen in the current codebase
        (there's no need for special handling to identify which object is being
@@ -1081,6 +1083,22 @@ eat_tin_one_turn(void)
         break_conduct(conduct_food);
     }
 use_me:
+    for (mtmp = level->monlist; mtmp; mtmp = nextmon) {
+        nextmon = mtmp->nmon;       /* trap might kill kitty */
+        if (DEADMONSTER(mtmp))
+            continue;
+        if ((mtmp->mtame) && (mtmp->data->mlet == S_FELINE)) {
+            if (mtmp->mtrapped) {
+                /* no longer in previous trap (affects mintrap) */
+                mtmp->mtrapped = 0;
+                fill_pit(level, mtmp->mx, mtmp->my);
+            }
+            mnexto(mtmp);
+            if (mintrap(mtmp) == 2)
+                change_luck(-1);
+        }
+    }
+
     if (carried(u.utracked[tos_tin]))
         useup(u.utracked[tos_tin]);
     else

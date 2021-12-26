@@ -12,18 +12,13 @@
 ▒▒▒
 ▒▒▒ * Regenerate the 4.3.0.5 spoilers.
 ▒▒▒
-▒▒▒ * Tame cats should teleport near to the player (like the magic whistle effect)
-▒▒▒   any time the player opens a tin.  Thanks to paxed for the idea.
 ▒▒▒
-▒▒▒ * A clear "This save file is from 4.3.0.4 or earlier" would be much better than
-▒▒▒   the current situation with old-version saves.
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+▒▒▒   4.3.0.6 (before save-compat-freeze) :
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Look at how the lamp charging code manages to allow charging a lit
-▒▒▒   lamp; use a similar technique to fix the issue of lit candles
-▒▒▒   being impervious to fire damage.
-▒▒▒
-▒▒▒ * Really really should enable highlighting of peacefuls to be disabled
-▒▒▒   without turning off highlighting of pets.
+▒▒▒ * A clear "This save file is from 4.3.0.5 or earlier" would be much
+▒▒▒   better than the current situation with old-version saves.
 ▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Make runic weapons do special damage where appropriate.
@@ -35,11 +30,6 @@
 ▒▒▒   + Merge the runics branch into bleeding-edge.
 ▒▒▒ * Ensure that runics interact reasonably with stacking.
 ▒▒▒
-▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒   4.3.0.6 (before save-compat-freeze) :
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒
 ▒▒▒ * Nuke magic cancellation.  Test late-game balance with this change.
 ▒▒▒
 ▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
@@ -50,6 +40,13 @@
 ▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
 ▒▒▒   Also, should it be the Caveman first sac gift?  Discuss.
 ▒▒▒
+▒▒▒ * Look at how the lamp charging code manages to allow charging a lit
+▒▒▒   lamp; use a similar technique to fix the issue of lit candles
+▒▒▒   being impervious to fire damage.
+▒▒▒
+▒▒▒ * Really really should enable highlighting of peacefuls to be disabled
+▒▒▒   without turning off highlighting of pets.
+▒▒▒
 ▒▒▒ * Put serious thought into giving the negative potions more uses than
 ▒▒▒   blanking.  After midgame, you always have far more holy water than you
 ▒▒▒   have any real use for, because far too many potions have no other real
@@ -57,6 +54,11 @@
 ▒▒▒   resources: you just blank all the useless potions and bless everything
 ▒▒▒   that could conceivably benefit from being blessed.  This should remain
 ▒▒▒   a possible strategy, but there should be other reasonable options.
+▒▒▒
+▒▒▒ * 14:56 < rld > <@malor> ... request for a change is the full "YES" to confirm
+▒▒▒                          attacking a peaceful :). That has gotten me a bunch because
+▒▒▒                          I am often moving quickly with "y"
+▒▒▒   Hmm, shouldn't attacking a peaceful require the Fight/Force prefix?
 ▒▒▒
 ▒▒▒ * Make strange object m (in an otherwise unused color), then repurpose their
 ▒▒▒   former symbol for instruments.  Rework tools to avoid reusing colors more
@@ -235,6 +237,10 @@
 ▒▒▒   turns (commit 61efee7b811a93).  After .4 gets some play testing, evaluate
 ▒▒▒   whether this is enough (see FIQ's comments lower down about pets attacking
 ▒▒▒   floating eyes).
+▒▒▒
+▒▒▒ * 08:56 <     rld > <@Ann> i think priests should have names just like shopkeepers
+▒▒▒   11:07 < jonadab > That's a good idea.
+▒▒▒   11:07 < jonadab > With distinct name pools for each alignment.
 ▒▒▒
 ▒▒▒ * Monsters with the M3_CLIMBER flag, and scurriers, should be able to enter tree tiles.
 ▒▒▒   Scurriers should get a movement-points discount when doing so.
