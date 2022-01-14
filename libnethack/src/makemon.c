@@ -1321,15 +1321,19 @@ makemon(const struct permonst *ptr, struct level *lev, int x, int y,
     }
 
     if (allow_minvent) {
+        /* Certain types of monsters automatically get names.  This happens
+           inside the allow_minvent check to ensure it happens when they are
+           created normally but not when they are loaded from bones or created
+           from a statue or figurine.  Do it before starting to give them any
+           inventory, because naming a monster causes reallocation, which can
+           result in inventory being generated but not added to the correct
+           monst struct. */
         if ((monsndx(ptr) == PM_WATCHMAN) ||
             (monsndx(ptr) == PM_WATCH_CAPTAIN)) {
-            /* Name them inside the allow_minvent check to ensure it happens
-               when they are created normally but not when they are loaded from
-               bones or created from a statue or figurine.  Do it before
-               starting to give them any inventory, because naming a monster
-               causes reallocation, which can result in inventory being
-               generated but not added to the correct monst struct. */
             mtmp = namewatchman(mtmp, lev);
+            ptr  = mtmp->data;
+        } else if (monsndx(ptr) == PM_ALIGNED_PRIEST) {
+            mtmp = namepriest(mtmp, lev);
             ptr  = mtmp->data;
         }
         if (is_armed(ptr))

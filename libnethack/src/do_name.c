@@ -36,11 +36,49 @@ static const char *const watchname[] = {
     "Worsley", "Yellowbelly", "Zed",
     0
 };
+static const char *const priestnamepool[] = {
+    "Aaron", "Abiathar", "Abihu", "Abishua", "Adaiah", "Adiohej", "Ahimelek",
+    "Ahitub", "Ahzai", "Aitima", "Amariah", "Amasai", "Amashile", "Amashsai",
+    "Amaziah", "Amitai", "Amzi", "Annas", "Arephitop", "Arze", "Aushej",
+    "Aushiba", "Aushoj", "Azarel","Azariah", "Badan", "Benaiah", "Bilgai",
+    "Biraiohej", "Biraioj", "Bishaile", "Bukki", "Butiha", "Cadfael",
+    "Cadrach", "Caiaphas", "Chardac", "Damaris", "Dinivan", "Draeyengarts",
+    "Eleazar", "Eli", "Eliashib", "Eliezer", "Elishama", "Elledras", "Emorej",
+    "Ezra", "Ginnethon", "Haggedolim", "Haiada", "Haiadej", "Haianeb",
+    "Haiaras", "Haidaom", "Haiklih", "Hailalep", "Haimerej", "Haidabesh",
+    "Haiharez", "Haikedez", "Hainakesh", "Hairachez", "Hairama", "Hairaza",
+    "Haizama", "Hajiklam", "Harim", "Hattush", "Hilkiah", "Hrathen", "Iaglib",
+    "Iasama", "Iasshama", "Iazha", "Iddo", "Ignatius", "Ignatz", "Ikkub",
+    "Ile", "Immer", "Ithamar", "Izma", "Izzu", "Jahaziel", "Jakin", "Jedaiah",
+    "Jerome", "Jeshua", "Jehoiarib", "Jehoida", "Jehoram", "Jeremiah",
+    "Jethro", "John" /* a priest and the son of a priest */, "Joiarib",
+    "Joshua", "Jozadak", "Kadazoj", "Kelemiha", "Kezedichlem", "Kadoz",
+    "Kohen", "Kohath", "Kuet", "Kullam", "Leafdac", "Leidbaz", "Leizahaj",
+    "Lenathen", "Leraza", "Leuer", "Luther", "Malkijah", "Malluk", "Mallushem",
+    "Marohej", "Mattan", "Melchizedek", "Meraioth", "Meremoth", "Meshillemoth",
+    "Meshullam", "Mijamin", "Milodeggah", "Mirah", "Moadiah", "Muher",
+    "Navinid", "Nadab", "Natinniqu", "Nattam", "Nehok", "Nethanel", "Netharh",
+    "Nikaj", "Nimajim", "Nivalaat", "Noraa", "Nothennig", "Oddi", "Orthej",
+    "Pashhur", "Pelaliah", "Phinehas", "Potiphera", "Quinnitan", "Ramathi",
+    "Rathaiba", "Razaele", "Rehum", "Remmi", "Rethul", "Reuel", "Rezeile",
+    "Ruhshap", "Saheniph", "Sallu", "Sanna", "Saphaiac", "Sardelle", "Seraiah",
+    "Shebaniah", "Shekaniah", "Shuttah", "Siramad", "Ssalgniats", "Stainglass",
+    "Strangeyeard", "Suitangi", "Taalavin", "Thahok", "Thoiarem",
+    "Thomellishem", "Thomerem", "Tuek", "Tzangi", "Uhiba", "Ullas", "Uzzi",
+    "Zabdiel", "Zadok", "Zechariah", "Zedekiah", "Zerahiah",
+    0
+};
 
 struct monst *
 namewatchman(struct monst *mon, struct level *lev)
 {
     return namemonsterfromlist(mon, watchname, lev, TRUE);
+}
+
+struct monst *
+namepriest(struct monst *mon, struct level *lev)
+{
+    return namemonsterfromlist(mon, priestnamepool, lev, TRUE);
 }
 
 /* Assign a name to a monster, taken from a list of possible names.
