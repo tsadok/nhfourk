@@ -289,11 +289,14 @@ achievement_unlock(enum achievement ach, int fieldidx, unsigned long fieldbit)
        to enable the all-races and all-roles achievements to be
        calculated.  So don't report them as historic events. */
     if (!(fieldidx == UNLOCK_FIELD_ASCROLES ||
-          fieldidx == UNLOCK_FIELD_ASCRACES))
+          fieldidx == UNLOCK_FIELD_ASCRACES)) {
         historic_event(FALSE, TRUE,
                        msgprintf("unlocked %s by %s.",
                                  explain_unlockable(fieldidx, fieldbit),
                                  explain_achievement(ach)));
+        pline(msgc_rumor, "Unlocked: %s.",
+              explain_unlockable(fieldidx, fieldbit));
+    }
     write_achievements();
 }
 
