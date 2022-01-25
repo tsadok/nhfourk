@@ -526,6 +526,7 @@ achievements_filename(void)
 #endif
         uname = msgprintf("%d", getuid());
 
+    /* TODO: investigate why valgrind thinks this is a memory leak: */
     return msgprintf("%sachievements_%s.dat",
                      fqn_prefix[SCOREPREFIX], uname);
 }
