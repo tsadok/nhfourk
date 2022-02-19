@@ -113,8 +113,7 @@ L<http://nethack4.org>
 =head1 BUGS
 
 Numerous.  If you find a bug, please do report it.  Usually the
-fastest way to get a response is on IRC (#nethack4 on freenode).
-You can also email the developers.  See also the public bug
-tracker at L<http://roguelikes.live/nh4-bugzilla/>.
+fastest way to get a response is on IRC (#nethack4 on Libera.chat).
+You can also email the developers.
 
 =cut

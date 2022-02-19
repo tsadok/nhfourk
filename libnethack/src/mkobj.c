@@ -623,6 +623,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                     otmp->spe = fruitadd("mint-flavored milkshake");
                 else if ((getmonth() == 4) && (getmday() == 1))  /* Apr Fool */
                     otmp->spe = fruitadd("partly eaten chickatrice corpse");
+                else if ((getmonth() == 6) && (getmday() <= 3))  /* Junethack */
+                    otmp->spe = fruitadd("demilichen corpse");
                 else if ((getmonth() == 7) && (getmday() == 1))  /* Canada */
                     otmp->spe = fruitadd("candied maple leaf");
                 else if ((getmonth() == 7) && (getmday() == 4))  /* Fourth */

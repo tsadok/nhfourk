@@ -1,4 +1,33 @@
 
+Outstanding Bug Reports:
+2022 Jan:
+ * Players see menus with only the unlocked possibilities and
+   think it's a bug even after having been told about the unlock system.
+   Feedback suggests the menu should indicate that there are locked entries.
+ * Config files from 4.3.0.4 and earlier can specify options that are
+   currently locked in .5.  This causes just about the problems I'd expect.
+   Need to reject/ignore locked options in the config file.
+2022 Feb:
+ * According to hothraxxa, #overview still says there's a throne on a level
+   where the throne has vanished (he got a wish)
+ * hothraxxa > !tell jonadab killed yeenoghu, not livelogged
+ * hothraxxa > !tell jonadab early throne genocide: deep ettin. just ran into a deep ettin
+ * hothraxxa > something is broken in the new fourk, i genocided h in a previous game and then ran into a dwarf
+ * hothraxxa > !tell jonadab Error: zero payment in money2mon!  Location: libnethack/src/shk.c:86
+ * hothraxxa > !tell jonadab message: The incubus takes 0 zorkmids for services rendered!
+ * hothraxxa > !tell jonadab Error: What a funny potion! (305)   Location: libnethack/src/potion.c:1003
+   hothraxxa > !tell jonadab hit C, immediately get Error: obj potion of  inuse was set in
+                     neutral turnstate?  Location: libnethack/src/restore.c:109
+   !tell jonadab dipping the mystery potion gives me water so that part is ok
+ * hothraxxa > !tell jonadab Error: explain_unlockable_role fell through  Location: libnethack/src/achieve.c:345
+ * hothraxxa > !tell jonadab also just noticed that the error message references freenode
+ * hothraxxa > !tell jonadab priestess did not get warning at xl15
+ * !tell jonadab Error: mksobj was asked to create a strange object (0)  Location: libnethack/src/mkobj.c:518
+ * Beholder+> jonadab: Message from hothraxxa at 2022-02-12 18:15 EST: Error: Reflecting for unknown reason
+                       Location: libnethack/src/muse.c:2303
+   jonadab: Message from hothraxxa at 2022-02-12 18:15 EST: i am wearing silver dragon scales
+ * 
+
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒                                                   ▒▒▒
 ▒▒▒   T O D O    L i s t s  :                         ▒▒▒

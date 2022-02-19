@@ -283,9 +283,8 @@ Sometimes, the size of the tile images has to be specified manually
 even though it could be inferred from the other files given on the
 command line.
 
-If you find a bug, please report it, either in the public bug tracker
-at L<http://roguelikes.live/nh4-bugzilla/> or via IRC (#nethack4 on
-freenode) or email (my username is jonadab and my ISP's mail server is
-at columbus.rr.com).
+If you find a bug, please report it, either via IRC (#nethack4 on
+Libera.chat) or email (my username is jonadab and my ISP's mail
+server is at columbus.rr.com).
 
 =cut
