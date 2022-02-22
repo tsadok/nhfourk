@@ -4,12 +4,11 @@ Outstanding Bug Reports:
  * Players see menus with only the unlocked possibilities and
    think it's a bug even after having been told about the unlock system.
    Feedback suggests the menu should indicate that there are locked entries.
+   + Partly addressed (for picking a role when starting a game).
  * Config files from 4.3.0.4 and earlier can specify options that are
    currently locked in .5.  This causes just about the problems I'd expect.
    Need to reject/ignore locked options in the config file.
 2022 Feb:
- * According to hothraxxa, #overview still says there's a throne on a level
-   where the throne has vanished (he got a wish)
  * hothraxxa > !tell jonadab killed yeenoghu, not livelogged
  * hothraxxa > !tell jonadab early throne genocide: deep ettin. just ran into a deep ettin
  * hothraxxa > something is broken in the new fourk, i genocided h in a previous game and then ran into a dwarf

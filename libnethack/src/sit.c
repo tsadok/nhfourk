@@ -342,6 +342,7 @@ dosit(const struct nh_cmd_arg *arg)
             IS_THRONE(level->locations[u.ux][u.uy].typ)) {
             /* may have teleported */
             level->locations[u.ux][u.uy].typ = ROOM;
+            level->heardsound[levsound_throne] = FALSE;
             pline(msgc_consequence,
                   "The throne vanishes in a puff of logic.");
             newsym(u.ux, u.uy);

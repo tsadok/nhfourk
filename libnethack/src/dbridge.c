@@ -850,6 +850,10 @@ destroy_drawbridge(int x, int y)
         loc1->typ = ((loc1->drawbridgemask & DB_ICE) ? ICE : ROOM);
         loc1->icedpool = ((loc1->drawbridgemask & DB_ICE) ? ICED_MOAT : 0);
     }
+    /* Not sure if it is possible in principle for the player to not be aware
+       that the bridge got destroyed; maybe; but it seems unlikely enough that
+       I'm not going to worry about #overview giving the fact away.        */
+    level->heardsound[levsound_drawbridge] = FALSE;
     wake_nearto(x, y, 500);
     loc2->typ = DOOR;
     loc2->doormask = D_NODOOR;
