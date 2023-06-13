@@ -1343,8 +1343,14 @@ place_object(struct obj *otmp, struct level *lev, int x, int y)
 {
     struct obj *otmp2 = lev->objects[x][y];
 
-    if (otmp->where != OBJ_FREE)
-        panic("place_object: obj not free");
+    if (!otmp) {
+        impossible("place_object: no object; it will not be placed.");
+        return;
+    }
+    if (otmp->where != OBJ_FREE) {
+        impossible("place_object: obj not free (%d); it will not be placed at (%d,%d)", otmp->otyp, x, y);
+        return;
+    }
     if (!isok(x, y))
         panic("placing object at bad position (%d,%d)", x, y);
 

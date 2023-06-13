@@ -1,5 +1,10 @@
 
 Outstanding Bug Reports:
+2022 October:
+ * Elf wizard players can fight with (iron) daggers and can wield (iron)
+   pick axes but cannot dig because "You can't handle [iron] anymore".
+   This is clearly inconsistent; need to decide how to handle it.
+   Reported 2022 October on Libera.chat by msearle
 2022 Jan:
  * Players see menus with only the unlocked possibilities and
    think it's a bug even after having been told about the unlock system.
@@ -9,7 +14,6 @@ Outstanding Bug Reports:
    currently locked in .5.  This causes just about the problems I'd expect.
    Need to reject/ignore locked options in the config file.
 2022 Feb:
- * hothraxxa > !tell jonadab killed yeenoghu, not livelogged
  * hothraxxa > !tell jonadab early throne genocide: deep ettin. just ran into a deep ettin
  * hothraxxa > something is broken in the new fourk, i genocided h in a previous game and then ran into a dwarf
  * hothraxxa > !tell jonadab Error: zero payment in money2mon!  Location: libnethack/src/shk.c:86
@@ -19,13 +23,29 @@ Outstanding Bug Reports:
                      neutral turnstate?  Location: libnethack/src/restore.c:109
    !tell jonadab dipping the mystery potion gives me water so that part is ok
  * hothraxxa > !tell jonadab Error: explain_unlockable_role fell through  Location: libnethack/src/achieve.c:345
- * hothraxxa > !tell jonadab also just noticed that the error message references freenode
  * hothraxxa > !tell jonadab priestess did not get warning at xl15
+   Note:  pri_abil[] in attrib.c suggests that they *should* have got it.
  * !tell jonadab Error: mksobj was asked to create a strange object (0)  Location: libnethack/src/mkobj.c:518
  * Beholder+> jonadab: Message from hothraxxa at 2022-02-12 18:15 EST: Error: Reflecting for unknown reason
                        Location: libnethack/src/muse.c:2303
    jonadab: Message from hothraxxa at 2022-02-12 18:15 EST: i am wearing silver dragon scales
- * 
+ * hothraxxa > !tell jonadab Error: RNG 1 range has less than 1 value  Location: libnethack/src/newrng.c:504
+ * hothraxxa > !tell jonadab attempted to displace a thug in a pit on the quest home level
+ * hothraxxa > !tell jonadab Error: dmonsfree: 4 removed doesn't match 5 pending  Location: libnethack/src/mon.c:1647
+ * hothraxxa > !tell jonadab gas spore exploded and killed something
+ * hothraxxa > !tell jonadab Error: dmonsfree: 2 removed doesn't match 3 pending  Location: libnethack/src/mon.c:1647
+ * hothraxxa > !tell jonadab Error: monster tries to create light?  Location: libnethack/src/read.c:1814
+--------------------
+ * sitting on a bench at full health gives the wrong message
+ * 12:27 < Beholder> Message from hothraxxa at 2022-02-06 10:56 EDT: getting this error again and
+                     cannot go down to the valley:  Error: What weird role is this? (Val) Location:
+                     libnethack/src/topten.c:617
+ * 12:27 < Beholder> Message from hothraxxa at 2022-02-06 10:57 EDT: neither C nor R lets me go down
+ * 12:27 < Beholder> Message from Demo at 2022-02-06 11:04 EDT: you should consider enabling
+                     continuing on impossibles if it isn't already as the idea with an impossible is
+                     that the game state is fine and continuing only has minor implications
+ * 12:27 < Beholder> Message from hothraxxa at 2022-02-06 11:39 EDT: killed yeenoghu, not livelogged
+
 
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒                                                   ▒▒▒
@@ -38,8 +58,15 @@ Outstanding Bug Reports:
 ▒▒▒   4.3.0.6 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * Extrinsic disint res (from black scales) should probably protect
+▒▒▒   inventory in much the same way as fire, cold, and shock; i.e.,
+▒▒▒   black-scaled armor should probably protect a cloak.
+▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.5 or earlier" would be much
 ▒▒▒   better than the current situation with old-version saves.
+▒▒▒
+▒▒▒ * There should be an artifact two-handed sword that Bar can get,
+▒▒▒   of comparable overall power to Cleaver but with different pros/cons.
 ▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Make runic weapons do special damage where appropriate.

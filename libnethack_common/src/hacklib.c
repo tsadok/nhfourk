@@ -452,17 +452,24 @@ dist2(int x0, int y0, int x1, int y1)
 }
 
 /* Perl got me addicted to being able to just a = b || c || d || e. */
+/* But it doesn't work right :-(
 int
-orchain_int(const int first, ...)
+orchain_int(const int n, ...)
 {
+    int i, j;
     va_list args;
 
-    va_start(args, first);
-    if (first)
-        return first;
+    va_start(args, n);
+    for (i = 0; i < n; i++) {
+        j = va_arg(args, int);
+        if (j) {
+            return j;
+        }
+    }
     va_end(args);
     return 0;
 }
+*/
 
 /* are two points lined up (on a straight line)? */
 boolean

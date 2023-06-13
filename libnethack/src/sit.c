@@ -376,7 +376,8 @@ dosit(const struct nh_cmd_arg *arg)
     } else if (Engulfed)
         pline(msgc_cancelled1, "There are no seats in here!");
     else
-        pline(msgc_yafm, "Having fun sitting on the %s?", surface(u.ux, u.uy));
+        pline(msgc_yafm, "Having fun sitting on the %s?",
+              IS_BENCH(typ) ? "bench" : surface(u.ux, u.uy));
     return 1;
 }
 

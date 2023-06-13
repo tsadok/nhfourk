@@ -364,9 +364,19 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
     int px, py, i, imax, cutoffone, cutofftwo, cutoffthree;
     /* int rmno = (sroom - lev->rooms) + ROOMOFFSET; */
     coord pos[ROWNO * COLNO];
-    int babypm, adultpm, ancientpm,
-        gemone, gemtwo, glass,
-        itemone, itemtwo, itemthree, itemfour;
+    /* These will hopefully all get changed around a theme color, but let's
+       initialize them all for safety: */
+    int babypm    = PM_GIANT_ANT;
+    int adultpm   = PM_CROCODILE;
+    int ancientpm = PM_WINGED_GARGOYLE;
+    int gemone    = LUCKSTONE;
+    int gemtwo    = FLINT;
+    int glass     = WORTHLESS_PIECE_OF_VIOLET_GLASS;
+    int itemone   = WAN_NOTHING;
+    int itemtwo   = POT_WATER;
+    int itemthree = SCR_BLANK_PAPER;
+    int itemfour  = SCALE_MAIL;
+
     int harder = !!(12 < rn2_on_rng(depth(&lev->z), rng));
     int color = rn2_on_rng(14, rng);
     struct monst *mon;
@@ -382,15 +392,14 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = AQUAMARINE;
         glass     = WORTHLESS_PIECE_OF_BLUE_GLASS;
         itemone   = RIN_SHOCK_RESISTANCE;
-        itemtwo   = orchain_int(
-            find_objnum_by_appearance(POTION_CLASS, "blue"),
-            find_objnum_by_appearance(RING_CLASS, "sapphire"),
-            find_objnum_by_appearance(POTION_CLASS, "brilliant blue"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "dark blue"),
-            find_objnum_by_appearance(POTION_CLASS, "deep blue"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "light blue"),
-            find_objnum_by_appearance(POTION_CLASS, "sky blue"),
-            itemone);
+        itemtwo   = find_objnum_by_appearance(POTION_CLASS, "blue");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(RING_CLASS, "sapphire");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(POTION_CLASS, "brilliant blue");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(SPBOOK_CLASS, "dark blue");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(POTION_CLASS, "deep blue");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(SPBOOK_CLASS, "light blue");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(POTION_CLASS, "sky blue");
+        if (!itemtwo) itemtwo = itemone;
         itemthree = CORNUTHAUM;
         itemfour  = WAN_LIGHTNING;
         break;
@@ -405,14 +414,13 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         glass     = WORTHLESS_PIECE_OF_GREEN_GLASS;
         itemone   = RIN_POISON_RESISTANCE;
         itemtwo   = POT_SICKNESS;
-        itemthree = orchain_int(
-            find_objnum_by_appearance(POTION_CLASS, "dark green"),
-            find_objnum_by_appearance(RING_CLASS, "jade"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "dark green"),
-            find_objnum_by_appearance(POTION_CLASS, "emerald"),
-            find_objnum_by_appearance(RING_CLASS, "emerald"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "light green"),
-            PEAR);
+        itemthree = find_objnum_by_appearance(POTION_CLASS, "dark green");
+        if (!itemthree) itemthree = find_objnum_by_appearance(RING_CLASS, "jade");
+        if (!itemthree) itemthree = find_objnum_by_appearance(SPBOOK_CLASS, "dark green");
+        if (!itemthree) itemthree = find_objnum_by_appearance(POTION_CLASS, "emerald");
+        if (!itemthree) itemthree = find_objnum_by_appearance(RING_CLASS, "emerald");
+        if (!itemthree) itemthree = find_objnum_by_appearance(SPBOOK_CLASS, "light green");
+        if (!itemthree) itemthree = PEAR;
         itemfour  = AMULET_VERSUS_POISON;
         break;
     case 6:
@@ -424,14 +432,13 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = OPAL;
         glass     = WORTHLESS_PIECE_OF_WHITE_GLASS;
         itemone   = RIN_COLD_RESISTANCE;
-        itemtwo   = orchain_int(
-            find_objnum_by_appearance(POTION_CLASS, "white"),
-            find_objnum_by_appearance(RING_CLASS, "diamond"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "white"),
-            find_objnum_by_appearance(POTION_CLASS, "milky"),
-            find_objnum_by_appearance(RING_CLASS, "pearl"),
-            find_objnum_by_appearance(RING_CLASS, "ivory"),
-            FROST_HORN);
+        itemtwo   = find_objnum_by_appearance(POTION_CLASS, "white");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(RING_CLASS, "diamond");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(SPBOOK_CLASS, "white");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(POTION_CLASS, "milky");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(RING_CLASS, "pearl");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(RING_CLASS, "ivory");
+        if (!itemtwo) itemtwo = FROST_HORN;
         itemthree = ICE_BOX;
         itemfour  = WAN_COLD;
         break;
@@ -443,10 +450,9 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = AGATE;
         glass     = WORTHLESS_PIECE_OF_ORANGE_GLASS;
         itemone   = AMULET_OF_RESTFUL_SLEEP;
-        itemtwo   = orchain_int(
-            find_objnum_by_appearance(POTION_CLASS, "orange"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "orange"),
-            CARROT);
+        itemtwo   = find_objnum_by_appearance(POTION_CLASS, "orange");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(SPBOOK_CLASS, "orange");
+        if (!itemtwo) itemtwo = CARROT;
         itemthree = ORANGE;
         itemfour  = WAN_SLEEP;
         break;
@@ -458,12 +464,11 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemtwo    = CHRYSOBERYL;
         glass     = WORTHLESS_PIECE_OF_YELLOW_GLASS;
         itemone   = POT_ACID;
-        itemtwo   = orchain_int(
-            find_objnum_by_appearance(POTION_CLASS, "yellow"),
-            find_objnum_by_appearance(SPBOOK_CLASS, "yellow"),
-            find_objnum_by_appearance(POTION_CLASS, "golden"),
-            find_objnum_by_appearance(POTION_CLASS, "amber"),
-            AMBER);
+        itemtwo   = find_objnum_by_appearance(POTION_CLASS, "yellow");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(SPBOOK_CLASS, "yellow");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(POTION_CLASS, "golden");
+        if (!itemtwo) itemtwo = find_objnum_by_appearance(POTION_CLASS, "amber");
+        if (!itemtwo) itemtwo = AMBER;
         itemthree = SCR_TAMING; /* Why do yellow dragons hoard these?
                                  * It's a mystery. */
         itemfour  = BANANA;
@@ -475,11 +480,10 @@ fill_dragonhall(struct level *lev, struct mkroom *sroom, enum rng rng)
         gemone    = BLACK_OPAL;
         gemtwo    = OBSIDIAN;
         glass     = WORTHLESS_PIECE_OF_BLACK_GLASS;
-        itemone   = orchain_int(
-            find_objnum_by_appearance(RING_CLASS, "black onyx"),
-            find_objnum_by_appearance(POTION_CLASS, "black"),
-            find_objnum_by_appearance(POTION_CLASS, "dark"),
-            JET);
+        itemone   = find_objnum_by_appearance(RING_CLASS, "black onyx");
+        if (!itemone) itemone = find_objnum_by_appearance(POTION_CLASS, "black");
+        if (!itemone) itemone = find_objnum_by_appearance(POTION_CLASS, "dark");
+        if (!itemone) itemone = JET;
         itemtwo   = BLINDFOLD;
         itemthree = SPE_FINGER_OF_DEATH;
         itemfour  = WAN_DEATH;
