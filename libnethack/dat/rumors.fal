@@ -102,6 +102,7 @@ If you want to feel great, you must eat something real big.
 If you want to float, you'd better eat a floating eye.
 If your ghost kills a player, it increases your score.
 Increase mindpower:  Tame your own ghost!
+Is this a dagger I see before me, the handle toward my hand?
 It is unchivalrous to hit someone who is wearing lenses.
 It takes twelve copper shekels to make a silver farthing, sixteen silver farthings to make a gold zorkmid, and thirty gold zorkmids to make an iridium groschen.
 It furthers one to see the great man.
@@ -241,6 +242,7 @@ They say that a succubus named Suzy will sometimes warn you of danger.
 They say that a wand of cancellation is not like a wand of polymorph.
 They say that a wood golem named Pinocchio would be easy to control.
 They say that after killing a dragon it's time for a change of scenery.
+They say that all fortune cookies are made in the far east.
 They say that an amulet of strangulation is worse than ring around the collar.
 They say that an attic is the best place to hide your toys.
 They say that an axe named Cleaver once belonged to a hacker named Beaver.
@@ -271,7 +273,9 @@ They say that finding worthless glass is worth something.
 They say that fortune cookies are food for thought.
 They say that gold is only wasted on a pet dragon.
 They say that good things come to those that wait.
+They say that good things come to those who wait, not to those who hesitate.
 They say that greased objects will slip out of monsters' hands.
+They say that bills are worth more than coins.
 They say that if you can't spell then you'll wish you had a spellbook.
 They say that if you live by the sword, you'll die by the sword.
 They say that if you play like a monster you'll have a better game.
@@ -299,6 +303,7 @@ They say that naming your cat Garfield will make you more attractive.
 They say that no one knows everything about everything in the dungeon.
 They say that no one plays NetHack just for the fun of it.
 They say that no one really subscribes to rec.games.roguelike.nethack.
+They say that no one really uses IRC any more.
 They say that no one will admit to starting a rumor.
 They say that nurses sometimes carry scalpels and never use them.
 They say that once you've met one wizard you've met them all.
@@ -306,14 +311,19 @@ They say that one troll is worth 10,000 newts.
 They say that only David can find the zoo!
 They say that only angels play their harps for their pets.
 They say that only big spenders carry gold.
+They say that only the kinkiest nurses use a scalpel.
 They say that orc shamans are healthy, wealthy and wise.
 They say that playing NetHack is like walking into a death trap.
 They say that problem breathing is best treated by a proper diet.
 They say that quaffing many potions of levitation can give you a headache.
 They say that queen bees get that way by eating royal jelly.
 They say that reading a scare monster scroll is the same as saying Elbereth.
+They say that real adventurers don't wear any armor.
+They say that real adventurers fight with their bare hands.
 They say that real hackers always are controlled.
 They say that real hackers never sleep.
+They say that real programmers code in Fortran.
+They say that SCCS is still the best version control system.
 They say that shopkeepers are insured by Croesus himself!
 They say that shopkeepers never carry more than 20 gold pieces, at night.
 They say that shopkeepers never sell blessed potions of invisibility.
@@ -331,11 +341,12 @@ They say that the Wizard of Yendor has a death wish.
 They say that the `hair of the dog' is sometimes an effective remedy.
 They say that the best time to save your game is now before it's too late.
 They say that the biggest obstacle in NetHack is your mind.
+They say that the difference between a fountain and a lake, isn't important.
 They say that the gods are angry when they hit you with objects.
 They say that the priesthood are specially favored by the gods.
 They say that the way to make a unicorn happy is to give it what it wants.
 They say that there are no black or white stones, only gray.
-They say that there are no skeletons hence there are no skeleton keys.
+They say that there are no skeletons, hence there are no skeleton keys.
 They say that there is a clever rogue in every hacker just dying to escape.
 They say that there is no such thing as free advice.
 They say that there is only one way to win at NetHack.
@@ -343,8 +354,10 @@ They say that there once was a fearsome chaotic samurai named Luk No.
 They say that there was a time when cursed holy water wasn't water.
 They say that there's no point in crying over a gray ooze.
 They say that there's only hope left after you've opened Pandora's box.
+They say that thirst is a greater enemy than all the monsters in the dungeon.
 They say that trap doors should always be marked `Caution:  Trap Door'.
 They say that using an amulet of change isn't a difficult operation.
+They say that vi is the best text editor, Emacs the best operating system.
 They say that water walking boots are better if you are fast like Hermes.
 They say that when you wear a circular amulet you might resemble a troll.
 They say that when you're hungry you can get a pizza in 30 moves or it's free.
@@ -357,6 +370,7 @@ They say that you can only kill a lich once and then you'd better be careful.
 They say that you can only wish for things you've already had.
 They say that you can train a cat by talking gently to it.
 They say that you can train a dog by talking firmly to it.
+They say that you can train a pet chameleon just like a dog or cat.
 They say that you can trust your gold with the king.
 They say that you can't wipe your greasy bare hands on a blank scroll.
 They say that you cannot trust scrolls of rumor.
@@ -373,6 +387,7 @@ They say that you should never introduce a rope golem to a succubus.
 They say that you should never sleep near invisible ring wraiths.
 They say that you should never try to leave the dungeon with a bag of gems.
 They say that you should remove your armor before sitting on a throne.
+They say you need just the right key for each lock.
 This fortune cookie is copy protected.
 This fortune cookie is the property of Fortune Cookies, Inc.
 This release contains 10% recycled material.
@@ -418,3 +433,5 @@ You offend Shai-Hulud by sheathing your crysknife without having drawn blood.
 You swallowed the fortune!
 You want to regain strength?  Two levels ahead is a guesthouse!
 You will encounter a tall, dark, and gruesome creature...
+Your dreams will not come true until you start having nightmares.
+Your pet will achieve enlightenment before you do.

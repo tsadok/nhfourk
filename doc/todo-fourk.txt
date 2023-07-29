@@ -1,5 +1,12 @@
 
 Outstanding Bug Reports:
+2023 June:
+ * <@cpittman> !tell jonadab Might have found a bug in fourk. I'm playing a
+   barbarian with a battle axe and there's a gas spore in the arc of my swing. When
+   it explodes the game crashes. I'm guessing the swing took out a monster the
+   explosion would kill. There might have also been a hidden garter snake in the
+   explosion. Game continues fine as long as I kill the gas spore away from any
+   other monsters.  Error: dmonsfree: 3 removed doesn't match 4 pending Location:
 2022 October:
  * Elf wizard players can fight with (iron) daggers and can wield (iron)
    pick axes but cannot dig because "You can't handle [iron] anymore".
@@ -173,6 +180,7 @@ Outstanding Bug Reports:
 ▒▒▒   18:54 <     FIQ+> I feel like it should be harder \n but preferably possible without magic
 ▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
 ▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
+▒▒▒   I could also make it so that each carrot/apple is only a percentage chance to tame them.
 ▒▒▒
 ▒▒▒ * Consider commit eb85596 (from dnethack), which addresses the 127 level limitation.
 ▒▒▒   This is not even remotely urgent for Fourk, but in principle it would be nice to

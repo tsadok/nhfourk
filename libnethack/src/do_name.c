@@ -1050,6 +1050,8 @@ static struct {
     {"rat-ant", FALSE},
     {"lllama", FALSE}, /* a big fire */
     {"suicidal mouse", FALSE}, /* terrifying */
+    {"end of all things", FALSE},
+    {"Peace incarnate", TRUE}, /* perhaps the greatest threat of all to War */
         /* Real animals, past and present: */
     {"butterfly", FALSE},
     {"gnu", FALSE},
@@ -1057,6 +1059,7 @@ static struct {
     {"echidna", FALSE},
     {"numbat", FALSE},
     {"quoll", FALSE},
+    {"squirrel", FALSE},
     {"giant cockroach", FALSE},
     {"giant slug", FALSE},
     {"maggot", FALSE},
@@ -1074,6 +1077,7 @@ static struct {
     {"nanobot", FALSE},
     {"battlemech", FALSE},
     {"Y2K bug", FALSE},
+    {"Anthropogenic Global Warming", TRUE},
         /* Quendor (Zork, &c.) */
     {"grue", FALSE},
     {"Christmas-tree monster", FALSE},
@@ -1133,6 +1137,7 @@ static struct {
     {"chocobone", FALSE},
         /* Minecraft */
     {"creeper", FALSE},
+    {"charged creeper", FALSE},
     {"enderman", FALSE},
         /* Commander Keen series */
     {"garg", FALSE}, /* Keen 1 */
@@ -1146,6 +1151,8 @@ static struct {
     {"goomba", FALSE},  /* Mario series */
     {"metroid", FALSE}, /* eponymous */
     {"ramblin' evil mushroom", FALSE}, /* EarthBound */
+    {"black leopard", FALSE}, /* Castlevania */
+    {"red skeleton", FALSE}, /* Castlevania */
         /* Wizardry */
     {"creeping coins", FALSE},
         /* Classical mythologies */
@@ -1247,6 +1254,7 @@ static struct {
     {"one-eyed one-horned flying purple people eater", FALSE},
         /* saccharine kiddy TV */
     {"Barney the dinosaur", TRUE},
+    {"Dora the Explorer", TRUE},
         /* Babylon 5 */
     {"Vorlon", FALSE},
         /* Battlestar Galactica */

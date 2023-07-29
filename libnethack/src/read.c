@@ -114,6 +114,7 @@ doread(const struct nh_cmd_arg *arg)
             "The Werewolves",
             "They Might Be Storm Giants",
             "Weapons don't kill people, I kill people",
+            "What is it good for?", /* War */
             "White Zombie",
             "You're killing me!",
             "Anhur State University - Home of the Fighting Fire Ants!",
@@ -125,7 +126,7 @@ doread(const struct nh_cmd_arg *arg)
             "Occupy Fort Ludios",
             "I couldn't afford this T-shirt so I stole it!",
             "Mind flayers suck",
-            "I'm not wearing any pants",
+            "I'm not wearing any pants!",
             "Down with the living!",
             "Vegetarian",
             "Vegan and Proud",
@@ -136,6 +137,8 @@ doread(const struct nh_cmd_arg *arg)
             "One does not simply kill the Wizard of Yendor.",
             "I killed the Wizard of Yendor.  (He got over it.)",
             "Giants are Tossers!", /* -- elenmirie */
+            "We are the dead.", /* 1984 */
+            "I eat purple worms for breakfast.",
         };
         const char *buf;
         int erosion;
