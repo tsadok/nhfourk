@@ -113,13 +113,11 @@ L<http://nethack4.org>
 =head1 BUGS
 
 Plenty.  If you find a bug, please do report it.  The most immediate
-way to get a response from me is via IRC (/msg jonadab on the freenode
-IRC network; there is also a channel, #nethack4, also on freenode,
-which is shared between NetHack 4, NetHack Fourk, and FIQHack), but
-you can also report a bug using the public bug tracker, which can be
-found at L<http://roguelikes.live/nh4-bugzilla/>, or via email (my
-email username is jonadab, and the domain name to use is that of my
-ISP, columbus.rr.com, and of course you put an at sign between them).
-I try to keep an eye on the /r/nethack sub on reddit as well.
+way to get a response from me is via IRC (/msg jonadab on the
+Libera.chat IRC network; there is also a channel, #nethack4, also on
+Libera.chat, which is shared between NetHack 4, NetHack Fourk, and
+FIQHack), but you can also report a bug via email (my email username
+is jonadab, and the domain name to use is that of my ISP,
+columbus.rr.com, and of course you put an at sign between them).
 
 =cut

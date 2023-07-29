@@ -429,12 +429,21 @@ item_provides_extrinsic(struct obj *otmp, int extrinsic, int *warntype)
         return mask & W_EQUIP;
 
     /* Handle dragon-scaled armor: */
-    if ((objects[otmp->otyp].oc_armcat == os_arm) && (otmp->scalecolor)) {
+    if ((otmp->oclass == ARMOR_CLASS) &&
+        (objects[otmp->otyp].oc_armcat == os_arm) && (otmp->scalecolor)) {
         int scale = FIRST_DRAGON_SCALES + otmp->scalecolor - DRAGONCOLOR_FIRST;
-        if (objects[scale].oc_oprop == extrinsic && extrinsic != WARN_OF_MON)
-            return mask & W_EQUIP;
-        if (objects[scale].oc_oprop2 == extrinsic && extrinsic != WARN_OF_MON)
-            return mask & W_EQUIP;
+        if (extrinsic == WARN_OF_MON)
+            return 0;
+        if ((scale < FIRST_DRAGON_SCALES) || (scale > LAST_DRAGON_SCALES)) {
+            impossible("Invalid dragon scale color, %d, on %s",
+                       /* can't call xname() here because infinite recursion */
+                       scale, obj_descr[objects[otmp->otyp].oc_name_idx].oc_name);
+        } else {
+            if (objects[scale].oc_oprop == extrinsic)
+                return mask & W_EQUIP;
+            if (objects[scale].oc_oprop2 == extrinsic)
+                return mask & W_EQUIP;
+        }
     }
 
     /* Non-artifact item properties go here. At the present:
@@ -674,8 +683,13 @@ spec_applies(const struct artifact *weap, const struct monst *mtmp)
             if (!(yours ? Stone_resistance : resists_ston(mtmp)))
                 return TRUE;
             break;
+        case AD_DISN:
+            impossible("Weapon has a disintegration attack.  This seems OP.");
+            if (!(yours ? Disint_resistance : resists_disint(mtmp)))
+                return TRUE;
+            break;
         default:
-            impossible("Weird weapon special attack.");
+            impossible("Weird weapon special attack (%u).", weap->attk.adtyp);
         }
     }
     return 0;

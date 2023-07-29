@@ -210,8 +210,8 @@ unlike Cygwin, WSL doesn't have the ability to run native Windows
 programs from within the environment).  Efforts to get a complete
 working build procedure for this setup are also ongoing.  If you
 manage to get it to work, I'd love to hear about it (contact jonadab
-either on the freenode IRC network or via email at columbus.rr.com; in
-the case of email, be sure to put the word "Fourk" in the subject
+either on the Libera.chat IRC network or via email at columbus.rr.com;
+in the case of email, be sure to put the word "Fourk" in the subject
 line, otherwise my filters won't notice the message and it'll land in
 the middle of a spam-filled inbox and not get noticed).
 

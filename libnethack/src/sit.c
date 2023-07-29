@@ -342,6 +342,7 @@ dosit(const struct nh_cmd_arg *arg)
             IS_THRONE(level->locations[u.ux][u.uy].typ)) {
             /* may have teleported */
             level->locations[u.ux][u.uy].typ = ROOM;
+            level->heardsound[levsound_throne] = FALSE;
             pline(msgc_consequence,
                   "The throne vanishes in a puff of logic.");
             newsym(u.ux, u.uy);
@@ -375,7 +376,8 @@ dosit(const struct nh_cmd_arg *arg)
     } else if (Engulfed)
         pline(msgc_cancelled1, "There are no seats in here!");
     else
-        pline(msgc_yafm, "Having fun sitting on the %s?", surface(u.ux, u.uy));
+        pline(msgc_yafm, "Having fun sitting on the %s?",
+              IS_BENCH(typ) ? "bench" : surface(u.ux, u.uy));
     return 1;
 }
 

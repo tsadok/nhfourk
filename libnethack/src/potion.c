@@ -300,6 +300,13 @@ make_hallucinated(long xtime,   /* nonzero if this is an attempt to turn on
         if (!Stone_resistance && !uarmg && !Hallucination)
             uwepgone();
     }
+    if (changed && Hallucination && Stoned) {
+        /* Alternate messages:  "Now you are totally stoned!"
+                                "Now you really ARE stoned!"
+                                "You feel totally loose!" */
+        pline(msgc_statusheal, "Wow, being stoned isn't so bad after all!");
+        fix_petrification();
+    }
 
     return changed;
 }

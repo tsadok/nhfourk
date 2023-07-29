@@ -363,6 +363,7 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
         if (pick4u == 'y' || role == ROLE_RANDOM || randomall) {
             role = randrole;
         } else {
+            int numlocked = 0;
             /* Prompt for a role */
 
             init_menulist(&menu);
@@ -376,11 +377,19 @@ player_selection(int *out_role, int *out_race, int *out_gend, int *out_align,
                     add_menu_item(&menu, id, list[i].caption, thisch,
                                   0);
                     lastch = thisch;
+                } else {
+                    numlocked++;
                 }
             }
             pick_list[0] = id = list[rand() % listlen].id + 1;
             add_menu_item(&menu, randrole + 1, "Random", '*', 0);
             add_menu_item(&menu, -1, "Quit", 'q', 0);
+            if (numlocked > 0) {
+                char mcbuf[QBUFSZ];
+                snprintf(mcbuf, ARRAY_SIZE(mcbuf),
+                         "(%d more choices are unlockable.)", numlocked);
+                add_menu_txt(&menu, mcbuf, MI_TEXT);
+            }
 
             snprintf(pbuf, ARRAY_SIZE(pbuf), "Pick a role for your %s", plbuf);
             curses_display_menu(&menu, pbuf, PICK_ONE, PLHINT_ANYWHERE,

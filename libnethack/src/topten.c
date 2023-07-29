@@ -604,6 +604,9 @@ classmon(char *plch, boolean fem)
     int i;
 
     /* Look for this role in the role table */
+    if (!strncmp(plch, "Val", 3)) {
+        return PM_SHIELDMAIDEN;
+    }
     for (i = 0; roles[i].name.m; i++)
         if (!strncmp(plch, roles[i].filecode, ROLESZ)) {
             if (fem && roles[i].femalenum != NON_PM)

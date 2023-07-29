@@ -1895,6 +1895,12 @@ mondead(struct monst *mtmp)
             break;
         }
     }
+    if (mtmp->isshk) {
+        level->heardsound[levsound_shop] = FALSE;
+    }
+    if (mtmp->ispriest && inhistemple(mtmp)) {
+        level->heardsound[levsound_temple] = FALSE;
+    }
 
     /* TODO: this is probably dead code */
     if (player_aware)

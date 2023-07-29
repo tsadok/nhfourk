@@ -1,4 +1,59 @@
 
+Outstanding Bug Reports:
+2023 June:
+ * <@cpittman> !tell jonadab Might have found a bug in fourk. I'm playing a
+   barbarian with a battle axe and there's a gas spore in the arc of my swing. When
+   it explodes the game crashes. I'm guessing the swing took out a monster the
+   explosion would kill. There might have also been a hidden garter snake in the
+   explosion. Game continues fine as long as I kill the gas spore away from any
+   other monsters.  Error: dmonsfree: 3 removed doesn't match 4 pending Location:
+2022 October:
+ * Elf wizard players can fight with (iron) daggers and can wield (iron)
+   pick axes but cannot dig because "You can't handle [iron] anymore".
+   This is clearly inconsistent; need to decide how to handle it.
+   Reported 2022 October on Libera.chat by msearle
+2022 Jan:
+ * Players see menus with only the unlocked possibilities and
+   think it's a bug even after having been told about the unlock system.
+   Feedback suggests the menu should indicate that there are locked entries.
+   + Partly addressed (for picking a role when starting a game).
+ * Config files from 4.3.0.4 and earlier can specify options that are
+   currently locked in .5.  This causes just about the problems I'd expect.
+   Need to reject/ignore locked options in the config file.
+2022 Feb:
+ * hothraxxa > !tell jonadab early throne genocide: deep ettin. just ran into a deep ettin
+ * hothraxxa > something is broken in the new fourk, i genocided h in a previous game and then ran into a dwarf
+ * hothraxxa > !tell jonadab Error: zero payment in money2mon!  Location: libnethack/src/shk.c:86
+ * hothraxxa > !tell jonadab message: The incubus takes 0 zorkmids for services rendered!
+ * hothraxxa > !tell jonadab Error: What a funny potion! (305)   Location: libnethack/src/potion.c:1003
+   hothraxxa > !tell jonadab hit C, immediately get Error: obj potion of  inuse was set in
+                     neutral turnstate?  Location: libnethack/src/restore.c:109
+   !tell jonadab dipping the mystery potion gives me water so that part is ok
+ * hothraxxa > !tell jonadab Error: explain_unlockable_role fell through  Location: libnethack/src/achieve.c:345
+ * hothraxxa > !tell jonadab priestess did not get warning at xl15
+   Note:  pri_abil[] in attrib.c suggests that they *should* have got it.
+ * !tell jonadab Error: mksobj was asked to create a strange object (0)  Location: libnethack/src/mkobj.c:518
+ * Beholder+> jonadab: Message from hothraxxa at 2022-02-12 18:15 EST: Error: Reflecting for unknown reason
+                       Location: libnethack/src/muse.c:2303
+   jonadab: Message from hothraxxa at 2022-02-12 18:15 EST: i am wearing silver dragon scales
+ * hothraxxa > !tell jonadab Error: RNG 1 range has less than 1 value  Location: libnethack/src/newrng.c:504
+ * hothraxxa > !tell jonadab attempted to displace a thug in a pit on the quest home level
+ * hothraxxa > !tell jonadab Error: dmonsfree: 4 removed doesn't match 5 pending  Location: libnethack/src/mon.c:1647
+ * hothraxxa > !tell jonadab gas spore exploded and killed something
+ * hothraxxa > !tell jonadab Error: dmonsfree: 2 removed doesn't match 3 pending  Location: libnethack/src/mon.c:1647
+ * hothraxxa > !tell jonadab Error: monster tries to create light?  Location: libnethack/src/read.c:1814
+--------------------
+ * sitting on a bench at full health gives the wrong message
+ * 12:27 < Beholder> Message from hothraxxa at 2022-02-06 10:56 EDT: getting this error again and
+                     cannot go down to the valley:  Error: What weird role is this? (Val) Location:
+                     libnethack/src/topten.c:617
+ * 12:27 < Beholder> Message from hothraxxa at 2022-02-06 10:57 EDT: neither C nor R lets me go down
+ * 12:27 < Beholder> Message from Demo at 2022-02-06 11:04 EDT: you should consider enabling
+                     continuing on impossibles if it isn't already as the idea with an impossible is
+                     that the game state is fine and continuing only has minor implications
+ * 12:27 < Beholder> Message from hothraxxa at 2022-02-06 11:39 EDT: killed yeenoghu, not livelogged
+
+
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒                                                   ▒▒▒
 ▒▒▒   T O D O    L i s t s  :                         ▒▒▒
@@ -10,8 +65,15 @@
 ▒▒▒   4.3.0.6 (before save-compat-freeze) :
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
+▒▒▒ * Extrinsic disint res (from black scales) should probably protect
+▒▒▒   inventory in much the same way as fire, cold, and shock; i.e.,
+▒▒▒   black-scaled armor should probably protect a cloak.
+▒▒▒
 ▒▒▒ * A clear "This save file is from 4.3.0.5 or earlier" would be much
 ▒▒▒   better than the current situation with old-version saves.
+▒▒▒
+▒▒▒ * There should be an artifact two-handed sword that Bar can get,
+▒▒▒   of comparable overall power to Cleaver but with different pros/cons.
 ▒▒▒
 ▒▒▒ * Implement the infrastructure for runic weapons:
 ▒▒▒   + Make runic weapons do special damage where appropriate.
@@ -118,6 +180,7 @@
 ▒▒▒   18:54 <     FIQ+> I feel like it should be harder \n but preferably possible without magic
 ▒▒▒   18:56 <  ais523 > you could make it so that pegasi avoid getting lined up, like unicorns do
 ▒▒▒   18:56 <  ais523 > so actually hitting them with the vegetables is hard
+▒▒▒   I could also make it so that each carrot/apple is only a percentage chance to tame them.
 ▒▒▒
 ▒▒▒ * Consider commit eb85596 (from dnethack), which addresses the 127 level limitation.
 ▒▒▒   This is not even remotely urgent for Fourk, but in principle it would be nice to
@@ -239,9 +302,6 @@
 ▒▒▒   Scurriers should get a movement-points discount when doing so.
 ▒▒▒
 ▒▒▒ * The M3_CLIMBER flag should change the message when you go up ladders or stairs.
-▒▒▒
-▒▒▒ * Look at commit 94ea00a1a3, from 3.6, and implement temple sounds.
-▒▒▒   Don't forget to set lev->heardsound[levsound_temple]
 ▒▒▒
 ▒▒▒ * Look through the Shieldmaiden/Hoplite quest text and rework/reflavor it
 ▒▒▒   if needed (you may be coming to the aid of a group of warriors foreign to you;

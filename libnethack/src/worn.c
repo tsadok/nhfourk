@@ -43,8 +43,8 @@ find_extrinsic(struct obj *chain, int extrinsic, int *warntype,
 long
 mworn_extrinsic(const struct monst *mon, int extrinsic)
 {
-    int warntype;
-    boolean blocked;
+    int warntype = 0;
+    boolean blocked = FALSE;
     return find_extrinsic(m_minvent(mon), extrinsic, &warntype, &blocked);
 }
 

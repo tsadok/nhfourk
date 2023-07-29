@@ -45,7 +45,7 @@ Additionally, almost every release will change the copyright status
 Places to announce a new release (including betas):
 
   * http://reddit.com/r/nethack
-  * IRC channels on Freenode: #nethack (just say it's been released),
+  * IRC channels on Libera.chat: #nethack (just say it's been released),
     #nethack4 (change the topic if necessary)
   * rec.games.roguelikes.nethack on Usenet
   * the networkmotd daemon on http://motd.nethack4.org (needs an admin

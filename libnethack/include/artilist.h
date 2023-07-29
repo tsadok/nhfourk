@@ -23,19 +23,19 @@ static const char *artifact_names[] = {
 # define A(nam,typ,s1,s2,mt,atk,dfn,cry,inv,al,cl,rac,cost) \
  { nam, cost, s1, s2, mt, atk, dfn, cry, al, inv, cl, rac, typ }
 
-# define     NO_ATTK    {0,0,0,0}       /* no attack */
-# define     NO_DFNS    {0,0,0,0}       /* no defense */
-# define     NO_CARY    {0,0,0,0}       /* no carry effects */
-# define     DFNS(c)    {0,c,0,0}
-# define     CARY(c)    {0,c,0,0}
-# define     PHYS(a,b)  {0,AD_PHYS,a,b} /* physical */
-# define     DRLI(a,b)  {0,AD_DRLI,a,b} /* life drain */
-# define     COLD(a,b)  {0,AD_COLD,a,b}
-# define     FIRE(a,b)  {0,AD_FIRE,a,b}
-# define     ELEC(a,b)  {0,AD_ELEC,a,b} /* electrical shock */
-# define     STUN(a,b)  {0,AD_STUN,a,b} /* magical attack */
-# define     POIS(a,b)  {0,AD_DRST,a,b} /* poison */
-# define     SLEE(a,b)  {0,AD_SLEE,a,b} /* sleep */
+# define     NO_ATTK    {'a',0,0,0,0}       /* no attack */
+# define     NO_DFNS    {'a',0,0,0,0}       /* no defense */
+# define     NO_CARY    {'a',0,0,0,0}       /* no carry effects */
+# define     DFNS(c)    {'a',0,c,0,0}
+# define     CARY(c)    {'a',0,c,0,0}
+# define     PHYS(a,b)  {'a',0,AD_PHYS,a,b} /* physical */
+# define     DRLI(a,b)  {'a',0,AD_DRLI,a,b} /* life drain */
+# define     COLD(a,b)  {'a',0,AD_COLD,a,b}
+# define     FIRE(a,b)  {'a',0,AD_FIRE,a,b}
+# define     ELEC(a,b)  {'a',0,AD_ELEC,a,b} /* electrical shock */
+# define     STUN(a,b)  {'a',0,AD_STUN,a,b} /* magical attack */
+# define     POIS(a,b)  {'a',0,AD_DRST,a,b} /* poison */
+# define     SLEE(a,b)  {'a',0,AD_SLEE,a,b} /* sleep */
 
 static const struct artifact const_artilist[] = {
 #endif /* ARTINAMES_C */

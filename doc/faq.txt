@@ -132,7 +132,7 @@ directly in the hope of confusing spambots, but it's the most obvious one that
 can be formed from the username "ais523" and the domain name "nethack4.org".
 
 If you want to discuss the game or its development, we also have an IRC
-channel, #nethack4 on irc.freenode.net; many of the developers idle there, and
+channel, #nethack4 on irc.libera.chat; many of the developers idle there, and
 many discussions are made there too.  There is also now a #nethack-dev channel
 for NetHack development generally (mostly aimed at variants with fewer changes
 from the 3.4.3 codebase).
@@ -427,7 +427,7 @@ among yourselves; this is the way that NetHack was played for many years, in
 UNIX computer labs all over the world, and it still works today.
 
 If you're interested in reading spoilers, good resources include IRC
-(#acehack and #nethack on irc.freenode.net), and the [NetHack
+(#acehack and #nethack on irc.libera.chat), and the [NetHack
 wiki][10].  NetHack 4 has some deviations from 3.4.3, and NetHack
 Fourk has more, but spoilers for 3.4.3 are still a good starting point.
 

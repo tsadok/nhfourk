@@ -623,6 +623,8 @@ mksobj(struct level *lev, int otyp, boolean init, boolean artif, enum rng rng)
                     otmp->spe = fruitadd("mint-flavored milkshake");
                 else if ((getmonth() == 4) && (getmday() == 1))  /* Apr Fool */
                     otmp->spe = fruitadd("partly eaten chickatrice corpse");
+                else if ((getmonth() == 6) && (getmday() <= 3))  /* Junethack */
+                    otmp->spe = fruitadd("demilichen corpse");
                 else if ((getmonth() == 7) && (getmday() == 1))  /* Canada */
                     otmp->spe = fruitadd("candied maple leaf");
                 else if ((getmonth() == 7) && (getmday() == 4))  /* Fourth */
@@ -1341,8 +1343,14 @@ place_object(struct obj *otmp, struct level *lev, int x, int y)
 {
     struct obj *otmp2 = lev->objects[x][y];
 
-    if (otmp->where != OBJ_FREE)
-        panic("place_object: obj not free");
+    if (!otmp) {
+        impossible("place_object: no object; it will not be placed.");
+        return;
+    }
+    if (otmp->where != OBJ_FREE) {
+        impossible("place_object: obj not free (%d); it will not be placed at (%d,%d)", otmp->otyp, x, y);
+        return;
+    }
     if (!isok(x, y))
         panic("placing object at bad position (%d,%d)", x, y);
 

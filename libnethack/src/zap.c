@@ -4742,7 +4742,7 @@ destroy_item(int osym, int dmgtyp)
                     /* Also not really applicable. */
                     break;
                 case WAN_MAKE_INVISIBLE: {
-                    if (uarmc->otyp == MUMMY_WRAPPING) {
+                    if (uarmc && uarmc->otyp == MUMMY_WRAPPING) {
                         pline(msgc_playerimmune,
                               "You feel rather itchy under your %s.",
                               xname(uarmc));

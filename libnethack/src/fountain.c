@@ -232,8 +232,10 @@ dryup(xchar x, xchar y, boolean isyou)
         level->locations[x][y].typ = ROOM;
         level->locations[x][y].looted = 0;
         level->locations[x][y].blessedftn = 0;
-        if (cansee(x, y))
+        if (cansee(x, y)) {
             pline(msgc_consequence, "The fountain dries up!");
+            level->heardsound[levsound_fountain] = FALSE;
+        }
         /* The location is seen if the hero/monster is invisible */
         /* or felt if the hero is blind.  */
         newsym(x, y);
@@ -553,6 +555,7 @@ breaksink(int x, int y)
         pline(msgc_consequence, "The pipes break!  Water spurts out!");
     level->locations[x][y].doormask = 0;
     level->locations[x][y].typ = FOUNTAIN;
+    level->heardsound[levsound_sink] = FALSE;
     newsym(x, y);
 }
 

@@ -36,7 +36,7 @@ pet_type(struct newgame_options *ngo)
     int which_pet = rn2(2);
 
     if (Race_if(PM_VALKYRIE))
-        return PM_WINTER_WOLF;
+        return PM_WINTER_WOLF_CUB;
     else if (urole.petnum != NON_PM)
         return urole.petnum;
     else if (ngo && ngo->preferred_pet == 'c')
