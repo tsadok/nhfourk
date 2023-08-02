@@ -1438,8 +1438,8 @@ mineralize(struct level *lev)
         return;
 
     /* basic level-related probabilities */
-    goldprob = 20 + depth(&lev->z) / 3;
-    gemprob  = goldprob / 4;
+    goldprob = 20 + depth(&lev->z) / 6;
+    gemprob  = goldprob / 2;
     rockprob = 50 - 2 * depth(&lev->z);
 
     /* mines have ***MORE*** goodies - otherwise why mine? */

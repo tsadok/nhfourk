@@ -62,7 +62,7 @@ struct objclass {
 # define SILVER         14      /* Ag */
 # define GOLD           15      /* Au */
 # define PLATINUM       16      /* Pt */
-# define MITHRIL        17
+# define MITHRIL        17      /* fantasy version of titanium steel */
 # define PLASTIC        18
 # define GLASS          19
 # define GEMSTONE       20

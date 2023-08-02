@@ -1124,7 +1124,7 @@ mkfloorgold(long amount, struct level *lev, int x, int y, enum rng rng)
 {
     if (amount <= 0L) {
         amount = 1 + rn2_on_rng(level_difficulty(&lev->z) + 2, rng);
-        amount *= 1 + rn2_on_rng(30, rng);
+        amount *= 1 + rn2_on_rng(50, rng);
         amount++;
     }
     return mkgold(amount, lev, x, y, rng);

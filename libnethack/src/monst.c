@@ -1293,8 +1293,8 @@ const struct permonst mons[] = {
        on the *order* for dragon here and for dragon scales in objects.c being
        the same as the order in the nh_dragon_color enum.  Baby dragons cannot
        confer intrinsics, to avoid polyself/egg abuse. As reptiles, dragons are
-       cold-blooded and thus aren't seen with infravision.  Red dragons are the
-       exception. */
+       cold-blooded and thus aren't seen with infravision, unless their color
+       of scales confers thermal properties (heat or cold). */
     MON("baby gray dragon", S_DRAGON,
         LVL(12, 13, 8, 2, 10, 0), G_GENO,
         A(ATTK(AT_BITE, AD_PHYS, 2, 6),
