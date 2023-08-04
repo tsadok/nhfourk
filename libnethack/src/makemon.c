@@ -592,16 +592,22 @@ m_initweap(struct level *lev, struct monst *mtmp, enum rng rng)
 
 /*
  *   Makes up money for monster's inventory.
- *   This will change with silver & copper coins
  */
 void
 mkmonmoney(struct monst *mtmp, long amount, enum rng rng)
 {
-    struct obj *gold = mksobj(mtmp->dlevel, GOLD_PIECE, FALSE, FALSE, rng);
+    long target = 12000;
+    long unmet  = (target - (long) u.generated_gold.moninv);
+    if (unmet < 0) { unmet = 0; }
+    amount = amount * unmet / target;
 
-    gold->quan = amount;
-    u.generated_gold.moninv += amount;
-    add_to_minv(mtmp, gold);
+    if (amount > 0) {
+        struct obj *gold = mksobj(mtmp->dlevel, GOLD_PIECE, FALSE, FALSE, rng);
+
+        gold->quan = amount;
+        u.generated_gold.moninv += (unsigned int) amount;
+        add_to_minv(mtmp, gold);
+    }
 }
 
 

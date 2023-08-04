@@ -1292,7 +1292,7 @@ weapon_type(struct obj *obj)
         /* Not using a weapon */
         return P_BARE_HANDED_COMBAT;
     if (obj->oclass != WEAPON_CLASS && obj->oclass != TOOL_CLASS &&
-        obj->oclass != GEM_CLASS)
+        obj->oclass != GEM_CLASS && obj->oclass != COIN_CLASS)
         /* Not a weapon, weapon-tool, or ammo */
         return P_NONE;
     type = objects[obj->otyp].oc_skill;

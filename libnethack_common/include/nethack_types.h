@@ -426,7 +426,8 @@ enum placement_hint {
 enum nh_create_response {
     NHCREATE_OK,
     NHCREATE_INVALID = -1,
-    NHCREATE_FAIL = -2
+    NHCREATE_FAIL = -2,
+    NHCREATE_BADCHAROPTS = -3,
 };
 
 enum nh_client_response {

@@ -1363,7 +1363,7 @@ thitmonst(struct monst *mon, struct obj *obj, struct obj *appraisestack)
     }
 
     if (obj->oclass == WEAPON_CLASS || is_weptool(obj) ||
-        obj->oclass == GEM_CLASS) {
+        obj->oclass == GEM_CLASS || obj->oclass == COIN_CLASS) {
         if (is_ammo(obj)) {
             if (!ammo_and_launcher(obj, uwep)) {
                 tmp -= 4;
@@ -1386,6 +1386,13 @@ thitmonst(struct monst *mon, struct obj *obj, struct obj *appraisestack)
                     else if (Role_if(PM_SAMURAI) && uwep->otyp == YUMI)
                         tmp++;
                 }
+            }
+        } else if ((obj->oclass == COIN_CLASS) &&
+                   uwep && (objects[uwep->otyp].oc_skill == P_SLING)) {
+            tmp += uwep->spe - greatest_erosion(uwep);
+            tmp += 2 + weapon_hit_bonus(uwep);
+            if (uwep->oartifact) {
+                tmp += spec_abon(uwep, mon);
             }
         } else {
             if (otyp == BOOMERANG)      /* arbitrary */
@@ -1433,7 +1440,8 @@ thitmonst(struct monst *mon, struct obj *obj, struct obj *appraisestack)
                 /* Hard stones are harder to break. */
                 if (broken && (obj->otyp == FLINT ||
                                ((obj->oclass == GEM_CLASS) &&
-                                objects[obj->otyp].oc_tough))
+                                objects[obj->otyp].oc_tough) ||
+                               (obj->otyp == GOLD_PIECE))
                     && rn2(1))
                     broken = 0;
 

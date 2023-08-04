@@ -384,6 +384,7 @@ rungame(nh_bool net)
     fnchar savedir[BUFSZ];
     long t;
     struct nh_roles_info *info;
+    enum nh_create_response errorcode;
 
     struct nh_option_desc *old_opts = curses_get_nh_opts(),
                           *new_opts = nhlib_clone_optlist(old_opts),
@@ -530,7 +531,8 @@ rungame(nh_bool net)
         curses_raw_print("Gimmel");
 #endif
     */
-    if (nh_create_game(fd, new_opts) == NHCREATE_OK) {
+    errorcode = nh_create_game(fd, new_opts);
+    if (errorcode == NHCREATE_OK) {
         ret = playgame(fd, FM_PLAY);
         /*
 #ifdef DEBUG_GAME_CREATION
@@ -540,11 +542,19 @@ rungame(nh_bool net)
         */
 
 #else /* (not NETCLIENT) */
-    if (nh_create_game(fd, new_opts) == NHCREATE_OK) {
+    errorcode = nh_create_game(fd, new_opts);
+    if (errorcode == NHCREATE_OK) {
         ret = playgame(fd, FM_PLAY);
 #endif /* NETCLIENT */
 
         close(fd);
+    } else {
+        if (errorcode == NHCREATE_FAIL)
+            curses_raw_print("Beans, said Homer.  Beans, beans beans beans.");
+        if (errorcode == NHCREATE_INVALID)
+            curses_raw_print("Invalid file descriptor or set seed.");
+        if (errorcode == NHCREATE_BADCHAROPTS)
+            curses_raw_print("Invalid character-creation options.");
     }
 
     destroy_game_windows();

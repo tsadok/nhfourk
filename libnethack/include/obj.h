@@ -170,9 +170,11 @@ struct obj {
                               objects[otmp->otyp].oc_skill >= -P_CROSSBOW && \
                               objects[otmp->otyp].oc_skill <= -P_BOW)
 # define ammo_and_launcher(otmp,ltmp) \
-                              (is_ammo(otmp) && (ltmp) && \
-                              objects[(otmp)->otyp].oc_skill == \
-                                -objects[(ltmp)->otyp].oc_skill)
+                              ((is_ammo(otmp) && (ltmp) && \
+                                objects[(otmp)->otyp].oc_skill ==   \
+                                -objects[(ltmp)->otyp].oc_skill) ||     \
+                               ((otmp->oclass == COIN_CLASS) && ltmp && \
+                                objects[(ltmp)->otyp].oc_skill == P_SLING))
 # define is_missile(otmp)    ((otmp->oclass == WEAPON_CLASS || \
                               otmp->oclass == TOOL_CLASS) && \
                               objects[otmp->otyp].oc_skill >= -P_BOOMERANG && \

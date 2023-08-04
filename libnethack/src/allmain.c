@@ -332,7 +332,7 @@ nh_create_game(int fd, struct nh_option_desc *opts_orig)
         !validalign(u.initrole, u.initrace, u.initalign) ||
         (!*u.uplname && !wizard)) {
         API_EXIT();
-        return NHCREATE_INVALID;
+        return NHCREATE_BADCHAROPTS;
     }
 
     /* We create a new save file that saves the state immediately after

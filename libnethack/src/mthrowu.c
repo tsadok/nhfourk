@@ -385,7 +385,7 @@ m_throw(struct monst *mon, int x, int y, int dx, int dy, int range,
             action_interrupted();
 
             if (singleobj->oclass == GEM_CLASS &&
-                singleobj->otyp <= LAST_GEM + 9
+                singleobj->otyp <= LAST_GLASS
                 /* 9 glass colors */
                 && is_unicorn(youmonst.data) && !u_helpless(hm_all)) {
                 if (singleobj->otyp > LAST_GEM) {

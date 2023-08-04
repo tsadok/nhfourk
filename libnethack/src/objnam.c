@@ -2421,8 +2421,7 @@ readobjnam(char *bp, struct obj *no_wish, boolean from_user, int wishtype)
         else if (!strncmpi(g, "coloured ", 9))
             g += 9;
         if (!strcmpi(g, "glass")) {     /* choose random color */
-            /* 9 different kinds */
-            typ = LAST_GEM + rnd(9);
+            typ = LAST_GEM + rnd(1 + LAST_GLASS - LAST_GEM);
             if (objects[typ].oc_class == GEM_CLASS)
                 goto typfnd;
             else

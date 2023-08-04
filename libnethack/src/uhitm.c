@@ -70,8 +70,9 @@ find_roll_to_hit(struct monst *mtmp)
       Analysis:  1 + (-5 to +12) + (+10 to -10, minus armor) + +0 + ((0-5556)/512)
            (Then below we can adjust by numbers like 2 or 4 for things like
             encumbrance or the monster having status effects.)
-           (Then the various weapon and skill to-hit boni are added.)
-           If the result is greater than d20, you hit.
+           Then the various weapon and skill to-hit boni are added.
+           If the result is greater than d20, you hit.  The final comparison
+           is made by another function, typically hitum() or maybe hmonas().
 
       abon() is normally the strength bonus plus the dex bonus
             strength bonus ranges from -2 (str < 6) to +3

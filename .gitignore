@@ -2,7 +2,10 @@
 build/*
 *.swp
 *.kate-swp
+*.core
+*.nhgame
 *~
+.*
 .emacs.desktop
 .emacs.desktop.lock
 aimake.local
