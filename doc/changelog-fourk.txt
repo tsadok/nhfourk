@@ -1,5 +1,5 @@
 About this document:
-Written 2014-2020 by Nathan Eady.
+Written 2014-2023 by Nathan Eady.
 
 This document (i.e., this specific file, changelog-fourk.txt) is in
 the public domain.  The author has specifically released it to the
@@ -58,6 +58,14 @@ Chronological Changelog (most recent at top):
 =============================================
 =============================================
 
+
+Changes in 4.3.0.6:
+-------------------
+
+ * The default map size has finally been increased.  As before,
+   this can be set at compile time with -DROWNO and -DCOLNO
+   in the compile flags (CFLAGS).  What has changed, is the
+   values that are used by default if you do not specify them.
 
 Changes in 4.3.0.5:
 -------------------

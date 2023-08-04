@@ -17,7 +17,7 @@ $playfieldutils = qr/dlb|dgn_comp|lev_comp/;
     options => {
         packagename => 'nhfourk',
         packagename_text => 'NetHack Fourk',
-        packageversion => '3.0.5',
+        packageversion => '3.0.6',
         companyname => 'NetHack Fourk DevTeam',
         ignore_directories => qr/^(?:\.git|mingw)/i,
 

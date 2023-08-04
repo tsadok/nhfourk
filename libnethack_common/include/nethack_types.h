@@ -44,10 +44,10 @@
  *     I want to fix this eventually, but I haven't yet.
  *  4. Even numbers may cause more problems than odd numbers. */
 #ifndef COLNO
-# define COLNO          79
+# define COLNO          84
 #endif
 #ifndef ROWNO
-# define ROWNO          21
+# define ROWNO          34
 #endif
 
 # define BUFSZ          256     /* for getlin buffers */
