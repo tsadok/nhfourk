@@ -1003,7 +1003,9 @@ do_objs(const char *outfile)
     int prefix = 0;
     char class = '\0';
     boolean sumerr = FALSE;
+    char first_gem[128] = "";
     char last_gem[128] = "";
+    char last_glass[128] = "";
     boolean need_comma = FALSE;
 
     if (!(ofp = fopen(outfile, WRTMODE))) {
@@ -1063,6 +1065,11 @@ do_objs(const char *outfile)
         case GEM_CLASS:
             if (objects[i].oc_material == GEMSTONE) {
                 strcpy(last_gem, objnam);
+                if (!*first_gem) {
+                    strcpy(first_gem, objnam);
+                }
+            } else if (objects[i].oc_material == GLASS) {
+                strcpy(last_glass, objnam);
             }
         default:
             fprintf(ofp, "#define\t");
@@ -1081,14 +1088,30 @@ do_objs(const char *outfile)
         sumerr = TRUE;
     }
 
+    if (!*first_gem) {
+        fprintf(stderr, "no gems at all, so no first gem");
+        fflush(stderr);
+        sumerr = TRUE;
+        /* Try to break things in the least bad way possible */
+        snprintf(first_gem, SIZE(first_gem), "%d", i - 1);
+    }
     if (!*last_gem) {
-        fprintf(stderr, "no gems at all");
+        fprintf(stderr, "no gems at all, so no last gem");
         fflush(stderr);
         sumerr = TRUE;
         /* Put in something that won't completely break things */
         snprintf(last_gem, SIZE(last_gem), "%d", i - 1);
     }
+    if (!*last_glass) {
+        fprintf(stderr, "no worthless glass at all, so no last glass");
+        fflush(stderr);
+        sumerr = TRUE;
+        /* Put in something that won't completely break things */
+        snprintf(last_glass, SIZE(last_glass), "%d", i - 1);
+    }
+    fprintf(ofp, "#define\tFIRST_GEM\t%s\n", first_gem);
     fprintf(ofp, "#define\tLAST_GEM\t%s\n", last_gem);
+    fprintf(ofp, "#define\tLAST_GLASS\t%s\n", last_glass);
     fprintf(ofp, "#define\tNUM_OBJECTS\t%d\n", i);
 
     fprintf(ofp, "\n/* Artifacts (unique objects) */\n\n");

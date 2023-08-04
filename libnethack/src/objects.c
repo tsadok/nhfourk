@@ -1045,10 +1045,10 @@ const struct objclass const_objects[] = {
 #undef WAND
 
 /* coins ... - so far, gold is all there is */
-#define COIN(name,prob,metal,worth) OBJECT( \
-        OBJ(name,NULL), BITS(0,1,0,0,0,0,0,0,0,0,0,P_NONE,metal), 0, \
-            COIN_CLASS, prob, 0, 1, worth, 0, 0, 0, 0, 0, HI_GOLD )
-    COIN("gold piece", 1000, GOLD, 1),
+#define COIN(name,prob,metal,worth,clr,skil,dmg) OBJECT(          \
+        OBJ(name,NULL), BITS(0,1,0,0,0,0,0,0,0,0,0,skil,metal), 0, \
+            COIN_CLASS, prob, 0, 1, worth, dmg, dmg, 0, 0, 0, clr)
+    COIN("gold piece", 1000, GOLD, 1, HI_GOLD, -P_SLING, 5),
 #undef COIN
 
 /* gems ... - includes stones and rocks but not boulders */
@@ -1083,8 +1083,10 @@ const struct objclass const_objects[] = {
     GEM("obsidian", "black", 9, 1, 200, 15, 6, GEMSTONE, CLR_BLACK),
     GEM("agate", "orange", 12, 1, 200, 15, 6, GEMSTONE, CLR_ORANGE),
     GEM("jade", "green", 10, 1, 300, 15, 6, GEMSTONE, CLR_GREEN),
-    /* Warning: some code in mthrowu.c assumes there are exactly 9 of these.
-       (Search for "LAST_GEM + 9".) */
+    /* Note1: lots of code in various places assumes that the worthless
+       glass objects directly follow the valuable gems. */
+    /* Note2: if the list of worthless glass objects changes in any way,
+       the switch statement in get_cost must be updated to match. */
     GEM("worthless piece of white glass", "white", 77, 1, 0, 6, 5, GLASS,
         CLR_WHITE),
     GEM("worthless piece of blue glass", "blue", 77, 1, 0, 6, 5, GLASS,
