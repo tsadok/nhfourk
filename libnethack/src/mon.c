@@ -195,7 +195,44 @@ make_corpse(struct monst *mtmp)
     int mndx = monsndx(mdat);
 
     switch (mndx) {
-        /* TODO: handle elder and great dragons similarly. */
+    case PM_ANCIENT_GRAY_DRAGON:
+    case PM_ANCIENT_SILVER_DRAGON:
+    case PM_ANCIENT_RED_DRAGON:
+    case PM_ANCIENT_ORANGE_DRAGON:
+    case PM_ANCIENT_WHITE_DRAGON:
+    case PM_ANCIENT_BLACK_DRAGON:
+    case PM_ANCIENT_BLUE_DRAGON:
+    case PM_ANCIENT_GREEN_DRAGON:
+    case PM_ANCIENT_YELLOW_DRAGON:
+        /* Ancient dragons always drop scales.  This code assumes that the order
+           of the ancient dragons is the same as the order of the scales.  */
+        if (!mtmp->mrevived || !rn2(7)) {
+            num = GRAY_DRAGON_SCALES + mndx - PM_ANCIENT_GRAY_DRAGON;
+            obj = mksobj_at(num, level, x, y, FALSE, FALSE, rng_main);
+            obj->spe = 0;
+            obj->cursed = obj->blessed = FALSE;
+        }
+        goto default_1;
+        
+    case PM_ELDER_GRAY_DRAGON:
+    case PM_ELDER_SILVER_DRAGON:
+    case PM_ELDER_RED_DRAGON:
+    case PM_ELDER_ORANGE_DRAGON:
+    case PM_ELDER_WHITE_DRAGON:
+    case PM_ELDER_BLACK_DRAGON:
+    case PM_ELDER_BLUE_DRAGON:
+    case PM_ELDER_GREEN_DRAGON:
+    case PM_ELDER_YELLOW_DRAGON:
+        /* Make dragon scales.  This assumes that the order of the */
+        /* dragons is the same as the order of the scales.  */
+        if ((!mtmp->mrevived || !rn2(7)) && !rn2_on_rng(2, rng_dragonscales)) {
+            num = GRAY_DRAGON_SCALES + mndx - PM_ELDER_GRAY_DRAGON;
+            obj = mksobj_at(num, level, x, y, FALSE, FALSE, rng_main);
+            obj->spe = 0;
+            obj->cursed = obj->blessed = FALSE;
+        }
+        goto default_1;
+        
     case PM_GRAY_DRAGON:
     case PM_SILVER_DRAGON:
     case PM_RED_DRAGON:
@@ -273,8 +310,8 @@ make_corpse(struct monst *mtmp)
     case PM_GLASS_GOLEM:
         num = dice(2, 4);       /* very low chance of creating all glass gems */
         while (num--)
-            obj = mksobj_at((LAST_GEM + rnd(9)), level, x, y, TRUE, FALSE,
-                            rng_main);
+            obj = mksobj_at((LAST_GEM + rnd(1 + LAST_GLASS - LAST_GEM)),
+                            level, x, y, TRUE, FALSE, rng_main);
         mtmp->mnamelth = 0;
         break;
     case PM_CLAY_GOLEM:
@@ -322,6 +359,8 @@ make_corpse(struct monst *mtmp)
         break;
     }
     /* All special cases should precede the G_NOCORPSE check */
+
+    if (!obj) return NULL;
 
     /* if polymorph or undead turning has killed this monster, prevent the same
        attack beam from hitting its corpse */
