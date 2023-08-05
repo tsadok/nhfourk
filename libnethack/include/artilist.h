@@ -22,6 +22,22 @@ static const char *artifact_names[] = {
 
 # define A(nam,typ,s1,s2,mt,atk,dfn,cry,inv,al,cl,rac,cost) \
  { nam, cost, s1, s2, mt, atk, dfn, cry, al, inv, cl, rac, typ }
+/* nam  -> name,
+   typ  -> otyp, base object type for the artifact
+   s1   -> spfx, special effect from wielding/wearing
+   s2   -> cspfx, special effect from just carrying
+   mt   -> mtype, monster type, mlet, or flag
+   atk  -> attk - attack damage type of the artifact's damage bonus
+   dfn  -> defn - attack damage type to which the artifact
+                  provides resistance when equipped
+   cry  -> cary - attack damage type to which the artifact
+                  provides resistance when carried
+   inv  -> inv_prop, property obtained by invoking artifact
+   al   -> alignment (of bequeathing dieties)
+   cl   -> role (player role)
+   rac  -> race (player race)
+   cost -> cost (default 100x base cost)
+ */
 
 # define     NO_ATTK    {'a',0,0,0,0}       /* no attack */
 # define     NO_DFNS    {'a',0,0,0,0}       /* no defense */

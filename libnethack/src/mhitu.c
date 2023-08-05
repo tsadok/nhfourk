@@ -872,10 +872,19 @@ magic_negation(struct monst *mon)
     struct obj *armor;
     int armpro = 0, ringpro = 0, extrapro = 0;
     enum objslot i;
+    /*
+      Fourk 4.3.0.6 Magic Cancellation Nerf
+
+      Magic Cancellation from armor may come back in the future, but first I
+      want to make a serious attempt to rebalance the game around not having it.
+
+      This is totally fair, because it isn't just the player:  monsters can no
+      longer get MC from their armor either.  See?  Totally fair.
+    */
 
     /* Loop over all the armor slots. Armor types for shirt, gloves, shoes, and
        shield don't currently provide any magic cancellation, but we might as
-       well be complete. */
+       well be complete.
     for (i = 0; i <= os_last_armor; i++) {
         int wtype;
         armor = which_armor(mon, i);
@@ -884,13 +893,15 @@ magic_negation(struct monst *mon)
         if (armor && item_provides_extrinsic(armor, PROTECTION, &wtype))
             extrapro++;
     }
+    */
 
-    /* this one is really a stretch... */
+    /* this one is really a stretch...
     armor = which_armor(mon, os_saddle);
     if (armor && armpro < objects[armor->otyp].a_can)
         armpro = objects[armor->otyp].a_can;
+    */
 
-    /* Additionally, jewelry may provide extrinsic protection. */
+    /* Jewelry may still provide extrinsic protection. */
     for (i = os_amul; i <= os_last_worn; i++) {
         int wtype;
         armor = which_armor(mon, i);
@@ -898,7 +909,7 @@ magic_negation(struct monst *mon)
             ringpro += ((objects[armor->otyp].oc_charged) ? armor->spe : 1);
     }
 
-    /* You can also get temporary protection from the spell. */
+    /* You can also still get temporary protection from the spell. */
     if (u.uspellprot > extrapro)
         extrapro = u.uspellprot;
 

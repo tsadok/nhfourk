@@ -312,10 +312,6 @@ Outstanding Bug Reports:
 ▒▒▒   SAVEBREAK (4.3.0.6):
 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 ▒▒▒
-▒▒▒ * Update version numbers for 4.3.0.6
-▒▒▒
-▒▒▒ * Ensure that the gold-generation tracking saves/restores all categories.
-▒▒▒
 ▒▒▒ * Amulet of half physical damage.  Appearance could be "lunate" or "warped"
 ▒▒▒   if I want to re-use a Slash'EM appearance, or I could make up a new one.
 ▒▒▒
@@ -339,7 +335,7 @@ Outstanding Bug Reports:
 ▒▒▒   + Merge the runics branch into bleeding-edge.
 ▒▒▒ * Ensure that runics interact reasonably with stacking.
 ▒▒▒
-▒▒▒ * Nuke magic cancellation.  Test late-game balance with this change.
+▒▒▒ * Test late-game balance with the magic cancellation nerf.
 ▒▒▒
 ▒▒▒ * Implement the Druid role.  Always neutral.  Human, possibly gnome.
 ▒▒▒   (I'd say dwarf if they could be neutral, but changing that seems not worth it,

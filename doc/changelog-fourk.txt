@@ -62,6 +62,14 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.6:
 -------------------
 
+ * 
+
+ * Except for the Cloak of Protection, armor no longer provides
+   special protection (sometimes called "magic negation" or
+   "magic cancellation").  You can still get this property from
+   jewelry or the magic spell.  Armor still improves your defense
+   value ("Armor Class").
+
  * The default map size has finally been increased.  As before,
    this can be set at compile time with -DROWNO and -DCOLNO
    in the compile flags (CFLAGS).  What has changed, is the

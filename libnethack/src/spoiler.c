@@ -1211,7 +1211,7 @@ makehtmlspoilers(void)
         fprintf(outfile, "\n<table id=\"armor\"><thead>\n  "
                 "<tr><th class=\"slot\">slot</th>"
                 "<th class=\"object\">armor</th>"
-                "<th class=\"numeric mc\">MC</th>"
+                /* "<th class=\"numeric mc\">MC</th>" */
                 "<th class=\"numeric ac\">def</th>"
                 "<th class=\"material\">mat</th>"
                 "<th class=\"size\">fits</th>"
@@ -1224,7 +1224,7 @@ makehtmlspoilers(void)
                 continue;
             fprintf(outfile, "<tr><td class=\"slot\">%s</td>"
                     "<td class=\"object\" id=\"obj%d\">%s</td>"
-                    "<td class=\"numeric mc\">%s</td>"
+                    /* "<td class=\"numeric mc\">%s</td>" */
                     "<td class=\"numeric ac\">%d</td>"
                     "<td class=\"material\">%s</td>"
                     "<td class=\"armorsize\">%s</td>"
@@ -1232,8 +1232,8 @@ makehtmlspoilers(void)
                     "<td class=\"numeric price\">%d</td>"
                     "</tr>\n",
                     oslotname(objects[i].oc_armcat), i, spoiloname(i),
-                    (objects[i].a_can ?
-                     msgprintf("MC%d", objects[i].a_can) : ""),
+                    /* (objects[i].a_can ?
+                       msgprintf("MC%d", objects[i].a_can) : ""), */
                     objects[i].a_ac, material_name(objects[i].oc_material),
                     spoilarmorsize(&objects[i]),
                     objects[i].oc_weight, objects[i].oc_cost);
