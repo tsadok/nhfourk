@@ -67,12 +67,8 @@ Outstanding Bug Reports:
 
     * Make gold coins effective sling ammo.
 
-    * Make gold coins not break easily when used as sling ammo.
-
     * When gold is donated to a priest, "The peaceful priest of [diety]
       secures the money under the altar for safe keeping."
-
-    * When digging into STONE, good chance a boulder results.
 
     * Finish implementing the scroll of silence.
    

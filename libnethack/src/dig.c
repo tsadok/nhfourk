@@ -391,8 +391,7 @@ dig(void)
                     mkcavearea(TRUE);
                     goto cleanup;
                 }
-            }
-            if (IS_TREE(loc->typ)) {
+            } else if (IS_TREE(loc->typ)) {
                 digtxt = "You cut down the tree.";
                 /* Note: we test for this exact string later, to decide if a
                    tree was cut down for alignment-record purposes. */
@@ -406,6 +405,12 @@ dig(void)
                     rnd_treefruit_at(dpx, dpy);
             } else {
                 digtxt = "You succeed in cutting away some rock.";
+                if (loc->typ == STONE && !rn2_on_rng(7, rng_main)) {
+                    struct obj * boulder = mksobj_at(BOULDER, level, dpx, dpy,
+                                                     FALSE, FALSE, rng_main);
+                    if (boulder) digtxt = "You succeed in cutting away some"
+                                     " rock, but a boulder remains.";
+                }
                 loc->typ = CORR;
             }
         } else if (IS_WALL(loc->typ)) {
