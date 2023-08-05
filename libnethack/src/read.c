@@ -396,7 +396,7 @@ recharge(struct obj *obj, int curse_bless)
          *
          * No custom RNG, because we can't know whether the user will recharge
          * the same wand repeatedly, or recharge a number of different wands
-         * separately, or a mixture, and this woud throw off the RNG.
+         * separately, or a mixture, and this would throw off the RNG.
          */
         n = (int)obj->recharged;
         if (obj->otyp == WAN_WISHING) { /* never recharge these */
@@ -610,6 +610,9 @@ recharge(struct obj *obj, int curse_bless)
 
     } else {
     not_chargable:
+        if (obj->otyp == MAGIC_LAMP)
+            /* A lamp that's not rechargeable, must be magic. */
+            makeknown(MAGIC_LAMP);
         pline(msgc_badidea, "You have a feeling of loss.");
     }
 }
