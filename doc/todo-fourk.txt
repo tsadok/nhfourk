@@ -349,10 +349,6 @@ Outstanding Bug Reports:
 ▒▒▒ * Consider making giantslayer a sling.  The wiki says Un does this.
 ▒▒▒   Also, should it be the Caveman first sac gift?  Discuss.
 ▒▒▒
-▒▒▒ * Look at how the lamp charging code manages to allow charging a lit
-▒▒▒   lamp; use a similar technique to fix the issue of lit candles
-▒▒▒   being impervious to fire damage.
-▒▒▒
 ▒▒▒ * Really really should enable highlighting of peacefuls to be disabled
 ▒▒▒   without turning off highlighting of pets.
 ▒▒▒

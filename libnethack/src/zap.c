@@ -4550,6 +4550,7 @@ set_candles_afire(void)
     struct obj *obj, *obj2;
     int eroded;
     for (obj = invent; obj; obj = obj2) {
+        int fuelleft = obj->age;
         obj2 = obj->nobj;
         if (!Is_candle(obj)) continue;
         if (obj->oartifact) /* There are currently no artifact candles, but. */
@@ -4558,22 +4559,18 @@ set_candles_afire(void)
             continue;   /* not available */
         eroded = candle_erosion_level(obj->age);
         obj->oeroded = (eroded >= 0) ? eroded : 0;
-        if (!obj->lamplit) {
-            int fuelleft = obj->age;
-            fuelleft -= WAX_EROSION_AMOUNT;
-            obj->age = (fuelleft > 1) ? fuelleft : 1;
-            begin_burn(obj, FALSE);
-        } /* else {
-             I thought about using up some of the candle's remaining wax
-             in this already-lit case as well, but that would require
-             messing with an existing timer.  Out of laziness, I haven't
-             implemented that part yet.  Ergo, correct strategy when fire
-             damage is destroying your candles is to leave them lit until
-             the source of damage can be neutralized, _then_ snuff them.
-             This is counterintuitive.  Bad programmer, no cookie :-(
-             See also the similar case in erode_obj in zap.c
-             See also the similar case for potions of oil in destroy_item()
-        } */
+        if (obj->lamplit) {
+            if (!stop_timer(obj->olev, BURN_OBJECT, obj)) {
+                impossible("set_candles_afire(): lit candle not timed!");
+            }
+            /*
+              See also the similar case in erode_obj in trap.c
+              See also the similar case for potions of oil in destroy_item()
+            */
+        }
+        fuelleft -= WAX_EROSION_AMOUNT;
+        obj->age = (fuelleft > 1) ? fuelleft : 1;
+        begin_burn(obj, FALSE);
     }
 }
 
@@ -4627,19 +4624,23 @@ destroy_item(int osym, int dmgtyp)
             switch (osym) {
             case POTION_CLASS:
                 if (obj->otyp == POT_OIL && !Underwater) {
-                    /* TODO: if already lit, use up some of the oil.
-                       See related comment in set_candles_afire() */
-                    if (!obj->lamplit) {
+                    if (obj->lamplit) {
+                        /* Stop timer before changing the remaining time... */
+                        if (!stop_timer(obj->olev, BURN_OBJECT, obj)) {
+                            impossible("destroy_item: lit potion not timed!");
+                        }
+                        /* See also the lit candle cases in zap.c and trap.c */
+                    } else {
                         makeknown(obj->otyp);
-                        if (obj->quan > 1L) {
-                            obj = splitobj(obj, 1L);
-                            begin_burn(obj, FALSE); /* burn before free to get position */
-                            obj_extract_self(obj);  /* free from inv... */
-                            /* then pick it back up (it shouldn't merge now) */
-                            hold_another_object(obj, "You drop %s!", doname(obj), NULL);
-                        } else
-                            begin_burn(obj, FALSE);
                     }
+                    if (obj->quan > 1L) {
+                        obj = splitobj(obj, 1L);
+                        begin_burn(obj, FALSE); /* burn before free to get position */
+                        obj_extract_self(obj);  /* free from inv... */
+                        /* then pick it back up (it shouldn't merge now) */
+                        hold_another_object(obj, "You drop %s!", doname(obj), NULL);
+                    } else
+                        begin_burn(obj, FALSE);
                 } else /* Other potions can freeze and shatter, so we no longer
                           subject them to fire damage, because that would make
                           them doubly vulnerable compared to other objects. */

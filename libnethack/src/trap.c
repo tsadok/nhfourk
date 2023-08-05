@@ -232,21 +232,18 @@ erode_obj(struct obj *otmp, const char *ostr, enum erode_type type,
             costly_damage_obj(otmp);
 
         if (Is_candle(otmp) && (type == ERODE_BURN)) {
-            if (!otmp->lamplit) {
-                int fuelleft = otmp->age;
-                fuelleft -= WAX_EROSION_AMOUNT;
-                otmp->age = (fuelleft > 1) ? fuelleft : 1;
-                begin_burn(otmp, FALSE);    
-            } /* else {
-                 I thought about using up some of the candle's remaining wax
-                 in this already-lit case as well, but that would require
-                 messing with an existing timer.  Out of laziness, I haven't
-                 implemented that part yet.  Ergo, correct strategy when fire
-                 damage is destroying your candles is to leave them lit until
-                 the source of damage can be neutralized, _then_ snuff them.
-                 This is counterintuitive.  Bad programmer, no cookie :-(
-                 See also the similar case in set_candles_afire() in zap.c
-            } */
+            int fuelleft = otmp->age;
+            if (otmp->lamplit) {
+                /* Stop the timer before changing the remaining time... */
+                if (!stop_timer(otmp->olev, BURN_OBJECT, otmp)) {
+                    impossible("erode_obj(): lit candle not timed!");
+                }
+                /* See also the similar case in set_candles_afire() in zap.c */
+                /* begin_burn() will restart the timer momentarily. */
+            }
+            fuelleft -= WAX_EROSION_AMOUNT;
+            otmp->age = (fuelleft > 1) ? fuelleft : 1;
+            begin_burn(otmp, FALSE);
         }
 
         update_inventory();
