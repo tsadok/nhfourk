@@ -299,6 +299,9 @@ play_test_game(const char *commands, bool verbose)
     case NHCREATE_FAIL:
         tap_comment("creating game: failure");
         break;
+    case NHCREATE_BADCHAROPTS:
+        tap_comment("creating game: bad character options");
+        break;
     case NHCREATE_INVALID:
         tap_comment("creating game: invalid options");
         break;
