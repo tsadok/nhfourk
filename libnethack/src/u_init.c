@@ -105,7 +105,8 @@ static const struct trobj Archeologist[] = {
     {BULLWHIP, 2, WEAPON_CLASS, 1, UNDEF_BLESS},
     {LEATHER_JACKET, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
     {FEDORA, 0, ARMOR_CLASS, 1, UNDEF_BLESS},
-    {FOOD_RATION, 0, FOOD_CLASS, 3, 0},
+    {FOOD_RATION, 0, FOOD_CLASS, 1, 0},
+    {TIN, 0, FOOD_CLASS, 3, 1},
     {PICK_AXE, UNDEF_SPE, TOOL_CLASS, 1, UNDEF_BLESS},
     {WAN_LIGHT, UNDEF_SPE, WAND_CLASS, 1, UNDEF_BLESS},
     {TOUCHSTONE, 0, GEM_CLASS, 1, 0},
@@ -279,7 +280,7 @@ static const struct trobj Wizard[] = {
  */
 
 static const struct trobj Tinopener[] = {
-    {TIN_OPENER, 0, TOOL_CLASS, 1, 0},
+    {TIN_OPENER, 0, TOOL_CLASS, 1, 1},
     {0, 0, 0, 0, 0}
 };
 
@@ -936,7 +937,7 @@ u_init_inv_skills(void)
         trobj_list[T_DARTS].trquan = 35 + rolern2(20);
         u.umoney0 = 1 + rolern2(1000);
         role_ini_inv(trobj_list, nclist);
-        if (!rolern2(4))
+        if (carrying(TIN))
             role_ini_inv(Tinopener, nclist);
         else if (!rolern2(3))
             role_ini_inv(Leash, nclist);

@@ -62,6 +62,12 @@ Chronological Changelog (most recent at top):
 Changes in 4.3.0.5:
 -------------------
 
+ * Tourists now received a tin opener in starting inventory if and
+   only if they receive a tin, rather than just a percentage of the
+   time at random.  Also, when they do get one, it is blessed.
+   Archeologists, who always receive a tin opener, now also receive a
+   blessed tin (of random contents) to go with it.
+
  * Digging into solid rock sometimes leaves a boulder.
 
  * Candles are now vulnerable to fire damage regardless of
