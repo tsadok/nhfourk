@@ -558,6 +558,8 @@ moverock(schar dx, schar dy)
             }
 
             if (!u.usteed &&
+                /* TODO: This is clearly wrong: inv_weight_total() cannot
+                   return a negative number, only zero or positive. */
                 (((!invent || inv_weight_total() <= -850) &&
                   (!dx || !dy || (IS_ROCK(level->locations[u.ux][sy].typ)
                                   && IS_ROCK(level->locations[sx][u.uy].typ))))

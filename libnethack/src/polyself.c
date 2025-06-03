@@ -1534,77 +1534,78 @@ mbodypart(struct monst *mon, int part)
         "fingertip", "foot", "hand", "handed", "head", "leg",
         "light headed", "neck", "spine", "toe", "hair",
         "blood", "lung", "nose", "stomach", "hide",
-        "limbs", "skin", "body"
+        "limbs", "skin", "body", "teeth"
     }, *const jelly_parts[] = { "pseudopod", "dark spot", "front",
         "pseudopod extension", "pseudopod extremity",
         "pseudopod root", "grasp", "grasped", "cerebral area",
         "lower pseudopod", "viscous", "middle", "surface",
         "pseudopod extremity", "ripples", "juices",
         "surface", "sensor", "stomach", "surface",
-        "pseudopods", "surface", "body"
+        "pseudopods", "surface", "body", "surface"
     }, *const animal_parts[] =
         { "forelimb", "eye", "face", "foreclaw", "claw tip",
         "rear claw", "foreclaw", "clawed", "head", "rear limb",
         "light headed", "neck", "spine", "rear claw tip",
         "fur", "blood", "lung", "nose", "stomach", "hide",
-        "limbs", "hide", "body"
+        "limbs", "hide", "body", "teeth"
     }, *const bird_parts[] = { "wing", "eye", "face", "wing", "wing tip",
         "foot", "wing", "winged", "head", "leg",
         "light headed", "neck", "spine", "toe",
         "feathers", "blood", "lung", "bill", "stomach", "plumage",
-        "limbs", "skin", "body"
+        "limbs", "skin", "body", "beak"
     }, *const gryphon_parts[] = { "foreleg", "eye", "face", "talon",
         "talon", "hind leg", "claw", "clawed", "head", "hind leg",
         "light headed", "ruff", "spine", "hind claw", "feathers",
         "blood", "lung", "beak", "stomach", "hide",
-        "limbs", "hide", "body"
+        "limbs", "hide", "body", "beak"
     }, *const horse_parts[] =
         { "foreleg", "eye", "face", "forehoof", "hoof tip",
         "rear hoof", "forehoof", "hooved", "head", "rear leg",
         "light headed", "neck", "backbone", "rear hoof tip",
         "mane", "blood", "lung", "nose", "stomach", "hide",
-        "limbs", "skin", "body"
+        "limbs", "skin", "body", "teeth"
     }, *const sphere_parts[] = { "appendage", "optic nerve", "body", "tentacle",
         "tentacle tip", "lower appendage", "tentacle", "tentacled",
         "body", "lower tentacle", "rotational", "equator", "body",
         "lower tentacle tip", "cilia", "life force", "retina",
-        "olfactory nerve", "interior", "cornea", "tentacles", "sclera", "body"
+        "olfactory nerve", "interior", "cornea", "tentacles", "sclera", "body",
+        "cornea"
     }, *const fungus_parts[] = { "mycelium", "visual area", "front", "hypha",
         "hypha", "root", "strand", "stranded", "cap area",
         "rhizome", "sporulated", "stalk", "root", "rhizome tip",
         "spores", "juices", "gill", "gill", "interior", "zest",
-        "hyphae", "zest", "mycelium"
+        "hyphae", "zest", "mycelium", "hyphae"
     }, *const vortex_parts[] = { "region", "eye", "front", "minor current",
         "minor current", "lower current", "swirl", "swirled",
         "central core", "lower current", "addled", "center",
         "currents", "edge", "currents", "life force",
         "center", "leading edge", "interior", "wisps",
-        "wisps", "outer vortex", "vortex"
+        "wisps", "outer vortex", "vortex", "currents"
     }, *const snake_parts[] = { "vestigial limb", "eye", "face", "large scale",
         "large scale tip", "rear region", "scale gap", "scale gapped",
         "head", "rear region", "light headed", "neck", "length",
         "rear scale", "scales", "blood", "lung", "forked tongue", "stomach",
-        "scales", "scales", "skin", "body"
+        "scales", "scales", "skin", "body", "fangs"
     }, *const worm_parts[] = { "anterior segment", "light sensitive cell", "clitellum",
         "setae", "setae", "posterior segment", "segment", "segmented",
         "anterior segment", "posterior", "over stretched", "clitellum", "length",
         "posterior setae", "setae", "blood", "skin", "prostomium", "stomach",
-        "segments", "skin", "body"
+        "segments", "skin", "body", "mouth"
     }, *const fish_parts[] = { "fin", "eye", "premaxillary", "pelvic axillary",
         "pelvic fin", "anal fin", "pectoral fin", "finned", "head", "peduncle",
         "played out", "gills", "dorsal fin", "caudal fin",
         "scales", "blood", "gill", "nostril", "stomach", "scales",
-        "fins", "skin", "body"
+        "fins", "skin", "body", "teeth"
     }, *const ghost_parts[] = { "arm", "eye", "face", "ghostly finger",
         "ghostly fingertip", "foot", "ghostly hand", "handed", "head",
         "leg", "light headed", "neck", "back", "toe", "aura", "spirit",
         "interior", "nose", "interior", "aura", "ghostly limbs", "aura",
-        "manifestation"
+        "manifestation", "ghostly teeth"
     }, *const owlbear_parts[] = { "wing", "eye", "face", "wingtip",
         "wingtip", "claw", "wingtip", "winged", "head", "leg",
         "light headed", "ruff", "spine", "talon", "feathers",
         "blood", "lung", "beak", "stomach", "hide",
-        "limbs", "skin", "body"
+        "limbs", "skin", "body", "beak"
     };
     /* claw attacks are overloaded in mons[]; most humanoids with such attacks
        should still reference hands rather than claws */
@@ -1629,9 +1630,11 @@ mbodypart(struct monst *mon, int part)
             mptr != &mons[PM_INCUBUS] && mptr != &mons[PM_SUCCUBUS])
             return part == HAND ? "claw" : "clawed";
     }
-    if ((mptr->mlet == S_ORC) && (part == NOSE))
+    if (((mptr->mlet == S_ORC) || mptr == &mons[PM_MINOTAUR]) &&
+        (part == NOSE))
         return "snout";
-    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MAMMOTH]) && part == NOSE)
+    if ((mptr == &mons[PM_MUMAK] || mptr == &mons[PM_MAMMOTH] ||
+         mptr == &mons[PM_DISENCHANTER]) && part == NOSE)
         return "trunk";
     if (mptr == &mons[PM_SHARK]) {
         /* sharks don't have scales */
@@ -1686,6 +1689,13 @@ mbodypart(struct monst *mon, int part)
         return "head";
     if (mptr->mlet == S_KRAKEN && mptr != &mons[PM_JELLYFISH])
         return fish_parts[part];
+    /* include/mondata.h:148:# define is_longworm(ptr)       (((ptr) == &mons[PM_BABY_LONG_WORM]) || \
+       include/mondata.h:149:                                 ((ptr) == &mons[PM_LONG_WORM]) || \
+       include/mondata.h:150:                                 ((ptr) == &mons[PM_LONG_WORM_TAIL]))
+    */
+    if (((mptr == &mons[PM_LONG_WORM]) || (mptr == &mons[PM_BABY_LONG_WORM]))
+        && (part == TEETH))
+        return "teeth";
     if (mptr->mlet == S_WORM)
         return worm_parts[part];
     if (slithy(mptr) || (mptr->mlet == S_DRAGON &&
@@ -1697,7 +1707,10 @@ mbodypart(struct monst *mon, int part)
         || mptr == &mons[PM_JELLYFISH])
         return jelly_parts[part];
     if (mptr->mlet == S_VORTEX ||
-        (mptr->mlet == S_ELEMENTAL && mptr != &mons[PM_STALKER]))
+        (mptr->mlet == S_ELEMENTAL &&
+         mptr != &mons[PM_STALKER] &&
+         mptr != &mons[PM_SYLPH]))
+        /* Earth elemental is really arguable here. */
         return vortex_parts[part];
     if (mptr->mlet == S_FUNGUS)
         return fungus_parts[part];
@@ -1708,7 +1721,7 @@ mbodypart(struct monst *mon, int part)
     if (mptr->mlet == S_GOLEM && !(mptr == &mons[PM_FLESH_GOLEM]) &&
         (part == HAIR || part == SPINE || part == BLOOD ||
          part == LUNG || part == STOMACH || part == EYE ||
-         part == HIDE || part == SKIN)) {
+         part == HIDE || part == SKIN || part == TEETH)) {
         if (mptr == &mons[PM_STRAW_GOLEM] ||
             mptr == &mons[PM_PAPER_GOLEM] ||
             mptr == &mons[PM_WOOD_GOLEM] ||
@@ -1726,6 +1739,27 @@ mbodypart(struct monst *mon, int part)
             return "glass";
         else
             return "substance";
+    }
+    if (part == TEETH) {
+        if ((mptr->mlet == S_ANT) ||
+            (mptr == &mons[PM_SCORPION]))
+            return "mandibles";
+        if (mptr->mlet == S_COCKATRICE)
+            return "beak";
+        if ((mptr == &mons[PM_MIND_FLAYER]) ||
+            (mptr == &mons[PM_MASTER_MIND_FLAYER]))
+            return "tentacles";
+        if ((mptr == &mons[PM_MUMAK]) ||
+            (mptr == &mons[PM_TITANOTHERE]) ||
+            (mptr == &mons[PM_MAMMOTH]))
+            return "tusks";
+        if ((mptr->mlet == S_SPIDER) ||
+            (mptr->mlet == S_VAMPIRE))
+            return "fangs";
+        if (mptr->mlet == S_XAN)
+            return "proboscis";
+        if (mptr == &mons[PM_RUST_MONSTER])
+            return "rusters";
     }
     if (humanoid(mptr))
         return humanoid_parts[part];

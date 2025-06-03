@@ -1076,8 +1076,14 @@ static struct {
     {"robot", FALSE},
     {"nanobot", FALSE},
     {"battlemech", FALSE},
+    {"large language model", FALSE},
+    {"segmentation fault", FALSE},
+    {"syntax error", FALSE},
     {"Y2K bug", FALSE},
+    {"meme", FALSE},
+    {"microaggression", FALSE},
     {"Anthropogenic Global Warming", TRUE},
+    {"skibidi toilet", FALSE}, /* If you don't know, don't look it up. */
         /* Quendor (Zork, &c.) */
     {"grue", FALSE},
     {"Christmas-tree monster", FALSE},
@@ -1230,6 +1236,7 @@ static struct {
     {"Terminator", FALSE},
     {"Predator", FALSE},
     {"killer tomato", FALSE},
+    {"creeping terror", FALSE},
         /* old L of SH */
     {"earthquake beast", FALSE},
         /* Robotech */
@@ -1263,6 +1270,7 @@ static struct {
     {"questing beast", FALSE},
         /* general-purpose words for monsters */
     {"bogey", FALSE},
+    {"foe", FALSE},
     {"whangdoodle", FALSE},
         /* conspiracy theory */
     {"reptilian overlord", FALSE},
@@ -1272,8 +1280,10 @@ static struct {
     {"hyperactive child", FALSE},
     {"grumpy old man", FALSE},
     {"surly teenager", FALSE},
+    {"prolix obnubilator", FALSE},
     {"telemarketer", FALSE},
     {"middle manager", FALSE},
+    {"bureaucrat", FALSE},
     {"politician", FALSE},
     {"attorney", FALSE},
 };

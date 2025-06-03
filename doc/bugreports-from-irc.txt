@@ -1,3 +1,64 @@
+06:57 <             rld+> <@cpittman> fourk question, why can't an elf use a stethoscope while wearing
+                          riding gloves (not gauntlets of power)?
+06:58 <        Beholder+> [hdf-us] [nh370] icantfindaname (Tou Hum Fem Neu), 518 points, T:1289, killed by
+                          a hobgoblin, while praying
+07:02 <          raisse > can't bear iron in their ears?
+07:09 <             rld+> <@cpittman> Ah, good point. But I am wearing an iron skull cap. I'll try finding
+                          another helm
+07:10 <        Beholder+> [hdf-eu] [nh370] Vinyl (Mon Hum Mal Neu) acquired the Mines' End luckstone, on
+                          T:13402
+07:13 <        Beholder+> [hdf-us] [4k] cpittman (Rog Elf Mal Cha), 20952 points, T:25434, killed by a
+                          green dragon
+07:13 <             rld+> <@cpittman> Nevermind... 🙂
+08:23 <             rld+> <@Loggers_IX> yeah, almost 100% sure it’s just a bug where non-infravisible
+                          creatures can’t be seen even when they come into LoS
+08:24 <             rld+> <@Loggers_IX> if there really was a red mold I’d be wrong, though
+08:25 <             rld+> <@cpittman> It's probably something with the auto-explore finding the creature
+                          before it's actually displayed. Because the creatures don't disappear after I
+                          see them
+08:26 <             rld+> <@cpittman> One of the acid blobs moved into the light away from me, then it was
+                          visible
+08:26 <             rld+> <@Loggers_IX> this seems like a really obvious bug but no one plays fourk so I
+                          guess it hasn’t been found lol
+
+***
+
+08:04 <             rld+> <@cpittman> Another fourk question, but I may have found a bug... Are molds
+                          supposed to be invisible to gnome players? I'm playing a Gnome Tourist and have
+                          been using the auto-explore, but been blocked a few times by lichens I cannot
+                          see. When I ; to the square they're on, it says blank floor, but then when I try
+                          to move to it, fight the lichen.
+08:05 <        Beholder+> [hdf-eu] [hackm] mobileuser (Mon Trt Fem Neu) killed Beholder, on T:41538
+                          (19:03:25)
+08:05 <             rld+> <@cpittman> It might be related to infravision, but each time I was blocked, it
+                          was in a square next to me
+08:08 <        Beholder+> [hdf-us] [hackm] IsPotato (Pri Ith Mal Cha), 1386 points, T:1490, killed by a
+                          water moccasin
+08:10 <        Beholder+> [hdf-eu] [hackm] mobileuser (Mon Trt Fem Neu) used a forge to create The Key Of
+                          Access, on T:41720 (19:08:30)
+08:12 <             rld+> <@cpittman> It might be something else. Am I blind? Because I don't see the
+                          gecko that's biting the character. https://x0.at/I7bi.png
+[...]
+08:19 <             rld+> <@Loggers_IX> That’s consistent with it being related to infra vision, because
+                          geckos are cold blooded
+08:20 <             rld+> <@cpittman> It just doesn't make sense why I can't see them when they are
+                          adjacent.
+08:20 <             rld+> <@Loggers_IX> I guess non-infravisible creatures are just invisible to you?
+                          that’s weird. I doubt it’s intended
+08:20 <             rld+> <@hackemslashem> Maybe it got hit with a potion of invisibility? Or it's a bug
+08:21 <             rld+> <@Loggers_IX> if it was truly invisible it wouldn’t give feedback about “the
+                          gecko”
+08:21 <             rld+> <@hackemslashem> yea
+08:21 <             rld+> <@cpittman> It's been several creatures so far, so probably not because of
+                          invisible
+08:21 <             rld+> <@hackemslashem> Maybe check the rc/config file for any symbol changes
+08:21 <             rld+> <@Loggers_IX> who develops fourk, is it jonadab?
+08:22 <             rld+> <@cpittman> Thing is, it's been lichens, a (red?) mold, gecko, and acid blob. So
+                          it's probably not a symbol thing either. So probably something weird with
+                          infravision
+08:23 <             rld+> <@cpittman> Red mold wouldn't make sense, so I'm probably wrong about the color
+
+***
 
 21:31 <                     rld+> <@luxidream> jonadab: when I move into this trapped thug, I get an error "RNG value less than 1"
 21:32 <                     rld+> <@luxidream> I also get a crash whenever the priest occupies the same place as the player

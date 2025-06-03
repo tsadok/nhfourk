@@ -45,10 +45,15 @@ static const char *const random_mesg[] = {
     "As if!",   /* Clueless */
     "Klaatu barada nikto!", /* The Day the Earth Stood Still */
     "When the goat turns red strikes true.", /* Order of the Stick */
+    "I prepared explosive runes this morning.", /* ditto */
+    "Ha, ehta, kole, Ehmo nehto lehka, Ohnee, Ehtaeh koeh lahke-latte.",
+                                                /* Classical Chaos */
+    "You have been warned!", /* The Warning */
     "It is a far, far better thing I do than I have ever done.",
        /* A Tale of Two Cities */
     "All dungeon adventurers are equal; but some are more equal than others.",
        /* Animal Farm */
+    "Quidquid Latine dictum, sit altum videtur.",
 };
 
 const char *

@@ -28,7 +28,7 @@ static int dieroll;
 const char *
 halluhitverb(boolean uhit)
 {
-    switch ((moves + rn2(6)) % 60) {
+    switch ((moves + rn2(6)) % 64) {
     case  1:  return uhit ? "masticate" : "masticates";
     case  2:  return uhit ? "imagine" : "imagines";
     case  3:  return uhit ? "impersonate" : "impersonates";
@@ -87,6 +87,10 @@ halluhitverb(boolean uhit)
     case 56:  return uhit ? "devour" : "devours";
     case 57:  return uhit ? "glare at" : "glares at";
     case 58:  return uhit ? "manhandle" : "manhandles";
+    case 59:  return uhit ? "misgender" : "misgenders";
+    case 60:  return uhit ? "unalive" : "unalives";
+    case 61:  return uhit ? "parody" : "parodies";
+    case 62:  return uhit ? "gaslight" : "gaslights";
     default:  return uhit ? "abuse" : "abuses";
     }
 }

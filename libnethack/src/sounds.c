@@ -210,8 +210,7 @@ dosounds(void)
                         pline(msgc_levelsound, "You shiver %s",
                               Cold_resistance ? "." :
                               msgprintf("violently, your %s chattering!",
-                                        /* TODO:  teach body_part TEETH */
-                                        "teeth"));
+                                        body_part(TEETH)));
                     return;
                 } else if (monsndx(mtmp->data) == PM_ORANGE_DRAGON) {
                     level->heardsound[levsound_dragonhall] = TRUE;
@@ -219,7 +218,7 @@ dosounds(void)
                         You_hear(msgc_levelsound,
                                  "someone reading actuarial tables.");
                     else if (Sleep_resistance)
-                        pline(msgc_levelsound, "You yawn.");
+                        pline(msgc_levelsound, "You yawn, feeling refreshed.");
                     else
                         pline(msgc_levelsound, "You hear gentle snoring.");
                     return;

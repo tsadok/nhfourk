@@ -1,7 +1,7 @@
 Asciibetical list of struct_type values:
 
  'E' (0x45, decimal  69) - Engraving (struct engr, engrave.h)
- 'L' (0x4C, decmial  76) - Level (struct level, rm.h)
+ 'L' (0x4C, decimal  76) - Level (struct level, rm.h)
  'M' (0x4D, decimal  77) - Monster (struct monst, monst.h)
  'O' (0x4F, decimal  79) - Object (struct obj)
  'P' (0x50, decimal  80) - Permonst (struct permonst, permonst.h)
