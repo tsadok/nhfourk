@@ -1074,7 +1074,7 @@ mkaiscav(struct level *lev, char *proto)
                 cx += mrn2(hflex || 1) - hflex;
                 cxdir = 2;
             } else if (abs(cxdir) > (minbreadth * 2)) {
-                cxdir = cxdir * 100 / mrn2(100);
+                cxdir = cxdir * 100 / (1 + mrn2(100));
                 cx += cxdir;
             } else {
                 cxdir += hflex - mrn2((hflex * 2) || 1);

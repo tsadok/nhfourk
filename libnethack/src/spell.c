@@ -1462,6 +1462,9 @@ percent_success(int spell)
     if (difficulty > 0) {
         /* Player is too low level or unskilled. */
         chance -= isqrt(900 * difficulty + 2000);
+    } else if (spellev(spell) == 0) {
+        impossible("Attempting to learn a level-zero spell.");
+        chance += 20;
     } else {
         /* Player is above level.  Learning continues, but the law of
            diminishing returns sets in quickly for low-level spells.  That is,

@@ -3960,7 +3960,7 @@ try_lift(struct monst *mtmp, struct trap *ttmp, int wt, boolean stuff)
 {
     int wc = weight_cap();
 
-    if (((wt * 2) / wc) >= HVY_ENCUMBER) {
+    if ((wc <= 0) || (((wt * 2) / wc) >= HVY_ENCUMBER)) {
         pline(msgc_failcurse, "%s is %s for you to lift.", Monnam(mtmp),
               stuff ? "carrying too much" : "too heavy");
         if (!ttmp->madeby_u && !mtmp->mpeaceful && mtmp->mcanmove &&

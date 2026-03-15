@@ -106,10 +106,10 @@ angle_comp(const void *vx, const void *vy)
         if (bx == 0)
             return 1;
         /* I've slapped an arbitrary factor of 20 on it just to reduce rounding errors */
-        if ((20*ay) / ax == (20*by) / bx)
+        if (((20*ay) / ax) == ((20*by) / bx))
             return 0;
         else
-            return ((20*ay) / ax < (20*by) / bx) ? -1 : 1;
+            return (((20*ay) / ax) < ((20*by) / bx)) ? -1 : 1;
     }
 }
 

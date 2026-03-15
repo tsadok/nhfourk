@@ -28,7 +28,7 @@ static int dieroll;
 const char *
 halluhitverb(boolean uhit)
 {
-    switch ((moves + rn2(6)) % 64) {
+    switch ((moves + rn2(12)) % 66) {
     case  1:  return uhit ? "masticate" : "masticates";
     case  2:  return uhit ? "imagine" : "imagines";
     case  3:  return uhit ? "impersonate" : "impersonates";
@@ -91,6 +91,8 @@ halluhitverb(boolean uhit)
     case 60:  return uhit ? "unalive" : "unalives";
     case 61:  return uhit ? "parody" : "parodies";
     case 62:  return uhit ? "gaslight" : "gaslights";
+    case 63:  return uhit ? "rizz up" : "rizzes up";
+    case 64:  return uhit ? "demonetize" : "demonetizes";
     default:  return uhit ? "abuse" : "abuses";
     }
 }
@@ -1732,7 +1734,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
         hitmsg(mtmp, mattk);
         if (!mtmp->mcan && (challengemode || !rn2(4)) && !mtmp->mspec_used) {
             mtmp->mspec_used = mtmp->mspec_used + (dmg + rn2(6));
-            dmg = dmg * 2 / armpro;
+            dmg = dmg * 2 / (armpro ? armpro : 1);
             if (dmg < 1)
                 break;
             if (Confusion)

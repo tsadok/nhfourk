@@ -532,6 +532,9 @@ use_defensive(struct monst *mtmp, struct musable *m)
     vismon = mon_visible(mtmp);
     oseen = otmp && vismon;
 
+    if (mtmp->mhpmax == 0) {
+        panic("About to divide by a monster's max HP, which is zero.");
+    }
     /* when using defensive choice to run away, we want monster to avoid
        rushing right straight back; don't override if already scared */
     fleetim = !mtmp->mflee ? (33 - (30 * mtmp->mhp / mtmp->mhpmax)) : 0;

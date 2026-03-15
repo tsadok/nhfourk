@@ -2313,7 +2313,7 @@ log_sync(long target_location, enum target_location_units tlu,
     while (((loadamt = relative_to_target(program_state.binary_save_location,
                                           target_location, tlu))) < 0) {
         if (!orig_loadamt)
-            orig_loadamt = loadamt;
+            orig_loadamt = (loadamt ? loadamt : 1);
         clock_t now = clock();
         if (now - last_load_progress_time > CLOCKS_PER_SEC / 10) {
             windowprocs.win_load_progress(

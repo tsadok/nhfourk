@@ -275,6 +275,11 @@ static int
 lib_dlb_fread(char *buf, int size, int quan, dlb * dp)
 {
     long pos, nread, nbytes;
+    if (size == 0) {
+        /* This should be a panic, because it is protecting
+           against division by zero; but we can't panic here. */
+        return 0;
+    }
 
     /* make sure we don't read into the next file */
     if ((dp->size - dp->mark) < (size * quan))

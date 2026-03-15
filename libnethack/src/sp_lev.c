@@ -2239,6 +2239,9 @@ maze1xy(struct level *lev, coord * m, int humidity)
     /* tryct: normally it won't take more than ten or so tries due to the
        circumstances under which we'll be called, but the `humidity' screening
        might drastically change the chances */
+    if ((x_maze_max < 4) || (y_maze_max < 4)) {
+        impossible("maze_max values are too low; division by zero may occur.");
+    }
 
     do {
         x = 3 + mrn2(x_maze_max - 3);

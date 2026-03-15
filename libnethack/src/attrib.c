@@ -662,7 +662,7 @@ redist_attr(void)
             AMAX(i) = ATTRMAX(i);
         if (AMAX(i) < ATTRMIN(i))
             AMAX(i) = ATTRMIN(i);
-        ABASE(i) = ABASE(i) * AMAX(i) / tmp;
+        ABASE(i) = ABASE(i) * AMAX(i) / (tmp ? tmp : 1);
         /* ABASE(i) > ATTRMAX(i) is impossible */
         if (ABASE(i) < ATTRMIN(i))
             ABASE(i) = ATTRMIN(i);

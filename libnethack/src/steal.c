@@ -85,6 +85,10 @@ stealgold(struct monst *mtmp)
     } else if (ygold) {
         const int gold_price = objects[GOLD_PIECE].oc_cost;
 
+        if (gold_price == 0) {
+            panic("About to divide by the value of gold, which is zero.");
+        }
+
         tmp = (somegold(money_cnt(invent)) + gold_price - 1) / gold_price;
         tmp = min(tmp, ygold->quan);
         if (tmp < ygold->quan)

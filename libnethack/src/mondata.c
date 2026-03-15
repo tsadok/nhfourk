@@ -787,6 +787,9 @@ short
 mprof(const struct monst * mon, int proficiency)
 {
     const struct permonst *ptr = mon->data;
+    if (proficiency == 0) {
+        panic("About to divide by zero proficiency.");
+    }
     /* return the relevant bits. */
     return (short) (((ptr)->mskill / proficiency) % 4);
 }

@@ -558,7 +558,9 @@ givit(int type, const struct permonst *ptr, int scalefactor)
         if (ml > l100)
             ml = l100;
 
-        ml /= scalefactor;
+        if (scalefactor > 0) {
+            ml /= scalefactor;
+        }
 
         if (ml < l100 && ml > 0) {
             /* The odds of /not/ getting the intrinsic on a direct roll are (1 -

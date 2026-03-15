@@ -148,7 +148,9 @@ newman(void)
     int tmp, oldlvl;
 
     tmp = u.uhpmax;
-    oldlvl = u.ulevel;
+    /* I've decided to be entirely paranoid about division by zero (even though,
+       if the player's level were ever zero, that would be extremely odd): */
+    oldlvl = u.ulevel ? u.ulevel : 1;
     u.ulevel = u.ulevel - 2 + rn2_on_rng(5, rng_poly_level_adj);
     if (u.ulevel > 127 || u.ulevel < 1) {       /* level went below 0? */
         u.ulevel = oldlvl;      /* restore old level in case they lifesave */
@@ -184,7 +186,7 @@ newman(void)
        9 - rn2(19): random change of -9 to +9 hit points */
     u.uhpmax = ((u.uhpmax - 10) * (long)u.ulevel / oldlvl + 10) + (9 - rn2(19));
 
-    u.uhp = u.uhp * (long)u.uhpmax / tmp;
+    u.uhp = u.uhp * (long)u.uhpmax / (tmp ? tmp : 1);
 
     tmp = u.uenmax;
     u.uenmax = u.uenmax * (long)u.ulevel / oldlvl + 9 - rn2(19);
@@ -714,7 +716,7 @@ polymon(int mntmp, boolean noisy)
     }
     u.mh = u.mhmax;
 
-    if (u.ulevel < mlvl) {
+    if ((u.ulevel < mlvl) && (mlvl > 0)) {
         /* Low level characters can't become high level monsters for long */
         u.mtimedone = u.mtimedone * u.ulevel / mlvl;
     }
