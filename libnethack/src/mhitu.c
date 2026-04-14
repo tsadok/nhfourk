@@ -935,6 +935,7 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
     int ac_threshhold = mtmp->m_lev + (u_helpless(hm_all) ? 4 : 0) -
         (((Invis && !perceives(mtmp->data)) || !mtmp->mcansee) ? 2 : 0) -
         (mtmp->mtrapped ? 2 : 0);
+    int checkpoint = 0;
     ac_threshhold = (!(mtmp->data->mflags3 & M3_VANDMGRDUC) &&
                      (ac_threshhold > 0)) ? ac_threshhold : 0;
 
@@ -1725,10 +1726,16 @@ hitmu(struct monst *mtmp, const struct attack *mattk)
             u_slow_down();
         break;
     case AD_DREN:
+        checkpoint++;
         hitmsg(mtmp, mattk);
-        if (uncancelled && (challengemode || !rn2(4)))
+        checkpoint++;
+        if (uncancelled && (challengemode || !rn2(4))) {
+            checkpoint++;
             drain_en(dmg);
+        }
+        checkpoint++;
         dmg = 0;
+        checkpoint++;
         break;
     case AD_CONF:
         hitmsg(mtmp, mattk);

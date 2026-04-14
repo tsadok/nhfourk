@@ -1785,7 +1785,9 @@ m_detach(struct monst *mtmp, const struct permonst *mptr)
         impossible("Monster detached without dying?");
         mtmp->deadmonster = 1;
     }
-    mtmp->dlevel->flags.purge_monsters++;
+    if (mtmp->dlevel) {
+        mtmp->dlevel->flags.purge_monsters++;
+    }
 }
 
 /* find the worn amulet of life saving which will save a monster */
@@ -1911,9 +1913,10 @@ mondead(struct monst *mtmp)
         mvitals[tmp].died++;
 
     /* The subroutine checks whether the monster is actually one that should be
-     * livelogged.  It would be neat if there could be different message wording
-     * depending on whether the player perpetrated the kill or not, but we don't
-     * seem to have that information at this point; it's not really essential. */
+       livelogged.  It would be neat if there could be different message wording
+       depending on whether the player perpetrated the kill or not, but we don't
+       seem to have that information at this point; it's not really
+       essential. */
     livelog_unique_monster(mtmp);
 
     /* if it's a (possibly polymorphed) quest leader, mark him as dead */

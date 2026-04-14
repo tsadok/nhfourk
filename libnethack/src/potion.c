@@ -477,6 +477,10 @@ peffects(struct obj *otmp)
 {
     int i, ii, lim;
 
+    if (!otmp) {
+        impossible("peffects: no potion");
+        return 0;
+    }
     switch (otmp->otyp) {
     case POT_RESTORE_ABILITY:
     case SPE_RESTORE_ABILITY:
@@ -681,6 +685,7 @@ peffects(struct obj *otmp)
             }
             break;
         }
+        break;
     case POT_PARALYSIS:
         if (Free_action)
             pline(msgc_yafm, "You stiffen momentarily.");

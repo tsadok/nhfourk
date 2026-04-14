@@ -1080,7 +1080,8 @@ rloc(struct monst *mtmp,        /* mx==COLNO implies migrating monster arrival *
                                                     fineangle);
                             x = mtmp->mx + rectcoord.x;
                             y = mtmp->my + rectcoord.y;
-                            if (isok(x,y) && !m_at(level,x,y) &&
+                            if (isok(x,y) &&
+                                !m_at(level,x,y) &&
                                 /* TODO: evaluate whether goodpos() should be
                                  * used here */
                                 (level->locations[x][y].typ >= CORR) &&

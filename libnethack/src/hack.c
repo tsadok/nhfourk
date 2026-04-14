@@ -3355,9 +3355,13 @@ maybe_wail(void)
         const char *who;
         int i, powercnt;
 
-        who = (Role_if(PM_WIZARD) ||
-               Race_if(PM_VALKYRIE)) ? msgupcasefirst(urace.individual.f)
-                                     : "Elf";
+        who = (Role_if(PM_WIZARD) || Race_if(PM_VALKYRIE))
+            ? msgupcasefirst((u.ufemale && urace.individual.f)
+                             ? urace.individual.f
+                             : ((urace.individual.m)
+                                ? urace.individual.m
+                                : urace.noun))
+            : "Elf";
         if (u.uhp == 1) {
             pline(msgc_fatal, "%s is about to die.", who);
         } else {
