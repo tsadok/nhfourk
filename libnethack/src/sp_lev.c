@@ -926,27 +926,33 @@ make_sokoprize(int origotyp, struct level *lev, int x, int y,
                boolean init, boolean artif, enum rng rng)
 {
     int otyp = origotyp;
-    if (otyp == BAG_OF_HOLDING && carrying(BAG_OF_HOLDING) &&
-        !u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
-        otyp = AMULET_OF_REFLECTION;
+    if (otyp == BAG_OF_HOLDING && carrying(BAG_OF_HOLDING))
+        if !u_have_property(REFLECTING, ANY_PROPERTY, FALSE)
+            otyp = AMULET_OF_REFLECTION;
+        else
+            otyp = rn2_on_rng(AMULET_OF_MAGICAL_BREATHING - AMULET_OF_ESP + 1, rng);
     if (otyp == AMULET_OF_REFLECTION &&
         u_have_property(REFLECTING, ANY_PROPERTY, FALSE))
-        if (!carrying(BAG_OF_HOLDING) && !carrying(OILSKIN_SACK))
-            otyp = rn2_on_rng(3, rng) ? OILSKIN_SACK : BAG_OF_HOLDING;
-    /* TODO: else, maybe another useful amulet? */
+        if (!carrying(BAG_OF_HOLDING))
+            otyp = BAG_OF_HOLDING;
+        else
+            otyp = rn2_on_rng(AMULET_OF_MAGICAL_BREATHING - AMULET_OF_ESP + 1, rng);
     if (otyp == RIN_POLYMORPH_CONTROL &&
         (carrying(RIN_POLYMORPH_CONTROL) ||
-         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE) ||
-         u_have_property(UNCHANGING, ANY_PROPERTY, FALSE)) &&
-        !carrying(AMULET_OF_FLYING) &&
-        !u_have_property(FLYING, ANY_PROPERTY, FALSE))
-        otyp = AMULET_OF_FLYING;
+         u_have_property(POLYMORPH_CONTROL, ANY_PROPERTY, FALSE)))
+        if !carrying(RIN_POLYMORPH) &&
+            !u_have_property(POLYMORPH, ANY_PROPERTY, FALSE)
+            otyp = RIN_POLYMORPH;
+        else
+            otyp = rn2_on_rng(RIN_SLOW_DIGESTION - RIN_ADORNMENT + 1, rng);
     if (otyp == RIN_TELEPORT_CONTROL &&
         (carrying(RIN_TELEPORT_CONTROL) ||
-         u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE)) &&
-        !carrying(RIN_TELEPORTATION) &&
-        !u_have_property(TELEPORT, ANY_PROPERTY, FALSE))
-        otyp = RIN_TELEPORTATION;
+         u_have_property(TELEPORT_CONTROL, ANY_PROPERTY, FALSE)))
+        if !carrying(RIN_TELEPORTATION) &&
+            !u_have_property(TELEPORT, ANY_PROPERTY, FALSE)
+            otyp = RIN_TELEPORTATION;
+        else
+            otyp = rn2_on_rng(RIN_SLOW_DIGESTION - RIN_ADORNMENT + 1, rng);
     return mksobj_at(otyp, lev, x, y, init, artif, rng);
 }
 
